@@ -14,7 +14,7 @@ extracting or indexing ANYTHING. Want to learn more? [Contact SWIRL](mailto:swir
 
 | Version | Date | Branch | Notes | 
 | ------- | ---- | ------ | ----- |
-| SWIRL SEARCH 1.0 | 04-07-2022 | Master | [Release Notes](./docs/RELEASE_NOTES_1.0.md) |
+| SWIRL SEARCH 1.0 | 04-07-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.0.md) |
 
 <br/>
 
