@@ -1,0 +1,8 @@
+{
+    "name": "HTTP Get with Auth",
+    "connector": "requests_get",
+    "url": "http://your-url-here",
+    "query_template": "{url}?q={query_string}",
+    "result_mappings": "your-mappings-here",
+    "credentials": "HTTPDigestAuth('your-username-here', 'your-password-here')"
+}

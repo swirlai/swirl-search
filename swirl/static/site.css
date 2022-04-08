@@ -1,0 +1,16 @@
+/* SWIRL site.css */
+
+body {margin-top:20px; color:white; background-color:black;}
+
+.center {display:block; width: 400px; margin-left:auto; margin-right: auto;}
+.huge {font-family:Verdana, Geneva, Tahoma, sans-serif; font-weight: bold; font-size:96px; text-align:center;}
+.big {font-family:Verdana, Geneva, Tahoma, sans-serif; font-weight: bold; font-size:36px; text-align:center;}
+.normal {font-family:Verdana, Geneva, Tahoma, sans-serif; font-size:32px; width: 350px; margin-left:auto; margin-right:auto; }
+.small {font-family:Verdana, Geneva, Tahoma, sans-serif; font-size:14px; width: 400px; margin-left:auto; margin-right:auto; }
+
+a:link {color:white; text-decoration:none;}
+a:visited {color:white;}
+a:hover {color:cornflowerblue;}
+a:active {color:yellow;}
+
+#li { margin: 0 0 0 20px; }

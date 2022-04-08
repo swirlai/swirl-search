@@ -1,0 +1,8 @@
+{
+    "name": "SWIRL Result Search (Experimental)",
+    "connector": "sqlite3",
+    "url": "path/to/swirl_server/db.sqlite3",
+    "query_template": "select %s from swirl_result where matches like '%%%s%%'",
+    "query_mappings": "id, search_id_id, json_array(json_results, 'payload.title, payload.body') as matches",
+    "result_processor": "swirl_result_matches_processor"
+}
