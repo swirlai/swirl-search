@@ -9,7 +9,6 @@ from datetime import datetime
 from .utils import create_result_dictionary
 
 import logging as logger
-logger.basicConfig(level=logger.INFO)
 
 from jsonpath_ng import parse
 

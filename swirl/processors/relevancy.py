@@ -5,7 +5,6 @@
 '''
 
 import logging as logger
-# logger.basicConfig(level=logger.INFO)
 
 #############################################    
 #############################################    
@@ -137,6 +136,7 @@ def cosine_relevancy_processor(search_id):
         highlighted_json_results = []
         if result.json_results:
             for item in result.json_results:
+                weighted_score = 0.0
                 dict_score = {}
                 match_dict = {}
                 item['boosts'] = []
@@ -144,9 +144,7 @@ def cosine_relevancy_processor(search_id):
                     if field in item:
                         last_term = ""
                         ############################################
-                        # # highlight 
-                        # to do: use nltk to stem and then match
-                        # to do: get the above from the highlight command P3
+                        # highlight 
                         if not search.status == 'RESCORING':
                             item[field] = highlight(item[field], search.query_string_processed)
                         ############################################
@@ -198,13 +196,12 @@ def cosine_relevancy_processor(search_id):
                 if weight == 0.0:
                     item['boosts'].append('X_WEIGHT_0')
                     item['score'] == 0.5
+                    weighted_score = 0.5
                 else:
                     weighted_score = round(float(item['score'])/float(weight),2)
                     item['score'] = weighted_score
                 ############################################
                 # boosting                
-                # to do: no all_terms_match for a single term query
-                # to do: miami look at ----->
                 query_len = len(search.query_string_processed.strip().split())
                 term_match = 0
                 phrase_match = 0
@@ -218,7 +215,9 @@ def cosine_relevancy_processor(search_id):
                             term_match = term_match + 1
                             terms_field = terms_field + 1
                     # boost if all terms match this field
-                    if terms_field == query_len:
+                    # to do: no all_terms_match for a single term query
+                    # to do: miami look at ----->
+                    if terms_field == query_len and query_len > 1:
                         all_terms = all_terms + 1
                 # take away credit for one field, one term hit
                 if term_match == 1:
@@ -253,7 +252,7 @@ def cosine_relevancy_processor(search_id):
                 updated = updated + 1
                 highlighted_json_results.append(item)
             # end for
-            logger.info(f"Updating results: {result.id}")
+            # logger.info(f"Updating results: {result.id}")
             # save!!!!
             result.json_results = highlighted_json_results
             # to do: catch invalid json error P2
