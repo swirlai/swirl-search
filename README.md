@@ -27,6 +27,8 @@ extracting or indexing ANYTHING. Want to learn more? [Contact SWIRL](mailto:swir
 :small_blue_diamond: [Object Reference](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference)
 :small_blue_diamond: [Admin Guide](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide)
 
+<br/>
+
 # Product Links
 
 :warning: These links will only work if you have SWIRL installed!
@@ -34,6 +36,8 @@ extracting or indexing ANYTHING. Want to learn more? [Contact SWIRL](mailto:swir
 :small_blue_diamond: [SWIRL Home](http://localhost:8000/swirl/index.html)
 :small_blue_diamond: [SearchProviders](http://localhost:8000/swirl/searchproviders/) | [Search](http://localhost:8000/swirl/search/) | [Results](http://localhost:8000/swirl/results/)
 :small_blue_diamond: [Swagger](http://localhost:8000/swirl/swagger-ui/) | [Schema](http://localhost:8000/swirl/openapi) | [PostMan](https://github.com/sidprobstein/swirl-search/blob/main/docs/SWIRL.postman_collection.json) 
+
+<br/>
 
 # Features
 
@@ -55,7 +59,7 @@ extracting or indexing ANYTHING. Want to learn more? [Contact SWIRL](mailto:swir
 
 :small_blue_diamond: [Optional search/result expiration service](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide#search-expiration-service) to limit storage use
 
-[Python CLI](./docs/USER_GUIDE.md#python-command-line-interface-cli)
+<br/>
 
 # Get Support
 
