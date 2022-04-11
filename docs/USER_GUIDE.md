@@ -647,7 +647,342 @@ SWIRL will respond by having the specified mixer present the unified results.
 When the result_mixer is set to relevancy_mixer, and the search.post_result_processor is set to cosine_relevancy_processor - the defaults - SWIRL will return a result set that features the most relevant responses to the search, across all sources.
 
 ```
-
+{
+    "messages": [
+        "##S#W#I#R#L##1#0################################################################",
+        "Retrieved 0 of 0 results from: Funding DB Search",
+        "Retrieved 1 of 3 results from: Document DB Search",
+        "Retrieved 10 of 38 results from: Enron Email ES Local",
+        "Retrieved 10 of 407,000 results from: Enterprise Search PSE",
+        "Retrieved 10 of 13,300,000,000 results from: Strategy Consulting PSE",
+        "Retrieved 10 of 14,600 results from: Mergers and Acquisitions PSE",
+        "Post processing of results by cosine_relevancy_processor updated 41 results",
+        "Results ordered by: relevancy_mixer"
+    ],
+    "info": {
+        "Funding DB Search": {
+            "found": 0,
+            "retrieved": 0,
+            "query_to_provider": "select * from funding where city like '%%strategy%%' or company like '%%strategy%%';",
+            "result_processor": "generic_result_processor"
+        },
+        "Document DB Search": {
+            "found": 3,
+            "retrieved": 1,
+            "query_to_provider": "select * from documents where title like '%%strategy%%' or body like '%%strategy%%' limit 10;",
+            "result_processor": "generic_result_processor"
+        },
+        "Enron Email ES Local": {
+            "found": 38,
+            "retrieved": 10,
+            "query_to_provider": "index='email', query={'query_string': {'query': 'strategy', 'default_field': 'content'}}",
+            "result_processor": "generic_result_processor"
+        },
+        "Enterprise Search PSE": {
+            "found": 407000,
+            "retrieved": 10,
+            "query_to_provider": "https://www.googleapis.com/customsearch/v1?cx=0c38029ddd002c006&key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM&start=1&q=strategy",
+            "result_processor": "generic_result_processor"
+        },
+        "Strategy Consulting PSE": {
+            "found": 13300000000,
+            "retrieved": 10,
+            "query_to_provider": "https://www.googleapis.com/customsearch/v1?cx=7d473806dcdde5bc6&key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM&start=1&q=strategy",
+            "result_processor": "generic_result_processor"
+        },
+        "Mergers and Acquisitions PSE": {
+            "found": 14600,
+            "retrieved": 10,
+            "query_to_provider": "https://www.googleapis.com/customsearch/v1?cx=b384c4e79a5394479&key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM&start=1&q=strategy",
+            "result_processor": "generic_result_processor"
+        },
+        "search": {
+            "query_string": "strategy",
+            "query_string_processed": "strategy"
+        },
+        "results": {
+            "next_page": "/swirl/results/?search_id=14&result_mixer=round_robin_mixer&page=2",
+            "retrieved": 10
+        }
+    },
+    "results": [
+        {
+            "rank": 7,
+            "score": 1.0,
+            "title": "Your *Strategy* Needs a *Strategy*",
+            "url": "https://www.bcg.com/publications/collections/your-strategy-needs-strategy/intro",
+            "body": "This new book from BCG's *Strategy* Lab cuts through the clutter of *strategy* frameworks and provides clarity on which approach to *strategy* and execution—or which ...",
+            "date_published": "unknown",
+            "date_retrieved": "2022-04-10 00:06:37.079250",
+            "author": "",
+            "searchprovider": "Strategy Consulting PSE",
+            "payload": {
+                "cacheId": "1VfUY4PbJP8J"
+            },
+            "explain": {
+                "matches": {
+                    "title": [
+                        "strategy"
+                    ],
+                    "body": [
+                        "strategy"
+                    ]
+                },
+                "similarity": 0.8,
+                "boosts": [
+                    "term_match 0.2"
+                ]
+            }
+        },
+        {
+            "rank": 9,
+            "score": 1.0,
+            "title": "*Strategy*",
+            "url": "https://www2.deloitte.com/us/en/insights/topics/strategy.html",
+            "body": "Consulting. Innovation, transformation and leadership occur in many ways. At Deloitte, our ability to help solve clients' most complex issues is distinct.",
+            "date_published": "unknown",
+            "date_retrieved": "2022-04-10 00:06:37.114367",
+            "author": "",
+            "searchprovider": "Strategy Consulting PSE",
+            "payload": {
+                "cacheId": "6fGaLtBaraUJ"
+            },
+            "explain": {
+                "matches": {
+                    "title": [
+                        "strategy"
+                    ]
+                },
+                "similarity": 1.0,
+                "boosts": []
+            }
+        },
+        {
+            "rank": 2,
+            "score": 0.95,
+            "title": "*Strategy*& - the global *strategy* consulting team at PwC",
+            "url": "https://www.strategyand.pwc.com/",
+            "body": "From the start, *Strategy*& creates a *strategy* for you that works today and delivers into tomorrow. We make *strategy* real.",
+            "date_published": "unknown",
+            "date_retrieved": "2022-04-10 00:06:36.978837",
+            "author": "",
+            "searchprovider": "Strategy Consulting PSE",
+            "payload": {
+                "cacheId": "iygA_Hu_O24J"
+            },
+            "explain": {
+                "matches": {
+                    "title": [
+                        "strategy"
+                    ],
+                    "body": [
+                        "strategy"
+                    ]
+                },
+                "similarity": 0.75,
+                "boosts": [
+                    "term_match 0.2"
+                ]
+            }
+        },
+        {
+            "rank": 5,
+            "score": 0.95,
+            "title": "Business Growth *Strategy* Consulting | BCG",
+            "url": "https://www.bcg.com/capabilities/corporate-finance-strategy/business-strategy",
+            "body": "BCG focuses on three critical deliverables to develop winning business growth strategies. Learn more about our business *strategy* consulting approach.",
+            "date_published": "unknown",
+            "date_retrieved": "2022-04-10 00:06:37.042919",
+            "author": "",
+            "searchprovider": "Strategy Consulting PSE",
+            "payload": {
+                "cacheId": "emuJsOnOzwwJ"
+            },
+            "explain": {
+                "matches": {
+                    "title": [
+                        "strategy"
+                    ],
+                    "body": [
+                        "strategy"
+                    ]
+                },
+                "similarity": 0.75,
+                "boosts": [
+                    "term_match 0.2"
+                ]
+            }
+        },
+        {
+            "rank": 1,
+            "score": 0.89,
+            "title": "*Strategy* Consulting Services & Solutions | Accenture",
+            "url": "https://www.accenture.com/us-en/about/strategy-index",
+            "body": "Accenture *Strategy* enables clients to thrive by combining technology fluency with industry expertise for solutions that master competitive agility.",
+            "date_published": "unknown",
+            "date_retrieved": "2022-04-10 00:06:36.956630",
+            "author": "",
+            "searchprovider": "Strategy Consulting PSE",
+            "payload": {
+                "cacheId": "zOUsVXwN5V0J"
+            },
+            "explain": {
+                "matches": {
+                    "title": [
+                        "strategy"
+                    ],
+                    "body": [
+                        "strategy"
+                    ]
+                },
+                "similarity": 0.69,
+                "boosts": [
+                    "term_match 0.2"
+                ]
+            }
+        },
+        {
+            "rank": 3,
+            "score": 0.89,
+            "title": "How Customer Expansion *Strategy* Catapults Business Growth",
+            "url": "https://www.searchunify.com/blog/how-customer-expansion-strategy-catapults-business-growth/",
+            "body": "Sep 28, 2021 <b>...</b> An effective customer expansion <b>*strategy*</b> understands customers &amp; their expectations. Then, accordingly provides relevant offers to upsell&nbsp;...",
+            "date_published": "unknown",
+            "date_retrieved": "2022-04-10 00:06:36.986653",
+            "author": "",
+            "searchprovider": "Enterprise Search PSE",
+            "payload": {
+                "cacheId": "9Zr6Xx7VclIJ"
+            },
+            "explain": {
+                "matches": {
+                    "title": [
+                        "strategy"
+                    ],
+                    "body": [
+                        "strategy"
+                    ]
+                },
+                "similarity": 0.69,
+                "boosts": [
+                    "term_match 0.2"
+                ]
+            }
+        },
+        {
+            "rank": 6,
+            "score": 0.85,
+            "title": "Western *Strategy* Summaries",
+            "url": "allen-p/_sent_mail/305.",
+            "body": "Message-ID: <13777999.1075855691899.JavaMail.evans@thyme>\nDate: Fri, 3 Mar 2000 04:33:00 -0800 (PST)\nFrom: phillip.allen@enron.com\nTo: mike.grigsby@enron.com\nSubject: Western *Strategy* Summaries\nMime-Version: 1.0\nContent-Type: text/plain; charset=us-ascii\nContent-Transfer-Encoding: 7bit\nX-From: Phillip K Allen\nX-To: Mike Grigsby\nX-cc: \nX-bcc: \nX-Folder: \\Phillip_Allen_Dec2000\\Notes Folders\\'sent mail\nX-Origin: Allen-P\nX-FileName: pallen.nsf\n\n---------------------- Forwarded by Phillip K Allen/HOU/ECT on 03/03/2000 \n12:30 PM ---------------------------\n\n\nTim Heizenrader\n03/03/2000 07:25 AM\nTo: James B Fallon/HOU/ECT@ECT, Phillip K Allen/HOU/ECT@ECT\ncc:  \nSubject: Western *Strategy* Summaries\n\nSlides from yesterday's meeting are attached: \n",
+            "date_published": "2000-03-03 04:33:00",
+            "date_retrieved": "2022-04-10 00:06:35.640365",
+            "author": "Phillip K Allen",
+            "searchprovider": "Enron Email ES Local",
+            "payload": {
+                "_source.to": "Mike Grigsby"
+            },
+            "explain": {
+                "matches": {
+                    "title": [
+                        "strategy"
+                    ],
+                    "body": [
+                        "strategy"
+                    ]
+                },
+                "similarity": 0.65,
+                "boosts": [
+                    "term_match 0.2"
+                ]
+            }
+        },
+        {
+            "rank": 8,
+            "score": 0.85,
+            "title": "*Strategy* consulting services | EY - US",
+            "url": "https://www.ey.com/en_us/strategy-transactions/strategy-services",
+            "body": "EY-Parthenon *strategy* consulting services can develop growth, transaction or turnaround strategies to help organizations increase profitability and ...",
+            "date_published": "unknown",
+            "date_retrieved": "2022-04-10 00:06:37.097333",
+            "author": "",
+            "searchprovider": "Strategy Consulting PSE",
+            "payload": {
+                "cacheId": "BuVvBXcmGawJ"
+            },
+            "explain": {
+                "matches": {
+                    "title": [
+                        "strategy"
+                    ],
+                    "body": [
+                        "strategy"
+                    ]
+                },
+                "similarity": 0.65,
+                "boosts": [
+                    "term_match 0.2"
+                ]
+            }
+        },
+        {
+            "rank": 10,
+            "score": 0.85,
+            "title": "Western *Strategy* Summaries",
+            "url": "allen-p/all_documents/305.",
+            "body": "Message-ID: <5105744.1075855672142.JavaMail.evans@thyme>\nDate: Fri, 3 Mar 2000 04:33:00 -0800 (PST)\nFrom: phillip.allen@enron.com\nTo: mike.grigsby@enron.com\nSubject: Western *Strategy* Summaries\nMime-Version: 1.0\nContent-Type: text/plain; charset=us-ascii\nContent-Transfer-Encoding: 7bit\nX-From: Phillip K Allen\nX-To: Mike Grigsby\nX-cc: \nX-bcc: \nX-Folder: \\Phillip_Allen_Dec2000\\Notes Folders\\All documents\nX-Origin: Allen-P\nX-FileName: pallen.nsf\n\n---------------------- Forwarded by Phillip K Allen/HOU/ECT on 03/03/2000 \n12:30 PM ---------------------------\n\n\nTim Heizenrader\n03/03/2000 07:25 AM\nTo: James B Fallon/HOU/ECT@ECT, Phillip K Allen/HOU/ECT@ECT\ncc:  \nSubject: Western *Strategy* Summaries\n\nSlides from yesterday's meeting are attached: \n",
+            "date_published": "2000-03-03 04:33:00",
+            "date_retrieved": "2022-04-10 00:06:35.778476",
+            "author": "Phillip K Allen",
+            "searchprovider": "Enron Email ES Local",
+            "payload": {
+                "_source.to": "Mike Grigsby"
+            },
+            "explain": {
+                "matches": {
+                    "title": [
+                        "strategy"
+                    ],
+                    "body": [
+                        "strategy"
+                    ]
+                },
+                "similarity": 0.65,
+                "boosts": [
+                    "term_match 0.2"
+                ]
+            }
+        },
+        {
+            "rank": 7,
+            "score": 0.83,
+            "title": "Western *Strategy* Briefing",
+            "url": "allen-p/_sent_mail/317.",
+            "body": "Message-ID: <10110194.1075855692193.JavaMail.evans@thyme>\nDate: Fri, 11 Feb 2000 07:39:00 -0800 (PST)\nFrom: phillip.allen@enron.com\nTo: mike.grigsby@enron.com\nSubject: Western *Strategy* Briefing\nMime-Version: 1.0\nContent-Type: text/plain; charset=us-ascii\nContent-Transfer-Encoding: 7bit\nX-From: Phillip K Allen\nX-To: Mike Grigsby\nX-cc: \nX-bcc: \nX-Folder: \\Phillip_Allen_Dec2000\\Notes Folders\\'sent mail\nX-Origin: Allen-P\nX-FileName: pallen.nsf\n\n---------------------- Forwarded by Phillip K Allen/HOU/ECT on 02/11/2000 \n03:38 PM ---------------------------\n\n\nTim Heizenrader\n02/10/2000 12:55 PM\nTo: James B Fallon/HOU/ECT@ECT, Phillip K Allen/HOU/ECT@ECT\ncc: Tim Belden/HOU/ECT@ECT \nSubject: Western *Strategy* Briefing\n\nSlides for today's meeting are attached: \n",
+            "date_published": "2000-02-11 07:39:00",
+            "date_retrieved": "2022-04-10 00:06:35.674315",
+            "author": "Phillip K Allen",
+            "searchprovider": "Enron Email ES Local",
+            "payload": {
+                "_source.to": "Mike Grigsby"
+            },
+            "explain": {
+                "matches": {
+                    "title": [
+                        "strategy"
+                    ],
+                    "body": [
+                        "strategy"
+                    ]
+                },
+                "similarity": 0.63,
+                "boosts": [
+                    "term_match 0.2"
+                ]
+            }
+        }
+    ]
+}
 ```
 
 Note that SWIRL also provides the rank value, which is the result number assigned by the responding source. This allows you to see what SWIRL thought was relevant vs what the sources thought.

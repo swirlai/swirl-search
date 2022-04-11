@@ -18,41 +18,36 @@ extracting or indexing ANYTHING. Want to learn more? [Contact SWIRL](mailto:swir
 
 <br/>
 
-# Documentation
+# Documentation Wiki
 
-### [Installation Guide](./docs/INSTALLATION_GUIDE.md)
+:small_blue_diamond: [Home](https://github.com/sidprobstein/swirl-search/wiki)
+:small_blue_diamond: [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
+:small_blue_diamond: [User Guide](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide)
+:small_blue_diamond: [Developer Guide](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide)
+:small_blue_diamond: [Object Reference](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference)
+:small_blue_diamond: [Admin Guide](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide)
 
-:small_blue_diamond: Steps: [Install Packages](./docs/INSTALLATION_GUIDE.md#install-packages) | [Setup SWIRL](./docs/INSTALLATION_GUIDE.md#setup-swirl) | [Start Services](./docs/INSTALLATION_GUIDE.md#start-services)
+# Product Links
 
-### [Quick Start](./docs/QUICK_START.md)
+:warning: These links will only work if you have SWIRL installed!
 
-:small_blue_diamond: Steps: [Create SearchProviders](./docs/QUICK_START.md#create-searchproviders) | [Run a Search](./docs/QUICK_START.md#run-a-search) | [Get Results](./docs/QUICK_START.md#get-results) 
+:small_blue_diamond: [SWIRL Home](http://localhost:8000/swirl/index.html)
+:small_blue_diamond: [SearchProviders](http://localhost:8000/swirl/searchproviders/) | [Search](http://localhost:8000/swirl/search/) | [Results](http://localhost:8000/swirl/results/)
+:small_blue_diamond: [Swagger](http://localhost:8000/swirl/swagger-ui/) | [Schema](http://localhost:8000/swirl/openapi) | [PostMan](https://github.com/sidprobstein/swirl-search/blob/main/docs/SWIRL.postman_collection.json)) 
 
-### [User Guide](./docs/USER_GUIDE.md)
+# Features
 
-:small_blue_diamond: [What is Federated Search?](./docs/USER_GUIDE.md#what-is-federated-search) | [What is SWIRL?](./docs/USER_GUIDE.md#what-is-swirl) | [Glossary](./docs/USER_GUIDE.md#glossary)<br/>
-:small_blue_diamond: [Managing Search Providers](./docs/USER_GUIDE.md#managing-searchproviders) | [Examples](./docs/USER_GUIDE.md#editing-searchproviders): [Mappings](./docs/USER_GUIDE.md#understanding-query-and-result-mappings) | [Credentials](./docs/USER_GUIDE.md#understanding-credentials) | [Develop Your Own](./docs/USER_GUIDE.md#develop-your-own) <br/>
-:small_blue_diamond: [Running Searches](./docs/USER_GUIDE.md#running-searches) | [Examples](./docs/USER_GUIDE.md#example-searches) | [Managing Searches](./docs/USER_GUIDE.md#managing-searches)<br/>
-:small_blue_diamond: [Managing Results](./docs/USER_GUIDE.md#managing-results) | [Viewing Unified Results](./docs/USER_GUIDE.md#viewing-unified-results)<br/>
-:small_blue_diamond: [Swagger](http://localhost:8000/swirl/swagger-ui/) | [Schema](http://localhost:8000/swirl/openapi) | [PostMan Collection](./docs/SWIRL.postman_collection.json)) | [Python CLI](./docs/USER_GUIDE.md#python-command-line-interface-cli)<br/>
+:small_blue_diamond: [Asynchronous search federation](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#architecture) via [REST APIs](http://localhost:8000/swirl/swagger-ui/)
+:small_blue_diamond: Data landed in Sqlite for later consumption
+:small_blue_diamond: [Pre-built searchprovider definitions](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for http_get, google PSE, elasticsearch and Sqlite
+:small_blue_diamond: [Sample data sets](https://github.com/sidprobstein/swirl-search/tree/main/Data) for use with Sqlite
+:small_blue_diamond: Sort results by provider date or relevancy, page through all results requested
+:small_blue_diamond: [Result mixers](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#mixers) operate on landed results and order results by relevancy, date, stack or round-robin
+:small_blue_diamond: [Cosine similarity relevancy](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) using Spacy vectors with field boosts and explanation
+:small_blue_diamond: [Optional spell correction](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#spell-correction) using TextBlob
+:small_blue_diamond: [Optional search/result expiration service](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide#search-expiration-service) to limit storage use
 
-### [Developer Guide](./docs/DEVELOPER_GUIDE.md)
-
-:small_blue_diamond: [Architecture](./docs/DEVELOPER_GUIDE.md#architecture) | [Workflow](./docs/DEVELOPER_GUIDE.md#workflow) | [Search Status](./docs/DEVELOPER_GUIDE.md#search-status)<br/>
-:small_blue_diamond: [Object Reference](./docs/DEVELOPER_GUIDE.md#object-reference)
-
-### [Admin Guide](./docs/ADMIN_GUIDE.md)
-
-:small_blue_diamond: [Search Expiration Service](./docs/ADMIN_GUIDE.md#search-expiration-service)<br/>
-:small_blue_diamond: [Service Startup & Daemonization](#./docs/ADMIN_GUIDE.mdservice-startup--daemonization)<br/>
-:small_blue_diamond: [Management Tools](./docs/ADMIN_GUIDE.md#management-tools)<br/>
-:small_blue_diamond: [Database Migration](./docs/ADMIN_GUIDE.md#database-migration)<br/>
-:small_blue_diamond: [Configuring Django](./docs/ADMIN_GUIDE.md#configuring-django)<br/>
-:small_blue_diamond: [Configuring Celery, Beats & RabbitMQ](./docs/ADMIN_GUIDE.md#configuring-celery-beats--rabbitmq)<br/>
-:small_blue_diamond: [Security](./docs/ADMIN_GUIDE.md#security)<br/>
-:small_blue_diamond: [Troubleshooting](./docs/ADMIN_GUIDE.md#troubleshooting)<br/>
-
-<br/>
+[Python CLI](./docs/USER_GUIDE.md#python-command-line-interface-cli)<br/>
 
 # Get Support
 
