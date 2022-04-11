@@ -33,21 +33,29 @@ extracting or indexing ANYTHING. Want to learn more? [Contact SWIRL](mailto:swir
 
 :small_blue_diamond: [SWIRL Home](http://localhost:8000/swirl/index.html)
 :small_blue_diamond: [SearchProviders](http://localhost:8000/swirl/searchproviders/) | [Search](http://localhost:8000/swirl/search/) | [Results](http://localhost:8000/swirl/results/)
-:small_blue_diamond: [Swagger](http://localhost:8000/swirl/swagger-ui/) | [Schema](http://localhost:8000/swirl/openapi) | [PostMan](https://github.com/sidprobstein/swirl-search/blob/main/docs/SWIRL.postman_collection.json)) 
+:small_blue_diamond: [Swagger](http://localhost:8000/swirl/swagger-ui/) | [Schema](http://localhost:8000/swirl/openapi) | [PostMan](https://github.com/sidprobstein/swirl-search/blob/main/docs/SWIRL.postman_collection.json) 
 
 # Features
 
 :small_blue_diamond: [Asynchronous search federation](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#architecture) via [REST APIs](http://localhost:8000/swirl/swagger-ui/)
+
 :small_blue_diamond: Data landed in Sqlite for later consumption
+
 :small_blue_diamond: [Pre-built searchprovider definitions](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for http_get, google PSE, elasticsearch and Sqlite
+
 :small_blue_diamond: [Sample data sets](https://github.com/sidprobstein/swirl-search/tree/main/Data) for use with Sqlite
+
 :small_blue_diamond: Sort results by provider date or relevancy, page through all results requested
+
 :small_blue_diamond: [Result mixers](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#mixers) operate on landed results and order results by relevancy, date, stack or round-robin
+
 :small_blue_diamond: [Cosine similarity relevancy](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) using Spacy vectors with field boosts and explanation
+
 :small_blue_diamond: [Optional spell correction](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#spell-correction) using TextBlob
+
 :small_blue_diamond: [Optional search/result expiration service](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide#search-expiration-service) to limit storage use
 
-[Python CLI](./docs/USER_GUIDE.md#python-command-line-interface-cli)<br/>
+[Python CLI](./docs/USER_GUIDE.md#python-command-line-interface-cli)
 
 # Get Support
 
