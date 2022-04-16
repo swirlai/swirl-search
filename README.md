@@ -64,12 +64,15 @@ extracting or indexing ANYTHING. Want to learn more? [Contact SWIRL](mailto:swir
 # Community & Support
 
 :small_blue_diamond: Create [GitHub Issues](https://github.com/sidprobstein/swirl-search/issues) to report bugs or questions
+
 :small_blue_diamond: Email [swirl-support@probstein.com](mailto:swirl-support@probstein.com) for support, feature requests & consulting
 
 # Contributing
 
 :small_blue_diamond: Review the [TO DO list](docs/TO_DO.md)
+
 :small_blue_diamond: Review the [Project Roadmap](https://github.com/sidprobstein/swirl-search/discussions/7)
+
 :small_blue_diamond: Submit a [Pull Request](https://github.com/sidprobstein/swirl-search/pulls) with changes
 
 
