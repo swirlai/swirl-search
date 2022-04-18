@@ -4,49 +4,52 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <title>SWIRL Federated Search Engine</title>
   <meta name="description" content="SWIRL Index Page">
   <meta name="author" content="sidprobstein@gmail.com">
-
   <meta property="og:title" content="SWIRL Federated Search Engine">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://localhost:8000/swirl/">
   <meta property="og:description" content="SWIRL Index Page">
   <meta property="og:image" content="image.png">
-
   <link rel="icon" href="/favicon.ico">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-
-  <link rel="stylesheet" href="/static/site.css">
+  <link rel="stylesheet" href="/static/swirl.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+  <link rel="manifest" href="/static/site.webmanifest">
+  <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#000000">
+  <meta name="theme-color" content="#ffffff"> 
 
 </head>
 
 <body>
   <!-- your content here... -->
   <script src="js/scripts.js"></script>
-  <img src="/static/swirl_logo_notext_500.jpg", class="center"/><br/>
-  <div class="huge"><a href="https://github.com/sidprobstein/swirl_server">SWIRL</a></div>
-  <div class="big"><a href="https://github.com/sidprobstein/swirl_server">FEDERATED SEARCH ENGINE</a></div>
-  <br/><br/>
-  <div class="normal">
-  &#128313; <a href="/swirl/searchproviders/">SearchProviders</a><br/>
-  &#128313; <a href="/swirl/search/">Search</a><br/>
-  &#128313; <a href="/swirl/results/">Results</a><br/>
-  &#128313; <a href="/swirl/swagger-ui/">Swagger</a><br/>
-  <br/>
-  &#128313; <a href="https://github.com/sidprobstein/swirl_server/tree/preview3/docs">Documentation</a><br/>
-  &#128313; <a href="/admin/" style="color: white;">Admin Server</a><br/>
-  &#128313; <a href="http://127.0.0.1:8080/" style="color: white;">SQLite-Web</a><br/>
-  &#128313; <a href="http://localhost:15672/#/" style="color: white;">RabbitMQ</a><br/>
-  <br/>
-  &#128313; <a href="mailto:swirl-support@probstein.com">Support</a>
-  <br/>
-  <br/>
-  <br/>
-  <a href="https://github.com/sidprobstein/swirl-search/blob/main/LICENSE">LICENSE</a> | <a href="https://github.com/sidprobstein/swirl-search/blob/main/NOTICE">NOTICE</a><br/>
-  <br/>
-  <br/>
-  </div>
+  <centered>
+    <section>
+      <div class="centered"><a href="https://github.com/sidprobstein/swirl-search" target="_new"><img src="/static/swirl_logo_notext_200.jpg", class="center"/></a></div>
+    </section>
+    <section>
+      <div class="centered"><span class="logo">SWIRL SEARCH</span></div>
+    </section>
+    <section>
+      <div class="menu">
+        &#128313; <a href="/swirl/swagger-ui/" target="_new">Swagger</a><br/><br/>
+        &#128313; <a href="/swirl/searchproviders/" target="_new">SearchProviders</a><br/>
+        &#128313; <a href="/swirl/search/" target="_new">Search</a><br/>
+        &#128313; <a href="/swirl/results/" target="_new">Results</a><br/><br/>
+        &#128313; <a href="/admin/" target="_new">Admin</a><br/><br/>
+        &#128313; <a href="https://github.com/sidprobstein/swirl-search/wiki" target="_new">Documentation</a><br/>
+        &#128313; <a href="https://github.com/sidprobstein/swirl-search/issues" target="_new">Support</a><br/><br/>
+    </div>
+  </section>
+  <section>
+    <div class="centered">
+      <span class="fineprint"><a href="https://github.com/sidprobstein/swirl-search/blob/main/LICENSE">LICENSE</a> &nbsp;|&nbsp; <a href="https://github.com/sidprobstein/swirl-search/blob/main/NOTICE">NOTICE</a></span>
+    </div>
+</section>
 </body>
 </html>

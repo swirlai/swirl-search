@@ -1,0 +1,136 @@
+/* SWIRL site.css */
+
+body {margin-top:20px; color:white; background-color:black;}
+
+a:link {color:white; text-decoration:none;}
+a:visited {color:#0284E9;}
+a:hover {color:#0284E9;}
+a:active {color:yellow;}
+
+#li { margin: 0 0 0 20px; }
+
+section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+div {
+    width: 1280px;
+    color: #fff;
+    background: black;
+    padding: 15px;
+    display: block;
+    justify-content: center;
+    font-family: Verdana, Tahoma, sans-serif; 
+  }
+
+.block {
+    display: block;
+}
+
+.col1 {
+    width: 100px;
+}
+
+.col2 {
+    width: 900px;
+}
+
+.col3 {
+    width: 280px;
+}
+
+.chl1 {
+    width: 100px;
+    background: #0284E9;
+}
+
+.chl2 {
+    width: 900px;
+    background: #0284E9;
+}
+
+.chl3 {
+    width: 280px;
+    background: #0284E9;
+}
+
+
+.menu {
+    width: auto;
+    font-size: 20px;
+}
+
+.flex {
+    display: flex;
+}
+
+.centered {
+    display: flex;
+    justify-content: center;
+}
+
+.searchbox {
+    width: 400px; 
+    font-size: 20px;
+}
+
+.button {
+    width: 100px; 
+    font-size: 20px;
+}
+
+.logo {
+    font-size: 32px;
+}
+
+.headline {
+    font-size: 20px;
+}
+
+.results {
+    color: silver;
+    font-size: 14px;
+}
+
+.result {
+    border: 1px solid silver;
+}
+
+.message{
+    font-size: 10px; 
+    margin-left: 20px;
+}
+
+.fineprint {
+    font-size: 10px;
+}
+
+.darklight {
+    background: #2d2d2d;
+}
+
+.highlight {
+    background: #0284E9;
+    color: black;
+    display: flex;
+    justify-content: center;
+}
+
+.highleft {
+    background: #0284E9;
+    color: black;
+}
+
+.highright {
+    background: #0284E9;
+    color: black;
+    text-align: right;
+}
+
+.left {
+    color: white;
+}
+
