@@ -14,7 +14,7 @@ extracting or indexing ANYTHING. Want to learn more? [Contact SWIRL](mailto:swir
 
 | Version | Date | Branch | Notes | 
 | ------- | ---- | ------ | ----- |
-| SWIRL SEARCH 1.0 | 04-07-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.0.md) |
+| SWIRL SEARCH 1.0.1 | 05-13-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.0.1.md) - recommended for all users |
 
 <br/>
 
@@ -63,7 +63,7 @@ extracting or indexing ANYTHING. Want to learn more? [Contact SWIRL](mailto:swir
 
 # Community & Support
 
-:small_blue_diamond: Create [GitHub Issues](https://github.com/sidprobstein/swirl-search/issues) to report bugs or questions
+:small_blue_diamond: [Create an Issue](https://github.com/sidprobstein/swirl-search/issues) to report bugs or ask questions
 
 :small_blue_diamond: Email [swirl-support@probstein.com](mailto:swirl-support@probstein.com) for support, feature requests & consulting
 

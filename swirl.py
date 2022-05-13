@@ -17,7 +17,6 @@ from datetime import datetime
 
 module_name = 'swirl.py'
 g_debug = False
-g_working_dir = ""
 
 class bcolors:
     OKGREEN = '\033[92m'
@@ -414,6 +413,12 @@ def setup(service_list):
     print(f"Collecting Statics:")
     print()
 
+    # https://github.com/sidprobstein/swirl-search/issues/10
+    # check to see if static exists, exit if so 
+    if os.path.exists(os.getcwd() + '/static'):
+        print("Error: folder 'static' exists in root directory; remove it and try this command again")
+        return False
+
     proc = subprocess.run(['python','manage.py','collectstatic'], capture_output=True)
     if proc.returncode != 0:
         print(f"Error: {proc.stderr.decode('UTF-8')}")
@@ -437,8 +442,6 @@ def main(argv):
     parser.add_argument('command', nargs='+', help="Specify 'help' to get a list of available commands")
     parser.add_argument('-d', '--debug', action="store_true", help="provide debugging information")
     args = parser.parse_args()
-
-    g_workingdir = os.getcwd()
 
     if args.debug:
         g_debug = True
