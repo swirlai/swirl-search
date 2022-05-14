@@ -1,4 +1,4 @@
-![SWIRL Logo](./docs/images/swirl_logo_notext_200.jpg)
+![SWIRL Logo](./docs/images/swirl_logo_1024.jpg)
 
 # SWIRL FEDERATED SEARCH ENGINE
 
@@ -14,7 +14,7 @@ extracting or indexing ANYTHING. Want to learn more? [Contact SWIRL](mailto:swir
 
 | Version | Date | Branch | Notes | 
 | ------- | ---- | ------ | ----- |
-| SWIRL SEARCH 1.0.1 | 05-13-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.0.1.md) - recommended for all users |
+| SWIRL SEARCH 1.0.2 | 05-13-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.0.2.md) - recommended for ALL USERS |
 
 <br/>
 
