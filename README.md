@@ -18,6 +18,11 @@ extracting or indexing ANYTHING. Want to learn more? [Contact SWIRL](mailto:swir
 
 <br/>
 
+![SWIRL Swagger](./docs/images/swirl_swagger_search.png)
+![SWIRL Results](./docs/images/swirl_results_focus.png)
+
+<br/>
+
 # Documentation Wiki
 
 :small_blue_diamond: [Home](https://github.com/sidprobstein/swirl-search/wiki)
