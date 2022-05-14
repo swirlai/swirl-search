@@ -18,7 +18,12 @@ extracting or indexing ANYTHING. Want to learn more? [Contact SWIRL](mailto:swir
 
 <br/>
 
+# Screen Shots
+
 ![SWIRL Swagger](./docs/images/swirl_swagger_search.png)
+
+<br/>
+
 ![SWIRL Results](./docs/images/swirl_results_focus.png)
 
 <br/>
