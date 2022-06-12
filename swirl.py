@@ -1,7 +1,7 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL Preview3
+@version:    SWIRL 1.x
 '''
 
 import argparse
@@ -53,7 +53,7 @@ SWIRL_SERVICE_DICT = {}
 for swirl_service in SWIRL_SERVICES:
     SWIRL_SERVICE_DICT[swirl_service['name']] = swirl_service['path']
 
-COMMAND_LIST = [ 'help', 'start', 'stop', 'restart', 'flush', 'migrate', 'setup', 'status', 'watch' ]
+COMMAND_LIST = [ 'help', 'start', 'start_sleep', 'stop', 'restart', 'flush', 'migrate', 'setup', 'status', 'watch' ]
 
 ##################################################
 
@@ -176,6 +176,12 @@ def start(service_list):
 
     return True
 
+##################################################
+
+def start_sleep (service_list):
+    
+    status = start(service_list)
+    return status
 
 ##################################################
 
@@ -484,7 +490,14 @@ def main(argv):
         return 1
     else:
         print(f"{bcolors.OKGREEN}Command successful!{bcolors.ENDC}")
-        return 0 
+        if args.command[0] == 'start_sleep':
+            while 1:
+                try:
+                    time.sleep(1)
+                except KeyboardInterrupt:
+                    return 0
+        else:
+            return 0 
     # end if
 
 #############################################    
