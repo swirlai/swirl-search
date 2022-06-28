@@ -441,7 +441,7 @@ def setup(service_list):
 
 def main(argv):
 
-    print(f"{bcolors.BOLD}##S#W#I#R#L##1#0################################################################{bcolors.ENDC}")
+    print(f"{bcolors.BOLD}##S#W#I#R#L##1#.#1##############################################################{bcolors.ENDC}")
     print()
 
     parser = argparse.ArgumentParser(description="Manage the SWIRL server")
