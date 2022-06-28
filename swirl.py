@@ -323,7 +323,7 @@ def stop(service_list):
     # shut down the first service, last - IF specified
     if SWIRL_SERVICES[0]['name'] in dict_pid:
         if SWIRL_SERVICES[0]['name'] in service_list:
-            print(f"Stopping: {SWIRL_SERVICES[0]['name']}, pid_group: {dict_pid[SWIRL_SERVICES[0]['name']]}... ", end='')
+            print(f"Stop: {SWIRL_SERVICES[0]['name']}, pid_group: {dict_pid[SWIRL_SERVICES[0]['name']]}... ", end='')
             pid = int(dict_pid[SWIRL_SERVICES[0]['name']])
             try:
                 pgrp = os.getpgid(pid)

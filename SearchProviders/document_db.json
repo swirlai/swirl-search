@@ -1,4 +1,5 @@
-{    "name": "Document DB Search",
+{    
+    "name": "Curated Documents (local/sqlite3)",
     "connector": "sqlite3",
     "url": "/Users/sid/code/swirl_server/db.sqlite3",
     "query_template": "select {fields} from {table} where {field1} like '%%{query_string}%%' or {field2} like '%%{query_string}%%';",

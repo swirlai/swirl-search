@@ -1,7 +1,7 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL Preview3
+@version:    SWIRL 1.x
 '''
 
 import logging as logger
@@ -12,61 +12,7 @@ import logging as logger
 from swirl.models import Search, Result
 from .utils import highlight
 
-def generic_relevancy_processor(search_id):
-
-    module_name = 'generic_relevancy_processor'
-
-    if Search.objects.filter(id=search_id).exists():
-        search = Search.objects.get(id=search_id)
-        if search.status == 'POST_RESULT_PROCESSING':
-            results = Result.objects.filter(search_id=search_id)
-        else:
-            logger.warning(f"{module_name}: search {search_id} has status {search.status}, this processor requires: status == 'POST_RESULT_PROCESSING'")
-            return 0
-        # end if
-    else:
-        logger.error(f"{module_name}: search {search_id} was not found")
-        return 0
-    # end if
-
-    highlight_field_list = [ 'title', 'body', 'url', 'author' ]
-    # max score: +1 per field (4), +1 per double per field (4), +2 for title
-
-    updated = 0
-    for result in results:
-        highlighted_json_results = []
-        if result.json_results:
-            for item in result.json_results:
-                score = 0
-                # highlight & score fields
-                for field in highlight_field_list:
-                    if item[field]:
-                        old_len = len(item[field])
-                        item[field] = highlight(item[field], search.query_string_processed)
-                        if len(item[field]) > old_len:
-                            # something matched this field
-                            score = score + 1
-                            if '* *' in str(item[field]):
-                                # this field appears to have at least one double match
-                                score = score + 1
-                            if field == 'title':
-                                # title boost
-                                score = score + 2
-                            # end if
-                        # end if
-                    # end if
-                # end for  
-                item['score'] = score
-                updated = updated + 1
-                highlighted_json_results.append(item)
-            # end for
-            logger.info(f"Updating results: {result.id}")
-            result.json_results = highlighted_json_results
-            result.save()
-        # end if
-    # end for
-
-    return updated
+from swirl.processors import *
 
 #############################################    
 #############################################    
@@ -91,7 +37,10 @@ def cos_similarity(x,y):
 #############################################    
 
 from .utils import clean_string_alphanumeric
+
+# load spacy
 import spacy
+nlp = spacy.load('en_core_web_md')
 
 def cosine_relevancy_processor(search_id):
 
@@ -110,6 +59,7 @@ def cosine_relevancy_processor(search_id):
         return 0
     # end if
 
+    # note: do not use url as it is usually a proxy vote for title
     RELEVANCY_CONFIG = {
         'title': {
             'weight': 3.0
@@ -121,16 +71,12 @@ def cosine_relevancy_processor(search_id):
             'weight': 2.0
         }
     }
-
-    # note: do not use url as it is usually a proxy vote for title
     
-    nlp = spacy.load('en_core_web_md')
     # prep query string
     query_string_nlp = nlp(clean_string_alphanumeric(search.query_string_processed)).vector
 
     ############################################
     # main loop
-
     updated = 0
     for result in results:
         highlighted_json_results = []
@@ -216,7 +162,6 @@ def cosine_relevancy_processor(search_id):
                             terms_field = terms_field + 1
                     # boost if all terms match this field
                     # to do: no all_terms_match for a single term query
-                    # to do: miami look at ----->
                     if terms_field == query_len and query_len > 1:
                         all_terms = all_terms + 1
                 # take away credit for one field, one term hit
@@ -256,6 +201,7 @@ def cosine_relevancy_processor(search_id):
             # save!!!!
             result.json_results = highlighted_json_results
             # to do: catch invalid json error P2
+            # to do: why would we do that here?
             result.save()
         # end if
     # end for

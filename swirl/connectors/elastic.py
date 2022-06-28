@@ -1,7 +1,7 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL Preview3
+@version:    SWIRL 1.x
 '''
 
 import django
@@ -71,6 +71,9 @@ def search(provider_id, search_id):
 
     ########################################
     # connect to elasticsearch
+
+    logger.info("elastic: connecting")
+
     try:
         es = eval(f'Elasticsearch({provider.credentials}, {provider.url})')
     except NameError as err:
@@ -86,12 +89,16 @@ def search(provider_id, search_id):
         save_result(search=search, provider=provider, messages=messages)
         return message
 
+    logger.info("elastic: connected")
+
     ########################################
-    # construct elasticsearch query
-    query_to_provider = bind_query_mappings(provider.query_template, provider.query_mappings)
-    # process built-ins
-    if '{url}' in provider.query_template:
-        query_to_provider = query_to_provider.replace('{url}',provider.url)
+    # construct the query
+    if provider.credentials.startswith('HTTP'):
+        query_to_provider = bind_query_mappings(provider.query_template, provider.query_mappings, provider.url)
+    else:
+        query_to_provider = bind_query_mappings(provider.query_template, provider.query_mappings, provider.url, provider.credentials)
+
+    # now should only have {query_string}
     if '{query_string}' in provider.query_template:
         query_to_provider = query_to_provider.replace('{query_string}', processed_query)
     # elastic queries always have braces, do not check/reject!
@@ -103,6 +110,7 @@ def search(provider_id, search_id):
         save_result(search=search, provider=provider, messages=messages)
         return message
 
+    # to do: all mappings need overhaul per requests_get
     sort_field = ""
     if 'sort_by_date' in provider.query_mappings:
         for field in provider.query_mappings.split(','):
@@ -124,6 +132,7 @@ def search(provider_id, search_id):
     # issue the query
     issue_search = ""
     if search.sort.lower() == 'date':
+        # to do: support ascending??? p2
         issue_search = 'es.search(' + query_to_provider + f', "sort"=[{{"{sort_field}": "desc"}}], size=' + str(provider.results_per_query) + ')'
     else:
         issue_search = 'es.search(' + query_to_provider + ', size=' + str(provider.results_per_query) + ')'

@@ -1,5 +1,5 @@
 {
-    "name": "ElasticCloud e-Commerce Demo",
+    "name": "Sample e-Commerce Data (cloud/elastic)",
     "connector": "elastic",
     "url": "cloud_id='Test1:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvJGM4M2MzMTUzODI5ZjQ3ZWY5ODA2YjUyZGNkMWNlNTZlJGY1M2YzZDE3NTllMDQwNWE4ODdiY2MwNGJkMDhkOWU2'",
     "query_template": "index=\"{index_name}\", query={\"query_string\": {\"query\": \"{query_string}\", \"default_field\": \"{default_field}\"}}",

@@ -1,8 +1,9 @@
 {
-    "name": "HTTP Get with Auth",
+    "name": "Simple HTTP/GET example with auth",
     "connector": "requests_get",
     "url": "http://your-url-here",
     "query_template": "{url}?q={query_string}",
-    "result_mappings": "your-mappings-here",
-    "credentials": "HTTPDigestAuth('your-username-here', 'your-password-here')"
+    "query_mappings": "start=RESULT_INDEX=PAGE,sort=date=DATE_SORT",
+    "result_mappings": "count=FOUND,items=RESULTS",
+    "credentials": "HTTPBasicAuth('your-username-here', 'your-password-here')"
 }

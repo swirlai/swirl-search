@@ -1,7 +1,7 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL Preview3
+@version:    SWIRL 1.x
 '''
 
 from django.db import models
@@ -17,7 +17,6 @@ class SearchProvider(models.Model):
     CONNECTOR_CHOICES = [
         ('requests_get', 'requests_get'),
         ('elastic', 'elasticsearch queryString'),
-        ('opensearch', 'Google PSE'),
         ('sqlite3', 'sqlite3')
     ]
     connector = models.CharField(max_length=200, default='requests_get', choices=CONNECTOR_CHOICES)

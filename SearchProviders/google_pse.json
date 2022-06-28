@@ -1,32 +1,32 @@
 [
-   {
-        "name": "Enterprise Search PSE",
-        "connector": "opensearch",
+    {
+        "name": "Enterprise Search (web/Google PSE)",
+        "connector": "requests_get",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_mappings": "cx=0c38029ddd002c006",
-        "result_mappings": "link=url,htmlSnippet=body,cacheId,NO_PAYLOAD",
-        "results_per_query": 10,
+        "query_mappings": "cx=0c38029ddd002c006,sort=date=DATE_SORT,start=RESULT_INDEX=PAGE",
+        "result_processor": "generic_result_processor",
+        "result_mappings": "link=url,htmlSnippet=body,cacheId,NO_PAYLOAD,searchInformation.totalResults=FOUND,queries.request[0].count=RETRIEVED,items=RESULTS",
         "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM"
     },
     {
-        "name": "Strategy Consulting PSE",
-        "connector": "opensearch",
+        "name": "Strategy Consulting (web/Google PSE)",
+        "connector": "requests_get",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_mappings": "cx=7d473806dcdde5bc6",
-        "result_mappings": "link=url,snippet=body,cacheId,NO_PAYLOAD",
-        "results_per_query": 10,
+        "query_mappings": "cx=7d473806dcdde5bc6,sort=date=DATE_SORT,start=RESULT_INDEX=PAGE",
+        "result_processor": "generic_result_processor",
+        "result_mappings": "link=url,htmlSnippet=body,cacheId,NO_PAYLOAD,searchInformation.totalResults=FOUND,queries.request[0].count=RETRIEVED,items=RESULTS",
         "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM"
     },
     {
-        "name": "Mergers and Acquisitions PSE",
-        "connector": "opensearch",
+        "name": "Mergers & Acquisitions (web/Google PSE)",
+        "connector": "requests_get",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_mappings": "cx=b384c4e79a5394479",
-        "result_mappings": "link=url,snippet=body,cacheId,NO_PAYLOAD",
-        "results_per_query": 10,
+        "query_mappings": "cx=b384c4e79a5394479,sort=date=DATE_SORT,start=RESULT_INDEX=PAGE",
+        "result_processor": "generic_result_processor",
+        "result_mappings": "link=url,htmlSnippet=body,cacheId,NO_PAYLOAD,searchInformation.totalResults=FOUND,queries.request[0].count=RETRIEVED,items=RESULTS",
         "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM"
     }
 ]

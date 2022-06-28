@@ -1,9 +1,10 @@
 {
-    "name": "Enron Email ES Local",
+    "name": "ENRON Email (local/elastic)",
     "connector": "elastic",
     "url": "hosts='http://localhost:9200/'",
     "query_template": "index='{index_name}', query={'query_string': {'query': '{query_string}', 'default_field': '{default_field}'}}",
     "query_mappings": "index_name=email,default_field=content,sort_by_date=date_published.keyword",
+    "result_processor": "generic_result_processor",
     "result_mappings": "_source.url=url,_source.date_published=date_published,_source.author=author,_source.subject=title,_source.content=body,_source.to,NO_PAYLOAD",
-    "credentials": "http_auth=(\"elastic\", \"your-password-here\")"
+    "credentials": "http_auth=(\"elastic\", \"your-elastic-password\")"
 }

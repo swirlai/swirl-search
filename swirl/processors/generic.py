@@ -1,7 +1,7 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL Preview3
+@version:    SWIRL 1.x
 '''
 
 from datetime import datetime
@@ -11,6 +11,7 @@ from .utils import create_result_dictionary
 import logging as logger
 
 from jsonpath_ng import parse
+from jsonpath_ng.exceptions import JsonPathParserError
 
 #############################################    
 #############################################    
@@ -48,8 +49,11 @@ def generic_query_processor(query_string):
 
 from dateutil import parser
 import re
+from re import error as re_error
 
 def generic_result_processor(json_data, provider, query_string):
+
+    # this processor accepts a list of dicts (argument json_data)
 
     module_name = 'generic_result_processor'
     list_results = []
@@ -75,9 +79,10 @@ def generic_result_processor(json_data, provider, query_string):
 
         #############################################  
         # handle mappings 
+
         # provided in form source_key=swirl_key, ..., where source_key can be a json_string e.g. _source.customer_full_name
-        # to do: support form 'string {variable} etc etc '=swirl_key
-        # to do: support form 'string {variable}' and have that go into payload!!
+        # to do: update this to match requests_get and use utils.py/get_mappings
+
         if provider.result_mappings:
             mappings = provider.result_mappings.split(',')
             for mapping in mappings:
@@ -89,23 +94,45 @@ def generic_result_processor(json_data, provider, query_string):
                 # extract source_key=swirl_key
                 swirl_key = ""
                 if '=' in stripped_mapping:
+                    # no need to switch to rfind, since multiple = is not allowed
+                    # source key may be a json path
                     source_key = stripped_mapping[:stripped_mapping.find('=')]
                     swirl_key = stripped_mapping[stripped_mapping.find('=')+1:]
                 else:
                     source_key = stripped_mapping
+                # control codez
+                if swirl_key.isupper():
+                    # ignore for now
+                    continue
                 # check for template
                 template_list = []
                 if source_key.startswith("'"):
-                    template_list = re.findall(r'\{.*?\}', source_key)
+                    try:
+                        template_list = re.findall(r'\{.*?\}', source_key)
+                    except re_error as err:
+                        message = f'{module_name}: Error: re: {err} in re.findall(r\'\{{.*?\}}\'): {source_key}'
+                        logger.error(f'{message}')
+                        return message
+                    # end try
                 else:
                     template_list.append('{' + source_key + '}')
                 # search for source_keys & construct a result_dict
                 result_dict = {}
                 for k in template_list:
                     jxp_key = f'$.{k[1:-1]}'
-                    jxp = parse(jxp_key)
-                    # search result for this 
-                    matches = [match.value for match in jxp.find(result)]
+                    try:
+                        jxp = parse(jxp_key)
+                        # search result for this 
+                        matches = [match.value for match in jxp.find(result)]
+                    except JsonPathParserError:
+                        message = f'{module_name}: Error: JsonPathParser: {err} in jsonpath_ng.find: {jxp_key}'
+                        logger.error(f'{message}')
+                        return message
+                    except (NameError, TypeError, ValueError) as err:
+                        message = f'{module_name}: Error: {err.args}, {err} in jsonpath_ng.find: {jxp_key}'
+                        logger.error(f'{message}')
+                        return message
+                    # end try
                     if len(matches) == 1:
                         result_dict[k[1:-1]] = matches[0]
                     else:
@@ -164,6 +191,13 @@ def generic_result_processor(json_data, provider, query_string):
                     # aggregate all other keys to payload
                     payload[key] = result[key]
         # end for
+
+        #############################################
+        # connector specific
+        # remove <matched_term> tags from title (northernlight)
+        if '<matched_term>' in swirl_result['title']:
+            swirl_result['title'] = swirl_result['title'].replace('<matched_term>', '')
+            swirl_result['title'] = swirl_result['title'].replace('</matched_term>', '')
 
         #############################################
         # final assembly

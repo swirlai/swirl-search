@@ -1,7 +1,7 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL Preview3
+@version:    SWIRL 1.x
 '''
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -135,9 +135,11 @@ def search(id):
             responding_provider_names = []
             for result in results:
                 responding_provider_names.append(result.searchprovider)
+            # fixed: don't report in-active providers as failed
             for provider in providers:
-                if not provider.name in responding_provider_names:
-                    failed_providers.append(provider.name)
+                if provider.active == True:
+                    if not provider.name in responding_provider_names:
+                        failed_providers.append(provider.name)
             logger.warning(f"{module_name}: timeout waiting for: {failed_providers}")
             break
     # end while

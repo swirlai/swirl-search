@@ -1,0 +1,9 @@
+{
+    "name": "techproducts (local/solr)",
+    "connector": "requests_get",
+    "url": "http://localhost:8983/solr/{collection}/select?wt=json",
+    "query_template": "{url}&q={query_string}",
+    "query_mappings": "collection=techproducts,start=RESULT_ZERO_INDEX=PAGE",
+    "result_processor": "generic_result_processor",
+    "result_mappings": "name=title,response.numFound=FOUND,response.docs=RESULTS"
+}
