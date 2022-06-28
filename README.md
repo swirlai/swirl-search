@@ -14,7 +14,7 @@ extracting or indexing ANYTHING. Want to learn more? [Contact SWIRL](mailto:swir
 
 | Version | Date | Branch | Notes | 
 | ------- | ---- | ------ | ----- |
-| SWIRL SEARCH 1.0.2 | 05-13-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.0.2.md) - recommended for ALL USERS |
+| SWIRL SEARCH 1.1 | 06-27-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.1.md) - recommended for ALL USERS |
 
 <br/>
 
@@ -55,7 +55,7 @@ extracting or indexing ANYTHING. Want to learn more? [Contact SWIRL](mailto:swir
 
 :small_blue_diamond: Data landed in Sqlite for later consumption
 
-:small_blue_diamond: [Pre-built searchprovider definitions](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for http_get, google PSE, elasticsearch and Sqlite
+:small_blue_diamond: [Pre-built searchprovider definitions](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for HTTP/GET, apache solr, elastic, Sqlite3 and NLResearch.com
 
 :small_blue_diamond: [Sample data sets](https://github.com/sidprobstein/swirl-search/tree/main/Data) for use with Sqlite
 
