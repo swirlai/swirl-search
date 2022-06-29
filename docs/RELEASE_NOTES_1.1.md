@@ -11,25 +11,12 @@
 
 <br/>
 
-## Key Features
-
-* [Asynchronous search federation](DEVELOPER_GUIDE.md#workflow) via REST APIs
-* Data landed in Sqlite for later consumption
-* [Pre-built searchprovider definitions](../SearchProviders/) for HTTP/GET (with auth), google PSE, elastic, apache solr, sqlite3 and NLResearch.com
-* [Sample data sources](../Data/) for use with sqlite3
-* Sort results by provider date or relevancy, page through all results requested
-* Result mixers operate on landed results and order results by relevancy, date, stack or round-robin
-* [Cosine similarity relevancy using Spacy vectors](USER_GUIDE.md#understanding-relevancy) with field boosts and explanation
-* Optional spell correction using TextBlob
-* Optional search/result expiration service to limit storage use
-
-<br/>
-
 ## Release Notes
 
-:small_blue_diamond: The requests_get connector has been refactored to handle responses via configuration. 
+:small_blue_diamond: The requests_get connector has been refactored to support [Query](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#swirl-query-control-keys) and [Result Control Keys](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#swirl-result-control-keys). 
+These allow the response from the requests_get connector to be configured using jsonpaths. 
 
-This eliminated the opensearch connector; Google PSE is now supported by configuring requests_get, and all SearchProvider definitions have been updated to reflect this. Here is an example of the new Google PSE configuration:
+This refactor also eliminated the opensearch connector; Google PSE is now supported by configuring requests_get. Here is an example of the new Google PSE configuration:
 
 ```
         "query_mappings": "cx=some-google-pse-id,sort=date=DATE_SORT,start=RESULT_INDEX=PAGE",
