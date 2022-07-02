@@ -5,7 +5,7 @@
         "url": "https://newsdata.io/api/1/news?apikey={apikey}",
         "query_template": "{url}&q={query_string}",
         "result_mappings": "description=body,link=url,pubDate=date_published,creator=author,source_id,NO_PAYLOAD,totalResults=FOUND,results=RESULTS",
-        "credentials": "apikey=your-api-key-here"
+        "credentials": "apikey=newsdata-api-key-here"
     },
     {
         "name": "News Archive (web/newsdata.io)",
@@ -13,7 +13,7 @@
         "url": "https://newsdata.io/api/1/archive?apikey={apikey}",
         "query_template": "{url}&q={query_string}",
         "result_mappings": "description=body,link=url,pubDate=date_published,creator=author,source_id,NO_PAYLOAD,totalResults=FOUND,results=RESULTS",
-        "credentials": "apikey=your-api-key-here"
+        "credentials": "apikey=newsdata-api-key-here"
     
     }   
 ]
