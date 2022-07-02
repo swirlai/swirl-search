@@ -6,6 +6,8 @@
 
 import logging as logger
 
+from attr import Attribute
+
 #############################################    
 #############################################    
 
@@ -95,35 +97,41 @@ def cosine_relevancy_processor(search_id):
                             item[field] = highlight(item[field], search.query_string_processed)
                         ############################################
                         # summarize matches
-                        for term in search.query_string_processed.strip().split():
-                            if term.lower() in item[field].lower():
-                                if field in match_dict:
-                                    match_dict[field].append(term)
-                                else:
-                                    match_dict[field] = []
-                                    match_dict[field].append(term)
-                                # end if
-                            # check for bi-gram match
-                            if last_term:
-                                if not term.lower() == last_term.lower():
-                                    if f'*{last_term.lower()}* *{term.lower()}*' in item[field].lower():
-                                        if f"{last_term}_{term}" not in match_dict[field]:
-                                            match_dict[field].append(f"{last_term}_{term}")
-                            last_term = term
-                        # end for
+                        try:
+                            for term in search.query_string_processed.strip().split():
+                                item_field = item[field]
+                                if type(item[field]) == list:
+                                    item_field = item[field][0]
+                                if term.lower() in item_field.lower():
+                                    if field in match_dict:
+                                        match_dict[field].append(term)
+                                    else:
+                                        match_dict[field] = []
+                                        match_dict[field].append(term)
+                                    # end if
+                                # check for bi-gram match
+                                if last_term:
+                                    if not term.lower() == last_term.lower():
+                                        if f'*{last_term.lower()}* *{term.lower()}*' in item_field.lower():
+                                            if f"{last_term}_{term}" not in match_dict[field]:
+                                                match_dict[field].append(f"{last_term}_{term}")
+                                last_term = term
+                            # end for
+                        except AttributeError:
+                            logger.error(f"AttributeError: term: {term}, item: {item[field]}")
                        ############################################
                         # cosine similarity between query and matching field store in dict_score
                         if field in match_dict:
                             # hit!!
                             # dict_score[field + "_field"] = clean_string_alphanumeric(item[field])
-                            field_nlp = nlp(clean_string_alphanumeric(item[field])).vector
+                            field_nlp = nlp(clean_string_alphanumeric(item_field)).vector
                             if field_nlp.all() == 0 or query_string_nlp.all() == 0:
-                                item['boosts'].append("X_BLANK_EMBEDDING")
+                                item['boosts'].append("BLANK_EMBEDDING")
                                 dict_score[field] = 0.5
                             else:
                                 dict_score[field] = cos_similarity(query_string_nlp, field_nlp)
                                 if isnan(dict_score[field]):
-                                    item['boosts'].append("X_COSINE_NAAN")
+                                    item['boosts'].append("COSINE_NAAN")
                                     dict_score[field] = 0.5
                             # end if
                         # end if
@@ -140,7 +148,7 @@ def cosine_relevancy_processor(search_id):
                     # end if
                 # end for
                 if weight == 0.0:
-                    item['boosts'].append('X_WEIGHT_0')
+                    item['boosts'].append('WEIGHT_0')
                     item['score'] == 0.5
                     weighted_score = 0.5
                 else:

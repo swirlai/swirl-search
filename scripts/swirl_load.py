@@ -23,7 +23,7 @@ module_name = 'swirl_load.py'
 
 def main(argv):
 
-    print("##S#W#I#R#L##1#0################################################################")
+    print("##S#W#I#R#L##1#.#1##############################################################")
     # arguments
     parser = argparse.ArgumentParser(description="Bulk load SWIRL objects in json format")
     parser.add_argument('filespec', help="path to one or more json files to load, optionally including wildcards, example folder-name/*.txt")

@@ -16,7 +16,7 @@ module_name = 'fix_csv.py'
 
 def main(argv):
 
-    print("##S#W#I#R#L##1#0################################################################")
+    print("##S#W#I#R#L##1#.#1##############################################################")
     # arguments
     parser = argparse.ArgumentParser(description="Fix CSV file for loading into SQLite3")
     parser.add_argument('filespec', help="path to a csv file to fix")

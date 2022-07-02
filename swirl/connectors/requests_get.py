@@ -113,16 +113,6 @@ def search(provider_id, search_id):
         messages.append(message)
         save_result(search=search, provider=provider, messages=messages)
         return message
-    # determine if paging is required
-    pages = 1
-    if provider.results_per_query > 10:
-        # yes, gather multiple pages
-        pages = int(int(provider.results_per_query) / 10)
-        # handle remainder
-        if (int(provider.results_per_query) % 10) > 0:
-            pages = pages + 1
-        # end if
-    # end if
 
     ########################################
     # get result mappings
@@ -130,29 +120,43 @@ def search(provider_id, search_id):
     mapped_results = {}
 
     ########################################
+    # determine if paging is required
+    pages = 1
+    if 'PAGE' in query_mappings:
+        if provider.results_per_query > 10:
+            # yes, gather multiple pages
+            pages = int(int(provider.results_per_query) / 10)
+            # handle remainder
+            if (int(provider.results_per_query) % 10) > 0:
+                pages = pages + 1
+            # end if
+        # end if
+    # end if
+
+    ########################################
     # issue the query
     start = 1
     found = None
     for page in range(0, pages):
 
-        ########################################
-        # prepare the page query
-        page_query = query_to_provider[:query_to_provider.rfind('&')]
-        page_spec = None
         if 'PAGE' in query_mappings:
+            page_query = query_to_provider[:query_to_provider.rfind('&')]
+            page_spec = None
             if 'RESULT_INDEX' in query_mappings['PAGE']:
                 page_spec = query_mappings['PAGE'].replace('RESULT_INDEX',str(start))
             if 'RESULT_ZERO_INDEX' in query_mappings['PAGE']:
                 page_spec = query_mappings['PAGE'].replace('RESULT_ZERO_INDEX',str(start-1))
             if 'PAGE_INDEX' in query_mappings['PAGE']:
                 page_spec = query_mappings['PAGE'].replace('PAGE_INDEX',page+1)
+            if page_spec:
+                page_query = page_query + '&' + page_spec + query_to_provider[query_to_provider.rfind('&'):]
+            else:
+                message = f"{module_name}: Warning: failed to resolve PAGE query mapping: {query_mappings['PAGE']}"
+                logger.warning(f'{message}')
+                # to do: review below
+                page_query = query_to_provider
             # end if
-        # end if
-        if page_spec:
-            page_query = page_query + '&' + page_spec + query_to_provider[query_to_provider.rfind('&'):]
         else:
-            message = f"{module_name}: Warning: failed to resolve PAGE query mapping: {query_mappings['PAGE']}"
-            logger.warning(f'{message}')
             page_query = query_to_provider
 
         ########################################
@@ -231,11 +235,14 @@ def search(provider_id, search_id):
                     messages.append(message)
                     save_result(search=search, provider=provider, messages=messages, query_to_provider=page_query)
                     return message
-                # end try                
+                # end try        
+                if len(matches) == 0:
+                    # no matches
+                    continue      
                 if len(matches) == 1:
                     mapped_results[mapping] = matches[0]
                 else:
-                    message = f"{module_name}: Error: {mapping} matched {len(matches)} expected 1"
+                    message = f"{module_name}: Error: {mapping} is matched {len(matches)} expected 1"
                     logger.error(f'{message}')
                     messages.append(message)
                     save_result(search=search, provider=provider, messages=messages, query_to_provider=page_query)

@@ -19,7 +19,7 @@ django.setup()
 def create_mix_wrapper(result_sets):
 
     mix_wrapper = {}
-    mix_wrapper['messages'] = [ "##S#W#I#R#L##1#0################################################################" ]
+    mix_wrapper['messages'] = [ "##S#W#I#R#L##1#.#1##############################################################" ]
     mix_wrapper['info'] = {}
     for result_set in result_sets:
         for message in result_set.messages:
