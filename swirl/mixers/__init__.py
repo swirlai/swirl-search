@@ -4,7 +4,6 @@
 @version:    SWIRL 1.x
 '''
 
-from .round_robin import *
 from .stack import *
 from .relevancy import *
 

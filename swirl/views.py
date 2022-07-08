@@ -75,8 +75,8 @@ class SearchViewSet(viewsets.ModelViewSet):
             new_search.status = 'NEW_SEARCH'
             new_search.save()
             search_task.delay(new_search.id)
-            time.sleep(7)
-            return redirect(f'/swirl/results?search_id={new_search.id}&result_mixer={new_search.result_mixer}')
+            time.sleep(6)
+            return redirect(f'/swirl/results?search_id={new_search.id}')
         # end if
         ########################################
         # handle ?rerun=
@@ -86,16 +86,15 @@ class SearchViewSet(viewsets.ModelViewSet):
         if rerun_id:
             rerun_search = Search.objects.get(id=rerun_id)
             old_results = Result.objects.filter(search_id=rerun_search.id)
-            logger.debug(f"{module_name}: deleting Result objects associated with search {rerun_id}")
+            # to do: instead of deleting, copy the search copy to a new search? 
+            logger.warning(f"{module_name}: deleting Result objects associated with search {rerun_id}")
             for old_result in old_results:
                 old_result.delete()
             rerun_search.status = 'NEW_SEARCH'
-            rerun_search.date_updated = datetime.now()
             rerun_search.save()
             search_task.delay(rerun_search.id)
-            # publish('search_create', {'id': rerun_search.id, 'status': 'NEW_SEARCH'})
-            time.sleep(3)
-            return redirect(f'/swirl/results?search_id={rerun_search.id}&result_mixer={rerun_search.result_mixer}')
+            time.sleep(6)
+            return redirect(f'/swirl/results?search_id={rerun_search.id}')
         # end if        
         ########################################
         # handle ?rescore=

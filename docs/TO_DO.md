@@ -1,7 +1,16 @@
 # SWIRL SEARCH #### TO DO #####
 
-## Test
-- [ ] It appears that ?q= and rerun may create a new query sometimes P1
+## Fix
+- [X] Fix round robin / revise it to be a case of stack mixer
+- [X] Fix stack mixer
+- [X] Sort the providers by highest rank to lowest rank for stack mixer
+- [ ] Can't tell which elastic is being queried bc url isn't in query-to-provider
+- [ ] Highlighting and stemming
+- [ ] $1+billion, $1 is not highlighted
+
+## 1.1.1 maybe 1.2?
+- [ ] Rename rank to searchprovider_rank?
+- [ ] Add swirl_rank 
 
 ## New Features
 - [ ] Docker P1

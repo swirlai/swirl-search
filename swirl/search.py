@@ -34,7 +34,9 @@ def search(id):
     search.status = 'PRE_PROCESSING'
     # search.date_updated = datetime.now()
     search.save()
-    providers = SearchProvider.objects.all()    
+    # providers = SearchProvider.objects.all()   
+    # providers should always include only active SearchProviders 
+    providers = SearchProvider.objects.filter(active=True)
     if len(providers) == 0:
         logger.error(f"{module_name}: error: no SearchProviders configured")
         search.status = 'ERR_NO_SEARCHPROVIDERS'
@@ -43,8 +45,6 @@ def search(id):
         return False
     ########################################
     # check for provider specification
-    # to do: handle case where someone specifies a non-existant provider name or id P4
-    # right now it will be silently ignored which is OK
     new_provider_list = []
     if search.searchprovider_list:
         for provider in providers:
@@ -59,9 +59,17 @@ def search(id):
                 search.date_updated = datetime.now()
                 search.save()
                 return False
+            # end if
             # check if the provider name is in the provider list for this query
             if provider_key in search.searchprovider_list:
                 new_provider_list.append(provider)
+            else:
+                logger.error(f"{module_name}: inactive or unknown searchprovider: {provider_key}")
+                search.status = 'ERR_SEARCHPROVIDER'
+                search.date_updated = datetime.now()
+                search.save()
+                return False
+            # end if
         # end for
         providers = new_provider_list
     # end if
@@ -89,6 +97,7 @@ def search(id):
     else:
         search.query_string_processed = search.query_string
     # end if
+    
     # to do: use chord()
     ########################################
     search.status = 'FEDERATING'
@@ -97,11 +106,10 @@ def search(id):
     federation_status = {}
     at_least_one = False
     for provider in providers:
-        if provider.active == True:
-            at_least_one = True
-            federation_status[provider.id] = None
-            logger.debug(f"{module_name}: federate: {provider.id}, {provider.name}, {provider.connector}, {search.id}")
-            federation_result[provider.id] = federate_task.delay(provider.id, provider.name, provider.connector, search.id)
+        at_least_one = True
+        federation_status[provider.id] = None
+        logger.debug(f"{module_name}: federate: {provider.id}, {provider.name}, {provider.connector}, {search.id}")
+        federation_result[provider.id] = federate_task.delay(provider.id, provider.name, provider.connector, search.id)
     # end for
     if not at_least_one:
         logger.warning(f"{module_name}: no active searchprovider specified: {search.searchprovider_list}")
@@ -109,10 +117,9 @@ def search(id):
         search.save()
         return False
     # end if
-
     ########################################
     # asynchronously collect results
-    time.sleep(2)
+    time.sleep(5)
     ticks = 0
     error_flag = False
     at_least_one = False
@@ -122,6 +129,7 @@ def search(id):
         results = Result.objects.filter(search_id=search.id)
         if len(results) == len(providers):
             # every provider has written a result object - exit
+            logger.warning(f"{module_name}: all results received, search {search.id}")
             break
         if len(results) > 0:
             at_least_one = True
@@ -129,23 +137,26 @@ def search(id):
         search.status = f'FEDERATING_WAIT_{ticks}'
         search.save()    
         time.sleep(1)
-        if ticks > 5:
-            error_flag = True
+        if ticks > 10:
+            logger.warning(f"{module_name}: timeout, search {search.id}")
             failed_providers = []
             responding_provider_names = []
             for result in results:
                 responding_provider_names.append(result.searchprovider)
-            # fixed: don't report in-active providers as failed
+            # fixed: don't report in-active providers as failed (above by filtering providers to active=True)
             for provider in providers:
-                if provider.active == True:
-                    if not provider.name in responding_provider_names:
-                        failed_providers.append(provider.name)
-            logger.warning(f"{module_name}: timeout waiting for: {failed_providers}")
+                if not provider.name in responding_provider_names:
+                    failed_providers.append(provider.name)
+                    error_flag = True
+                    logger.warning(f"{module_name}: timeout waiting for: {failed_providers}")
+                # end if
+            # end for
+            # exit the loop
             break
     # end while
     ########################################
     # update query status
-    logger.debug(f"{module_name}: tock!")
+    logger.debug(f"{module_name}: exiting...")
     if error_flag:
         if at_least_one:
             search.status = 'PARTIAL_RESULTS'
@@ -196,15 +207,20 @@ def rescore(id):
 
     try:
         search = Search.objects.get(id=id)
+        results = Result.objects.filter(search_id=search.id)
     except ObjectDoesNotExist as err:
         logger.error(f'{module_name}: Error: ObjectDoesNotExist: {err}')
         return False
-    if not search.status.endswith('_READY'):
-        logger.warning(f"{module_name}: search {search.id} has status {search.status}, rescore only works on status ending in _READY")
-        return False
+        
     last_status = search.status
+    if not search.status.endswith('_READY'):
+        logger.warning(f"{module_name}: search {search.id} has status {search.status}, rescore may not work")
+        last_status = None
+
+    if len(results) == 0:
+        logger.error(f"{module_name}: search {search.id} has no results to rescore")
+        return False
     search.status = 'RESCORING'
-    # search.date_updated = datetime.now()
     search.save()
     if search.post_result_processor:
         results_modified = eval(search.post_result_processor)(search.id)
@@ -217,5 +233,5 @@ def rescore(id):
         search.save()
         return True
     else:
-        logger.warning(f"{module_name}: search {search.id} has no post_result_processor defined, can't rescore")
+        logger.error(f"{module_name}: search {search.id} has no post_result_processor defined")
         return False

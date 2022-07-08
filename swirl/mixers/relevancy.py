@@ -4,6 +4,7 @@
 @version:    SWIRL 1.x
 '''
 
+from pydoc import resolve
 import django
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -21,6 +22,8 @@ from swirl.models import Search, Result
 import logging as logger
 
 from operator import itemgetter
+
+from django.urls import reverse
 
 #############################################    
 #############################################    
@@ -60,12 +63,16 @@ def relevancy_mixer(search_id, results_requested, page):
     results_needed = int(page) * int(results_requested)
 
     if len(sorted_results) > results_needed:
-        mix_wrapper['info']['results']['next_page'] = f'/swirl/results/?search_id={search_id}&result_mixer=round_robin_mixer&page={int(page)+1}'
+        mix_wrapper['info']['results']['next_page'] = f'http://localhost:8000/swirl/results/?search_id={search_id}&result_mixer=relevancy_mixer&page={int(page)+1}'
+    else:
+        logger.warning(f'{module_name}: results exhausted for search: {search.id}')
 
     sorted_results = sorted_results[(int(page)-1)*int(results_requested):int(page)*int(results_requested)]
 
     if page > 1:
-        mix_wrapper['info']['results']['prev_page'] = f'/swirl/results/?search_id={search_id}&result_mixer=round_robin_mixer&page={int(page)-1}'
+        mix_wrapper['info']['results']['prev_page'] = f'http://localhost:8000/swirl/results/?search_id={search_id}&result_mixer=relevancy_mixer&page={int(page)-1}'
+
+    # redirect(f'/swirl/results?search_id={new_search.id}')
 
     mix_wrapper['results'] = sorted_results
 
