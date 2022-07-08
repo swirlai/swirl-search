@@ -65,13 +65,15 @@ def stack_mixer_x(search_id, results_requested, page, stack):
     mix_wrapper['info']['search'] = {}
     mix_wrapper['info']['search']['query_string'] = search.query_string
     mix_wrapper['info']['search']['query_string_processed'] = search.query_string_processed
+    mix_wrapper['info']['search']['rescore_url'] = f'http://localhost:8000/swirl/search/?rescore={search.id}'
+    mix_wrapper['info']['search']['rerun_url'] = f'http://localhost:8000/swirl/search/?rerun={search.id}'
 
     # join json_results
     all_results = []
     for result in results:
         all_results = all_results + result.json_results
     # sort the json_results by score
-    ranked_results = sorted(sorted(all_results, key=itemgetter('rank')), key=itemgetter('score'), reverse=True)
+    ranked_results = sorted(sorted(all_results, key=itemgetter('searchprovider_rank')), key=itemgetter('swirl_score'), reverse=True)
     # organize results by provider
     dict_ranked_by_provider = {}
     for result in ranked_results:
@@ -83,10 +85,10 @@ def stack_mixer_x(search_id, results_requested, page, stack):
     list_top_each_provider = []
     for provider in dict_ranked_by_provider:
         list_top_each_provider.append(dict_ranked_by_provider[provider][0])
-    list_ranked_providers = sorted(list_top_each_provider, key=itemgetter('score'), reverse=True)
+    list_ranked_providers = sorted(list_top_each_provider, key=itemgetter('swirl_score'), reverse=True)
     dict_ranked_providers = {}
     for provider in list_ranked_providers:
-        dict_ranked_providers[provider['searchprovider']] = provider['score']
+        dict_ranked_providers[provider['searchprovider']] = provider['swirl_score']
 
     # mix the results
     results_needed = int(page) * int(results_requested)
@@ -137,9 +139,17 @@ def stack_mixer_x(search_id, results_requested, page, stack):
         stacked_results = stacked_results[-1*(int(results_requested)):]
         mix_wrapper['info']['results']['prev_page'] = f'http://localhost:8000/swirl/results/?search_id={search_id}&result_mixer=stack_{stack}_mixer&page={int(page)-1}'
 
-    mix_wrapper['results'] = stacked_results
+    # number the results
+    numbered_results = []
+    result_number = (int(page)-1)*int(results_requested) + 1
+    for result in stacked_results:
+        result['swirl_rank'] = result_number
+        numbered_results.append(result)
+        result_number = result_number + 1
 
-    mix_wrapper['info']['results']['retrieved'] = len(stacked_results)
+    mix_wrapper['results'] = numbered_results
+
+    mix_wrapper['info']['results']['retrieved'] = len(numbered_results)
 
     # last message 
     if len(mix_wrapper['results']) > 2:

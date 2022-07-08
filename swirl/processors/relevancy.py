@@ -139,21 +139,21 @@ def cosine_relevancy_processor(search_id):
                 # end for 
                 ############################################
                 # weight field similarity
-                item['score'] = 0.0
+                item['swirl_score'] = 0.0
                 weight = 0.0
                 for field in dict_score:
                     if not field.endswith('_field'):
-                        item['score'] = float(item['score']) + float(RELEVANCY_CONFIG[field]['weight']) * float(dict_score[field])
+                        item['swirl_score'] = float(item['swirl_score']) + float(RELEVANCY_CONFIG[field]['weight']) * float(dict_score[field])
                         weight = weight + float(RELEVANCY_CONFIG[field]['weight'])
                     # end if
                 # end for
                 if weight == 0.0:
                     item['boosts'].append('WEIGHT_0')
-                    item['score'] == 0.5
+                    item['swirl_score'] == 0.5
                     weighted_score = 0.5
                 else:
-                    weighted_score = round(float(item['score'])/float(weight),2)
-                    item['score'] = weighted_score
+                    weighted_score = round(float(item['swirl_score'])/float(weight),2)
+                    item['swirl_score'] = weighted_score
                 ############################################
                 # boosting                
                 query_len = len(search.query_string_processed.strip().split())
@@ -179,18 +179,18 @@ def cosine_relevancy_processor(search_id):
                 else:
                     term_boost = round((float(term_match) * 0.1) / float(query_len), 2)
                     item['boosts'].append(f'term_match {term_boost}')
-                phrase_boost = round((float(phrase_match) * 0.2) / float(query_len), 2)
+                phrase_boost = round((float(phrase_match) * 0.2) / (float(query_len) / 2), 2)
                 if phrase_boost > 0:
                     item['boosts'].append(f'phrase_match {phrase_boost}')
-                all_terms_boost = round((float(all_terms) * 0.1 * float(query_len)), 2)
+                all_terms_boost = round((float(all_terms) * 0.1), 2)
                 if all_terms_boost > 0:
                     item['boosts'].append(f'all_terms {all_terms_boost}')
-                item['score'] = item['score'] + max([term_boost, phrase_boost, all_terms_boost])
-                item['score'] = round(item['score'], 2)
+                item['swirl_score'] = item['swirl_score'] + max([term_boost, phrase_boost, all_terms_boost])
+                item['swirl_score'] = round(item['swirl_score'], 2)
                 ###########################################
                 # check for overrun
-                if item['score'] > 1.0:
-                    item['score'] = 1.0
+                if item['swirl_score'] > 1.0:
+                    item['swirl_score'] = 1.0
                 # explain
                 item['explain'] = {} 
                 item['explain']['matches'] = match_dict

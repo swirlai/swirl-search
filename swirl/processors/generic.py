@@ -70,7 +70,7 @@ def generic_result_processor(json_data, provider, query_string):
         swirl_result = create_result_dictionary()
         payload = {}
         # report searchprovider rank, not ours
-        swirl_result['rank'] = result_number
+        swirl_result['searchprovider_rank'] = result_number
         swirl_result['date_published'] = 'unknown'
         swirl_result['date_retrieved'] = str(datetime.now())
         # to do: figure out url scheme P1

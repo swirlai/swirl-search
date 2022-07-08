@@ -11,15 +11,16 @@ import re
 def create_result_dictionary():
 
     dict_result = {}
-    dict_result['rank'] = 0
-    dict_result['score'] = 0
+    dict_result['swirl_rank'] = 0
+    dict_result['swirl_score'] = 0.0
+    dict_result['searchprovider'] = ""
+    dict_result['searchprovider_rank'] = 0
     dict_result['title'] = ""
     dict_result['url'] = ""
     dict_result['body'] = ""
     dict_result['date_published'] = ""
     dict_result['date_retrieved'] = ""
     dict_result['author'] = ""
-    dict_result['searchprovider'] = ""
     dict_result['payload'] = {}
     return dict_result
 
