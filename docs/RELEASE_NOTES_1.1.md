@@ -39,7 +39,7 @@
 
 :small_blue_diamond: Former Google opensearch connector retired
 
-:small_blue_diamond: The new [mapping keys DATE_SORT, PAGE, FOUND, RETRIEVED and RESULTS](../wiki/2.-User-Guide#query-mappings) are described in the [User's Guide](../wiki/2.-User-Guide#query-mappings).
+:small_blue_diamond: There are new [query mappings DATE_SORT, RELEVANCY_SORT and PAGE](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#query-mappings), and new [result mappings FOUND, RETRIEVED, RESULTS and RESULT](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#result-mappings) now available for the requests_get connetor
 
 :small_blue_diamond: Updated [Round Robin and Stack mixers](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#mixers) now use relevancy as primary sort
 
@@ -92,7 +92,7 @@ View the [sample SearchProvider](../SearchProviders/newsdata_api.json).
 
 ## Known Issues
 
-:small_blue_diamond: [Creating searches from a browser with q=](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#creating-search-objects-with-a-url) can sometimes create two Search objects. 
+:small_blue_diamond: [Creating searches from a browser with q=](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#creating-a-search-object-with-a-url-and-qquery_string) can sometimes create two Search objects. 
 
 This appears to be because of browser prefetch. [Turn off Chrome prefetch](https://www.technipages.com/google-chrome-prefetch). [Turn off Safari prefetch](https://stackoverflow.com/questions/29214246/how-to-turn-off-safaris-prefetch-feature)
 
