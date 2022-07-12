@@ -2,7 +2,7 @@
     {
         "name": "Latest News (web/newsdata.io)",
         "connector": "requests_get",
-        "url": "https://newsdata.io/api/1/news?apikey={apikey}",
+        "url": "https://newsdata.io/api/1/news?language=en&apikey={apikey}",
         "query_template": "{url}&q={query_string}",
         "result_mappings": "description=body,link=url,pubDate=date_published,creator=author,source_id,NO_PAYLOAD,totalResults=FOUND,results=RESULTS",
         "credentials": "apikey=newsdata-api-key-here"
@@ -10,7 +10,7 @@
     {
         "name": "News Archive (web/newsdata.io)",
         "connector": "requests_get",
-        "url": "https://newsdata.io/api/1/archive?apikey={apikey}",
+        "url": "https://newsdata.io/api/1/archive?language=en&apikey={apikey}",
         "query_template": "{url}&q={query_string}",
         "result_mappings": "description=body,link=url,pubDate=date_published,creator=author,source_id,NO_PAYLOAD,totalResults=FOUND,results=RESULTS",
         "credentials": "apikey=newsdata-api-key-here"
