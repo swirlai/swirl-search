@@ -96,7 +96,7 @@ View the [sample SearchProvider](../SearchProviders/newsdata_api.json).
 
 This appears to be because of browser prefetch. [Turn off Chrome prefetch](https://www.technipages.com/google-chrome-prefetch). [Turn off Safari prefetch](https://stackoverflow.com/questions/29214246/how-to-turn-off-safaris-prefetch-feature)
 
-Please [report any issues](https://github.com/sidprobstein/swirl-search/issues/)with this or the [rerun function](USER_GUIDE.md#re-starting-re-running--re-trying-a-search).
+Please [report any issues](https://github.com/sidprobstein/swirl-search/issues/) with this or the [rerun function](USER_GUIDE.md#re-starting-re-running--re-trying-a-search).
 
 <br/>
 
