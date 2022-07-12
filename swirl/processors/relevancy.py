@@ -40,10 +40,6 @@ def cos_similarity(x,y):
 
 from .utils import clean_string_alphanumeric
 
-# load spacy
-import spacy
-nlp = spacy.load('en_core_web_md')
-
 def cosine_relevancy_processor(search_id):
 
     module_name = 'cosine_relevancy_processor'
@@ -148,9 +144,7 @@ def cosine_relevancy_processor(search_id):
                     # end if
                 # end for
                 if weight == 0.0:
-                    item['boosts'].append('WEIGHT_0')
-                    item['swirl_score'] == 0.5
-                    weighted_score = 0.5
+                    item['swirl_score'] = weighted_score = 0.0
                 else:
                     weighted_score = round(float(item['swirl_score'])/float(weight),2)
                     item['swirl_score'] = weighted_score
@@ -178,7 +172,8 @@ def cosine_relevancy_processor(search_id):
                     term_boost = 0.0
                 else:
                     term_boost = round((float(term_match) * 0.1) / float(query_len), 2)
-                    item['boosts'].append(f'term_match {term_boost}')
+                    if term_boost > 0:
+                        item['boosts'].append(f'term_match {term_boost}')
                 phrase_boost = round((float(phrase_match) * 0.2) / (float(query_len) / 2), 2)
                 if phrase_boost > 0:
                     item['boosts'].append(f'phrase_match {phrase_boost}')
@@ -198,9 +193,6 @@ def cosine_relevancy_processor(search_id):
                 item['explain']['boosts'] = item['boosts']
                 # clean up 
                 del item['boosts']
-                if search.status == 'RESCORING':
-                    if 'score_all_key_phrases' in item:
-                        del item['score_all_key_phrases']
                 ##############################################
                 updated = updated + 1
                 highlighted_json_results.append(item)

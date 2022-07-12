@@ -26,25 +26,24 @@ from operator import itemgetter
 #############################################    
 #############################################    
 
-def round_robin_mixer(search_id, results_requested, page):
-    return stack_mixer_x(search_id, results_requested, page, 1)
+def round_robin_mixer(search_id, results_requested, page, explain):
+    return stack_mixer_x(search_id, results_requested, page, 1, explain)
 
-def stack_mixer(search_id, results_requested, page):
-    return stack_mixer_x(search_id, results_requested, page, 1)
+def stack_mixer(search_id, results_requested, page, explain):
+    return stack_mixer_x(search_id, results_requested, page, 1, explain)
 
-def stack_1_mixer(search_id, results_requested, page):
-    return stack_mixer_x(search_id, results_requested, page, 1)
+def stack_1_mixer(search_id, results_requested, page, explain):
+    return stack_mixer_x(search_id, results_requested, page, 1, explain)
 
-def stack_2_mixer(search_id, results_requested, page):
-    return stack_mixer_x(search_id, results_requested, page, 2)
+def stack_2_mixer(search_id, results_requested, page, explain):
+    return stack_mixer_x(search_id, results_requested, page, 2, explain)
 
-def stack_3_mixer(search_id, results_requested, page):
-    return stack_mixer_x(search_id, results_requested, page, 3)
+def stack_3_mixer(search_id, results_requested, page, explain):
+    return stack_mixer_x(search_id, results_requested, page, 3, explain)
 
-def stack_mixer_x(search_id, results_requested, page, stack):
+def stack_mixer_x(search_id, results_requested, page, stack, explain=True):
 
     module_name = 'stack_mixer.py'
-    logger.warning(f'{module_name}: mixing')
 
     if Search.objects.filter(id=search_id).exists():
         search = Search.objects.get(id=search_id)
@@ -72,6 +71,8 @@ def stack_mixer_x(search_id, results_requested, page, stack):
     all_results = []
     for result in results:
         all_results = all_results + result.json_results
+    found = len(all_results)
+
     # sort the json_results by score
     ranked_results = sorted(sorted(all_results, key=itemgetter('searchprovider_rank')), key=itemgetter('swirl_score'), reverse=True)
     # organize results by provider
@@ -97,10 +98,8 @@ def stack_mixer_x(search_id, results_requested, page, stack):
     last_len = 0
     while len(stacked_results) < results_needed:
         for searchprovider in dict_ranked_providers:
-            logger.warning(f"debug: {searchprovider}")
             for p in range(0,stack):
                 if len(dict_ranked_by_provider[searchprovider]) > position + p:
-                    logger.warning(f"p = {p}, position = {position}")
                     stacked_results.append(dict_ranked_by_provider[searchprovider][position + p])
                 # done if we now have enough
                 # w/o the below, we add one per source until exceeding that might be OK but should be deliberate
@@ -127,6 +126,9 @@ def stack_mixer_x(search_id, results_requested, page, stack):
     ########################################
     # finalize results
     mix_wrapper['info']['results'] = {}
+    mix_wrapper['info']['results']['retrieved_total'] = found
+    # set the order in the dict
+    mix_wrapper['info']['results']['retrieved'] = 0
 
     results_available = 0
     for result in results:
@@ -144,6 +146,8 @@ def stack_mixer_x(search_id, results_requested, page, stack):
     result_number = (int(page)-1)*int(results_requested) + 1
     for result in stacked_results:
         result['swirl_rank'] = result_number
+        if not explain:
+            del result['explain']
         numbered_results.append(result)
         result_number = result_number + 1
 

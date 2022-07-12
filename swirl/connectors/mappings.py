@@ -22,11 +22,11 @@ logger = get_task_logger(__name__)
 #############################################    
 #############################################    
 
-# types for use with mappings - these are checked by utils.py/get_mappings.py
+# types for use with mappings 
 
-QUERY_RESULT_KEYS = [ 'DATE_SORT', 'PAGE' ]
+QUERY_MAPPING_KEYS = [ 'DATE_SORT', 'RELEVANCY_SORT', 'PAGE' ]
 RESULT_MAPPING_KEYS = [ 'FOUND', 'RETRIEVED', 'RESULTS', 'RESULT' ]
-MAPPING_KEYS = QUERY_RESULT_KEYS + RESULT_MAPPING_KEYS
+MAPPING_KEYS = QUERY_MAPPING_KEYS + RESULT_MAPPING_KEYS
 
 QUERY_MAPPING_VARIABLES = [ 'RESULT_INDEX', 'RESULT_ZERO_INDEX', 'PAGE_INDEX' ]
 RESULT_MAPPING_VARIABLES = []

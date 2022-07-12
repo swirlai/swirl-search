@@ -6,5 +6,6 @@
 
 from .stack import *
 from .relevancy import *
+from .date import *
 
 # Add new SWIRL mixers here

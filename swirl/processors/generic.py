@@ -227,6 +227,6 @@ def generic_post_result_processor(search_id):
 
     module_name = 'generic_post_result_processor'
     
-    # to do: post_result_processor is expected to update the results using a csv and return the number of modified results
+    # to do
     
     return 0

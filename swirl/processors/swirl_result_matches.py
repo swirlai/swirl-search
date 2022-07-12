@@ -17,7 +17,7 @@ def swirl_result_matches_processor(json_data, provider, query_string):
     
     for row in json_data:
         dict_result = create_result_dictionary()
-        dict_result['rank'] = (100 - result_number)
+        dict_result['searchprovider_rank'] = (100 - result_number)
         dict_result['date_retrieved'] = str(datetime.now())
         # there are 5 rows of {'id': 27, 'search_id_id': 38, 'matches':
         result_id = row['id']

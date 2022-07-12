@@ -1,16 +1,14 @@
 # SWIRL SEARCH #### TO DO #####
 
 ## Fix
-- [X] Fix round robin / revise it to be a case of stack mixer
-- [X] Fix stack mixer
-- [X] Sort the providers by highest rank to lowest rank for stack mixer
-- [X] Rename rank to searchprovider_rank?
-- [X] Add swirl_rank 
-- [ ] Can't tell which elastic is being queried bc url isn't in query-to-provider
-- [ ] Highlighting and stemming
-- [ ] $1+billion, $1 is not highlighted
+- [ ] Relevancy boost problem - stored - DEFER
+- [ ] If a search has date_sort, then set the result_mixer to date_sort? DEFER
+- [ ] Can't tell which elastic is being queried bc url isn't in query-to-provider DEFER
+- [ ] Highlighting and stemming DEFER
+- [ ] $1+billion, $1 is not highlighted DEFER
 
 ## New Features
+- [ ] Searches folder with example searches in json DEFER
 - [ ] Docker P1
 - [ ] Search UI P1
 - [ ] search?retry=id - P1 rerun only providers that failed etc

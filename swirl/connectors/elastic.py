@@ -133,7 +133,7 @@ def search(provider_id, search_id):
     issue_search = ""
     if search.sort.lower() == 'date':
         # to do: support ascending??? p2
-        issue_search = 'es.search(' + query_to_provider + f', "sort"=[{{"{sort_field}": "desc"}}], size=' + str(provider.results_per_query) + ')'
+        issue_search = 'es.search(' + query_to_provider + f", sort=[{{'{sort_field}': 'desc'}}], size=" + str(provider.results_per_query) + ')'
     else:
         issue_search = 'es.search(' + query_to_provider + ', size=' + str(provider.results_per_query) + ')'
     # end if

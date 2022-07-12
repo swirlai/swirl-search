@@ -48,27 +48,8 @@ def search(id):
     new_provider_list = []
     if search.searchprovider_list:
         for provider in providers:
-            provider_key = None
-            if type(search.searchprovider_list[0]) == str:
-                provider_key = provider.name
-            elif type(search.searchprovider_list[0]) == int:
-                provider_key = provider.id
-            else:
-                logger.error(f"{module_name}: unknown searchprovider_list: {search.searchprovider_list}")
-                search.status = 'ERR_SEARCHPROVIDER_LIST'
-                search.date_updated = datetime.now()
-                search.save()
-                return False
-            # end if
-            # check if the provider name is in the provider list for this query
-            if provider_key in search.searchprovider_list:
+            if provider.id in search.searchprovider_list:
                 new_provider_list.append(provider)
-            else:
-                logger.error(f"{module_name}: inactive or unknown searchprovider: {provider_key}")
-                search.status = 'ERR_SEARCHPROVIDER'
-                search.date_updated = datetime.now()
-                search.save()
-                return False
             # end if
         # end for
         providers = new_provider_list
@@ -149,6 +130,11 @@ def search(id):
                     failed_providers.append(provider.name)
                     error_flag = True
                     logger.warning(f"{module_name}: timeout waiting for: {failed_providers}")
+                    message = f"{module_name}: No response from provider: {failed_providers}"
+                    messages = search.messages
+                    messages.append(message)
+                    search.messages = messages
+                    search.save()
                 # end if
             # end for
             # exit the loop
@@ -171,7 +157,7 @@ def search(id):
     search.result_url = f"http://{settings.ALLOWED_HOSTS[0]}:8000/swirl/results?search_id={search.id}&result_mixer={search.result_mixer}"
     # note the sort
     if search.sort.lower() == 'date':
-        message = f"Requested sort_by_date from from all providers"
+        message = f"Requested sort_by_date from all providers"
         messages = search.messages
         messages.append(message)
         search.messages = messages        

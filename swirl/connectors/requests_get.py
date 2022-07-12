@@ -98,12 +98,28 @@ def search(provider_id, search_id):
         logger.info(f"{module_name}: date sort specified")
         # insert before the last parameter, which is expected to be the user query
         sort_query = query_to_provider[:query_to_provider.rfind('&')]
-        if not 'DATE_SORT' in query_mappings:
+        if 'DATE_SORT' in query_mappings:
+        # end if
+            sort_query = sort_query + '&' + query_mappings['DATE_SORT'] + query_to_provider[query_to_provider.rfind('&'):]
+            query_to_provider = sort_query
+        else:
+            # use default query_to_provider
             message = f'{module_name}: Warning: DATE_SORT missing from query_mappings: {query_mappings}'
             logger.warning(f'{message}')
         # end if
-        sort_query = sort_query + '&' + query_mappings['DATE_SORT'] + query_to_provider[query_to_provider.rfind('&'):]
-        query_to_provider = sort_query
+    else:
+        sort_query = query_to_provider[:query_to_provider.rfind('&')]
+        if 'RELEVANCY_SORT' in query_mappings:
+        # end if
+            sort_query = sort_query + '&' + query_mappings['RELEVANCY_SORT'] + query_to_provider[query_to_provider.rfind('&'):]
+            query_to_provider = sort_query
+        else:
+            # use default query_to_provider
+            message = f'{module_name}: Warning: RELEVANCY_SORT missing from query_mappings: {query_mappings}'
+            logger.warning(f'{message}')
+        # end if
+    # end if
+        
     # validate query
     if '{' in query_to_provider or '}' in query_to_provider:
         logger.warning(f"{module_name}: warning: {provider.id} found braces {{ or }} in query after template mapping")
