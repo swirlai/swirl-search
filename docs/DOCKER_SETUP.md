@@ -62,6 +62,10 @@ Attaching to swirl-c-app-1
 
 The container ID in this example is swirl-c-app-1. It will be different if you cloned the repo to a different folder.
 
+Moments later, Docker desktop will reflect the running container:
+
+![SWIRL running in Docker](/docs/images/swirl_docker.png)
+
 <br/>
 
 ## Create Super User Account
