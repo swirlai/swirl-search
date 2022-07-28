@@ -108,6 +108,26 @@ This should bring up the following, or similar:
 
 <br/>
 
+:key: Important note: you cannot use localhost when configuring endpoints using SWIRL Docker!!
+
+For example if you have solr running on localhost:8983, SWIRL will be unable to contact it
+from inside the docker container. 
+
+On OS/X go to the shell and type hostname to get this, e.g.
+
+```
+sid@AgentCooper solr-8.11.1 % hostname
+AgentCooper.local
+```
+
+In the SearchProvider, replace localhost with the hostname, and it will work:
+
+```
+"url": "http://AgentCooper.local:8983/solr/{collection}/select?wt=json",
+```
+
+<br/>
+
 ## Run a Query!
 
 ### [http://localhost:8000/swirl/search/?q=search+engine](http://localhost:8000/swirl/search/?q=search+engine)
