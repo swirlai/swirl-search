@@ -118,7 +118,7 @@ After 5-7 seconds, this should bring up a unified, relevancy ranked result list:
 
 <br/>
 
-:medal: Congratulations, SWIRL docker is installed!
+### Congratulations, SWIRL docker is installed!
 
 <br/>
 
