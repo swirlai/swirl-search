@@ -1,15 +1,22 @@
-# SWIRL SEARCH #### TO DO #####
+# SWIRL SEARCH TO DO
 
-## Fix
+## Issues
 - [ ] Relevancy boost problem - stored - DEFER
 - [ ] If a search has date_sort, then set the result_mixer to date_sort? DEFER
 - [ ] Can't tell which elastic is being queried bc url isn't in query-to-provider DEFER
 - [ ] Highlighting and stemming DEFER
 - [ ] $1+billion, $1 is not highlighted DEFER
+- [ ] Northern light 0 result bug in Docker? CHECK
+
+# Refactors
+- [ ] Rewrite objects from procedural (duplicate code, very easy) to object model (override/extend methods, more complex)
+- [ ] Separate non-changing parts of searchproviders into connector configs?
+- [ ] Separate response mapping from result mapping
+- [ ] Make celery work or move to fully DB managed model?
 
 ## New Features
+- [ ] Sort the Retrieved X of Y messages in descending
 - [ ] Searches folder with example searches in json DEFER
-- [ ] Docker P1
 - [ ] Search UI P1
 - [ ] search?retry=id - P1 rerun only providers that failed etc
 - [ ] Url result construction
@@ -40,7 +47,7 @@
 
 ## Connectors
 - [ ] Add a credential example for Sqlite3 P2
-- [ ] RBD connector with sql-alchemy
+- [ ] RBD connector with sql-alchemy P1
 - [ ] Search past results 
 - [ ] Caching so that if you run the same search within x period, it takes you to the last result set, otherwise, refreshes? P3
 

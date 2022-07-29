@@ -4,6 +4,10 @@
 
 # SWIRL SEARCH 1.1 DOCKER SETUP
 
+:warning: Warning: as of the current version of the containerization-wip branch, the SWIRL database is instantly and unrecoverably deleted if you shut down the container.
+
+<br/>
+
 ## Install Docker
 
 [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)
@@ -141,6 +145,8 @@ After 5-7 seconds, this should bring up a unified, relevancy ranked result list:
 ### Congratulations, SWIRL docker is installed!
 
 <br/>
+
+:warning: Warning: as of the current version of the containerization-wip branch, the SWIRL database is instantly and unrecoverably deleted if you shut down the container.
 
 ## Documentation
 
