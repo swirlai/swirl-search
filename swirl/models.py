@@ -72,7 +72,8 @@ class Search(models.Model):
         ('round_robin_mixer', 'round_robin_mixer'),
         ('stack_mixer', 'stack_mixer'),
         ('stack_2_mixer', 'stack_2_mixer'),
-        ('stack_3_mixer', 'stack_3_mixer')
+        ('stack_3_mixer', 'stack_3_mixer'),
+        ('date_mixer', 'date_mixer')
     ]
     result_mixer = models.CharField(max_length=200, default='relevancy_mixer', choices=MIXER_CHOICES)
     RETENTION_CHOICES = [
