@@ -36,7 +36,10 @@ class SearchProvider(models.Model):
     result_mappings = models.CharField(max_length=200, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
     credentials = models.CharField(max_length=200, default=str, blank=True)
-        
+
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return self.name
 
@@ -84,6 +87,10 @@ class Search(models.Model):
     ]
     retention = models.IntegerField(default=0, choices=RETENTION_CHOICES)
 
+    class Meta:
+        ordering = ['-date_updated']
+
+
     def __str__(self):
         signature = str(self.id) + ':' + str(self.searchprovider_list) + ':' + self.query_string
         return signature
@@ -99,6 +106,9 @@ class Result(models.Model):
     retrieved = models.IntegerField(default=0)
     found = models.IntegerField(default=0)
     json_results = models.JSONField(default=list)
+
+    class Meta:
+        ordering = ['-date_created']
 
     def __str__(self):
         signature = str(self.id) + ':' + str(self.search) + ':' + str(self.searchprovider)

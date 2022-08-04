@@ -174,10 +174,10 @@ def cosine_relevancy_processor(search_id):
                     term_boost = round((float(term_match) * 0.1) / float(query_len), 2)
                     if term_boost > 0:
                         item['boosts'].append(f'term_match {term_boost}')
-                phrase_boost = round((float(phrase_match) * 0.2) / (float(query_len) / 2), 2)
+                phrase_boost = round((float(phrase_match) * 0.2) / float(query_len), 2)
                 if phrase_boost > 0:
                     item['boosts'].append(f'phrase_match {phrase_boost}')
-                all_terms_boost = round((float(all_terms) * 0.1), 2)
+                all_terms_boost = round((float(all_terms) * 0.2), 2)
                 if all_terms_boost > 0:
                     item['boosts'].append(f'all_terms {all_terms_boost}')
                 item['swirl_score'] = item['swirl_score'] + max([term_boost, phrase_boost, all_terms_boost])

@@ -29,7 +29,7 @@ from .tasks import search_task, rescore_task
 ########################################
 
 def index(request):
-    context = {'searchprovider_list': []}
+    context = {'index': []}
     return render(request, 'index.html', context)
 
 ########################################
@@ -107,8 +107,8 @@ class SearchViewSet(viewsets.ModelViewSet):
             time.sleep(7)
             return redirect(f'/swirl/results?search_id={rescore_id}')
         # end if
-        searches = reversed(Search.objects.all())
-        serializer = SearchSerializer(searches, many=True)
+        # searches = reversed(Search.objects.all())
+        serializer = SearchSerializer(self.queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     ########################################
@@ -225,8 +225,8 @@ class ResultViewSet(viewsets.ModelViewSet):
             # end if
         ########################################
         else:
-            results = reversed(Result.objects.all())
-            serializer = ResultSerializer(results, many=True)
+            # results = reversed(Result.objects.all())
+            serializer = ResultSerializer(self.queryset, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         # end if
 
