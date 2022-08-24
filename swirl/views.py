@@ -107,7 +107,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             time.sleep(7)
             return redirect(f'/swirl/results?search_id={rescore_id}')
         # end if
-        # searches = reversed(Search.objects.all())
+        self.queryset = reversed(Search.objects.all())
         serializer = SearchSerializer(self.queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
