@@ -1,0 +1,283 @@
+'''
+@author:     Sid Probstein
+@contact:    sidprobstein@gmail.com
+@version:    SWIRL 1.1
+'''
+
+import django
+from django.db import Error
+from django.core.exceptions import ObjectDoesNotExist
+
+from sys import path
+from os import environ
+
+from swirl.utils import swirl_setdir
+path.append(swirl_setdir()) # path to settings.py file
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+django.setup()
+
+import time
+
+import requests
+# do not remove
+from requests.auth import HTTPBasicAuth, HTTPDigestAuth, HTTPProxyAuth
+from requests.exceptions import ConnectionError
+
+import urllib.parse
+from urllib3.exceptions import NewConnectionError
+
+from jsonpath_ng import parse
+from jsonpath_ng.exceptions import JsonPathParserError
+
+from http import HTTPStatus
+
+from celery.utils.log import get_task_logger
+from logging import DEBUG, INFO, WARNING
+logger = get_task_logger(__name__)
+
+from .mappings import *
+from .utils import bind_query_mappings
+
+from .Connector import Connector
+
+class RequestsGet(Connector):
+
+    type = "RequestsGet"
+
+    ########################################
+
+    def construct_query(self):
+
+        # to do: migrate this to Connector base class?
+        query_to_provider = ""
+        if self.provider.credentials.startswith('HTTP'):
+            query_to_provider = bind_query_mappings(self.provider.query_template, self.provider.query_mappings, self.provider.url)
+        else:
+            query_to_provider = bind_query_mappings(self.provider.query_template, self.provider.query_mappings, self.provider.url, self.provider.credentials)
+        # this should leave one item, {query_string}
+        if '{query_string}' in query_to_provider:
+            query_to_provider = query_to_provider.replace('{query_string}', urllib.parse.quote_plus(self.search.query_string_processed))
+        else:
+            self.warning(f'{{query_string}} missing from query_to_provider: {query_to_provider}')
+
+        if self.search.sort.lower() == 'date':
+            logger.info(f"{self}: date sort specified")
+            # insert before the last parameter, which is expected to be the user query
+            sort_query = query_to_provider[:query_to_provider.rfind('&')]
+            if 'DATE_SORT' in self.query_mappings:
+                sort_query = sort_query + '&' + self.query_mappings['DATE_SORT'] + query_to_provider[query_to_provider.rfind('&'):]
+                query_to_provider = sort_query
+            else:
+                self.warning(f'DATE_SORT missing from self.query_mappings: {self.query_mappings}')
+        else:
+            sort_query = query_to_provider[:query_to_provider.rfind('&')]
+            if 'RELEVANCY_SORT' in self.query_mappings:
+                sort_query = sort_query + '&' + self.query_mappings['RELEVANCY_SORT'] + query_to_provider[query_to_provider.rfind('&'):]
+                query_to_provider = sort_query
+            else:
+                self.warning(f'RELEVANCY_SORT missing from self.query_mappings: {self.query_mappings}')      
+
+        self.query_to_provider = query_to_provider    
+
+        return
+
+    ########################################
+
+    def validate_query(self):
+
+        query_to_provider = self.query_to_provider
+        if '{' in query_to_provider or '}' in query_to_provider:
+            self.warning(f"{self.provider.id} found braces {{ or }} in query")
+            return False
+        
+        return super().validate_query()
+
+    ########################################
+
+    def execute_search(self):
+
+        # determine if paging is required
+        pages = 1
+        if 'PAGE' in self.query_mappings:
+            if self.provider.results_per_query > 10:
+                # yes, gather multiple pages
+                pages = int(int(self.provider.results_per_query) / 10)
+                # handle remainder
+                if (int(self.provider.results_per_query) % 10) > 0:
+                    pages = pages + 1
+
+        # issue the query
+        start = 1
+        for page in range(0, pages):
+
+            if 'PAGE' in self.query_mappings:
+                page_query = self.query_to_provider[:self.query_to_provider.rfind('&')]
+                page_spec = None
+                if 'RESULT_INDEX' in self.query_mappings['PAGE']:
+                    page_spec = self.query_mappings['PAGE'].replace('RESULT_INDEX',str(start))
+                if 'RESULT_ZERO_INDEX' in self.query_mappings['PAGE']:
+                    page_spec = self.query_mappings['PAGE'].replace('RESULT_ZERO_INDEX',str(start-1))
+                if 'PAGE_INDEX' in self.query_mappings['PAGE']:
+                    page_spec = self.query_mappings['PAGE'].replace('PAGE_INDEX',page+1)
+                if page_spec:
+                    page_query = page_query + '&' + page_spec + self.query_to_provider[self.query_to_provider.rfind('&'):]
+                else:
+                    self.warning(f"failed to resolve PAGE query mapping: {self.query_mappings['PAGE']}")
+                    page_query = self.query_to_provider
+            else:
+                page_query = self.query_to_provider
+
+            # check the query
+            if page_query == "":
+                self.error("page_query is blank")
+                return
+
+            # dictionary of authentication types permitted in the upcoming eval
+            dict_auth = { 'HTTPBasicAuth': HTTPBasicAuth, 'HTTPDigestAuth': HTTPDigestAuth, 'HTTProxyAuth': HTTPProxyAuth}
+
+            # issue the query
+            logger.info(f"{self}: requesting: {self.provider.connector} -> {page_query}")
+            try:
+                if self.provider.credentials.startswith('HTTP'):
+                    # handle HTTPBasicAuth('user', 'pass') and other forms
+                    response = requests.get(page_query, auth=eval(self.provider.credentials, dict_auth))
+                else:
+                    response = requests.get(page_query)
+            except NewConnectionError as err:
+                self.error(f"requests.get reports {err} from: {self.provider.connector} -> {page_query}", NewConnectionError)
+                return
+            except ConnectionError as err:
+                self.error(f"requests.get reports {err} from: {self.provider.connector} -> {page_query}")
+                return
+            except requests.exceptions.InvalidURL as err:
+                self.error(f"requests.get reports {err} from: {self.provider.connector} -> {page_query}")
+                return
+            if response.status_code != HTTPStatus.OK:
+                self.error(f"request.get returned: {response.status_code} {response.reason} from: {self.provider.name} for: {page_query}")
+                return
+            # end if
+
+            # normalize the response
+            mapped_response = {}
+            json_data = response.json()
+            if len(json_data) == 0:
+                self.error("request.get succeeded, but no json data returned")
+                return
+            # extract results using mappings
+            for mapping in RESULT_MAPPING_KEYS:
+                if mapping == 'RESULT':
+                    # skip for now
+                    continue
+                if mapping in self.result_mappings:
+                    jxp_key = f"$.{self.result_mappings[mapping]}"
+                    try:
+                        jxp = parse(jxp_key)
+                        matches = [match.value for match in jxp.find(json_data)]
+                    except JsonPathParserError:
+                        self.error(f'JsonPathParser: {err} in provider.self.result_mappings: {self.provider.result_mappings}')
+                        return
+                    except (NameError, TypeError, ValueError) as err:
+                        self.error(f'{err.args}, {err} in provider.self.result_mappings: {self.provider.result_mappings}')
+                        return
+                    # end try        
+                    if len(matches) == 0:
+                        # no matches
+                        continue      
+                    if len(matches) == 1:
+                        mapped_response[mapping] = matches[0]
+                    else:
+                        self.error(f'{mapping} is matched {len(matches)} expected 1')
+                        return
+                # end if
+            # end for
+            # count results etc
+            found = retrieved = -1
+            if 'RETRIEVED' in mapped_response:        
+                retrieved = int(mapped_response['RETRIEVED'])
+                self.retrieved = retrieved
+            if 'FOUND' in mapped_response:
+                found = int(mapped_response['FOUND'])
+                self.found = found
+            if found == 0 or retrieved == 0:
+                # no results, not an error
+                self.messages.append(f"Retrieved 0 of 0 results from: {self.provider.name}")
+                self.retrieved = 0
+                self.status = 'READY'
+                return   
+            # process the results
+            if 'RESULTS' in mapped_response:
+                if not mapped_response['RESULTS']:
+                    mapped_response['RESULTS'] = json_data
+                if not type(mapped_response['RESULTS']) == list:
+                    # nlresearch single result
+                    if type(mapped_response['RESULTS']) == dict:
+                        logger.info(f"{self}: received dict, appending to list")
+                        tmp_list = []
+                        tmp_list.append(mapped_response['RESULTS'])
+                        mapped_response['RESULTS'] = tmp_list
+                    else:
+                        self.error(f"mapped results was type: {type(mapped_response['RESULTS'])}")
+                        return
+                # end if
+            else:
+                self.error(f'{self}: RESULTS missing from mapped_response')
+                return
+            # end if
+            response = []
+            if 'RESULT' in self.result_mappings:
+                for result in mapped_response['RESULTS']:                
+                    try:
+                        jxp_key = f"$.{self.result_mappings['RESULT']}"
+                        jxp = parse(jxp_key)
+                        matches = [match.value for match in jxp.find(result)]
+                    except JsonPathParserError:
+                        self.error(f'JsonPathParser: {err} in self.result_mappings: {self.provider.result_mappings}')
+                        return
+                    except (NameError, TypeError, ValueError) as err:
+                        self.error(f'{err.args}, {err} in self.result_mappings: {self.provider.result_mappings}')
+                        return
+                    # end try
+                    if len(matches) == 1:
+                        for match in matches:
+                            response.append(match)
+                    else:
+                        self.error(f'control mapping RESULT matched {len(matches)}, expected {self.provider.results_per_query}')
+                        return
+            else:
+                # no RESULT key specified
+                response = mapped_response['RESULTS']
+            # check retrieved 
+            if retrieved > -1 and retrieved != len(response):
+                self.warning(f"retrieved does not match length of response {len(response)}")
+            if retrieved == -1:       
+                retrieved = len(response)
+                self.retrieved = retrieved
+            if found == -1:
+                # for now, assume the source delivered what it found
+                found = len(response)
+                self.found = found
+            if found == 0 or retrieved == 0:
+                # no results, not an error
+                message = f"Retrieved 0 of 0 results from: {self.provider.name}"
+                # logger.info(f'{module_name}: {message}')
+                self.messages.append(message)
+                self.status = 'READY'
+                return
+                  
+            # check count
+            if retrieved < 10:
+                # no more pages, so don't request any
+                break
+            start = start + 10 # get only as many pages as required to satisfy provider results_per_query setting, in increments of 10
+
+            time.sleep(1)
+
+        # end for
+
+        self.found = found
+        self.retrieved = retrieved
+        self.response = response
+        # self.results is set in the normalize_results() method, usually called by the base class
+        
+        return
+

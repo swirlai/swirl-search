@@ -4,8 +4,8 @@
 @version:    SWIRL 1.x
 '''
 
-from .elastic import search
-from .requests_get import search
-from .sqlite3 import search
+from .Elastic import Elastic
+from .RequestsGet import RequestsGet
+from .Sqlite3 import Sqlite3
 
-# Add new SWIRL connectors here
+# Add new SWIRL connector here

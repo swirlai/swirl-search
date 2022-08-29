@@ -21,23 +21,28 @@ module_name = 'tasks.py'
 
 ##################################################
 # installed connectors
-# from .connectors import elastic, requests_get, opensearch
 
-from .connectors import *
+from swirl.connectors.RequestsGet import RequestsGet
+from swirl.connectors.Sqlite3 import Sqlite3
+from swirl.connectors.Elastic import Elastic
 
 ##################################################
 ##################################################
 
 @shared_task(name='federate', ignore_result=True)
 def federate_task(provider_id, provider_name, provider_connector, search_id):
-    # logger.info(f'{module_name}: federate_task: {provider_name}.{provider_connector}')  
-    return eval(provider_connector).search(provider_id, search_id)
+    logger.info(f'{module_name}: federate_task: {provider_name}.{provider_connector}')  
+    # eval(provider_connector).search(provider_id, search_id)
+    connector = eval(provider_connector)(provider_id, search_id)
+    # to do: add try/catch
+    connector.federate()
+    return 
 
 from .search import search
 
 @shared_task(name='search', ignore_result=True)
 def search_task(search_id):
-    # logger.info(f'{module_name}: search_task: {search_id}')  
+    logger.info(f'{module_name}: search_task: {search_id}')  
     return search(search_id)
 
 from .search import rescore

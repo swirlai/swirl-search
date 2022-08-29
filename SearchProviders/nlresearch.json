@@ -1,6 +1,6 @@
 {
     "name": "IT News (web/NLResearch.com)",
-    "connector": "requests_get",
+    "connector": "RequestsGet",
     "url": "https://nlresearch.com/results.php?datasource=BRECE&language=1&periodDate=-7&resultsPerPage=10&micpr=0&extended=1&output=json",
     "query_template": "{url}&login={login}&password={password}&textQuery={query_string}",
     "query_mappings": "startNumber=RESULT_INDEX=PAGE,sort=2=DATE_SORT,sort=1=RELEVANCY_SORT",

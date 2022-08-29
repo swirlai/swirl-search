@@ -1,6 +1,6 @@
 {    
     "name": "Curated Documents (local/sqlite3)",
-    "connector": "sqlite3",
+    "connector": "Sqlite3",
     "url": "/Users/sid/code/swirl_server/db.sqlite3",
     "query_template": "select {fields} from {table} where {field1} like '%%{query_string}%%' or {field2} like '%%{query_string}%%';",
     "query_mappings": "fields=*,sort_by_date=date,table=documents,field1=title,field2=body",

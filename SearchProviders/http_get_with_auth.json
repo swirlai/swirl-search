@@ -1,6 +1,6 @@
 {
     "name": "Simple HTTP/GET example with auth",
-    "connector": "requests_get",
+    "connector": "RequestsGet",
     "url": "http://your-url-here",
     "query_template": "{url}?q={query_string}",
     "query_mappings": "start=RESULT_INDEX=PAGE,sort=date=DATE_SORT",

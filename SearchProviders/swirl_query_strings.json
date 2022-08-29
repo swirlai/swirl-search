@@ -1,6 +1,6 @@
 {
     "name": "SWIRL Query String Search",
-    "connector": "sqlite3",
+    "connector": "Sqlite3",
     "url": "path/to/swirl_server/db.sqlite3",
     "query_template": "select %s from swirl_query where query_string like '%%%s%%'",
     "query_mappings": "*"

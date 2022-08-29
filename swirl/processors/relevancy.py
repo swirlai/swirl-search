@@ -151,37 +151,39 @@ def cosine_relevancy_processor(search_id):
                 ############################################
                 # boosting                
                 query_len = len(search.query_string_processed.strip().split())
-                term_match = 0
-                phrase_match = 0
-                all_terms = 0
-                for match in match_dict:
-                    terms_field = 0
-                    for hit in match_dict[match]:
-                        if '_' in hit:
-                            phrase_match = phrase_match + 1
-                        else:
-                            term_match = term_match + 1
-                            terms_field = terms_field + 1
-                    # boost if all terms match this field
-                    # to do: no all_terms_match for a single term query
-                    if terms_field == query_len and query_len > 1:
-                        all_terms = all_terms + 1
-                # take away credit for one field, one term hit
-                if term_match == 1:
+                if query_len > 1:
                     term_match = 0
-                    term_boost = 0.0
-                else:
-                    term_boost = round((float(term_match) * 0.1) / float(query_len), 2)
-                    if term_boost > 0:
-                        item['boosts'].append(f'term_match {term_boost}')
-                phrase_boost = round((float(phrase_match) * 0.2) / float(query_len), 2)
-                if phrase_boost > 0:
-                    item['boosts'].append(f'phrase_match {phrase_boost}')
-                all_terms_boost = round((float(all_terms) * 0.2), 2)
-                if all_terms_boost > 0:
-                    item['boosts'].append(f'all_terms {all_terms_boost}')
-                item['swirl_score'] = item['swirl_score'] + max([term_boost, phrase_boost, all_terms_boost])
-                item['swirl_score'] = round(item['swirl_score'], 2)
+                    phrase_match = 0
+                    all_terms = 0
+                    for match in match_dict:
+                        terms_field = 0
+                        for hit in match_dict[match]:
+                            if '_' in hit:
+                                phrase_match = phrase_match + 1
+                            else:
+                                term_match = term_match + 1
+                                terms_field = terms_field + 1
+                        # boost if all terms match this field
+                        # to do: no all_terms_match for a single term query
+                        if terms_field == query_len and query_len > 1:
+                            all_terms = all_terms + 1
+                    # take away credit for one field, one term hit
+                    if term_match == 1:
+                        term_match = 0
+                        term_boost = 0.0
+                    else:
+                        term_boost = round((float(term_match) * 0.1) / float(query_len), 2)
+                        if term_boost > 0:
+                            item['boosts'].append(f'term_match {term_boost}')
+                    phrase_boost = round((float(phrase_match) * 0.2) / float(query_len), 2)
+                    if phrase_boost > 0:
+                        item['boosts'].append(f'phrase_match {phrase_boost}')
+                    all_terms_boost = round((float(all_terms) * 0.2), 2)
+                    if all_terms_boost > 0:
+                        item['boosts'].append(f'all_terms {all_terms_boost}')
+                    item['swirl_score'] = item['swirl_score'] + max([term_boost, phrase_boost, all_terms_boost])
+                    item['swirl_score'] = round(item['swirl_score'], 2)
+                # end if
                 ###########################################
                 # check for overrun
                 if item['swirl_score'] > 1.0:

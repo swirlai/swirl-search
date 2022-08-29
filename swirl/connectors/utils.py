@@ -35,7 +35,7 @@ def save_result(search, provider, query_to_provider="", messages=[], found=0, re
 
 #############################################    
 
-def bind_query_mappings(query_template, query_mappings, url, credentials=None):
+def bind_query_mappings(query_template, query_mappings, url=None, credentials=None):
 
     # accepts: various parameters
     # returns: query template with all mappings (including URL and any credentials in key=value format) bound
@@ -66,7 +66,7 @@ def bind_query_mappings(query_template, query_mappings, url, credentials=None):
                 source_key = stripped_mapping[:stripped_mapping.rfind('=')]
                 swirl_key = stripped_mapping[stripped_mapping.rfind('=')+1:]
             else:
-                logger.warning(f"{module_name}: warning: mapping {stripped_mapping} is missing '='")
+                logger.warning(f"{module_name}: Warning: mapping {stripped_mapping} is missing '='")
                 continue
             # end if
             if swirl_key in QUERY_MAPPING_VARIABLES:
@@ -76,7 +76,7 @@ def bind_query_mappings(query_template, query_mappings, url, credentials=None):
             if template_key in bound_query_template:
                 bound_query_template = bound_query_template.replace(template_key, swirl_key)
                 continue
-            logger.warning(f"{module_name}: warning: mapping {source_key} not found in template, does it need braces {{}}?")
+            logger.warning(f"{module_name}: Warning: mapping {source_key} not found in template, does it need braces {{}}?")
         # end for
     # end if
 
@@ -84,7 +84,7 @@ def bind_query_mappings(query_template, query_mappings, url, credentials=None):
 
 #############################################    
 
-def get_mappings(mappings):
+def get_mappings_dict(mappings):
 
     # accepts: any provider mapping
     # returns: dict of the mappings by swirl_key
@@ -106,7 +106,7 @@ def get_mappings(mappings):
                 swirl_key = stripped_mapping
             # end if
             if swirl_key in dict_mappings:
-                logger.warning(f"{module_name}: warning: control mapping {swirl_key} found more than once, ignoring")
+                logger.warning(f"{module_name}: Warning: control mapping {swirl_key} found more than once, ignoring")
                 continue
             dict_mappings[swirl_key] = source_key
         # end for

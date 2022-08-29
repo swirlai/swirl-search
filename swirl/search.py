@@ -100,7 +100,7 @@ def search(id):
     # end if
     ########################################
     # asynchronously collect results
-    time.sleep(5)
+    time.sleep(3)
     ticks = 0
     error_flag = False
     at_least_one = False

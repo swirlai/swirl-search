@@ -29,6 +29,7 @@ def create_result_dictionary():
 import copy
 
 STOP_WORDS = ['and', 'not', 'or', 'a', 'an', 'the']
+IMPORTANT_CHARS = ['$', '%']
 
 def highlight(text, query_string):
 
@@ -45,15 +46,23 @@ def highlight(text, query_string):
             if ch.isalnum():
                 text3 = text3 + ch
             else:
-                text3 = text3 + ' '
+                if ch in IMPORTANT_CHARS:
+                    text3 = text3 + ch
+                else:
+                    text3 = text3 + ' '
             # end if
         # end for
         # get a list of the locations for this term
         hit_list = []
         if text3.lower().startswith(term.lower()):
             hit_list.append(0)
+        re_term = term
+        # escape characters that need to be regexable
+        for c in IMPORTANT_CHARS:
+            if c in re_term:
+                re_term = re_term.replace(c, '\\' + c)
         if len(text3.strip().split()) > 1:
-            hit_list = hit_list + [m.start() for m in re.finditer(' ' + term.lower() + ' ', text3.lower())]
+            hit_list = hit_list + [m.start() for m in re.finditer(' ' + re_term.lower() + ' ', text3.lower())]
             if text3.lower().endswith(term.lower()):
                 hit_list.append(len(text3) - len(term) - 1)
         # print(hit_list)

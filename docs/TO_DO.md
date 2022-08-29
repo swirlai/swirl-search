@@ -1,18 +1,24 @@
 # SWIRL SEARCH TO DO
 
+## Documentation
+- [ ] Document the STOP_WORD list in processors/util???
+
 ## Issues
+- [ ] Fix eval so only __builtins__ are supported, e.g. eval(foo, {}) 
+https://www.programiz.com/python-programming/methods/built-in/eval
 - [ ] Relevancy boost problem - stored - DEFER
 - [ ] If a search has date_sort, then set the result_mixer to date_sort? DEFER
 - [ ] Can't tell which elastic is being queried bc url isn't in query-to-provider DEFER
 - [ ] Highlighting and stemming DEFER
 - [ ] $1+billion, $1 is not highlighted DEFER
-- [ ] Northern light 0 result bug in Docker? CHECK
 
 # Refactors
-- [ ] Rewrite objects from procedural (duplicate code, very easy) to object model (override/extend methods, more complex)
+- [X] Rewrite connectors to object and refactor all existing ones
+- [ ] Rewrite processors to object and refactor all existing ones
+- [ ] Rewrite mixers to object and refactor all existing ones
 - [ ] Separate non-changing parts of searchproviders into connector configs?
 - [ ] Separate response mapping from result mapping
-- [ ] Make celery work or move to fully DB managed model?
+- [ ] Make celery work, move to fully DB managed model or replace celery with dramatiq.io
 
 ## New Features
 - [ ] Sort the Retrieved X of Y messages in descending

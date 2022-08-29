@@ -1,6 +1,6 @@
 {
     "name": "ENRON Email (local/elastic)",
-    "connector": "elastic",
+    "connector": "Elastic",
     "url": "hosts='http://localhost:9200/'",
     "query_template": "index='{index_name}', query={'query_string': {'query': '{query_string}', 'default_field': '{default_field}'}}",
     "query_mappings": "index_name=email,default_field=content,sort_by_date=date_published.keyword",

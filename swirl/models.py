@@ -15,9 +15,9 @@ class SearchProvider(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=200)
     CONNECTOR_CHOICES = [
-        ('requests_get', 'requests_get'),
-        ('elastic', 'elasticsearch queryString'),
-        ('sqlite3', 'sqlite3')
+        ('RequestsGet', 'RequestsGet'),
+        ('Elastic', 'Elasticsearch Query String'),
+        ('Sqlite3', 'Sqlite3')
     ]
     connector = models.CharField(max_length=200, default='requests_get', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=1024, default=str, blank=True)
