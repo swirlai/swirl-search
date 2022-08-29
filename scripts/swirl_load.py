@@ -19,11 +19,18 @@ from http import HTTPStatus
 
 module_name = 'swirl_load.py'
 
+class bcolors:
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+
 ##################################################
 
 def main(argv):
 
-    print("##S#W#I#R#L##1#.#1##############################################################")
+    print(f"{bcolors.BOLD}##S#W#I#R#L##1#.#2##############################################################{bcolors.ENDC}")
     # arguments
     parser = argparse.ArgumentParser(description="Bulk load SWIRL objects in json format")
     parser.add_argument('filespec', help="path to one or more json files to load, optionally including wildcards, example folder-name/*.txt")
