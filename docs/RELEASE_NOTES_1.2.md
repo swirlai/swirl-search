@@ -16,7 +16,7 @@ The Connectors have been renamed for clarity:
 
 The only change required to use these connectors is to change the "Connector" setting in the [SearchProvider](../SearchProviders/current.json). All of the included providers have been updated.
 
-For more information consult the [Developers Guide](TO DO)
+For more information consult the [Developers Guide, Connectors sections](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference#connectors)
 
 <br/>
 
@@ -33,7 +33,7 @@ The Mixers have been renamed for clarity:
 
 The only change required to use these connectors is to specify the name correctly in the Search object. 
 
-For more information consult the [Developers Guide](TO DO)
+For more information consult the [Developers Guide, Mixers section](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference#mixers)
 
 :small_blue_diamond: The new Mixers sort the Received messages for easy display:
 
