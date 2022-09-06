@@ -14,7 +14,7 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 
 | Version | Date | Branch | Notes | 
 | ------- | ---- | ------ | ----- |
-| SWIRL SEARCH 1.1 | 06-27-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.1.md) - recommended for ALL USERS |
+| SWIRL SEARCH 1.2 | 09-05-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.2.md) - recommended for ALL USERS |
 
 <br/>
 
@@ -49,6 +49,8 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 :small_blue_diamond: [Sample data sets](https://github.com/sidprobstein/swirl-search/tree/main/Data) for use with Sqlite3
 
 :small_blue_diamond: [Optional search/result expiration service](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide#search-expiration-service) to limit storage use
+
+:small_blue_diamond: Easily extensible [Connector](https://github.com/sidprobstein/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/sidprobstein/swirl-search/tree/main/swirl/mixers) objects
 
 <br/>
 
