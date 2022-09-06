@@ -26,6 +26,13 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['localhost']
 
+import socket
+
+try:
+    HOSTNAME = socket.gethostname()
+except:
+    HOSTNAME = 'localhost'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -107,7 +114,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
