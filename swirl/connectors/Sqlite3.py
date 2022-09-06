@@ -19,8 +19,8 @@ django.setup()
 # connectors
 
 ########################################
-import Sqlite3
-from Sqlite3 import Error
+import sqlite3
+from sqlite3 import Error
 
 from celery.utils.log import get_task_logger
 from logging import DEBUG
