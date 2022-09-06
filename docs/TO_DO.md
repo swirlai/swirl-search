@@ -12,10 +12,13 @@ https://www.programiz.com/python-programming/methods/built-in/eval
 - [ ] Highlighting and stemming DEFER
 - [ ] $1+billion, $1 is not highlighted DEFER
 
+## Test!!
+- [ ] the new settings.py HOSTNAME which is used in the Mxier base class
+
 # Refactors
 - [X] Rewrite connectors to object and refactor all existing ones
+- [X] Rewrite mixers to object and refactor all existing ones
 - [ ] Rewrite processors to object and refactor all existing ones
-- [ ] Rewrite mixers to object and refactor all existing ones
 - [ ] Separate non-changing parts of searchproviders into connector configs?
 - [ ] Separate response mapping from result mapping
 - [ ] Make celery work, move to fully DB managed model or replace celery with dramatiq.io

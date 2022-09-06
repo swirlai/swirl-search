@@ -16,6 +16,51 @@ The Connectors have been renamed for clarity:
 
 The only change required to use these connectors is to change the "Connector" setting in the [SearchProvider](../SearchProviders/current.json). All of the included providers have been updated.
 
+For more information consult the [Developers Guide](TO DO)
+
+<br/>
+
+:small_blue_diamond: New Object Oriented Mixers!
+
+The Mixers have been renamed for clarity:
+
+* RelevancyMixer
+* DateMixer
+* Stack1Mixer aka RoundRobinMixer
+* Stack2Mixer
+* Stack3Mixer
+* StackNMixer
+
+The only change required to use these connectors is to specify the name correctly in the Search object. 
+
+For more information consult the [Developers Guide](TO DO)
+
+:small_blue_diamond: The new Mixers sort the Received messages for easy display:
+
+```
+"messages": [
+        "##S#W#I#R#L##1#.#2##############################################################",
+        "Retrieved 10 of 4740000000 results from: Strategy Consulting (web/Google PSE)",
+        "Retrieved 10 of 249000 results from: Enterprise Search (web/Google PSE)",
+        "Retrieved 10 of 1332 results from: IT News (web/NLResearch.com)",
+        "Retrieved 10 of 382 results from: Mergers & Acquisitions (web/Google PSE)",
+        "Retrieved 8 of 8 results from: Company Funding Records (local/sqlite3)",
+        "Retrieved 6 of 6 results from: ENRON Email (local/elastic)",
+        "Retrieved 1 of 1 results from: techproducts (local/solr)",
+        "Post processing of results by cosine_relevancy_processor updated 55 results",
+        "DateMixer hid 31 results with date_published='unknown'",
+        "Results ordered by: DateMixer"
+    ]
+```
+
+Thanks to [natsort](https://pypi.org/project/natsort/), which is now required by SWIRL for this amazing capability! To install natsort:
+
+```
+pip install natsort
+```
+
+<br/>
+
 :small_blue_diamond: No longer boosting single term queries
 
 ![SWIRL Relvancy Ranked Results featuring SOLR, NLResearch.com](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/swirl_results_solr_nlresearch.png) 

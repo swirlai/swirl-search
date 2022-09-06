@@ -203,10 +203,10 @@ class ResultViewSet(viewsets.ModelViewSet):
                     try:
                         if otf_result_mixer:
                             # call the specifixed mixer on the fly otf
-                            results = eval(otf_result_mixer)(search.id, search.results_requested, page, explain)
+                            results = eval(otf_result_mixer)(search.id, search.results_requested, page, explain).mix()
                         else:
                             # call the mixer for this search provider
-                            results = eval(search.result_mixer)(search.id, search.results_requested, page, explain)
+                            results = eval(search.result_mixer)(search.id, search.results_requested, page, explain).mix()
                     except NameError as err:
                         message = f'Error: NameError: {err}'
                         logger.error(f'{module_name}: {message}')

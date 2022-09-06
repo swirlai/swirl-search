@@ -28,9 +28,9 @@
 
 ## Changes
 
-:small_blue_diamond: Revised [requests_get connector](../swirl/connectors/requests_get.py) now supports most any json response by configuration
+:small_blue_diamond: Revised [RequestsGet connector](../swirl/connectors/RequestsGet.py) now supports most any json response by configuration
 
-:small_blue_diamond: [Google PSE SearchProvider](../SearchProviders/google_pse.json) revised to use requests_get
+:small_blue_diamond: [Google PSE SearchProvider](../SearchProviders/google_pse.json) revised to use RequestsGet
 
 ```
 "query_mappings": "cx=some-google-pse-id,sort=date=DATE_SORT,start=RESULT_INDEX=PAGE",
@@ -39,7 +39,7 @@
 
 :small_blue_diamond: Former Google opensearch connector retired
 
-:small_blue_diamond: There are new [query mappings DATE_SORT, RELEVANCY_SORT and PAGE](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#query-mappings), and new [result mappings FOUND, RETRIEVED, RESULTS and RESULT](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#result-mappings) now available for the requests_get connetor
+:small_blue_diamond: There are new [query mappings DATE_SORT, RELEVANCY_SORT and PAGE](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#query-mappings), and new [result mappings FOUND, RETRIEVED, RESULTS and RESULT](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#result-mappings) now available for the RequestsGet connetor
 
 :small_blue_diamond: Updated [Round Robin and Stack mixers](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#mixers) now use relevancy as primary sort
 
@@ -54,7 +54,7 @@ Here's the [sample SearchProvider](../SearchProviders/solr_with_auth.json):
 ```
 {
     "name": "techproducts (local/solr)",
-    "connector": "requests_get",
+    "connector": "RequestsGet",
     "url": "http://localhost:8983/solr/{collection}/select?wt=json",
     "query_template": "{url}&q={query_string}",
     "query_mappings": "collection=techproducts,start=RESULT_ZERO_INDEX=PAGE",
@@ -72,7 +72,7 @@ Here's the [sample SearchProvider](../SearchProviders/nlresearch.json):
 ```
 {
     "name": "IT News (web/NLResearch.com)",
-    "connector": "requests_get",
+    "connector": "RequestsGet",
     "url": "https://nlresearch.com/results.php?datasource=BRECE&language=1&periodDate=-7&resultsPerPage=10&micpr=0&extended=1&output=json",
     "query_template": "{url}&login={login}&password={password}&textQuery={query_string}",
     "query_mappings": "startNumber=RESULT_INDEX=PAGE,sort=2=DATE_SORT",

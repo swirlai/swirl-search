@@ -14,7 +14,6 @@ environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 #############################################    
-#############################################    
 
 def create_mix_wrapper(result_sets):
 

@@ -10,7 +10,7 @@ from .utils import create_result_dictionary, highlight
 
 def swirl_result_matches_processor(json_data, provider, query_string):
 
-    # note: this processor accepts a sqlite3 json_array only and returns the expected list of dict_result sets
+    # note: this processor accepts a Sqlite3 json_array only and returns the expected list of dict_result sets
 
     list_results = []
     result_number = 1

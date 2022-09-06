@@ -81,7 +81,7 @@ def generic_result_processor(json_data, provider, query_string):
         # handle mappings 
 
         # provided in form source_key=swirl_key, ..., where source_key can be a json_string e.g. _source.customer_full_name
-        # to do: update this to match requests_get and use utils.py/get_mappings
+        # to do: update this to match RequestsGet and use utils.py/get_mappings
 
         if provider.result_mappings:
             mappings = provider.result_mappings.split(',')

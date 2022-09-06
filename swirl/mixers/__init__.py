@@ -4,8 +4,8 @@
 @version:    SWIRL 1.x
 '''
 
-from .stack import *
-from .relevancy import *
-from .date import *
+from .Relevancy import RelevancyMixer
+from .Date import DateMixer
+from .Stack import *
 
 # Add new SWIRL mixers here

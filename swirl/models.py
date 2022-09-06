@@ -19,7 +19,7 @@ class SearchProvider(models.Model):
         ('Elastic', 'Elasticsearch Query String'),
         ('Sqlite3', 'Sqlite3')
     ]
-    connector = models.CharField(max_length=200, default='requests_get', choices=CONNECTOR_CHOICES)
+    connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=1024, default=str, blank=True)
     query_template = models.CharField(max_length=200, default='{url}?q={query_string}')
     QUERY_PROCESSOR_CHOICES = [
@@ -71,14 +71,15 @@ class Search(models.Model):
     result_url = models.CharField(max_length=200, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)
     messages = models.JSONField(default=list, blank=True)
     MIXER_CHOICES = [
-        ('relevancy_mixer', 'relevancy_mixer'),
-        ('round_robin_mixer', 'round_robin_mixer'),
-        ('stack_mixer', 'stack_mixer'),
-        ('stack_2_mixer', 'stack_2_mixer'),
-        ('stack_3_mixer', 'stack_3_mixer'),
-        ('date_mixer', 'date_mixer')
+        ('RelevancyMixer', 'RelevancyMixer'),
+        ('RoundRobinMixer', 'RoundRobinMixer'),
+        ('Stack1Mixer', 'Stack1Mixer'),
+        ('Stack2Mixer', 'Stack2Mixer'),
+        ('Stack3Mixer', 'Stack3Mixer'),
+        ('StackNMixer', 'StackNMixer'),
+        ('DateMixer', 'DateMixer')
     ]
-    result_mixer = models.CharField(max_length=200, default='relevancy_mixer', choices=MIXER_CHOICES)
+    result_mixer = models.CharField(max_length=200, default='RelevancyMixer', choices=MIXER_CHOICES)
     RETENTION_CHOICES = [
         (0, 'Do not expire'),
         (1, 'Expire after 1 hour'),

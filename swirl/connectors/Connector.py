@@ -43,7 +43,6 @@ class Connector:
         self.provider = None
         self.search = None
         self.status = ""
-        self.messages = []
         self.query_to_provider = ""
         self.query_mappings = {}
         self.result_mappings = {}
@@ -52,6 +51,7 @@ class Connector:
         self.retrieved = -1
         self.results = []
         self.processed_results = []
+        self.messages = []
 
         # get the provider and query
         try:
@@ -88,6 +88,10 @@ class Connector:
 
     def federate(self):
 
+        '''
+        Executes the workflow for a given search and provider
+        ''' 
+
         logger.info(f'{self}: federate()')
 
         if self.status == 'READY':
@@ -119,6 +123,10 @@ class Connector:
 
     def process_query(self):
 
+        '''
+        Invoke the specified query_processor for this provider, store the processed query_string in query_string_processed
+        ''' 
+
         try:
             processed_query = eval(self.provider.query_processor)(self.search.query_string)
         except (NameError, TypeError, ValueError) as err:
@@ -134,6 +142,10 @@ class Connector:
 
     def construct_query(self):
 
+        '''
+        Turn the query_string_processed into the query_to_provider
+        ''' 
+
         self.query_to_provider = self.search.query_string_processed
         return
 
@@ -141,6 +153,10 @@ class Connector:
 
     def validate_query(self):
        
+        '''
+        Validate the query_to_provider, and return True or False
+        ''' 
+
         if self.query_to_provider == "":
             self.error("query_to_provider is blank or missing")
             return False
@@ -149,7 +165,11 @@ class Connector:
     ########################################
 
     def execute_search(self):
-        
+    
+        '''
+        Connect to, query and save the response from this provider 
+        ''' 
+
         self.found = 1
         self.retrieved = 1
         self.response = [ 
@@ -166,6 +186,10 @@ class Connector:
 
     def normalize_response(self):
         
+        '''
+        Transform the response from the provider into a json (list) and store as results
+        ''' 
+
         self.results = self.response
         return
 
@@ -173,6 +197,10 @@ class Connector:
     ########################################
 
     def process_results(self):
+
+        '''
+        Process the json results through the specified result processor for the provider, updating processed_results
+        ''' 
 
         if self.found > 0:
             # process results
@@ -190,6 +218,10 @@ class Connector:
     ########################################
 
     def save_results(self):
+
+        '''
+        Store the transformed results as a Result object in the database, linked to the search_id
+        ''' 
 
         try:
             new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, query_to_provider=self.query_to_provider, result_processor=self.provider.result_processor, messages=self.messages, found=self.found, retrieved=self.retrieved, json_results=self.processed_results)

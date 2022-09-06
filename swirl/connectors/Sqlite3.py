@@ -19,8 +19,8 @@ django.setup()
 # connectors
 
 ########################################
-import sqlite3
-from sqlite3 import Error
+import Sqlite3
+from Sqlite3 import Error
 
 from celery.utils.log import get_task_logger
 from logging import DEBUG
@@ -135,8 +135,8 @@ class Sqlite3(Connector):
 
         connection = None
         try:
-            connection = sqlite3.connect(db_path)
-            connection.row_factory = sqlite3.Row
+            connection = Sqlite3.connect(db_path)
+            connection.row_factory = Sqlite3.Row
         except Error as err:
             self.error(f"{err} connecting to Sqlite3: {db_path}")
             return
