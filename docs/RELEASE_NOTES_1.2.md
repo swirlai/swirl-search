@@ -4,36 +4,24 @@
 
 # SWIRL SEARCH 1.2
 
+This version incorporates tons of feedback around developer usability!
+​
 ## Changes
 
-:small_blue_diamond: New Object Oriented Connectors!
+:small_blue_diamond: New Object Oriented Connectors & Mixers
 
-The Connectors have been renamed for clarity:
+The Connectors: RequestsGet (SOLR etc), Elastic, Sqlite3
+The Mixers: RelevancyMixer, DateMixer, Stack1Mixer, Stack2Mixer, Stack3Mixer, StackNMixer
 
-* Elastic
-* RequestsGet
-* Sqlite3
+Here's the new DateMixer - everything but the imports - a 92% reduction in code from 1.1:
+
+![DateMixer code](./images/DateMixer.png)
 
 The only change required to use these connectors is to change the "Connector" setting in the [SearchProvider](../SearchProviders/current.json). All of the included providers have been updated.
 
-For more information consult the [Developers Guide, Connectors sections](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference#connectors)
+For more information consult the Developers Guide [Connectors](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference#connectors) and [Mixers](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference#mixers) sections
 
 <br/>
-
-:small_blue_diamond: New Object Oriented Mixers!
-
-The Mixers have been renamed for clarity:
-
-* RelevancyMixer
-* DateMixer
-* Stack1Mixer aka RoundRobinMixer
-* Stack2Mixer
-* Stack3Mixer
-* StackNMixer
-
-The only change required to use these connectors is to specify the name correctly in the Search object. 
-
-For more information consult the [Developers Guide, Mixers section](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference#mixers)
 
 :small_blue_diamond: The new Mixers sort the Received messages for easy display:
 
