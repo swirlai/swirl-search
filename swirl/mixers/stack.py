@@ -23,7 +23,7 @@ import logging as logger
 
 from operator import itemgetter
 
-from .Mixer import Mixer
+from .mixer import Mixer
 
 class StackNMixer(Mixer):
 

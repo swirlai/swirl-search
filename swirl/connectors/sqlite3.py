@@ -29,7 +29,7 @@ logger.setLevel(DEBUG)
 
 from .utils import save_result, bind_query_mappings
 
-from .Connector import Connector
+from .connector import Connector
 
 class Sqlite3(Connector):
 

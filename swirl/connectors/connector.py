@@ -27,6 +27,8 @@ logger = get_task_logger(__name__)
 
 from .utils import get_mappings_dict
 
+from swirl.processors import *
+
 ########################################
 
 class Connector:
@@ -207,7 +209,7 @@ class Connector:
             retrieved = len(self.results)
             self.messages.append(f"Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
             try:
-                processed_results = eval(self.provider.result_processor)(self.results, self.provider, self.search.query_string_processed)
+                processed_results = eval(self.provider.result_processor)(self.results, self.provider, self.search.query_string_processed).process()
             except (NameError, TypeError, ValueError) as err:
                 self.error(f'{err.args}, {err} in provider.result_processor(): {self.provider.result_processor}({self.results}, {self.provider}, {self.processed_query})', err)
                 return

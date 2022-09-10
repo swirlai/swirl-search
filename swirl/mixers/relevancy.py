@@ -24,7 +24,7 @@ from operator import itemgetter
 
 from django.urls import reverse
 
-from .Mixer import Mixer
+from .mixer import Mixer
 
 #############################################    
 

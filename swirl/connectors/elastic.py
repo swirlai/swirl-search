@@ -20,7 +20,7 @@ logger = get_task_logger(__name__)
 
 from .utils import save_result, bind_query_mappings
 
-from .Connector import Connector
+from .connector import Connector
 
 from elasticsearch import Elasticsearch
 import elasticsearch

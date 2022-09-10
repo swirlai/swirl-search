@@ -22,9 +22,9 @@ module_name = 'tasks.py'
 ##################################################
 # installed connectors
 
-from swirl.connectors.RequestsGet import RequestsGet
-from swirl.connectors.Sqlite3 import Sqlite3
-from swirl.connectors.Elastic import Elastic
+from swirl.connectors.requestsget import RequestsGet
+from swirl.connectors.sqlite3 import Sqlite3
+from swirl.connectors.elastic import Elastic
 
 ##################################################
 ##################################################

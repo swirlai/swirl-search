@@ -38,7 +38,7 @@ logger = get_task_logger(__name__)
 from .mappings import *
 from .utils import bind_query_mappings
 
-from .Connector import Connector
+from .connector import Connector
 
 class RequestsGet(Connector):
 

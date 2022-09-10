@@ -57,7 +57,6 @@ class Mixer:
             self.search = Search.objects.get(id=self.search_id)
         except ObjectDoesNotExist as err:
             self.error(f'Search does not exist: {search_id}')
-            self.status = "ERROR"
             return
 
         self.result_mixer = self.type
@@ -111,9 +110,11 @@ class Mixer:
 
     def error(self, message):
         logger.error(f'{self}: Error: {message}')
+        self.status = "ERROR"
 
     def warning(self, message):
         logger.warning(f'{self}: Warning: {message}')
+        self.status = "WARNING"
 
     ########################################
 
