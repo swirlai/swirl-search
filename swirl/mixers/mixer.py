@@ -20,7 +20,6 @@ environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from swirl.models import Search, Result, SearchProvider
-from swirl.processors import *
 
 from celery.utils.log import get_task_logger
 from logging import DEBUG
