@@ -3,8 +3,8 @@
 body {margin-top:20px; color:white; background-color:black;}
 
 a:link {color:white; text-decoration:none;}
-a:visited {color:#0284E9;}
-a:hover {color:#0284E9;}
+a:visited {color:silver;}
+a:hover {color:white;}
 a:active {color:yellow;}
 
 #li { margin: 0 0 0 20px; }

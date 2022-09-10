@@ -23,7 +23,6 @@ from .utils import save_result, bind_query_mappings
 from .connector import Connector
 
 from elasticsearch import Elasticsearch
-import elasticsearch
 
 class Elastic(Connector):
 
@@ -82,17 +81,17 @@ class Elastic(Connector):
         response = None
         try:
             response = eval(self.query_to_provider)
-        except elasticsearch.ConnectionError as err:
+        except Elasticsearch.ConnectionError as err:
             self.error(f"es.search reports: {err}")
-        except elasticsearch.NotFoundError:
+        except Elasticsearch.NotFoundError:
             self.error(f"es.search reports HTTP/404 (Not Found)")
-        except elasticsearch.RequestError:
+        except Elasticsearch.RequestError:
             self.error(f"es.search reports Bad Request")
-        except elasticsearch.AuthenticationException:
+        except Elasticsearch.AuthenticationException:
             self.error(f"es.search reports HTTP/401 (Forbidden)")
-        except elasticsearch.AuthorizationException:
+        except Elasticsearch.AuthorizationException:
             self.error(f"es.search reports HTTP/403 (Access Denied)")
-        except elasticsearch.ApiError as err:
+        except Elasticsearch.ApiError as err:
             self.error(f"es.search reports '{err}'")
 
         self.response = response

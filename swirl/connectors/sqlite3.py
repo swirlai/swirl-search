@@ -135,12 +135,12 @@ class Sqlite3(Connector):
 
         connection = None
         try:
-            connection = Sqlite3.connect(db_path)
-            connection.row_factory = Sqlite3.Row
+            connection = sqlite3.connect(db_path)
+            connection.row_factory = sqlite3.Row
         except Error as err:
-            self.error(f"{err} connecting to Sqlite3: {db_path}")
+            self.error(f"{err} connecting to sqlite3: {db_path}")
             return
-        logger.info(f"{self}: connected to Sqlite3: {db_path}")
+        logger.info(f"{self}: connected to sqlite3: {db_path}")
 
         # issue the count(*) query
         logger.debug(f"{self}: requesting: {self.provider.connector} -> {self.count_query}")
