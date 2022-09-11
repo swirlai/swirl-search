@@ -1,0 +1,16 @@
+requests
+django
+django_restframework
+django-celery-beat
+django-rest-swagger
+Celery
+pika
+elasticsearch
+jsonpath-ng
+pyyaml
+whitenoise
+daphne
+textblob
+spacy
+natsort
+django-environ
