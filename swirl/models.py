@@ -23,16 +23,17 @@ class SearchProvider(models.Model):
     url = models.CharField(max_length=1024, default=str, blank=True)
     query_template = models.CharField(max_length=200, default='{url}?q={query_string}')
     QUERY_PROCESSOR_CHOICES = [
-        ('generic_query_processor', 'generic_query_processor'),
-        ('spellcheck_query_processor', 'spellcheck_query_processor (TextBlob)')
+        ('GenericQueryProcessor', 'GenericQueryProcessor'),
+        ('GenericQueryCleaningProcessor', 'GenericQueryCleaningProcessor'),
+        ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]
-    query_processor = models.CharField(max_length=200, default='generic_query_processor', choices=QUERY_PROCESSOR_CHOICES)
+    query_processor = models.CharField(max_length=200, default='GenericQueryProcessor', choices=QUERY_PROCESSOR_CHOICES)
     query_mappings = models.CharField(max_length=200, default=str, blank=True)
     RESULT_PROCESSOR_CHOICES = [
-        ('generic_result_processor', 'generic_result_processor'),
-        ('swirl_result_matches_processor', 'swirl_result_matches_processor')
+        ('GenericResultProcessor', 'GenericResultProcessor'),
+        ('SwirlResultMatchesProcessor', 'SwirlResultMatchesProcessor')
     ]
-    result_processor = models.CharField(max_length=200, default='generic_result_processor', choices=RESULT_PROCESSOR_CHOICES)
+    result_processor = models.CharField(max_length=200, default='GenericResultProcessor', choices=RESULT_PROCESSOR_CHOICES)
     result_mappings = models.CharField(max_length=200, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
     credentials = models.CharField(max_length=200, default=str, blank=True)
@@ -58,16 +59,17 @@ class Search(models.Model):
     searchprovider_list = models.JSONField(default=list, blank=True)
     status = models.CharField(max_length=50, default='NEW_SEARCH')
     PRE_QUERY_PROCESSOR_CHOICES = [
-        ('generic_pre_query_processor', 'generic_pre_query_processor'),
-        ('spellcheck_query_processor', 'spellcheck_query_processor (TextBlob)')
+        ('GenericQueryProcessor', 'GenericQueryProcessor'),
+        ('GenericQueryCleaningProcessor', 'GenericQueryCleaningProcessor'),
+        ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]
     pre_query_processor = models.CharField(max_length=200, default=str, blank=True, choices=PRE_QUERY_PROCESSOR_CHOICES)
     POST_RESULT_PROCESSOR_CHOICES = [
-        ('generic_post_result_processor', 'generic_post_result_processor'),
-        ('generic_relevancy_processor', 'generic_relevancy_processor'),
-        ('cosine_relevancy_processor', 'cosine_relevancy_processor (spaCy)')
+        ('GenericPostResultProcessor', 'GenericPostResultProcessor'),
+        ('GenericRelevancyProcessor', 'GenericRelevancyProcessor'),
+        ('CosineRelevancyProcessor', 'CosineRelevancyProcessor (w/spaCy)')
     ]
-    post_result_processor = models.CharField(max_length=200, default='cosine_relevancy_processor', blank=True, choices=POST_RESULT_PROCESSOR_CHOICES)
+    post_result_processor = models.CharField(max_length=200, default='CosineRelevancyProcessor', blank=True, choices=POST_RESULT_PROCESSOR_CHOICES)
     result_url = models.CharField(max_length=200, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)
     messages = models.JSONField(default=list, blank=True)
     MIXER_CHOICES = [
@@ -81,7 +83,7 @@ class Search(models.Model):
     ]
     result_mixer = models.CharField(max_length=200, default='RelevancyMixer', choices=MIXER_CHOICES)
     RETENTION_CHOICES = [
-        (0, 'Do not expire'),
+        (0, 'Never expire'),
         (1, 'Expire after 1 hour'),
         (2, 'Expire after 1 day'),
         (3, 'Expire after 1 month')

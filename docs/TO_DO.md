@@ -18,13 +18,17 @@ https://www.programiz.com/python-programming/methods/built-in/eval
 # Refactors
 - [X] Rewrite connectors to object and refactor all existing ones
 - [X] Rewrite mixers to object and refactor all existing ones
-- [ ] Rewrite processors to object and refactor all existing ones
+- [-] Rewrite processors to object and refactor all existing ones - NEEDS TEST
+- [ ] Separate response mapping from result mapping *****
+- [ ] Add provider filter to base mixer class, e.g. &search_provider=1 filters to that
+
+# TBD
 - [ ] Separate non-changing parts of searchproviders into connector configs?
-- [ ] Separate response mapping from result mapping
 - [ ] Make celery work, move to fully DB managed model or replace celery with dramatiq.io
 
 ## New Features
-- [ ] Sort the Retrieved X of Y messages in descending
+- [ ] Add a SearchProviderList object? Just a list of IDs, and if you specify that in the searchprovider list, it works
+- [X] Sort the Retrieved X of Y messages in descending
 - [ ] Searches folder with example searches in json DEFER
 - [ ] Search UI P1
 - [ ] search?retry=id - P1 rerun only providers that failed etc
@@ -39,6 +43,10 @@ https://www.programiz.com/python-programming/methods/built-in/eval
 - [ ] add weight to search provider ****** 
 - [ ] allow weight specification for sources in query (***** with above)
 - [ ] use postgres etc instead of sqlite for swirl
+
+## BIG IDEAS
+- [ ] periodically, analyze the results from each provider, and build a dictionary with tf of all 1,2,3 gramsm e.g. the classifier, maybe use scikit, use this to determine which providers to query, over time
+- [ ] learn to rank sources from above
 
 ## Processors
 - [ ] Lookup query processor - scans for regex in query, replaces with value(s) from CSV or SQlite - P1

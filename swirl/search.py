@@ -61,7 +61,13 @@ def search(id):
         search.status = 'PRE_QUERY_PROCESSING'
         search.save()
         try:
-            search.query_string_processed = eval(search.pre_query_processor)(search.query_string)
+            pre_query_processor = eval(search.pre_query_processor)(search.query_string)
+            if pre_query_processor.validate():
+                search.query_string_processed = pre_query_processor.process()
+            else:
+                # to do: handle error
+                pass
+            # end if
         except NameError as err:
             message = f'Error: NameError: {err}'
             logger.error(f'{module_name}: {message}')
@@ -169,7 +175,22 @@ def search(id):
         last_status = search.status
         search.status = 'POST_RESULT_PROCESSING'
         search.save()
-        results_modified = eval(search.post_result_processor)(search.id)
+        try:
+            post_result_processor = eval(search.post_result_processor)(search.id)
+            if post_result_processor.validate():
+                results_modified = post_result_processor.process()
+            else:
+                # to do: handle error
+                pass
+            # end if
+        except NameError as err:
+            message = f'Error: NameError: {err}'
+            logger.error(f'{module_name}: {message}')
+            return False
+        except TypeError as err:
+            message = f'Error: TypeError: {err}'
+            logger.error(f'{module_name}: {message}')
+            return False
         message = f"Post processing of results by {search.post_result_processor} updated {results_modified} results"
         messages = search.messages
         messages.append(message)

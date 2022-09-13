@@ -60,7 +60,7 @@ class Connector:
             self.provider = SearchProvider.objects.get(id=self.provider_id)
             self.search = Search.objects.get(id=self.search_id)
         except ObjectDoesNotExist as err:
-            self.error(f'ObjectDoesNotExist: {err}', ObjectDoesNotExist)
+            self.error(f'ObjectDoesNotExist: {err}')
             return
 
         self.query_mappings = get_mappings_dict(self.provider.query_mappings)
@@ -130,9 +130,9 @@ class Connector:
         ''' 
 
         try:
-            processed_query = eval(self.provider.query_processor)(self.search.query_string)
+            processed_query = eval(self.provider.query_processor)(self.search.query_string).process()
         except (NameError, TypeError, ValueError) as err:
-            self.error(f'{err.args}, {err} in provider.query_processor(search.query_string_processed): {self.provider.query_processor}({self.search.query_string_processed})', err)
+            self.error(f'{err.args}, {err} in provider.query_processor(search.query_string_processed): {self.provider.query_processor}({self.search.query_string_processed})')
             return
         if processed_query != self.search.query_string_processed:
             self.search.query_string_processed = processed_query
@@ -209,9 +209,9 @@ class Connector:
             retrieved = len(self.results)
             self.messages.append(f"Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
             try:
-                processed_results = eval(self.provider.result_processor)(self.results, self.provider, self.search.query_string_processed)
+                processed_results = eval(self.provider.result_processor)(self.results, self.provider, self.search.query_string_processed).process()
             except (NameError, TypeError, ValueError) as err:
-                self.error(f'{err.args}, {err} in provider.result_processor(): {self.provider.result_processor}({self.results}, {self.provider}, {self.processed_query})', err)
+                self.error(f'{err.args}, {err} in provider.result_processor(): {self.provider.result_processor}({self.results}, {self.provider}, {self.processed_query})')
                 return
             self.processed_results = processed_results
         # end if
@@ -229,5 +229,5 @@ class Connector:
             new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, query_to_provider=self.query_to_provider, result_processor=self.provider.result_processor, messages=self.messages, found=self.found, retrieved=self.retrieved, json_results=self.processed_results)
             new_result.save()
         except Error as err:
-            self.error(f'save_result() failed: {err}', err)
+            self.error(f'save_result() failed: {err}')
         return
