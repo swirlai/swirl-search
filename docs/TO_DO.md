@@ -14,11 +14,12 @@ https://www.programiz.com/python-programming/methods/built-in/eval
 
 ## Test!!
 - [ ] the new settings.py HOSTNAME which is used in the Mxier base class
+- [ ] new relevancy - consider removing boosts? IDK - continue with reading
 
 # Refactors
 - [X] Rewrite connectors to object and refactor all existing ones
 - [X] Rewrite mixers to object and refactor all existing ones
-- [-] Rewrite processors to object and refactor all existing ones - NEEDS TEST
+- [X] Rewrite processors to object and refactor all existing ones
 - [ ] Separate response mapping from result mapping *****
 - [ ] Add provider filter to base mixer class, e.g. &search_provider=1 filters to that
 

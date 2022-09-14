@@ -97,28 +97,37 @@ def highlight(text, query_string):
 #############################################
 
 def clean_string_alphanumeric(dirty_string):
-
-    # to do: ensure we don't emit two blanks???
-
+    list_tag_chars = [ '<', '>' ]
     module_name = 'clean_string_alphanumeric'
-
     query_clean = ""
     last_ch = ""
+    start_tag = False
     try:
         for ch in dirty_string.strip():
+            if ch in list_tag_chars:
+                if start_tag:
+                    start_tag = False
+                else:
+                    start_tag = True
+                    continue
+            if start_tag:
+                continue
             if ch.isalnum():
                 query_clean = query_clean + ch
+                continue
             else:
-                if ch in [',', '.', '?', '!', "'", '"', '-']:
+                if ch in [',', '.', '?', '!', "'", '"', '-', '$', '#', ';', '&']:
                     query_clean = query_clean + ch
+                    continue
                 else:
                     if last_ch != ' ':
                         if ch == ' ':
                             query_clean = query_clean + ch
+                            continue
                 # end if
             # end if
+            # end if
             last_ch = ch
-            
     except NameError as err:
         return(f'{module_name}: Error: NameError: {err}')
     except TypeError as err:

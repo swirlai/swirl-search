@@ -4,7 +4,6 @@
 @version:    SWIRL 1.x
 '''
 
-from abc import update_abstractmethods
 import logging as logger
 
 #############################################    
@@ -18,22 +17,17 @@ from .processor import *
 #############################################    
 #############################################    
 
-from math import sqrt, isnan
+from math import isnan
  
-def squared_sum(x):
-    """ return 3 rounded square rooted value """
- 
-    return round(sqrt(sum([a*a for a in x])),3)
+# def squared_sum(x):
+#     return round(sqrt(sum([a*a for a in x])),3)
 
-#############################################    
+# #############################################    
 
-def cos_similarity(x,y):
-    """ return cosine similarity between two lists """
-    """ can return NaN (not a number) if one of the embeddings is a zero-array - caller must handle """
-
-    numerator = sum(a*b for a,b in zip(x,y))
-    denominator = squared_sum(x)*squared_sum(y)
-    return round(numerator/float(denominator),3)
+# def cos_similarity(x,y):
+#     numerator = sum(a*b for a,b in zip(x,y))
+#     denominator = squared_sum(x)*squared_sum(y)
+#     return round(numerator/float(denominator),3)
 
 #############################################    
 
@@ -48,7 +42,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
 
     def __init__(self, search_id):
 
-        self.nlp = spacy.load('en_core_web_md')
+        self.nlp = spacy.load('en_core_web_lg')
         super().__init__(search_id)
 
     ############################################
@@ -68,7 +62,8 @@ class CosineRelevancyProcessor(PostResultProcessor):
         }
         
         # prep query string
-        query_string_nlp = self.nlp(clean_string_alphanumeric(self.search.query_string_processed)).vector
+        query_string_nlp = self.nlp(self.search.query_string_processed)
+        self.warning(f'nlp: {query_string_nlp}')
 
         ############################################
         # main loop
@@ -117,15 +112,15 @@ class CosineRelevancyProcessor(PostResultProcessor):
                             if field in match_dict:
                                 # hit!!
                                 # dict_score[field + "_field"] = clean_string_alphanumeric(item[field])
-                                field_nlp = self.nlp(clean_string_alphanumeric(item_field)).vector
-                                if field_nlp.all() == 0 or query_string_nlp.all() == 0:
-                                    item['boosts'].append("BLANK_EMBEDDING")
-                                    dict_score[field] = 0.5
-                                else:
-                                    dict_score[field] = cos_similarity(query_string_nlp, field_nlp)
-                                    if isnan(dict_score[field]):
-                                        item['boosts'].append("COSINE_NAAN")
-                                        dict_score[field] = 0.5
+                                field_nlp = self.nlp(item_field)
+                                # if field_nlp.all() == 0 or query_string_nlp.all() == 0:
+                                #     item['boosts'].append("BLANK_EMBEDDING")
+                                #     dict_score[field] = 0.5
+                                # else:
+                                dict_score[field] = query_string_nlp.similarity(field_nlp)
+                                # if isnan(dict_score[field]):
+                                #     item['boosts'].append("COSINE_NAAN")
+                                #     dict_score[field] = 0.5
                                 # end if
                             # end if
                         # end if
