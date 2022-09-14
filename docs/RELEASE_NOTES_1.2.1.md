@@ -4,15 +4,7 @@
 
 # SWIRL SEARCH 1.2.1
 
-This version continues improving developer usability!
-​
-## New
-
-:small_blue_diamond: Docker support now available
-
-Please refer to the main article: [Container Setup](../CONTAINER-SETUP.md) for details.
-
-<br/>
+This version continues improving developer usability and resolves issues found in 1.2.
 
 ## Changes
 
@@ -53,15 +45,13 @@ For more information consult the Developers Guide [Processors](https://github.co
 
 <br/>
 
-:small_blue_diamond: Added use of django-environ to ease cloud and docker deployments.
+:small_blue_diamond: Added use of django-environ to ease future deployments.
 
 If you are installing locally, don't forget to install this package:
 
 ```
 pip install django-environ
 ```
-
-It's not needed if [using docker](../CONTAINER-SETUP.md). 
 
 <br/>
 
