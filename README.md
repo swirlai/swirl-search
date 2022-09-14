@@ -14,7 +14,7 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 
 | Version | Date | Branch | Notes | 
 | ------- | ---- | ------ | ----- |
-| [SWIRL SEARCH 1.2](https://github.com/sidprobstein/swirl-search/releases/tag/v1.2_final) | 09-08-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.2.md) - recommended for ALL USERS |
+| [SWIRL SEARCH 1.2.1](https://github.com/sidprobstein/swirl-search/releases/tag/v1.2.1) | 09-13-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.2.1.md) - recommended for ALL USERS |
 
 <br/>
 
