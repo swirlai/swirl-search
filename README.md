@@ -14,16 +14,16 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 
 | Version | Date | Branch | Notes | 
 | ------- | ---- | ------ | ----- |
-| [SWIRL SEARCH 1.2.1](https://github.com/sidprobstein/swirl-search/releases/tag/v1.2.1) | 09-13-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.2.1.md) - recommended for ALL USERS |
+| [SWIRL SEARCH 1.3](https://github.com/sidprobstein/swirl-search/releases/tag/v1.3) | 09-23-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.3.md) - recommended for ALL USERS |
 
 <br/>
 
 # Screen Shots
 
-![SWIRL Swagger](./docs/images/swirl_swagger_search.png)
+### Google PSE Search Providers
+![SWIRL SearchProviders](./docs/images/swirl_providers_focus.png)
 
-<br/>
-
+### Relevancy Ranked Results
 ![SWIRL Results](./docs/images/swirl_results_focus.png)
 
 <br/>

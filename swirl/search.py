@@ -5,7 +5,6 @@
 '''
 
 from django.core.exceptions import ObjectDoesNotExist
-import time 
 from datetime import datetime
 
 import logging as logger
@@ -13,6 +12,8 @@ import logging as logger
 from swirl.models import Search, SearchProvider, Result
 from swirl.tasks import federate_task
 from swirl.processors import *
+
+import time
 
 ##################################################
 ##################################################
@@ -22,7 +23,9 @@ from django.conf import settings
 module_name = 'search.py'
 
 def search(id):
-    
+
+    start_time = time.time()
+
     try:
         search = Search.objects.get(id=id)
     except ObjectDoesNotExist as err:
@@ -32,10 +35,8 @@ def search(id):
         logger.warning(f"{module_name}: search {search.id} has status {search.status}; set it to NEW_SEARCH to restart it")
         return False
     search.status = 'PRE_PROCESSING'
-    # search.date_updated = datetime.now()
     search.save()
-    # providers = SearchProvider.objects.all()   
-    # providers should always include only active SearchProviders 
+    # only active SearchProviders 
     providers = SearchProvider.objects.filter(active=True)
     if len(providers) == 0:
         logger.error(f"{module_name}: error: no SearchProviders configured")
@@ -65,8 +66,9 @@ def search(id):
             if pre_query_processor.validate():
                 search.query_string_processed = pre_query_processor.process()
             else:
-                # to do: handle error
-                pass
+                message = f'Error: pre_query_processor.validate() failed'
+                logger.error(f'{module_name}: {message}')
+                return False
             # end if
         except NameError as err:
             message = f'Error: NameError: {err}'
@@ -95,8 +97,8 @@ def search(id):
     for provider in providers:
         at_least_one = True
         federation_status[provider.id] = None
-        logger.debug(f"{module_name}: federate: {provider.id}, {provider.name}, {provider.connector}, {search.id}")
-        federation_result[provider.id] = federate_task.delay(provider.id, provider.name, provider.connector, search.id)
+        logger.debug(f"{module_name}: federate: {search}, {provider}")
+        federation_result[provider.id] = federate_task.delay(search.id, provider.id, provider.connector)
     # end for
     if not at_least_one:
         logger.warning(f"{module_name}: no active searchprovider specified: {search.searchprovider_list}")
@@ -106,7 +108,7 @@ def search(id):
     # end if
     ########################################
     # asynchronously collect results
-    time.sleep(3)
+    time.sleep(2)
     ticks = 0
     error_flag = False
     at_least_one = False
@@ -124,7 +126,7 @@ def search(id):
         search.status = f'FEDERATING_WAIT_{ticks}'
         search.save()    
         time.sleep(1)
-        if ticks > 10:
+        if (ticks + 2) > int(settings.SWIRL_TIMEOUT):
             logger.warning(f"{module_name}: timeout, search {search.id}")
             failed_providers = []
             responding_provider_names = []
@@ -137,9 +139,7 @@ def search(id):
                     error_flag = True
                     logger.warning(f"{module_name}: timeout waiting for: {failed_providers}")
                     message = f"{module_name}: No response from provider: {failed_providers}"
-                    messages = search.messages
-                    messages.append(message)
-                    search.messages = messages
+                    search.messages.append(message)
                     search.save()
                 # end if
             # end for
@@ -164,9 +164,7 @@ def search(id):
     # note the sort
     if search.sort.lower() == 'date':
         message = f"Requested sort_by_date from all providers"
-        messages = search.messages
-        messages.append(message)
-        search.messages = messages        
+        search.messages.append(message)
     search.save()
     logger.debug(f"{module_name}: landed data!")
     ########################################
@@ -180,8 +178,9 @@ def search(id):
             if post_result_processor.validate():
                 results_modified = post_result_processor.process()
             else:
-                # to do: handle error
-                pass
+                message = f'Error: post_result_processor.validate() failed'
+                logger.error(f'{module_name}: {message}')
+                return False
             # end if
         except NameError as err:
             message = f'Error: NameError: {err}'
@@ -192,15 +191,17 @@ def search(id):
             logger.error(f'{module_name}: {message}')
             return False
         message = f"Post processing of results by {search.post_result_processor} updated {results_modified} results"
-        messages = search.messages
-        messages.append(message)
-        search.messages = messages        
+        search.messages.append(message)    
         search.status = last_status
     if search.status == 'PARTIAL_RESULTS':
         search.status = 'PARTIAL_RESULTS_READY'
     if search.status == 'FULL_RESULTS':
         search.status = 'FULL_RESULTS_READY'
-    search.save()
+    end_time = time.time()
+    search.time = f"{(end_time - start_time):.1f}"
+    # message = f"Total search time: {search.time:.1f} (s)"
+    # search.messages.append(message)
+    search.save()    
     logger.debug(f"{module_name}: {search.id}, {search.status}")
 
     ########################################
@@ -231,10 +232,6 @@ def rescore(id):
     search.save()
     if search.post_result_processor:
         results_modified = eval(search.post_result_processor)(search.id)
-        # message = f"Post processing of results by {search.post_result_processor} updated {results_modified} results"
-        # messages = search.messages
-        # messages.append(message)
-        # search.messages = messages    
         logger.info(f"{module_name}: rescoring {search.id} by {search.post_result_processor} updated {results_modified} results")   
         search.status = last_status
         search.save()

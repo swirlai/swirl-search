@@ -1,7 +1,7 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.2
+@version:    SWIRL 1.3
 '''
 
 import django
@@ -35,13 +35,14 @@ class Mixer:
 
     ########################################
 
-    def __init__(self, search_id, results_requested, page, explain=True):
+    def __init__(self, search_id, results_requested, page, explain=False, provider=None):
 
         self.search_id = search_id
         self.results_requested = results_requested
         self.page = page
         self.results_needed = int(self.page) * int(self.results_requested)
         self.explain = explain
+        self.provider = provider
         self.results = None
         self.search = None
         self.mix_wrapper = {}
@@ -51,8 +52,19 @@ class Mixer:
         self.result_mixer = None
         self.status = "INIT"
 
+        self.warning(f"provider_list: {self.provider}")
+        
         try:
-            self.results = Result.objects.filter(search_id=search_id)
+            if self.provider:
+                if type(self.provider) == str:
+                    self.provider = int(self.provider)
+                if type(self.provider) == int:
+                    self.results = Result.objects.filter(search_id=search_id,provider_id=self.provider)
+                else:
+                    self.warning(f"Unknown provider_list: {self.provider}")
+                # end if
+            else:
+                self.results = Result.objects.filter(search_id=search_id)
             self.search = Search.objects.get(id=self.search_id)
         except ObjectDoesNotExist as err:
             self.error(f'Search does not exist: {search_id}')
@@ -61,7 +73,7 @@ class Mixer:
         self.result_mixer = self.type
 
         self.mix_wrapper = {}
-        self.mix_wrapper['messages'] = [ "##S#W#I#R#L##1#.#2##############################################################" ]
+        self.mix_wrapper['messages'] = [ settings.SWIRL_BANNER ]
         self.mix_wrapper['info'] = {}
         self.mix_wrapper['results'] = None
 
@@ -72,8 +84,10 @@ class Mixer:
             self.mix_wrapper['info'][result.searchprovider] = {}
             self.mix_wrapper['info'][result.searchprovider]['found'] = result.found
             self.mix_wrapper['info'][result.searchprovider]['retrieved'] = result.retrieved
+            self.mix_wrapper['info'][result.searchprovider]['filter_url'] = f'http://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search.id}&provider={result.provider_id}'
             self.mix_wrapper['info'][result.searchprovider]['query_to_provider'] = result.query_to_provider
             self.mix_wrapper['info'][result.searchprovider]['result_processor'] = result.result_processor
+            self.mix_wrapper['info'][result.searchprovider]['search_time'] = result.time
         result_messages = natsorted(result_messages, reverse=True)
         self.mix_wrapper['messages'] = self.mix_wrapper['messages'] + result_messages
         
@@ -97,6 +111,7 @@ class Mixer:
         self.mix_wrapper['info']['results']['retrieved_total'] = self.found
         # set the order in the dict
         self.mix_wrapper['info']['results']['retrieved'] = 0
+        self.mix_wrapper['info']['results']['federation_time'] = self.search.time
 
         self.status = 'READY'
 
@@ -167,10 +182,17 @@ class Mixer:
 
         # next page
         if self.found > int(self.results_needed):
-            self.mix_wrapper['info']['results']['next_page'] = f'http://localhost:8000/swirl/results/?search_id={self.search_id}&result_mixer={self.result_mixer}&page={int(self.page)+1}'
-
+            if self.result_mixer == self.search.result_mixer:
+                self.mix_wrapper['info']['results']['next_page'] = f'http://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&page={int(self.page)+1}'
+            else:
+                self.mix_wrapper['info']['results']['next_page'] = f'http://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&result_mixer={self.result_mixer}&page={int(self.page)+1}'
+            # end if
         if int(self.page) > 1:
-            self.mix_wrapper['info']['results']['prev_page'] = f'http://localhost:8000/swirl/results/?search_id={self.search_id}&result_mixer={self.result_mixer}&page={int(self.page)-1}'
+            if self.result_mixer == self.search.result_mixer:
+                self.mix_wrapper['info']['results']['prev_page'] = f'http://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&page={int(self.page)-1}'
+            else:
+                self.mix_wrapper['info']['results']['prev_page'] = f'http://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&result_mixer={self.result_mixer}&page={int(self.page)-1}'
+            # end if
 
         # last message 
         if len(self.mix_wrapper['results']) > 2:

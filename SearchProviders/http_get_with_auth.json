@@ -3,7 +3,7 @@
     "connector": "RequestsGet",
     "url": "http://your-url-here",
     "query_template": "{url}?q={query_string}",
-    "query_mappings": "start=RESULT_INDEX=PAGE,sort=date=DATE_SORT",
-    "result_mappings": "count=FOUND,items=RESULTS",
+    "query_mappings": "PAGE=start=RESULT_INDEX,DATE_SORT=sort=date",
+    "result_mappings": "FOUND=count,RESULTS=items",
     "credentials": "HTTPBasicAuth('your-username-here', 'your-password-here')"
 }

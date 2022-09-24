@@ -4,6 +4,6 @@
     "url": "cloud_id='Test1:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvJGM4M2MzMTUzODI5ZjQ3ZWY5ODA2YjUyZGNkMWNlNTZlJGY1M2YzZDE3NTllMDQwNWE4ODdiY2MwNGJkMDhkOWU2'",
     "query_template": "index=\"{index_name}\", query={\"query_string\": {\"query\": \"{query_string}\", \"default_field\": \"{default_field}\"}}",
     "query_mappings": "index_name=kibana_sample_data_ecommerce,default_field=customer_full_name",
-    "result_mappings": "_source.customer_full_name=title,_source.email=body,_source.manufacturer,_source.products,NO_PAYLOAD",
+    "result_mappings": "title=_source.customer_full_name,body=_source.email,_source.manufacturer,_source.products,NO_PAYLOAD",
     "credentials": "http_auth=(\"elastic\", \"your-password-here\")"
 }

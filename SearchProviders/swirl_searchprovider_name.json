@@ -1,7 +1,0 @@
-{
-    "name": "SWIRL SearchProvider Name Search",
-    "connector": "Sqlite3",
-    "url": "path/to/swirl_server/db.sqlite3",
-    "query_template": "select %s from swirl_searchprovider where name like '%%%s%%'",
-    "query_mappings": "*"    
-}

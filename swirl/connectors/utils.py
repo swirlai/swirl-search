@@ -62,9 +62,9 @@ def bind_query_mappings(query_template, query_mappings, url=None, credentials=No
         for mapping in mappings:
             stripped_mapping = mapping.strip()
             if '=' in stripped_mapping:
-                # take the right most, in case there are multiple which is permitted
-                source_key = stripped_mapping[:stripped_mapping.rfind('=')]
-                swirl_key = stripped_mapping[stripped_mapping.rfind('=')+1:]
+                # take the left most
+                swirl_key = stripped_mapping[:stripped_mapping.find('=')]
+                source_key = stripped_mapping[stripped_mapping.find('=')+1:]
             else:
                 logger.warning(f"{module_name}: Warning: mapping {stripped_mapping} is missing '='")
                 continue
@@ -72,11 +72,11 @@ def bind_query_mappings(query_template, query_mappings, url=None, credentials=No
             if swirl_key in QUERY_MAPPING_VARIABLES:
                 # ignore it
                 continue
-            template_key = '{' + source_key + '}'
+            template_key = '{' + swirl_key + '}'
             if template_key in bound_query_template:
-                bound_query_template = bound_query_template.replace(template_key, swirl_key)
+                bound_query_template = bound_query_template.replace(template_key, source_key)
                 continue
-            logger.warning(f"{module_name}: Warning: mapping {source_key} not found in template, does it need braces {{}}?")
+            logger.warning(f"{module_name}: Warning: mapping {template_key} not found in template, does it need braces {{}}?")
         # end for
     # end if
 
@@ -99,8 +99,8 @@ def get_mappings_dict(mappings):
         for mapping in mappings:
             stripped_mapping = mapping.strip()
             if '=' in stripped_mapping:
-                source_key = stripped_mapping[:stripped_mapping.rfind('=')]
-                swirl_key = stripped_mapping[stripped_mapping.rfind('=')+1:]
+                swirl_key = stripped_mapping[:stripped_mapping.find('=')]
+                source_key = stripped_mapping[stripped_mapping.find('=')+1:]
             else:
                 source_key = None
                 swirl_key = stripped_mapping

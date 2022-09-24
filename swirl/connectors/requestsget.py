@@ -164,20 +164,20 @@ class RequestsGet(Connector):
                 self.error("request.get succeeded, but no json data returned")
                 return
             # extract results using mappings
-            for mapping in RESULT_MAPPING_KEYS:
+            for mapping in RESPONSE_MAPPING_KEYS:
                 if mapping == 'RESULT':
                     # skip for now
                     continue
-                if mapping in self.result_mappings:
-                    jxp_key = f"$.{self.result_mappings[mapping]}"
+                if mapping in self.response_mappings:
+                    jxp_key = f"$.{self.response_mappings[mapping]}"
                     try:
                         jxp = parse(jxp_key)
                         matches = [match.value for match in jxp.find(json_data)]
                     except JsonPathParserError:
-                        self.error(f'JsonPathParser: {err} in provider.self.result_mappings: {self.provider.result_mappings}')
+                        self.error(f'JsonPathParser: {err} in provider.self.response_mappings: {self.provider.response_mappings}')
                         return
                     except (NameError, TypeError, ValueError) as err:
-                        self.error(f'{err.args}, {err} in provider.self.result_mappings: {self.provider.result_mappings}')
+                        self.error(f'{err.args}, {err} in provider.self.response_mappings: {self.provider.response_mappings}')
                         return
                     # end try        
                     if len(matches) == 0:
@@ -224,17 +224,17 @@ class RequestsGet(Connector):
                 return
             # end if
             response = []
-            if 'RESULT' in self.result_mappings:
+            if 'RESULT' in self.response_mappings:
                 for result in mapped_response['RESULTS']:                
                     try:
-                        jxp_key = f"$.{self.result_mappings['RESULT']}"
+                        jxp_key = f"$.{self.response_mappings['RESULT']}"
                         jxp = parse(jxp_key)
                         matches = [match.value for match in jxp.find(result)]
                     except JsonPathParserError:
-                        self.error(f'JsonPathParser: {err} in self.result_mappings: {self.provider.result_mappings}')
+                        self.error(f'JsonPathParser: {err} in self.response_mappings: {self.provider.response_mappings}')
                         return
                     except (NameError, TypeError, ValueError) as err:
-                        self.error(f'{err.args}, {err} in self.result_mappings: {self.provider.result_mappings}')
+                        self.error(f'{err.args}, {err} in self.response_mappings: {self.provider.response_mappings}')
                         return
                     # end try
                     if len(matches) == 1:

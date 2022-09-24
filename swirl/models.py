@@ -34,6 +34,7 @@ class SearchProvider(models.Model):
         ('SwirlResultMatchesProcessor', 'SwirlResultMatchesProcessor')
     ]
     result_processor = models.CharField(max_length=200, default='GenericResultProcessor', choices=RESULT_PROCESSOR_CHOICES)
+    response_mappings = models.CharField(max_length=200, default=str, blank=True)
     result_mappings = models.CharField(max_length=200, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
     credentials = models.CharField(max_length=200, default=str, blank=True)
@@ -58,6 +59,7 @@ class Search(models.Model):
     results_requested = models.IntegerField(default=10)
     searchprovider_list = models.JSONField(default=list, blank=True)
     status = models.CharField(max_length=50, default='NEW_SEARCH')
+    time = models.FloatField(default=0.0)
     PRE_QUERY_PROCESSOR_CHOICES = [
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('GenericQueryCleaningProcessor', 'GenericQueryCleaningProcessor'),
@@ -102,17 +104,19 @@ class Result(models.Model):
     id = models.BigAutoField(primary_key=True)
     date_created = models.DateTimeField(auto_now_add=True)
     search_id = models.ForeignKey(Search, on_delete=models.CASCADE) 
+    provider_id = models.IntegerField(default=0)
     searchprovider = models.CharField(max_length=50, default=str)
     query_to_provider = models.CharField(max_length=200, default=str)
     result_processor = models.CharField(max_length=200, default=str)
     messages = models.JSONField(default=list, blank=True)
     retrieved = models.IntegerField(default=0)
     found = models.IntegerField(default=0)
+    time = models.FloatField(default=0.0)
     json_results = models.JSONField(default=list)
 
     class Meta:
         ordering = ['-date_created']
 
     def __str__(self):
-        signature = str(self.id) + ':' + str(self.search) + ':' + str(self.searchprovider)
+        signature = str(self.id) + ':' + str(self.search_id) + ':' + str(self.searchprovider)
         return signature

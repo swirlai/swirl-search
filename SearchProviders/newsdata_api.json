@@ -4,7 +4,7 @@
         "connector": "RequestsGet",
         "url": "https://newsdata.io/api/1/news?language=en&apikey={apikey}",
         "query_template": "{url}&q={query_string}",
-        "result_mappings": "description=body,link=url,pubDate=date_published,creator=author,source_id,NO_PAYLOAD,totalResults=FOUND,results=RESULTS",
+        "result_mappings": "body=description=,url=link,date_published=pubDate,author=creator,source_id,NO_PAYLOAD,FOUND=totalResults,RESULTS=results",
         "credentials": "apikey=newsdata-api-key-here"
     },
     {
@@ -12,7 +12,7 @@
         "connector": "RequestsGet",
         "url": "https://newsdata.io/api/1/archive?language=en&apikey={apikey}",
         "query_template": "{url}&q={query_string}",
-        "result_mappings": "description=body,link=url,pubDate=date_published,creator=author,source_id,NO_PAYLOAD,totalResults=FOUND,results=RESULTS",
+        "result_mappings": "body=description=,url=link,date_published=pubDate,author=creator,source_id,NO_PAYLOAD,FOUND=totalResults,RESULTS=results",
         "credentials": "apikey=newsdata-api-key-here"
     
     }   

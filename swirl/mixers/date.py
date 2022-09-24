@@ -43,8 +43,6 @@ class DateMixer(Mixer):
             if result['date_published'] == 'unknown':
                 unknown = unknown + 1
                 continue
-            if not self.explain:
-                del result['explain']
             dated_results.append(result)
 
         self.mix_wrapper['messages'].append(f"DateMixer hid {unknown} results with date_published='unknown'")

@@ -98,7 +98,7 @@ Also, replace swirl-c-app-1 with your container ID if different.
 This should produce the following:
 
 ```
-##S#W#I#R#L##1#.#1##############################################################
+##S#W#I#R#L##1#.#3##############################################################
 swirl_load.py: fed 3 into SWIRL, 0 errors
 ```
 

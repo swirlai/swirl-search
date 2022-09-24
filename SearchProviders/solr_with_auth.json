@@ -3,7 +3,8 @@
     "connector": "RequestsGet",
     "url": "http://localhost:8983/solr/{collection}/select?wt=json",
     "query_template": "{url}&q={query_string}",
-    "query_mappings": "collection=techproducts,start=RESULT_ZERO_INDEX=PAGE",
-    "result_mappings": "name=title,response.numFound=FOUND,response.docs=RESULTS",
+    "query_mappings": "collection=techproducts,PAGE=start=RESULT_ZERO_INDEX",
+    "response_mappings": "FOUND=numFound,RESULTS=response.docs",
+    "result_mappings": "title=name,response",
     "credentials": "HTTPBasicAuth('solr-username','solr-password')"
 }

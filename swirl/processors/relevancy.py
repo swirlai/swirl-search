@@ -18,16 +18,6 @@ from .processor import *
 #############################################    
 
 from math import isnan
- 
-# def squared_sum(x):
-#     return round(sqrt(sum([a*a for a in x])),3)
-
-# #############################################    
-
-# def cos_similarity(x,y):
-#     numerator = sum(a*b for a,b in zip(x,y))
-#     denominator = squared_sum(x)*squared_sum(y)
-#     return round(numerator/float(denominator),3)
 
 #############################################    
 
@@ -42,7 +32,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
 
     def __init__(self, search_id):
 
-        self.nlp = spacy.load('en_core_web_lg')
+        self.nlp = spacy.load('en_core_web_md')
         super().__init__(search_id)
 
     ############################################

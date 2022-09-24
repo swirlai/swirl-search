@@ -15,6 +15,16 @@ import time
 import signal
 from datetime import datetime
 
+import django
+from sys import path
+from os import environ
+from swirl.utils import swirl_setdir
+path.append(swirl_setdir()) # path to settings.py file
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+django.setup()
+
+from django.conf import settings
+
 module_name = 'swirl.py'
 g_debug = False
 
@@ -441,7 +451,7 @@ def setup(service_list):
 
 def main(argv):
 
-    print(f"{bcolors.BOLD}##S#W#I#R#L##1#.#2##############################################################{bcolors.ENDC}")
+    print(f"{bcolors.BOLD}{settings.SWIRL_BANNER}{bcolors.ENDC}")
     print()
 
     parser = argparse.ArgumentParser(description="Manage the SWIRL server")

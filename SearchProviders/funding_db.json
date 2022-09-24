@@ -1,8 +1,8 @@
 {
-    "name": "Company Funding Records (local/Sqlite3)",
+    "name": "Company Funding Records (local/sqlite3)",
     "connector": "Sqlite3",
-    "url": "/Users/sid/code/swirl_server/db.sqlite3",
+    "url": "/Users/sid/code/swirl-search-master/db.sqlite3",
     "query_template": "select {fields} from {table} where {field1} like '%%{query_string}%%' or {field2} like '%%{query_string}%%';",
     "query_mappings": "fields=*,sort_by_date=fundedDate,table=funding,field1=city,field2=company",
-    "result_mappings": "'{company} series {round}'=title,'{city} {fundedDate}: {company} raised usd ${raisedAmt}\nThe company is headquartered in {city} and employs {numEmps}'=body,fundedDate=date_published,NO_PAYLOAD"
+    "result_mappings": "title='{company} series {round}',body='{city} {fundedDate}: {company} raised usd ${raisedAmt}\nThe company is headquartered in {city} and employs {numEmps}',date_published=fundedDate,NO_PAYLOAD"
 }

@@ -10,6 +10,8 @@ from datetime import datetime
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User, Group
 from django.http import Http404, HttpResponse
+from django.conf import settings
+
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework import viewsets, status
 from rest_framework import permissions
@@ -37,10 +39,10 @@ def index(request):
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#1##############################################################
-    API endpoint that allows management of SearchProviders. 
-    Use GET to list all objects, POST to create a new one. 
-    Add /<id>/ to DELETE, PUT or PATCH objects.
+    ##S#W#I#R#L##1#.#3##############################################################
+    API endpoint for managing SearchProviders. 
+    Use GET to list all, POST to create a new one. 
+    Add /<id>/ to DELETE, PUT or PATCH.
     """
     queryset = SearchProvider.objects.all()
     serializer_class = SearchProviderSerializer
@@ -52,12 +54,11 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
 
 class SearchViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#1##############################################################
-    API endpoint that allows management of Search objects. 
-    Use GET to list all objects, POST to create a new one. 
-    Add /<id>/ to DELETE, PUT or PATCH objects.
+    ##S#W#I#R#L##1#.#3##############################################################
+    API endpoint for managing Search objects. 
+    Use GET to list all, POST to create a new one. 
+    Add /<id>/ to DELETE, PUT or PATCH.
     """
-
     queryset = Search.objects.all()
     serializer_class = SearchSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -75,7 +76,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             new_search.status = 'NEW_SEARCH'
             new_search.save()
             search_task.delay(new_search.id)
-            time.sleep(6)
+            time.sleep(settings.SWIRL_Q_WAIT)
             return redirect(f'/swirl/results?search_id={new_search.id}')
         # end if
         ########################################
@@ -93,7 +94,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             rerun_search.status = 'NEW_SEARCH'
             rerun_search.save()
             search_task.delay(rerun_search.id)
-            time.sleep(6)
+            time.sleep(settings.SWIRL_RERUN_WAIT)
             return redirect(f'/swirl/results?search_id={rerun_search.id}')
         # end if        
         ########################################
@@ -104,7 +105,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         if rescore_id:
             # to do to do
             rescore_task.delay(rescore_id)
-            time.sleep(7)
+            time.sleep(settings.SWIRL_RESCORE_WAIT)
             return redirect(f'/swirl/results?search_id={rescore_id}')
         # end if
         self.queryset = Search.objects.all()
@@ -159,12 +160,14 @@ class SearchViewSet(viewsets.ModelViewSet):
 
 class ResultViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#1##############################################################
-    API endpoint that allows Results to be viewed or edited
-    Use GET to list all objects, POST to create a new one. 
-    Add /<id>/ to DELETE, PUT or PATCH objects.
+    ##S#W#I#R#L##1#.#3##############################################################
+    API endpoint for managing Result objects, including Mixed Results
+    Use GET to list all, POST to create a new one. 
+    Add /<id>/ to DELETE, PUT or PATCH.
     Add ?search_id=<search_id> to view mixed Results
-    Add ?result_mixer=<mixer_name> to specify a different mixer
+    Add ?result_mixer=<MixerName> to specify a different mixer
+    Add ?explain=[True|False] to show or hide the Relevancy explanation
+    Add ?provider=<provider_id> to filter results to once SearchProvider
     """
     queryset = Result.objects.all()
     serializer_class = ResultSerializer
@@ -187,13 +190,17 @@ class ResultViewSet(viewsets.ModelViewSet):
         if 'result_mixer' in request.GET.keys():
             otf_result_mixer = str(request.GET['result_mixer'])
         # end if        
-        explain = True
+        explain = False
         if 'explain' in request.GET.keys():
             explain = str(request.GET['explain'])
             if explain.lower() == 'false':
                 explain = False
-             # endif
+            elif explain.lower() == 'true':
+                explain = True
         # end if
+        provider = None
+        if 'provider' in request.GET.keys():
+            provider = int(request.GET['provider'])
         # end if
         if search_id:
             # check if the query has ready status
@@ -203,10 +210,10 @@ class ResultViewSet(viewsets.ModelViewSet):
                     try:
                         if otf_result_mixer:
                             # call the specifixed mixer on the fly otf
-                            results = eval(otf_result_mixer)(search.id, search.results_requested, page, explain).mix()
+                            results = eval(otf_result_mixer)(search.id, search.results_requested, page, explain, provider).mix()
                         else:
                             # call the mixer for this search provider
-                            results = eval(search.result_mixer)(search.id, search.results_requested, page, explain).mix()
+                            results = eval(search.result_mixer)(search.id, search.results_requested, page, explain, provider).mix()
                     except NameError as err:
                         message = f'Error: NameError: {err}'
                         logger.error(f'{module_name}: {message}')
@@ -254,7 +261,7 @@ class ResultViewSet(viewsets.ModelViewSet):
 
 class UserViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#1##############################################################
+    ##S#W#I#R#L##1#.#3##############################################################
     API endpoint that allows management of Users objects.
     Use GET to list all objects, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH objects.
@@ -269,7 +276,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class GroupViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#1##############################################################
+    ##S#W#I#R#L##1#.#3##############################################################
     API endpoint that allows management of Group objects.
     Use GET to list all objects, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH objects.

@@ -99,8 +99,8 @@ class GenericResultProcessor(ResultProcessor):
                     if '=' in stripped_mapping:
                         # no need to switch to rfind, since multiple = is not allowed
                         # source key may be a json path
-                        source_key = stripped_mapping[:stripped_mapping.find('=')]
-                        swirl_key = stripped_mapping[stripped_mapping.find('=')+1:]
+                        swirl_key = stripped_mapping[:stripped_mapping.find('=')]
+                        source_key = stripped_mapping[stripped_mapping.find('=')+1:]
                     else:
                         source_key = stripped_mapping
                     # control codez

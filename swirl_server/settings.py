@@ -29,13 +29,7 @@ SECRET_KEY = 'django-insecure-4*@!3sf)-t=jvww$27w#_gv9!18+8cj9(+e$#w8*#umln$jjf$
 DEBUG = False
 
 ALLOWED_HOSTS = ['localhost']
-
-import socket
-
-try:
-    HOSTNAME = socket.gethostname()
-except:
-    HOSTNAME = 'localhost'
+HOSTNAME = ALLOWED_HOSTS[0]
 
 # Application definition
 
@@ -185,3 +179,12 @@ CELERY_BEAT_SCHEDULE = {
          'schedule': crontab(minute=0,hour='*'),
         },          
 }
+
+# SWIRL
+
+SWIRL_BANNER = '##S#W#I#R#L##1#.#3##############################################################'
+SWIRL_TIMEOUT = 10
+
+SWIRL_Q_WAIT = 7
+SWIRL_RERUN_WAIT = 8
+SWIRL_RESCORE_WAIT = 3

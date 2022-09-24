@@ -1,7 +1,7 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.2
+@version:    SWIRL 1.3
 '''
 
 import django
@@ -47,6 +47,7 @@ class Connector:
         self.status = ""
         self.query_to_provider = ""
         self.query_mappings = {}
+        self.response_mappings = {}
         self.result_mappings = {}
         self.response = None
         self.found = -1
@@ -54,6 +55,7 @@ class Connector:
         self.results = []
         self.processed_results = []
         self.messages = []
+        self.start_time = None
 
         # get the provider and query
         try:
@@ -64,6 +66,7 @@ class Connector:
             return
 
         self.query_mappings = get_mappings_dict(self.provider.query_mappings)
+        self.response_mappings = get_mappings_dict(self.provider.response_mappings)
         self.result_mappings = get_mappings_dict(self.provider.result_mappings)
 
         self.status = 'READY'
@@ -95,6 +98,7 @@ class Connector:
         ''' 
 
         logger.info(f'{self}: federate()')
+        self.start_time = time.time()
 
         if self.status == 'READY':
             self.status = 'FEDERATING'
@@ -195,7 +199,6 @@ class Connector:
         self.results = self.response
         return
 
-
     ########################################
 
     def process_results(self):
@@ -225,8 +228,11 @@ class Connector:
         Store the transformed results as a Result object in the database, linked to the search_id
         ''' 
 
+        # timing
+        end_time = time.time()
+
         try:
-            new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, query_to_provider=self.query_to_provider, result_processor=self.provider.result_processor, messages=self.messages, found=self.found, retrieved=self.retrieved, json_results=self.processed_results)
+            new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id, query_to_provider=self.query_to_provider, result_processor=self.provider.result_processor, messages=self.messages, found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}', json_results=self.processed_results)
             new_result.save()
         except Error as err:
             self.error(f'save_result() failed: {err}')

@@ -13,12 +13,14 @@ path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
 django.setup()
 
+from django.conf import settings
+
 #############################################    
 
 def create_mix_wrapper(result_sets):
 
     mix_wrapper = {}
-    mix_wrapper['messages'] = [ "##S#W#I#R#L##1#.#1##############################################################" ]
+    mix_wrapper['messages'] = [ settings.SWIRL_BANNER ]
     mix_wrapper['info'] = {}
     for result_set in result_sets:
         for message in result_set.messages:

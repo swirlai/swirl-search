@@ -13,6 +13,16 @@ from os import environ
 import glob
 import json
 
+import django
+from sys import path
+from os import environ
+from swirl.utils import swirl_setdir
+path.append(swirl_setdir()) # path to settings.py file
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+django.setup()
+
+from django.conf import settings
+
 import requests
 from requests.auth import HTTPBasicAuth
 from http import HTTPStatus
@@ -30,7 +40,7 @@ class bcolors:
 
 def main(argv):
 
-    print(f"{bcolors.BOLD}##S#W#I#R#L##1#.#2##############################################################{bcolors.ENDC}")
+    print(f"{bcolors.BOLD}{settings.SWIRL_BANNER}{bcolors.ENDC}")
     # arguments
     parser = argparse.ArgumentParser(description="Bulk load SWIRL objects in json format")
     parser.add_argument('filespec', help="path to one or more json files to load, optionally including wildcards, example folder-name/*.txt")

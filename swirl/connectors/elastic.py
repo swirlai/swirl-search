@@ -1,7 +1,7 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.2
+@version:    SWIRL 1.3
 '''
 
 import django
@@ -40,15 +40,9 @@ class Elastic(Connector):
 
         sort_field = ""
         if 'sort_by_date' in self.query_mappings:
-            for field in self.query_mappings.split(','):
-                if field.lower().startswith('sort_by_date'):
-                    if '=' in field:
-                        sort_field = field[field.find('=')+1:]
-                    else:
-                        self.error(f"sort_by_date mapping is missing '='")
-                    # end if
-                # end if
-            # end for
+            sort_field = self.query_mappings['sort_by_date']
+        else:
+            self.error(f"sort_by_date mapping is missing '='")
         # end if
 
         elastic_query = ""
