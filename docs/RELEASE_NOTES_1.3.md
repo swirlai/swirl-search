@@ -48,9 +48,11 @@ The "federation_time" includes:
 
 <br/>
 
+:small_blue_diamond: Response mappings have been separated from result mappings, for clarity. 
+
 :small_blue_diamond: Mappings have been reversed for clarity, and are now in the form swirl_key = source_mapping
 
-All included SearchProviders have been updated. To migrate an existing SearchProvider, make the right-most key the left-most.
+All included SearchProviders have been updated with both changes. To migrate an existing SearchProvider, make the right-most key the left-most.
 
 For example, change:
 
