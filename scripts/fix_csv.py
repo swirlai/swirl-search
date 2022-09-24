@@ -10,23 +10,13 @@ import sys
 import os
 import csv
 
-import django
-from sys import path
-from os import environ
-from swirl.utils import swirl_setdir
-path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
-django.setup()
-
-from django.conf import settings
-
 module_name = 'fix_csv.py'
 
 ##################################################
 
 def main(argv):
 
-    print(settings.SWIRL_BANNER)
+    print('##S#W#I#R#L##1#.#3##############################################################')
     # arguments
     parser = argparse.ArgumentParser(description="Fix CSV file for loading into SQLite3")
     parser.add_argument('filespec', help="path to a csv file to fix")
