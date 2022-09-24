@@ -22,7 +22,8 @@ from math import isnan
 #############################################    
 
 from .utils import clean_string_alphanumeric
-import spacy
+
+from ..spacy import nlp
 
 class CosineRelevancyProcessor(PostResultProcessor):
 
@@ -30,10 +31,10 @@ class CosineRelevancyProcessor(PostResultProcessor):
 
     ############################################
 
-    def __init__(self, search_id):
+    # def __init__(self, search_id):
 
-        self.nlp = spacy.load('en_core_web_md')
-        super().__init__(search_id)
+    #     self.nlp = spacy.load('en_core_web_md')
+    #     super().__init__(search_id)
 
     ############################################
 
@@ -52,7 +53,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
         }
         
         # prep query string
-        query_string_nlp = self.nlp(self.search.query_string_processed)
+        query_string_nlp = nlp(self.search.query_string_processed)
         self.warning(f'nlp: {query_string_nlp}')
 
         ############################################
@@ -102,7 +103,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
                             if field in match_dict:
                                 # hit!!
                                 # dict_score[field + "_field"] = clean_string_alphanumeric(item[field])
-                                field_nlp = self.nlp(item_field)
+                                field_nlp = nlp(item_field)
                                 # if field_nlp.all() == 0 or query_string_nlp.all() == 0:
                                 #     item['boosts'].append("BLANK_EMBEDDING")
                                 #     dict_score[field] = 0.5
