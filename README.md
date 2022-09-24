@@ -1,4 +1,4 @@
-![SWIRL Logo](./docs/images/swirl_logo_1024.jpg)
+![SWIRL Logo](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/swirl_logo_1024.jpg)
 
 # SWIRL FEDERATED SEARCH ENGINE
 
@@ -21,63 +21,63 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 # Screen Shots
 
 ### Google PSE Search Providers
-![SWIRL SearchProviders](./docs/images/swirl_providers_focus.png)
+![SWIRL SearchProviders](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/swirl_providers_focus.png)
 
 ### Relevancy Ranked Results
-![SWIRL Results](./docs/images/swirl_results_focus.png)
+![SWIRL Results](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/swirl_results_focus.png)
 
 <br/>
 
 # Features
 
-:small_blue_diamond: [Pre-built searchprovider definitions](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for apache solr, elastic, Sqlite3, http/get/auth/json and NLResearch.com
+* [Pre-built searchprovider definitions](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for apache solr, elastic, Sqlite3, http/get/auth/json and NLResearch.com
 
-:small_blue_diamond: [Asynchronous search federation](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#architecture) via [REST APIs](http://localhost:8000/swirl/swagger-ui/)
+* [Asynchronous search federation](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#architecture) via [REST APIs](http://localhost:8000/swirl/swagger-ui/)
 
-:small_blue_diamond: Data landed in Sqlite3 for post-processing, later consumption
+* Data landed in Sqlite3 for post-processing, later consumption
 
-:small_blue_diamond: [Cosine similarity relevancy](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) using Spacy vectors with term, phrase and freshness boosts with full explanation
+* [Cosine similarity relevancy](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) using Spacy vectors with term, phrase and freshness boosts with full explanation
 
-:small_blue_diamond: [Result mixers](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#mixers) operate on landed results and order results by relevancy, date, stack or round-robin
+* [Result mixers](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#mixers) operate on landed results and order results by relevancy, date, stack or round-robin
 
-:small_blue_diamond: Sort results by provider date or relevancy
+* Sort results by provider date or relevancy
 
-:small_blue_diamond: Page through all results requested
+* Page through all results requested
 
-:small_blue_diamond: [Optional spell correction](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#spell-correction) using TextBlob
+* [Optional spell correction](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#spell-correction) using TextBlob
 
-:small_blue_diamond: [Sample data sets](https://github.com/sidprobstein/swirl-search/tree/main/Data) for use with Sqlite3
+* [Sample data sets](https://github.com/sidprobstein/swirl-search/tree/main/Data) for use with Sqlite3
 
-:small_blue_diamond: [Optional search/result expiration service](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide#search-expiration-service) to limit storage use
+* [Optional search/result expiration service](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide#search-expiration-service) to limit storage use
 
-:small_blue_diamond: Easily extensible [Connector](https://github.com/sidprobstein/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/sidprobstein/swirl-search/tree/main/swirl/mixers) objects
+* Easily extensible [Connector](https://github.com/sidprobstein/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/sidprobstein/swirl-search/tree/main/swirl/mixers) objects
 
 <br/>
 
 # Documentation
 
-:small_blue_diamond: [Home](https://github.com/sidprobstein/swirl-search/wiki)
-:small_blue_diamond: [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
-:small_blue_diamond: [User Guide](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide)
-:small_blue_diamond: [Developer Guide](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide)
-:small_blue_diamond: [Object Reference](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference)
-:small_blue_diamond: [Admin Guide](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide)
+* [Home](https://github.com/sidprobstein/swirl-search/wiki)
+* [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
+* [User Guide](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide)
+* [Developer Guide](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide)
+* [Object Reference](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference)
+* [Admin Guide](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide)
 
 <br/>
 
 # Contributing
 
-:small_blue_diamond: Review the [to-do list](docs/TO_DO.md)
+* Review the [to-do list](docs/TO_DO.md)
 
-:small_blue_diamond: Submit a [pull request](https://github.com/sidprobstein/swirl-search/pulls) with changes
+* Submit a [pull request](https://github.com/sidprobstein/swirl-search/pulls) with changes
 
 <br/>
 
 # Support
 
-:small_blue_diamond: [Create an Issue](https://github.com/sidprobstein/swirl-search/issues) if something doesn't work, isn't clear, or should be documented - we'd love to hear from you!
+* [Create an Issue](https://github.com/sidprobstein/swirl-search/issues) if something doesn't work, isn't clear, or should be documented - we'd love to hear from you!
 
-:small_blue_diamond: Paid support and consulting are available... [contact SWIRL](mailto:swirl@probstein.com) for more information.
+* Paid support and consulting are available... [contact SWIRL](mailto:swirl@probstein.com) for more information.
 
 <br/>
 

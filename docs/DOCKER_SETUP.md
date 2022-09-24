@@ -2,9 +2,11 @@
 
 <br/>
 
-# SWIRL SEARCH 1.1 DOCKER SETUP
+# DOCKER SETUP for SWIRL 1.3
 
-:warning: Warning: as of the current version of the containerization-wip branch, the SWIRL database is instantly and unrecoverably deleted if you shut down the container.
+:warning: Warning: when using docker the SWIRL database is instantly and irrevocably deleted upon container shutdown!
+
+Please [contact support](#support) for a docker image suitable for production deployment. 
 
 <br/>
 
@@ -15,28 +17,25 @@
 ## Clone the Repo Branch
 
 ```
-sid@AgentCooper code % git clone -b containerization-wip https://github.com/sidprobstein/swirl-search swirl-c
-Cloning into 'swirl-c'...
-remote: Enumerating objects: 417, done.
-remote: Counting objects: 100% (417/417), done.
-remote: Compressing objects: 100% (389/389), done.
-remote: Total 417 (delta 194), reused 246 (delta 27), pack-reused 0
-Receiving objects: 100% (417/417), 15.14 MiB | 7.21 MiB/s, done.
-Resolving deltas: 100% (194/194), done.
+git clone https://github.com/sidprobstein/swirl-search
 ```
 
-Feel free to replace swirl-c with your choice of folder name.
+Feel free to specify the name of a new folder, instead of using the default (swirl-search):
+
+```
+git clone https://github.com/sidprobstein/swirl-search my-folder
+```
 
 <br/>
 
 ## Setup Container
 
 ```
-cd swirl-c
+cd swirl-search
 docker build . -t swirl-search:latest
 ```
 
-If you cloned to a directory other than swirl-c, replace it above.
+If you cloned to a directory other than swirl-search, replace it above.
 
 This command should produce a long response starting with:
 
@@ -44,6 +43,8 @@ This command should produce a long response starting with:
 [+] Building 132.2s (21/21) FINISHED
 ...etc...
 ```
+
+If you see any error messages, please [contact support](#support) for assistance.
 
 <br/>
 
@@ -59,7 +60,7 @@ Docker should respond with the following, or similar:
 [+] Running 2/2
 Network swirl-c_default Created 0.0s
 Container swirl-c-app-1 Created 0.0s
-Attaching to swirl-c-app-1
+Attaching to swirl-search-app-1
 ```
 
 ### Note down the container ID attached, as it will be needed later!
@@ -75,10 +76,10 @@ Moments later, Docker desktop will reflect the running container:
 ## Create Super User Account
 
 ```
-docker exec -it swirl-c-app-1 python manage.py createsuperuser --email admin@example.com --username admin
+docker exec -it swirl-search-app-1 python manage.py createsuperuser --email admin@example.com --username admin
 ```
 
-Again, replace swirl-c-app-1 with your container ID if different. 
+Again, replace swirl-search-app-1 with your container ID if different. 
 
 Enter a new password, twice. If django complains that the password is too simple, type "Y" to use it anyway. 
 
@@ -89,11 +90,11 @@ Enter a new password, twice. If django complains that the password is too simple
 ## Load Google PSE SearchProviders
 
 ```
-docker exec -it swirl-c-app-1 python scripts/swirl_load.py SearchProviders/google_pse.json -u admin -p super-user-password
+docker exec -it swirl-search-app-1 python scripts/swirl_load.py SearchProviders/google_pse.json -u admin -p super-user-password
 ```
 
 Replace super-user-password with the password you created in the previous step. 
-Also, replace swirl-c-app-1 with your container ID if different. 
+Also, replace swirl-search-app-1 with your container ID if different. 
 
 This should produce the following:
 
@@ -110,28 +111,6 @@ This should bring up the following, or similar:
 
 ![SWIRL Search Provider List, Google PSE](/docs/images/pse/swirl_spl_list.png)
 
-<br/>
-
-:key: Important note: you cannot use localhost when configuring endpoints using SWIRL Docker!!
-
-For example if you have solr running on localhost:8983, SWIRL will be unable to contact it
-from inside the docker container. 
-
-On OS/X go to the shell and type hostname to get this, e.g.
-
-```
-sid@AgentCooper solr-8.11.1 % hostname
-AgentCooper.local
-```
-
-In the SearchProvider, replace localhost with the hostname, and it will work:
-
-```
-"url": "http://AgentCooper.local:8983/solr/{collection}/select?wt=json",
-```
-
-<br/>
-
 ## Run a Query!
 
 ### [http://localhost:8000/swirl/search/?q=search+engine](http://localhost:8000/swirl/search/?q=search+engine)
@@ -144,9 +123,32 @@ After 5-7 seconds, this should bring up a unified, relevancy ranked result list:
 
 ### Congratulations, SWIRL docker is installed!
 
+## Notes
+
+:warning: Warning: when using docker the SWIRL database is instantly and irrevocably deleted upon container shutdown!
+
+Please [contact support](#support) for a docker image suitable for production deployment. 
+
 <br/>
 
-:warning: Warning: as of the current version of the containerization-wip branch, the SWIRL database is instantly and unrecoverably deleted if you shut down the container.
+:info: Important: SWIRL in Docker cannot use localhost to connect to local endpoints!
+
+For example: if you have solr running on localhost:8983, SWIRL will be unable to contact it from inside the docker container using that URL.
+
+To configure such a source, get the hostname. On OS/X:
+
+```
+% hostname
+AgentCooper.local
+```
+
+In the SearchProvider, replace localhost with the hostname:
+
+```
+"url": "http://AgentCooper.local:8983/solr/{collection}/select?wt=json",
+```
+
+<br/>
 
 ## Documentation
 
