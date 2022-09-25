@@ -101,11 +101,7 @@ To view the explain for any mixed result set, add explain=True to the mixer URL.
 
 This is because of browser prefetch. [Turn off Chrome prefetch](https://www.technipages.com/google-chrome-prefetch). [Turn off Safari prefetch](https://stackoverflow.com/questions/29214246/how-to-turn-off-safaris-prefetch-feature)
 
-Please [report any issues](https://github.com/sidprobstein/swirl-search/issues/) with this or the [rerun function](USER_GUIDE.md#re-starting-re-running--re-trying-a-search).
-
-<br/>
-
-:small_blue_diamond: The [Django admin form for managing Result objects](http://localhost:8000/admin/swirl/result/) throws a 500 error. P2.
+Please [report any issues](https://github.com/sidprobstein/swirl-search/issues/) with this to [support](#support).
 
 <br/>
 

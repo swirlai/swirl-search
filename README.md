@@ -15,7 +15,7 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 | Version | Date | Branch | Notes | 
 | ------- | ---- | ------ | ----- |
 | [SWIRL SEARCH 1.3](https://github.com/sidprobstein/swirl-search/releases/tag/v1.3) | 09-23-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.3.md) - recommended for ALL USERS |
-| [DOCKER CONTAINER](https://hub.docker.com/r/sidprobstein/swirl-search) | 09-24-2022 | Main | For demo/trial only; does not persist data! | 
+| [Docker Image](https://hub.docker.com/r/sidprobstein/swirl-search) | 09-24-2022 | Main | Latest version, for demo/trial only; does not persist data! [Setup Guide](docs/DOCKER_SETUP.md) | 
 
 <br/>
 
@@ -39,7 +39,7 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 
 * [Cosine similarity relevancy](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) using Spacy vectors with term, phrase and freshness boosts with full explanation
 
-* [Result mixers](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#mixers) operate on landed results and order results by relevancy, date, stack or round-robin
+* [Result mixers](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#result-mixers) operate on landed results and order results by relevancy, date, stack or round-robin
 
 * Sort results by provider date or relevancy
 
@@ -68,7 +68,7 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 
 # Contributing
 
-* Review the [to-do list](docs/TO_DO.md)
+* Review the [help wanted list](docs/help_wanted.md)
 
 * Submit a [pull request](https://github.com/sidprobstein/swirl-search/pulls) with changes
 

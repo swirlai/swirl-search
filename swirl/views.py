@@ -58,6 +58,9 @@ class SearchViewSet(viewsets.ModelViewSet):
     API endpoint for managing Search objects. 
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH.
+    Add ?q=<query_string> to the URL to create a Search with default settings
+    Add ?rerun=<query_id> to fully re-execute a query, discarding previous results
+    Add ?rescore=<query_id> to re-run post-result processing, updating relevancy scores
     """
     queryset = Search.objects.all()
     serializer_class = SearchSerializer
@@ -164,10 +167,10 @@ class ResultViewSet(viewsets.ModelViewSet):
     API endpoint for managing Result objects, including Mixed Results
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH.
-    Add ?search_id=<search_id> to view mixed Results
-    Add ?result_mixer=<MixerName> to specify a different mixer
-    Add ?explain=[True|False] to show or hide the Relevancy explanation
-    Add ?provider=<provider_id> to filter results to once SearchProvider
+    Add ?search_id=<search_id> to the base URL to view mixed results with the default mixer
+    Add &result_mixer=<MixerName> to the above URL specify the result mixer to use
+    Add &explain=True to display the relevancy explanation for each result
+    Add &provider=<provider_id> to filter results to one SearchProvider
     """
     queryset = Result.objects.all()
     serializer_class = ResultSerializer
