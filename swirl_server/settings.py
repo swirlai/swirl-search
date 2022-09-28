@@ -130,10 +130,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
+if DEBUG:
+    STATIC_URL = 'static/'
+else:
+    STATIC_URL = '/'
+
 MEDIA_ROOT = 'uploads/'
 MEDIA_URL = 'uploads/'
 
-STATIC_URL = '/'
 
 import os
 
