@@ -119,7 +119,7 @@ def launch(name, path):
         return -1
     try:
         process = subprocess.Popen(path_list, stdout=f, stderr=subprocess.STDOUT)
-    except SubprocessError as err:
+    except Exception as err: # Broad exception okay here.
         print(f"Error: {err} creating process: {' '.join(path_list)}")
         return -1
 
@@ -164,7 +164,7 @@ def start(service_list):
                 dict_pid[service_name] = result
                 pids = pids + str(result) + ','
             else:
-                print(f"Error: {result.returncode}, check logs for output")
+                print(f"Error: {result}, check logs for output")
                 flag = True
             # end if
         else:
