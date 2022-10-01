@@ -15,7 +15,7 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 | Version | Date | Branch | Notes | 
 | ------- | ---- | ------ | ----- |
 | [SWIRL SEARCH 1.3](https://github.com/sidprobstein/swirl-search/releases/tag/v1.3) | 09-23-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.3.md) - recommended for ALL USERS |
-| [Docker Image](https://hub.docker.com/r/sidprobstein/swirl-search) | 09-24-2022 | Main | Latest version, for demo/trial only; does not persist data! [Setup Guide](docs/DOCKER_SETUP.md) | 
+| [Docker Image](https://hub.docker.com/r/sidprobstein/swirl-search) | * | Main | Latest version, for trial only; *does* *not* *persist* *data* *when* *shut* *down*! [Setup Guide](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start#docker) | 
 
 <br/>
 

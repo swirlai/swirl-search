@@ -2,7 +2,7 @@
 
 <br/>
 
-# DOCKER SETUP for SWIRL 1.3
+# DOCKER BUILD for SWIRL
 
 :warning: Warning: when using docker the SWIRL database is instantly and irrevocably deleted upon container shutdown!
 
