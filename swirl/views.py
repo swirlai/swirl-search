@@ -48,6 +48,8 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
     serializer_class = SearchProviderSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+    # TO DO: figure out if we keep this or not P1
+    pagination_class = None 
 
 ########################################
 ########################################
@@ -193,7 +195,7 @@ class ResultViewSet(viewsets.ModelViewSet):
         if 'result_mixer' in request.GET.keys():
             otf_result_mixer = str(request.GET['result_mixer'])
         # end if        
-        explain = False
+        explain = settings.SWIRL_EXPLAIN
         if 'explain' in request.GET.keys():
             explain = str(request.GET['explain'])
             if explain.lower() == 'false':

@@ -71,10 +71,6 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         if field in item:
                             last_term = ""
                             ############################################
-                            # highlight 
-                            if not self.search.status == 'RESCORING':
-                                item[field] = highlight(item[field], self.search.query_string_processed)
-                            ############################################
                             # summarize matches
                             try:
                                 for term in self.search.query_string_processed.strip().split():
@@ -91,30 +87,25 @@ class CosineRelevancyProcessor(PostResultProcessor):
                                     # check for bi-gram match
                                     if last_term:
                                         if not term.lower() == last_term.lower():
-                                            if f'*{last_term.lower()}* *{term.lower()}*' in item_field.lower():
+                                            if f'{last_term.lower()} {term.lower()}' in item_field.lower():
                                                 if f"{last_term}_{term}" not in match_dict[field]:
                                                     match_dict[field].append(f"{last_term}_{term}")
                                     last_term = term
                                 # end for
                             except AttributeError:
                                 self.error(f"AttributeError: term: {term}, item: {item[field]}")
-                        ############################################
+                            ############################################
                             # cosine similarity between query and matching field store in dict_score
                             if field in match_dict:
                                 # hit!!
-                                # dict_score[field + "_field"] = clean_string_alphanumeric(item[field])
                                 field_nlp = nlp(item_field)
-                                # if field_nlp.all() == 0 or query_string_nlp.all() == 0:
-                                #     item['boosts'].append("BLANK_EMBEDDING")
-                                #     dict_score[field] = 0.5
-                                # else:
                                 dict_score[field] = query_string_nlp.similarity(field_nlp)
-                                # if isnan(dict_score[field]):
-                                #     item['boosts'].append("COSINE_NAAN")
-                                #     dict_score[field] = 0.5
-                                # end if
                             # end if
-                        # end if
+                            ############################################
+                            # highlight 
+                            if not self.search.status == 'RESCORING':
+                                item[field] = highlight(item[field], self.search.query_string_processed)
+                       # end if
                     # end for 
                     ############################################
                     # weight field similarity

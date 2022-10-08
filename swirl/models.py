@@ -11,33 +11,36 @@ from django.db import models
 class SearchProvider(models.Model):
     id = models.BigAutoField(primary_key=True)
     active = models.BooleanField(default=True)
+    default = models.BooleanField(default=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=200)
     CONNECTOR_CHOICES = [
         ('RequestsGet', 'RequestsGet'),
         ('Elastic', 'Elasticsearch Query String'),
+        ('PostGresql', 'PostGresql'),
         ('Sqlite3', 'Sqlite3')
     ]
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
-    url = models.CharField(max_length=1024, default=str, blank=True)
-    query_template = models.CharField(max_length=200, default='{url}?q={query_string}')
+    url = models.CharField(max_length=2048, default=str, blank=True)
+    query_template = models.CharField(max_length=2048, default='{url}?q={query_string}')
     QUERY_PROCESSOR_CHOICES = [
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('GenericQueryCleaningProcessor', 'GenericQueryCleaningProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]
     query_processor = models.CharField(max_length=200, default='GenericQueryProcessor', choices=QUERY_PROCESSOR_CHOICES)
-    query_mappings = models.CharField(max_length=200, default=str, blank=True)
+    query_mappings = models.CharField(max_length=2048, default=str, blank=True)
     RESULT_PROCESSOR_CHOICES = [
         ('GenericResultProcessor', 'GenericResultProcessor'),
         ('SwirlResultMatchesProcessor', 'SwirlResultMatchesProcessor')
     ]
     result_processor = models.CharField(max_length=200, default='GenericResultProcessor', choices=RESULT_PROCESSOR_CHOICES)
-    response_mappings = models.CharField(max_length=200, default=str, blank=True)
-    result_mappings = models.CharField(max_length=200, default=str, blank=True)
+    response_mappings = models.CharField(max_length=2048, default=str, blank=True)
+    result_mappings = models.CharField(max_length=2048, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
-    credentials = models.CharField(max_length=200, default=str, blank=True)
+    credentials = models.CharField(max_length=512, default=str, blank=True)
+    tags = models.JSONField(default=list)
 
     class Meta:
         ordering = ['id']
@@ -91,6 +94,7 @@ class Search(models.Model):
         (3, 'Expire after 1 month')
     ]
     retention = models.IntegerField(default=0, choices=RETENTION_CHOICES)
+    tags = models.JSONField(default=list)
 
     class Meta:
         ordering = ['-date_updated']
@@ -106,13 +110,14 @@ class Result(models.Model):
     search_id = models.ForeignKey(Search, on_delete=models.CASCADE) 
     provider_id = models.IntegerField(default=0)
     searchprovider = models.CharField(max_length=50, default=str)
-    query_to_provider = models.CharField(max_length=200, default=str)
+    query_to_provider = models.CharField(max_length=2048, default=str)
     result_processor = models.CharField(max_length=200, default=str)
     messages = models.JSONField(default=list, blank=True)
     retrieved = models.IntegerField(default=0)
     found = models.IntegerField(default=0)
     time = models.FloatField(default=0.0)
     json_results = models.JSONField(default=list)
+    tags = models.JSONField(default=list)
 
     class Meta:
         ordering = ['-date_created']

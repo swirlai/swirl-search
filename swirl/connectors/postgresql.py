@@ -19,8 +19,7 @@ django.setup()
 # connectors
 
 ########################################
-import sqlite3
-from sqlite3 import Error
+import psycopg2
 
 from celery.utils.log import get_task_logger
 from logging import DEBUG
@@ -31,15 +30,16 @@ from .utils import save_result, bind_query_mappings
 
 from .connector import Connector
 
-class Sqlite3(Connector):
+class PostGresql(Connector):
 
-    type = "Sqlite3"
+    type = "PostGresql"
 
     ########################################
 
     def __init__(self, provider_id, search_id):
 
         self.count_query = ""
+        self.column_names = []
         return super().__init__(provider_id, search_id)
 
     def construct_query(self):
@@ -128,19 +128,19 @@ class Sqlite3(Connector):
     def execute_search(self):
 
         # connect to the db
-        db_path = self.provider.url
-        if not os.path.exists(db_path):
-            self.error(f"db_path does not exist")
+        config = self.provider.url.split(':')
+        if len(config) != 5:
+            self.error(f'Invalid configuration: {config}')
             return
 
+        # localhost:5432:sid:sid:sid
         connection = None
         try:
-            connection = sqlite3.connect(db_path)
-            connection.row_factory = sqlite3.Row
+            connection = psycopg2.connect(host=config[0], port=config[1], database=config[2], user=config[3], password=config[4])
         except Error as err:
-            self.error(f"{err} connecting to {self.type}: {db_path}")
+            self.error(f"{err} connecting to {self.type}")
             return
-        logger.info(f"{self}: connected to {self.type}: {db_path}")
+        logger.info(f"{self}: connected")
 
         # issue the count(*) query
         logger.debug(f"{self}: requesting: {self.provider.connector} -> {self.count_query}")
@@ -155,6 +155,7 @@ class Sqlite3(Connector):
             self.error(f"execute_count_query: {err}")
             return
 
+        # found = (1460,)
         if found == None:
             found = 0
         else:
@@ -182,10 +183,13 @@ class Sqlite3(Connector):
             cursor = connection.cursor()
             rows = None
             cursor.execute(self.query_to_provider)
+            column_names = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
         except Error as err:
             self.error(f"execute_count_query: {err}")
             return
+
+        # rows is a list of tuple results
 
         if rows == None:
             message = f"Retrieved 0 of 0 results from: {self.provider.name}"
@@ -194,8 +198,9 @@ class Sqlite3(Connector):
             return
             # end if
         # end if
-
+        
         self.response = rows
+        self.column_names = column_names
         self.found = found
         return
 
@@ -209,12 +214,14 @@ class Sqlite3(Connector):
         if found == 0:
             return
 
+        # rows = [ (1, 'lifelock', 'LifeLock', '', 'web', 'Tempe', 'AZ', datetime.date(2007, 5, 1), Decimal('6850000'), 'USD', 'b'), etc ]
+
         trimmed_rows = []
-        field_list = rows[0].keys()
+        column_names = self.column_names
         for row in rows:
             dict_row = {}
             n_field = 0
-            for field in field_list:
+            for field in column_names:
                 dict_row[field] = row[n_field]
                 n_field = n_field + 1
             # end for

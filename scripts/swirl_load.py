@@ -34,7 +34,7 @@ class bcolors:
 
 def main(argv):
 
-    print(f"{bcolors.BOLD}##S#W#I#R#L##1#.#3##############################################################{bcolors.ENDC}")
+    print(f"{bcolors.BOLD}##S#W#I#R#L##1#.#4##############################################################{bcolors.ENDC}")
     # arguments
     parser = argparse.ArgumentParser(description="Bulk load SWIRL objects in json format")
     parser.add_argument('filespec', help="path to one or more json files to load, optionally including wildcards, example folder-name/*.txt")

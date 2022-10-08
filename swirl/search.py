@@ -36,25 +36,38 @@ def search(id):
         return False
     search.status = 'PRE_PROCESSING'
     search.save()
-    # only active SearchProviders 
+    # check for provider specification
     providers = SearchProvider.objects.filter(active=True)
+    new_provider_list = []
+    if search.searchprovider_list:
+        # add providers to list by id, name or tag
+        for provider in providers:
+            if provider.id in search.searchprovider_list:
+                new_provider_list.append(provider)
+            if provider.name in search.searchprovider_list:
+                if not provider in new_provider_list:
+                    new_provider_list.append(provider)
+            if provider.tags:
+                for tag in provider.tags:
+                    if tag in search.searchprovider_list:
+                        if not provider in new_provider_list:
+                            new_provider_list.append(provider)
+                # end if
+            # end for
+        # end for
+    else:
+        # no provider list
+        for provider in providers:
+            if provider.default:
+                new_provider_list.append(provider)
+    # end if
+    providers = new_provider_list
     if len(providers) == 0:
         logger.error(f"{module_name}: error: no SearchProviders configured")
         search.status = 'ERR_NO_SEARCHPROVIDERS'
         search.date_updated = datetime.now()
         search.save()
         return False
-    ########################################
-    # check for provider specification
-    new_provider_list = []
-    if search.searchprovider_list:
-        for provider in providers:
-            if provider.id in search.searchprovider_list:
-                new_provider_list.append(provider)
-            # end if
-        # end for
-        providers = new_provider_list
-    # end if
 
     ########################################
     # pre_search_processing
@@ -231,8 +244,26 @@ def rescore(id):
     search.status = 'RESCORING'
     search.save()
     if search.post_result_processor:
-        results_modified = eval(search.post_result_processor)(search.id)
-        logger.info(f"{module_name}: rescoring {search.id} by {search.post_result_processor} updated {results_modified} results")   
+        try:
+            post_result_processor = eval(search.post_result_processor)(search.id)
+            if post_result_processor.validate():
+                results_modified = post_result_processor.process()
+            else:
+                message = f'Error: post_result_processor.validate() failed'
+                logger.error(f'{module_name}: {message}')
+                return False
+            # end if
+        except NameError as err:
+            message = f'Error: NameError: {err}'
+            logger.error(f'{module_name}: {message}')
+            return False
+        except TypeError as err:
+            message = f'Error: TypeError: {err}'
+            logger.error(f'{module_name}: {message}')
+            return False
+        message = f"Rescoring by {search.post_result_processor} updated {results_modified} results"
+        logger.info(f"{module_name}: {message}")   
+        search.messages.append(message)    
         search.status = last_status
         search.save()
         return True

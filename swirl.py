@@ -58,6 +58,8 @@ SWIRL_SERVICES = [
     }
 ]
 
+SWIRL_CORE_SERVICES = [SWIRL_SERVICES[1]['name'], SWIRL_SERVICES[2]['name']]
+
 # prepare service_dict 
 SWIRL_SERVICE_DICT = {}
 for swirl_service in SWIRL_SERVICES:
@@ -478,7 +480,8 @@ def main(argv):
             service_list = []
             for service in SWIRL_SERVICES:
                 service_list.append(service['name'])
-            # end for
+        elif service_list[0].lower() == 'core':
+            service_list = SWIRL_CORE_SERVICES
         else:
             for service in service_list:
                 if not service in SWIRL_SERVICE_DICT:
@@ -490,11 +493,10 @@ def main(argv):
                     return False
                 # end if
             # end for
-        # end if
         # run the command
         result = eval(args.command[0] + '(service_list)')
     # end if
-
+    
     if result == False:
         print(f"{bcolors.FAIL}Command {args.command[0]} reported an error{bcolors.ENDC}")
         return 1
