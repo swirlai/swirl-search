@@ -98,6 +98,17 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql_psycopg2",
+#         "NAME": "sid",
+#         "USER": "sid",
+#         "PASSWORD": "sid",
+#         "HOST": "localhost",
+#         "PORT": "5432",
+#     }
+# }
+
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -189,9 +200,11 @@ CELERY_BEAT_SCHEDULE = {
 
 # SWIRL
 
-SWIRL_BANNER = '##S#W#I#R#L##1#.#3##############################################################'
-SWIRL_TIMEOUT = 10
+SWIRL_BANNER = '##S#W#I#R#L##1#.#4##############################################################'
 
+SWIRL_TIMEOUT = 10
 SWIRL_Q_WAIT = 7
 SWIRL_RERUN_WAIT = 8
 SWIRL_RESCORE_WAIT = 3
+
+SWIRL_EXPLAIN = True

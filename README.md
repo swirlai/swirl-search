@@ -14,7 +14,7 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 
 | Version | Date | Branch | Notes | 
 | ------- | ---- | ------ | ----- |
-| [SWIRL SEARCH 1.3](https://github.com/sidprobstein/swirl-search/releases/tag/v1.3) | 09-23-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.3.md) - recommended for ALL USERS |
+| [SWIRL SEARCH 1.4](https://github.com/sidprobstein/swirl-search/releases/tag/v1.4) | 10-9-2022 | Main | [Release Notes](./docs/RELEASE_NOTES_1.4.md) - recommended for ALL USERS |
 | [Docker Image](https://hub.docker.com/r/sidprobstein/swirl-search) | * | Main | Latest version, for trial only; *does* *not* *persist* *data* *when* *shut* *down*! [Setup Guide](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start#docker) | 
 
 <br/>
@@ -31,11 +31,11 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 
 # Features
 
-* [Pre-built searchprovider definitions](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for apache solr, elastic, Sqlite3, http/get/auth/json and NLResearch.com
+* [Pre-built searchprovider definitions](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for apache solr, elastic, Sqlite3, PostGresql, generic http/get/auth/json and pay services like NLResearch.com and Newsdata.io
 
 * [Asynchronous search federation](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#architecture) via [REST APIs](http://localhost:8000/swirl/swagger-ui/)
 
-* Data landed in Sqlite3 for post-processing, later consumption
+* Data landed in Sqlite3 or PostGresql for post-processing, later consumption
 
 * [Cosine similarity relevancy](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) using Spacy vectors with term, phrase and freshness boosts with full explanation
 
@@ -47,7 +47,7 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 
 * [Optional spell correction](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#spell-correction) using TextBlob
 
-* [Sample data sets](https://github.com/sidprobstein/swirl-search/tree/main/Data) for use with Sqlite3
+* [Sample data sets](https://github.com/sidprobstein/swirl-search/tree/main/Data) for use with Sqlite3 and PostGresql
 
 * [Optional search/result expiration service](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide#search-expiration-service) to limit storage use
 
