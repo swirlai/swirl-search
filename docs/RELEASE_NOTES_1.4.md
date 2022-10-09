@@ -14,6 +14,23 @@ SearchProviders can now be organized using Tags - json lists that can hold any m
 
 This allows you to set up a set of general use providers as 'default' and ones for specific topics under various tags. For example:
 
+SearchProvider:
+
+```
+{
+        "active": true,
+        "default": false,
+        "name": "Maritime News (web/Google PSE)",
+        "connector": "RequestsGet",
+        ...etc...
+        "tags": [
+            "maritime"
+        ]
+    },
+```
+
+Search:
+
 ```
 {
     "query_string": "strategic consulting",
