@@ -13,5 +13,4 @@ daphne
 textblob
 spacy
 natsort
-psycopg2
 django-environ

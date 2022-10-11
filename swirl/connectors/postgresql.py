@@ -14,17 +14,18 @@ from os import environ
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
-django.setup()
-
-# connectors
-
-########################################
-import psycopg2
+django.setup()    
 
 from celery.utils.log import get_task_logger
 from logging import DEBUG
 logger = get_task_logger(__name__)
 logger.setLevel(DEBUG)
+
+########################################
+try:
+    import psycopg2
+except ImportError as e:
+    logger.error(f"postgresql.py: Error: can't load psycopg2: {e}, see https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference#postgresql")
 
 from .utils import save_result, bind_query_mappings
 

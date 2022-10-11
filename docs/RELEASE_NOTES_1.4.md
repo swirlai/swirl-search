@@ -38,6 +38,8 @@ Search:
 }
 ```
 
+Read more: [Organizing SearchProviders with Active, Default and Tags](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#organizing-searchproviders-with-active-default-and-tags)
+
 :small_blue_diamond: New PostGresql Connector
 
 The funding database example has also been updated to run with PostGresql.
@@ -52,6 +54,8 @@ The funding database example has also been updated to run with PostGresql.
     "result_mappings": "title='{company} series {round}',body='{city} {fundeddate}: {company} raised usd ${raisedamt}\nThe company is headquartered in {city} and employs {numemps}',date_published=fundeddate,NO_PAYLOAD"
 }
 ```
+
+Read more: [PostGresql Connector](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference#postgresql)
 
 ## Changes
 
