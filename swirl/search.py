@@ -232,7 +232,7 @@ def rescore(id):
     except ObjectDoesNotExist as err:
         logger.error(f'{module_name}: Error: ObjectDoesNotExist: {err}')
         return False
-        
+
     last_status = search.status
     if not search.status.endswith('_READY'):
         logger.warning(f"{module_name}: search {search.id} has status {search.status}, rescore may not work")
@@ -241,8 +241,10 @@ def rescore(id):
     if len(results) == 0:
         logger.error(f"{module_name}: search {search.id} has no results to rescore")
         return False
+
     search.status = 'RESCORING'
     search.save()
+
     if search.post_result_processor:
         try:
             post_result_processor = eval(search.post_result_processor)(search.id)
@@ -262,9 +264,11 @@ def rescore(id):
             logger.error(f'{module_name}: {message}')
             return False
         message = f"Rescoring by {search.post_result_processor} updated {results_modified} results"
-        logger.info(f"{module_name}: {message}")   
         search.messages.append(message)    
-        search.status = last_status
+        if last_status:
+            search.status = last_status
+        else:
+            search.status = "FULL_RESULTS_READY"
         search.save()
         return True
     else:

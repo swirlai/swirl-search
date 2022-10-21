@@ -205,6 +205,6 @@ SWIRL_BANNER = '##S#W#I#R#L##1#.#4##############################################
 SWIRL_TIMEOUT = 10
 SWIRL_Q_WAIT = 7
 SWIRL_RERUN_WAIT = 8
-SWIRL_RESCORE_WAIT = 3
+SWIRL_RESCORE_WAIT = 5
 
 SWIRL_EXPLAIN = True

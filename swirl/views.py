@@ -211,7 +211,7 @@ class ResultViewSet(viewsets.ModelViewSet):
             # check if the query has ready status
             if Search.objects.filter(id=search_id).exists():
                 search = Search.objects.get(id=search_id)
-                if search.status.endswith('_READY'):
+                if search.status.endswith('_READY') or search.status == 'RESCORING':
                     try:
                         if otf_result_mixer:
                             # call the specifixed mixer on the fly otf
