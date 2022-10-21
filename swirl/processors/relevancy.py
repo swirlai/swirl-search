@@ -6,6 +6,8 @@
 
 import logging as logger
 
+from regex import E
+
 #############################################    
 #############################################    
 
@@ -21,7 +23,7 @@ from math import isnan
 
 #############################################    
 
-from .utils import clean_string_alphanumeric
+from .utils import clean_string, stem_string
 
 from ..spacy import nlp
 
@@ -53,8 +55,13 @@ class CosineRelevancyProcessor(PostResultProcessor):
         }
         
         # prep query string
+        query_len = len(self.search.query_string_processed.strip().split())
+        empty_query_vector = False
         query_string_nlp = nlp(self.search.query_string_processed)
-        self.warning(f'nlp: {query_string_nlp}')
+        if query_string_nlp.vector.all() == 0:
+            # zero vector!! similiarty won't work
+            empty_query_vector = True
+        # self.warning(f'nlp: {query_string_nlp}')
 
         ############################################
         # main loop
@@ -96,10 +103,20 @@ class CosineRelevancyProcessor(PostResultProcessor):
                                 self.error(f"AttributeError: term: {term}, item: {item[field]}")
                             ############################################
                             # cosine similarity between query and matching field store in dict_score
+                            # to do: handle phrases in query, e.g. foo "bar baz" bee
+                            # to do: seems like bar_baz has to become field
                             if field in match_dict:
                                 # hit!!
-                                field_nlp = nlp(item_field)
-                                dict_score[field] = query_string_nlp.similarity(field_nlp)
+                                if empty_query_vector:
+                                    dict_score[field] = 0.5
+                                else:
+                                    if len(item_field) > (query_len * 3):
+                                        # process item_field in chunks and take the highest score
+                                        pass
+                                    # to do: remove <...> from item_field
+                                    field_nlp = nlp(item_field)
+                                    dict_score[field] = query_string_nlp.similarity(field_nlp)
+                                # end if
                             # end if
                             ############################################
                             # highlight 
@@ -124,40 +141,29 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         item['swirl_score'] = weighted_score
                     ############################################
                     # boosting                
-                    query_len = len(self.search.query_string_processed.strip().split())
-                    if query_len > 1:
+                    term_match = 0
+                    phrase_match = 0
+                    for match in match_dict:
+                        terms_field = 0
+                        for hit in match_dict[match]:
+                            if '_' in hit:
+                                phrase_match = phrase_match + 1
+                            else:
+                                term_match = term_match + 1
+                                terms_field = terms_field + 1
+                    # take away credit for one field, one term hit
+                    if term_match == 1:
                         term_match = 0
-                        phrase_match = 0
-                        all_terms = 0
-                        for match in match_dict:
-                            terms_field = 0
-                            for hit in match_dict[match]:
-                                if '_' in hit:
-                                    phrase_match = phrase_match + 1
-                                else:
-                                    term_match = term_match + 1
-                                    terms_field = terms_field + 1
-                            # boost if all terms match this field
-                            # to do: no all_terms_match for a single term query
-                            if terms_field == query_len and query_len > 1:
-                                all_terms = all_terms + 1
-                        # take away credit for one field, one term hit
-                        if term_match == 1:
-                            term_match = 0
-                            term_boost = 0.0
-                        else:
-                            term_boost = round((float(term_match) * 0.1) / float(query_len), 2)
-                            if term_boost > 0:
-                                item['boosts'].append(f'term_match {term_boost}')
-                        phrase_boost = round((float(phrase_match) * 0.2) / float(query_len), 2)
-                        if phrase_boost > 0:
-                            item['boosts'].append(f'phrase_match {phrase_boost}')
-                        all_terms_boost = round((float(all_terms) * 0.2), 2)
-                        if all_terms_boost > 0:
-                            item['boosts'].append(f'all_terms {all_terms_boost}')
-                        item['swirl_score'] = item['swirl_score'] + max([term_boost, phrase_boost, all_terms_boost])
-                        item['swirl_score'] = round(item['swirl_score'], 2)
-                    # end if
+                        term_boost = 0.0
+                    else:
+                        term_boost = round((float(term_match) * 0.1) / float(query_len), 2)
+                        if term_boost > 0:
+                            item['boosts'].append(f'term_match {term_boost}')
+                    phrase_boost = round((float(phrase_match) * 0.2) / float(query_len), 2)
+                    if phrase_boost > 0:
+                        item['boosts'].append(f'phrase_match {phrase_boost}')
+                    item['swirl_score'] = item['swirl_score'] + max([term_boost, phrase_boost])
+                    item['swirl_score'] = round(item['swirl_score'], 2)
                     ###########################################
                     # check for overrun
                     if item['swirl_score'] > 1.0:
@@ -185,3 +191,201 @@ class CosineRelevancyProcessor(PostResultProcessor):
         self.results_updated = int(updated)
         
         return self.results_updated
+
+############################################
+
+from math import sqrt
+
+class NewCosineRelevancyProcessor(PostResultProcessor):
+
+    type = 'NewCosineRelevancyPostResultProcessor'
+
+    ############################################
+
+    def process(self):
+
+        RELEVANCY_CONFIG = {
+            'title': {
+                'weight': 3.0
+            },
+            'body': {
+                'weight': 1.0
+            },
+            'author': {
+                'weight': 2.0
+            }
+        }
+        
+        # prep query string
+        query_list = self.search.query_string_processed.strip().split()
+        query_stemmed_list = stem_string(clean_string(self.search.query_string_processed)).strip().split()
+        self.warning(f"query_list: {query_stemmed_list}")
+        query_len = len(query_stemmed_list)
+        
+        query_string_nlp = nlp(self.search.query_string_processed)
+
+        # check for zero vector
+        empty_query_vector = False
+        if query_string_nlp.vector.all() == 0:
+            empty_query_vector = True
+            self.warning("Warning: empty query vector")
+
+        ############################################
+        # main loop
+        updated = 0
+        for results in self.results:
+            # result set
+            # self.warning("Results!")
+            highlighted_json_results = []
+            if not results.json_results:
+                # self.warning("Blank result set!")
+                continue
+            for result in results.json_results:
+                # result item
+                self.warning("Result!---------------")
+                weighted_score = 0.0
+                dict_result_matches = {}
+                dict_result_score = {}
+                result['boosts'] = []
+                for field in RELEVANCY_CONFIG:
+                    # dict_sim contains the similarity scores, keyed by query term(s) (e.g. x, x_y, x_y_z) for this field
+                    dict_sim = {}
+                    if field in result:
+                        # self.warning(f"Field: {field}")
+                        last_term = ""
+                        # item_field is shorthand for item[field]
+                        result_field = result[field]
+                        result_field_list = clean_string(result_field).strip().split()
+                        result_stemmed = stem_string(clean_string(result_field))
+                        result_stemmed_list = result_stemmed.strip().split()
+                        if len(result_field_list) != len(result_stemmed_list):
+                            self.error("result_field_list does not equal result_stemmed_list!")
+                        ############################################
+                        # 1, 2 gram
+                        p = 0
+                        while p < query_len:
+                            grams = [1]
+                            if query_len > 1:
+                                grams = [1,2]
+                            for gram in grams:
+                                # a slice can be 1 gram (if query is length 1)
+                                qslice = query_stemmed_list[p:p+gram]
+                                self.warning(f"qslice: {qslice}")
+                                if '_'.join(qslice) in dict_sim:
+                                    continue
+                                qs = ' '.join(qslice)
+                                ####### MATCH
+                                if qs.lower() in result_stemmed.lower():
+                                    iidx = -1
+                                    for i in result_stemmed_list:
+                                        if qslice[0].lower() == i.lower():
+                                            # here is the beginning of the match?!?
+                                            # to do: WARNING: the below could miss, because the lower() is not applied in the index() P1 P1 P1
+                                            iidx = result_stemmed_list.index(qslice[0])
+                                            break
+                                    if iidx == -1:
+                                        # to do: handle error
+                                        self.warning("no iidx")
+                                        pass
+                                    rw = result_field_list[iidx-gram-1:iidx+len(qslice)+2+gram]
+                                    qw = query_list[p:p+gram]
+                                    ######## SIMILARITY vs WINDOW
+                                    self.warning(f"similarity: {qw} ? {rw}")
+                                    rw_nlp = nlp(' '.join(rw))
+                                    qw_nlp = nlp(' '.join(qw))
+                                    if qw_nlp.vector.all() == 0:
+                                        self.warning("Warning: qw_nlp is 0")
+                                    dict_sim['_'.join(qslice)] = qw_nlp.similarity(rw_nlp)             
+                                    # self.warning(f"scoring {w} = {qslice_nlp.similarity(w_nlp)}")
+                                # end if
+                            # end for
+                            p = p + 1   
+                        # end if
+                        ############################################
+                        # all_terms
+                        if query_len > 2:
+                            if ' '.join(query_stemmed_list).lower() in result_stemmed.lower():
+                                # self.warning("all_terms")
+                                # to do: iterate through matches
+                                iidx = -1
+                                for i in result_stemmed_list:
+                                    if query_stemmed_list[0].lower() == i.lower():
+                                        # here is the beginning of the match?!?
+                                        iidx = result_stemmed_list.index(query_stemmed_list[0])
+                                        break
+                                if iidx == -1:
+                                    # to do: handle error
+                                    self.warning("No iidx")
+                                    pass
+                                # to do: extract window around the match
+                                rw = result_stemmed_list[iidx-int(query_len/2):iidx+query_len+int(query_len/2)]
+                                rw_nlp = nlp(' '.join(rw))
+                                dict_sim['_'.join(query_stemmed_list).lower()] = query_string_nlp.similarity(rw_nlp)
+                            # end if
+                        # end if
+                        self.warning(f"dict_sim: {dict_sim}")
+                        ############################################
+                        # select longest/highest match
+                        dict_weighted = {}
+                        if dict_sim:
+                            for match in dict_sim:
+                                dict_weighted[match] = dict_sim[match] * (len(match) * len(match))
+                            self.warning(f"dict_weighted: {dict_weighted}")
+                            top_key = sorted(dict_weighted.items(), key=lambda item: item[1], reverse=True)[0][0]
+                            self.warning(f"score! {field}: {top_key}, {dict_sim[top_key]}")
+                            dict_result_matches[field] = top_key
+                            dict_result_score[field] = dict_sim[top_key]
+                        else:
+                            dict_result_score[field] = 0.0
+                        ############################################
+                        # highlight 
+                        # self.warning("highlighting")
+                        if not self.search.status == 'RESCORING':
+                            result[field] = highlight(result[field], self.search.query_string_processed)
+                    # end if
+                # end for 
+                ############################################
+                # weight field similarity
+                self.warning("weighting")
+                result['swirl_score'] = 0.0
+                weight = 0.0
+                for field in dict_result_score:
+                    # if not field.endswith('_field'):
+                    self.warning(f"score! {field} sim was: {dict_result_score[field]}")
+                    if dict_result_score[field] > 0.0:
+                        result['swirl_score'] = float(result['swirl_score']) + float(RELEVANCY_CONFIG[field]['weight']) * float(dict_result_score[field])
+                        weight = weight + float(RELEVANCY_CONFIG[field]['weight'])
+                    # end if
+                # end for
+                self.warning(f"raw score: {result['swirl_score']}")
+                self.warning(f"weight: {weight}")
+                if weight == 0.0:
+                    result['swirl_score'] = weighted_score = 0.0
+                    self.warning("weight 0")
+                else:
+                    weighted_score = round(float(result['swirl_score'])/float(weight),2)
+                    result['swirl_score'] = weighted_score
+                    self.warning(f"weighted score: {weighted_score}")
+                # end if
+                result['explain'] = {} 
+                result['explain']['matches'] = dict_result_matches
+                result['explain']['similarity'] = weighted_score
+                result['explain']['boosts'] = []
+                # clean up 
+                # del item['boosts']
+                ##############################################
+                updated = updated + 1
+                highlighted_json_results.append(result)
+            # end for
+            # logger.info(f"Updating results: {result.id}")
+            # save!!!!
+            results.json_results = highlighted_json_results
+            # to do: catch invalid json error P2
+            # to do: why would we do that here?
+            results.save()
+        # end for
+
+        self.results_updated = int(updated)
+        
+        return self.results_updated
+

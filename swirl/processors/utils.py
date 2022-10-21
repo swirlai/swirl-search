@@ -96,17 +96,32 @@ def highlight(text, query_string):
 
 #############################################
 
-def clean_string_alphanumeric(dirty_string):
+from nltk.stem import PorterStemmer
+
+ps = PorterStemmer()
+
+def stem_string(s):
+        
+    nl=[]
+    for s in s.strip().split():
+        nl.append(ps.stem(s))
+
+    return ' '.join(nl)
+
+#############################################
+
+def clean_string(s):
     list_tag_chars = [ '<', '>' ]
-    module_name = 'clean_string_alphanumeric'
+    module_name = 'clean_snippet'
     query_clean = ""
     last_ch = ""
     start_tag = False
     try:
-        for ch in dirty_string.strip():
+        for ch in s.strip():
             if ch in list_tag_chars:
                 if start_tag:
                     start_tag = False
+                    query_clean = query_clean + ' '
                 else:
                     start_tag = True
                     continue
@@ -116,16 +131,12 @@ def clean_string_alphanumeric(dirty_string):
                 query_clean = query_clean + ch
                 continue
             else:
-                if ch in [',', '.', '?', '!', "'", '"', '-', '$', '#', ';', '&']:
-                    query_clean = query_clean + ch
-                    continue
-                else:
-                    if last_ch != ' ':
-                        if ch == ' ':
-                            query_clean = query_clean + ch
-                            continue
+                # to do: preserve numbers, e.g. if in 0 then keep .,% or if $ or L(pound) etc proceeds a number
+                if last_ch != ' ':
+                    if ch == ' ':
+                        query_clean = query_clean + ch
+                        continue
                 # end if
-            # end if
             # end if
             last_ch = ch
     except NameError as err:

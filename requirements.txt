@@ -14,3 +14,5 @@ textblob
 spacy
 natsort
 django-environ
+nltk
+

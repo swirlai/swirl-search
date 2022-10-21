@@ -19,11 +19,15 @@ class SearchProvider(models.Model):
         ('RequestsGet', 'RequestsGet'),
         ('Elastic', 'Elasticsearch Query String'),
         ('PostGresql', 'PostGresql'),
+        ('M365OutlookMessages', 'Microsoft M365 Outlook Messages'),
+        ('M365OutlookCalendar', 'Microsoft M365 Outlook Calendar'),
+        ('M365OneDrive', 'Microsoft M365 OneDrive Files'),
+        ('M365SharePoint', 'Microsoft M365 SharePoint Sites'),
         ('Sqlite3', 'Sqlite3')
     ]
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
-    query_template = models.CharField(max_length=2048, default='{url}?q={query_string}')
+    query_template = models.CharField(max_length=2048, default='{url}?q={query_string}', blank=True)
     QUERY_PROCESSOR_CHOICES = [
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('GenericQueryCleaningProcessor', 'GenericQueryCleaningProcessor'),
@@ -72,7 +76,8 @@ class Search(models.Model):
     POST_RESULT_PROCESSOR_CHOICES = [
         ('GenericPostResultProcessor', 'GenericPostResultProcessor'),
         ('GenericRelevancyProcessor', 'GenericRelevancyProcessor'),
-        ('CosineRelevancyProcessor', 'CosineRelevancyProcessor (w/spaCy)')
+        ('CosineRelevancyProcessor', 'CosineRelevancyProcessor (w/spaCy)'),
+        ('NewCosineRelevancyProcessor', 'NewCosineRelevancyProcessor (w/spaCy)')
     ]
     post_result_processor = models.CharField(max_length=200, default='CosineRelevancyProcessor', blank=True, choices=POST_RESULT_PROCESSOR_CHOICES)
     result_url = models.CharField(max_length=200, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)
