@@ -23,7 +23,7 @@ from math import isnan
 
 #############################################    
 
-from .utils import clean_string, stem_string
+from .utils import clean_string, stem_string, match_all
 
 from ..spacy import nlp
 
@@ -194,11 +194,13 @@ class CosineRelevancyProcessor(PostResultProcessor):
 
 ############################################
 
+from nltk.corpus import stopwords
+
 from math import sqrt
 
-class NewCosineRelevancyProcessor(PostResultProcessor):
+class NewishCosineRelevancyProcessor(PostResultProcessor):
 
-    type = 'NewCosineRelevancyPostResultProcessor'
+    type = 'NewishCosineRelevancyPostResultProcessor'
 
     ############################################
 
@@ -287,7 +289,7 @@ class NewCosineRelevancyProcessor(PostResultProcessor):
                                         # to do: handle error
                                         self.warning("no iidx")
                                         pass
-                                    rw = result_field_list[iidx-gram-1:iidx+len(qslice)+2+gram]
+                                    rw = result_field_list[iidx-(gram*2)-1:iidx+len(qslice)+2+(gram*2)]
                                     qw = query_list[p:p+gram]
                                     ######## SIMILARITY vs WINDOW
                                     self.warning(f"similarity: {qw} ? {rw}")
@@ -389,3 +391,132 @@ class NewCosineRelevancyProcessor(PostResultProcessor):
         
         return self.results_updated
 
+############################################
+
+class NewCosineRelevancyProcessor(PostResultProcessor):
+
+    type = 'NewCosineRelevancyPostResultProcessor'
+
+    ############################################
+
+    def process(self):
+
+        RELEVANCY_CONFIG = {
+            'title': {
+                'weight': 3.0
+            },
+            'body': {
+                'weight': 1.0
+            },
+            'author': {
+                'weight': 2.0
+            }
+        }
+        
+        # prep query string
+        query = clean_string(self.search.query_string_processed).strip()
+        query_nlp = nlp(query)
+        query_list = query.strip().split()
+        query_len = len(query_list)
+        query_stemmed_list = stem_string(clean_string(self.search.query_string_processed)).strip().split()
+        query_stemmed = ' '.join(query_stemmed_list)
+        query_stemmed_nlp = nlp(query_stemmed)
+
+        # check for zero vector
+        empty_query_vector = False
+        if query_nlp.vector.all() == 0:
+            empty_query_vector = True
+            self.warning("query vector is 0")
+
+        ############################################
+        # main loop
+        updated = 0
+        for results in self.results:
+            # result set
+            # self.warning("Results!")
+            highlighted_json_results = []
+            if not results.json_results:
+                # self.warning("Blank result set!")
+                continue
+            for result in results.json_results:
+                # result item
+                dict_score = {}
+                self.warning("Result!---------------")
+                for field in RELEVANCY_CONFIG:
+                    if field in result:
+                        # result_field is shorthand for item[field]
+                        result_field = clean_string(result[field]).strip()
+                        result_field_nlp = nlp(result_field)
+                        result_field_list = clean_string(result_field).strip().split()
+                        result_field_stemmed = stem_string(clean_string(result_field))
+                        result_field_stemmed_list = result_field_stemmed.strip().split()
+                        dict_score[field] = {}
+                        ############################################
+                        # query vs result_field
+                        dict_score[field]['_'.join(query_list)] = query_nlp.similarity(result_field_nlp)
+                        ############################################
+                        # 1, 2, all gram
+                        p = 0
+                        while p < query_len:
+                            grams = [1]
+                            if query_len > 1:
+                                grams = [1,2]
+                            if query_len > 2:
+                                grams = [1,2,query_len]
+                            for gram in grams:
+                                # a slice can be 1 gram (if query is length 1)
+                                query_slice_list = query_list[p:p+gram]
+                                query_slice_len = len(query_slice_list)
+                                if query_slice_len == 0:
+                                    continue
+                                query_slice_stemmed_list = query_stemmed_list[p:p+gram]
+                                if '_'.join(query_slice_list) in dict_score[field]:
+                                    continue
+                                ####### MATCH
+                                # iterate across all matches
+                                # match on stem to increase match rate
+                                # match_all returns a list of result_field_list indexes that match
+                                match_list = match_all(query_slice_stemmed_list, result_field_stemmed_list)
+                                # self.warning(f"match_all: {query_slice_stemmed_list} ? {result_field_stemmed_list} = {match_list}")
+                                if match_list:
+                                    for match in match_list:
+                                        rw = result_field_list[match-gram-1:match+query_slice_len+2+gram]
+                                        qw = query_slice_list
+                                        ######## SIMILARITY vs WINDOW
+                                        rw_nlp = nlp(' '.join(rw))
+                                        qw_nlp = nlp(' '.join(qw))
+                                        if qw_nlp.vector.all() == 0:
+                                            self.warning("Warning: qw_nlp is 0")
+                                        dict_score[field]['_'.join(query_slice_list) + '_' + str(match)] = qw_nlp.similarity(rw_nlp)  
+                                    # end for
+                                # end if
+                            # end for
+                            p = p + 1
+                        # end while
+                        ############################################
+                        # highlight 
+                        if not self.search.status == 'RESCORING':
+                            result[field] = highlight(result[field], self.search.query_string_processed)
+                        ############################################
+                    # end if
+                # end for field in RELEVANCY_CONFIG:
+                # score the item 
+                result['swirl_score'] = 0.0
+                for f in dict_score:
+                    weight = 1
+                    if f in RELEVANCY_CONFIG:
+                        weight = RELEVANCY_CONFIG[f]['weight']
+                    for k in dict_score[f]:
+                        # if dict_score[f][k] > 0.0:
+                        result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k))
+                result['explain'] = dict_score                
+                updated = updated + 1
+                # save highlighted version
+                highlighted_json_results.append(result)
+            # end for result in results.json_results:
+            results.save()
+        # end for results in self.results:
+
+        self.results_updated = int(updated)
+        
+        return self.results_updated                
