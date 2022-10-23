@@ -116,21 +116,37 @@ def clean_string(s):
     query_clean = ""
     last_ch = ""
     start_tag = False
+    entity = False
     try:
         for ch in s.strip():
             if ch in list_tag_chars:
                 if start_tag:
                     start_tag = False
-                    query_clean = query_clean + ' '
                 else:
                     start_tag = True
                     continue
             if start_tag:
                 continue
+            if ch == '&':
+                entity = True
+                continue
+            if ch == ';' and entity:
+                entity = False
+                continue
+            if entity:
+                continue
             if ch.isalnum():
                 query_clean = query_clean + ch
                 continue
             else:
+                # to do: handle $000 or $00,00 or $0.00
+                # to do: handle x.y%
+                if ch in [ '.', '"', "'", '?', '!' ]:
+                    query_clean = query_clean + ch
+                # else:
+                #     if last_ch != ' ':
+                #         query_clean = query_clean + ' '
+                # end if
                 # to do: preserve numbers, e.g. if in 0 then keep .,% or if $ or L(pound) etc proceeds a number
                 if last_ch != ' ':
                     if ch == ' ':
@@ -143,5 +159,26 @@ def clean_string(s):
         return(f'{module_name}: Error: NameError: {err}')
     except TypeError as err:
         return(f'{module_name}: Error: TypeError: {err}')
+    # remove extra spaces
+    if '  ' in query_clean:
+        while '  ' in query_clean:
+            query_clean = query_clean.replace('  ', ' ')
     return query_clean.strip()
 
+#############################################
+
+def match_all(list_find, list_targets):
+
+    match_list = []
+    if not list_targets:
+        return match_list
+
+    find = ' '.join(list_find)
+    p = 0
+
+    while p < len(list_targets):
+        if find.strip().lower() == ' '.join(list_targets[p:p+len(list_find)]).strip().lower():
+            match_list.append(p)
+        p = p + 1
+    
+    return match_list
