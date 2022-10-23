@@ -453,16 +453,18 @@ class NewCosineRelevancyProcessor(PostResultProcessor):
                         dict_score[field] = {}
                         ############################################
                         # query vs result_field
-                        dict_score[field]['_'.join(query_list)+'_*'] = query_nlp.similarity(result_field_nlp)
+                        qvr = query_nlp.similarity(result_field_nlp)
+                        if qvr > 0.5:
+                            dict_score[field]['_'.join(query_list)+'_*'] = qvr
                         ############################################
                         # 1, 2, all gram
                         p = 0
                         while p < query_len:
                             grams = [1]
                             if query_len == 2:
-                                grams = [1,2]
+                                grams = [2,1]
                             if query_len > 2:
-                                grams = [1,2,query_len]
+                                grams = [query_len,2,1]
                             for gram in grams:
                                 # a slice can be 1 gram (if query is length 1)
                                 query_slice_list = query_list[p:p+gram]
@@ -480,7 +482,7 @@ class NewCosineRelevancyProcessor(PostResultProcessor):
                                 # self.warning(f"match_all: {query_slice_stemmed_list} ? {result_field_stemmed_list} = {match_list}")
                                 if match_list:
                                     for match in match_list:
-                                        rw = result_field_list[match-gram-1:match+query_slice_len+2+gram]
+                                        rw = result_field_list[match-(gram*2)-1:match+query_slice_len+2+(gram*2)]
                                         qw = query_slice_list
                                         ######## SIMILARITY vs WINDOW
                                         rw_nlp = nlp(' '.join(rw))
@@ -493,6 +495,8 @@ class NewCosineRelevancyProcessor(PostResultProcessor):
                             # end for
                             p = p + 1
                         # end while
+                        if dict_score[field] == {}:
+                            del dict_score[field]
                         ############################################
                         # highlight 
                         if not self.search.status == 'RESCORING':
