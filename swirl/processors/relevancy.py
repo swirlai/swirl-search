@@ -453,13 +453,13 @@ class NewCosineRelevancyProcessor(PostResultProcessor):
                         dict_score[field] = {}
                         ############################################
                         # query vs result_field
-                        dict_score[field]['_'.join(query_list)] = query_nlp.similarity(result_field_nlp)
+                        dict_score[field]['_'.join(query_list)+'_*'] = query_nlp.similarity(result_field_nlp)
                         ############################################
                         # 1, 2, all gram
                         p = 0
                         while p < query_len:
                             grams = [1]
-                            if query_len > 1:
+                            if query_len == 2:
                                 grams = [1,2]
                             if query_len > 2:
                                 grams = [1,2,query_len]
@@ -487,7 +487,7 @@ class NewCosineRelevancyProcessor(PostResultProcessor):
                                         qw_nlp = nlp(' '.join(qw))
                                         if qw_nlp.vector.all() == 0:
                                             self.warning("Warning: qw_nlp is 0")
-                                        dict_score[field]['_'.join(query_slice_list) + '_' + str(match)] = qw_nlp.similarity(rw_nlp)  
+                                        dict_score[field]['_'.join(query_slice_list)+'_'+str(match)] = qw_nlp.similarity(rw_nlp)  
                                     # end for
                                 # end if
                             # end for
@@ -507,8 +507,12 @@ class NewCosineRelevancyProcessor(PostResultProcessor):
                     if f in RELEVANCY_CONFIG:
                         weight = RELEVANCY_CONFIG[f]['weight']
                     for k in dict_score[f]:
-                        # if dict_score[f][k] > 0.0:
-                        result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k))
+                        if dict_score[f][k] > 0.5:
+                            if k.endswith('_*'):
+                                result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k])
+                            else:
+                                result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k))
+                            # end if
                 result['explain'] = dict_score                
                 updated = updated + 1
                 # save highlighted version
