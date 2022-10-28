@@ -6,4 +6,7 @@
 
 from nltk.corpus import stopwords
 
+# TO DO: add lang detection and others
 stopwords_en = set(stopwords.words('english'))
+
+from nltk.tokenize import word_tokenize, sent_tokenize

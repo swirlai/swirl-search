@@ -26,7 +26,8 @@ from .utils import clean_string, stem_string, match_all
 from ..spacy import nlp
 
 # to do: detect language and load all stopwords? P1
-from ..nltk import stopwords_en
+from ..nltk import stopwords_en, word_tokenize, sent_tokenize
+
 
 class CosineRelevancyProcessor(PostResultProcessor):
 
@@ -78,8 +79,8 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         # prepare result field
                         result_field = clean_string(result[field]).strip()
                         result_field_nlp = nlp(result_field)
-                        result_field_list = clean_string(result_field).strip().split()
-                        result_field_stemmed = stem_string(clean_string(result_field))
+                        result_field_list = result_field.strip().split()
+                        result_field_stemmed = stem_string(result_field)
                         result_field_stemmed_list = result_field_stemmed.strip().split()
                         dict_score[field] = {}
                         ############################################
@@ -91,10 +92,23 @@ class CosineRelevancyProcessor(PostResultProcessor):
                                 qvr = 0.3 + 1/3
                             # end if
                         else:
-                            qvr = query_nlp.similarity(result_field_nlp)
+                            label = '_*'
+                            if len(sent_tokenize(result_field)) > 1:
+                                # by sentence, take highest
+                                max_similarity = 0.0
+                                for sent in sent_tokenize(result_field):
+                                    result_sent_nlp = nlp(sent)
+                                    qvs = query_nlp.similarity(result_sent_nlp)
+                                    if qvs > max_similarity:
+                                        max_similarity = qvs
+                                # end for
+                                qvr = max_similarity
+                                label = '_s*'
+                            else:
+                                qvr = query_nlp.similarity(result_field_nlp)
                         # end if
-                        if qvr > 0.5:
-                            dict_score[field]['_'.join(query_list)+'_*'] = qvr
+                        if qvr >= settings.SWIRL_MIN_SIMILARITY:
+                            dict_score[field]['_'.join(query_list)+label] = qvr
                         ############################################
                         # 1, 2, all gram
                         p = 0
@@ -106,18 +120,15 @@ class CosineRelevancyProcessor(PostResultProcessor):
                                 grams = [query_len,2,1]
                             for gram in grams:
                                 if gram == "":
-                                    self.warning("skipping blank gram")
                                     continue
                                 # end if
                                 if len(result_field_list) == 0:
-                                    self.warning("skipping blank field")
                                     continue
                                 # a slice can be 1 gram (if query is length 1)
                                 query_slice_list = query_list[p:p+gram]
                                 query_slice_len = len(query_slice_list)
                                 if query_slice_len == 1:
                                     if query_slice_list[0] in stopwords_en:
-                                        self.warning(f"Ignoring stopword: {query_slice_list[0]}")
                                         continue
                                 if query_slice_len == 0:
                                     continue

@@ -4,6 +4,7 @@
 @version:    SWIRL 1.x
 '''
 
+from gettext import lngettext
 import re
 
 #############################################    
@@ -156,7 +157,7 @@ def clean_string(s):
             else:
                 # all others
                 # copy chars
-                if ch in [ '"', "'", '?', '!', '#', '@' ]:
+                if ch in [ '"', "'", '#', '@' ]:
                     query_clean = query_clean + ch
                     if numeric:
                         numeric = False
@@ -178,6 +179,11 @@ def clean_string(s):
                         continue
                     # end if
                 # end if
+                # replace with .
+                if ch in [ '|', '?', '!' ]:
+                    query_clean = query_clean + '.'
+                    last_ch = '.'
+                    continue                
                 # don't express if numeric 
                 if ch in [ '.', ',' ]:
                     if not numeric and not currency:
@@ -206,6 +212,8 @@ def clean_string(s):
     if '  ' in query_clean:
         while '  ' in query_clean:
             query_clean = query_clean.replace('  ', ' ')
+
+    # remove 
     return query_clean.strip()
 
 #############################################
