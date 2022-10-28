@@ -28,7 +28,12 @@ def create_result_dictionary():
 
 import copy
 
-STOP_WORDS = ['and', 'not', 'or', 'a', 'an', 'the']
+from nltk.corpus import stopwords
+# to do: detect language, set correctly
+stop_words = set(stopwords.words('english'))
+
+STOP_WORDS = stop_words
+
 IMPORTANT_CHARS = ['$', '%']
 
 def highlight(text, query_string):
@@ -111,50 +116,88 @@ def stem_string(s):
 #############################################
 
 def clean_string(s):
-    list_tag_chars = [ '<', '>' ]
-    module_name = 'clean_snippet'
+
+    # remove entities and tags
+    s1 = remove_tags(s)
+
+    # parse s1 carefully
+    module_name = 'clean_string'
     query_clean = ""
     last_ch = ""
-    start_tag = False
-    entity = False
+    tag = False
+    tagloc = closeloc = xloc = -1
+    currency = False
+    numeric = False
+    lastnum = ""
     try:
-        for ch in s.strip():
-            if ch in list_tag_chars:
-                if start_tag:
-                    start_tag = False
-                else:
-                    start_tag = True
-                    continue
-            if start_tag:
+        for ch in s1.strip():
+            # numbers
+            if ch.isnumeric():
+                numeric = True
+                if last_ch in [ '$', '£', '€', '¥', '₣' ]:
+                    query_clean = query_clean + last_ch
+                    currency = True
+                if currency:
+                    query_clean = query_clean + ch
+                if numeric:
+                    lastnum = lastnum + ch
+                last_ch = ch
                 continue
-            if ch == '&':
-                entity = True
-                continue
-            if ch == ';' and entity:
-                entity = False
-                continue
-            if entity:
-                continue
-            if ch.isalnum():
+            # letters
+            if ch.isalpha():
                 query_clean = query_clean + ch
+                if numeric:
+                    numeric = False
+                if currency:
+                    currency = False
+                lastnum = ""
+                last_ch = ch
                 continue
             else:
-                # to do: handle $000 or $00,00 or $0.00
-                # to do: handle x.y%
-                if ch in [ '.', '"', "'", '?', '!' ]:
+                # all others
+                # copy chars
+                if ch in [ '"', "'", '?', '!', '#', '@' ]:
                     query_clean = query_clean + ch
-                # else:
-                #     if last_ch != ' ':
-                #         query_clean = query_clean + ' '
-                # end if
-                # to do: preserve numbers, e.g. if in 0 then keep .,% or if $ or L(pound) etc proceeds a number
-                if last_ch != ' ':
-                    if ch == ' ':
-                        query_clean = query_clean + ch
+                    if numeric:
+                        numeric = False
+                    if currency:
+                        currency = False
+                    lastnum = ""
+                    last_ch = ch
+                    continue
+                # replace with space
+                if ch in [ ' ', '-', '_', ':', '\t', '\n', '\r', '+', '/', '\\' ]:
+                    if numeric:
+                        numeric = False
+                    if currency:
+                        currency = False
+                    lastnum = ""       
+                    # emit no more than 1 space
+                    if last_ch != ' ':
+                        query_clean = query_clean + ' '
                         continue
+                    # end if
+                # end if
+                # don't express if numeric 
+                if ch in [ '.', ',' ]:
+                    if not numeric and not currency:
+                        query_clean = query_clean + ch
+                        last_ch = ch
+                        continue
+                # percent
+                if ch == '%' and len(lastnum) > 0:
+                    query_clean = query_clean + lastnum + ch
+                    last_ch = ch
+                    continue
+                # keep in numeric
+                if ch in [ '.', ',' ]:
+                    if currency:
+                        query_clean = query_clean + ch
+                    lastnum = lastnum + ch
                 # end if
             # end if
             last_ch = ch
+        # end for
     except NameError as err:
         return(f'{module_name}: Error: NameError: {err}')
     except TypeError as err:
@@ -167,10 +210,30 @@ def clean_string(s):
 
 #############################################
 
+from bs4 import BeautifulSoup
+
+# Function to remove tags
+def remove_tags(html):
+  
+    # parse html content
+    soup = BeautifulSoup(html, "html.parser")
+  
+    for data in soup(['style', 'script']):
+        # Remove tags
+        data.decompose()
+  
+    # return data by retrieving the tag content
+    return ' '.join(soup.stripped_strings)
+
+#############################################
+
 def match_all(list_find, list_targets):
 
     match_list = []
     if not list_targets:
+        return match_list
+
+    if not list_find:
         return match_list
 
     find = ' '.join(list_find)

@@ -174,6 +174,7 @@ class Mixer:
             result['swirl_rank'] = result_number
             if not self.explain:
                 del result['explain']
+                del result['swirl_score']
             result_number = result_number + 1
   
         # extract the page of mixed results

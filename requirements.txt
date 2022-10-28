@@ -15,4 +15,5 @@ spacy
 natsort
 django-environ
 nltk
+bs4
 

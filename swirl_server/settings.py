@@ -149,7 +149,6 @@ else:
 MEDIA_ROOT = 'uploads/'
 MEDIA_URL = 'uploads/'
 
-
 import os
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
@@ -200,7 +199,7 @@ CELERY_BEAT_SCHEDULE = {
 
 # SWIRL
 
-SWIRL_BANNER = '##S#W#I#R#L##1#.#4##############################################################'
+SWIRL_BANNER = '##S#W#I#R#L##1#.#5##############################################################'
 
 SWIRL_TIMEOUT = 10
 SWIRL_Q_WAIT = 7
@@ -208,3 +207,26 @@ SWIRL_RERUN_WAIT = 8
 SWIRL_RESCORE_WAIT = 5
 
 SWIRL_EXPLAIN = True
+
+SWIRL_RELEVANCY_CONFIG = {
+    'title': {
+        'weight': 3.0,
+        'len_boost': 1.5,
+        'len_boost_max': 4,
+        'len_penalty': 0.67,
+        'len_penalty_min': 16
+    },
+    'body': {
+        'weight': 1.0,
+        'len_boost': 2.0,
+        'len_boost_max': 10,
+        'len_penalty': 0.5,
+        'len_penalty_min': 80
+    },
+    'author': {
+        'weight': 2.0
+    }
+}
+
+SWIRL_MAX_MATCHES = 4
+SWIRL_MIN_SIMILARITY = 0.52
