@@ -120,6 +120,7 @@ def highlight_list (text, word_list):
     return highlighted_text
 
 #############################################
+# fix for https://github.com/sidprobstein/swirl-search/issues/34
 
 from nltk.stem import PorterStemmer
 
@@ -236,6 +237,7 @@ def clean_string(s):
     return query_clean.strip()
 
 #############################################
+# fix for https://github.com/sidprobstein/swirl-search/issues/33
 
 from bs4 import BeautifulSoup
 

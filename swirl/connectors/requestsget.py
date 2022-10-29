@@ -192,7 +192,8 @@ class RequestsGet(Connector):
                             self.error(f'{mapping} is matched {len(matches)} expected 1')
                             return
                     else:
-                        self.warning("Err1")
+                        # no match, maybe ok
+                        pass
                 # end if
             # end for
             # count results etc
@@ -250,7 +251,8 @@ class RequestsGet(Connector):
                             self.error(f'control mapping RESULT matched {len(matches)}, expected {self.provider.results_per_query}')
                             return
                     else:
-                        self.error("Err2")
+                        # no match, maybe ok
+                        pass
             else:
                 # no RESULT key specified
                 response = mapped_response['RESULTS']
@@ -265,11 +267,9 @@ class RequestsGet(Connector):
                     found = retrieved = 0
                 # end if
             if retrieved == -1:       
-                self.warning("Err3")
                 retrieved = len(response)
                 self.retrieved = retrieved
             if found == -1:
-                self.warning("Err4")
                 # for now, assume the source delivered what it found
                 found = len(response)
                 self.found = found

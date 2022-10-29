@@ -44,6 +44,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
         query_nlp = nlp(query)
         query_list = query.strip().split()
         query_len = len(query_list)
+        # fix for https://github.com/sidprobstein/swirl-search/issues/34
         query_stemmed_list = stem_string(clean_string(self.search.query_string_processed)).strip().split()
 
         # check for zero vector
@@ -82,6 +83,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         result_field = clean_string(result[field]).strip()
                         result_field_nlp = nlp(result_field)
                         result_field_list = result_field.strip().split()
+                        # fix for https://github.com/sidprobstein/swirl-search/issues/34
                         result_field_stemmed = stem_string(result_field)
                         result_field_stemmed_list = result_field_stemmed.strip().split()
                         if len(result_field_list) != len(result_field_stemmed_list):
@@ -183,6 +185,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         ############################################
                         # highlight
                         result[field] = result[field].replace('*','')   # remove old
+                        # fix for https://github.com/sidprobstein/swirl-search/issues/33
                         result[field] = highlight_list(remove_tags(result[field]), extracted_highlights)
                         ############################################
                     # end if

@@ -51,8 +51,6 @@ class Mixer:
         self.found = 0
         self.result_mixer = None
         self.status = "INIT"
-
-        self.warning(f"provider_list: {self.provider}")
         
         try:
             if self.provider:

@@ -35,5 +35,6 @@ class RelevancyMixer(Mixer):
     def order(self):
 
         # sort by score
-        self.mixed_results = sorted(sorted(self.all_results, key=itemgetter('searchprovider_rank')), key=itemgetter('swirl_score'), reverse=True)
+        self.mixed_results = sorted(sorted(sorted(self.all_results, key=itemgetter('searchprovider_rank')), key=itemgetter('date_published'), reverse=True), key=itemgetter('swirl_score'), reverse=True)
+
 
