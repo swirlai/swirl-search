@@ -27,6 +27,8 @@ def create_result_dictionary():
 
 #############################################
 
+# TO DO: review all below
+
 import copy
 
 from nltk.corpus import stopwords
@@ -36,6 +38,10 @@ stop_words = set(stopwords.words('english'))
 STOP_WORDS = stop_words
 
 IMPORTANT_CHARS = ['$', '%']
+
+import logging as logger
+
+# TO DO: remove this? 
 
 def highlight(text, query_string):
 
@@ -97,6 +103,19 @@ def highlight(text, query_string):
             text2 = highlighted_text  
             # end if
         # end if
+              
+    return highlighted_text
+
+#############################################
+
+def highlight_list (text, word_list):
+
+    highlighted_text = text
+    for word in word_list:
+        if highlighted_text.find(word) > -1:
+            highlighted_text = highlighted_text.replace(word, f'*{word}*')
+        else:
+            logger.error(f"highlight_list: failed to find match: {word}, {highlighted_text}")
               
     return highlighted_text
 

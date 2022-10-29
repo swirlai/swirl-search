@@ -9,8 +9,9 @@ import logging as logger
 #############################################    
 #############################################    
 
+# TO DO: clean up this order
+
 from swirl.models import Search, Result
-from .utils import highlight
 
 from .processor import *
 
@@ -21,13 +22,12 @@ from math import isnan
 
 from django.conf import settings
 
-from .utils import clean_string, stem_string, match_all
+from .utils import clean_string, stem_string, match_all, highlight_list, remove_tags
 
 from ..spacy import nlp
 
 # to do: detect language and load all stopwords? P1
 from ..nltk import stopwords_en, word_tokenize, sent_tokenize
-
 
 class CosineRelevancyProcessor(PostResultProcessor):
 
@@ -53,11 +53,13 @@ class CosineRelevancyProcessor(PostResultProcessor):
 
         # check for stopword query
         query_without_stopwords = []
-        for term in query_list:
-            if not term in stopwords_en:
-                query_without_stopwords.append(term)
+        for extract in query_list:
+            if not extract in stopwords_en:
+                query_without_stopwords.append(extract)
         if len(query_without_stopwords) == 0:
             self.error(f"query_string_processed is all stopwords!")
+            # to do: handle more gracefully
+            return self.results
         
         ############################################
         # main loop
@@ -82,33 +84,38 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         result_field_list = result_field.strip().split()
                         result_field_stemmed = stem_string(result_field)
                         result_field_stemmed_list = result_field_stemmed.strip().split()
+                        if len(result_field_list) != len(result_field_stemmed_list):
+                            self.error("len(result_field_list) != len(result_field_stemmed_list), highlighting errors may occur")
                         dict_score[field] = {}
+                        extracted_highlights = []
+                        match_stems = []
                         ############################################
                         # query vs result_field
-                        if empty_query_vector or result_field_nlp.vector.all() == 0:
-                            if len(result_field_list) == 0:
-                                qvr = 0.0
-                            else:
-                                qvr = 0.3 + 1/3
-                            # end if
-                        else:
-                            label = '_*'
-                            if len(sent_tokenize(result_field)) > 1:
-                                # by sentence, take highest
-                                max_similarity = 0.0
-                                for sent in sent_tokenize(result_field):
-                                    result_sent_nlp = nlp(sent)
-                                    qvs = query_nlp.similarity(result_sent_nlp)
-                                    if qvs > max_similarity:
-                                        max_similarity = qvs
-                                # end for
-                                qvr = max_similarity
-                                label = '_s*'
-                            else:
-                                qvr = query_nlp.similarity(result_field_nlp)
-                        # end if
-                        if qvr >= settings.SWIRL_MIN_SIMILARITY:
-                            dict_score[field]['_'.join(query_list)+label] = qvr
+                        # to do: if no match, and score is below .7, then set to 0?
+                        # if empty_query_vector or result_field_nlp.vector.all() == 0:
+                        #     if len(result_field_list) == 0:
+                        #         qvr = 0.0
+                        #     else:
+                        #         qvr = 0.3 + 1/3
+                        #     # end if
+                        # else:
+                        #     label = '_*'
+                        #     if len(sent_tokenize(result_field)) > 1:
+                        #         # by sentence, take highest
+                        #         max_similarity = 0.0
+                        #         for sent in sent_tokenize(result_field):
+                        #             result_sent_nlp = nlp(sent)
+                        #             qvs = query_nlp.similarity(result_sent_nlp)
+                        #             if qvs > max_similarity:
+                        #                 max_similarity = qvs
+                        #         # end for
+                        #         qvr = max_similarity
+                        #         label = '_s*'
+                        #     else:
+                        #         qvr = query_nlp.similarity(result_field_nlp)
+                        # # end if
+                        # if qvr >= settings.SWIRL_MIN_SIMILARITY:
+                        #     dict_score[field]['_'.join(query_list)+label] = qvr
                         ############################################
                         # 1, 2, all gram
                         p = 0
@@ -136,9 +143,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
                                 if '_'.join(query_slice_list) in dict_score[field]:
                                     continue
                                 ####### MATCH
-                                # iterate across all matches
-                                # match on stem
-                                # match_all returns a list of result_field_list indexes that match
+                                # iterate across all matches, match on stem; match_all returns a list of result_field_list indexes that match
                                 match_list = match_all(query_slice_stemmed_list, result_field_stemmed_list)
                                 if len(match_list) > settings.SWIRL_MAX_MATCHES:
                                     match_list = match_list[:settings.SWIRL_MAX_MATCHES-1]
@@ -146,28 +151,39 @@ class CosineRelevancyProcessor(PostResultProcessor):
                                 if match_list:
                                     key = ''
                                     for match in match_list:
+                                        extracted_match_list = result_field_list[match:match+len(query_slice_stemmed_list)]
+                                        key = '_'.join(extracted_match_list)+'_'+str(match)
                                         rw = result_field_list[match-(gram*2)-1:match+query_slice_len+2+(gram*2)]
-                                        key = '_'.join(qw)+'_'+str(match)
+                                        dict_score[field][key] = ""
                                         ######## SIMILARITY vs WINDOW
                                         rw_nlp = nlp(' '.join(rw))
                                         if rw_nlp.vector.all() == 0:
                                             dict_score[field][key] = 0.31 + 1/3
-                                            continue
-                                        qw_nlp = nlp(' '.join(qw))
-                                        if qw_nlp.vector.all() == 0:
-                                            dict_score[field][key] = 0.32 + 1/3
-                                            continue
-                                        dict_score[field][key] = qw_nlp.similarity(rw_nlp)
+                                        if not dict_score[field][key]:
+                                            qw_nlp = nlp(' '.join(qw))
+                                            if qw_nlp.vector.all() == 0:
+                                                dict_score[field][key] = 0.32 + 1/3
+                                        if not dict_score[field][key]:
+                                            dict_score[field][key] = qw_nlp.similarity(rw_nlp)
+                                        ######### COLLECT MATCHES FOR HIGHLIGHTING
+                                        for extract in extracted_match_list:
+                                            if extract in extracted_highlights:
+                                                continue
+                                            extracted_highlights.append(extract)
+                                        if '_'.join(query_slice_stemmed_list) not in match_stems:
+                                            match_stems.append('_'.join(query_slice_stemmed_list))
                                     # end for
+                                    # dict_score[field]['_highlight_hits'] = extracted_highlights
+                                    # dict_score[field]['_matching_stems'] = match_stems
                             # end for
                             p = p + 1
                         # end while
                         if dict_score[field] == {}:
                             del dict_score[field]
                         ############################################
-                        # highlight 
+                        # highlight
                         result[field] = result[field].replace('*','')   # remove old
-                        result[field] = highlight(result[field], self.search.query_string_processed)
+                        result[field] = highlight_list(remove_tags(result[field]), extracted_highlights)
                         ############################################
                     # end if
                 # end for field in RELEVANCY_CONFIG:
@@ -190,6 +206,8 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         dict_len_adjusts[f] = len_adjust
                     # end if
                     for k in dict_score[f]:
+                        if k.startswith('_'):
+                            continue
                         if dict_score[f][k] >= settings.SWIRL_MIN_SIMILARITY:
                             if k.endswith('_*'):
                                 result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k]) * len_adjust

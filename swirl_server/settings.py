@@ -211,14 +211,14 @@ SWIRL_EXPLAIN = True
 SWIRL_RELEVANCY_CONFIG = {
     'title': {
         'weight': 3.0,
-        'len_boost': 1.5,
+        'len_boost': 1.0,
         'len_boost_max': 4,
         'len_penalty': 0.67,
         'len_penalty_min': 16
     },
     'body': {
         'weight': 1.0,
-        'len_boost': 2.0,
+        'len_boost': 1.2,
         'len_boost_max': 10,
         'len_penalty': 0.5,
         'len_penalty_min': 80
