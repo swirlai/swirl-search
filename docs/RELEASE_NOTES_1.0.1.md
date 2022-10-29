@@ -48,6 +48,6 @@ Please [report issues](https://github.com/sidprobstein/swirl-search/issues/) wit
 
 # Get Support
 
-Please [report an issue](https://github.com/sidprobstein/swirl-search/issues/) or email [swirl-support@probstein.com](mailto:swirl-support@probstein.com) for support.
+Please [report an issue](https://github.com/sidprobstein/swirl-search/issues/) or email [support@swirl.today](mailto:support@swirl.today) for support.
 
 <br/>
