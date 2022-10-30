@@ -65,7 +65,7 @@ SWIRL_SERVICE_DICT = {}
 for swirl_service in SWIRL_SERVICES:
     SWIRL_SERVICE_DICT[swirl_service['name']] = swirl_service['path']
 
-COMMAND_LIST = [ 'help', 'start', 'start_sleep', 'stop', 'restart', 'flush', 'migrate', 'setup', 'status', 'watch' ]
+COMMAND_LIST = [ 'help', 'start', 'start_sleep', 'stop', 'restart', 'flush', 'migrate', 'setup', 'install', 'status', 'watch', 'tail' ]
 
 ##################################################
 
@@ -209,6 +209,25 @@ def watch(service_list):
             break
 
     return True
+
+##################################################
+
+def tail(service_list):
+
+    print("Tailing logs/*.log - hit ^C to stop:")
+
+    try:
+        p = subprocess.Popen(['tail','-f','logs/django.log','logs/celery-worker.log'], stdout=subprocess.PIPE)
+        
+        while p.poll() is None:
+            l = p.stdout.readline()
+            print(l.decode("utf-8").replace('\n',''))
+        p.kill()
+        return True
+
+    except KeyboardInterrupt:
+        p.kill()
+        return True
 
 ##################################################
 
@@ -426,27 +445,46 @@ def setup(service_list):
         print(f"Error: error during migration, check console output")
         return False
 
-    # collect statics
-    print()
-    print(f"Collecting Statics:")
-    print()
+    if not os.path.exists(os.getcwd() + '/static'):
+        # collect statics
+        print()
+        print(f"Collecting Statics:")
+        print()
+        proc = subprocess.run(['python','manage.py','collectstatic'], capture_output=True)
+        if proc.returncode != 0:
+            print(f"Error: {proc.stderr.decode('UTF-8')}")
+            return False
+        result = proc.stdout.decode('UTF-8')
+        print(result)
+        if 'static files copied' in result:
+            print("Ok")
+            return True
+        else:
+            return False
+    else:
+        return True
 
-    # https://github.com/sidprobstein/swirl-search/issues/10
-    # check to see if static exists, exit if so 
-    if os.path.exists(os.getcwd() + '/static'):
-        print("Error: folder 'static' exists in root directory; remove it and try this command again")
-        return False
+##################################################
 
-    proc = subprocess.run(['python','manage.py','collectstatic'], capture_output=True)
+def install(service_list):
+
+    print("Installing SWIRL dependencies:")
+
+    err = 0
+
+    proc = subprocess.run(['pip','install','-r','requirements.txt'], capture_output=True)
     if proc.returncode != 0:
         print(f"Error: {proc.stderr.decode('UTF-8')}")
         return False
     result = proc.stdout.decode('UTF-8')
     print(result)
-    if 'static files copied' in result:
-        return True
-    else:
+    if 'error' in result:
         return False
+
+    print("Ok")
+
+    # now run setup
+    return setup(service_list)
 
 ##################################################
 ##################################################
