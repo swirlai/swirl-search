@@ -65,7 +65,7 @@ SWIRL_SERVICE_DICT = {}
 for swirl_service in SWIRL_SERVICES:
     SWIRL_SERVICE_DICT[swirl_service['name']] = swirl_service['path']
 
-COMMAND_LIST = [ 'help', 'start', 'start_sleep', 'stop', 'restart', 'flush', 'migrate', 'setup', 'install', 'status', 'watch', 'tail' ]
+COMMAND_LIST = [ 'help', 'start', 'start_sleep', 'stop', 'restart', 'flush', 'migrate', 'setup', 'status', 'watch', 'tail' ]
 
 ##################################################
 
@@ -463,28 +463,6 @@ def setup(service_list):
             return False
     else:
         return True
-
-##################################################
-
-def install(service_list):
-
-    print("Installing SWIRL dependencies:")
-
-    err = 0
-
-    proc = subprocess.run(['pip','install','-r','requirements.txt'], capture_output=True)
-    if proc.returncode != 0:
-        print(f"Error: {proc.stderr.decode('UTF-8')}")
-        return False
-    result = proc.stdout.decode('UTF-8')
-    print(result)
-    if 'error' in result:
-        return False
-
-    print("Ok")
-
-    # now run setup
-    return setup(service_list)
 
 ##################################################
 ##################################################
