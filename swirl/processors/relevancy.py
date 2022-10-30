@@ -134,9 +134,6 @@ class CosineRelevancyProcessor(PostResultProcessor):
                             if query_len > 2:
                                 grams = [query_len,2,1]
                             for gram in grams:
-                                if gram == "":
-                                    continue
-                                # end if
                                 if len(result_field_list) == 0:
                                     continue
                                 # a slice can be 1 gram (if query is length 1)
@@ -182,7 +179,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
                                             match_stems.append('_'.join(query_slice_stemmed_list))
                                     # end for
                                     # dict_score[field]['_highlight_hits'] = extracted_highlights
-                                    # dict_score[field]['_matching_stems'] = match_stems
+                                    dict_score[field]['_matching_stems'] = match_stems
                             # end for
                             p = p + 1
                         # end while
@@ -201,24 +198,13 @@ class CosineRelevancyProcessor(PostResultProcessor):
                 # dict_len_adjusts = {}
                 for f in dict_score:
                     if f in RELEVANCY_CONFIG:
-                        # len_adjust = 1.0
                         weight = RELEVANCY_CONFIG[f]['weight']
-                        # lenf = len(clean_string(result[f]).split())
-                        # if 'len_boost_max' in RELEVANCY_CONFIG[f]:
-                        #     if lenf <= RELEVANCY_CONFIG[f]['len_boost_max']:
-                        #         # boost
-                        #         len_adjust = float(RELEVANCY_CONFIG[f]['len_boost'])
-                        # if 'len_penalty_min' in RELEVANCY_CONFIG[f]:
-                        #     if lenf >= RELEVANCY_CONFIG[f]['len_penalty_min']:
-                        #         # penalty
-                        #         len_adjust = float(RELEVANCY_CONFIG[f]['len_penalty'])
-                        # dict_len_adjusts[f] = len_adjust
-                    # end if
                     for k in dict_score[f]:
                         if k.startswith('_'):
                             continue
                         if dict_score[f][k] >= settings.SWIRL_MIN_SIMILARITY:
-                            if k.endswith('_*'):
+                            # to do: this should also include _s*
+                            if k.endswith('_*') or k.endswith('_s*'):
                                 result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k]) # * len_adjust
                             else:
                                 result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k)) # * len_adjust
@@ -226,10 +212,6 @@ class CosineRelevancyProcessor(PostResultProcessor):
                     # end for
                 # end for
                 ####### explain
-                # for f in dict_len_adjusts:
-                #     # dict_score[f]['_length'] = len(clean_string(result[f]).split())
-                #     if dict_len_adjusts[f] != 1.0:
-                #         dict_score[f]['_len_boost'] = dict_len_adjusts[f]
                 result['explain'] = dict_score                
                 updated = updated + 1
                 # save highlighted version

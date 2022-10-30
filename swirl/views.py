@@ -39,7 +39,7 @@ def index(request):
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#3##############################################################
+    ##S#W#I#R#L##1#.#5##############################################################
     API endpoint for managing SearchProviders. 
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH.
@@ -56,7 +56,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
 
 class SearchViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#3##############################################################
+    ##S#W#I#R#L##1#.#5##############################################################
     API endpoint for managing Search objects. 
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH.
@@ -169,7 +169,7 @@ class SearchViewSet(viewsets.ModelViewSet):
 
 class ResultViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#3##############################################################
+    ##S#W#I#R#L##1#.#5##############################################################
     API endpoint for managing Result objects, including Mixed Results
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH.
@@ -270,7 +270,7 @@ class ResultViewSet(viewsets.ModelViewSet):
 
 class UserViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#3##############################################################
+    ##S#W#I#R#L##1#.#5##############################################################
     API endpoint that allows management of Users objects.
     Use GET to list all objects, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH objects.
@@ -285,7 +285,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class GroupViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#3##############################################################
+    ##S#W#I#R#L##1#.#5##############################################################
     API endpoint that allows management of Group objects.
     Use GET to list all objects, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH objects.
