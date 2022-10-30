@@ -234,7 +234,7 @@ def rescore(id):
         return False
 
     last_status = search.status
-    if not search.status.endswith('_READY'):
+    if not (search.status.endswith('_READY') or search.status == 'RESCORING'):
         logger.warning(f"{module_name}: search {search.id} has status {search.status}, rescore may not work")
         last_status = None
 
@@ -263,7 +263,8 @@ def rescore(id):
             message = f'Error: TypeError: {err}'
             logger.error(f'{module_name}: {message}')
             return False
-        message = f"Rescoring by {search.post_result_processor} updated {results_modified} results"
+        message = f"Rescoring by {search.post_result_processor} updated {results_modified} results on {datetime.now()}"
+        search.messages = []
         search.messages.append(message)    
         if last_status:
             search.status = last_status
