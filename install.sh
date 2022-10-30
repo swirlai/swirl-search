@@ -8,3 +8,6 @@ python -m spacy download en_core_web_lg
 
 echo "Downloading NLTK modules..."
 python -m nltk.downloader stopwords
+python -m nltk.downloader punkt
+
+echo "If no errors occured, run python swirl.py setup"

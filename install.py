@@ -5,18 +5,11 @@
 '''
 
 import argparse
-from asyncio.subprocess import STDOUT
 import sys
 import os
 import subprocess
-from subprocess import SubprocessError
-import json
-import time
-import signal
-from datetime import datetime
 
 module_name = 'install.py'
-g_debug = False
 
 class bcolors:
     OKGREEN = '\033[92m'
@@ -61,7 +54,6 @@ def main(argv):
     print()
 
     parser = argparse.ArgumentParser(description="Install swirl packages")
-    parser.add_argument('command', nargs='+', help="Specify 'help' to get a list of available commands")
     parser.add_argument('-d', '--debug', action="store_true", help="provide debugging information")
     args = parser.parse_args()
 
