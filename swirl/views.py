@@ -97,6 +97,10 @@ class SearchViewSet(viewsets.ModelViewSet):
             for old_result in old_results:
                 old_result.delete()
             rerun_search.status = 'NEW_SEARCH'
+            # fix for https://github.com/sidprobstein/swirl-search/issues/35
+            message = f"Re-run on {datetime.now()}"
+            rerun_search.messages = []
+            rerun_search.messages.append(message)    
             rerun_search.save()
             search_task.delay(rerun_search.id)
             time.sleep(settings.SWIRL_RERUN_WAIT)

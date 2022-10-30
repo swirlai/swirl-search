@@ -171,8 +171,10 @@ class Mixer:
         for result in self.mixed_results:
             result['swirl_rank'] = result_number
             if not self.explain:
-                del result['explain']
-                del result['swirl_score']
+                if 'explain' in result:
+                    del result['explain']
+                if 'swirl_score' in result:
+                    del result['swirl_score']
             result_number = result_number + 1
   
         # extract the page of mixed results

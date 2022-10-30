@@ -4,9 +4,6 @@
 @version:    SWIRL 1.x
 '''
 
-from gettext import lngettext
-import re
-
 #############################################    
 
 def create_result_dictionary():
@@ -26,87 +23,21 @@ def create_result_dictionary():
     return dict_result
 
 #############################################
+# fix for https://github.com/sidprobstein/swirl-search/issues/34
 
-# TO DO: review all below
+from ..nltk import ps
 
-import copy
+def stem_string(s):
+        
+    nl=[]
+    for s in s.strip().split():
+        nl.append(ps.stem(s))
 
-from nltk.corpus import stopwords
-# to do: detect language, set correctly
-stop_words = set(stopwords.words('english'))
-
-STOP_WORDS = stop_words
-
-IMPORTANT_CHARS = ['$', '%']
-
-import logging as logger
-
-# TO DO: remove this? 
-
-def highlight(text, query_string):
-
-    text2 = copy.copy(text)
-
-    highlighted_text = text
-    
-    for term in query_string.strip().split():
-        if term in STOP_WORDS:
-            continue
-        # update text3 which is a tokenized text2
-        text3 = ""
-        for ch in text2:
-            if ch.isalnum():
-                text3 = text3 + ch
-            else:
-                if ch in IMPORTANT_CHARS:
-                    text3 = text3 + ch
-                else:
-                    text3 = text3 + ' '
-            # end if
-        # end for
-        # get a list of the locations for this term
-        hit_list = []
-        if text3.lower().startswith(term.lower()):
-            hit_list.append(0)
-        re_term = term
-        # escape characters that need to be regexable
-        for c in IMPORTANT_CHARS:
-            if c in re_term:
-                re_term = re_term.replace(c, '\\' + c)
-        if len(text3.strip().split()) > 1:
-            hit_list = hit_list + [m.start() for m in re.finditer(' ' + re_term.lower() + ' ', text3.lower())]
-            if text3.lower().endswith(term.lower()):
-                hit_list.append(len(text3) - len(term) - 1)
-        # print(hit_list)
-        # highlight the hits
-        if hit_list:
-            last = 0
-            highlighted_text = ""
-            for hit in hit_list:
-                if hit == 0:
-                    highlighted_text = '*' + text2[:len(term)] + '*'
-                    last = len(term)
-                else:
-                    if highlighted_text:
-                        highlighted_text = highlighted_text + text2[last:hit+1] + '*' + text2[hit+1:hit+1+len(term)] + '*'
-                    else:
-                        highlighted_text = text2[last:hit+1] + '*' + text2[hit+1:hit+1+len(term)] + '*'
-                    last = hit + 1 + len(term)
-                    # end if
-                # end if
-                # print(highlighted_text)
-            # end for
-            if last < len(text2):
-                highlighted_text = highlighted_text + text2[last:]
-            # print(highlighted_text)
-            # update text2
-            text2 = highlighted_text  
-            # end if
-        # end if
-              
-    return highlighted_text
+    return ' '.join(nl)
 
 #############################################
+
+import logging as logger
 
 def highlight_list (text, word_list):
 
@@ -120,19 +51,22 @@ def highlight_list (text, word_list):
     return highlighted_text
 
 #############################################
-# fix for https://github.com/sidprobstein/swirl-search/issues/34
+# fix for https://github.com/sidprobstein/swirl-search/issues/33
 
-from nltk.stem import PorterStemmer
+from ..bs4 import bs
 
-ps = PorterStemmer()
-
-def stem_string(s):
-        
-    nl=[]
-    for s in s.strip().split():
-        nl.append(ps.stem(s))
-
-    return ' '.join(nl)
+# Function to remove tags
+def remove_tags(html):
+  
+    # parse html content
+    soup = bs(html, "html.parser")
+  
+    for data in soup(['style', 'script']):
+        # Remove tags
+        data.decompose()
+  
+    # return data by retrieving the tag content
+    return ' '.join(soup.stripped_strings)
 
 #############################################
 
@@ -237,24 +171,6 @@ def clean_string(s):
     return query_clean.strip()
 
 #############################################
-# fix for https://github.com/sidprobstein/swirl-search/issues/33
-
-from bs4 import BeautifulSoup
-
-# Function to remove tags
-def remove_tags(html):
-  
-    # parse html content
-    soup = BeautifulSoup(html, "html.parser")
-  
-    for data in soup(['style', 'script']):
-        # Remove tags
-        data.decompose()
-  
-    # return data by retrieving the tag content
-    return ' '.join(soup.stripped_strings)
-
-#############################################
 
 def match_all(list_find, list_targets):
 
@@ -274,3 +190,14 @@ def match_all(list_find, list_targets):
         p = p + 1
     
     return match_list
+
+#############################################
+
+def match_any(list_find, list_targets):
+
+    for item in list_find:
+        for target in list_targets:
+            if item.lower() in target.lower():
+                return True
+
+    return False
