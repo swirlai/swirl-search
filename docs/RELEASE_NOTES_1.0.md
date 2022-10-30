@@ -42,7 +42,7 @@ This may be because of browser pre-fetch, or simply because of hitting ENTER twi
 
 - [ ] Test the [Installation Guide](INSTALLATION_GUIDE.md) and [Quick Start](QUICK_START.md)
 - [ ] Test and document the [installation procedure for Microsoft Windows](INSTALLATION_GUIDE.md#microsoft-windows)
-- [ ] Email [swirl-support@probstein.com](mailto:swirl-support@probstein.com) for support, or please [open a ticket in Github](https://github.com/sidprobstein/swirl-search/issues)
+- [ ] Email [support@swirl.today](mailto:support@swirl.today) for support, or please [open a ticket in Github](https://github.com/sidprobstein/swirl-search/issues)
 
 <br/>
 
@@ -56,6 +56,6 @@ This may be because of browser pre-fetch, or simply because of hitting ENTER twi
 
 # Get Support
 
-Please email [swirl-support@probstein.com](mailto:swirl-support@probstein.com) for support.
+Please email [support@swirl.today](mailto:support@swirl.today) for support.
 
 <br/>

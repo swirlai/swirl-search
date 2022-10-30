@@ -8,7 +8,7 @@ This version expands usability for multiple topics by adding default providers p
 
 ## Additions
 
-:small_blue_diamond:New SearchProvider properties "Default" and "Tags"
+:small_blue_diamond: New SearchProvider properties "Default" and "Tags"
 
 SearchProviders can now be organized using Tags - json lists that can hold any monicker desired for one or more providers. Tags can be specified in search objects using the searchprovider_list, and freely combined with provider names or IDs. If no searchprovider_list is specified, only providers with Default = True will be run. 
 
@@ -96,4 +96,4 @@ Please [report any issues](https://github.com/sidprobstein/swirl-search/issues/)
 
 :small_blue_diamond: [Create an Issue](https://github.com/sidprobstein/swirl-search/issues) if something doesn't work, isn't clear, or should be documented - we'd love to hear from you!
 
-:small_blue_diamond: Paid support and consulting are available... [contact SWIRL](mailto:swirl@probstein.com) for more information.
+:small_blue_diamond: Paid support and consulting are available... [contact SWIRL](mailto:support@swirl.today) for more information.

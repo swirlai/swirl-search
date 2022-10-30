@@ -160,6 +160,8 @@ class RequestsGet(Connector):
             # normalize the response
             mapped_response = {}
             json_data = response.json()
+            if not json_data:
+                self.error("Err")
             if len(json_data) == 0:
                 self.error("request.get succeeded, but no json data returned")
                 return
@@ -179,15 +181,19 @@ class RequestsGet(Connector):
                     except (NameError, TypeError, ValueError) as err:
                         self.error(f'{err.args}, {err} in provider.self.response_mappings: {self.provider.response_mappings}')
                         return
-                    # end try        
-                    if len(matches) == 0:
-                        # no matches
-                        continue      
-                    if len(matches) == 1:
-                        mapped_response[mapping] = matches[0]
+                    # end try    
+                    if matches:    
+                        if len(matches) == 0:
+                            # no matches
+                            continue      
+                        if len(matches) == 1:
+                            mapped_response[mapping] = matches[0]
+                        else:
+                            self.error(f'{mapping} is matched {len(matches)} expected 1')
+                            return
                     else:
-                        self.error(f'{mapping} is matched {len(matches)} expected 1')
-                        return
+                        # no match, maybe ok
+                        pass
                 # end if
             # end for
             # count results etc
@@ -237,18 +243,29 @@ class RequestsGet(Connector):
                         self.error(f'{err.args}, {err} in self.response_mappings: {self.provider.response_mappings}')
                         return
                     # end try
-                    if len(matches) == 1:
-                        for match in matches:
-                            response.append(match)
+                    if matches:
+                        if len(matches) == 1:
+                            for match in matches:
+                                response.append(match)
+                        else:
+                            self.error(f'control mapping RESULT matched {len(matches)}, expected {self.provider.results_per_query}')
+                            return
                     else:
-                        self.error(f'control mapping RESULT matched {len(matches)}, expected {self.provider.results_per_query}')
-                        return
+                        # no match, maybe ok
+                        pass
             else:
                 # no RESULT key specified
                 response = mapped_response['RESULTS']
             # check retrieved 
-            if retrieved > -1 and retrieved != len(response):
-                self.warning(f"retrieved does not match length of response {len(response)}")
+            if response:
+                if retrieved > -1 and retrieved != len(response):
+                    self.warning(f"retrieved does not match length of response {len(response)}")
+            else:
+                # to do: review
+                self.error(f"no results extracted from response! found:{found}")
+                if found != 0:
+                    found = retrieved = 0
+                # end if
             if retrieved == -1:       
                 retrieved = len(response)
                 self.retrieved = retrieved

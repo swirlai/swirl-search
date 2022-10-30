@@ -1,9 +1,7 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.0
+@version:    SWIRL 1.5
 '''
 
-import spacy
-
-nlp = spacy.load('en_core_web_lg')
+from bs4 import BeautifulSoup as bs

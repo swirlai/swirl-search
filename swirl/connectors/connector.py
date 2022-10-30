@@ -18,6 +18,8 @@ path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
 django.setup()
 
+from django.conf import settings
+
 from swirl.models import Search, Result, SearchProvider
 from swirl.processors import *
 
@@ -196,6 +198,14 @@ class Connector:
         Transform the response from the provider into a json (list) and store as results
         ''' 
 
+        if self.response:
+            if len(self.response) == 0:
+                # no results, not an error
+                self.retrieved = 0
+                self.messages.append(f"Retrieved 0 of 0 results from: {self.provider.name}")
+                self.status = 'READY'
+                return
+
         self.results = self.response
         return
 
@@ -209,7 +219,8 @@ class Connector:
 
         if self.found > 0:
             # process results
-            retrieved = len(self.results)
+            if self.results:
+                retrieved = len(self.results)
             self.messages.append(f"Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
             try:
                 processed_results = eval(self.provider.result_processor)(self.results, self.provider, self.search.query_string_processed).process()

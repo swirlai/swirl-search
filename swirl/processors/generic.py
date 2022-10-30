@@ -33,7 +33,7 @@ class GenericQueryProcessor(QueryProcessor):
 class GenericQueryCleaningProcessor(QueryProcessor):
 
     type = 'GenericQueryCleaningProcessor'
-    chars_allowed_in_query = [' ', '+', '-', '"', "'", '(', ')', '_', '~'] 
+    chars_allowed_in_query = [' ', '+', '-', '"', "'", '(', ')', '_', '~', ':'] 
 
     def process(self):
 
@@ -74,18 +74,9 @@ class GenericResultProcessor(ResultProcessor):
             payload = {}
             # report searchprovider rank, not ours
             swirl_result['searchprovider_rank'] = result_number
-            swirl_result['date_published'] = 'unknown'
             swirl_result['date_retrieved'] = str(datetime.now())
-            # to do: figure out url scheme P1
-            if 'id' in result:
-                swirl_result['url'] = self.provider.url + '/' + str(result['id'])
-
             #############################################  
-            # handle mappings 
-
-            # provided in form source_key=swirl_key, ..., where source_key can be a json_string e.g. _source.customer_full_name
-            # to do: update this to match RequestsGet and use utils.py/get_mappings
-
+            # mappings are in form source_key=swirl_key, ..., where source_key can be a json_string e.g. _source.customer_full_name
             if self.provider.result_mappings:
                 mappings = self.provider.result_mappings.split(',')
                 for mapping in mappings:
@@ -149,10 +140,11 @@ class GenericResultProcessor(ResultProcessor):
                         # single mapping
                         if source_key in result_dict:
                             if swirl_key:
-                                # user has specified the target location
+                                # provider specifies the target
                                 if swirl_key in swirl_result:
                                     if type(swirl_result[swirl_key]) == type(result_dict[source_key]):
                                         # same type, copy it
+                                        # to do: improve this, likely check to see if it needs parsing first e.g. is it a datetime? P2
                                         if swirl_key.lower().startswith('date'):
                                             swirl_result[swirl_key] = str(parser.parse(result_dict[source_key]))
                                         else:
@@ -191,6 +183,11 @@ class GenericResultProcessor(ResultProcessor):
                         # aggregate all other keys to payload
                         payload[key] = result[key]
             # end for
+
+            # if no date_published, set it to unknown
+            # TO DO: maybe this should be left blank? P1 *****
+            if swirl_result['date_published'] == "":
+                swirl_result['date_published'] = 'unknown'
 
             #############################################
             # connector specific
