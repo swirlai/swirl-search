@@ -30,12 +30,23 @@ This version consists of a new relevancy model supported by stemmed matching and
 
 ## Upgrading
 
-For all platforms other than docker, this means running the following from the command line:
+For all platforms other than docker, run the following from the command line, in the swirl installation folder:
+
+```
+python install.py
+./install.sh
+```
+
+(Windows users, run install.bat)
+
+If these scripts don't work for any reason, install manually:
 
 ```
 pip install -r requirements.txt
 python -m spacy download en_core_web_lg
 ```
+
+<br/>
 
 :warning: Docker users need to restart their image to get the new version. Containers using sqlite3 for storage delete all content upon shut down! Read more: [Docker Build for SWIRL](https://github.com/sidprobstein/swirl-search/blob/main/docs/DOCKER_BUILD.md)
 
