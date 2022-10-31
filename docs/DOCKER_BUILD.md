@@ -32,7 +32,7 @@ git clone https://github.com/sidprobstein/swirl-search my-folder
 
 ```
 cd swirl-search
-docker build . -t swirl-search:latest
+docker build . -t sidprobstein/swirl-search:latest
 ```
 
 If you cloned to a directory other than swirl-search, replace it above.
