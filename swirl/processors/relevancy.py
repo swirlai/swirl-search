@@ -179,7 +179,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
                                             match_stems.append('_'.join(query_slice_stemmed_list))
                                     # end for
                                     # dict_score[field]['_highlight_hits'] = extracted_highlights
-                                    dict_score[field]['_matching_stems'] = match_stems
+                                    # dict_score[field]['_matching_stems'] = match_stems
                             # end for
                             p = p + 1
                         # end while
