@@ -22,6 +22,8 @@ WORKDIR /app
 
 # install requirements
 RUN pip install -r requirements.txt
-RUN python -m spacy download en_core_web_md
+RUN python -m spacy download en_core_web_lg
+RUN python -m nltk.downloader stopwords
+RUN python -m nltk.downloader punkt
 
 EXPOSE 8000
