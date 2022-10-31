@@ -32,11 +32,11 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 
 # Features
 
-* [Pre-built searchprovider definitions](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for apache solr, elastic, Sqlite3, PostGresql, generic http/get/auth/json and pay services like NLResearch.com and Newsdata.io
+* [Pre-built searchprovider definitions](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for apache solr, elastic, Sqlite3, PostgreSQL, generic http/get/auth/json and pay services like NLResearch.com and Newsdata.io
 
 * [Asynchronous search federation](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#architecture) via [REST APIs](http://localhost:8000/swirl/swagger-ui/)
 
-* Data landed in Sqlite3 or PostGresql for post-processing, later consumption
+* Data landed in Sqlite3 or PostgreSQL for post-processing, later consumption
 
 * [Cosine similarity relevancy](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) using Spacy vectors with term, phrase and freshness boosts with full explanation
 
@@ -48,7 +48,7 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 
 * [Optional spell correction](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#spell-correction) using TextBlob
 
-* [Sample data sets](https://github.com/sidprobstein/swirl-search/tree/main/Data) for use with Sqlite3 and PostGresql
+* [Sample data sets](https://github.com/sidprobstein/swirl-search/tree/main/Data) for use with Sqlite3 and PostgreSQL
 
 * [Optional search/result expiration service](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide#search-expiration-service) to limit storage use
 

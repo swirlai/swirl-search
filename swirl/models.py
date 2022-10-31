@@ -18,7 +18,7 @@ class SearchProvider(models.Model):
     CONNECTOR_CHOICES = [
         ('RequestsGet', 'RequestsGet'),
         ('Elastic', 'Elasticsearch Query String'),
-        ('PostGresql', 'PostGresql'),
+        ('PostgreSQL', 'PostgreSQL'),
         ('M365OutlookMessages', 'Microsoft M365 Outlook Messages'),
         ('M365OutlookCalendar', 'Microsoft M365 Outlook Calendar'),
         ('M365OneDrive', 'Microsoft M365 OneDrive Files'),

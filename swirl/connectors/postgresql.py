@@ -31,9 +31,9 @@ from .utils import save_result, bind_query_mappings
 
 from .db_connector import DBConnector
 
-class PostGresql(DBConnector):
+class PostgreSQL(DBConnector):
 
-    type = "PostGresql"
+    type = "PostgreSQL"
 
     ########################################
 
