@@ -145,35 +145,29 @@ class GenericResultProcessor(ResultProcessor):
                                 if swirl_key in swirl_result:
                                     if not type(result_dict[source_key]) in json_types:
                                         if 'date' in source_key.lower():
-                                            self.warning("converting date")
                                             # parser.par will fill-in a missing time portion etc
                                             result_dict[source_key] = str(parser.parse(str(result_dict[source_key])))
                                         else:
                                             result_dict[source_key] = str(result_dict[source_key])
                                         # end if
                                     # end if
-                                    self.warning(f"{swirl_result[swirl_key]} ?= {result_dict[source_key]}")
                                     if type(swirl_result[swirl_key]) == type(result_dict[source_key]):
                                         # same type, copy it
-                                        self.warning(f"same type, copying {result_dict[source_key]} to {swirl_key}")
                                         if 'date' in swirl_key.lower():
                                             swirl_result[swirl_key] = str(parser.parse(result_dict[source_key]))
                                         else:
                                             swirl_result[swirl_key] = result_dict[source_key]
                                     else:
                                         # different type, so payload it
-                                        self.warning(f"payload, diff type, copying {result_dict[source_key]} to {swirl_key}")
                                         if use_payload:
                                             payload[swirl_key] = result_dict[source_key]
                                     # end if
                                 else:
-                                    self.warning(f"payload 1, copying {result_dict[source_key]} to {swirl_key}")
                                     if use_payload:
                                         payload[swirl_key] = result_dict[source_key]
                                     # end if
                                 # end if
                             else:
-                                self.warning(f"payload 2, copying {result_dict[source_key]} to {swirl_key}")
                                 # no target key specified, so it will go into payload with that name
                                 # since it was specified we do not check NO_PAYLOAD
                                 payload[source_key] = result_dict[source_key]
@@ -225,7 +219,6 @@ class GenericResultProcessor(ResultProcessor):
                 # end if
             # end if
             swirl_result['searchprovider'] = self.provider.name
-            self.warning(f"{swirl_result}")
             list_results.append(swirl_result)
             result_number = result_number + 1
             if result_number > self.provider.results_per_query:  
