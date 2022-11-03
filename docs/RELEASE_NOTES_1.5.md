@@ -22,11 +22,15 @@ This version consists of a new relevancy model supported by stemmed matching and
 
 ## Issues Resolved
 
-:small_blue_diamond: [Re-run and re-score now remove previous search.messages, and provide an update with timestamp](https://github.com/sidprobstein/swirl-search/issues/35)
+:small_blue_diamond: [Re-run and re-score now remove previous search.messages, and provide an update with timestamp](https://github.com/sidprobstein/swirl-search/issues/35) 
 
 :small_blue_diamond: [Fixed highlighting interaction with tags](https://github.com/sidprobstein/swirl-search/issues/33) by removing tags prior to highlighting
 
-:small_blue_diamond: [Fix newsdata.io](https://github.com/sidprobstein/swirl-search/issues/28)
+:small_blue_diamond: [Fixed newsdata.io](https://github.com/sidprobstein/swirl-search/issues/28) including date_published and author mappings
+
+:small_blue_diamond: Fixed date_published conversion from PostgreSQL
+
+:small_blue_diamond: Updated swirl.py help to clarify lists, show core service
 
 ## Upgrading
 
@@ -44,6 +48,8 @@ If these scripts don't work for any reason, install manually:
 ```
 pip install -r requirements.txt
 python -m spacy download en_core_web_lg
+python -m nltk.downloader stopwords
+python -m nltk.downloader punkt
 ```
 
 <br/>

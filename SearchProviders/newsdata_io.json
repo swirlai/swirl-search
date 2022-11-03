@@ -5,7 +5,7 @@
         "url": "https://newsdata.io/api/1/news?language=en&apikey={apikey}",
         "query_template": "{url}&q={query_string}",
         "response_mappings": "FOUND=totalResults,RESULTS=results",
-        "result_mappings": "body=description,url=link,date_published=pubDate,author=creator,source_id,NO_PAYLOAD",
+        "result_mappings": "body=description,url=link,date_published=pubDate,author=creator[0],source_id,NO_PAYLOAD",
         "credentials": "apikey=newsdata-api-key-here"
     },
     {
@@ -14,7 +14,7 @@
         "url": "https://newsdata.io/api/1/archive?language=en&apikey={apikey}",
         "query_template": "{url}&q={query_string}",
         "response_mappings": "FOUND=totalResults,RESULTS=results",
-        "result_mappings": "body=description=,url=link,date_published=pubDate,author=creator,source_id,NO_PAYLOAD",
+        "result_mappings": "body=description=,url=link,date_published=pubDate,author=creator[0],source_id,NO_PAYLOAD",
         "credentials": "apikey=newsdata-api-key-here"
     
     }   

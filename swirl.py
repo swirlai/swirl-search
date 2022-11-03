@@ -427,10 +427,10 @@ def restart(service_list):
 
 def help(service_list):
     print("Usage: python swirl.py <command> [<service-list>]\n")
-    print(f"Available commands: {' '.join(COMMAND_LIST)}")
-    print(f"Available services: {' '.join(SWIRL_SERVICE_DICT.keys())}\n")
+    print(f"Available commands: {', '.join(COMMAND_LIST)}")
+    print(f"Available services: {', '.join(SWIRL_SERVICE_DICT.keys())}, core ({', '.join(SWIRL_CORE_SERVICES)})\n")
     print("The start, status, stop and restart commands default to all SWIRL services.")
-    print("They optionally accept one or more SWIRL service names, separated by spaces.")
+    print("Most optionally accept one or more SWIRL service names, separated by spaces.")
     print()
     result = True
 

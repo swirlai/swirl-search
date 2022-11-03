@@ -52,7 +52,7 @@ class PostgreSQL(DBConnector):
         except Error as err:
             self.error(f"{err} connecting to {self.type}")
             return
-        logger.info(f"{self}: connected")
+        # logger.info(f"{self}: connected")
 
         # issue the count(*) query
         logger.debug(f"{self}: requesting: {self.provider.connector} -> {self.count_query}")
