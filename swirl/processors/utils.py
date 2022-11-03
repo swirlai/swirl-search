@@ -46,7 +46,8 @@ def highlight_list (text, word_list):
         if highlighted_text.find(word) > -1:
             highlighted_text = highlighted_text.replace(word, f'*{word}*')
         else:
-            logger.error(f"highlight_list: failed to find match: {word}, {highlighted_text}")
+            logger.warning(f"highlight_list: failed to find match: {word}, {highlighted_text}, ignoring")
+            pass
               
     return highlighted_text
 

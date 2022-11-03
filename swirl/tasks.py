@@ -29,8 +29,6 @@ from swirl.connectors import *
 
 @shared_task(name='federate', ignore_result=True)
 def federate_task(search_id, provider_id, provider_connector):
-    logger.info(f'{module_name}: federate_task: {search_id}, {provider_id}, {provider_connector}')  
-    # eval(provider_connector).search(provider_id, search_id)
     try:
         connector = eval(provider_connector)(provider_id, search_id)
         connector.federate()
@@ -49,7 +47,7 @@ from .search import search
 
 @shared_task(name='search', ignore_result=True)
 def search_task(search_id):
-    logger.info(f'{module_name}: search_task: {search_id}')  
+    # logger.info(f'{module_name}: search_task: {search_id}')  
     return search(search_id)
 
 ##################################################
@@ -59,7 +57,6 @@ from .search import rescore
 
 @shared_task(name='rescore', ignore_result=True)
 def rescore_task(search_id):
-    # logger.info(f'{module_name}: rescore_task: {search_id}')  
     return rescore(search_id)
 
 ##################################################
@@ -69,5 +66,4 @@ from .expirer import expirer
 
 @shared_task(name='expirer')
 def expirer_task():
-    # logger.info(f'{module_name}: expirer_task')  
     return expirer()

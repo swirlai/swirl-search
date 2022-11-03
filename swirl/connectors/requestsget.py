@@ -75,7 +75,8 @@ class RequestsGet(Connector):
                 sort_query = sort_query + '&' + self.query_mappings['RELEVANCY_SORT'] + query_to_provider[query_to_provider.rfind('&'):]
                 query_to_provider = sort_query
             else:
-                self.warning(f'RELEVANCY_SORT missing from self.query_mappings: {self.query_mappings}')      
+                # self.warning(f'RELEVANCY_SORT missing from self.query_mappings: {self.query_mappings}')      
+                pass
 
         self.query_to_provider = query_to_provider    
 

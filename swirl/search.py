@@ -215,7 +215,7 @@ def search(id):
     # message = f"Total search time: {search.time:.1f} (s)"
     # search.messages.append(message)
     search.save()    
-    logger.debug(f"{module_name}: {search.id}, {search.status}")
+    # logger.debug(f"{module_name}: {search.id}, {search.status}")
 
     ########################################
 

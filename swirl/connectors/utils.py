@@ -66,7 +66,7 @@ def bind_query_mappings(query_template, query_mappings, url=None, credentials=No
                 swirl_key = stripped_mapping[:stripped_mapping.find('=')]
                 source_key = stripped_mapping[stripped_mapping.find('=')+1:]
             else:
-                logger.warning(f"{module_name}: Warning: mapping {stripped_mapping} is missing '='")
+                # logger.warning(f"{module_name}: Warning: mapping {stripped_mapping} is missing '='")
                 continue
             # end if
             if swirl_key in QUERY_MAPPING_VARIABLES:
@@ -76,7 +76,7 @@ def bind_query_mappings(query_template, query_mappings, url=None, credentials=No
             if template_key in bound_query_template:
                 bound_query_template = bound_query_template.replace(template_key, source_key)
                 continue
-            logger.warning(f"{module_name}: Warning: mapping {template_key} not found in template, does it need braces {{}}?")
+            # logger.warning(f"{module_name}: Warning: mapping {template_key} not found in template, does it need braces {{}}?")
         # end for
     # end if
 

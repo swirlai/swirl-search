@@ -99,7 +99,6 @@ class Connector:
         Executes the workflow for a given search and provider
         ''' 
 
-        logger.info(f'{self}: federate()')
         self.start_time = time.time()
 
         if self.status == 'READY':
