@@ -41,7 +41,7 @@ def install():
 
     print("Ok")
     print()
-    print("Now run python swirl.py setup")
+    print("Now run install.sh!")
 
     return True
 
