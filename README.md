@@ -76,9 +76,9 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 
 # Support
 
-* [Create an Issue](https://github.com/sidprobstein/swirl-search/issues) if something doesn't work, isn't clear, or should be documented - we'd love to hear from you!
+:small_blue_diamond: [Create an Issue](https://github.com/sidprobstein/swirl-search/issues) if something doesn't work, isn't clear, or should be documented
 
-* Paid support and consulting are available... [contact SWIRL](mailto:support@swirl.today) for more information.
+:small_blue_diamond: Email: [support@swirl.today](mailto:support@swirl.today) with issues, requests, questions, etc - we'd love to hear from you!
 
 <br/>
 
