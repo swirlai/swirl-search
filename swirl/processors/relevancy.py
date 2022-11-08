@@ -111,6 +111,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         # query vs result_field
                         if match_any(query_stemmed_list, result_field_stemmed_list):  
                             qvr = 0.0                          
+                            label = '_*'
                             if empty_query_vector or result_field_nlp.vector.all() == 0:
                                 if len(result_field_list) == 0:
                                     qvr = 0.0
@@ -118,7 +119,6 @@ class CosineRelevancyProcessor(PostResultProcessor):
                                     qvr = 0.3 + 1/3
                                 # end if
                             else:
-                                label = '_*'
                                 if len(sent_tokenize(result_field)) > 1:
                                     # by sentence, take highest
                                     max_similarity = 0.0
@@ -209,7 +209,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
                 result['dict_score'] = dict_score
                 result['dict_len'] = dict_len
             # end for result in results.json_results:
-            results.save()
+            # results.save()
         # end for results in self.results:
         ############################################
         # Compute field means
