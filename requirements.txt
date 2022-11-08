@@ -14,7 +14,9 @@ textblob
 spacy
 natsort
 django-environ
+statistics
 nltk
 bs4
 psycopg2
+
 
