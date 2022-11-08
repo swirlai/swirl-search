@@ -18,7 +18,7 @@ from .processor import *
 #############################################    
 #############################################    
 
-from math import isnan
+from math import sqrt
 
 from django.conf import settings
 
@@ -66,6 +66,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
         
         updated = 0
         dict_lens = {}
+
         ############################################
         # PASS 1
         for results in self.results:
@@ -177,8 +178,10 @@ class CosineRelevancyProcessor(PostResultProcessor):
                                         qw_nlp = nlp(' '.join(qw))
                                         if qw_nlp.vector.all() == 0:
                                             dict_score[field][key] = 0.32 + 1/3
-                                        if qw_nlp.similarity(rw_nlp) >= float(settings.SWIRL_MIN_SIMILARITY):
-                                            dict_score[field][key] = qw_nlp.similarity(rw_nlp)
+                                        qw_nlp_sim = qw_nlp.similarity(rw_nlp)
+                                        if qw_nlp_sim:
+                                            if qw_nlp_sim >= float(settings.SWIRL_MIN_SIMILARITY):
+                                                dict_score[field][key] = qw_nlp_sim
                                         if dict_score[field][key] == 0.0:
                                             del dict_score[field][key]
                                         ######### COLLECT MATCHES FOR HIGHLIGHTING
@@ -213,7 +216,6 @@ class CosineRelevancyProcessor(PostResultProcessor):
         dict_len_median = {}
         for field in dict_lens:
             dict_len_median[field] = mean(dict_lens[field])
-        # self.warning(f"dict_len_adjusts: {dict_len_median}")
         ############################################
         # PASS 2
         # score results by field, adjusting for field length
@@ -244,12 +246,13 @@ class CosineRelevancyProcessor(PostResultProcessor):
                             continue
                         if dict_score[f][k] >= float(settings.SWIRL_MIN_SIMILARITY):
                             len_adjust = float(dict_len_median[f] / dict_len[f])
+                            rank_adjust = float(1 / sqrt(result['searchprovider_rank']))
                             # self.warning(f"len_adjust: {len_adjust}: {result}")
                             # to do: this should also include _s*
                             if k.endswith('_*') or k.endswith('_s*'):
-                                result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k]) * len_adjust
+                                result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k))
                             else:
-                                result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k)) * len_adjust
+                                result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k)) * len_adjust * rank_adjust
                         # end if
                     # end for
                 # end for
