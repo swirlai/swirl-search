@@ -1,31 +1,25 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
 '''
-
-import django
-from django.core.exceptions import ObjectDoesNotExist
 
 from sys import path
 from os import environ
-from .utils import * 
+
+import django
+from django.core.exceptions import ObjectDoesNotExist
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
 django.setup()
 
-from swirl.models import Search, Result
-
-import logging as logger
-import datetime
-
 from operator import itemgetter
 
 from django.urls import reverse
 
-from .mixer import Mixer
+from swirl.mixers.mixer import Mixer
+from swirl.mixers.utils import * 
 
 #############################################    
 #############################################    

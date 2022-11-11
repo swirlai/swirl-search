@@ -1,9 +1,9 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
 '''
 
+#############################################    
 #############################################    
 
 def create_result_dictionary():
@@ -54,7 +54,7 @@ def highlight_list (text, word_list):
 #############################################
 # fix for https://github.com/sidprobstein/swirl-search/issues/33
 
-from ..bs4 import bs
+from swirl.bs4 import bs
 
 # Function to remove tags
 def remove_tags(html):
@@ -112,7 +112,7 @@ def clean_string(s):
             else:
                 # all others
                 # copy chars
-                if ch in [ '"', "'", '#', '@' ]:
+                if ch in [ '"', "'", '#', '@', '-' ]:
                     query_clean = query_clean + ch
                     if numeric:
                         numeric = False
@@ -122,7 +122,8 @@ def clean_string(s):
                     last_ch = ch
                     continue
                 # replace with space
-                if ch in [ ' ', '-', '_', ':', '\t', '\n', '\r', '+', '/', '\\' ]:
+                # as of swirl 1.6, - is left in
+                if ch in [ ' ', '_', ':', '\t', '\n', '\r', '+', '/', '\\' ]:
                     if numeric:
                         numeric = False
                     if currency:

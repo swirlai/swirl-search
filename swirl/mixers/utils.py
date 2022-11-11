@@ -19,6 +19,9 @@ from django.conf import settings
 
 def create_mix_wrapper(result_sets):
 
+    # accepts: result sets
+    # returns: wrapper around the results
+
     mix_wrapper = {}
     mix_wrapper['messages'] = [ settings.SWIRL_BANNER ]
     mix_wrapper['info'] = {}

@@ -334,7 +334,7 @@ def stop(service_list):
             pid = int(dict_pid[service_name])
             try:
                 os.kill(pid, 0)  # if the pid doesn't exist, this will throw an exception
-                os.kill(pid, signal.SIGINT)
+                os.kill(pid, signal.SIGTERM)
             except OSError as err:
                 print(f"Error: {err}")
                 flag = True
@@ -358,7 +358,7 @@ def stop(service_list):
             pid = int(dict_pid[SWIRL_SERVICES[0]['name']])
             try:
                 pgrp = os.getpgid(pid)
-                os.killpg(pgrp, signal.SIGINT)
+                os.killpg(pgrp, signal.SIGTERM)
                 # os.kill(pid, 0)  # if the pid doesn't exist, this will throw an exception
                 # os.kill(pid, signal.SIGTERM)
             except OSError as err:

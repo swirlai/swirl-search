@@ -4,18 +4,19 @@
 @version:    SWIRL 1.x
 '''
 
-from textblob import TextBlob
 import logging as logger
+
+from textblob import TextBlob
 
 #############################################    
 #############################################     
 
-def spellcheck_query_processor(query_string):
+def SpellcheckQueryProcessor(query_string):
 
-    module_name = 'spellcheck_query_processor'
+    module_name = 'SpellcheckQueryProcessor'
 
     if len(query_string) == 0:
-        return
+        return query_string
 
     try:
         corrected_query_string = "{0}".format(TextBlob(query_string).correct())
@@ -28,6 +29,3 @@ def spellcheck_query_processor(query_string):
         logger.info(f"{module_name}: rewrote query from {query_string} to {corrected_query_string}")
 
     return corrected_query_string
-
-#############################################    
-#############################################  

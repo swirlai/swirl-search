@@ -4,22 +4,17 @@
 @version:    SWIRL 1.3
 '''
 
-import django
-from django.db import Error
-from django.core.exceptions import ObjectDoesNotExist
-from django.conf import settings
-
 from sys import path
 from os import environ
 
-import time
+import django
+from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
 django.setup()
-
-from swirl.models import Search, Result, SearchProvider
 
 from celery.utils.log import get_task_logger
 from logging import DEBUG
@@ -27,6 +22,9 @@ logger = get_task_logger(__name__)
 
 from natsort import natsorted
 
+from swirl.models import Search, Result
+
+########################################
 ########################################
 
 class Mixer:

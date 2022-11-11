@@ -1,12 +1,12 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
 '''
 
 import time
 import logging as logger
 from datetime import datetime
+
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User, Group
 from django.http import Http404, HttpResponse
@@ -17,15 +17,16 @@ from rest_framework import viewsets, status
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import *
-from .serializers import *
+
+from swirl.models import *
+from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result
 from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer
 from swirl.mixers import *
 
 module_name = 'views.py'
 
-from .tasks import search_task, rescore_task
+from swirl.tasks import search_task, rescore_task
 
 ########################################
 ########################################

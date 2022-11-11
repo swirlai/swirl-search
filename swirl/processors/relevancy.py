@@ -1,38 +1,25 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
 '''
 
-import logging as logger
-
-#############################################    
-#############################################    
-
-# TO DO: clean up this order
-
-from swirl.models import Search, Result
-
-from .processor import *
-
-#############################################    
-#############################################    
-
 from math import sqrt
+from statistics import mean, median
 
 from django.conf import settings
 
-from .utils import clean_string, stem_string, match_all, match_any, highlight_list, remove_tags
-
-from ..spacy import nlp
-
-from statistics import mean, median
-
 # to do: detect language and load all stopwords? P1
-from ..nltk import stopwords_en, word_tokenize, sent_tokenize
+from swirl.nltk import stopwords_en, word_tokenize, sent_tokenize
+from swirl.processors.utils import clean_string, stem_string, match_all, match_any, highlight_list, remove_tags
+from swirl.spacy import nlp
+from swirl.processors.processor import PostResultProcessor
+
+#############################################    
+#############################################    
 
 class CosineRelevancyProcessor(PostResultProcessor):
 
+    # This processor loads a set of saved results, scores them, and updates the results
     type = 'CosineRelevancyPostResultProcessor'
 
     ############################################
@@ -43,11 +30,32 @@ class CosineRelevancyProcessor(PostResultProcessor):
         
         # prep query string
         query = clean_string(self.search.query_string_processed).strip()
-        query_nlp = nlp(query)
         query_list = query.strip().split()
+
+        # not list
+        list_not = []
+        updated_query = []
+        # to do: this needs to be handled by a new QueryProcessor, also P1
+        lower_query = ' '.join(query_list).lower()
+        lower_query_list = lower_query.split()
+        if 'not' in lower_query_list:
+            updated_query = query_list[:lower_query_list.index('not')]
+            list_not = query_list[lower_query_list.index('not')+1:]
+        else:
+            for q in query_list:
+                if q.startswith('-'):
+                    list_not.append(q[1:])
+                else:
+                    updated_query.append(q)
+                # end if
+            # end for
+        # end if
+        if updated_query:
+            query = ' '.join(updated_query).strip()
+            query_list = query.split()
+        # end if
         query_len = len(query_list)
-        # fix for https://github.com/sidprobstein/swirl-search/issues/34
-        query_stemmed_list = stem_string(clean_string(self.search.query_string_processed)).strip().split()
+        query_nlp = nlp(query)
 
         # check for zero vector
         empty_query_vector = False
@@ -63,7 +71,10 @@ class CosineRelevancyProcessor(PostResultProcessor):
             self.error(f"query_string_processed is all stopwords!")
             # to do: handle more gracefully
             return self.results
-        
+
+        # fix for https://github.com/sidprobstein/swirl-search/issues/34
+        query_stemmed_list = stem_string(clean_string(self.search.query_string_processed)).strip().split()
+
         updated = 0
         dict_lens = {}
 
@@ -80,6 +91,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
                 # result item
                 dict_score = {}
                 dict_len = {}
+                notted = ""
                 for field in RELEVANCY_CONFIG:
                     if field in result:
                         # result_field is shorthand for item[field]
@@ -89,6 +101,13 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         result_field = clean_string(result[field]).strip()
                         result_field_nlp = nlp(result_field)
                         result_field_list = result_field.strip().split()
+                        # not test
+                        result_field_lower = ' '.join(result_field_list).lower()
+                        result_field_lower_list = result_field_lower.split()
+                        for t in list_not:
+                            if t.lower() in result_field_lower_list:
+                                notted = {field: t}
+                                break
                         # field length
                         if field in dict_len:
                             self.warning("duplicate field?")
@@ -206,8 +225,11 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         result[field] = highlight_list(remove_tags(result[field]), extracted_highlights)
                     # end if
                 # end for field in RELEVANCY_CONFIG:
-                result['dict_score'] = dict_score
-                result['dict_len'] = dict_len
+                if notted:
+                    result['NOT'] = notted
+                else:
+                    result['dict_score'] = dict_score
+                    result['dict_len'] = dict_len
             # end for result in results.json_results:
             # results.save()
         # end for results in self.results:
@@ -224,6 +246,12 @@ class CosineRelevancyProcessor(PostResultProcessor):
                 continue
             for result in results.json_results:
                 result['swirl_score'] = 0.0
+                # check for not
+                if 'NOT' in result:
+                    result['swirl_score'] = -1.0 + 1/3
+                    result['explain'] = { 'NOT': result['NOT'] }
+                    del result['NOT']
+                    break
                 # retrieve the scores and lens from pass 1
                 if 'dict_score' in result:
                     dict_score = result['dict_score']

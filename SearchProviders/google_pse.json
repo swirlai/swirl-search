@@ -4,7 +4,7 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_mappings": "cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX",
+        "query_mappings": "cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT=True,NOT_CHAR=-",
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
         "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM"
@@ -14,7 +14,7 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_mappings": "cx=7d473806dcdde5bc6,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX",
+        "query_mappings": "cx=7d473806dcdde5bc6,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT=True,NOT_CHAR=-",
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=htmlSnippet,cacheid,NO_PAYLOAD",
         "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM"
@@ -24,7 +24,7 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX",
+        "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT=True,NOT_CHAR=-",
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
         "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM"

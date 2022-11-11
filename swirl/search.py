@@ -1,28 +1,29 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
 '''
 
-from django.core.exceptions import ObjectDoesNotExist
-from datetime import datetime
-
 import logging as logger
+from datetime import datetime
+import time
+
+from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 
 from swirl.models import Search, SearchProvider, Result
 from swirl.tasks import federate_task
 from swirl.processors import *
 
-import time
-
 ##################################################
 ##################################################
-
-from django.conf import settings
 
 module_name = 'search.py'
 
 def search(id):
+
+    '''
+    Execute the search task workflow
+    '''
 
     start_time = time.time()
 
@@ -70,7 +71,7 @@ def search(id):
         return False
 
     ########################################
-    # pre_search_processing
+    # pre-query processing, which updates query_string_processed
     if search.pre_query_processor:
         search.status = 'PRE_QUERY_PROCESSING'
         search.save()
@@ -217,14 +218,15 @@ def search(id):
     search.save()    
     # logger.debug(f"{module_name}: {search.id}, {search.status}")
 
-    ########################################
-
     return True
 
 ##################################################
-##################################################
 
 def rescore(id):
+
+    '''
+    Execute the rescore task workflow
+    '''
 
     try:
         search = Search.objects.get(id=id)

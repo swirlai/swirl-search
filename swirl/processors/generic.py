@@ -1,19 +1,16 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
 '''
 
 from datetime import datetime
 
-from .utils import create_result_dictionary
-
-import logging as logger
-
 from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
-from .processor import *
+from swirl.processors.processor import *
+from swirl.processors.utils import clean_string, create_result_dictionary
+from swirl.connectors.utils import get_mappings_dict
   
 #############################################    
 #############################################    
@@ -23,42 +20,74 @@ class GenericQueryProcessor(QueryProcessor):
     type = 'GenericQueryProcessor'
     
     def process(self):
-
-        self.query_string_processed = self.query_string
-        return self.query_string_processed
-
-#############################################    
+        return clean_string(self.query_string).strip()
+                
 #############################################    
 
-class GenericQueryCleaningProcessor(QueryProcessor):
+class AdaptiveQueryProcessor(QueryProcessor):
 
-    type = 'GenericQueryCleaningProcessor'
-    chars_allowed_in_query = [' ', '+', '-', '"', "'", '(', ')', '_', '~', ':'] 
-
+    type = 'AdaptiveQueryProcessor'
+    
     def process(self):
 
-        try:
-            query_clean = ''.join(ch for ch in self.query_string.strip() if ch.isalnum() or ch in self.chars_allowed_in_query)
-        except NameError as err:
-            self.error(f'NameError: {err}')
-        except TypeError as err:
-            self.warning(f'TypeError: {err}')
-        if self.input != query_clean:
-            logger.info(f"{self}: rewrote query from {self.input} to {query_clean}")
+        query = clean_string(self.query_string).strip()
+        query_list = query.split()
 
-        self.query_string_processed = query_clean
-        return self.query_string_processed
+        # parse the query into list_not and list_and
+        list_not = []
+        list_and = []
+        lower_query = ' '.join(query_list).lower()
+        lower_query_list = lower_query.split()
+        if 'not' in lower_query_list:
+            list_and = query_list[:lower_query_list.index('not')]
+            list_not = query_list[lower_query_list.index('not')+1:]
+        else:
+            for q in query_list:
+                if q.startswith('-'):
+                    list_not.append(q[1:])
+                else:
+                    list_and.append(q)
+            # end for
+        # end if
+    
+        if len(list_not) > 0:
+            processed_query = ""
+            dict_query_mappings = get_mappings_dict(self.query_mappings)
+            not_cmd = False
+            not_char = ""
+            if 'NOT' in dict_query_mappings:
+                not_cmd = bool(dict_query_mappings['NOT'])
+            if 'NOT_CHAR' in dict_query_mappings:
+                not_char = str(dict_query_mappings['NOT_CHAR'])
+            if not_cmd and not_char:
+                # leave the query as is, since it supports both NOT and -term
+                return query
+            if not_cmd:
+                processed_query = ' '.join(list_and) + ' ' + 'NOT ' + ' '.join(list_not)
+                return processed_query.strip()
+            if not_char:
+                processed_query = ' '.join(list_and) + ' '
+                for t in list_not:
+                    processed_query = processed_query + not_char + t + ' '
+                return processed_query.strip()
+            if not (not_cmd or not_char):
+                self.warning(f"Provider does not support NOT in query: {self.query_string}")
+                # remove the notted portion
+                return ' '.join(list_and)
+
+        return query
 
 #############################################    
 #############################################    
 
 from dateutil import parser
+
 import re
 from re import error as re_error
 
-class GenericResultProcessor(ResultProcessor):
+class MappingResultProcessor(ResultProcessor):
 
-    type="GenericResultsProcessor"
+    type="MappingResultProcessor"
 
     def process(self):
 

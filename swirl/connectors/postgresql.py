@@ -1,15 +1,13 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.3
 '''
+
+from sys import path
+from os import environ
 
 import django
 from django.db import Error
-from django.core.exceptions import ObjectDoesNotExist
-import os
-from sys import path
-from os import environ
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
@@ -19,17 +17,17 @@ django.setup()
 from celery.utils.log import get_task_logger
 from logging import DEBUG
 logger = get_task_logger(__name__)
-logger.setLevel(DEBUG)
+# logger.setLevel(DEBUG)
 
-########################################
 try:
     import psycopg2
 except ImportError as e:
     logger.error(f"postgresql.py: Error: can't load psycopg2: {e}, see https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference#postgresql")
 
-from .utils import save_result, bind_query_mappings
+from swirl.connectors.db_connector import DBConnector
 
-from .db_connector import DBConnector
+########################################
+########################################
 
 class PostgreSQL(DBConnector):
 

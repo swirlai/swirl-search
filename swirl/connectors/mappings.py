@@ -1,20 +1,17 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
 '''
 
-import django
 from sys import path
 from os import environ
+
+import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
 django.setup()
-
-# models
-# from swirl.models import Result
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)

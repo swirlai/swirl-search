@@ -1,18 +1,16 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
 '''
 
-from pathlib import Path
 import os
 import logging as logger
+from pathlib import Path
 
 ##################################################
 ##################################################
 
 def swirl_setdir():
-     
     # Get the current path and append it to the path
     this_file = str(Path(__file__).resolve())
     # /Users/sid/Code/swirl_server/swirl/utils.py

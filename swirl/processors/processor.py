@@ -1,17 +1,12 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.3
 '''
-
-import json
-import django
-from django.db import Error
-from django.core.exceptions import ObjectDoesNotExist
-from django.conf import settings
 
 from sys import path
 from os import environ
+
+import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
@@ -54,7 +49,7 @@ class Processor:
     def validate(self):
 
         '''
-        Validate the input; tbd by derived classes
+        Verify input; tbd by derived classes
         '''
 
         return True
@@ -78,10 +73,10 @@ class QueryProcessor(Processor):
 
     ########################################
 
-    def __init__(self, query_string):
+    def __init__(self, query_string, query_mappings):
 
         self.query_string = query_string
-        self.query_string_processed = ""
+        self.query_mappings = query_mappings
 
     ########################################
 
@@ -106,7 +101,7 @@ class QueryProcessor(Processor):
         Executes the workflow for a query processor; tbd by derived classes
         '''
 
-        return self.query_string_processed
+        return self.query_string
 
 ########################################
 ########################################
@@ -127,6 +122,10 @@ class ResultProcessor(Processor):
     ########################################
 
     def validate(self):
+
+        '''
+        Verify that there are results
+        '''
 
         if not type(self.results) == list:
             self.error("self.results is not list")
@@ -187,8 +186,13 @@ class PostResultProcessor(Processor):
 
     def validate(self):
 
-        if len(self.results) == 0:
-            return False
+        '''
+        Verify there is at least one result to process
+        '''
+
+        if self.results:
+            if len(self.results) == 0:
+                return False
 
         return True
 

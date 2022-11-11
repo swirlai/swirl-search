@@ -1,12 +1,9 @@
 '''
 @author:     Sid Probstein
 @contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.0
 '''
 
-from .generic import *
-from .relevancy import *
-# from .spellcheck_query import *
+from swirl.processors.generic import *
+from swirl.processors.relevancy import *
 
-# Add new SWIRL processors here
-# from .swirl_result_matches import *
+# Add new processors here!
