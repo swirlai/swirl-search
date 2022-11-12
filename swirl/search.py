@@ -174,7 +174,7 @@ def search(id):
     ########################################
     # fix the result url
     # to do: figure out a better solution P1
-    search.result_url = f"http://{settings.ALLOWED_HOSTS[0]}:8000/swirl/results?search_id={search.id}&result_mixer={search.result_mixer}"
+    search.result_url = f"{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results?search_id={search.id}&result_mixer={search.result_mixer}"
     # note the sort
     if search.sort.lower() == 'date':
         message = f"Requested sort_by_date from all providers"

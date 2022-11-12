@@ -80,7 +80,7 @@ class Mixer:
             self.mix_wrapper['info'][result.searchprovider] = {}
             self.mix_wrapper['info'][result.searchprovider]['found'] = result.found
             self.mix_wrapper['info'][result.searchprovider]['retrieved'] = result.retrieved
-            self.mix_wrapper['info'][result.searchprovider]['filter_url'] = f'http://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search.id}&provider={result.provider_id}'
+            self.mix_wrapper['info'][result.searchprovider]['filter_url'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search.id}&provider={result.provider_id}'
             self.mix_wrapper['info'][result.searchprovider]['query_to_provider'] = result.query_to_provider
             self.mix_wrapper['info'][result.searchprovider]['result_processor'] = result.result_processor
             self.mix_wrapper['info'][result.searchprovider]['search_time'] = result.time
@@ -93,8 +93,8 @@ class Mixer:
         self.mix_wrapper['info']['search'] = {}
         self.mix_wrapper['info']['search']['query_string'] = self.search.query_string
         self.mix_wrapper['info']['search']['query_string_processed'] = self.search.query_string_processed
-        self.mix_wrapper['info']['search']['rescore_url'] = f'http://{settings.HOSTNAME}:8000/swirl/search/?rescore={self.search.id}'
-        self.mix_wrapper['info']['search']['rerun_url'] = f'http://{settings.HOSTNAME}:8000/swirl/search/?rerun={self.search.id}'
+        self.mix_wrapper['info']['search']['rescore_url'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/search/?rescore={self.search.id}'
+        self.mix_wrapper['info']['search']['rerun_url'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/search/?rerun={self.search.id}'
 
         # join json_results
         for result in self.results:
@@ -182,15 +182,15 @@ class Mixer:
         # next page
         if self.found > int(self.results_needed):
             if self.result_mixer == self.search.result_mixer:
-                self.mix_wrapper['info']['results']['next_page'] = f'http://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&page={int(self.page)+1}'
+                self.mix_wrapper['info']['results']['next_page'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&page={int(self.page)+1}'
             else:
-                self.mix_wrapper['info']['results']['next_page'] = f'http://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&result_mixer={self.result_mixer}&page={int(self.page)+1}'
+                self.mix_wrapper['info']['results']['next_page'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&result_mixer={self.result_mixer}&page={int(self.page)+1}'
             # end if
         if int(self.page) > 1:
             if self.result_mixer == self.search.result_mixer:
-                self.mix_wrapper['info']['results']['prev_page'] = f'http://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&page={int(self.page)-1}'
+                self.mix_wrapper['info']['results']['prev_page'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&page={int(self.page)-1}'
             else:
-                self.mix_wrapper['info']['results']['prev_page'] = f'http://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&result_mixer={self.result_mixer}&page={int(self.page)-1}'
+                self.mix_wrapper['info']['results']['prev_page'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&result_mixer={self.result_mixer}&page={int(self.page)-1}'
             # end if
 
         # last message 

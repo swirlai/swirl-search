@@ -28,8 +28,10 @@ SECRET_KEY = 'django-insecure-4*@!3sf)-t=jvww$27w#_gv9!18+8cj9(+e$#w8*#umln$jjf$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+# PUT the FQDN first in the list below
 ALLOWED_HOSTS = ['localhost']
 HOSTNAME = ALLOWED_HOSTS[0]
+PROTOCOL = 'http'
 
 # Application definition
 
