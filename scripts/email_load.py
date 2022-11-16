@@ -32,6 +32,7 @@ def main(argv):
     parser = argparse.ArgumentParser(description="Bulk index email in CSV format to elasticsearch")
     parser.add_argument('filespec', help="path to the csv file to load")
     parser.add_argument('-e', '--elasticsearch', help="URL to elasticsearch", default='http://localhost:9200/')
+    parser.add_argument('-i', '--index', help="the index to receive the email messages", default='email')
     parser.add_argument('-m', '--max', help="maximum number of rows to index", default=0)
     parser.add_argument('-p', '--password', help="password for user 'elastic'")
     args = parser.parse_args()
@@ -89,7 +90,7 @@ def main(argv):
         # end for
         # finally, make the content field which is everything !
         email['content'] = body
-        res = es.index(index='email', document=email)
+        res = es.index(index=args.index, document=email)
         rows = rows + 1
         if rows % 100 == 0:
             print(f"Indexed {rows} records so far...")

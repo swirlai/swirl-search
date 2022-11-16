@@ -33,6 +33,7 @@ class SearchProvider(models.Model):
     query_processor = models.CharField(max_length=200, default='AdaptiveQueryProcessor', choices=QUERY_PROCESSOR_CHOICES)
     query_mappings = models.CharField(max_length=2048, default=str, blank=True)
     RESULT_PROCESSOR_CHOICES = [
+        ('GenericResultProcessor', 'GenericResultProcessor'),
         ('MappingResultProcessor', 'MappingResultProcessor')
     ]
     result_processor = models.CharField(max_length=200, default='MappingResultProcessor', choices=RESULT_PROCESSOR_CHOICES)
