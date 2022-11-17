@@ -139,7 +139,7 @@ class Connector:
             return
         if processed_query:
             if processed_query != self.search.query_string_processed:
-                self.messages.append(f"{self.provider.query_processor} rewrote query_string to: {processed_query}")
+                self.messages.append(f"{self.provider.name}'s {self.provider.query_processor} rewrote query_string_processed to: {processed_query}")
             self.query_string_to_provider = processed_query
         else:
             self.query_string_to_provider = self.search.query_string_processed
@@ -242,7 +242,7 @@ class Connector:
         end_time = time.time()
 
         try:
-            new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id, query_to_provider=self.query_to_provider, result_processor=self.provider.result_processor, messages=self.messages, found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}', json_results=self.processed_results)
+            new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id, query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider, result_processor=self.provider.result_processor, messages=self.messages, found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}', json_results=self.processed_results)
             new_result.save()
         except Error as err:
             self.error(f'save_result() failed: {err}')

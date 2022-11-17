@@ -89,7 +89,6 @@ def clean_string(s):
     # parse s1 carefully
     module_name = 'clean_string'
     query_clean = ""
-    last_ch = ""
     try:
         for ch in s1.strip():
             # numbers
@@ -98,10 +97,10 @@ def clean_string(s):
             # letters
             if ch.isalpha():
                 query_clean = query_clean + ch
-            if ch in [ "'", '’', ' ', '-' ]:
+            if ch in [ '"', "'", '’', ' ', '-' ]:
                 query_clean = query_clean + ch
-            if ch in [ '.', '!', '?', ':' ]:
-                query_clean = query_clean + ' ' + ch + ' '
+            # if ch in [ '.', '!', '?', ':' ]:
+            #     query_clean = query_clean + ' ' + ch + ' '
         # end for
     except NameError as err:
         return(f'{module_name}: Error: NameError: {err}')
@@ -111,8 +110,7 @@ def clean_string(s):
     if '  ' in query_clean:
         while '  ' in query_clean:
             query_clean = query_clean.replace('  ', ' ')
-
-    # remove 
+    # end if
     return query_clean.strip()
 
 #############################################

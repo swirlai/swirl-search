@@ -81,6 +81,7 @@ class Mixer:
             self.mix_wrapper['info'][result.searchprovider]['found'] = result.found
             self.mix_wrapper['info'][result.searchprovider]['retrieved'] = result.retrieved
             self.mix_wrapper['info'][result.searchprovider]['filter_url'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search.id}&provider={result.provider_id}'
+            self.mix_wrapper['info'][result.searchprovider]['query_string_to_provider'] = result.query_string_to_provider
             self.mix_wrapper['info'][result.searchprovider]['query_to_provider'] = result.query_to_provider
             self.mix_wrapper['info'][result.searchprovider]['result_processor'] = result.result_processor
             self.mix_wrapper['info'][result.searchprovider]['search_time'] = result.time
@@ -91,6 +92,10 @@ class Mixer:
             for message in self.search.messages:
                 self.mix_wrapper['messages'].append(message)
         self.mix_wrapper['info']['search'] = {}
+        if self.search.tags:
+            self.mix_wrapper['info']['search']['tags'] = self.search.tags
+        if self.search.searchprovider_list:
+            self.mix_wrapper['info']['search']['searchprovider_list'] = self.search.searchprovider_list
         self.mix_wrapper['info']['search']['query_string'] = self.search.query_string
         self.mix_wrapper['info']['search']['query_string_processed'] = self.search.query_string_processed
         self.mix_wrapper['info']['search']['rescore_url'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/search/?rescore={self.search.id}'

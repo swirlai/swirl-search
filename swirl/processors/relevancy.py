@@ -31,14 +31,17 @@ class CosineRelevancyProcessor(PostResultProcessor):
         # prep query string
         query = clean_string(self.search.query_string_processed).strip()
         query_list = query.strip().split()
+        # remove AND, OR
+        if 'AND' in query_list:
+            query_list.remove('AND')
+        if 'OR' in query_list:
+            query_list.remove('OR')
         # not list
         not_list = []
         not_parsed_query = []
-        lower_query = ' '.join(query_list).lower()
-        lower_query_list = lower_query.split()
-        if 'not' in lower_query_list:
-            not_parsed_query = query_list[:lower_query_list.index('not')]
-            not_list = query_list[lower_query_list.index('not')+1:]
+        if 'NOT' in query_list:
+            not_parsed_query = query_list[:query_list.index('NOT')]
+            not_list = query_list[query_list.index('NOT')+1:]
         else:
             for q in query_list:
                 if q.startswith('-'):
@@ -245,7 +248,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
                                     if dict_score[field][key] == 0.0:
                                         qw_nlp_sim = qw_nlp.similarity(rw_nlp)
                                         if qw_nlp_sim:
-                                            if qw_nlp_sim >= 0.1: # float(settings.SWIRL_MIN_SIMILARITY):
+                                            if qw_nlp_sim >= float(settings.SWIRL_MIN_SIMILARITY):
                                                 dict_score[field][key] = qw_nlp_sim
                                     if dict_score[field][key] == 0.0:
                                         del dict_score[field][key]
