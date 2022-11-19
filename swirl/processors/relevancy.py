@@ -1,6 +1,6 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
+@contact:    sid@swirl.today
 '''
 
 from math import sqrt
@@ -9,7 +9,7 @@ from statistics import mean, median
 from django.conf import settings
 
 # to do: detect language and load all stopwords? P1
-from swirl.nltk import stopwords_en, word_tokenize, sent_tokenize
+from swirl.nltk import stopwords, sent_tokenize
 from swirl.processors.utils import clean_string, bigrams, stem_string, match_all, match_any, highlight_list, remove_tags
 from swirl.spacy import nlp
 from swirl.processors.processor import PostResultProcessor
@@ -66,7 +66,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
         # check for stopword query
         query_without_stopwords = []
         for extract in query_list:
-            if not extract in stopwords_en:
+            if not extract in stopwords:
                 query_without_stopwords.append(extract)
         if len(query_without_stopwords) == 0:
             self.error(f"query_string_processed is all stopwords!")
@@ -110,12 +110,12 @@ class CosineRelevancyProcessor(PostResultProcessor):
                 query_target_list.append(bigram)
             for gram in query_stemmed_list:
                 # ignore stopword 1-grams
-                if gram in stopwords_en:
+                if gram in stopwords:
                     continue
                 query_stemmed_target_list.append([gram])
             for gram in query_list:
                 # ignore stopword 1-grams
-                if gram in stopwords_en:
+                if gram in stopwords:
                     continue
                 query_target_list.append([gram])
         # self.warning(f"query_stemmed_target_list: {query_stemmed_target_list}")

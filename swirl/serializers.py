@@ -1,6 +1,6 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
+@contact:    sid@swirl.today
 '''
 
 from django.contrib.auth.models import User, Group

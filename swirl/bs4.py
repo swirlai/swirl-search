@@ -1,6 +1,6 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
+@contact:    sid@swirl.today
 '''
 
 from bs4 import BeautifulSoup as bs

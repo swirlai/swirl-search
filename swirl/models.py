@@ -1,6 +1,6 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
+@contact:    sid@swirl.today
 '''
 
 from django.db import models
@@ -72,8 +72,7 @@ class Search(models.Model):
     POST_RESULT_PROCESSOR_CHOICES = [
         ('GenericPostResultProcessor', 'GenericPostResultProcessor'),
         ('GenericRelevancyProcessor', 'GenericRelevancyProcessor'),
-        ('CosineRelevancyProcessor', 'CosineRelevancyProcessor (w/spaCy)'),
-        ('NewCosineRelevancyProcessor', 'NewCosineRelevancyProcessor (w/spaCy)')
+        ('CosineRelevancyProcessor', 'CosineRelevancyProcessor (w/spaCy)')
     ]
     post_result_processor = models.CharField(max_length=200, default='CosineRelevancyProcessor', blank=True, choices=POST_RESULT_PROCESSOR_CHOICES)
     result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)

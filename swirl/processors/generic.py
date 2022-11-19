@@ -1,6 +1,6 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
+@contact:    sid@swirl.today
 '''
 
 from datetime import datetime
@@ -117,7 +117,6 @@ class MappingResultProcessor(ResultProcessor):
             swirl_result['date_retrieved'] = str(datetime.now())
             #############################################  
             # mappings are in form swirl_key=source_key, where source_key can be a json_string e.g. _source.customer_full_name
-            # to do: support swirl_key=source_key1|source_key2|source_key3
             if self.provider.result_mappings:
                 mappings = self.provider.result_mappings.split(',')
                 for mapping in mappings:

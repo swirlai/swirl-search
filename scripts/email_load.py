@@ -1,6 +1,6 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
+@contact:    sid@swirl.today
 '''
 
 import sys
@@ -12,22 +12,10 @@ import os
 from elasticsearch import Elasticsearch
 import elasticsearch
 
-module_name = 'email_load.py'
-
-##################################################
-
-class bcolors:
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-
 ##################################################
 
 def main(argv):
 
-    print(f"{bcolors.BOLD}##S#W#I#R#L##1#.#5##############################################################{bcolors.ENDC}")
     # arguments
     parser = argparse.ArgumentParser(description="Bulk index email in CSV format to elasticsearch")
     parser.add_argument('filespec', help="path to the csv file to load")
@@ -38,7 +26,7 @@ def main(argv):
     args = parser.parse_args()
 
     if not os.path.exists(args.filespec):
-        print(f"{bcolors.FAIL}Error: file not found: {args.filespec}{bcolors.ENDC}")
+        print(f"Error: file not found: {args.filespec}")
         return
 
     f = open(args.filespec, 'r')

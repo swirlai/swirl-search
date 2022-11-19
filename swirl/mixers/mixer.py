@@ -1,6 +1,6 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
+@contact:    sid@swirl.today
 @version:    SWIRL 1.3
 '''
 
@@ -23,6 +23,7 @@ logger = get_task_logger(__name__)
 from natsort import natsorted
 
 from swirl.models import Search, Result
+from swirl.banner import SWIRL_BANNER
 
 ########################################
 ########################################
@@ -69,7 +70,7 @@ class Mixer:
         self.result_mixer = self.type
 
         self.mix_wrapper = {}
-        self.mix_wrapper['messages'] = [ settings.SWIRL_BANNER ]
+        self.mix_wrapper['messages'] = [ SWIRL_BANNER ]
         self.mix_wrapper['info'] = {}
         self.mix_wrapper['results'] = None
 

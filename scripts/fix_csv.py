@@ -1,8 +1,7 @@
 
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
+@contact:    sid@swirl.today
 '''
 
 import argparse
@@ -16,7 +15,6 @@ module_name = 'fix_csv.py'
 
 def main(argv):
 
-    print('##S#W#I#R#L##1#.#5##############################################################')
     # arguments
     parser = argparse.ArgumentParser(description="Fix CSV file for loading into SQLite3")
     parser.add_argument('filespec', help="path to a csv file to fix")
