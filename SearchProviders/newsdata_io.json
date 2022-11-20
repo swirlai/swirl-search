@@ -6,7 +6,7 @@
         "query_template": "{url}&q={query_string}",
         "query_mappings": "NOT_CHAR=-",
         "response_mappings": "FOUND=totalResults,RESULTS=results",
-        "result_mappings": "body=description,url=link,date_published=pubDate,author=creator[0],source_id,NO_PAYLOAD",
+        "result_mappings": "body=content|description,url=link,date_published=pubDate,author=creator[0],source_id,NO_PAYLOAD",
         "credentials": "apikey=newsdata-api-key-here"
     },
     {
@@ -17,7 +17,7 @@
         "query_template": "{url}&q={query_string}",
         "query_mappings": "NOT_CHAR=-",
         "response_mappings": "FOUND=totalResults,RESULTS=results",
-        "result_mappings": "body=description=,url=link,date_published=pubDate,author=creator[0],source_id,NO_PAYLOAD",
+        "result_mappings": "body=content|description=,url=link,date_published=pubDate,author=creator[0],source_id,NO_PAYLOAD",
         "credentials": "apikey=newsdata-api-key-with-archive-enabled-here"
     
     }   

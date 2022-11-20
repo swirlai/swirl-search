@@ -53,7 +53,7 @@ SWIRL_SERVICES = [
     }
 ]
 
-SWIRL_CORE_SERVICES = [SWIRL_SERVICES[1]['name'], SWIRL_SERVICES[2]['name']]
+SWIRL_CORE_SERVICES = ['django', 'celery-worker']
 
 # prepare service_dict 
 SWIRL_SERVICE_DICT = {}
@@ -63,6 +63,22 @@ for swirl_service in SWIRL_SERVICES:
 COMMAND_LIST = [ 'help', 'start', 'start_sleep', 'stop', 'restart', 'flush', 'migrate', 'setup', 'status', 'watch', 'tail' ]
 
 ##################################################
+
+def check_rabbit():
+    proc = subprocess.run(['ps','-ef'], capture_output=True)
+    result = proc.stdout.decode('UTF-8')
+    list_result = []
+    if '\n' in result:
+        list_result = result.split('\n')
+    for l in list_result:
+        if 'rabbitmq' in l.lower():
+            if 'grep rabbitmq' in l.lower():
+                # ignore: grep rabbitmq
+                pass
+            else:
+                return l
+        
+    return ""
 
 def check_pid(pid):
     proc = subprocess.run(['ps','-p',str(pid)], capture_output=True)
@@ -153,6 +169,14 @@ def start(service_list):
     flag = False
     for service_name in service_list:
         if service_name in SWIRL_SERVICE_DICT:
+            # Fix for https://github.com/sidprobstein/swirl-search/issues/47
+            if service_name == 'rabbitmq':
+                # check to see if it is running
+                rabbit = check_rabbit()
+                if rabbit:
+                    print(f"Warning: rabbitmq appears to be running, skipping it:\n{rabbit}")
+                    continue
+            # end if
             print(f"Start: {service_name} -> {SWIRL_SERVICE_DICT[service_name]} ... ", end='')
             result = launch(service_name, SWIRL_SERVICE_DICT[service_name])
             time.sleep(5)        

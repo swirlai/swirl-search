@@ -139,7 +139,7 @@ class Connector:
             return
         if processed_query:
             if processed_query != self.search.query_string_processed:
-                self.messages.append(f"{self.provider.name}'s {self.provider.query_processor} rewrote query_string_processed to: {processed_query}")
+                self.messages.append(f"{self.provider.query_processor} rewrote {self.provider.name}'s query_string_processed to: {processed_query}")
             self.query_string_to_provider = processed_query
         else:
             self.query_string_to_provider = self.search.query_string_processed
