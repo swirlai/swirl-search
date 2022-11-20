@@ -26,6 +26,7 @@ ADD ./SearchProviders /app/SearchProviders
 ADD ./scripts /app/scripts
 ADD ./Data /app/Data
 ADD ./swirl.py /app/swirl.py
+ADD ./swirl_load.py /app/swirl_load.py
 ADD ./manage.py /app/manage.py
 
 WORKDIR /app
