@@ -69,7 +69,18 @@ This configures SWIRL to populate the ```body``` result field with the ```conten
 
 <br/>
 
-:small_blue_diamond: ```scripts/email_load.py``` has been included to make it easy to load the [Enron email dataset]() into ElasticSearch
+:small_blue_diamond: The search endpoint now supports a provider URL parameter! 
+
+```
+http://localhost:8000/swirl/search/?q=knowledge+management&providers=3,maritime,news
+```
+
+The parameter will accept a SearchProvider id or tag. Full details: [Specifying SearchProviders with the providers URL Parameter](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#specifying-the-searchproviders-with-the-providers-url-parameter)
+
+ 
+<br/>
+
+:small_blue_diamond: ```scripts/email_load.py``` has been included to make it easy to load the [Enron email dataset](https://www.cs.cmu.edu/~enron/) into ElasticSearch
 
 <br/>
 
