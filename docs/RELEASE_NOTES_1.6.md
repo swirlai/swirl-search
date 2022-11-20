@@ -86,7 +86,7 @@ swirl_load.py: fed 3 into SWIRL, 0 errors
 
 <br/>
 
-:small_blue_diamond: the former ```GenericResultProcessor``` has been renamed ```MappingResultProcessor```
+:small_blue_diamond: The former ```GenericResultProcessor``` has been renamed ```MappingResultProcessor```
 
 A new GenericResultProcessor now takes no option on results, allowing connectors that already produce the SWIRL format to save processing.
 
