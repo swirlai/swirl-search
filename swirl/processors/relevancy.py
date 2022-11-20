@@ -58,7 +58,6 @@ class CosineRelevancyProcessor(PostResultProcessor):
         query_nlp = nlp(query)
 
         # check for zero vector
-        # to do: review this?!?
         empty_query_vector = False
         if query_nlp.vector.all() == 0:
             empty_query_vector = True
@@ -79,7 +78,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
 
         # check for non query?
         if query_stemmed_list_len == 0:
-            # to do: warning because this should not happen
+            self.warning("Query stemmed list is empty!")
             return self.results
 
         updated = 0
@@ -118,8 +117,6 @@ class CosineRelevancyProcessor(PostResultProcessor):
                 if gram in stopwords:
                     continue
                 query_target_list.append([gram])
-        # self.warning(f"query_stemmed_target_list: {query_stemmed_target_list}")
-        # self.warning(f"query_target_list: {query_target_list}")
         if len(query_stemmed_target_list) != len(query_target_list):
             self.error("len(query_stemmed_target_list) != len(query_target_list), highlighting errors may occur")
 
@@ -158,10 +155,8 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         if len(result_field_list) != len(result_field_stemmed_list):
                             self.error("len(result_field_list) != len(result_field_stemmed_list), highlighting errors may occur")
                         # NOT test
-                        result_field_lower = ' '.join(result_field_list).lower()
-                        result_field_lower_list = result_field_lower.split()
                         for t in not_list:
-                            if t.lower() in result_field_lower_list:
+                            if t.lower() in (result_field.lower() for result_field in result_field_list):
                                 notted = {field: t}
                                 break
                         # field length
@@ -184,7 +179,6 @@ class CosineRelevancyProcessor(PostResultProcessor):
                             qvr = 0.0                          
                             label = '_*'
                             if empty_query_vector or result_field_nlp.vector.all() == 0:
-                                # self.warning(f"sim_*: {query} ? {result_field} query or result was == 0")
                                 if len(result_field_list) == 0:
                                     qvr = 0.0
                                 else:
@@ -193,20 +187,16 @@ class CosineRelevancyProcessor(PostResultProcessor):
                             else:
                                 if len(sent_tokenize(result_field)) > 1:
                                     # by sentence, take highest
-                                    # to do: only calc similarity if something matches it?!? P1
                                     max_similarity = 0.0
                                     for sent in sent_tokenize(result_field):
                                         result_sent_nlp = nlp(sent)
                                         qvs = query_nlp.similarity(result_sent_nlp)
-                                        # self.warning(f"sim_s*: {query} ? {sent} = {qvs}")
                                         if qvs > max_similarity:
                                             max_similarity = qvs
                                     # end for
                                     qvr = max_similarity
-                                    # self.warning(f"sim_s*: {query} ? {sent} = {qvr}")
                                     label = '_s*'
                                 else:
-                                    # self.warning(f"sim_*: {query} ? {result_field}")
                                     qvr = query_nlp.similarity(result_field_nlp)
                             # end if
                             if qvr >= float(settings.SWIRL_MIN_SIMILARITY):
@@ -224,7 +214,6 @@ class CosineRelevancyProcessor(PostResultProcessor):
                             # iterate across all matches, match on stem
                             # match_all returns a list of result_field_list indexes that match
                             match_list = match_all(query_slice_stemmed_list, result_field_stemmed_list)
-                            # self.warning(f"match_list: {query_slice_stemmed_list} ? {result_field_stemmed_list} = {match_list}")
                             # truncate the match list, if longer than configured
                             if len(match_list) > settings.SWIRL_MAX_MATCHES:
                                 self.warning(f"truncating matches for: {query_slice_stemmed_list}")
@@ -235,7 +224,6 @@ class CosineRelevancyProcessor(PostResultProcessor):
                                 for match in match_list:
                                     extracted_match_list = result_field_list[match:match+query_slice_stemmed_len]
                                     key = '_'.join(extracted_match_list)+'_'+str(match)
-                                    # to do: work on the below
                                     rw_list = result_field_list[match-(2*query_slice_stemmed_len):match+(2*query_slice_stemmed_len)+1]
                                     dict_score[field][key] = 0.0
                                     ######## SIMILARITY vs WINDOW
@@ -277,7 +265,6 @@ class CosineRelevancyProcessor(PostResultProcessor):
                     result['dict_score'] = dict_score
                     result['dict_len'] = dict_len
             # end for result in results.json_results:
-            # results.save()
         # end for results in self.results:
         ############################################
         # Compute field means
@@ -323,9 +310,6 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         if dict_score[f][k] >= float(settings.SWIRL_MIN_SIMILARITY):
                             len_adjust = float(dict_len_median[f] / dict_len[f])
                             rank_adjust = 1.0 + (1.0 / sqrt(result['searchprovider_rank']))
-                            # rank_adjust = float(1 / sqrt(result['searchprovider_rank']))
-                            # self.warning(f"len_adjust: {len_adjust}: {result}")
-                            # to do: this should also include _s*
                             if k.endswith('_*') or k.endswith('_s*'):
                                 result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k))
                             else:

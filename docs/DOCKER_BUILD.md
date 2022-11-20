@@ -90,7 +90,7 @@ Enter a new password, twice. If django complains that the password is too simple
 ## Load Google PSE SearchProviders
 
 ```
-docker exec -it swirl-search-app-1 python scripts/swirl_load.py SearchProviders/google_pse.json -u admin -p super-user-password
+docker exec -it swirl-search-app-1 python swirl_load.py SearchProviders/google_pse.json -u admin -p super-user-password
 ```
 
 Replace super-user-password with the password you created in the previous step. 
@@ -99,7 +99,7 @@ Also, replace swirl-search-app-1 with your container ID if different.
 This should produce the following:
 
 ```
-##S#W#I#R#L##1#.#3##############################################################
+##S#W#I#R#L##1#.#6##############################################################
 swirl_load.py: fed 3 into SWIRL, 0 errors
 ```
 

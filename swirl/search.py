@@ -45,12 +45,12 @@ def search(id):
         for provider in providers:
             if provider.id in search.searchprovider_list:
                 new_provider_list.append(provider)
-            if provider.name in search.searchprovider_list:
+            if provider.name.lower() in (provider.lower() for provider in search.searchprovider_list):
                 if not provider in new_provider_list:
                     new_provider_list.append(provider)
             if provider.tags:
                 for tag in provider.tags:
-                    if tag in search.searchprovider_list:
+                    if tag.lower() in (p.lower() for p in search.searchprovider_list):
                         if not provider in new_provider_list:
                             new_provider_list.append(provider)
                 # end if
@@ -59,6 +59,7 @@ def search(id):
     else:
         # no provider list
         for provider in providers:
+            # active status is determined later on
             if provider.default:
                 new_provider_list.append(provider)
     # end if

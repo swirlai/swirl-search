@@ -74,20 +74,22 @@ class SearchViewSet(viewsets.ModelViewSet):
     def list(self, request):
         ########################################
         # handle ?tag=
-        tags = ""
-        if 'tags' in request.GET.keys():
-            tags = request.GET['tags']
+        providers = ""
+        if 'providers' in request.GET.keys():
+            providers = request.GET['providers']
+            if ',' in providers:
+                providers = providers.split(',')
         ########################################
         # handle ?q=
         query_string = ""
         if 'q' in request.GET.keys():
             query_string = request.GET['q']
         if query_string:
-            if tags:
-                if type(tags) == list:
-                    new_search = Search.objects.create(query_string=query_string,tags=tags)
+            if providers:
+                if type(providers) == list:
+                    new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers)
                 else:
-                    new_search = Search.objects.create(query_string=query_string,tags=[tags])
+                    new_search = Search.objects.create(query_string=query_string,searchprovider_list=[providers])
                 # end if
             else:
                 new_search = Search.objects.create(query_string=query_string)
