@@ -1,7 +1,6 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.0
+@contact:    sid@swirl.today
 '''
 
 import spacy

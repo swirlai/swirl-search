@@ -1,15 +1,15 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
+@contact:    sid@swirl.today
 '''
 
 from sys import path
 from os import environ
-import django
-from django.utils import timezone
 import logging as logger
 from datetime import timedelta
+
+import django
+from django.utils import timezone
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
@@ -24,6 +24,12 @@ module_name = 'expirer.py'
 ##################################################
 
 def expirer():
+
+    '''
+    This fires whenever a Celery Beat event arrives
+    Remove searches that are past expiration date, if expiration is not 0
+    '''
+    
     searches = Search.objects.filter(retention__gt=0)
     for search in searches:
         if search.retention == 0:

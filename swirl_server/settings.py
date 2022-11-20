@@ -28,8 +28,10 @@ SECRET_KEY = 'django-insecure-4*@!3sf)-t=jvww$27w#_gv9!18+8cj9(+e$#w8*#umln$jjf$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+# PUT the FQDN first in the list below
 ALLOWED_HOSTS = ['localhost']
 HOSTNAME = ALLOWED_HOSTS[0]
+PROTOCOL = 'http'
 
 # Application definition
 
@@ -184,6 +186,8 @@ CELERY_RESULT_BACKEND='rpc://'
 # CELERY_BROKER_POOL_LIMIT = None
 # CELERY_BROKER_CONNECTION_TIMEOUT = None
 
+CELERY_WORKER_CANCEL_LONG_RUNNING_TASKS_ON_CONNECTION_LOSS = False
+
 # Celery Configuration Options
 CELERY_TIMEZONE = "US/Eastern"
 CELERY_TIME_ZONE = "US/Eastern"
@@ -197,9 +201,10 @@ CELERY_BEAT_SCHEDULE = {
         },          
 }
 
-# SWIRL
+#####################################
+# SWIRL SEARCH
 
-SWIRL_BANNER = '##S#W#I#R#L##1#.#5##############################################################'
+SWIRL_DEFAULT_QUERY_LANGUAGE = 'english'
 
 SWIRL_TIMEOUT = 10
 SWIRL_Q_WAIT = 7
@@ -220,5 +225,6 @@ SWIRL_RELEVANCY_CONFIG = {
     }
 }
 
-SWIRL_MAX_MATCHES = 4
+SWIRL_MAX_MATCHES = 5
 SWIRL_MIN_SIMILARITY = 0.54
+

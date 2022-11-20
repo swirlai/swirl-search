@@ -1,14 +1,15 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
+@contact:    sid@swirl.today
 '''
+
+from sys import path
+from os import environ
 
 from celery.utils.log import get_task_logger
 from celery import shared_task
 from celery.schedules import crontab
-from sys import path
-from os import environ
+
 import django
 
 from swirl.utils import swirl_setdir
@@ -18,9 +19,6 @@ django.setup()
 
 logger = get_task_logger(__name__)
 module_name = 'tasks.py'
-
-##################################################
-# installed connectors
 
 from swirl.connectors import *
 
@@ -41,9 +39,8 @@ def federate_task(search_id, provider_id, provider_connector):
     return 
 
 ##################################################
-##################################################
 
-from .search import search
+from swirl.search import search
 
 @shared_task(name='search', ignore_result=True)
 def search_task(search_id):
@@ -51,18 +48,16 @@ def search_task(search_id):
     return search(search_id)
 
 ##################################################
-##################################################
 
-from .search import rescore
+from swirl.search import rescore
 
 @shared_task(name='rescore', ignore_result=True)
 def rescore_task(search_id):
     return rescore(search_id)
 
 ##################################################
-##################################################
 
-from .expirer import expirer
+from swirl.expirer import expirer
 
 @shared_task(name='expirer')
 def expirer_task():

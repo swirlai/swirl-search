@@ -1,17 +1,16 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
+@contact:    sid@swirl.today
 @version:    SWIRL 1.3
 '''
+
+from sys import path
+from os import environ
+import time
 
 import django
 from django.db import Error
 from django.core.exceptions import ObjectDoesNotExist
-
-from sys import path
-from os import environ
-
-import time
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
@@ -20,17 +19,15 @@ django.setup()
 
 from django.conf import settings
 
-from swirl.models import Search, Result, SearchProvider
-from swirl.processors import *
-
 from celery.utils.log import get_task_logger
 from logging import DEBUG
 logger = get_task_logger(__name__)
 
-from .utils import get_mappings_dict
-
+from swirl.models import Search, Result, SearchProvider
+from swirl.connectors.utils import get_mappings_dict
 from swirl.processors import *
 
+########################################
 ########################################
 
 class Connector:
@@ -47,6 +44,7 @@ class Connector:
         self.provider = None
         self.search = None
         self.status = ""
+        self.query_string_to_provider = ""
         self.query_to_provider = ""
         self.query_mappings = {}
         self.response_mappings = {}
@@ -131,18 +129,20 @@ class Connector:
     def process_query(self):
 
         '''
-        Invoke the specified query_processor for this provider, store the processed query_string in query_string_processed
+        Invoke the specified query_processor for this provider on search.query_string_processed, store the result in self.query_string_to_provider
         ''' 
 
         try:
-            processed_query = eval(self.provider.query_processor)(self.search.query_string).process()
+            processed_query = eval(self.provider.query_processor)(self.search.query_string_processed, self.provider.query_mappings).process()
         except (NameError, TypeError, ValueError) as err:
-            self.error(f'{err.args}, {err} in provider.query_processor(search.query_string_processed): {self.provider.query_processor}({self.search.query_string_processed})')
+            self.error(f'{err.args}, {err} in provider.query_processor(search.query_string_processed): {self.provider.query_processor}({self.search.query_string_processed}, {self.provider.query_mappings})')
             return
-        if processed_query != self.search.query_string_processed:
-            self.search.query_string_processed = processed_query
-            self.search.save()
-            self.messages.append(f"{self.provider.query_processor} rewrote query_string to: {processed_query}")
+        if processed_query:
+            if processed_query != self.search.query_string_processed:
+                self.messages.append(f"{self.provider.query_processor} rewrote {self.provider.name}'s query_string_processed to: {processed_query}")
+            self.query_string_to_provider = processed_query
+        else:
+            self.query_string_to_provider = self.search.query_string_processed
         return
 
     ########################################
@@ -153,7 +153,7 @@ class Connector:
         Turn the query_string_processed into the query_to_provider
         ''' 
 
-        self.query_to_provider = self.search.query_string_processed
+        self.query_to_provider = self.query_string_to_provider
         return
 
     ########################################
@@ -181,8 +181,8 @@ class Connector:
         self.retrieved = 1
         self.response = [ 
             {
-                'title': f'{self.query_to_provider}', 
-                'body': f'Did you search for {self.query_to_provider}?', 
+                'title': f'{self.query_string_to_provider}', 
+                'body': f'Did you search for {self.query_string_to_provider}?', 
                 'author': f'{self}'
             }
         ]
@@ -222,9 +222,9 @@ class Connector:
                 retrieved = len(self.results)
             self.messages.append(f"Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
             try:
-                processed_results = eval(self.provider.result_processor)(self.results, self.provider, self.search.query_string_processed).process()
+                processed_results = eval(self.provider.result_processor)(self.results, self.provider, self.query_string_to_provider).process()
             except (NameError, TypeError, ValueError) as err:
-                self.error(f'{err.args}, {err} in provider.result_processor(): {self.provider.result_processor}({self.results}, {self.provider}, {self.processed_query})')
+                self.error(f'{err.args}, {err} in provider.result_processor(): {self.provider.result_processor}({self.results}, {self.provider}, {self.query_string_to_provider})')
                 return
             self.processed_results = processed_results
         # end if
@@ -242,7 +242,7 @@ class Connector:
         end_time = time.time()
 
         try:
-            new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id, query_to_provider=self.query_to_provider, result_processor=self.provider.result_processor, messages=self.messages, found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}', json_results=self.processed_results)
+            new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id, query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider, result_processor=self.provider.result_processor, messages=self.messages, found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}', json_results=self.processed_results)
             new_result.save()
         except Error as err:
             self.error(f'save_result() failed: {err}')

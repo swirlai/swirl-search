@@ -1,12 +1,11 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
+@contact:    sid@swirl.today
 '''
 
 from django.contrib.auth.models import User, Group
-from swirl.models import SearchProvider, Search, Result
 from rest_framework import serializers
+from swirl.models import SearchProvider, Search, Result
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

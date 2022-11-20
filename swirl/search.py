@@ -1,28 +1,29 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
+@contact:    sid@swirl.today
 '''
 
-from django.core.exceptions import ObjectDoesNotExist
-from datetime import datetime
-
 import logging as logger
+from datetime import datetime
+import time
+
+from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 
 from swirl.models import Search, SearchProvider, Result
 from swirl.tasks import federate_task
 from swirl.processors import *
 
-import time
-
 ##################################################
 ##################################################
-
-from django.conf import settings
 
 module_name = 'search.py'
 
 def search(id):
+
+    '''
+    Execute the search task workflow
+    '''
 
     start_time = time.time()
 
@@ -44,12 +45,12 @@ def search(id):
         for provider in providers:
             if provider.id in search.searchprovider_list:
                 new_provider_list.append(provider)
-            if provider.name in search.searchprovider_list:
+            if provider.name.lower() in (provider.lower() for provider in search.searchprovider_list):
                 if not provider in new_provider_list:
                     new_provider_list.append(provider)
             if provider.tags:
                 for tag in provider.tags:
-                    if tag in search.searchprovider_list:
+                    if tag.lower() in (p.lower() for p in search.searchprovider_list):
                         if not provider in new_provider_list:
                             new_provider_list.append(provider)
                 # end if
@@ -58,6 +59,7 @@ def search(id):
     else:
         # no provider list
         for provider in providers:
+            # active status is determined later on
             if provider.default:
                 new_provider_list.append(provider)
     # end if
@@ -70,7 +72,7 @@ def search(id):
         return False
 
     ########################################
-    # pre_search_processing
+    # pre-query processing, which updates query_string_processed
     if search.pre_query_processor:
         search.status = 'PRE_QUERY_PROCESSING'
         search.save()
@@ -173,7 +175,7 @@ def search(id):
     ########################################
     # fix the result url
     # to do: figure out a better solution P1
-    search.result_url = f"http://{settings.ALLOWED_HOSTS[0]}:8000/swirl/results?search_id={search.id}&result_mixer={search.result_mixer}"
+    search.result_url = f"{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results?search_id={search.id}&result_mixer={search.result_mixer}"
     # note the sort
     if search.sort.lower() == 'date':
         message = f"Requested sort_by_date from all providers"
@@ -217,14 +219,15 @@ def search(id):
     search.save()    
     # logger.debug(f"{module_name}: {search.id}, {search.status}")
 
-    ########################################
-
     return True
 
 ##################################################
-##################################################
 
 def rescore(id):
+
+    '''
+    Execute the rescore task workflow
+    '''
 
     try:
         search = Search.objects.get(id=id)

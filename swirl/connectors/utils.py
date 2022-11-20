@@ -1,21 +1,20 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
+@contact:    sid@swirl.today
 '''
 
-import django
 from sys import path
 from os import environ
+
+import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
 django.setup()
 
-# models
 from swirl.models import Result
-from .mappings import *
+from swirl.connectors.mappings import *
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -25,9 +24,11 @@ logger = get_task_logger(__name__)
 
 def save_result(search, provider, query_to_provider="", messages=[], found=0, retrieved=0, provider_results=[]):
 
-    # accepts: model data
-    # returns: results of saving those items 
-    # makes no chnages
+    '''
+    accepts: model data
+    returns: results of saving those items 
+    makes no changes
+    '''
 
     new_result = Result.objects.create(search_id=search, searchprovider=provider.name, query_to_provider=query_to_provider, result_processor=provider.result_processor, messages=messages, found=found, retrieved=retrieved, json_results=provider_results)
     new_result.save()
@@ -37,10 +38,12 @@ def save_result(search, provider, query_to_provider="", messages=[], found=0, re
 
 def bind_query_mappings(query_template, query_mappings, url=None, credentials=None):
 
-    # accepts: various parameters
-    # returns: query template with all mappings (including URL and any credentials in key=value format) bound
-    # ignores: QUERY_MAPPING_VARIABLES (e.g. RESULT_INDEX)
-    
+    '''
+    accepts: various parameters
+    returns: query template with all mappings (including URL and any credentials in key=value format) bound
+    ignores: QUERY_MAPPING_VARIABLES (e.g. RESULT_INDEX)
+    '''
+
     module_name = 'bind_query_mappings'
 
     bound_query_template = query_template
@@ -86,9 +89,11 @@ def bind_query_mappings(query_template, query_mappings, url=None, credentials=No
 
 def get_mappings_dict(mappings):
 
-    # accepts: any provider mapping
-    # returns: dict of the mappings by swirl_key
-    # warns if any swirl_key is repeated
+    '''
+    accepts: any provider mapping
+    returns: dict of the mappings by swirl_key
+    warns if any swirl_key is repeated
+    '''
 
     module_name = 'get_mappings'
 

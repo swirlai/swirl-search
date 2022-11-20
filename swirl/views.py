@@ -1,12 +1,12 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
+@contact:    sid@swirl.today
 '''
 
 import time
 import logging as logger
 from datetime import datetime
+
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User, Group
 from django.http import Http404, HttpResponse
@@ -17,15 +17,16 @@ from rest_framework import viewsets, status
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import *
-from .serializers import *
+
+from swirl.models import *
+from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result
 from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer
 from swirl.mixers import *
 
 module_name = 'views.py'
 
-from .tasks import search_task, rescore_task
+from swirl.tasks import search_task, rescore_task
 
 ########################################
 ########################################
@@ -39,7 +40,7 @@ def index(request):
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#5##############################################################
+    ##S#W#I#R#L##1#.#6##############################################################
     API endpoint for managing SearchProviders. 
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH.
@@ -56,7 +57,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
 
 class SearchViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#5##############################################################
+    ##S#W#I#R#L##1#.#6##############################################################
     API endpoint for managing Search objects. 
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH.
@@ -72,12 +73,27 @@ class SearchViewSet(viewsets.ModelViewSet):
     ########################################
     def list(self, request):
         ########################################
+        # handle ?tag=
+        providers = ""
+        if 'providers' in request.GET.keys():
+            providers = request.GET['providers']
+            if ',' in providers:
+                providers = providers.split(',')
+        ########################################
         # handle ?q=
         query_string = ""
         if 'q' in request.GET.keys():
             query_string = request.GET['q']
         if query_string:
-            new_search = Search.objects.create(query_string=query_string)
+            if providers:
+                if type(providers) == list:
+                    new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers)
+                else:
+                    new_search = Search.objects.create(query_string=query_string,searchprovider_list=[providers])
+                # end if
+            else:
+                new_search = Search.objects.create(query_string=query_string)
+            # end if
             new_search.status = 'NEW_SEARCH'
             new_search.save()
             search_task.delay(new_search.id)
@@ -169,7 +185,7 @@ class SearchViewSet(viewsets.ModelViewSet):
 
 class ResultViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#5##############################################################
+    ##S#W#I#R#L##1#.#6##############################################################
     API endpoint for managing Result objects, including Mixed Results
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH.
@@ -270,7 +286,7 @@ class ResultViewSet(viewsets.ModelViewSet):
 
 class UserViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#5##############################################################
+    ##S#W#I#R#L##1#.#6##############################################################
     API endpoint that allows management of Users objects.
     Use GET to list all objects, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH objects.
@@ -285,7 +301,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class GroupViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#5##############################################################
+    ##S#W#I#R#L##1#.#6##############################################################
     API endpoint that allows management of Group objects.
     Use GET to list all objects, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH objects.

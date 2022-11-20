@@ -1,12 +1,9 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
+@contact:    sid@swirl.today
 '''
 
 from django.db import models
-
-# Create your models here.
 
 class SearchProvider(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -30,16 +27,16 @@ class SearchProvider(models.Model):
     query_template = models.CharField(max_length=2048, default='{url}?q={query_string}', blank=True)
     QUERY_PROCESSOR_CHOICES = [
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
-        ('GenericQueryCleaningProcessor', 'GenericQueryCleaningProcessor'),
+        ('AdaptiveQueryProcessor', 'AdaptiveQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]
-    query_processor = models.CharField(max_length=200, default='GenericQueryProcessor', choices=QUERY_PROCESSOR_CHOICES)
+    query_processor = models.CharField(max_length=200, default='AdaptiveQueryProcessor', choices=QUERY_PROCESSOR_CHOICES)
     query_mappings = models.CharField(max_length=2048, default=str, blank=True)
     RESULT_PROCESSOR_CHOICES = [
         ('GenericResultProcessor', 'GenericResultProcessor'),
-        ('SwirlResultMatchesProcessor', 'SwirlResultMatchesProcessor')
+        ('MappingResultProcessor', 'MappingResultProcessor')
     ]
-    result_processor = models.CharField(max_length=200, default='GenericResultProcessor', choices=RESULT_PROCESSOR_CHOICES)
+    result_processor = models.CharField(max_length=200, default='MappingResultProcessor', choices=RESULT_PROCESSOR_CHOICES)
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
     result_mappings = models.CharField(max_length=2048, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
@@ -56,8 +53,8 @@ class Search(models.Model):
     id = models.BigAutoField(primary_key=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    query_string = models.CharField(max_length=200, default=str)
-    query_string_processed = models.CharField(max_length=200, default=str, blank=True)
+    query_string = models.CharField(max_length=256, default=str)
+    query_string_processed = models.CharField(max_length=256, default=str, blank=True)
     SORT_CHOICES = [
         ('relevancy', 'relevancy'),
         ('date', 'date')
@@ -69,18 +66,16 @@ class Search(models.Model):
     time = models.FloatField(default=0.0)
     PRE_QUERY_PROCESSOR_CHOICES = [
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
-        ('GenericQueryCleaningProcessor', 'GenericQueryCleaningProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]
     pre_query_processor = models.CharField(max_length=200, default=str, blank=True, choices=PRE_QUERY_PROCESSOR_CHOICES)
     POST_RESULT_PROCESSOR_CHOICES = [
         ('GenericPostResultProcessor', 'GenericPostResultProcessor'),
         ('GenericRelevancyProcessor', 'GenericRelevancyProcessor'),
-        ('CosineRelevancyProcessor', 'CosineRelevancyProcessor (w/spaCy)'),
-        ('NewCosineRelevancyProcessor', 'NewCosineRelevancyProcessor (w/spaCy)')
+        ('CosineRelevancyProcessor', 'CosineRelevancyProcessor (w/spaCy)')
     ]
     post_result_processor = models.CharField(max_length=200, default='CosineRelevancyProcessor', blank=True, choices=POST_RESULT_PROCESSOR_CHOICES)
-    result_url = models.CharField(max_length=200, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)
+    result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)
     messages = models.JSONField(default=list, blank=True)
     MIXER_CHOICES = [
         ('RelevancyMixer', 'RelevancyMixer'),
@@ -115,6 +110,7 @@ class Result(models.Model):
     search_id = models.ForeignKey(Search, on_delete=models.CASCADE) 
     provider_id = models.IntegerField(default=0)
     searchprovider = models.CharField(max_length=50, default=str)
+    query_string_to_provider = models.CharField(max_length=256, default=str)
     query_to_provider = models.CharField(max_length=2048, default=str)
     result_processor = models.CharField(max_length=200, default=str)
     messages = models.JSONField(default=list, blank=True)

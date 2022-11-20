@@ -1,11 +1,10 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
+@contact:    sid@swirl.today
 '''
 
-from .relevancy import RelevancyMixer
-from .date import DateMixer
-from .stack import *
+from swirl.mixers.relevancy import RelevancyMixer
+from swirl.mixers.date import DateMixer
+from swirl.mixers.stack import *
 
-# Add new SWIRL mixers here
+# Add new mixers here!

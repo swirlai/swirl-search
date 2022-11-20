@@ -1,25 +1,21 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.1
+@contact:    sid@swirl.today
 '''
-
-import django
-from django.db import Error
-from django.core.exceptions import ObjectDoesNotExist
 
 from sys import path
 from os import environ
+import time
+
+import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
 django.setup()
 
-import time
-
 import requests
-# do not remove
+
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth, HTTPProxyAuth
 from requests.exceptions import ConnectionError
 
@@ -35,10 +31,13 @@ from celery.utils.log import get_task_logger
 from logging import DEBUG, INFO, WARNING
 logger = get_task_logger(__name__)
 
-from .mappings import *
-from .utils import bind_query_mappings
+from swirl.connectors.mappings import *
+from swirl.connectors.utils import bind_query_mappings
 
-from .connector import Connector
+from swirl.connectors.connector import Connector
+
+########################################
+########################################
 
 class RequestsGet(Connector):
 
@@ -56,7 +55,7 @@ class RequestsGet(Connector):
             query_to_provider = bind_query_mappings(self.provider.query_template, self.provider.query_mappings, self.provider.url, self.provider.credentials)
         # this should leave one item, {query_string}
         if '{query_string}' in query_to_provider:
-            query_to_provider = query_to_provider.replace('{query_string}', urllib.parse.quote_plus(self.search.query_string_processed))
+            query_to_provider = query_to_provider.replace('{query_string}', urllib.parse.quote_plus(self.query_string_to_provider))
         else:
             self.warning(f'{{query_string}} missing from query_to_provider: {query_to_provider}')
 

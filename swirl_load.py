@@ -1,21 +1,13 @@
-
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
+@contact:    sid@swirl.today
 '''
 
 import argparse
 import sys
 import os
-from sys import path
-from os import environ
 import glob
 import json
-
-import django
-from sys import path
-from os import environ
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -23,20 +15,16 @@ from http import HTTPStatus
 
 module_name = 'swirl_load.py'
 
-class bcolors:
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
+from swirl.banner import SWIRL_BANNER, bcolors
 
 ##################################################
 
 def main(argv):
 
-    print(f"{bcolors.BOLD}##S#W#I#R#L##1#.#5##############################################################{bcolors.ENDC}")
+    print(f"{bcolors.BOLD}{SWIRL_BANNER}{bcolors.ENDC}")
+    print()
     # arguments
-    parser = argparse.ArgumentParser(description="Bulk load SWIRL objects in json format")
+    parser = argparse.ArgumentParser(description="Bulk load SWIRL SEARCH objects in json format")
     parser.add_argument('filespec', help="path to one or more json files to load, optionally including wildcards, example folder-name/*.txt")
     parser.add_argument('-d', '--debug', action="store_true", help="provide debugging information")
     parser.add_argument('-u', '--username')

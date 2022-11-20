@@ -1,7 +1,6 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.5
+@contact:    sid@swirl.today
 '''
 
 from bs4 import BeautifulSoup as bs

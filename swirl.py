@@ -15,25 +15,20 @@ import time
 import signal
 from datetime import datetime
 
-import django
-from sys import path
-from os import environ
-from swirl.utils import swirl_setdir
-path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
-django.setup()
+# import django
+# from sys import path
+# from os import environ
+# from swirl.utils import swirl_setdir
+# path.append(swirl_setdir()) # path to settings.py file
+# environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+# django.setup()
 
-from django.conf import settings
+# from django.conf import settings
 
 module_name = 'swirl.py'
 g_debug = False
 
-class bcolors:
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
+from swirl.banner import SWIRL_BANNER, bcolors
 
 # NOTE: ORDER BELOW IS IMPORTANT
 # NOTE: FIRST IN LIST IS FIRST STARTED
@@ -58,7 +53,7 @@ SWIRL_SERVICES = [
     }
 ]
 
-SWIRL_CORE_SERVICES = [SWIRL_SERVICES[1]['name'], SWIRL_SERVICES[2]['name']]
+SWIRL_CORE_SERVICES = ['django', 'celery-worker']
 
 # prepare service_dict 
 SWIRL_SERVICE_DICT = {}
@@ -68,6 +63,22 @@ for swirl_service in SWIRL_SERVICES:
 COMMAND_LIST = [ 'help', 'start', 'start_sleep', 'stop', 'restart', 'flush', 'migrate', 'setup', 'status', 'watch', 'tail' ]
 
 ##################################################
+
+def check_rabbit():
+    proc = subprocess.run(['ps','-ef'], capture_output=True)
+    result = proc.stdout.decode('UTF-8')
+    list_result = []
+    if '\n' in result:
+        list_result = result.split('\n')
+    for l in list_result:
+        if 'rabbitmq' in l.lower():
+            if 'grep rabbitmq' in l.lower():
+                # ignore: grep rabbitmq
+                pass
+            else:
+                return l
+        
+    return ""
 
 def check_pid(pid):
     proc = subprocess.run(['ps','-p',str(pid)], capture_output=True)
@@ -158,6 +169,14 @@ def start(service_list):
     flag = False
     for service_name in service_list:
         if service_name in SWIRL_SERVICE_DICT:
+            # Fix for https://github.com/sidprobstein/swirl-search/issues/47
+            if service_name == 'rabbitmq':
+                # check to see if it is running
+                rabbit = check_rabbit()
+                if rabbit:
+                    print(f"Warning: rabbitmq appears to be running, skipping it:\n{rabbit}")
+                    continue
+            # end if
             print(f"Start: {service_name} -> {SWIRL_SERVICE_DICT[service_name]} ... ", end='')
             result = launch(service_name, SWIRL_SERVICE_DICT[service_name])
             time.sleep(5)        
@@ -334,7 +353,7 @@ def stop(service_list):
             pid = int(dict_pid[service_name])
             try:
                 os.kill(pid, 0)  # if the pid doesn't exist, this will throw an exception
-                os.kill(pid, signal.SIGINT)
+                os.kill(pid, signal.SIGTERM)
             except OSError as err:
                 print(f"Error: {err}")
                 flag = True
@@ -358,7 +377,7 @@ def stop(service_list):
             pid = int(dict_pid[SWIRL_SERVICES[0]['name']])
             try:
                 pgrp = os.getpgid(pid)
-                os.killpg(pgrp, signal.SIGINT)
+                os.killpg(pgrp, signal.SIGTERM)
                 # os.kill(pid, 0)  # if the pid doesn't exist, this will throw an exception
                 # os.kill(pid, signal.SIGTERM)
             except OSError as err:
@@ -469,7 +488,7 @@ def setup(service_list):
 
 def main(argv):
 
-    print(f"{bcolors.BOLD}{settings.SWIRL_BANNER}{bcolors.ENDC}")
+    print(f"{bcolors.BOLD}{SWIRL_BANNER}{bcolors.ENDC}")
     print()
 
     parser = argparse.ArgumentParser(description="Manage the SWIRL server")

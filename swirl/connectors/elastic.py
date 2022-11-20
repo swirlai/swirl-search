@@ -1,14 +1,12 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.3
+@contact:    sid@swirl.today
 '''
 
-import django
-from django.db import Error
-from django.core.exceptions import ObjectDoesNotExist
 from sys import path
 from os import environ
+
+import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
@@ -18,12 +16,14 @@ django.setup()
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
-from .utils import save_result, bind_query_mappings
-
-from .connector import Connector
+from swirl.connectors.utils import bind_query_mappings
+from swirl.connectors.connector import Connector
 
 from elasticsearch import Elasticsearch
 from elasticsearch import *
+
+########################################
+########################################
 
 class Elastic(Connector):
 
@@ -36,7 +36,7 @@ class Elastic(Connector):
         query_to_provider = bind_query_mappings(self.provider.query_template, self.provider.query_mappings)
 
         if '{query_string}' in self.provider.query_template:
-            query_to_provider = query_to_provider.replace('{query_string}', self.search.query_string_processed)
+            query_to_provider = query_to_provider.replace('{query_string}', self.query_string_to_provider)
 
         sort_field = ""
         if 'sort_by_date' in self.query_mappings:

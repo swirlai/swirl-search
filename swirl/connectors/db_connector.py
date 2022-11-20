@@ -1,15 +1,13 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
+@contact:    sid@swirl.today
 @version:    SWIRL 1.3
 '''
 
-import django
-from django.db import Error
-from django.core.exceptions import ObjectDoesNotExist
-import os
 from sys import path
 from os import environ
+
+import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
@@ -19,11 +17,12 @@ django.setup()
 from celery.utils.log import get_task_logger
 from logging import DEBUG
 logger = get_task_logger(__name__)
-logger.setLevel(DEBUG)
 
-from .utils import save_result, bind_query_mappings
+from swirl.connectors.utils import bind_query_mappings
+from swirl.connectors.connector import Connector
 
-from .connector import Connector
+########################################
+########################################
 
 class DBConnector(Connector):
 
@@ -54,7 +53,7 @@ class DBConnector(Connector):
         count_query = bind_query_mappings(count_query_template, self.provider.query_mappings)
     
         if '{query_string}' in count_query:
-            count_query = count_query.replace('{query_string}', self.search.query_string_processed)
+            count_query = count_query.replace('{query_string}', self.query_string_to_provider)
         else:
             self.error(f"{{query_string}} not found in bound query_template {count_query}")
             return
@@ -64,7 +63,7 @@ class DBConnector(Connector):
         # main query
         query_to_provider = bind_query_mappings(self.provider.query_template, self.provider.query_mappings)
         if '{query_string}' in query_to_provider:
-            query_to_provider = query_to_provider.replace('{query_string}', self.search.query_string_processed)
+            query_to_provider = query_to_provider.replace('{query_string}', self.query_string_to_provider)
 
         # sort field
         sort_field = ""

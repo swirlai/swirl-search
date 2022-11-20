@@ -1,24 +1,20 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.3
+@contact:    sid@swirl.today
 '''
 
-import django
-from django.db import Error
-from django.core.exceptions import ObjectDoesNotExist
 import os
 from sys import path
 from os import environ
+
+import django
+from django.db import DataError
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
 django.setup()
 
-# connectors
-
-########################################
 import sqlite3
 from sqlite3 import Error
 
@@ -27,9 +23,10 @@ from logging import DEBUG
 logger = get_task_logger(__name__)
 logger.setLevel(DEBUG)
 
-from .utils import save_result, bind_query_mappings
+from swirl.connectors.db_connector import DBConnector
 
-from .db_connector import DBConnector
+########################################
+########################################
 
 class Sqlite3(DBConnector):
 

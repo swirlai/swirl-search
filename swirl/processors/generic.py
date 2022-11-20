@@ -1,19 +1,16 @@
 '''
 @author:     Sid Probstein
-@contact:    sidprobstein@gmail.com
-@version:    SWIRL 1.x
+@contact:    sid@swirl.today
 '''
 
 from datetime import datetime
 
-from .utils import create_result_dictionary
-
-import logging as logger
-
 from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
-from .processor import *
+from swirl.processors.processor import *
+from swirl.processors.utils import clean_string, create_result_dictionary
+from swirl.connectors.utils import get_mappings_dict
   
 #############################################    
 #############################################    
@@ -23,42 +20,84 @@ class GenericQueryProcessor(QueryProcessor):
     type = 'GenericQueryProcessor'
     
     def process(self):
-
-        self.query_string_processed = self.query_string
-        return self.query_string_processed
-
-#############################################    
+        return clean_string(self.query_string).strip()
+                
 #############################################    
 
-class GenericQueryCleaningProcessor(QueryProcessor):
+class AdaptiveQueryProcessor(QueryProcessor):
 
-    type = 'GenericQueryCleaningProcessor'
-    chars_allowed_in_query = [' ', '+', '-', '"', "'", '(', ')', '_', '~', ':'] 
-
+    type = 'AdaptiveQueryProcessor'
+    
     def process(self):
 
-        try:
-            query_clean = ''.join(ch for ch in self.query_string.strip() if ch.isalnum() or ch in self.chars_allowed_in_query)
-        except NameError as err:
-            self.error(f'NameError: {err}')
-        except TypeError as err:
-            self.warning(f'TypeError: {err}')
-        if self.input != query_clean:
-            logger.info(f"{self}: rewrote query from {self.input} to {query_clean}")
+        query = clean_string(self.query_string).strip()
+        query_list = query.split()
 
-        self.query_string_processed = query_clean
-        return self.query_string_processed
+        # parse the query into list_not and list_and
+        list_not = []
+        list_and = []
+        lower_query = ' '.join(query_list).lower()
+        lower_query_list = lower_query.split()
+        if 'not' in lower_query_list:
+            list_and = query_list[:lower_query_list.index('not')]
+            list_not = query_list[lower_query_list.index('not')+1:]
+        else:
+            for q in query_list:
+                if q.startswith('-'):
+                    list_not.append(q[1:])
+                else:
+                    list_and.append(q)
+            # end for
+        # end if
+    
+        if len(list_not) > 0:
+            processed_query = ""
+            dict_query_mappings = get_mappings_dict(self.query_mappings)
+            not_cmd = False
+            not_char = ""
+            if 'NOT' in dict_query_mappings:
+                not_cmd = bool(dict_query_mappings['NOT'])
+            if 'NOT_CHAR' in dict_query_mappings:
+                not_char = str(dict_query_mappings['NOT_CHAR'])
+            if not_cmd and not_char:
+                # leave the query as is, since it supports both NOT and -term
+                return query
+            if not_cmd:
+                processed_query = ' '.join(list_and) + ' ' + 'NOT ' + ' '.join(list_not)
+                return processed_query.strip()
+            if not_char:
+                processed_query = ' '.join(list_and) + ' '
+                for t in list_not:
+                    processed_query = processed_query + not_char + t + ' '
+                return processed_query.strip()
+            if not (not_cmd or not_char):
+                self.warning(f"Provider does not support NOT in query: {self.query_string}")
+                # remove the notted portion
+                return ' '.join(list_and)
+
+        return query
 
 #############################################    
-#############################################    
-
-from dateutil import parser
-import re
-from re import error as re_error
 
 class GenericResultProcessor(ResultProcessor):
 
-    type="GenericResultsProcessor"
+    type="GenericResultProcessor"
+
+    def process(self):
+
+        self.processed_results = self.results
+        return self.processed_results
+
+#############################################    
+
+from dateutil import parser
+
+import re
+from re import error as re_error
+
+class MappingResultProcessor(ResultProcessor):
+
+    type="MappingResultProcessor"
 
     def process(self):
 
@@ -77,7 +116,7 @@ class GenericResultProcessor(ResultProcessor):
             swirl_result['searchprovider_rank'] = result_number
             swirl_result['date_retrieved'] = str(datetime.now())
             #############################################  
-            # mappings are in form source_key=swirl_key, ..., where source_key can be a json_string e.g. _source.customer_full_name
+            # mappings are in form swirl_key=source_key, where source_key can be a json_string e.g. _source.customer_full_name
             if self.provider.result_mappings:
                 mappings = self.provider.result_mappings.split(',')
                 for mapping in mappings:
@@ -99,6 +138,14 @@ class GenericResultProcessor(ResultProcessor):
                     if swirl_key.isupper():
                         # ignore for now
                         continue
+                    # check for field list |
+                    source_field_list = []
+                    if '|' in source_key:
+                        source_field_list = source_key.split('|')
+                        # self.warning(f"source_field_list! {source_field_list}")
+                    if len(source_field_list) == 0:
+                        source_field_list.append(source_key)
+                    #############################################
                     # check for template
                     template_list = []
                     if source_key.startswith("'"):
@@ -109,9 +156,11 @@ class GenericResultProcessor(ResultProcessor):
                             return []
                         # end try
                     else:
-                        template_list.append('{' + source_key + '}')
+                        for key in source_field_list:
+                            template_list.append('{' + key + '}')
                     # search for source_keys & construct a result_dict
                     result_dict = {}
+                    # self.warning(f"template_list: {template_list}")
                     for k in template_list:
                         jxp_key = f'$.{k[1:-1]}'
                         try:
@@ -138,44 +187,56 @@ class GenericResultProcessor(ResultProcessor):
                             # end if
                         # end if
                     else:
+                        #############################################
                         # single mapping
-                        if source_key in result_dict:
-                            if swirl_key:
-                                # provider specifies the target
-                                if swirl_key in swirl_result:
-                                    if not type(result_dict[source_key]) in json_types:
-                                        if 'date' in source_key.lower():
-                                            # parser.par will fill-in a missing time portion etc
-                                            result_dict[source_key] = str(parser.parse(str(result_dict[source_key])))
-                                        else:
-                                            result_dict[source_key] = str(result_dict[source_key])
+                        for source_key in source_field_list:
+                            if source_key in result_dict:
+                                if not result_dict[source_key]:
+                                    # blank key
+                                    continue
+                                if swirl_key:
+                                    # provider specifies the target
+                                    if swirl_key in swirl_result:
+                                        if not type(result_dict[source_key]) in json_types:
+                                            if 'date' in source_key.lower():
+                                                # parser.parse will fill-in a missing time portion etc
+                                                result_dict[source_key] = str(parser.parse(str(result_dict[source_key])))
+                                            else:
+                                                result_dict[source_key] = str(result_dict[source_key])
+                                            # end if
                                         # end if
-                                    # end if
-                                    if type(swirl_result[swirl_key]) == type(result_dict[source_key]):
-                                        # same type, copy it
-                                        if 'date' in swirl_key.lower():
-                                            swirl_result[swirl_key] = str(parser.parse(result_dict[source_key]))
+                                        if type(swirl_result[swirl_key]) == type(result_dict[source_key]):
+                                            # same type, copy it
+                                            if 'date' in swirl_key.lower():
+                                                if swirl_result[swirl_key] == "":
+                                                    swirl_result[swirl_key] = str(parser.parse(result_dict[source_key]))
+                                                else:
+                                                    payload[swirl_key+"_"+source_key] = str(parser.parse(result_dict[source_key]))
+                                            else:
+                                                if swirl_result[swirl_key] == "":
+                                                    swirl_result[swirl_key] = result_dict[source_key]
+                                                else:
+                                                    payload[swirl_key+"_"+source_key] = result_dict[source_key]
                                         else:
-                                            swirl_result[swirl_key] = result_dict[source_key]
+                                            # different type, so payload it
+                                            if use_payload:
+                                                payload[swirl_key] = result_dict[source_key]
+                                        # end if
                                     else:
-                                        # different type, so payload it
                                         if use_payload:
                                             payload[swirl_key] = result_dict[source_key]
+                                        # end if
                                     # end if
                                 else:
-                                    if use_payload:
-                                        payload[swirl_key] = result_dict[source_key]
-                                    # end if
+                                    # no target key specified, so it will go into payload with that name
+                                    # since it was specified we do not check NO_PAYLOAD
+                                    payload[source_key] = result_dict[source_key]
                                 # end if
                             else:
-                                # no target key specified, so it will go into payload with that name
-                                # since it was specified we do not check NO_PAYLOAD
-                                payload[source_key] = result_dict[source_key]
+                                # no results for this mapping were found - normal
+                                pass
                             # end if
-                        else:
-                            # no results for this mapping were found - normal
-                            pass
-                        # end if
+                        # end for
                 # end for
             # end if
 
