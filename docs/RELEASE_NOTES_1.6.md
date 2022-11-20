@@ -147,28 +147,7 @@ Updating .swirl... Ok
 
 :heart: Thanks to all who reported this issue!!
 
-## Upgrading
-
-For all platforms other than Docker, run the following from the command line, in the swirl installation folder:
-
-```
-./install.sh
-```
-
-Windows users should run ```install.bat``` instead!
-
-:key: If these scripts don't work for any reason, install manually:
-
-```
-pip install -r requirements.txt
-python -m spacy download en_core_web_lg
-python -m nltk.downloader stopwords
-python -m nltk.downloader punkt
-```
-
 <br/>
-
-:warning: Docker users need to restart their image to get the new version. Containers using sqlite3 for storage delete all content upon shut down! Read more: [Docker Build for SWIRL](https://github.com/sidprobstein/swirl-search/blob/main/docs/DOCKER_BUILD.md)
 
 ## Known Issues
 
