@@ -43,14 +43,14 @@ def search(id):
     if search.searchprovider_list:
         # add providers to list by id, name or tag
         for provider in providers:
-            if provider.id in search.searchprovider_list:
+            if str(provider.id) in search.searchprovider_list:
                 new_provider_list.append(provider)
-            if provider.name.lower() in (provider.lower() for provider in search.searchprovider_list):
+            if provider.name.lower() in (str(p).lower() for p in search.searchprovider_list):
                 if not provider in new_provider_list:
                     new_provider_list.append(provider)
             if provider.tags:
                 for tag in provider.tags:
-                    if tag.lower() in (p.lower() for p in search.searchprovider_list):
+                    if tag.lower() in (str(p).lower() for p in search.searchprovider_list):
                         if not provider in new_provider_list:
                             new_provider_list.append(provider)
                 # end if

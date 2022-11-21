@@ -170,13 +170,13 @@ def start(service_list):
     for service_name in service_list:
         if service_name in SWIRL_SERVICE_DICT:
             # Fix for https://github.com/sidprobstein/swirl-search/issues/47
-            if service_name == 'rabbitmq':
-                # check to see if it is running
-                rabbit = check_rabbit()
-                if rabbit:
-                    print(f"Warning: rabbitmq appears to be running, skipping it:\n{rabbit}")
-                    continue
-            # end if
+            # if service_name == 'rabbitmq':
+            #     # check to see if it is running
+            #     rabbit = check_rabbit()
+            #     if rabbit:
+            #         print(f"Warning: rabbitmq appears to be running, skipping it:\n{rabbit}")
+            #         continue
+            # # end if
             print(f"Start: {service_name} -> {SWIRL_SERVICE_DICT[service_name]} ... ", end='')
             result = launch(service_name, SWIRL_SERVICE_DICT[service_name])
             time.sleep(5)        
