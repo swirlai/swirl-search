@@ -4,7 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SWIRL SEARCH - Federated Search Engine - HOME</title>
+  {% load env_extras %}
+  <title>SWIRL SEARCH {% get_swirl_version %} - Federated Search Engine - HOME</title>
   <meta name="description" content="SWIRL SEARCH Index Page">
   <meta name="author" content="sid@swirl.today">
   <meta property="og:title" content="SWIRL SEARCH - Federated Search Engine - HOME">
@@ -28,7 +29,7 @@
   <!---script src="js/scripts.js"></script--->
   <centered>
     <section>
-      <div class="centered"><a href="https://github.com/sidprobstein/swirl-search" target="_new"><img src="/swirl_logo_text_500.jpg" class="center" alt="SWIRL SEARCH - Federated Search Engine - HOME"/></a></div>
+      <div class="centered"><a href="https://github.com/sidprobstein/swirl-search" target="_new"><img src="/swirl_logo_text_500.jpg" class="center" alt="SWIRL SEARCH {% get_swirl_version %} - Federated Search Engine - HOME"/></a></div>
     </section>
     <section>
       <div class="menu">
@@ -43,7 +44,7 @@
   </section>
   <section>
     <div class="centered">
-      <span class="fineprint"><a href="https://github.com/sidprobstein/swirl-search/blob/main/LICENSE">LICENSE</a> &nbsp;|&nbsp; <a href="https://github.com/sidprobstein/swirl-search/blob/main/NOTICE">NOTICE</a></span>
+      <span class="fineprint"><a href="https://github.com/sidprobstein/swirl-search/">SWIRL SEARCH {% get_swirl_version %}</a> &nbsp;|&nbsp; <a href="https://github.com/sidprobstein/swirl-search/blob/main/LICENSE">LICENSE</a> &nbsp;|&nbsp; <a href="https://github.com/sidprobstein/swirl-search/blob/main/NOTICE">NOTICE</a></span>
     </div>
 </section>
 </body>
