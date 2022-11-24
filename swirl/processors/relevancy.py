@@ -10,7 +10,7 @@ from django.conf import settings
 
 # to do: detect language and load all stopwords? P1
 from swirl.nltk import stopwords, sent_tokenize
-from swirl.processors.utils import clean_string, bigrams, stem_string, match_all, match_any, highlight_list, remove_tags
+from swirl.processors.utils import *
 from swirl.spacy import nlp
 from swirl.processors.processor import PostResultProcessor
 
@@ -36,6 +36,8 @@ class CosineRelevancyProcessor(PostResultProcessor):
             query_list.remove('AND')
         if 'OR' in query_list:
             query_list.remove('OR')
+        # check for numeric
+        query_has_numeric = has_numeric(query_list)
         # not list
         not_list = []
         not_parsed_query = []
@@ -55,12 +57,6 @@ class CosineRelevancyProcessor(PostResultProcessor):
             query = ' '.join(not_parsed_query).strip()
             query_list = query.split()
         # end if
-        query_nlp = nlp(query)
-
-        # check for zero vector
-        empty_query_vector = False
-        if query_nlp.vector.all() == 0:
-            empty_query_vector = True
 
         # check for stopword query
         query_without_stopwords = []
@@ -147,6 +143,10 @@ class CosineRelevancyProcessor(PostResultProcessor):
                             if len(result_field) == 0:
                                 continue
                         # prepare result field                        
+                        if result_field.startswith('http'):
+                            # the field is a URL, split it on -
+                            if '-' in result_field:
+                                result_field = result_field.replace('-', ' ')                            
                         result_field_nlp = nlp(result_field)
                         result_field_list = result_field.strip().split()
                         # fix for https://github.com/sidprobstein/swirl-search/issues/34
@@ -175,7 +175,14 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         match_stems = []
                         ###########################################
                         # query vs result_field
-                        if match_any(query_stemmed_list, result_field_stemmed_list):  
+                        if match_any(query_stemmed_list, result_field_stemmed_list):
+                            # capitalize search terms that are capitalied in the result field
+                            query = ' '.join(capitalize_search(query_list, result_field_list))
+                            query_nlp = nlp(query)
+                            # check for zero vector
+                            empty_query_vector = False
+                            if query_nlp.vector.all() == 0:
+                                empty_query_vector = True
                             qvr = 0.0                          
                             label = '_*'
                             if empty_query_vector or result_field_nlp.vector.all() == 0:
@@ -223,8 +230,23 @@ class CosineRelevancyProcessor(PostResultProcessor):
                                 key = ''
                                 for match in match_list:
                                     extracted_match_list = result_field_list[match:match+query_slice_stemmed_len]
+                                    # if the extracted match is capitalized, then capitalize the query
+                                    qw_list = capitalize(qw_list, extracted_match_list)
                                     key = '_'.join(extracted_match_list)+'_'+str(match)
-                                    rw_list = result_field_list[match-(2*query_slice_stemmed_len):match+(2*query_slice_stemmed_len)+1]
+                                    # extract query window qw around the match
+                                    if (match-(2*query_slice_stemmed_len)-1) < 0:
+                                    #     if (match-query_slice_stemmed_len-1) < 0:
+                                    #         rw_list = result_field_list_rel[match-query_slice_stemmed_len-1:match+(2*query_slice_stemmed_len)+1]
+                                    #     else:
+                                        rw_list = result_field_list[match:match+(3*query_slice_stemmed_len)+1]
+                                    else:
+                                        rw_list = result_field_list[match-(2*query_slice_stemmed_len)-1:match+(2*query_slice_stemmed_len)+1]
+                                    # end if
+                                    if not query_has_numeric and has_numeric(rw_list):
+                                        rw_list = remove_numeric(rw_list)
+                                        if not rw_list:
+                                            rw_list = result_field_list[match:match+(3*query_slice_stemmed_len)+1]
+                                    # end if
                                     dict_score[field][key] = 0.0
                                     ######## SIMILARITY vs WINDOW
                                     rw_nlp = nlp(' '.join(rw_list))
@@ -236,6 +258,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
                                     if dict_score[field][key] == 0.0:
                                         qw_nlp_sim = qw_nlp.similarity(rw_nlp)
                                         if qw_nlp_sim:
+                                            # self.warning(f"compare: {qw_nlp} sim? {rw_nlp} = {qw_nlp_sim}")
                                             if qw_nlp_sim >= float(settings.SWIRL_MIN_SIMILARITY):
                                                 dict_score[field][key] = qw_nlp_sim
                                     if dict_score[field][key] == 0.0:
@@ -270,7 +293,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
         # Compute field means
         dict_len_median = {}
         for field in dict_lens:
-            dict_len_median[field] = mean(dict_lens[field])
+            dict_len_median[field] = median(dict_lens[field])
         ############################################
         # PASS 2
         # score results by field, adjusting for field length
@@ -297,18 +320,20 @@ class CosineRelevancyProcessor(PostResultProcessor):
                 else:
                     self.warning(f"pass 2: result {results}: {result} has no dict_len")
                 # score the item 
+                dict_len_adjust = {}
                 for f in dict_score:
                     if f in RELEVANCY_CONFIG:
                         weight = RELEVANCY_CONFIG[f]['weight']
                     else:
                         continue
+                    len_adjust = float(dict_len_median[f] / dict_len[f])
+                    dict_len_adjust[f] = len_adjust
                     for k in dict_score[f]:
                         if k.startswith('_'):
                             continue
                         if not dict_score[f][k]:
                             continue
                         if dict_score[f][k] >= float(settings.SWIRL_MIN_SIMILARITY):
-                            len_adjust = float(dict_len_median[f] / dict_len[f])
                             rank_adjust = 1.0 + (1.0 / sqrt(result['searchprovider_rank']))
                             if k.endswith('_*') or k.endswith('_s*'):
                                 result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k))
@@ -317,6 +342,9 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         # end if
                     # end for
                 # end for
+                for f in dict_score:
+                    if f in dict_len_adjust:
+                        dict_score[f]['length_adjust'] = dict_len_adjust[f]
                 ####### explain
                 result['explain'] = dict_score                
                 updated = updated + 1

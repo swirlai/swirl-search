@@ -13,9 +13,10 @@ class SearchProvider(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=200)
     CONNECTOR_CHOICES = [
-        ('RequestsGet', 'RequestsGet'),
+        ('RequestsGet', 'HTTP/GET returning JSON'),
         ('Elastic', 'Elasticsearch Query String'),
         ('PostgreSQL', 'PostgreSQL'),
+        ('BigQuery', 'Google BigQuery'),
         ('M365OutlookMessages', 'Microsoft M365 Outlook Messages'),
         ('M365OutlookCalendar', 'Microsoft M365 Outlook Calendar'),
         ('M365OneDrive', 'Microsoft M365 OneDrive Files'),

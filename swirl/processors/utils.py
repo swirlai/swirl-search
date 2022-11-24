@@ -37,6 +37,65 @@ def stem_string(s):
 
 #############################################
 
+def has_numeric(string_or_list):
+
+    list_thing = []
+    if type(string_or_list) == str:
+        list_thing = string_or_list.strip().split(' ')
+    if type(string_or_list) == list:
+        list_thing = string_or_list
+    if list_thing == []:
+        return False
+
+    for t in list_thing:
+        if t.isnumeric():
+            return True
+        else:
+            for c in t:
+                if c.isnumeric():
+                    return True
+                # end if
+            # end for
+        # end if
+    # end for
+         
+    return False
+
+#############################################
+
+def remove_numeric(string_or_list):
+
+    list_thing = []
+    if type(string_or_list) == str:
+        list_thing = string_or_list.strip().split(' ')
+    if type(string_or_list) == list:
+        list_thing = string_or_list
+    if list_thing == []:
+        return list_thing
+
+    list_new = []    
+    for t in list_thing:
+        if t.isalpha():
+            list_new.append(t)
+        else:
+            new_c = ''
+            for c in t:
+                if c.isalpha():
+                    new_c = new_c + c
+                # end if
+            # end for
+            if new_c:
+                list_new.append(new_c)
+        # end if
+    # end for
+
+    if type(string_or_list) == str:
+        return ' '.join(list_new)
+        
+    return list_new
+
+#############################################
+
 def highlighted_list(text, word_list):
 
     highlighted_text = text
@@ -97,10 +156,10 @@ def clean_string(s):
             # letters
             if ch.isalpha():
                 query_clean = query_clean + ch
-            if ch in [ '"', "'", '’', ' ', '-' ]:
+            if ch in [ '"', "'", '’', ' ', '-', '$', '%' ]:
                 query_clean = query_clean + ch
-            # if ch in [ '.', '!', '?', ':' ]:
-            #     query_clean = query_clean + ' ' + ch + ' '
+            if ch in [ '\n', ':', '!', '?', ';', '/', '_' ]:
+                query_clean = query_clean + ' '
         # end for
     except NameError as err:
         return(f'{module_name}: Error: NameError: {err}')
@@ -111,7 +170,12 @@ def clean_string(s):
         while '  ' in query_clean:
             query_clean = query_clean.replace('  ', ' ')
     # end if
-    return query_clean.strip()
+    # remove as single token
+    query_cleaner = []
+    for t in query_clean.split():
+        if t not in [ '-', '--']:
+            query_cleaner.append(t)
+    return ' '.join(query_cleaner)
 
 #############################################
 
@@ -166,5 +230,59 @@ def bigrams(list_terms):
 
     return bigrams
 
+#############################################
 
+import logging as logger
+
+def capitalize(list_lower, list_unknown):
+
+    if not list_lower:
+        return list_lower
+
+    if not list_unknown:
+        return list_unknown    
     
+    if len(list_lower) != len(list_unknown):
+        logger.error("capitalize: inputs were not same length")
+        return list_lower
+    
+    list_capitalized = []
+    for m in list_unknown:
+        if m[0].isupper():
+            list_capitalized.append(list_lower[list_unknown.index(m)][0].upper() + list_lower[list_unknown.index(m)][1:])
+        else:
+            list_capitalized.append(list_lower[list_unknown.index(m)])
+
+    return list_capitalized
+
+#############################################
+
+def capitalize_search(list_lower, list_unknown):
+
+    if type(list_lower) != list:
+        return None
+    
+    if type(list_unknown) != list:
+        return None
+     
+    if not list_lower:
+        return list_lower
+
+    if not list_unknown:
+        return list_unknown    
+
+    list_capitalized = []
+    for i in list_lower:
+        loc_list = match_all([i], list_unknown)
+        capped = False
+        for loc in loc_list:
+            if list_unknown[loc][0].isupper():
+                list_capitalized.append(i[0].upper() + i[1:])
+                capped = True
+                break
+        if capped:
+            continue
+        list_capitalized.append(i)
+    # end for
+        
+    return list_capitalized

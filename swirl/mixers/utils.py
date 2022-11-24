@@ -23,7 +23,7 @@ def create_mix_wrapper(result_sets):
     # returns: wrapper around the results
 
     mix_wrapper = {}
-    mix_wrapper['messages'] = [ settings.SWIRL_BANNER ]
+    mix_wrapper['messages'] = [ settings.SWIRL_BANNER_TEXT ]
     mix_wrapper['info'] = {}
     for result_set in result_sets:
         for message in result_set.messages:

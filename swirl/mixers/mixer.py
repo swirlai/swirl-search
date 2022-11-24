@@ -23,7 +23,7 @@ logger = get_task_logger(__name__)
 from natsort import natsorted
 
 from swirl.models import Search, Result
-from swirl.banner import SWIRL_BANNER
+from swirl.banner import SWIRL_BANNER_TEXT
 
 ########################################
 ########################################
@@ -70,7 +70,7 @@ class Mixer:
         self.result_mixer = self.type
 
         self.mix_wrapper = {}
-        self.mix_wrapper['messages'] = [ SWIRL_BANNER ]
+        self.mix_wrapper['messages'] = [ SWIRL_BANNER_TEXT ]
         self.mix_wrapper['info'] = {}
         self.mix_wrapper['results'] = None
 

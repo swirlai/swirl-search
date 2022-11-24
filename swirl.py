@@ -60,7 +60,7 @@ SWIRL_SERVICE_DICT = {}
 for swirl_service in SWIRL_SERVICES:
     SWIRL_SERVICE_DICT[swirl_service['name']] = swirl_service['path']
 
-COMMAND_LIST = [ 'help', 'start', 'start_sleep', 'stop', 'restart', 'flush', 'migrate', 'setup', 'status', 'watch', 'tail' ]
+COMMAND_LIST = [ 'help', 'start', 'start_sleep', 'stop', 'restart', 'flush', 'migrate', 'setup', 'status', 'watch', 'logs' ]
 
 ##################################################
 
@@ -231,9 +231,9 @@ def watch(service_list):
 
 ##################################################
 
-def tail(service_list):
+def logs(service_list):
 
-    print("Tailing logs/*.log - hit ^C to stop:")
+    print("tail -f logs/*.log - hit ^C to stop:")
 
     try:
         p = subprocess.Popen(['tail','-f','logs/django.log','logs/celery-worker.log'], stdout=subprocess.PIPE)
@@ -488,7 +488,7 @@ def setup(service_list):
 
 def main(argv):
 
-    print(f"{bcolors.BOLD}{SWIRL_BANNER}{bcolors.ENDC}")
+    print(f"{SWIRL_BANNER}")
     print()
 
     parser = argparse.ArgumentParser(description="Manage the SWIRL server")

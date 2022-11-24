@@ -21,7 +21,7 @@ from swirl.banner import SWIRL_BANNER, bcolors
 
 def main(argv):
 
-    print(f"{bcolors.BOLD}{SWIRL_BANNER}{bcolors.ENDC}")
+    print(f"{SWIRL_BANNER}")
     print()
     # arguments
     parser = argparse.ArgumentParser(description="Bulk load SWIRL SEARCH objects in json format")
