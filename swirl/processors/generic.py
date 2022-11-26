@@ -85,7 +85,45 @@ class GenericResultProcessor(ResultProcessor):
 
     def process(self):
 
-        self.processed_results = self.results
+        list_results = []
+        result_number = 1
+        for result in self.results:
+            swirl_result = create_result_dictionary()
+            payload = {}
+            # report searchprovider rank, not ours
+            swirl_result['searchprovider_rank'] = result_number
+            swirl_result['date_retrieved'] = str(datetime.now())
+
+            #############################################  
+            # copy fields, avoiding collisions
+            for key in result.keys():
+                if key in swirl_result.keys():
+                    if not swirl_result[key]:
+                        swirl_result[key] = result[key]
+             # end for
+
+            if swirl_result['date_published'] == "":
+                swirl_result['date_published'] = 'unknown'
+
+            # final assembly
+
+            swirl_result['payload'] = {}
+            # try to find a title, if none provided
+            if swirl_result['title'] == "":
+                if swirl_result['url']:
+                    swirl_result['title'] = swirl_result['url']
+                elif swirl_result['author']:
+                    swirl_result['title'] = swirl_result['author']
+                # end if
+            # end if
+            swirl_result['searchprovider'] = self.provider.name
+            list_results.append(swirl_result)
+            result_number = result_number + 1
+            if result_number > self.provider.results_per_query:  
+                break
+        # end for
+
+        self.processed_results = list_results
         return self.processed_results
 
 #############################################    
