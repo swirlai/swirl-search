@@ -1,6 +1,6 @@
 @echo off
 
-echo "##S#W#I#R#L##1#.#6##############################################################"
+python swirl/banner.py
 echo ""
 
 echo "Installing dependencies:"

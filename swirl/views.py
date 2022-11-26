@@ -30,18 +30,16 @@ from swirl.tasks import search_task, rescore_task
 from swirl.search import search as execute_search
 
 ########################################
-########################################
 
 def index(request):
     context = {'index': []}
     return render(request, 'index.html', context)
 
 ########################################
-########################################
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#6##############################################################
+    ##S#W#I#R#L##1#.#7##############################################################
     API endpoint for managing SearchProviders. 
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH.
@@ -54,11 +52,10 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
     pagination_class = None 
 
 ########################################
-########################################
 
 class SearchViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#6##############################################################
+    ##S#W#I#R#L##1#.#7##############################################################
     API endpoint for managing Search objects. 
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH.
@@ -71,17 +68,14 @@ class SearchViewSet(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-    ########################################
     def list(self, request):
-        ########################################
-        # handle ?tag=
+
         providers = ""
         if 'providers' in request.GET.keys():
             providers = request.GET['providers']
             if ',' in providers:
                 providers = providers.split(',')
-        ########################################
-        # handle ?q=
+
         query_string = ""
         if 'q' in request.GET.keys():
             query_string = request.GET['q']
@@ -100,13 +94,17 @@ class SearchViewSet(viewsets.ModelViewSet):
             search_task.delay(new_search.id)
             time.sleep(settings.SWIRL_Q_WAIT)
             return redirect(f'/swirl/results?search_id={new_search.id}')
-        # end if
+
         ########################################
-        # handle ?qx=
+
+        page = 1
+        if 'page' in request.GET.keys():
+            page = int(request.GET['page'])
+
         otf_result_mixer = None
         if 'result_mixer' in request.GET.keys():
             otf_result_mixer = str(request.GET['result_mixer'])
-        # end if        
+
         explain = settings.SWIRL_EXPLAIN
         if 'explain' in request.GET.keys():
             explain = str(request.GET['explain'])
@@ -114,7 +112,11 @@ class SearchViewSet(viewsets.ModelViewSet):
                 explain = False
             elif explain.lower() == 'true':
                 explain = True
-        # end if
+
+        provider = None
+        if 'provider' in request.GET.keys():
+            provider = int(request.GET['provider'])
+
         query_string = ""
         if 'qx' in request.GET.keys():
             query_string = request.GET['qx']
@@ -124,10 +126,8 @@ class SearchViewSet(viewsets.ModelViewSet):
                     new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers)
                 else:
                     new_search = Search.objects.create(query_string=query_string,searchprovider_list=[providers])
-                # end if
             else:
                 new_search = Search.objects.create(query_string=query_string)
-            # end if
             new_search.status = 'NEW_SEARCH'
             new_search.save()
             res = execute_search(new_search.id)
@@ -139,10 +139,10 @@ class SearchViewSet(viewsets.ModelViewSet):
                     try:
                         if otf_result_mixer:
                             # call the specifixed mixer on the fly otf
-                            results = eval(otf_result_mixer)(search.id, search.results_requested, 1).mix()
+                            results = eval(otf_result_mixer)(search.id, search.results_requested, page, explain, provider).mix()
                         else:
                             # call the mixer for this search provider
-                            results = eval(search.result_mixer)(search.id, search.results_requested, 1).mix()
+                            results = eval(search.result_mixer)(search.id, search.results_requested, page, explain, provider).mix()
                     except NameError as err:
                         message = f'Error: NameError: {err}'
                         logger.error(f'{module_name}: {message}')
@@ -155,17 +155,18 @@ class SearchViewSet(viewsets.ModelViewSet):
                 else:
                     tries = tries + 1
                     time.sleep(1)
-                # end if
             else:
                 # invalid search_id
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
             # end if
-        # end if query_string
+        # end if
+
         ########################################
-        # handle ?rerun=
+
         rerun_id = 0
         if 'rerun' in request.GET.keys():
             rerun_id = int(request.GET['rerun'])
+
         if rerun_id:
             rerun_search = Search.objects.get(id=rerun_id)
             old_results = Result.objects.filter(search_id=rerun_search.id)
@@ -183,22 +184,27 @@ class SearchViewSet(viewsets.ModelViewSet):
             time.sleep(settings.SWIRL_RERUN_WAIT)
             return redirect(f'/swirl/results?search_id={rerun_search.id}')
         # end if        
+
         ########################################
-        # handle ?rescore=
+
         rescore_id = 0
         if 'rescore' in request.GET.keys():
             rescore_id = request.GET['rescore']
+
         if rescore_id:
             # to do to do
             rescore_task.delay(rescore_id)
             time.sleep(settings.SWIRL_RESCORE_WAIT)
             return redirect(f'/swirl/results?search_id={rescore_id}')
-        # end if
+        
+        ########################################
+
         self.queryset = Search.objects.all()
         serializer = SearchSerializer(self.queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     ########################################
+
     def create(self, request):
         serializer = SearchSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -207,6 +213,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     ########################################
+
     def retrieve(self, request, pk=None):
         if Search.objects.filter(pk=pk).exists():
             search = Search.objects.get(pk=pk)
@@ -217,6 +224,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         # end if
 
     ########################################
+
     def update(self, request, pk=None):
         if Search.objects.filter(pk=pk).exists():
             search = Search.objects.get(pk=pk)
@@ -233,6 +241,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
     ########################################
+        
     def destroy(self, request, pk=None):
         if Search.objects.filter(pk=pk).exists():
             search = Search.objects.get(pk=pk)
@@ -242,11 +251,10 @@ class SearchViewSet(viewsets.ModelViewSet):
             return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
 ########################################
-########################################
 
 class ResultViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#6##############################################################
+    ##S#W#I#R#L##1#.#7##############################################################
     API endpoint for managing Result objects, including Mixed Results
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH.
@@ -260,22 +268,20 @@ class ResultViewSet(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-    ########################################
     def list(self, request):
 
-        # handle search_id, page, and optionally result_mixer
         search_id = 0
         if 'search_id' in request.GET.keys():
             search_id = int(request.GET['search_id'])
-        # end if
+
         page = 1
         if 'page' in request.GET.keys():
             page = int(request.GET['page'])
-        # end if
+
         otf_result_mixer = None
         if 'result_mixer' in request.GET.keys():
             otf_result_mixer = str(request.GET['result_mixer'])
-        # end if        
+
         explain = settings.SWIRL_EXPLAIN
         if 'explain' in request.GET.keys():
             explain = str(request.GET['explain'])
@@ -283,11 +289,11 @@ class ResultViewSet(viewsets.ModelViewSet):
                 explain = False
             elif explain.lower() == 'true':
                 explain = True
-        # end if
+
         provider = None
         if 'provider' in request.GET.keys():
             provider = int(request.GET['provider'])
-        # end if
+
         if search_id:
             # check if the query has ready status
             if Search.objects.filter(id=search_id).exists():
@@ -315,8 +321,6 @@ class ResultViewSet(viewsets.ModelViewSet):
             else:
                 # invalid search_id
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
-            # end if
-        ########################################
         else:
             # results = reversed(Result.objects.all())
             serializer = ResultSerializer(self.queryset, many=True)
@@ -324,6 +328,7 @@ class ResultViewSet(viewsets.ModelViewSet):
         # end if
 
     ########################################
+
     def retrieve(self, request, pk=None):
         if Result.objects.filter(pk=pk).exists():
             result = Result.objects.get(pk=pk)
@@ -334,6 +339,7 @@ class ResultViewSet(viewsets.ModelViewSet):
         # end if
 
     ########################################
+        
     def destroy(self, request, pk=None):
         if Result.objects.filter(pk=pk).exists():
             result = Result.objects.get(pk=pk)
@@ -343,11 +349,10 @@ class ResultViewSet(viewsets.ModelViewSet):
             return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
 ########################################
-########################################
 
 class UserViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#6##############################################################
+    ##S#W#I#R#L##1#.#7##############################################################
     API endpoint that allows management of Users objects.
     Use GET to list all objects, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH objects.
@@ -358,11 +363,10 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 ########################################
-########################################
 
 class GroupViewSet(viewsets.ModelViewSet):
     """
-    ##S#W#I#R#L##1#.#6##############################################################
+    ##S#W#I#R#L##1#.#7##############################################################
     API endpoint that allows management of Group objects.
     Use GET to list all objects, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH objects.
