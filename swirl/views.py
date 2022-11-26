@@ -27,6 +27,7 @@ from swirl.mixers import *
 module_name = 'views.py'
 
 from swirl.tasks import search_task, rescore_task
+from swirl.search import search as execute_search
 
 ########################################
 ########################################
@@ -100,6 +101,66 @@ class SearchViewSet(viewsets.ModelViewSet):
             time.sleep(settings.SWIRL_Q_WAIT)
             return redirect(f'/swirl/results?search_id={new_search.id}')
         # end if
+        ########################################
+        # handle ?qx=
+        otf_result_mixer = None
+        if 'result_mixer' in request.GET.keys():
+            otf_result_mixer = str(request.GET['result_mixer'])
+        # end if        
+        explain = settings.SWIRL_EXPLAIN
+        if 'explain' in request.GET.keys():
+            explain = str(request.GET['explain'])
+            if explain.lower() == 'false':
+                explain = False
+            elif explain.lower() == 'true':
+                explain = True
+        # end if
+        query_string = ""
+        if 'qx' in request.GET.keys():
+            query_string = request.GET['qx']
+        if query_string:
+            if providers:
+                if type(providers) == list:
+                    new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers)
+                else:
+                    new_search = Search.objects.create(query_string=query_string,searchprovider_list=[providers])
+                # end if
+            else:
+                new_search = Search.objects.create(query_string=query_string)
+            # end if
+            new_search.status = 'NEW_SEARCH'
+            new_search.save()
+            res = execute_search(new_search.id)
+            if not res:
+                return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if Search.objects.filter(id=new_search.id).exists():
+                search = Search.objects.get(id=new_search.id)
+                if search.status.endswith('_READY') or search.status == 'RESCORING':
+                    try:
+                        if otf_result_mixer:
+                            # call the specifixed mixer on the fly otf
+                            results = eval(otf_result_mixer)(search.id, search.results_requested, 1).mix()
+                        else:
+                            # call the mixer for this search provider
+                            results = eval(search.result_mixer)(search.id, search.results_requested, 1).mix()
+                    except NameError as err:
+                        message = f'Error: NameError: {err}'
+                        logger.error(f'{module_name}: {message}')
+                        return
+                    except TypeError as err:
+                        message = f'Error: TypeError: {err}'
+                        logger.error(f'{module_name}: {message}')
+                        return
+                    return Response(results, status=status.HTTP_200_OK)
+                else:
+                    tries = tries + 1
+                    time.sleep(1)
+                # end if
+            else:
+                # invalid search_id
+                return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
+            # end if
+        # end if query_string
         ########################################
         # handle ?rerun=
         rerun_id = 0
