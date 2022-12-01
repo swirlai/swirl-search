@@ -55,7 +55,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         if not request.user.has_perm('swirl.view_searchprovider'):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        self.queryset = SearchProvider.objects.all()
+        self.queryset = SearchProvider.objects.filter(owner=self.request.user)
         serializer = SearchProviderSerializer(self.queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -67,9 +67,8 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
 
         serializer = SearchProviderSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(owner=self.request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
 ########################################
 
@@ -105,12 +104,12 @@ class SearchViewSet(viewsets.ModelViewSet):
         if query_string:
             if providers:
                 if type(providers) == list:
-                    new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers)
+                    new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user)
                 else:
-                    new_search = Search.objects.create(query_string=query_string,searchprovider_list=[providers])
+                    new_search = Search.objects.create(query_string=query_string,searchprovider_list=[providers],owner=self.request.user)
                 # end if
             else:
-                new_search = Search.objects.create(query_string=query_string)
+                new_search = Search.objects.create(query_string=query_string,owner=self.request.user)
             # end if
             new_search.status = 'NEW_SEARCH'
             new_search.save()
@@ -146,11 +145,11 @@ class SearchViewSet(viewsets.ModelViewSet):
         if query_string:
             if providers:
                 if type(providers) == list:
-                    new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers)
+                    new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user)
                 else:
-                    new_search = Search.objects.create(query_string=query_string,searchprovider_list=[providers])
+                    new_search = Search.objects.create(query_string=query_string,searchprovider_list=[providers],owner=self.request.user)
             else:
-                new_search = Search.objects.create(query_string=query_string)
+                new_search = Search.objects.create(query_string=query_string,owner=self.request.user)
             new_search.status = 'NEW_SEARCH'
             new_search.save()
             res = execute_search(new_search.id)
@@ -222,7 +221,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         
         ########################################
 
-        self.queryset = Search.objects.all()
+        self.queryset = Search.objects.filter(owner=self.request.user)
         serializer = SearchSerializer(self.queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -236,7 +235,7 @@ class SearchViewSet(viewsets.ModelViewSet):
 
         serializer = SearchSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(owner=self.request.user)
         search_task.delay(serializer.data['id'])
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -249,7 +248,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         if not request.user.has_perm('swirl.view_search'):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        if Search.objects.filter(pk=pk).exists():
+        if Search.objects.filter(pk=pk, owner=self.request.user).exists():
             self.queryset = Search.objects.get(pk=pk)
             serializer = SearchSerializer(self.queryset)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -265,12 +264,12 @@ class SearchViewSet(viewsets.ModelViewSet):
         if not request.user.has_perm('swirl.change_search'):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        if Search.objects.filter(pk=pk).exists():
+        if Search.objects.filter(pk=pk, owner=self.request.user).exists():
             search = Search.objects.get(pk=pk)
             search.date_updated = datetime.now()
             serializer = SearchSerializer(instance=search, data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            serializer.save(owner=self.request.user)
             # re-start queries if status appropriate
             if search.status == 'NEW_SEARCH':
                 search_task.delay(search.id)
@@ -287,7 +286,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         if not request.user.has_perm('swirl.delete_search'):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        if Search.objects.filter(pk=pk).exists():
+        if Search.objects.filter(pk=pk, owner=self.request.user).exists():
             search = Search.objects.get(pk=pk)
             search.delete()
             return Response('Search Object Deleted', status=status.HTTP_410_GONE)
@@ -369,7 +368,7 @@ class ResultViewSet(viewsets.ModelViewSet):
                 # invalid search_id
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
         else:
-            # results = reversed(Result.objects.all())
+            self.queryset = reversed(Result.objects.filter(owner=self.request.user))
             serializer = ResultSerializer(self.queryset, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         # end if
@@ -382,7 +381,7 @@ class ResultViewSet(viewsets.ModelViewSet):
         if not request.user.has_perm('swirl.view_result'):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        if Result.objects.filter(pk=pk).exists():
+        if Result.objects.filter(pk=pk, owner=self.request.user).exists():
             result = Result.objects.get(pk=pk)
             serializer = ResultSerializer(result)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -398,12 +397,12 @@ class ResultViewSet(viewsets.ModelViewSet):
         if not request.user.has_perm('swirl.change_result'):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        if Result.objects.filter(pk=pk).exists():
+        if Result.objects.filter(pk=pk, owner=self.request.user).exists():
             result = Result.objects.get(pk=pk)
             result.date_updated = datetime.now()
             serializer = ResultSerializer(instance=result, data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            serializer.save(owner=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
@@ -416,7 +415,7 @@ class ResultViewSet(viewsets.ModelViewSet):
         if not request.user.has_perm('swirl.delete_result'):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        if Result.objects.filter(pk=pk).exists():
+        if Result.objects.filter(pk=pk, owner=self.request.user).exists():
             result = Result.objects.get(pk=pk)
             result.delete()
             return Response('Result Object Deleted!', status=status.HTTP_410_GONE)

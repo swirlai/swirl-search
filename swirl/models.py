@@ -9,6 +9,7 @@ from django.contrib.auth.models import User, Group
 class SearchProvider(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=200)
+    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
@@ -53,6 +54,7 @@ class SearchProvider(models.Model):
 
 class Search(models.Model):
     id = models.BigAutoField(primary_key=True)
+    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     query_string = models.CharField(max_length=256, default=str)
@@ -108,6 +110,7 @@ class Search(models.Model):
 
 class Result(models.Model):
     id = models.BigAutoField(primary_key=True)
+    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     search_id = models.ForeignKey(Search, on_delete=models.CASCADE) 
     provider_id = models.IntegerField(default=0)
