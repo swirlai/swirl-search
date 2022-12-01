@@ -4,14 +4,15 @@
 '''
 
 from django.db import models
+from django.contrib.auth.models import User, Group
 
 class SearchProvider(models.Model):
     id = models.BigAutoField(primary_key=True)
-    active = models.BooleanField(default=True)
-    default = models.BooleanField(default=True)
+    name = models.CharField(max_length=200)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    name = models.CharField(max_length=200)
+    active = models.BooleanField(default=True)
+    default = models.BooleanField(default=True)
     CONNECTOR_CHOICES = [
         ('RequestsGet', 'HTTP/GET returning JSON'),
         ('Elastic', 'Elasticsearch Query String'),
@@ -37,8 +38,8 @@ class SearchProvider(models.Model):
         ('GenericResultProcessor', 'GenericResultProcessor'),
         ('MappingResultProcessor', 'MappingResultProcessor')
     ]
-    result_processor = models.CharField(max_length=200, default='MappingResultProcessor', choices=RESULT_PROCESSOR_CHOICES)
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
+    result_processor = models.CharField(max_length=200, default='MappingResultProcessor', choices=RESULT_PROCESSOR_CHOICES)
     result_mappings = models.CharField(max_length=2048, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
     credentials = models.CharField(max_length=512, default=str, blank=True)

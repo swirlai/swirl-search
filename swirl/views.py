@@ -47,9 +47,29 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
     queryset = SearchProvider.objects.all()
     serializer_class = SearchProviderSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-    # TO DO: figure out if we keep this or not P1
     pagination_class = None 
+
+    def list(self, request):
+
+        # check permissions
+        if not request.user.has_perm('swirl.view_searchprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        self.queryset = SearchProvider.objects.all()
+        serializer = SearchProviderSerializer(self.queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request):
+
+        # check permissions
+        if not request.user.has_perm('swirl.add_searchprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        serializer = SearchProviderSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 ########################################
 
@@ -66,9 +86,12 @@ class SearchViewSet(viewsets.ModelViewSet):
     queryset = Search.objects.all()
     serializer_class = SearchSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request):
+
+        # check permissions
+        if not request.user.has_perm('swirl.view_search'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
         providers = ""
         if 'providers' in request.GET.keys():
@@ -206,18 +229,29 @@ class SearchViewSet(viewsets.ModelViewSet):
     ########################################
 
     def create(self, request):
+
+        # check permissions
+        if not request.user.has_perm('swirl.add_search'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
         serializer = SearchSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         search_task.delay(serializer.data['id'])
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     ########################################
 
     def retrieve(self, request, pk=None):
+
+        # check permissions
+        if not request.user.has_perm('swirl.view_search'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
         if Search.objects.filter(pk=pk).exists():
-            search = Search.objects.get(pk=pk)
-            serializer = SearchSerializer(search)
+            self.queryset = Search.objects.get(pk=pk)
+            serializer = SearchSerializer(self.queryset)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
@@ -226,6 +260,11 @@ class SearchViewSet(viewsets.ModelViewSet):
     ########################################
 
     def update(self, request, pk=None):
+
+        # check permissions
+        if not request.user.has_perm('swirl.change_search'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
         if Search.objects.filter(pk=pk).exists():
             search = Search.objects.get(pk=pk)
             search.date_updated = datetime.now()
@@ -243,6 +282,11 @@ class SearchViewSet(viewsets.ModelViewSet):
     ########################################
         
     def destroy(self, request, pk=None):
+
+        # check permissions
+        if not request.user.has_perm('swirl.delete_search'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
         if Search.objects.filter(pk=pk).exists():
             search = Search.objects.get(pk=pk)
             search.delete()
@@ -266,9 +310,12 @@ class ResultViewSet(viewsets.ModelViewSet):
     queryset = Result.objects.all()
     serializer_class = ResultSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request):
+
+        # check permissions
+        if not request.user.has_perm('swirl.view_result'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
         search_id = 0
         if 'search_id' in request.GET.keys():
@@ -330,6 +377,11 @@ class ResultViewSet(viewsets.ModelViewSet):
     ########################################
 
     def retrieve(self, request, pk=None):
+
+        # check permissions
+        if not request.user.has_perm('swirl.view_result'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
         if Result.objects.filter(pk=pk).exists():
             result = Result.objects.get(pk=pk)
             serializer = ResultSerializer(result)
@@ -339,8 +391,31 @@ class ResultViewSet(viewsets.ModelViewSet):
         # end if
 
     ########################################
+
+    def update(self, request, pk=None):
+
+        # check permissions
+        if not request.user.has_perm('swirl.change_result'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        if Result.objects.filter(pk=pk).exists():
+            result = Result.objects.get(pk=pk)
+            result.date_updated = datetime.now()
+            serializer = ResultSerializer(instance=result, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
+
+    ########################################
         
     def destroy(self, request, pk=None):
+
+        # check permissions
+        if not request.user.has_perm('swirl.delete_result'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
         if Result.objects.filter(pk=pk).exists():
             result = Result.objects.get(pk=pk)
             result.delete()

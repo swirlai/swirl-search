@@ -20,7 +20,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class SearchProviderSerializer(serializers.ModelSerializer):
     class Meta:
         model = SearchProvider
-        fields = ['id', 'active', 'default', 'date_created', 'date_updated', 'name', 'connector', 'url', 'query_template', 'query_processor', 'query_mappings', 'result_processor', 'response_mappings', 'result_mappings', 'results_per_query', 'credentials', 'tags']
+        fields = ['id', 'name', 'date_created', 'date_updated', 'active', 'default', 'connector', 'url', 'query_template', 'query_processor', 'query_mappings', 'result_processor', 'response_mappings', 'result_mappings', 'results_per_query', 'credentials', 'tags']
 
 class SearchSerializer(serializers.ModelSerializer):
     class Meta:
