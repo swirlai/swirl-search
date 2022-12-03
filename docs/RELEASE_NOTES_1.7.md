@@ -95,6 +95,12 @@ Please [report any issues](https://github.com/sidprobstein/swirl-search/issues/)
 
 <br/>
 
+# Upgrading
+
+:warning: Version 1.7 requires database migration. Details: [Upgrading SWIRL](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide#upgrading-swirl)
+
+<br/>
+
 # Documentation
 
 * [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
