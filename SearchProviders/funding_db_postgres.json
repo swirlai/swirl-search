@@ -1,5 +1,5 @@
 {
-    "name": "Company Funding Records (local/sqlite3)",
+    "name": "Company Funding Records (local/postgresql)",
     "connector": "PostgreSQL",
     "url": "host:port:database:username:password",
     "query_template": "select {fields} from {table} where {field1} ilike '%{query_string}%' or {field2} ilike '%{query_string}%';",
