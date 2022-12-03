@@ -14,8 +14,8 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 
 | Version                     | Date                        | Notes | 
 | --------------------------- | --------------------------- | ----- |
-| [SWIRL SEARCH 1.6.1](https://github.com/sidprobstein/swirl-search/releases/tag/v1.6.1) | 11-25-2022 | [Release 1.6](./docs/RELEASE_NOTES_1.6.md), [Release 1.6.1](./docs/RELEASE_NOTES_1.6.1.md) |
-| [Docker Image](https://hub.docker.com/r/sidprobstein/swirl-search) | * | [Setup Guide](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start#docker) - Note, does not persist data after shutdown! | 
+| [SWIRL SEARCH 1.7](https://github.com/sidprobstein/swirl-search/releases/tag/v1.7) | 12-3-2022 | [Release 1.7](./docs/RELEASE_NOTES_1.7.md) |
+| [Docker Image](https://hub.docker.com/r/sidprobstein/swirl-search) | * | [Setup Guide](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start#docker) - Note, not for production use, *does* *not* *persist* *data* after shutdown! | 
 
 <br/>
 
@@ -35,13 +35,13 @@ SWIRL is available under the [Apache 2.0 license](https://github.com/sidprobstei
 
 * [Adaptation of the query for each provider](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#search-syntax) such as rewriting ```NOT term``` to ```-term```, removing NOTted terms from providers that don't support NOT, and passing down AND, + and OR.
 
-* [Asynchronous search federation](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#architecture) via [REST APIs](http://localhost:8000/swirl/swagger-ui/)
+* [Synchronous or asynchronous search federation](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#architecture) via [REST APIs](http://localhost:8000/swirl/swagger-ui/)
 
-* Data landed in Sqlite3 or PostgreSQL for post-processing, later consumption
+* Data landed in Sqlite3 or PostgreSQL for post-processing, consumption and analytics
 
 * [Matching on word stems](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) and [handling of stopword](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference#stopwords-language) via NLTK
 
-* Re-ranking of unified results [using Cosine Vector Similarity](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) via Spacy and NLTK
+* Re-ranking of unified results [using Cosine Vector Similarity](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) based on [spaCy](https://spacy.io/)'s large language model and [NLTK](https://www.nltk.org/)
 
 * [Result mixers](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#result-mixers) operate on landed results and order results by relevancy, date, stack or round-robin
 
