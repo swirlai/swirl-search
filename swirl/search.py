@@ -33,12 +33,13 @@ def search(id):
         logger.error(f'{module_name}: Error: ObjectDoesNotExist: {err}')
         return False
     if search.status != 'NEW_SEARCH':
-        logger.warning(f"{module_name}: search {search.id} has status {search.status}; set it to NEW_SEARCH to restart it")
+        logger.warning(f"{module_name}: search {search.id} has status {search.status}; set it to NEW_SEARCH to (re)start it")
         return False
     search.status = 'PRE_PROCESSING'
     search.save()
     # check for provider specification
-    providers = SearchProvider.objects.filter(active=True)
+    # security review for 1.7 - OK - filtered by owner
+    providers = SearchProvider.objects.filter(active=True, owner=search.owner)
     new_provider_list = []
     if search.searchprovider_list:
         # add providers to list by id, name or tag
@@ -130,6 +131,7 @@ def search(id):
     while 1:        
         logger.debug(f"{module_name}: tick!")
         # get the list of result objects
+        # security review for 1.7 - OK - filtered by search object
         results = Result.objects.filter(search_id=search.id)
         if len(results) == len(providers):
             # every provider has written a result object - exit
@@ -231,6 +233,7 @@ def rescore(id):
 
     try:
         search = Search.objects.get(id=id)
+        # security review for 1.7 - OK - filtered by search object
         results = Result.objects.filter(search_id=search.id)
     except ObjectDoesNotExist as err:
         logger.error(f'{module_name}: Error: ObjectDoesNotExist: {err}')

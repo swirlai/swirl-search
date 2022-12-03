@@ -56,11 +56,13 @@ class Mixer:
                 if type(self.provider) == str:
                     self.provider = int(self.provider)
                 if type(self.provider) == int:
+                    # security review for 1.7 - OK, filtered by search ID
                     self.results = Result.objects.filter(search_id=search_id,provider_id=self.provider)
                 else:
                     self.warning(f"Unknown provider_list: {self.provider}")
                 # end if
             else:
+                # security review for 1.7 - OK, filtered by search ID
                 self.results = Result.objects.filter(search_id=search_id)
             self.search = Search.objects.get(id=self.search_id)
         except ObjectDoesNotExist as err:
