@@ -164,16 +164,16 @@ class PostResultProcessor(Processor):
         self.search = None
         self.results_updated = -1
 
-        if Search.objects.filter(id=search_id).exists():
-            self.search = Search.objects.get(id=search_id)
-            if self.search.status == 'POST_RESULT_PROCESSING' or self.search.status == 'RESCORING':
-                self.results = Result.objects.filter(search_id=search_id)
-            else:
-                logger.warning(f"search.status {self.search.status}, this processor requires: status == 'POST_RESULT_PROCESSING'")
-                return 0
-            # end if
+        # security review for 1.7 - OK, filtered by search ID
+        if not Search.objects.filter(id=search_id).exists():
+            self.error(f"Search not found {search_id}")
+            return 0
+        self.search = Search.objects.get(id=search_id)
+        if self.search.status == 'POST_RESULT_PROCESSING' or self.search.status == 'RESCORING':
+            # security review for 1.7 - OK, filtered by search ID
+            self.results = Result.objects.filter(search_id=search_id)
         else:
-            self.error(f"search not found")
+            logger.warning(f"search.status {self.search.status}, this processor requires: status == 'POST_RESULT_PROCESSING'")
             return 0
         # end if
 

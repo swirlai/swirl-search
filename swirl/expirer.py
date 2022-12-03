@@ -30,6 +30,7 @@ def expirer():
     Remove searches that are past expiration date, if expiration is not 0
     '''
     
+    # security review for 1.7 - OK - system function
     searches = Search.objects.filter(retention__gt=0)
     for search in searches:
         if search.retention == 0:

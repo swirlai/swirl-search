@@ -96,19 +96,6 @@ def remove_numeric(string_or_list):
 
 #############################################
 
-def highlighted_list(text, word_list):
-
-    highlighted_text = text
-    for word in word_list:
-        loc = highlighted_text.find(word)
-        if loc > -1:
-            highlighted_text = highlighted_text.replace(word, f'*{word}*')
-        else:
-            # logger.warning(f"highlight_list: failed to find match: {word}, {highlighted_text}, ignoring")
-            pass
-              
-    return highlighted_text
-
 def highlight_list(text, word_list):
 
     highlighted_list = []
@@ -147,35 +134,35 @@ def clean_string(s):
 
     # parse s1 carefully
     module_name = 'clean_string'
-    query_clean = ""
+    string_clean = ""
     try:
         for ch in s1.strip():
             # numbers
             if ch.isnumeric():
-                query_clean = query_clean + ch
+                string_clean = string_clean + ch
             # letters
             if ch.isalpha():
-                query_clean = query_clean + ch
+                string_clean = string_clean + ch
             if ch in [ '"', "'", '’', ' ', '-', '$', '%' ]:
-                query_clean = query_clean + ch
+                string_clean = string_clean + ch
             if ch in [ '\n', ':', '!', '?', ';', '/', '_' ]:
-                query_clean = query_clean + ' '
+                string_clean = string_clean + ' '
         # end for
     except NameError as err:
         return(f'{module_name}: Error: NameError: {err}')
     except TypeError as err:
         return(f'{module_name}: Error: TypeError: {err}')
     # remove extra spaces
-    if '  ' in query_clean:
-        while '  ' in query_clean:
-            query_clean = query_clean.replace('  ', ' ')
+    if '  ' in string_clean:
+        while '  ' in string_clean:
+            string_clean = string_clean.replace('  ', ' ')
     # end if
     # remove as single token
-    query_cleaner = []
-    for t in query_clean.split():
+    string_cleaner = []
+    for t in string_clean.split():
         if t not in [ '-', '--']:
-            query_cleaner.append(t)
-    return ' '.join(query_cleaner)
+            string_cleaner.append(t)
+    return ' '.join(string_cleaner)
 
 #############################################
 
