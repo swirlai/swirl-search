@@ -52,6 +52,14 @@ More details: [Permissioning Users](https://github.com/sidprobstein/swirl-search
 
 <br/>
 
+:small_blue_diamond: SearchProviders may now be shared with all other users/groups. 
+
+This setting is false by default, except for the super user. This makes it easy to set up a multi-user system without duplicating SearchProviders. 
+
+More details: [Sharing SearchProviders](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide#sharing-searchproviders-between-users)
+
+<br/>
+
 ## Changes
 
 :small_blue_diamond: swirl.py now supports a ```logs``` command that will output all log files to the console
