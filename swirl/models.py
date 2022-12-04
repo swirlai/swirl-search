@@ -10,6 +10,7 @@ class SearchProvider(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=200)
     owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    shared = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)

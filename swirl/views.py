@@ -58,8 +58,8 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         if not request.user.has_perm('swirl.view_searchprovider'):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        # security review for 1.7 - OK - filtered by owner
-        self.queryset = SearchProvider.objects.filter(owner=self.request.user)
+        self.queryset = SearchProvider.objects.filter(owner=self.request.user) | SearchProvider.objects.filter(shared=True) 
+
         serializer = SearchProviderSerializer(self.queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -70,6 +70,10 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         # check permissions
         if not request.user.has_perm('swirl.add_searchprovider'):
             return Response(status=status.HTTP_403_FORBIDDEN)
+
+        # by default, if the user is superuser, the searchprovider is shared
+        if self.request.user.is_superuser:
+           request.data['shared'] = 'true'
 
         serializer = SearchProviderSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -85,7 +89,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         # security review for 1.7 - OK, filtered by owner
-        if not SearchProvider.objects.filter(pk=pk, owner=self.request.user).exists():
+        if not (SearchProvider.objects.filter(pk=pk, owner=self.request.user).exists() or SearchProvider.objects.filter(pk=pk, shared=True).exists()):
             return Response('SearchProvider Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
         searchprovider = SearchProvider.objects.get(pk=pk)
@@ -101,6 +105,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         # security review for 1.7 - OK, filtered by owner
+        # note: shared providers cannot be updated
         if not SearchProvider.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('SearchProvider Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
@@ -121,6 +126,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         # security review for 1.7 - OK, filtered by owner
+        # note: shared providers cannot be destroyed
         if not SearchProvider.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('SearchProvider Object Not Found', status=status.HTTP_404_NOT_FOUND)
 

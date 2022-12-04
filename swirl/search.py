@@ -39,7 +39,7 @@ def search(id):
     search.save()
     # check for provider specification
     # security review for 1.7 - OK - filtered by owner
-    providers = SearchProvider.objects.filter(active=True, owner=search.owner)
+    providers = SearchProvider.objects.filter(active=True, owner=search.owner) | SearchProvider.objects.filter(active=True, shared=True)
     new_provider_list = []
     if search.searchprovider_list:
         # add providers to list by id, name or tag
