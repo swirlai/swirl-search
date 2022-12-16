@@ -67,6 +67,7 @@ class Elastic(Connector):
     def execute_search(self):     
 
         try:
+            # security review 1.7 - OK - limited to Elasticsearch
             es = eval(f'Elasticsearch({self.provider.credentials}, {self.provider.url})')
         except NameError as err:
             self.error(f'NameError: {err}')
@@ -75,6 +76,7 @@ class Elastic(Connector):
 
         response = None
         try:
+            # security review 1.7 - OK - limited to Elasticsearch
             response = eval(self.query_to_provider)
         except ConnectionError as err:
             self.error(f"es.search reports: {err}")

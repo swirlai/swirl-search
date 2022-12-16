@@ -133,14 +133,14 @@ class RequestsGet(Connector):
                 return
 
             # dictionary of authentication types permitted in the upcoming eval
-            dict_auth = { 'HTTPBasicAuth': HTTPBasicAuth, 'HTTPDigestAuth': HTTPDigestAuth, 'HTTProxyAuth': HTTPProxyAuth}
+            dict_auth = {'HTTPBasicAuth': HTTPBasicAuth, 'HTTPDigestAuth': HTTPDigestAuth, 'HTTProxyAuth': HTTPProxyAuth}
 
             # issue the query
             logger.info(f"{self}: requesting: {self.provider.connector} -> {page_query}")
             try:
                 if self.provider.credentials.startswith('HTTP'):
                     # handle HTTPBasicAuth('user', 'pass') and other forms
-                    response = requests.get(page_query, auth=eval(self.provider.credentials, dict_auth))
+                    response = requests.get(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth))
                 else:
                     response = requests.get(page_query)
             except NewConnectionError as err:

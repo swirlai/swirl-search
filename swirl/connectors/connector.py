@@ -27,6 +27,12 @@ from swirl.models import Search, Result, SearchProvider
 from swirl.connectors.utils import get_mappings_dict
 from swirl.processors import *
 
+SWIRL_OBJECT_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
+
+SWIRL_OBJECT_DICT = {}
+for t in SWIRL_OBJECT_LIST:
+    SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
+
 ########################################
 ########################################
 
@@ -133,7 +139,7 @@ class Connector:
         ''' 
 
         try:
-            processed_query = eval(self.provider.query_processor)(self.search.query_string_processed, self.provider.query_mappings).process()
+            processed_query = eval(self.provider.query_processor, {"self.provider.query_processor": self.provider.query_processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.search.query_string_processed, self.provider.query_mappings, self.provider.tags).process()
         except (NameError, TypeError, ValueError) as err:
             self.error(f'{err.args}, {err} in provider.query_processor(search.query_string_processed): {self.provider.query_processor}({self.search.query_string_processed}, {self.provider.query_mappings})')
             return
@@ -222,7 +228,7 @@ class Connector:
                 retrieved = len(self.results)
             self.messages.append(f"Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
             try:
-                processed_results = eval(self.provider.result_processor)(self.results, self.provider, self.query_string_to_provider).process()
+                processed_results = eval(self.provider.result_processor, {"self.provider.result_processor": self.provider.result_processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.results, self.provider, self.query_string_to_provider).process()
             except (NameError, TypeError, ValueError) as err:
                 self.error(f'{err.args}, {err} in provider.result_processor(): {self.provider.result_processor}({self.results}, {self.provider}, {self.query_string_to_provider})')
                 return

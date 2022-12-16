@@ -4,7 +4,6 @@
 '''
 
 from django.db import models
-from django.contrib.auth.models import User, Group
 
 class SearchProvider(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -67,6 +66,7 @@ class Search(models.Model):
     sort = models.CharField(max_length=50, default='relevancy', blank=True)
     results_requested = models.IntegerField(default=10)
     searchprovider_list = models.JSONField(default=list, blank=True)
+    subscribe = models.BooleanField(default=False)
     status = models.CharField(max_length=50, default='NEW_SEARCH')
     time = models.FloatField(default=0.0)
     PRE_QUERY_PROCESSOR_CHOICES = [
@@ -75,12 +75,11 @@ class Search(models.Model):
     ]
     pre_query_processor = models.CharField(max_length=200, default=str, blank=True, choices=PRE_QUERY_PROCESSOR_CHOICES)
     POST_RESULT_PROCESSOR_CHOICES = [
-        ('GenericPostResultProcessor', 'GenericPostResultProcessor'),
-        ('GenericRelevancyProcessor', 'GenericRelevancyProcessor'),
         ('CosineRelevancyProcessor', 'CosineRelevancyProcessor (w/spaCy)')
     ]
     post_result_processor = models.CharField(max_length=200, default='CosineRelevancyProcessor', blank=True, choices=POST_RESULT_PROCESSOR_CHOICES)
     result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)
+    new_results_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s&new=true', blank=True)
     messages = models.JSONField(default=list, blank=True)
     MIXER_CHOICES = [
         ('RelevancyMixer', 'RelevancyMixer'),
@@ -104,15 +103,16 @@ class Search(models.Model):
     class Meta:
         ordering = ['-date_updated']
 
-
     def __str__(self):
         signature = str(self.id) + ':' + str(self.searchprovider_list) + ':' + self.query_string
         return signature
-
+        
 class Result(models.Model):
     id = models.BigAutoField(primary_key=True)
     owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+    last_retrieved = models.DateTimeField(auto_now_add=True)
     search_id = models.ForeignKey(Search, on_delete=models.CASCADE) 
     provider_id = models.IntegerField(default=0)
     searchprovider = models.CharField(max_length=50, default=str)

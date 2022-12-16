@@ -73,10 +73,11 @@ class QueryProcessor(Processor):
 
     ########################################
 
-    def __init__(self, query_string, query_mappings):
+    def __init__(self, query_string, query_mappings, tags):
 
         self.query_string = query_string
         self.query_mappings = query_mappings
+        self.tags = tags
 
     ########################################
 

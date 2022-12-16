@@ -9,7 +9,7 @@ from datetime import datetime
 
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User, Group
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpRequest
 from django.conf import settings
 from django.db import Error
 from django.core.exceptions import ObjectDoesNotExist
@@ -18,6 +18,7 @@ from rest_framework.authentication import BasicAuthentication, SessionAuthentica
 from rest_framework import viewsets, status
 from rest_framework import permissions
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework.views import APIView
 
 from swirl.models import *
@@ -31,6 +32,12 @@ module_name = 'views.py'
 from swirl.tasks import search_task, rescore_task
 from swirl.search import search as execute_search
 
+SWIRL_OBJECT_LIST = Search.MIXER_CHOICES
+
+SWIRL_OBJECT_DICT = {}
+for t in SWIRL_OBJECT_LIST:
+    SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
+
 ########################################
 
 def index(request):
@@ -42,7 +49,6 @@ def index(request):
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """
-    __S_W_I_R_L__1_._7______________________________________________________________
     API endpoint for managing SearchProviders. 
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH one.
@@ -139,7 +145,6 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
 
 class SearchViewSet(viewsets.ModelViewSet):
     """
-    __S_W_I_R_L__1_._7______________________________________________________________
     API endpoint for managing Search objects. 
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH one.
@@ -231,7 +236,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 try:
                     if otf_result_mixer:
                         # call the specifixed mixer on the fly otf
-                        results = eval(otf_result_mixer)(search.id, search.results_requested, 1, explain, provider).mix()
+                        results = eval(otf_result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, 1, explain, provider).mix()
                     else:
                         # call the mixer for this search provider
                         results = eval(search.result_mixer)(search.id, search.results_requested, 1, explain, provider).mix()
@@ -315,12 +320,20 @@ class SearchViewSet(viewsets.ModelViewSet):
         if not (request.user.has_perm('swirl.add_search') and request.user.has_perm('swirl.change_search') and request.user.has_perm('swirl.add_result') and request.user.has_perm('swirl.change_result')):
             logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
             return Response(status=status.HTTP_403_FORBIDDEN)
-
+            
         serializer = SearchSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         # security review for 1.7 - OK, create with owner
         serializer.save(owner=self.request.user)
-        search_task.delay(serializer.data['id'])
+
+        if not (self.request.user.has_perm('swirl.view_searchprovider')):
+            # TO DO: SECURITY REVIEW
+            if Search.objects.filter(id=serializer.data['id'], owner=self.request.user).exists():
+                search = Search.objects.get(id=serializer.data['id'])
+                search.status = 'ERR_NO_SEARCHPROVIDERS'
+                search.save
+        else:
+            search_task.delay(serializer.data['id'])
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -390,7 +403,6 @@ class SearchViewSet(viewsets.ModelViewSet):
 
 class ResultViewSet(viewsets.ModelViewSet):
     """
-    __S_W_I_R_L__1_._7______________________________________________________________
     API endpoint for managing Result objects, including Mixed Results
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH one.
@@ -444,10 +456,10 @@ class ResultViewSet(viewsets.ModelViewSet):
                 try:
                     if otf_result_mixer:
                         # call the specifixed mixer on the fly otf
-                        results = eval(otf_result_mixer)(search.id, search.results_requested, page, explain, provider).mix()
+                        results = eval(otf_result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain, provider).mix()
                     else:
                         # call the mixer for this search provider
-                        results = eval(search.result_mixer)(search.id, search.results_requested, page, explain, provider).mix()
+                        results = eval(search.result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain, provider).mix()
                 except NameError as err:
                     message = f'Error: NameError: {err}'
                     logger.error(f'{module_name}: {message}')
@@ -462,7 +474,7 @@ class ResultViewSet(viewsets.ModelViewSet):
             # end if
         else:
             # security review for 1.7 - OK, filtered by owner
-            self.queryset = reversed(Result.objects.filter(owner=self.request.user))
+            self.queryset = Result.objects.filter(owner=self.request.user)
             serializer = ResultSerializer(self.queryset, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         # end if
@@ -524,7 +536,6 @@ class ResultViewSet(viewsets.ModelViewSet):
 
 class UserViewSet(viewsets.ModelViewSet):
     """
-    __S_W_I_R_L__1_._7______________________________________________________________
     API endpoint that allows management of Users objects.
     Use GET to list all objects, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH one.
@@ -538,7 +549,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class GroupViewSet(viewsets.ModelViewSet):
     """
-    __S_W_I_R_L__1_._7______________________________________________________________
     API endpoint that allows management of Group objects.
     Use GET to list all objects, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH one.

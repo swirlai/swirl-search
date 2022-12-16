@@ -60,7 +60,7 @@ SWIRL_SERVICE_DICT = {}
 for swirl_service in SWIRL_SERVICES:
     SWIRL_SERVICE_DICT[swirl_service['name']] = swirl_service['path']
 
-COMMAND_LIST = [ 'help', 'start', 'start_sleep', 'stop', 'restart', 'flush', 'migrate', 'setup', 'status', 'watch', 'logs' ]
+COMMAND_LIST = [ 'help', 'start', 'start_sleep', 'stop', 'restart', 'migrate', 'setup', 'status', 'watch', 'logs' ]
 
 ##################################################
 
@@ -486,6 +486,10 @@ def setup(service_list):
 ##################################################
 ##################################################
 
+COMMAND_DIR = {}
+for command in COMMAND_LIST:
+    COMMAND_DIR[command] = eval(command)
+
 def main(argv):
 
     print(f"{SWIRL_BANNER}")
@@ -529,7 +533,9 @@ def main(argv):
                 # end if
             # end for
         # run the command
-        result = eval(args.command[0] + '(service_list)')
+        command = args.command[0]
+        # limit eval for security purposes
+        result = eval(command + '(service_list)', {"command": command, "service_list": service_list, "__builtins__": None}, COMMAND_DIR)
     # end if
     
     if result == False:

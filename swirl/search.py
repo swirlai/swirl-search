@@ -11,8 +11,14 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 
 from swirl.models import Search, SearchProvider, Result
-from swirl.tasks import federate_task
+from swirl.tasks import federate_task, rescore_task
 from swirl.processors import *
+
+SWIRL_OBJECT_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
+
+SWIRL_OBJECT_DICT = {}
+for t in SWIRL_OBJECT_LIST:
+    SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
 
 ##################################################
 ##################################################
@@ -24,6 +30,11 @@ def search(id):
     '''
     Execute the search task workflow
     '''
+
+    # TO DO: support UPDATE_SEARCH!!!
+    # assemble provider list - below looks ok
+    # skip pre-query processing
+    # handle new results/updating in connector++
 
     start_time = time.time()
 
@@ -78,7 +89,7 @@ def search(id):
         search.status = 'PRE_QUERY_PROCESSING'
         search.save()
         try:
-            pre_query_processor = eval(search.pre_query_processor)(search.query_string)
+            pre_query_processor = eval(search.pre_query_processor, {"search.pre_query_processor": search.pre_query_processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.query_string)
             if pre_query_processor.validate():
                 search.query_string_processed = pre_query_processor.process()
             else:
@@ -191,7 +202,7 @@ def search(id):
         search.status = 'POST_RESULT_PROCESSING'
         search.save()
         try:
-            post_result_processor = eval(search.post_result_processor)(search.id)
+            post_result_processor = eval(search.post_result_processor, {"search.post_result_processor": search.post_result_processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id)
             if post_result_processor.validate():
                 results_modified = post_result_processor.process()
             else:
@@ -253,7 +264,7 @@ def rescore(id):
 
     if search.post_result_processor:
         try:
-            post_result_processor = eval(search.post_result_processor)(search.id)
+            post_result_processor = eval(search.post_result_processor, {"search.post_result_processor": search.post_result_processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id)
             if post_result_processor.validate():
                 results_modified = post_result_processor.process()
             else:
