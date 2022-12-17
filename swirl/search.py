@@ -11,7 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 
 from swirl.models import Search, SearchProvider, Result
-from swirl.tasks import federate_task, rescore_task
+from swirl.tasks import federate_task
 from swirl.processors import *
 
 SWIRL_OBJECT_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
@@ -31,11 +31,7 @@ def search(id):
     Execute the search task workflow
     '''
 
-    # TO DO: support UPDATE_SEARCH!!!
-    # assemble provider list - below looks ok
-    # skip pre-query processing
-    # handle new results/updating in connector++
-
+    update = False
     start_time = time.time()
 
     try:
@@ -43,9 +39,13 @@ def search(id):
     except ObjectDoesNotExist as err:
         logger.error(f'{module_name}: Error: ObjectDoesNotExist: {err}')
         return False
-    if search.status != 'NEW_SEARCH':
-        logger.warning(f"{module_name}: search {search.id} has status {search.status}; set it to NEW_SEARCH to (re)start it")
+    if not search.status.upper() in ['NEW_SEARCH', 'UPDATE_SEARCH']:
+        logger.warning(f"{module_name}: search {search.id} has unexpected status {search.status}; set it to NEW_SEARCH to (re)start it")
         return False
+    if search.status.upper() == 'UPDATE_SEARCH':
+        update = True
+        search.sort = 'date'
+
     search.status = 'PRE_PROCESSING'
     search.save()
     # check for provider specification
@@ -125,7 +125,7 @@ def search(id):
         at_least_one = True
         federation_status[provider.id] = None
         logger.debug(f"{module_name}: federate: {search}, {provider}")
-        federation_result[provider.id] = federate_task.delay(search.id, provider.id, provider.connector)
+        federation_result[provider.id] = federate_task.delay(search.id, provider.id, provider.connector, update)
     # end for
     if not at_least_one:
         logger.warning(f"{module_name}: no active searchprovider specified: {search.searchprovider_list}")
@@ -189,6 +189,7 @@ def search(id):
     # fix the result url
     # to do: figure out a better solution P1
     search.result_url = f"{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results?search_id={search.id}&result_mixer={search.result_mixer}"
+    search.new_result_url = f"{search.result_url}&new=true"
     # note the sort
     if search.sort.lower() == 'date':
         message = f"Requested sort_by_date from all providers"

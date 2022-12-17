@@ -79,7 +79,7 @@ class Search(models.Model):
     ]
     post_result_processor = models.CharField(max_length=200, default='CosineRelevancyProcessor', blank=True, choices=POST_RESULT_PROCESSOR_CHOICES)
     result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)
-    new_results_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s&new=true', blank=True)
+    new_result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s&new=true', blank=True)
     messages = models.JSONField(default=list, blank=True)
     MIXER_CHOICES = [
         ('RelevancyMixer', 'RelevancyMixer'),
@@ -112,7 +112,6 @@ class Result(models.Model):
     owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    last_retrieved = models.DateTimeField(auto_now_add=True)
     search_id = models.ForeignKey(Search, on_delete=models.CASCADE) 
     provider_id = models.IntegerField(default=0)
     searchprovider = models.CharField(max_length=50, default=str)

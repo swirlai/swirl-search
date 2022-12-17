@@ -27,10 +27,10 @@ class SearchSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = Search
-        fields = ['id', 'owner', 'date_created', 'date_updated', 'query_string', 'query_string_processed', 'sort', 'results_requested', 'searchprovider_list', 'subscribed', 'status', 'pre_query_processor', 'post_result_processor', 'result_url', 'new_result_url', 'messages', 'result_mixer', 'retention', 'tags']
+        fields = ['id', 'owner', 'date_created', 'date_updated', 'query_string', 'query_string_processed', 'sort', 'results_requested', 'searchprovider_list', 'subscribe', 'status', 'pre_query_processor', 'post_result_processor', 'result_url', 'new_result_url', 'messages', 'result_mixer', 'retention', 'tags']
 
 class ResultSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = Result
-        fields = ['id', 'owner', 'date_created', 'search_id', 'searchprovider', 'query_to_provider', 'result_processor', 'messages', 'retrieved', 'found', 'time', 'json_results', 'tags']
+        fields = ['id', 'owner', 'date_created', 'date_updated', 'search_id', 'searchprovider', 'query_to_provider', 'result_processor', 'messages', 'retrieved', 'found', 'time', 'json_results', 'tags']

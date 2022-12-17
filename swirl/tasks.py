@@ -33,10 +33,10 @@ for t in SWIRL_OBJECT_LIST:
 ##################################################
 
 @shared_task(name='federate', ignore_result=True)
-def federate_task(search_id, provider_id, provider_connector):
+def federate_task(search_id, provider_id, provider_connector, update):
     try:
 
-        connector = eval(provider_connector, {"provider_connector": provider_connector, "__builtins__": None}, SWIRL_OBJECT_DICT)(provider_id, search_id)
+        connector = eval(provider_connector, {"provider_connector": provider_connector, "__builtins__": None}, SWIRL_OBJECT_DICT)(provider_id, search_id, update)
         connector.federate()
     except NameError as err:
         message = f'Error: NameError: {err}'

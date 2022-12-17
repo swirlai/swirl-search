@@ -201,6 +201,11 @@ CELERY_BEAT_SCHEDULE = {
          'task': 'expirer', 
          'schedule': crontab(minute=0,hour='*'),
         },          
+    # Executes every hour
+    'subscribe': { 
+         'task': 'subscriber', 
+         'schedule': crontab(minute=0,hour='*'),
+        },          
 }
 
 #####################################

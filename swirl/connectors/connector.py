@@ -42,10 +42,11 @@ class Connector:
 
     ########################################
 
-    def __init__(self, provider_id, search_id):
+    def __init__(self, provider_id, search_id, update):
 
         self.provider_id = provider_id
         self.search_id = search_id
+        self.update = update
         self.status = 'INIT'
         self.provider = None
         self.search = None
@@ -247,9 +248,48 @@ class Connector:
         # timing
         end_time = time.time()
 
+        if self.update:
+            try:
+                result = Result.objects.get(search_id=self.search, provider_id=self.provider.id)
+            except ObjectDoesNotExist as err:
+                self.error(f'UPDATE_SEARCH: Result.objects.get() not found: {err}')
+                return
+            if len(result) != 1:
+                message = f"Found {len(result)} results with search_id={self.search}, provider_id={self.provider.id}, aborting!"
+                self.error(message)
+                self.messages.append(message)
+                self.search.status = "ERR_UPDATE_RESULTS"
+                self.search.save()
+                return
+            self.warning("UPDATE_SEARCH: updating result {result.id}")
+            result_url_list = [r['url'] for r in result.json_results]
+            deduped_new_results = []
+            for r in self.processed_results:
+                if 'url' in r:
+                    if r['url']:
+                        if r['url'] in result_url_list:
+                            # duplicate!
+                            self.warning(f"Excluding duplicate: {r['url']}")
+                            continue
+                        else:
+                            # mark the new results as 'new'
+                            r['new'] = True
+                            deduped_new_results.append(r)
+                        # end if
+                    # end if
+                # end if
+            # end for
+            try:
+                result.update(messages=result.messages + self.messages, found=max(result.found, self.found), retrieved=result.retrieved + self.retrieved, time=f'{result.time + (end_time - self.start_time):.1f}', json_results=result.json_results + deduped_new_results)
+                result.save()
+            except Error as err:
+                self.error(f'UPDATE_SEARCH: save_result() failed: {err}')
+            return
+        # end if
+
         try:
             new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id, query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider, result_processor=self.provider.result_processor, messages=self.messages, found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}', json_results=self.processed_results, owner=self.search.owner)
             new_result.save()
         except Error as err:
-            self.error(f'save_result() failed: {err}')
+            self.error(f'NEW_SEARCH: save_result() failed: {err}')
         return
