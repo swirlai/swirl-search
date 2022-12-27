@@ -60,7 +60,6 @@ class RequestsGet(Connector):
             self.warning(f'{{query_string}} missing from query_to_provider: {query_to_provider}')
 
         if self.search.sort.lower() == 'date':
-            logger.info(f"{self}: date sort specified")
             # insert before the last parameter, which is expected to be the user query
             sort_query = query_to_provider[:query_to_provider.rfind('&')]
             if 'DATE_SORT' in self.query_mappings:
@@ -131,12 +130,11 @@ class RequestsGet(Connector):
             if page_query == "":
                 self.error("page_query is blank")
                 return
-
+            
             # dictionary of authentication types permitted in the upcoming eval
             dict_auth = {'HTTPBasicAuth': HTTPBasicAuth, 'HTTPDigestAuth': HTTPDigestAuth, 'HTTProxyAuth': HTTPProxyAuth}
 
             # issue the query
-            logger.info(f"{self}: requesting: {self.provider.connector} -> {page_query}")
             try:
                 if self.provider.credentials.startswith('HTTP'):
                     # handle HTTPBasicAuth('user', 'pass') and other forms
@@ -217,7 +215,6 @@ class RequestsGet(Connector):
                 if not type(mapped_response['RESULTS']) == list:
                     # nlresearch single result
                     if type(mapped_response['RESULTS']) == dict:
-                        logger.info(f"{self}: received dict, appending to list")
                         tmp_list = []
                         tmp_list.append(mapped_response['RESULTS'])
                         mapped_response['RESULTS'] = tmp_list
@@ -276,7 +273,6 @@ class RequestsGet(Connector):
             if found == 0 or retrieved == 0:
                 # no results, not an error
                 message = f"Retrieved 0 of 0 results from: {self.provider.name}"
-                # logger.info(f'{module_name}: {message}')
                 self.messages.append(message)
                 self.status = 'READY'
                 return

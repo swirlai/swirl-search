@@ -49,10 +49,8 @@ class Sqlite3(DBConnector):
         except Error as err:
             self.error(f"{err} connecting to {self.type}: {db_path}")
             return
-        logger.info(f"{self}: connected to {self.type}: {db_path}")
 
         # issue the count(*) query
-        logger.debug(f"{self}: requesting: {self.provider.connector} -> {self.count_query}")
         cursor = None
         rows = None
         found = None
@@ -70,11 +68,10 @@ class Sqlite3(DBConnector):
             found = found[0]
 
         if 'json' in self.count_query.lower():
-            logger.debug(f"{self}: ignoring 0 return from find, since 'json' appears in the query_string")
+            logger.warning(f"{self}: ignoring 0 return from find, since 'json' appears in the query_string")
         else:
             if found == 0:
                 message = f"Retrieved 0 of 0 results from: {self.provider.name}"
-                logger.info(f'{self}: {message}')
                 self.messages.append(message)
                 self.status = 'READY'
                 self.found = 0
@@ -84,7 +81,6 @@ class Sqlite3(DBConnector):
         # end if
 
         # issue the main query
-        logger.debug(f"{self}: requesting: {self.provider.connector} -> {self.query_to_provider}")
         cursor = None
         rows = None
         try:

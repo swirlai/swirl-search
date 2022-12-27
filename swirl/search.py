@@ -3,12 +3,14 @@
 @contact:    sid@swirl.today
 '''
 
-import logging as logger
 from datetime import datetime
 import time
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
+
+from celery.utils.log import get_task_logger
+logger = get_task_logger(__name__)
 
 from swirl.models import Search, SearchProvider, Result
 from swirl.tasks import federate_task
@@ -30,7 +32,7 @@ def search(id):
     '''
     Execute the search task workflow
     '''
-
+    
     update = False
     start_time = time.time()
 
@@ -52,10 +54,15 @@ def search(id):
     # security review for 1.7 - OK - filtered by owner
     providers = SearchProvider.objects.filter(active=True, owner=search.owner) | SearchProvider.objects.filter(active=True, shared=True)
     new_provider_list = []
-    if search.searchprovider_list:
+    if search.searchprovider_list:            
         # add providers to list by id, name or tag
         for provider in providers:
-            if str(provider.id) in search.searchprovider_list:
+            provider_key = None
+            if type(search.searchprovider_list[0]) == str:
+                provider_key = str(provider.id)
+            else:
+                provider_key = provider.id
+            if provider_key in search.searchprovider_list:
                 new_provider_list.append(provider)
             if provider.name.lower() in (str(p).lower() for p in search.searchprovider_list):
                 if not provider in new_provider_list:
@@ -107,9 +114,7 @@ def search(id):
             return False
         if search.query_string_processed != search.query_string:
             message = f"Pre-query processing by {search.pre_query_processor} rewrote query_string to: {search.query_string_processed}"
-            messages = search.messages
-            messages.append(message)
-            search.messages = messages
+            search.messages.append(message)
     else:
         search.query_string_processed = search.query_string
     # end if
@@ -124,7 +129,6 @@ def search(id):
     for provider in providers:
         at_least_one = True
         federation_status[provider.id] = None
-        logger.debug(f"{module_name}: federate: {search}, {provider}")
         federation_result[provider.id] = federate_task.delay(search.id, provider.id, provider.connector, update)
     # end for
     if not at_least_one:
@@ -140,16 +144,30 @@ def search(id):
     error_flag = False
     at_least_one = False
     while 1:        
-        logger.debug(f"{module_name}: tick!")
+        updated = 0
         # get the list of result objects
         # security review for 1.7 - OK - filtered by search object
+        # to do: add a status item to each result object
         results = Result.objects.filter(search_id=search.id)
         if len(results) == len(providers):
-            # every provider has written a result object - exit
-            logger.warning(f"{module_name}: all results received, search {search.id}")
-            break
+            if update:
+                for result in results:
+                    if result.status == 'UPDATED':
+                        updated = updated + 1
+                if updated == len(providers):
+                    # every provider has updated a result object - exit
+                    logger.warning(f"{module_name}: all results updated, search {search.id}")
+                    break
+            else:
+                # every provider has written a result object - exit
+                logger.warning(f"{module_name}: all results received, search {search.id}")
+                break
         if len(results) > 0:
-            at_least_one = True
+            if update:
+                if updated > 0:
+                    at_least_one = True
+            else:
+                at_least_one = True
         ticks = ticks + 1
         search.status = f'FEDERATING_WAIT_{ticks}'
         search.save()    
@@ -176,7 +194,6 @@ def search(id):
     # end while
     ########################################
     # update query status
-    logger.debug(f"{module_name}: exiting...")
     if error_flag:
         if at_least_one:
             search.status = 'PARTIAL_RESULTS'
@@ -192,10 +209,13 @@ def search(id):
     search.new_result_url = f"{search.result_url}&new=true"
     # note the sort
     if search.sort.lower() == 'date':
-        message = f"Requested sort_by_date from all providers"
-        search.messages.append(message)
+        if not update:
+            message = f"Requested sort_by_date from all providers"
+            search.messages.append(message)
+        else:
+            # to do: ???
+            pass
     search.save()
-    logger.debug(f"{module_name}: landed data!")
     ########################################
     # post_result_processing
     if search.post_result_processor:
@@ -220,18 +240,28 @@ def search(id):
             logger.error(f'{module_name}: {message}')
             return False
         message = f"Post processing of results by {search.post_result_processor} updated {results_modified} results"
-        search.messages.append(message)    
+        last_message = search.messages[-1:]
+        if last_message:
+            logger.warning(f"Foo: {last_message[0]} ?= {message}")
+            if last_message[0].lower().strip() != message.lower().strip():
+                search.messages.append(message)   
+        else:
+            search.messages.append(message)   
+        # end if
         search.status = last_status
     if search.status == 'PARTIAL_RESULTS':
-        search.status = 'PARTIAL_RESULTS_READY'
+        if update:
+            search.status = 'PARTIAL_UPDATE_READY'
+        else:
+            search.status = 'PARTIAL_RESULTS_READY'
     if search.status == 'FULL_RESULTS':
-        search.status = 'FULL_RESULTS_READY'
+        if update:
+            search.status = 'FULL_UPDATE_READY'
+        else:
+            search.status = 'FULL_RESULTS_READY'
     end_time = time.time()
     search.time = f"{(end_time - start_time):.1f}"
-    # message = f"Total search time: {search.time:.1f} (s)"
-    # search.messages.append(message)
     search.save()    
-    # logger.debug(f"{module_name}: {search.id}, {search.status}")
 
     return True
 

@@ -30,11 +30,11 @@ class DBConnector(Connector):
 
     ########################################
 
-    def __init__(self, provider_id, search_id):
+    def __init__(self, provider_id, search_id, update):
 
         self.count_query = ""
         self.column_names = []
-        return super().__init__(provider_id, search_id)
+        return super().__init__(provider_id, search_id, update)
 
     def construct_query(self):
 
@@ -84,7 +84,7 @@ class DBConnector(Connector):
                 if sort_field:
                     query_to_provider = query_to_provider.replace(';', f' order by {sort_field} desc;')
                 else:
-                    logger.info(f"{self}: has no sort_field, ignoring request to sort this provider")
+                    logger.warning(f"{self}: has no sort_field, ignoring request to sort this provider")
                 # end if
             else:
                 self.warning(f"query_to_provider is missing ';' at end")

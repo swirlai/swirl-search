@@ -35,7 +35,6 @@ for t in SWIRL_OBJECT_LIST:
 @shared_task(name='federate', ignore_result=True)
 def federate_task(search_id, provider_id, provider_connector, update):
     try:
-
         connector = eval(provider_connector, {"provider_connector": provider_connector, "__builtins__": None}, SWIRL_OBJECT_DICT)(provider_id, search_id, update)
         connector.federate()
     except NameError as err:
@@ -52,7 +51,6 @@ from swirl.search import search
 
 @shared_task(name='search', ignore_result=True)
 def search_task(search_id):
-    # logger.info(f'{module_name}: search_task: {search_id}')  
     return search(search_id)
 
 ##################################################
@@ -70,3 +68,11 @@ from swirl.expirer import expirer
 @shared_task(name='expirer')
 def expirer_task():
     return expirer()
+
+##################################################
+
+from swirl.subscriber import subscriber
+
+@shared_task(name='subscriber')
+def subscriber_task():
+    return subscriber()

@@ -119,6 +119,7 @@ class Result(models.Model):
     query_to_provider = models.CharField(max_length=2048, default=str)
     result_processor = models.CharField(max_length=200, default=str)
     messages = models.JSONField(default=list, blank=True)
+    status = models.CharField(max_length=20, default=str)
     retrieved = models.IntegerField(default=0)
     found = models.IntegerField(default=0)
     time = models.FloatField(default=0.0)

@@ -33,4 +33,4 @@ class ResultSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = Result
-        fields = ['id', 'owner', 'date_created', 'date_updated', 'search_id', 'searchprovider', 'query_to_provider', 'result_processor', 'messages', 'retrieved', 'found', 'time', 'json_results', 'tags']
+        fields = ['id', 'owner', 'date_created', 'date_updated', 'search_id', 'searchprovider', 'query_to_provider', 'result_processor', 'messages', 'status', 'retrieved', 'found', 'time', 'json_results', 'tags']

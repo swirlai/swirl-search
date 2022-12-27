@@ -20,7 +20,6 @@ django.setup()
 from django.conf import settings
 
 from celery.utils.log import get_task_logger
-from logging import DEBUG
 logger = get_task_logger(__name__)
 
 from swirl.models import Search, Result, SearchProvider
@@ -85,10 +84,12 @@ class Connector:
 
     ########################################
 
-    def error(self, message):
+    def error(self, message, save_results=True):
         self.messages.append(f'{self}: Error: {message}')
         self.status = 'ERROR'
-        self.save_results()
+        # to do: review this, is can cause a double error when an error occurs IN save_results()...
+        if save_results:
+            self.save_results()
         logger.error(f'{self}: Error: {message}')
 
     def warning(self, message):
@@ -103,7 +104,7 @@ class Connector:
         '''
         Executes the workflow for a given search and provider
         ''' 
-
+        
         self.start_time = time.time()
 
         if self.status == 'READY':
@@ -116,19 +117,22 @@ class Connector:
                     self.execute_search()
                     self.normalize_response()
                     self.process_results()
-                    self.save_results()
-                    self.status = 'READY'
+                    res = self.save_results()
+                    if res:
+                        return True
+                    else:
+                        return False
                 else:
                     self.error(f'query validation failed: {v}')
-                    return
+                    return False
                 # end if
             except Exception as err:
                 self.error(f'{err}')
-                return
+                return False
             # end try
         else:
             self.error(f'unexpected status: {self.status}')
-            return
+            return False
         # end if
 
     ########################################
@@ -212,6 +216,7 @@ class Connector:
                 self.status = 'READY'
                 return
 
+        # to do: is this a bug in the making?
         self.results = self.response
         return
 
@@ -227,7 +232,8 @@ class Connector:
             # process results
             if self.results:
                 retrieved = len(self.results)
-            self.messages.append(f"Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
+            if not self.update:
+                self.messages.append(f"Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
             try:
                 processed_results = eval(self.provider.result_processor, {"self.provider.result_processor": self.provider.result_processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.results, self.provider, self.query_string_to_provider).process()
             except (NameError, TypeError, ValueError) as err:
@@ -250,46 +256,66 @@ class Connector:
 
         if self.update:
             try:
-                result = Result.objects.get(search_id=self.search, provider_id=self.provider.id)
+                result = Result.objects.filter(search_id=self.search, provider_id=self.provider.id)
             except ObjectDoesNotExist as err:
-                self.error(f'UPDATE_SEARCH: Result.objects.get() not found: {err}')
-                return
+                self.search.status = "ERROR_RESULT_NOT_FOUND"
+                self.error(f'UPDATE_SEARCH: Result.objects.get() not found: {err}', save_results=False)
+                return False
             if len(result) != 1:
-                message = f"Found {len(result)} results with search_id={self.search}, provider_id={self.provider.id}, aborting!"
-                self.error(message)
-                self.messages.append(message)
-                self.search.status = "ERR_UPDATE_RESULTS"
-                self.search.save()
-                return
-            self.warning("UPDATE_SEARCH: updating result {result.id}")
+                self.search.status = "ERR_DUPLICATE_RESULT_OBJECTS"
+                self.error(f"UPDATE_SEARCH: found {len(result)} results with search_id={self.search}, provider_id={self.provider.id}", save_results=False)
+                return False
+            # load the single result object now :\
+            self.warning(f"UPDATE_SEARCH: loading result {result[0].id}")
+            result = Result.objects.get(id=result[0].id)
             result_url_list = [r['url'] for r in result.json_results]
             deduped_new_results = []
+            # DEDUPE RESULTS
+            # TO DO: handle url blank/missing more gracefully P1
             for r in self.processed_results:
                 if 'url' in r:
                     if r['url']:
                         if r['url'] in result_url_list:
                             # duplicate!
-                            self.warning(f"Excluding duplicate: {r['url']}")
+                            self.warning(f"Excluding duplicate result: {r['url']}")
                             continue
                         else:
                             # mark the new results as 'new'
                             r['new'] = True
                             deduped_new_results.append(r)
                         # end if
+                    else:
+                        self.warning(f'ignoring result because url is blank: {r}')
                     # end if
+                else:
+                    self.warning(f'ignoring result with no url: {r}')
                 # end if
             # end for
-            try:
-                result.update(messages=result.messages + self.messages, found=max(result.found, self.found), retrieved=result.retrieved + self.retrieved, time=f'{result.time + (end_time - self.start_time):.1f}', json_results=result.json_results + deduped_new_results)
-                result.save()
-            except Error as err:
-                self.error(f'UPDATE_SEARCH: save_result() failed: {err}')
-            return
+            if len(deduped_new_results) == 0:
+                # no new results found
+                self.warning(f"Subscriber: 0 new results on {datetime.now()}")
+                return True
+            self.warning(f"UPDATE_SEARCH: updating result: {result.id} with {len(deduped_new_results)}")
+            self.messages.append(f"Retrieved {len(deduped_new_results)} new results from: {result.searchprovider}")
+            # try:
+            result.messages = result.messages + self.messages
+            result.found = max(result.found, self.found)
+            result.retrieved = result.retrieved + len(deduped_new_results)
+            result.time = f'{result.time + (end_time - self.start_time):.1f}'
+            result.json_results = result.json_results + deduped_new_results
+            result.status = 'UPDATED'
+            result.save()
+            self.warning("UPDATE_SEARCH: Saving!")
+            # except Error as err:
+            #     self.error(f'UPDATE_SEARCH: save_result() failed: {err}', save_results=False)
+            #     return False
+            self.warning(f"UPDATE_SEARCH: done")
+            return True
         # end if
 
         try:
-            new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id, query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider, result_processor=self.provider.result_processor, messages=self.messages, found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}', json_results=self.processed_results, owner=self.search.owner)
+            new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id, query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider, result_processor=self.provider.result_processor, messages=self.messages, status='READY', found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}', json_results=self.processed_results, owner=self.search.owner)
             new_result.save()
         except Error as err:
-            self.error(f'NEW_SEARCH: save_result() failed: {err}')
-        return
+            self.error(f'NEW_SEARCH: save_result() failed: {err}', save_results=False)
+        return True

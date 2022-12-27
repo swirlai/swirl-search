@@ -118,6 +118,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
 
         ############################################
         # PASS 1
+        # to do: refactor the names so it is clearer, e.g. json_result instead of result, result_set instead of results
         for results in self.results:
             ############################################
             # result set
@@ -125,6 +126,9 @@ class CosineRelevancyProcessor(PostResultProcessor):
             if not results.json_results:
                 continue
             for result in results.json_results:
+                if results.status == 'UPDATED':
+                    if not 'new' in result:
+                        continue
                 ############################################
                 # result item
                 dict_score = {}
@@ -313,12 +317,14 @@ class CosineRelevancyProcessor(PostResultProcessor):
                     dict_score = result['dict_score']
                     del result['dict_score']
                 else:
-                    self.warning(f"pass 2: result {results}: {result} has no dict_score")
+                    # self.warning(f"pass 2: result {results}: {result} has no dict_score")
+                    continue
                 if 'dict_len' in result:
                     dict_len = result['dict_len']
                     del result['dict_len']
                 else:
-                    self.warning(f"pass 2: result {results}: {result} has no dict_len")
+                    # self.warning(f"pass 2: result {results}: {result} has no dict_len")
+                    continue
                 # score the item 
                 dict_len_adjust = {}
                 for f in dict_score:

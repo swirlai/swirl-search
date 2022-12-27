@@ -6,7 +6,8 @@
 from sys import path
 from os import environ
 import logging as logger
-from datetime import timedelta
+logger.basicConfig(level=logger.INFO)
+import time
 
 import django
 from django.utils import timezone
@@ -36,21 +37,20 @@ def subscriber():
     # security review for 1.7 - OK - system function
     searches = Search.objects.filter(subscribe=True)
     for search in searches:
-        owner = User(search.owner)
+        logger.info(f"{module_name}: subscriber: {search.id}")
+        owner = search.owner # User(search.owner)
         # check permissions
         if not (owner.has_perm('swirl.change_search') and owner.has_perm('swirl.change_result')):
-            logger.warning(f"User {owner} needs permissions change_search({owner.has_perm('swirl.change_search')}), change_result({owner.has_perm('swirl.change_result')})")
+            logger.warning(f"{module_name}: User {owner} needs permissions change_search({owner.has_perm('swirl.change_search')}), change_result({owner.has_perm('swirl.change_result')})")
             # to do: handle this better
             continue
         # security check
         search.status = 'UPDATE_SEARCH'
         search.save()
         search_task.delay(search.id)
-        # wait some period it could be 30 s
-        # handle errors and no results
-        # if there are results, put a message in like 
-        # message = f"Re-run on {datetime.now()}"
-
+        # to do: parameterize
+        time.sleep(20)
+        # to do: check to see # of results and then do another logger.info?
     # end for
 
     return True

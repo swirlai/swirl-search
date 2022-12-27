@@ -54,7 +54,6 @@ class Elastic(Connector):
         else:
             elastic_query = 'es.search(' + query_to_provider + ', size=' + str(self.provider.results_per_query) + ')'
         # end if
-        logger.info(f"{self}: issuing query: {self.provider.connector} -> {elastic_query}")
 
         if elastic_query == "":
             self.error(f"elastic_query unexpectedly blank")
