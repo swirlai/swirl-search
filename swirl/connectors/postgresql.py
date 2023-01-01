@@ -5,6 +5,7 @@
 
 from sys import path
 from os import environ
+from datetime import datetime
 
 import django
 from django.db import Error
@@ -73,7 +74,7 @@ class PostgreSQL(DBConnector):
             logger.warning(f"{self}: ignoring 0 return from find, since 'json' appears in the query_string")
         else:
             if found == 0:
-                message = f"Retrieved 0 of 0 results from: {self.provider.name}"
+                message = f"[{datetime.now()}] Retrieved 0 of 0 results from: {self.provider.name}"
                 self.messages.append(message)
                 self.status = 'READY'
                 self.found = 0
@@ -98,7 +99,7 @@ class PostgreSQL(DBConnector):
         # rows is a list of tuple results
 
         if rows == None:
-            message = f"Retrieved 0 of 0 results from: {self.provider.name}"
+            message = f"[{datetime.now()}] Retrieved 0 of 0 results from: {self.provider.name}"
             logger.warning(f'{self}: {message}, but count_query returned {found}')
             self.messages.append(message)
             return

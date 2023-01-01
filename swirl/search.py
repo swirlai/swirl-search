@@ -113,7 +113,7 @@ def search(id):
             logger.error(f'{module_name}: {message}')
             return False
         if search.query_string_processed != search.query_string:
-            message = f"Pre-query processing by {search.pre_query_processor} rewrote query_string to: {search.query_string_processed}"
+            message = f"[{datetime.now()}] Pre-query processing by {search.pre_query_processor} rewrote query_string to: {search.query_string_processed}"
             search.messages.append(message)
     else:
         search.query_string_processed = search.query_string
@@ -147,7 +147,6 @@ def search(id):
         updated = 0
         # get the list of result objects
         # security review for 1.7 - OK - filtered by search object
-        # to do: add a status item to each result object
         results = Result.objects.filter(search_id=search.id)
         if len(results) == len(providers):
             if update:
@@ -184,7 +183,7 @@ def search(id):
                     failed_providers.append(provider.name)
                     error_flag = True
                     logger.warning(f"{module_name}: timeout waiting for: {failed_providers}")
-                    message = f"{module_name}: No response from provider: {failed_providers}"
+                    message = f"[{datetime.now()}] {module_name}: No response from provider: {failed_providers}"
                     search.messages.append(message)
                     search.save()
                 # end if
@@ -210,11 +209,8 @@ def search(id):
     # note the sort
     if search.sort.lower() == 'date':
         if not update:
-            message = f"Requested sort_by_date from all providers"
+            message = f"[{datetime.now()}] Requested sort_by_date from all providers"
             search.messages.append(message)
-        else:
-            # to do: ???
-            pass
     search.save()
     ########################################
     # post_result_processing
@@ -239,9 +235,10 @@ def search(id):
             message = f'Error: TypeError: {err}'
             logger.error(f'{module_name}: {message}')
             return False
-        message = f"Post processing of results by {search.post_result_processor} updated {results_modified} results"
+        message = f"[{datetime.now()}] Post processing of results by {search.post_result_processor} updated {results_modified} results"
         last_message = search.messages[-1:]
         if last_message:
+            # to do: REMOVE THIS
             logger.warning(f"Foo: {last_message[0]} ?= {message}")
             if last_message[0].lower().strip() != message.lower().strip():
                 search.messages.append(message)   
@@ -311,7 +308,7 @@ def rescore(id):
             message = f'Error: TypeError: {err}'
             logger.error(f'{module_name}: {message}')
             return False
-        message = f"Rescoring by {search.post_result_processor} updated {results_modified} results on {datetime.now()}"
+        message = f"[{datetime.now()}] Rescoring by {search.post_result_processor} updated {results_modified} results on {datetime.now()}"
         search.messages = []
         search.messages.append(message)    
         if last_status:

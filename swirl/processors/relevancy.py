@@ -65,7 +65,7 @@ class CosineRelevancyProcessor(PostResultProcessor):
                 query_without_stopwords.append(extract)
         if len(query_without_stopwords) == 0:
             self.error(f"query_string_processed is all stopwords!")
-            # to do: handle more gracefully
+            # to do: handle more gracefully P1
             return self.results
 
         # stem the query - fix for https://github.com/sidprobstein/swirl-search/issues/34

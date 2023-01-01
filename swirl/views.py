@@ -26,6 +26,7 @@ from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result
 from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer
 from swirl.mixers import *
+# from swirl.subscriber import update as update_search
 
 module_name = 'views.py'
 
@@ -272,13 +273,12 @@ class SearchViewSet(viewsets.ModelViewSet):
             # security review for 1.7 - OK, filtered by search            
             rerun_search = Search.objects.get(id=rerun_id)
             old_results = Result.objects.filter(search_id=rerun_search.id)
-            # to do: instead of deleting, copy the search copy to a new search? 
             logger.warning(f"{module_name}: deleting Result objects associated with search {rerun_id}")
             for old_result in old_results:
                 old_result.delete()
             rerun_search.status = 'NEW_SEARCH'
             # fix for https://github.com/sidprobstein/swirl-search/issues/35
-            message = f"Re-run on {datetime.now()}"
+            message = f"[{datetime.now()}] Rerun requested"
             rerun_search.messages = []
             rerun_search.messages.append(message)    
             rerun_search.save()
@@ -305,6 +305,24 @@ class SearchViewSet(viewsets.ModelViewSet):
             time.sleep(settings.SWIRL_RESCORE_WAIT)
             return redirect(f'/swirl/results?search_id={rescore_id}')
         
+        ########################################
+
+        # update_id = 0
+        # if 'update' in request.GET.keys():
+        #     update_id = request.GET['update']
+
+        # if update_id:
+        #     # check permissions
+        #     if not (request.user.has_perm('swirl.change_search') and request.user.has_perm('swirl.change_result')):
+        #         logger.warning(f"User {self.request.user} needs permissions change_search({request.user.has_perm('swirl.change_search')}), change_result({request.user.has_perm('swirl.change_result')})")
+        #         return Response(status=status.HTTP_403_FORBIDDEN)
+        #     # security check
+        #     if not Search.objects.filter(id=update_id, owner=self.request.user).exists():
+        #         return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
+        #     update_task.delay(update_id)
+        #     time.sleep(settings.SWIRL_SUBSCRIBE_WAIT)
+        #     return redirect(f'/swirl/results?search_id={update_id}')
+
         ########################################
 
         # security review for 1.7 - OK, filtered by owner

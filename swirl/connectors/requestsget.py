@@ -5,6 +5,8 @@
 
 from sys import path
 from os import environ
+from datetime import datetime
+
 import time
 
 import django
@@ -204,7 +206,7 @@ class RequestsGet(Connector):
                 self.found = found
             if found == 0 or retrieved == 0:
                 # no results, not an error
-                self.messages.append(f"Retrieved 0 of 0 results from: {self.provider.name}")
+                self.messages.append(f"[{datetime.now()}] Retrieved 0 of 0 results from: {self.provider.name}")
                 self.retrieved = 0
                 self.status = 'READY'
                 return   
@@ -272,7 +274,7 @@ class RequestsGet(Connector):
                 self.found = found
             if found == 0 or retrieved == 0:
                 # no results, not an error
-                message = f"Retrieved 0 of 0 results from: {self.provider.name}"
+                message = f"[{datetime.now()}] Retrieved 0 of 0 results from: {self.provider.name}"
                 self.messages.append(message)
                 self.status = 'READY'
                 return

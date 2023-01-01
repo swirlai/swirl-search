@@ -5,6 +5,7 @@
 
 from sys import path
 from os import environ
+from datetime import datetime
 
 import django
 
@@ -110,7 +111,7 @@ class Elastic(Connector):
         if found == 0:
             # no results, not an error
             self.retrieved = 0
-            self.messages.append(f"Retrieved 0 of 0 results from: {self.provider.name}")
+            self.messages.append(f"[{datetime.now()}] Retrieved 0 of 0 results from: {self.provider.name}")
             self.status = 'READY'
             return
 

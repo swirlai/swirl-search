@@ -85,9 +85,8 @@ class Connector:
     ########################################
 
     def error(self, message, save_results=True):
-        self.messages.append(f'{self}: Error: {message}')
+        self.messages.append(f'[{datetime.now()}] {self}: Error: {message}')
         self.status = 'ERROR'
-        # to do: review this, is can cause a double error when an error occurs IN save_results()...
         if save_results:
             self.save_results()
         logger.error(f'{self}: Error: {message}')
@@ -150,7 +149,7 @@ class Connector:
             return
         if processed_query:
             if processed_query != self.search.query_string_processed:
-                self.messages.append(f"{self.provider.query_processor} rewrote {self.provider.name}'s query_string_processed to: {processed_query}")
+                self.messages.append(f"[{datetime.now()}] {self.provider.query_processor} rewrote {self.provider.name}'s query_string_processed to: {processed_query}")
             self.query_string_to_provider = processed_query
         else:
             self.query_string_to_provider = self.search.query_string_processed
@@ -197,7 +196,7 @@ class Connector:
                 'author': f'{self}'
             }
         ]
-        self.messages.append(f"{self} created 1 mock response")
+        self.messages.append(f"[{datetime.now()}] {self} created 1 mock response")
         return
 
     ########################################
@@ -212,7 +211,7 @@ class Connector:
             if len(self.response) == 0:
                 # no results, not an error
                 self.retrieved = 0
-                self.messages.append(f"Retrieved 0 of 0 results from: {self.provider.name}")
+                self.messages.append(f"[{datetime.now()}] Retrieved 0 of 0 results from: {self.provider.name}")
                 self.status = 'READY'
                 return
 
@@ -233,7 +232,7 @@ class Connector:
             if self.results:
                 retrieved = len(self.results)
             if not self.update:
-                self.messages.append(f"Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
+                self.messages.append(f"[{datetime.now()}] Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
             try:
                 processed_results = eval(self.provider.result_processor, {"self.provider.result_processor": self.provider.result_processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.results, self.provider, self.query_string_to_provider).process()
             except (NameError, TypeError, ValueError) as err:
@@ -268,16 +267,15 @@ class Connector:
             # load the single result object now :\
             self.warning(f"UPDATE_SEARCH: loading result {result[0].id}")
             result = Result.objects.get(id=result[0].id)
-            result_url_list = [r['url'] for r in result.json_results]
+            result_dedupe_key_list = [r[settings.SWIRL_DEDUPE_FIELD] for r in result.json_results]
             deduped_new_results = []
             # DEDUPE RESULTS
-            # TO DO: handle url blank/missing more gracefully P1
             for r in self.processed_results:
-                if 'url' in r:
-                    if r['url']:
-                        if r['url'] in result_url_list:
+                if settings.SWIRL_DEDUPE_FIELD in r:
+                    if r[settings.SWIRL_DEDUPE_FIELD]:
+                        if r[settings.SWIRL_DEDUPE_FIELD] in result_dedupe_key_list:
                             # duplicate!
-                            self.warning(f"Excluding duplicate result: {r['url']}")
+                            self.warning(f"Excluding duplicate result: {r[settings.SWIRL_DEDUPE_FIELD]}")
                             continue
                         else:
                             # mark the new results as 'new'
@@ -285,10 +283,10 @@ class Connector:
                             deduped_new_results.append(r)
                         # end if
                     else:
-                        self.warning(f'ignoring result because url is blank: {r}')
+                        self.warning(f'ignoring result because dedupe field {settings.SWIRL_DEDUPE_FIELD} is blank: {r}')
                     # end if
                 else:
-                    self.warning(f'ignoring result with no url: {r}')
+                    self.warning(f'ignoring result with no dedupe field {settings.SWIRL_DEDUPE_FIELD}: {r}')
                 # end if
             # end for
             if len(deduped_new_results) == 0:
@@ -296,7 +294,7 @@ class Connector:
                 self.warning(f"Subscriber: 0 new results on {datetime.now()}")
                 return True
             self.warning(f"UPDATE_SEARCH: updating result: {result.id} with {len(deduped_new_results)}")
-            self.messages.append(f"Retrieved {len(deduped_new_results)} new results from: {result.searchprovider}")
+            self.messages.append(f"[{datetime.now()}] Retrieved {len(deduped_new_results)} new results from: {result.searchprovider}")
             # try:
             result.messages = result.messages + self.messages
             result.found = max(result.found, self.found)

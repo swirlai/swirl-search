@@ -76,3 +76,7 @@ from swirl.subscriber import subscriber
 @shared_task(name='subscriber')
 def subscriber_task():
     return subscriber()
+
+# @shared_task(name='update', ignore_result=True)
+# def update_task(search_id):
+#     return subscriber(search_id)
