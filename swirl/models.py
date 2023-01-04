@@ -30,17 +30,22 @@ class SearchProvider(models.Model):
     query_template = models.CharField(max_length=2048, default='{url}?q={query_string}', blank=True)
     QUERY_PROCESSOR_CHOICES = [
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
+        ('TestQueryProcessor', 'TestQueryProcessor'),
         ('AdaptiveQueryProcessor', 'AdaptiveQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]
-    query_processor = models.CharField(max_length=200, default='AdaptiveQueryProcessor', choices=QUERY_PROCESSOR_CHOICES)
+    query_processor = models.CharField(max_length=200, default='AdaptiveQueryProcessor', choices=QUERY_PROCESSOR_CHOICES, blank=True)
+    query_processors = models.JSONField(default=list, blank=True)
     query_mappings = models.CharField(max_length=2048, default=str, blank=True)
     RESULT_PROCESSOR_CHOICES = [
         ('GenericResultProcessor', 'GenericResultProcessor'),
+        ('DuplicateHalfResultProcessor', 'DuplicateHalfResultProcessor'),
+        ('TestResultProcessor', 'TestResultProcessor'),
         ('MappingResultProcessor', 'MappingResultProcessor')
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
-    result_processor = models.CharField(max_length=200, default='MappingResultProcessor', choices=RESULT_PROCESSOR_CHOICES)
+    result_processor = models.CharField(max_length=200, default='MappingResultProcessor', choices=RESULT_PROCESSOR_CHOICES, blank=True)
+    result_processors = models.JSONField(default=list, blank=True)
     result_mappings = models.CharField(max_length=2048, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
     credentials = models.CharField(max_length=512, default=str, blank=True)
@@ -71,18 +76,24 @@ class Search(models.Model):
     time = models.FloatField(default=0.0)
     PRE_QUERY_PROCESSOR_CHOICES = [
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
+        ('TestQueryProcessor', 'TestQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]
     pre_query_processor = models.CharField(max_length=200, default=str, blank=True, choices=PRE_QUERY_PROCESSOR_CHOICES)
+    pre_query_processors = models.JSONField(default=list, blank=True)
     POST_RESULT_PROCESSOR_CHOICES = [
-        ('CosineRelevancyProcessor', 'CosineRelevancyProcessor (w/spaCy)')
+        ('DedupeByFieldPostResultProcessor', 'DedupeByFieldPostResultProcessor'),
+        ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor'),
+        ('CosineRelevancyPostResultProcessor', 'CosineRelevancyPostResultProcessor (w/spaCy)')
     ]
-    post_result_processor = models.CharField(max_length=200, default='CosineRelevancyProcessor', blank=True, choices=POST_RESULT_PROCESSOR_CHOICES)
+    post_result_processor = models.CharField(max_length=200, default='CosineRelevancyPostResultProcessor', blank=True, choices=POST_RESULT_PROCESSOR_CHOICES)
+    post_result_processors = models.JSONField(default=list, blank=True)
     result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)
     new_result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s&new=true', blank=True)
     messages = models.JSONField(default=list, blank=True)
     MIXER_CHOICES = [
         ('RelevancyMixer', 'RelevancyMixer'),
+        ('RelevancyNewItemsMixer', 'RelevancyNewItemsMixer'),
         ('RoundRobinMixer', 'RoundRobinMixer'),
         ('Stack1Mixer', 'Stack1Mixer'),
         ('Stack2Mixer', 'Stack2Mixer'),
@@ -117,7 +128,8 @@ class Result(models.Model):
     searchprovider = models.CharField(max_length=50, default=str)
     query_string_to_provider = models.CharField(max_length=256, default=str)
     query_to_provider = models.CharField(max_length=2048, default=str)
-    result_processor = models.CharField(max_length=200, default=str)
+    query_processors = models.JSONField(default=list, blank=True)
+    result_processors = models.JSONField(default=list, blank=True)
     messages = models.JSONField(default=list, blank=True)
     status = models.CharField(max_length=20, default=str)
     retrieved = models.IntegerField(default=0)
@@ -127,7 +139,7 @@ class Result(models.Model):
     tags = models.JSONField(default=list)
 
     class Meta:
-        ordering = ['-date_created']
+        ordering = ['-date_updated']
 
     def __str__(self):
         signature = str(self.id) + ':' + str(self.search_id) + ':' + str(self.searchprovider)

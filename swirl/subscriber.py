@@ -19,7 +19,7 @@ environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from swirl.models import Search
-from swirl.tasks import search_task
+from swirl.search import search as run_search
 from datetime import datetime
 
 module_name = 'subscriber.py'
@@ -56,25 +56,18 @@ def subscriber():
         # security check
         search.status = 'UPDATE_SEARCH'
         search.save()
-        search_task.delay(search.id)
-        wait = 1
-        while 1:
-            if wait > settings.SWIRL_SUBSCRIBE_MAX_RETRIES:
-                logger.error(f"{module_name}: subscriber: timeout updating {search.id}, status {search.status}")
-                break
-            time.sleep(settings.SWIRL_SUBSCRIBE_WAIT)
-            if search.status.endswith('_READY'):
-                logger.info(f"{module_name}: subscriber: updated {search.id}")
-                break
-            if search.status.startswith('ERR'):
-                logger.error(f"{module_name}: subscriber: error {search.status} updating {search.id}")
-                if search.subscribe:
-                    search.messages.append(f'[{datetime.now()}] Subscriber disabled updates due to error {search.status}')
-                    search.subscribe = False
-                search.save()
-                break
-            wait = wait + 1
-        # end while
+        # to do: better than below and renaming upon import
+        success = run_search(search.id)
+        if success:
+            logger.info(f"{module_name}: subscriber: updated {search.id}")
+        else:
+            logger.error(f"{module_name}: subscriber: error {search.status} updating {search.id}")
+            if search.subscribe:
+                search.messages.append(f'[{datetime.now()}] Subscriber disabled updates due to error {search.status}')
+                search.subscribe = False
+            search.save()
+        # end if
+        time.sleep(settings.SWIRL_SUBSCRIBE_WAIT)
     # end for
 
     return True

@@ -17,9 +17,8 @@ from swirl.processors.processor import PostResultProcessor
 #############################################    
 #############################################    
 
-class CosineRelevancyProcessor(PostResultProcessor):
+class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
-    # This processor loads a set of saved results, scores them, and updates the results
     type = 'CosineRelevancyPostResultProcessor'
 
     ############################################
@@ -125,10 +124,47 @@ class CosineRelevancyProcessor(PostResultProcessor):
             highlighted_json_results = []
             if not results.json_results:
                 continue
-            for result in results.json_results:
-                if results.status == 'UPDATED':
-                    if not 'new' in result:
-                        continue
+            for item in results.json_results:
+                # if results.status == 'UPDATED':
+                #     if not 'new' in item:
+                #         continue
+                if 'explain' in item:
+                    dict_score = item['explain']
+                    item['dict_score'] = dict_score
+                    dict_len = {}
+                    # field length
+                    # to do: refactor below to avoid duplication of code
+                    for field in RELEVANCY_CONFIG:
+                        if field in item:
+                            if type(item[field]) == list:
+                                # to do: handle this better
+                                item[field] = item[field][0]
+                            # result_field is shorthand for item[field]
+                            result_field = clean_string(item[field]).strip()
+                            # check for zero-length result
+                            if result_field:
+                                if len(result_field) == 0:
+                                    continue
+                            # prepare result field                        
+                            if result_field.startswith('http'):
+                                # the field is a URL, split it on -
+                                if '-' in result_field:
+                                    result_field = result_field.replace('-', ' ')                            
+                            result_field_list = result_field.strip().split()
+                            if field in dict_len:
+                                self.warning("duplicate field?")
+                            else:
+                                dict_len[field] = len(result_field_list)
+                            if field in dict_lens:
+                                dict_lens[field].append(len(result_field_list))
+                            else:
+                                dict_lens[field] = []
+                                dict_lens[field].append(len(result_field_list))
+                            # end if
+                        # end if
+                    # end for
+                    item['dict_len'] = dict_len
+                    continue
                 ############################################
                 # result item
                 dict_score = {}
@@ -136,12 +172,12 @@ class CosineRelevancyProcessor(PostResultProcessor):
                 dict_len = {}
                 notted = ""
                 for field in RELEVANCY_CONFIG:
-                    if field in result:
-                        if type(result[field]) == list:
+                    if field in item:
+                        if type(item[field]) == list:
                             # to do: handle this better
-                            result[field] = result[field][0]
+                            item[field] = item[field][0]
                         # result_field is shorthand for item[field]
-                        result_field = clean_string(result[field]).strip()
+                        result_field = clean_string(item[field]).strip()
                         # check for zero-length result
                         if result_field:
                             if len(result_field) == 0:
@@ -281,16 +317,16 @@ class CosineRelevancyProcessor(PostResultProcessor):
                             del dict_score[field]
                         ############################################
                         # highlight
-                        result[field] = result[field].replace('*','')   # remove old
+                        item[field] = item[field].replace('*','')   # remove old
                         # fix for https://github.com/sidprobstein/swirl-search/issues/33
-                        result[field] = highlight_list(remove_tags(result[field]), extracted_highlights)
+                        item[field] = highlight_list(remove_tags(item[field]), extracted_highlights)
                     # end if
                 # end for field in RELEVANCY_CONFIG:
                 if notted:
-                    result['NOT'] = notted
+                    item['NOT'] = notted
                 else:
-                    result['dict_score'] = dict_score
-                    result['dict_len'] = dict_len
+                    item['dict_score'] = dict_score
+                    item['dict_len'] = dict_len
             # end for result in results.json_results:
         # end for results in self.results:
         ############################################
@@ -304,24 +340,27 @@ class CosineRelevancyProcessor(PostResultProcessor):
         for results in self.results:
             if not results.json_results:
                 continue
-            for result in results.json_results:
-                result['swirl_score'] = 0.0
+            for item in results.json_results:
+                # if results.status == 'UPDATED':
+                #     if not 'new' in item:
+                #         continue
+                item['swirl_score'] = 0.0
                 # check for not
-                if 'NOT' in result:
-                    result['swirl_score'] = -1.0 + 1/3
-                    result['explain'] = { 'NOT': result['NOT'] }
-                    del result['NOT']
+                if 'NOT' in item:
+                    item['swirl_score'] = -1.0 + 1/3
+                    item['explain'] = { 'NOT': item['NOT'] }
+                    del item['NOT']
                     break
                 # retrieve the scores and lens from pass 1
-                if 'dict_score' in result:
-                    dict_score = result['dict_score']
-                    del result['dict_score']
+                if 'dict_score' in item:
+                    dict_score = item['dict_score']
+                    del item['dict_score']
                 else:
                     # self.warning(f"pass 2: result {results}: {result} has no dict_score")
                     continue
-                if 'dict_len' in result:
-                    dict_len = result['dict_len']
-                    del result['dict_len']
+                if 'dict_len' in item:
+                    dict_len = item['dict_len']
+                    del item['dict_len']
                 else:
                     # self.warning(f"pass 2: result {results}: {result} has no dict_len")
                     continue
@@ -340,11 +379,11 @@ class CosineRelevancyProcessor(PostResultProcessor):
                         if not dict_score[f][k]:
                             continue
                         if dict_score[f][k] >= float(settings.SWIRL_MIN_SIMILARITY):
-                            rank_adjust = 1.0 + (1.0 / sqrt(result['searchprovider_rank']))
+                            rank_adjust = 1.0 + (1.0 / sqrt(item['searchprovider_rank']))
                             if k.endswith('_*') or k.endswith('_s*'):
-                                result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k))
+                                item['swirl_score'] = item['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k)) 
                             else:
-                                result['swirl_score'] = result['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k)) * len_adjust * rank_adjust
+                                item['swirl_score'] = item['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k)) * (0.7 * len_adjust) * rank_adjust
                         # end if
                     # end for
                 # end for
@@ -352,10 +391,10 @@ class CosineRelevancyProcessor(PostResultProcessor):
                     if f in dict_len_adjust:
                         dict_score[f]['length_adjust'] = dict_len_adjust[f]
                 ####### explain
-                result['explain'] = dict_score                
+                item['explain'] = dict_score                
                 updated = updated + 1
                 # save highlighted version
-                highlighted_json_results.append(result)
+                highlighted_json_results.append(item)
             # end for
             results.save()
         # end for

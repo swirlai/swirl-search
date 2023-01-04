@@ -26,7 +26,6 @@ from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result
 from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer
 from swirl.mixers import *
-# from swirl.subscriber import update as update_search
 
 module_name = 'views.py'
 
@@ -307,21 +306,23 @@ class SearchViewSet(viewsets.ModelViewSet):
         
         ########################################
 
-        # update_id = 0
-        # if 'update' in request.GET.keys():
-        #     update_id = request.GET['update']
+        update_id = 0
+        if 'update' in request.GET.keys():
+            update_id = request.GET['update']
 
-        # if update_id:
-        #     # check permissions
-        #     if not (request.user.has_perm('swirl.change_search') and request.user.has_perm('swirl.change_result')):
-        #         logger.warning(f"User {self.request.user} needs permissions change_search({request.user.has_perm('swirl.change_search')}), change_result({request.user.has_perm('swirl.change_result')})")
-        #         return Response(status=status.HTTP_403_FORBIDDEN)
-        #     # security check
-        #     if not Search.objects.filter(id=update_id, owner=self.request.user).exists():
-        #         return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
-        #     update_task.delay(update_id)
-        #     time.sleep(settings.SWIRL_SUBSCRIBE_WAIT)
-        #     return redirect(f'/swirl/results?search_id={update_id}')
+        if update_id:
+            # check permissions
+            if not (request.user.has_perm('swirl.change_search') and request.user.has_perm('swirl.change_result')):
+                logger.warning(f"User {self.request.user} needs permissions change_search({request.user.has_perm('swirl.change_search')}), change_result({request.user.has_perm('swirl.change_result')})")
+                return Response(status=status.HTTP_403_FORBIDDEN)
+            # security check
+            if not Search.objects.filter(id=update_id, owner=self.request.user).exists():
+                return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
+            search.status = 'UPDATE_SEARCH'
+            search.save()
+            search_task.delay(update_id)
+            time.sleep(settings.SWIRL_SUBSCRIBE_WAIT)
+            return redirect(f'/swirl/results?search_id={update_id}')
 
         ########################################
 

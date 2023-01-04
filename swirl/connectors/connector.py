@@ -49,7 +49,6 @@ class Connector:
         self.status = 'INIT'
         self.provider = None
         self.search = None
-        self.status = ""
         self.query_string_to_provider = ""
         self.query_to_provider = ""
         self.query_mappings = {}
@@ -80,21 +79,22 @@ class Connector:
     ########################################
 
     def __str__(self):
-        return f"{self.type}_{self.provider_id}_{self.search_id}"
+        return f"{self.type}_{self.search_id}_{self.provider_id}"
 
     ########################################
 
+    def message(self, message):
+        self.messages.append(f'[{datetime.now()}] {message}')
+
     def error(self, message, save_results=True):
-        self.messages.append(f'[{datetime.now()}] {self}: Error: {message}')
+        logger.error(f'{self}: {message}')
+        self.message(f'Error: {message}')
         self.status = 'ERROR'
         if save_results:
             self.save_results()
-        logger.error(f'{self}: Error: {message}')
 
     def warning(self, message):
-        # self.messages.append(f'{self}: Warning: {message}')
-        logger.warning(f'{self}: Warning: {message}')
-        self.status = 'WARNING'
+        logger.warning(f'{self}: {message}')
 
     ########################################
 
@@ -114,15 +114,25 @@ class Connector:
                 v = self.validate_query()
                 if v:
                     self.execute_search()
-                    self.normalize_response()
-                    self.process_results()
-                    res = self.save_results()
-                    if res:
-                        return True
+                    if self.status not in ['FEDERATING', 'READY']:
+                        self.error(f"execute_search() failed, status {self.status}")
+                    if self.status == 'FEDERATING':
+                        self.normalize_response()
+                    if self.status not in ['FEDERATING', 'READY']:
+                        self.error(f"normalize_response() failed, status {self.status}")
+                    if self.status == 'FEDERATING':
+                        self.process_results()
+                    if self.status == 'READY':
+                        res = self.save_results()
+                        if res:
+                            return True
+                        else:
+                            return False
                     else:
+                        self.error(f"process_results() failed, status {self.status}")
                         return False
                 else:
-                    self.error(f'query validation failed: {v}')
+                    self.error(f'validate_query() failed: {v}')
                     return False
                 # end if
             except Exception as err:
@@ -142,17 +152,28 @@ class Connector:
         Invoke the specified query_processor for this provider on search.query_string_processed, store the result in self.query_string_to_provider
         ''' 
 
-        try:
-            processed_query = eval(self.provider.query_processor, {"self.provider.query_processor": self.provider.query_processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.search.query_string_processed, self.provider.query_mappings, self.provider.tags).process()
-        except (NameError, TypeError, ValueError) as err:
-            self.error(f'{err.args}, {err} in provider.query_processor(search.query_string_processed): {self.provider.query_processor}({self.search.query_string_processed}, {self.provider.query_mappings})')
-            return
-        if processed_query:
-            if processed_query != self.search.query_string_processed:
-                self.messages.append(f"[{datetime.now()}] {self.provider.query_processor} rewrote {self.provider.name}'s query_string_processed to: {processed_query}")
-            self.query_string_to_provider = processed_query
+        processor_list = []
+        if self.provider.query_processor:
+            processor_list = [self.provider.query_processor]
+            if self.provider.query_processors:
+                self.warning("Ignoring searchprovider.query_processors, since searchprovider.query_processor is specified")
         else:
-            self.query_string_to_provider = self.search.query_string_processed
+            processor_list = self.provider.query_processors
+
+        for processor in processor_list:
+            try:
+                processed_query = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.search.query_string_processed, self.provider.query_mappings, self.provider.tags).process()
+            except (NameError, TypeError, ValueError) as err:
+                self.error(f'{processor}: {err.args}, {err}')
+                return
+            if processed_query:
+                if processed_query != self.search.query_string_processed:
+                    self.message(f"{processor} rewrote {self.provider.name}'s query to: {processed_query}")
+                self.query_string_to_provider = processed_query
+            else:
+                self.query_string_to_provider = self.search.query_string_processed
+            # end if
+        # end for
         return
 
     ########################################
@@ -196,7 +217,7 @@ class Connector:
                 'author': f'{self}'
             }
         ]
-        self.messages.append(f"[{datetime.now()}] {self} created 1 mock response")
+        self.message(f"Connector.execute_search() created 1 mock response")
         return
 
     ########################################
@@ -211,11 +232,11 @@ class Connector:
             if len(self.response) == 0:
                 # no results, not an error
                 self.retrieved = 0
-                self.messages.append(f"[{datetime.now()}] Retrieved 0 of 0 results from: {self.provider.name}")
+                self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.status = 'READY'
                 return
 
-        # to do: is this a bug in the making?
+        # to do: review the below it may be dangerous
         self.results = self.response
         return
 
@@ -232,13 +253,38 @@ class Connector:
             if self.results:
                 retrieved = len(self.results)
             if not self.update:
-                self.messages.append(f"[{datetime.now()}] Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
-            try:
-                processed_results = eval(self.provider.result_processor, {"self.provider.result_processor": self.provider.result_processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.results, self.provider, self.query_string_to_provider).process()
-            except (NameError, TypeError, ValueError) as err:
-                self.error(f'{err.args}, {err} in provider.result_processor(): {self.provider.result_processor}({self.results}, {self.provider}, {self.query_string_to_provider})')
-                return
-            self.processed_results = processed_results
+                self.message(f"Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
+            processor_list = []
+            if self.provider.result_processor:
+                processor_list = [self.provider.result_processor]
+                if self.provider.result_processors:
+                    self.warning("Ignoring result_processors, since result_processor is specified")
+            else:
+                processor_list = self.provider.result_processors
+
+            processor_input = self.results
+            processor_output = None
+
+            for processor in processor_list:
+
+                try:
+                    processor_output = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(processor_input, self.provider, self.query_string_to_provider).process()
+                except (NameError, TypeError, ValueError) as err:
+                    self.error(f'{processor}: {err.args}, {err}')
+                    return
+
+                if processor_output:
+                    processor_input = processor_output
+                else:
+                    # to do: document
+                    self.search.status = "ERR_RESULT_PROCESSING"
+                    self.error(f"{processor} returned no results")
+                    return
+
+            self.processed_results = processor_output
+            if self.processed_results:
+                self.status = 'READY'
+
         # end if
         return
 
@@ -253,67 +299,63 @@ class Connector:
         # timing
         end_time = time.time()
 
+        # gather processor lists
+        query_processors = []
+        if self.search.pre_query_processor:
+            query_processors.append(self.search.pre_query_processor)
+        else:
+            query_processors = query_processors + self.search.pre_query_processors
+        # end if
+        if self.provider.query_processor:
+            query_processors.append(self.provider.query_processor)
+        else:
+            query_processors = query_processors + self.provider.query_processors
+        # end if
+        result_processors = []
+        if self.provider.result_processor:
+            result_processors = [self.provider.result_processor]
+        else:
+            result_processors = self.provider.result_processors
+        # end if
+
         if self.update:
             try:
                 result = Result.objects.filter(search_id=self.search, provider_id=self.provider.id)
             except ObjectDoesNotExist as err:
                 self.search.status = "ERROR_RESULT_NOT_FOUND"
-                self.error(f'UPDATE_SEARCH: Result.objects.get() not found: {err}', save_results=False)
+                self.error(f'Update failed: results not found: {err}', save_results=False)
                 return False
             if len(result) != 1:
+                # to do: document
                 self.search.status = "ERR_DUPLICATE_RESULT_OBJECTS"
-                self.error(f"UPDATE_SEARCH: found {len(result)} results with search_id={self.search}, provider_id={self.provider.id}", save_results=False)
+                self.error(f"Update failed: found {len(result)} result objects, expected 1", save_results=False)
                 return False
             # load the single result object now :\
-            self.warning(f"UPDATE_SEARCH: loading result {result[0].id}")
             result = Result.objects.get(id=result[0].id)
-            result_dedupe_key_list = [r[settings.SWIRL_DEDUPE_FIELD] for r in result.json_results]
-            deduped_new_results = []
-            # DEDUPE RESULTS
+            # add new flag       
             for r in self.processed_results:
-                if settings.SWIRL_DEDUPE_FIELD in r:
-                    if r[settings.SWIRL_DEDUPE_FIELD]:
-                        if r[settings.SWIRL_DEDUPE_FIELD] in result_dedupe_key_list:
-                            # duplicate!
-                            self.warning(f"Excluding duplicate result: {r[settings.SWIRL_DEDUPE_FIELD]}")
-                            continue
-                        else:
-                            # mark the new results as 'new'
-                            r['new'] = True
-                            deduped_new_results.append(r)
-                        # end if
-                    else:
-                        self.warning(f'ignoring result because dedupe field {settings.SWIRL_DEDUPE_FIELD} is blank: {r}')
-                    # end if
-                else:
-                    self.warning(f'ignoring result with no dedupe field {settings.SWIRL_DEDUPE_FIELD}: {r}')
-                # end if
-            # end for
-            if len(deduped_new_results) == 0:
-                # no new results found
-                self.warning(f"Subscriber: 0 new results on {datetime.now()}")
-                return True
-            self.warning(f"UPDATE_SEARCH: updating result: {result.id} with {len(deduped_new_results)}")
-            self.messages.append(f"[{datetime.now()}] Retrieved {len(deduped_new_results)} new results from: {result.searchprovider}")
-            # try:
-            result.messages = result.messages + self.messages
-            result.found = max(result.found, self.found)
-            result.retrieved = result.retrieved + len(deduped_new_results)
-            result.time = f'{result.time + (end_time - self.start_time):.1f}'
-            result.json_results = result.json_results + deduped_new_results
-            result.status = 'UPDATED'
-            result.save()
-            self.warning("UPDATE_SEARCH: Saving!")
-            # except Error as err:
-            #     self.error(f'UPDATE_SEARCH: save_result() failed: {err}', save_results=False)
-            #     return False
-            self.warning(f"UPDATE_SEARCH: done")
+                r['new'] = True
+            try:
+                result.messages = result.messages + self.messages
+                result.found = max(result.found, self.found)
+                result.retrieved = result.retrieved + self.retrieved
+                result.time = f'{result.time + (end_time - self.start_time):.1f}'
+                result.json_results = result.json_results + self.processed_results
+                result.query_processors = query_processors
+                result.result_processors = result_processors
+                result.status = 'UPDATED'
+                result.save()
+            except Error as err:                 
+                self.error(f'save_results() update failed: {err.args}, {err}', save_results=False)
+                return False
+            logger.info(f"{self}: Update: added {len(self.processed_results)} new items to result {result.id}")
+            self.message(f"Retrieved {len(self.processed_results)} new results from: {result.searchprovider}")
             return True
         # end if
 
         try:
-            new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id, query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider, result_processor=self.provider.result_processor, messages=self.messages, status='READY', found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}', json_results=self.processed_results, owner=self.search.owner)
+            new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id, query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider, query_processors=query_processors, result_processors=result_processors, messages=self.messages, status='READY', found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}', json_results=self.processed_results, owner=self.search.owner)
             new_result.save()
         except Error as err:
-            self.error(f'NEW_SEARCH: save_result() failed: {err}', save_results=False)
+            self.error(f'save_results() failed: {err.args}, {err}', save_results=False)
         return True

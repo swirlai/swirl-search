@@ -6,6 +6,7 @@
 
 from sys import path
 from os import environ
+from datetime import datetime
 
 import django
 from django.core.exceptions import ObjectDoesNotExist
@@ -90,7 +91,8 @@ class Mixer:
             self.mix_wrapper['info'][result.searchprovider]['filter_url'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search.id}&provider={result.provider_id}'
             self.mix_wrapper['info'][result.searchprovider]['query_string_to_provider'] = result.query_string_to_provider
             self.mix_wrapper['info'][result.searchprovider]['query_to_provider'] = result.query_to_provider
-            self.mix_wrapper['info'][result.searchprovider]['result_processor'] = result.result_processor
+            self.mix_wrapper['info'][result.searchprovider]['query_processors'] = result.query_processors
+            self.mix_wrapper['info'][result.searchprovider]['result_processors'] = result.result_processors
             self.mix_wrapper['info'][result.searchprovider]['search_time'] = result.time
         result_messages = natsorted(result_messages, reverse=True)
         rewrote_messages = natsorted(rewrote_messages)
@@ -174,7 +176,7 @@ class Mixer:
         if (int(self.page)-1)*int(self.results_requested) > len(self.mixed_results):
             self.error("Page not found, results exhausted")
             self.mix_wrapper['results'] = []
-            self.mix_wrapper['messages'].append(f"Results exhausted for {self.search_id}")
+            self.mix_wrapper['messages'].append(f"[{datetime.now()}] Results exhausted for {self.search_id}")
             return
 
         # number all mixed results
@@ -209,9 +211,9 @@ class Mixer:
         # last message 
         if len(self.mix_wrapper['results']) > 2:
             if self.result_mixer:
-                self.mix_wrapper['messages'].append(f"Results ordered by: {self.result_mixer}")
+                self.mix_wrapper['messages'].append(f"[{datetime.now()}] Results ordered by: {self.result_mixer}")
             else:
-                self.mix_wrapper['messages'].append(f"Results ordered by: {self.type}")     
+                self.mix_wrapper['messages'].append(f"[{datetime.now()}] Results ordered by: {self.type}")     
 
 
 

@@ -1,0 +1,132 @@
+'''
+@author:     Sid Probstein
+@contact:    sid@swirl.today
+'''
+
+from datetime import datetime
+
+from swirl.processors.processor import *
+from swirl.processors.utils import clean_string
+from swirl.connectors.utils import get_mappings_dict
+  
+#############################################    
+#############################################    
+
+class AdaptiveQueryProcessor(QueryProcessor):
+
+    type = 'AdaptiveQueryProcessor'
+    
+    def process(self):
+
+        # TAG: Operator
+        # TAG: does not support NOT
+
+        query_wot_list = []
+        dict_tags = {}
+        tag = ""
+
+        for term in self.query_string.strip().split():      
+            val = ""      
+            if ':' in term:
+                if term.endswith(':'):
+                    # next term is tag
+                    tag = term[:-1]
+                    continue
+                else:
+                    tag = term.split(':')[0]
+                    val = term.split(':')[1]
+                # end if
+            else:
+                if tag:
+                    if term.strip().lower() != 'not':
+                        val = term
+                    else:
+                        tag = ""
+                        query_wot_list.append(term)
+                        continue
+                else:
+                    query_wot_list.append(term)
+                    continue
+                # end if
+            # end if
+            if tag:
+                if val:
+                    if not tag in dict_tags:
+                        dict_tags[tag.lower()] = []
+                    dict_tags[tag.lower()].append(val)
+                    query_wot_list.append(val)
+                # end if
+            # end if
+
+        # self.warning(f"query_wot: {query_wot_list}, dict_tags: {dict_tags}")
+        # self.warning(f"{self.tags}")
+
+        if self.tags:
+            # self.warning("foo")
+            # if this provider has tags
+            adapted_query_list = []
+            for tag in self.tags:
+                if tag.lower() in dict_tags:
+                    # if the provider has a tag specified in this query
+                    adapted_query_list.append(' '.join(dict_tags[tag.lower()]))
+            # self.warning(f"adapted_query: {adapted_query_list}")
+            if adapted_query_list:
+                # replace the query with just that text
+                return ' '.join(adapted_query_list)
+            # end if
+        # end if
+
+        self.query_string = ' '.join(query_wot_list)
+
+        # Adaptive Query Processing:
+
+        query = clean_string(self.query_string).strip()
+        query_list = query.split()
+
+        # NOT Operator
+        # parse the query into list_not and list_and
+        list_not = []
+        list_and = []
+        lower_query = ' '.join(query_list).lower()
+        lower_query_list = lower_query.split()
+        if 'not' in lower_query_list:
+            list_and = query_list[:lower_query_list.index('not')]
+            list_not = query_list[lower_query_list.index('not')+1:]
+        else:
+            for q in query_list:
+                if q.startswith('-'):
+                    list_not.append(q[1:])
+                else:
+                    list_and.append(q)
+            # end for
+        # end if
+    
+        if len(list_not) > 0:
+            processed_query = ""
+            dict_query_mappings = get_mappings_dict(self.query_mappings)
+            not_cmd = False
+            not_char = ""
+            if 'NOT' in dict_query_mappings:
+                not_cmd = bool(dict_query_mappings['NOT'])
+            if 'NOT_CHAR' in dict_query_mappings:
+                not_char = str(dict_query_mappings['NOT_CHAR'])
+            if not_cmd and not_char:
+                # leave the query as is, since it supports both NOT and -term
+                return query
+            if not_cmd:
+                processed_query = ' '.join(list_and) + ' ' + 'NOT ' + ' '.join(list_not)
+                return processed_query.strip()
+            if not_char:
+                processed_query = ' '.join(list_and) + ' '
+                for t in list_not:
+                    processed_query = processed_query + not_char + t + ' '
+                return processed_query.strip()
+            if not (not_cmd or not_char):
+                self.warning(f"Provider does not support NOT in query, removing NOTted portion!")
+                # remove the notted portion
+                return ' '.join(list_and)
+
+        # self.warning(f"query: {query}")
+
+        return query
+

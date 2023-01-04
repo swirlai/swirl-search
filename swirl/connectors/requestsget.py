@@ -204,9 +204,10 @@ class RequestsGet(Connector):
             if 'FOUND' in mapped_response:
                 found = int(mapped_response['FOUND'])
                 self.found = found
+            # check for 0 response
             if found == 0 or retrieved == 0:
                 # no results, not an error
-                self.messages.append(f"[{datetime.now()}] Retrieved 0 of 0 results from: {self.provider.name}")
+                self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.retrieved = 0
                 self.status = 'READY'
                 return   
@@ -272,10 +273,10 @@ class RequestsGet(Connector):
                 # for now, assume the source delivered what it found
                 found = len(response)
                 self.found = found
+            # check for 0 delivered results (different from above)
             if found == 0 or retrieved == 0:
                 # no results, not an error
-                message = f"[{datetime.now()}] Retrieved 0 of 0 results from: {self.provider.name}"
-                self.messages.append(message)
+                self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.status = 'READY'
                 return
                   

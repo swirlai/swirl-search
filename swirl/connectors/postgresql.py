@@ -71,11 +71,11 @@ class PostgreSQL(DBConnector):
             found = found[0]
 
         if 'json' in self.count_query.lower():
-            logger.warning(f"{self}: ignoring 0 return from find, since 'json' appears in the query_string")
+            # to do: check on this
+            self.warning(f"Ignoring 0 return from find, since 'json' appears in the query_string")
         else:
             if found == 0:
-                message = f"[{datetime.now()}] Retrieved 0 of 0 results from: {self.provider.name}"
-                self.messages.append(message)
+                self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.status = 'READY'
                 self.found = 0
                 self.retrieved = 0
@@ -99,9 +99,8 @@ class PostgreSQL(DBConnector):
         # rows is a list of tuple results
 
         if rows == None:
-            message = f"[{datetime.now()}] Retrieved 0 of 0 results from: {self.provider.name}"
-            logger.warning(f'{self}: {message}, but count_query returned {found}')
-            self.messages.append(message)
+            logger.warning(f"Received 0 results, but count_query returned {found}")
+            self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
             return
             # end if
         # end if
@@ -119,6 +118,7 @@ class PostgreSQL(DBConnector):
         found = self.found
 
         if found == 0:
+            self.status = 'READY'
             return
 
         # rows = [ (1, 'lifelock', 'LifeLock', '', 'web', 'Tempe', 'AZ', datetime.date(2007, 5, 1), Decimal('6850000'), 'USD', 'b'), etc ]

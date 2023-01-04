@@ -39,10 +39,10 @@ def search(id):
     try:
         search = Search.objects.get(id=id)
     except ObjectDoesNotExist as err:
-        logger.error(f'{module_name}: Error: ObjectDoesNotExist: {err}')
+        logger.error(f'{module_name}_{id}: ObjectDoesNotExist: {err}')
         return False
     if not search.status.upper() in ['NEW_SEARCH', 'UPDATE_SEARCH']:
-        logger.warning(f"{module_name}: search {search.id} has unexpected status {search.status}; set it to NEW_SEARCH to (re)start it")
+        logger.warning(f"{module_name}_{search.id}: unexpected status {search.status}")
         return False
     if search.status.upper() == 'UPDATE_SEARCH':
         update = True
@@ -84,37 +84,42 @@ def search(id):
     # end if
     providers = new_provider_list
     if len(providers) == 0:
-        logger.error(f"{module_name}: error: no SearchProviders configured")
+        logger.error(f"{module_name}_{search.id}: no SearchProviders configured")
         search.status = 'ERR_NO_SEARCHPROVIDERS'
-        search.date_updated = datetime.now()
         search.save()
         return False
 
     ########################################
     # pre-query processing, which updates query_string_processed
-    if search.pre_query_processor:
+    if search.pre_query_processor or search.pre_query_processors:
         search.status = 'PRE_QUERY_PROCESSING'
         search.save()
-        try:
-            pre_query_processor = eval(search.pre_query_processor, {"search.pre_query_processor": search.pre_query_processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.query_string)
-            if pre_query_processor.validate():
-                search.query_string_processed = pre_query_processor.process()
-            else:
-                message = f'Error: pre_query_processor.validate() failed'
-                logger.error(f'{module_name}: {message}')
+        # setup processor pipeline
+        processor_list = []
+        if search.pre_query_processor:
+            processor_list = [search.pre_query_processor]
+            if search.pre_query_processors:
+                logger.warning(f"{module_name}_{search.id}: Ignoring search.pre_query_processors, since search.pre_query_processor is specified")
+        else:
+            processor_list = search.pre_query_processors
+        # end if
+        for processor in processor_list:
+            try:
+                pre_query_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.query_string)
+                if pre_query_processor.validate():
+                    search.query_string_processed = pre_query_processor.process()
+                else:
+                    logger.error(f'{module_name}_{search.id}: {processor}.validate() failed')
+                    return False
+                # end if
+            except (NameError, TypeError, ValueError) as err:
+                logger.error(f'{module_name}_{search.id}: {processor}: {err.args}, {err}')
                 return False
+            if search.query_string_processed != search.query_string:
+                search.messages.append(f"[{datetime.now()}] {processor} rewrote query to: {search.query_string_processed}")
+                search.save()
             # end if
-        except NameError as err:
-            message = f'Error: NameError: {err}'
-            logger.error(f'{module_name}: {message}')
-            return False
-        except TypeError as err:
-            message = f'Error: TypeError: {err}'
-            logger.error(f'{module_name}: {message}')
-            return False
-        if search.query_string_processed != search.query_string:
-            message = f"[{datetime.now()}] Pre-query processing by {search.pre_query_processor} rewrote query_string to: {search.query_string_processed}"
-            search.messages.append(message)
+        # end for
     else:
         search.query_string_processed = search.query_string
     # end if
@@ -132,7 +137,7 @@ def search(id):
         federation_result[provider.id] = federate_task.delay(search.id, provider.id, provider.connector, update)
     # end for
     if not at_least_one:
-        logger.warning(f"{module_name}: no active searchprovider specified: {search.searchprovider_list}")
+        logger.warning(f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}")
         search.status = 'ERR_NO_ACTIVE_SEARCHPROVIDERS'
         search.save()
         return False
@@ -155,11 +160,11 @@ def search(id):
                         updated = updated + 1
                 if updated == len(providers):
                     # every provider has updated a result object - exit
-                    logger.warning(f"{module_name}: all results updated, search {search.id}")
+                    logger.info(f"{module_name}_{search.id}: all results updated!")
                     break
             else:
                 # every provider has written a result object - exit
-                logger.warning(f"{module_name}: all results received, search {search.id}")
+                logger.info(f"{module_name}_{search.id}: all results received!")
                 break
         if len(results) > 0:
             if update:
@@ -172,19 +177,17 @@ def search(id):
         search.save()    
         time.sleep(1)
         if (ticks + 2) > int(settings.SWIRL_TIMEOUT):
-            logger.warning(f"{module_name}: timeout, search {search.id}")
+            logger.info(f"{module_name}_{search.id}: timeout!")
             failed_providers = []
             responding_provider_names = []
             for result in results:
                 responding_provider_names.append(result.searchprovider)
-            # fixed: don't report in-active providers as failed (above by filtering providers to active=True)
             for provider in providers:
                 if not provider.name in responding_provider_names:
                     failed_providers.append(provider.name)
                     error_flag = True
-                    logger.warning(f"{module_name}: timeout waiting for: {failed_providers}")
-                    message = f"[{datetime.now()}] {module_name}: No response from provider: {failed_providers}"
-                    search.messages.append(message)
+                    logger.warning(f"{module_name}_{search.id}: timeout waiting for: {failed_providers}")
+                    search.messages.append(f"[{datetime.now()}] Timeout waiting for: {failed_providers}")
                     search.save()
                 # end if
             # end for
@@ -209,42 +212,48 @@ def search(id):
     # note the sort
     if search.sort.lower() == 'date':
         if not update:
-            message = f"[{datetime.now()}] Requested sort_by_date from all providers"
-            search.messages.append(message)
+            search.messages.append(f"[{datetime.now()}] Requested sort_by_date from all providers")
     search.save()
     ########################################
     # post_result_processing
-    if search.post_result_processor:
+    if search.post_result_processor or search.post_result_processors:
         last_status = search.status
         search.status = 'POST_RESULT_PROCESSING'
         search.save()
-        try:
-            post_result_processor = eval(search.post_result_processor, {"search.post_result_processor": search.post_result_processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id)
-            if post_result_processor.validate():
-                results_modified = post_result_processor.process()
-            else:
-                message = f'Error: post_result_processor.validate() failed'
-                logger.error(f'{module_name}: {message}')
-                return False
-            # end if
-        except NameError as err:
-            message = f'Error: NameError: {err}'
-            logger.error(f'{module_name}: {message}')
-            return False
-        except TypeError as err:
-            message = f'Error: TypeError: {err}'
-            logger.error(f'{module_name}: {message}')
-            return False
-        message = f"[{datetime.now()}] Post processing of results by {search.post_result_processor} updated {results_modified} results"
-        last_message = search.messages[-1:]
-        if last_message:
-            # to do: REMOVE THIS
-            logger.warning(f"Foo: {last_message[0]} ?= {message}")
-            if last_message[0].lower().strip() != message.lower().strip():
-                search.messages.append(message)   
+        # setup processor pipeline
+        processor_list = []
+        if search.post_result_processor:
+            processor_list = [search.post_result_processor]
+            if search.post_result_processors:
+                logger.warning(f"{module_name}_{search.id}: Ignoring search.post_result_processors, since search.post_result_processor is specified")
         else:
-            search.messages.append(message)   
+            processor_list = search.post_result_processors
         # end if
+        for processor in processor_list:
+            try:
+                post_result_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id)
+                if post_result_processor.validate():
+                    results_modified = post_result_processor.process()
+                else:
+                    logger.error(f"{module_name}_{search.id}: {processor}.validate() failed")
+                    return False
+                # end if
+            except (NameError, TypeError, ValueError) as err:
+                logger.error(f'{module_name}_{search.id}: {processor}: {err.args}, {err}')
+                return False
+            if results_modified > 0:
+                message = f"[{datetime.now()}] {processor} updated {results_modified} results"
+                # don't repeat the same message - to do: test
+                last_message = search.messages[-1:]
+                if last_message:
+                    if last_message[0].lower().strip() != message.lower().strip():
+                        search.messages.append(message)   
+                    # end if
+                else:
+                    search.messages.append(message)   
+                # end if
+            # end if
+        # end for
         search.status = last_status
     if search.status == 'PARTIAL_RESULTS':
         if update:
@@ -275,48 +284,53 @@ def rescore(id):
         # security review for 1.7 - OK - filtered by search object
         results = Result.objects.filter(search_id=search.id)
     except ObjectDoesNotExist as err:
-        logger.error(f'{module_name}: Error: ObjectDoesNotExist: {err}')
+        logger.error(f'{module_name}_{search.id}: ObjectDoesNotExist: {err}')
         return False
 
     last_status = search.status
     if not (search.status.endswith('_READY') or search.status == 'RESCORING'):
-        logger.warning(f"{module_name}: search {search.id} has status {search.status}, rescore may not work")
+        logger.warning(f"{module_name}_{search.id}: unexpected status {search.status}, rescore may not work")
         last_status = None
 
     if len(results) == 0:
-        logger.error(f"{module_name}: search {search.id} has no results to rescore")
+        logger.error(f"{module_name}_{search.id}: No results to rescore!")
         return False
 
-    search.status = 'RESCORING'
-    search.save()
-
-    if search.post_result_processor:
-        try:
-            post_result_processor = eval(search.post_result_processor, {"search.post_result_processor": search.post_result_processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id)
-            if post_result_processor.validate():
-                results_modified = post_result_processor.process()
-            else:
-                message = f'Error: post_result_processor.validate() failed'
-                logger.error(f'{module_name}: {message}')
+    if search.post_result_processor or search.post_result_processors:
+        search.status = 'RESCORING'
+        search.save()
+        # setup processor pipeline
+        processor_list = []
+        if search.post_result_processor:
+            processor_list = [search.post_result_processor]
+            if search.post_result_processors:
+                logger.warning(f"{module_name}_{search.id}: Ignoring search.post_result_processors, since search.post_result_processor is specified")
+        else:
+            processor_list = search.post_result_processors
+        # end if
+        for processor in processor_list:
+            try:
+                post_result_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id)
+                if post_result_processor.validate():
+                    results_modified = post_result_processor.process()
+                else:
+                    logger.error(f"{module_name}_{search.id}: {processor}.validate() failed")
+                    return False
+                # end if
+            except (NameError, TypeError, ValueError) as err:
+                logger.error(f'{module_name}_{search.id}: {processor}: {err.args}, {err}')
                 return False
-            # end if
-        except NameError as err:
-            message = f'Error: NameError: {err}'
-            logger.error(f'{module_name}: {message}')
-            return False
-        except TypeError as err:
-            message = f'Error: TypeError: {err}'
-            logger.error(f'{module_name}: {message}')
-            return False
-        message = f"[{datetime.now()}] Rescoring by {search.post_result_processor} updated {results_modified} results on {datetime.now()}"
-        search.messages = []
-        search.messages.append(message)    
+            # to do: determine if we need to check for message duplication as above
+            if results_modified > 0:
+                search.messages.append(f"[{datetime.now()}] {processor} updated {results_modified} results")
+        # end for
         if last_status:
             search.status = last_status
         else:
-            search.status = "FULL_RESULTS_READY"
+            # to do: document this
+            search.status = "RESCORED_RESULTS_READY"
         search.save()
         return True
     else:
-        logger.error(f"{module_name}: search {search.id} has no post_result_processor defined")
+        logger.warning(f"{module_name}_{search.id}: No post_result_processor or post_result_processors defined")
         return False

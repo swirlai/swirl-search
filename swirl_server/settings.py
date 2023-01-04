@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'swirl_server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': env('SQL_ENGINE'),
+        'ENGINE': str(env('SQL_ENGINE')),
         'NAME': env('SQL_DATABASE'),
         'USER': env('SQL_USER'),
         'PASSWORD': env('SQL_PASSWORD'),
@@ -203,7 +203,7 @@ CELERY_BEAT_SCHEDULE = {
     # Executes every hour
     'subscribe': { 
          'task': 'subscriber', 
-         'schedule': crontab(minute=0,hour='*'),
+         'schedule': crontab(minute=0,hour='*'),   # minute='*/10'
         },          
 }
 
@@ -216,6 +216,10 @@ SWIRL_TIMEOUT = 10
 SWIRL_Q_WAIT = 7
 SWIRL_RERUN_WAIT = 8
 SWIRL_RESCORE_WAIT = 5
+SWIRL_SUBSCRIBE_WAIT = 20
+SWIRL_DEDUPE_FIELD = 'url'
+SWIRL_DEDUPE_SIMILARITY_MINIMUM = 0.95
+SWIRL_DEDUPE_SIMILARITY_FIELDS = ['title', 'body']
 
 SWIRL_EXPLAIN = bool(env('SWIRL_EXPLAIN'))
 
