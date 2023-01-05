@@ -49,6 +49,8 @@ class RequestsGet(Connector):
 
     def construct_query(self):
 
+        logger.info(f"{self}: construct_query()")
+
         # to do: migrate this to Connector base class?
         query_to_provider = ""
         if self.provider.credentials.startswith('HTTP'):
@@ -86,6 +88,8 @@ class RequestsGet(Connector):
 
     def validate_query(self):
 
+        logger.info(f"{self}: validate_query()")
+
         query_to_provider = self.query_to_provider
         if '{' in query_to_provider or '}' in query_to_provider:
             self.warning(f"{self.provider.id} found braces {{ or }} in query")
@@ -96,6 +100,8 @@ class RequestsGet(Connector):
     ########################################
 
     def execute_search(self):
+
+        logger.info(f"{self}: execute_search()")
 
         # determine if paging is required
         pages = 1

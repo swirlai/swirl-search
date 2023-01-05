@@ -45,13 +45,24 @@ def search(id):
         logger.warning(f"{module_name}_{search.id}: unexpected status {search.status}")
         return False
     if search.status.upper() == 'UPDATE_SEARCH':
+        logger.info(f"{module_name}: {search.id}.status == UPDATE_SEARCH")
         update = True
         search.sort = 'date'
 
     search.status = 'PRE_PROCESSING'
+    logger.info(f"{module_name}: {search.status}")
     search.save()
     # check for provider specification
-    # security review for 1.7 - OK - filtered by owner
+    # to do: add provider if tagged in query, e.g. electric vehicle company:tesla
+    # identify tags in the query
+    raw_tags_in_query_list = [tag for tag in search.query_string.strip().split() if ':' in tag]
+    tags_in_query_list = []
+    for tag in raw_tags_in_query_list:
+        if tag.endswith(':'):
+            tags_in_query_list.append(tag[:-1])
+        else:
+            tags_in_query_list.append(tag[:tag.find(':')])
+    logger.info(f"{module_name}: {tags_in_query_list}")
     providers = SearchProvider.objects.filter(active=True, owner=search.owner) | SearchProvider.objects.filter(active=True, shared=True)
     new_provider_list = []
     if search.searchprovider_list:            
@@ -64,12 +75,18 @@ def search(id):
                 provider_key = provider.id
             if provider_key in search.searchprovider_list:
                 new_provider_list.append(provider)
-            if provider.name.lower() in (str(p).lower() for p in search.searchprovider_list):
+                continue
+            if provider.name.lower() in [str(p).lower() for p in search.searchprovider_list]:
                 if not provider in new_provider_list:
                     new_provider_list.append(provider)
+                    continue
             if provider.tags:
                 for tag in provider.tags:
-                    if tag.lower() in (str(p).lower() for p in search.searchprovider_list):
+                    if tag.lower() in [t.lower() for t in tags_in_query_list]:
+                        if not provider in new_provider_list:
+                            new_provider_list.append(provider)
+                            continue
+                    if tag.lower() in [p.lower() for p in search.searchprovider_list]:
                         if not provider in new_provider_list:
                             new_provider_list.append(provider)
                 # end if
@@ -81,6 +98,13 @@ def search(id):
             # active status is determined later on
             if provider.default:
                 new_provider_list.append(provider)
+            else:
+                if provider.tags:
+                    for tag in provider.tags:
+                        if tag.lower() in [t.lower() for t in tags_in_query_list]: 
+                            if not provider in new_provider_list:
+                                new_provider_list.append(provider)
+        # end for
     # end if
     providers = new_provider_list
     if len(providers) == 0:
@@ -93,6 +117,7 @@ def search(id):
     # pre-query processing, which updates query_string_processed
     if search.pre_query_processor or search.pre_query_processors:
         search.status = 'PRE_QUERY_PROCESSING'
+        logger.info(f"{module_name}: {search.status}")
         search.save()
         # setup processor pipeline
         processor_list = []
@@ -124,9 +149,9 @@ def search(id):
         search.query_string_processed = search.query_string
     # end if
     
-    # to do: use chord()
     ########################################
     search.status = 'FEDERATING'
+    logger.info(f"{module_name}: {search.status}")
     search.save()        
     federation_result = {}
     federation_status = {}
@@ -174,6 +199,7 @@ def search(id):
                 at_least_one = True
         ticks = ticks + 1
         search.status = f'FEDERATING_WAIT_{ticks}'
+        logger.info(f"{module_name}: {search.status}")
         search.save()    
         time.sleep(1)
         if (ticks + 2) > int(settings.SWIRL_TIMEOUT):
@@ -204,6 +230,7 @@ def search(id):
         # end if
     else:
         search.status = 'FULL_RESULTS'
+    logger.info(f"{module_name}: {search.status}")
     ########################################
     # fix the result url
     # to do: figure out a better solution P1
@@ -219,6 +246,7 @@ def search(id):
     if search.post_result_processor or search.post_result_processors:
         last_status = search.status
         search.status = 'POST_RESULT_PROCESSING'
+        logger.info(f"{module_name}: {search.status}")
         search.save()
         # setup processor pipeline
         processor_list = []
@@ -230,6 +258,7 @@ def search(id):
             processor_list = search.post_result_processors
         # end if
         for processor in processor_list:
+            logger.info(f"{module_name}: invoking processor: {processor}")
             try:
                 post_result_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id)
                 if post_result_processor.validate():
@@ -265,8 +294,10 @@ def search(id):
             search.status = 'FULL_UPDATE_READY'
         else:
             search.status = 'FULL_RESULTS_READY'
+    logger.info(f"{module_name}: {search.status}")
     end_time = time.time()
     search.time = f"{(end_time - start_time):.1f}"
+    logger.info(f"{module_name}: search time: {search.time}")
     search.save()    
 
     return True
@@ -310,6 +341,7 @@ def rescore(id):
         # end if
         for processor in processor_list:
             try:
+                logger.info(f"{module_name}: invoking processor: {processor}")
                 post_result_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id)
                 if post_result_processor.validate():
                     results_modified = post_result_processor.process()
@@ -329,6 +361,7 @@ def rescore(id):
         else:
             # to do: document this
             search.status = "RESCORED_RESULTS_READY"
+        logger.info(f"{module_name}: {search.status}")
         search.save()
         return True
     else:

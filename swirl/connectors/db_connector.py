@@ -38,6 +38,8 @@ class DBConnector(Connector):
 
     def construct_query(self):
 
+        logger.info(f"{self}: construct_query()")
+
         # handle ;
         if not self.provider.query_template.endswith(';'):
             self.provider.query_template = self.provider.query_template + ';'
@@ -100,6 +102,8 @@ class DBConnector(Connector):
     ########################################
 
     def validate_query(self):
+
+        logger.info(f"{self}: validate_query()")
 
         if '{' in self.count_query or '}' in self.count_query:
             self.warning(f"found braces in count_query after template mapping")

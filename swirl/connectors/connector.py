@@ -152,6 +152,7 @@ class Connector:
         Invoke the specified query_processor for this provider on search.query_string_processed, store the result in self.query_string_to_provider
         ''' 
 
+        logger.info(f"{self}: process_query()")
         processor_list = []
         if self.provider.query_processor:
             processor_list = [self.provider.query_processor]
@@ -161,6 +162,7 @@ class Connector:
             processor_list = self.provider.query_processors
 
         for processor in processor_list:
+            logger.info(f"{self}: invoking processor: {processor}")
             try:
                 processed_query = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.search.query_string_processed, self.provider.query_mappings, self.provider.tags).process()
             except (NameError, TypeError, ValueError) as err:
@@ -184,6 +186,7 @@ class Connector:
         Turn the query_string_processed into the query_to_provider
         ''' 
 
+        logger.info(f"{self}: construct_query()")
         self.query_to_provider = self.query_string_to_provider
         return
 
@@ -195,6 +198,7 @@ class Connector:
         Validate the query_to_provider, and return True or False
         ''' 
 
+        logger.info(f"{self}: validate_query()")
         if self.query_to_provider == "":
             self.error("query_to_provider is blank or missing")
             return False
@@ -208,6 +212,7 @@ class Connector:
         Connect to, query and save the response from this provider 
         ''' 
 
+        logger.info(f"{self}: execute_search()")
         self.found = 1
         self.retrieved = 1
         self.response = [ 
@@ -228,6 +233,7 @@ class Connector:
         Transform the response from the provider into a json (list) and store as results
         ''' 
 
+        logger.info(f"{self}: normalize_response()")
         if self.response:
             if len(self.response) == 0:
                 # no results, not an error
@@ -248,6 +254,7 @@ class Connector:
         Process the json results through the specified result processor for the provider, updating processed_results
         ''' 
 
+        logger.info(f"{self}: process_results()")
         if self.found > 0:
             # process results
             if self.results:
@@ -266,7 +273,8 @@ class Connector:
             processor_output = None
 
             for processor in processor_list:
-
+                
+                logger.info(f"{self}: invoking processor: {processor}")
                 try:
                     processor_output = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(processor_input, self.provider, self.query_string_to_provider).process()
                 except (NameError, TypeError, ValueError) as err:
@@ -296,6 +304,7 @@ class Connector:
         Store the transformed results as a Result object in the database, linked to the search_id
         ''' 
 
+        logger.info(f"{self}: save_results()")
         # timing
         end_time = time.time()
 
@@ -344,6 +353,7 @@ class Connector:
                 result.query_processors = query_processors
                 result.result_processors = result_processors
                 result.status = 'UPDATED'
+                logger.info(f"{self}: Result.save()")
                 result.save()
             except Error as err:                 
                 self.error(f'save_results() update failed: {err.args}, {err}', save_results=False)
@@ -354,6 +364,7 @@ class Connector:
         # end if
 
         try:
+            logger.info(f"{self}: Result.create()")
             new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id, query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider, query_processors=query_processors, result_processors=result_processors, messages=self.messages, status='READY', found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}', json_results=self.processed_results, owner=self.search.owner)
             new_result.save()
         except Error as err:

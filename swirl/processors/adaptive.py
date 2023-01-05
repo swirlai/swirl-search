@@ -18,8 +18,8 @@ class AdaptiveQueryProcessor(QueryProcessor):
     
     def process(self):
 
-        # TAG: Operator
-        # TAG: does not support NOT
+        # TAG: processing
+        # Note: WOT is "without tags"
 
         query_wot_list = []
         dict_tags = {}
@@ -58,18 +58,13 @@ class AdaptiveQueryProcessor(QueryProcessor):
                 # end if
             # end if
 
-        # self.warning(f"query_wot: {query_wot_list}, dict_tags: {dict_tags}")
-        # self.warning(f"{self.tags}")
-
         if self.tags:
-            # self.warning("foo")
             # if this provider has tags
             adapted_query_list = []
             for tag in self.tags:
                 if tag.lower() in dict_tags:
                     # if the provider has a tag specified in this query
                     adapted_query_list.append(' '.join(dict_tags[tag.lower()]))
-            # self.warning(f"adapted_query: {adapted_query_list}")
             if adapted_query_list:
                 # replace the query with just that text
                 return ' '.join(adapted_query_list)
@@ -78,12 +73,10 @@ class AdaptiveQueryProcessor(QueryProcessor):
 
         self.query_string = ' '.join(query_wot_list)
 
-        # Adaptive Query Processing:
-
         query = clean_string(self.query_string).strip()
         query_list = query.split()
 
-        # NOT Operator
+        # NOT tag
         # parse the query into list_not and list_and
         list_not = []
         list_and = []

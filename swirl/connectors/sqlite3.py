@@ -37,6 +37,8 @@ class Sqlite3(DBConnector):
 
     def execute_search(self):
 
+        logger.info(f"{self}: execute_search()")
+
         # connect to the db
         db_path = self.provider.url
         if not os.path.exists(db_path):
@@ -107,6 +109,8 @@ class Sqlite3(DBConnector):
 
     def normalize_response(self):
         
+        logger.info(f"{self}: normalize_response()")
+
         rows = self.response
         found = self.found
 

@@ -38,6 +38,8 @@ class PostgreSQL(DBConnector):
 
     def execute_search(self):
 
+        logger.info(f"{self}: execute_search()")
+
         # connect to the db
         config = self.provider.url.split(':')
         if len(config) != 5:
@@ -114,6 +116,8 @@ class PostgreSQL(DBConnector):
 
     def normalize_response(self):
         
+        logger.info(f"{self}: normalize_response()")
+
         rows = self.response
         found = self.found
 

@@ -30,7 +30,7 @@ from swirl.mixers import *
 module_name = 'views.py'
 
 from swirl.tasks import search_task, rescore_task
-from swirl.search import search as execute_search
+from swirl.search import search as run_search
 
 SWIRL_OBJECT_LIST = Search.MIXER_CHOICES
 
@@ -56,7 +56,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
     queryset = SearchProvider.objects.all()
     serializer_class = SearchProviderSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    pagination_class = None 
+    # pagination_class = None 
 
     def list(self, request):
 
@@ -181,6 +181,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
                 return Response(status=status.HTTP_403_FORBIDDEN)
             # run search
+            logger.info(f"{module_name}: Search.create() from ?q")
             try:
                 new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user)
             except Error as err:
@@ -218,6 +219,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
                 return Response(status=status.HTTP_403_FORBIDDEN)
             # run search
+            logger.info(f"{module_name}: Search.create() from ?qs")
             try:
                 # security review for 1.7 - OK, created with owner
                 new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user)
@@ -225,7 +227,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 self.error(f'Search.create() failed: {err}')            
             new_search.status = 'NEW_SEARCH'
             new_search.save()
-            res = execute_search(new_search.id)
+            res = run_search(new_search.id)
             if not res:
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             if not Search.objects.filter(id=new_search.id).exists():
@@ -270,6 +272,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             if not Search.objects.filter(id=rerun_id, owner=self.request.user).exists():
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
             # security review for 1.7 - OK, filtered by search            
+            logger.info(f"{module_name}: ?rerun!")
             rerun_search = Search.objects.get(id=rerun_id)
             old_results = Result.objects.filter(search_id=rerun_search.id)
             logger.warning(f"{module_name}: deleting Result objects associated with search {rerun_id}")
@@ -300,6 +303,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             # security check
             if not Search.objects.filter(id=rescore_id, owner=self.request.user).exists():
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
+            logger.info(f"{module_name}: ?rescore!")
             rescore_task.delay(rescore_id)
             time.sleep(settings.SWIRL_RESCORE_WAIT)
             return redirect(f'/swirl/results?search_id={rescore_id}')
@@ -318,6 +322,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             # security check
             if not Search.objects.filter(id=update_id, owner=self.request.user).exists():
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
+            logger.info(f"{module_name}: ?update!")
             search.status = 'UPDATE_SEARCH'
             search.save()
             search_task.delay(update_id)
@@ -325,6 +330,8 @@ class SearchViewSet(viewsets.ModelViewSet):
             return redirect(f'/swirl/results?search_id={update_id}')
 
         ########################################
+
+        logger.info(f"{module_name}: Search.list()!")
 
         # security review for 1.7 - OK, filtered by owner
         self.queryset = Search.objects.filter(owner=self.request.user)
@@ -339,7 +346,9 @@ class SearchViewSet(viewsets.ModelViewSet):
         if not (request.user.has_perm('swirl.add_search') and request.user.has_perm('swirl.change_search') and request.user.has_perm('swirl.add_result') and request.user.has_perm('swirl.change_result')):
             logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
             return Response(status=status.HTTP_403_FORBIDDEN)
-            
+
+        logger.info(f"{module_name}: Search.create() from POST")
+
         serializer = SearchSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         # security review for 1.7 - OK, create with owner
@@ -386,6 +395,8 @@ class SearchViewSet(viewsets.ModelViewSet):
         if not Search.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
+        logger.info(f"{module_name}: Search.update()!")
+
         search = Search.objects.get(pk=pk)
         search.date_updated = datetime.now()
         serializer = SearchSerializer(instance=search, data=request.data)
@@ -412,6 +423,8 @@ class SearchViewSet(viewsets.ModelViewSet):
         # security review for 1.7 - OK, filtered by owner
         if not Search.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
+
+        logger.info(f"{module_name}: Search.destroy()!")
 
         search = Search.objects.get(pk=pk)
         search.delete()
@@ -470,6 +483,7 @@ class ResultViewSet(viewsets.ModelViewSet):
             if not Search.objects.filter(id=search_id, owner=self.request.user).exists():
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
             # security review for 1.7 - OK, filtered by owner
+            logger.info(f"{module_name}: Calling mixer from ?search_id")
             search = Search.objects.get(id=search_id)
             if search.status.endswith('_READY') or search.status == 'RESCORING':
                 try:
@@ -526,6 +540,8 @@ class ResultViewSet(viewsets.ModelViewSet):
         if not Result.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
+        logger.info(f"{module_name}: Result.update()!")
+
         result = Result.objects.get(pk=pk)
         result.date_updated = datetime.now()
         serializer = ResultSerializer(instance=result, data=request.data)
@@ -545,6 +561,8 @@ class ResultViewSet(viewsets.ModelViewSet):
         # security review for 1.7 - OK, filtered by owner
         if not Result.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
+
+        logger.info(f"{module_name}: Result.destroy()!")
 
         result = Result.objects.get(pk=pk)
         result.delete()

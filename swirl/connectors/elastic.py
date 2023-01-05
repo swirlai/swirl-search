@@ -34,6 +34,8 @@ class Elastic(Connector):
 
     def construct_query(self):
 
+        logger.info(f"{self}: construct_query()")
+
         query_to_provider = bind_query_mappings(self.provider.query_template, self.provider.query_mappings)
 
         if '{query_string}' in self.provider.query_template:
@@ -65,6 +67,8 @@ class Elastic(Connector):
     ########################################
 
     def execute_search(self):     
+
+        logger.info(f"{self}: execute_search()")
 
         try:
             # security review 1.7 - OK - limited to Elasticsearch
@@ -100,6 +104,8 @@ class Elastic(Connector):
 
     def normalize_response(self):
         
+        logger.info(f"{self}: normalize_response()")
+
         if len(self.response) == 0:
             self.error("search succeeded, but found no json data in response")
 

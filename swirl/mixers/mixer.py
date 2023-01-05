@@ -77,14 +77,10 @@ class Mixer:
         self.mix_wrapper['info'] = {}
         self.mix_wrapper['results'] = None
 
-        result_messages = []
-        rewrote_messages = []
+        messages = []
         for result in self.results:
             for message in result.messages:
-                if 'rewrote' in message:
-                    rewrote_messages.append(message)
-                else:
-                    result_messages.append(message)
+                messages.append(message)
             self.mix_wrapper['info'][result.searchprovider] = {}
             self.mix_wrapper['info'][result.searchprovider]['found'] = result.found
             self.mix_wrapper['info'][result.searchprovider]['retrieved'] = result.retrieved
@@ -94,13 +90,13 @@ class Mixer:
             self.mix_wrapper['info'][result.searchprovider]['query_processors'] = result.query_processors
             self.mix_wrapper['info'][result.searchprovider]['result_processors'] = result.result_processors
             self.mix_wrapper['info'][result.searchprovider]['search_time'] = result.time
-        result_messages = natsorted(result_messages, reverse=True)
-        rewrote_messages = natsorted(rewrote_messages)
-        self.mix_wrapper['messages'] = self.mix_wrapper['messages'] + result_messages + rewrote_messages
         
         if self.search.messages:
             for message in self.search.messages:
-                self.mix_wrapper['messages'].append(message)
+                messages.append(message)
+        
+        self.mix_wrapper['messages'] = self.mix_wrapper['messages'] + natsorted(messages) #, reverse=True)
+
         self.mix_wrapper['info']['search'] = {}
         if self.search.tags:
             self.mix_wrapper['info']['search']['tags'] = self.search.tags

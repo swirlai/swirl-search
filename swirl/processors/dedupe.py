@@ -69,24 +69,28 @@ class DedupeBySimilarityPostResultProcessor(PostResultProcessor):
                 # end for                    
                 content = content.strip()
                 nlp_content = nlp(content)
-                if nlp_list:
-                    for n in nlp_list:
-                        # to do: parameterize
-                        sim = nlp_content.similarity(n)
-                        if sim > settings.SWIRL_DEDUPE_SIMILARITY_MINIMUM:
-                            # similar
-                            dupes = dupes + 1
-                            logger.info(f"{self}: Excluding duplicate by similarity {sim}!")
-                            continue
-                        else:
-                            # not similar
-                            nlp_list.append(nlp_content)
-                            deduped_item_list.append(item)
-                        # end if
-                    # end for
-                # end if 
+                dupe = False
+                max_sim = 0.0
+                for n in nlp_list:
+                    sim = nlp_content.similarity(n)
+                    if sim > settings.SWIRL_DEDUPE_SIMILARITY_MINIMUM:
+                        # similar
+                        dupe = True
+                        dupes = dupes + 1
+                        logger.info(f"{self}: Excluding dupe: {sim} for {item['title']}")
+                        break
+                    else:
+                        if sim > max_sim:
+                            max_sim = sim
+                    # end if
+                # end for
+                if not dupe:
+                    nlp_list.append(nlp_content)
+                    deduped_item_list.append(item)
+                # end if
             # end for
             result.json_results = deduped_item_list
+            logger.info(f"{self}: result.save()")
             result.save()
         # end for
         
