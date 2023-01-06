@@ -6,9 +6,7 @@ SWIRL is an open source, AI [Federated Search Engine](https://en.wikipedia.org/w
 
 ![Federated search diagram](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/federation_diagram.png)
 
-SWIRL searches any number of search engines, databases and services with query APIs and uses [Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/) (the "AI") to re-rank the unified results - in seconds - *without* extracting and indexing *anything*. 
-
-SWIRL includes no-code connectors to elastic, apache solr, generic HTTP/GET/JSON, PostgreSQL and premium services like Google Programmable Search Engine, NLResearch.com, newsdata.io and more.
+SWIRL queries any number of data sources - search engines, databases, noSQL engines, cloud/SaaS services with APIs etc - and uses [Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/) to re-rank the unified results *without* extracting and indexing *anything*. Built on the python/django/rabbit stack, SWIRL includes connectors to elastic, apache solr, PostgreSQL and generic HTTP/GET/JSON with configurations of the latter for premium services like Google's Programmable Search Engine, NLResearch.com and newsdata.io. [Learn more about SWIRL on the project WIKI...](https://github.com/sidprobstein/swirl-search/wiki)
 
 <br/>
 
@@ -31,16 +29,12 @@ http://localhost:8000/swirl/search/?q=your+query+here
 
 # Try SWIRL Now!
 
-:warning: Make sure Docker is running before proceeding
-
 ```
 docker pull sidprobstein/swirl-search
 docker compose up
 ```
 
-The container will start. Note down the container name, e.g. ```swirl-search-master-app-1```
-
-After a minute or two you should see the following or similar:
+The container will start. Note down the container name, e.g. ```swirl-search-master-app-1```. After a minute or two you should see the following or similar:
 
 ```
 swirl-search-master-app-1  | Command successful!
@@ -56,7 +50,7 @@ From the console, create a super user:
 docker exec -it swirl-search-master-app-1 python manage.py createsuperuser --username admin
 ```
 
-Enter a password. Remember it, you will need it later.
+Enter a password, twice. It will be needed in the next step.
 
 From the console, feed some search providers:
 
@@ -72,7 +66,7 @@ Be sure to replace ```<your-admin-password>``` with the password you created ear
 
 # Hosted SWIRL
 
-If you are interested in trying SWIRL via a hosted offering, please [contact support](#support).
+If you are interested in trying SWIRL via a hosted offering, please [contact support](#support) for a free trial.
 
 <br/>
 
