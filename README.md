@@ -1,12 +1,13 @@
-![SWIRL Logo](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/swirl_logo_1024.jpg)
+<h1> &nbsp; SWIRL AI Federated Search Engine <img alt='SWIRL Logo' src='https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/swirl_logo_notext_200.jpg' width=38 align=left></h1>
 
-# SWIRL AI Federated Search Engine
-
-SWIRL is an open source, AI [Federated Search Engine](https://en.wikipedia.org/wiki/Federated_search)! 
+SWIRL queries any number of data sources - search engines, databases, noSQL engines, cloud/SaaS services with APIs etc - and uses [Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/) to re-rank the unified results *without* extracting and indexing *anything*. 
 
 ![Federated search diagram](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/federation_diagram.png)
 
-SWIRL queries any number of data sources - search engines, databases, noSQL engines, cloud/SaaS services with APIs etc - and uses [Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/) to re-rank the unified results *without* extracting and indexing *anything*. Built on the python/django/rabbit stack, SWIRL includes connectors to elastic, apache solr, PostgreSQL and generic HTTP/GET/JSON with configurations of the latter for premium services like Google's Programmable Search Engine, NLResearch.com and newsdata.io. [Learn more about SWIRL on the project WIKI...](https://github.com/sidprobstein/swirl-search/wiki)
+Built on the python/django/rabbit stack, SWIRL includes connectors to [elastic](https://www.elastic.co/cn/downloads/elasticsearch), apache [solr](https://solr.apache.org/), [PostgreSQL](https://www.postgresql.org/) and generic HTTP/GET/JSON with configurations for premium services like Google's Programmable Search Engine, NLResearch.com, newsdata.io and more. 
+
+Learn more about [Federated Search](https://en.wikipedia.org/wiki/Federated_search) and 
+[SWIRL SEARCH on the project WIKI...](https://github.com/sidprobstein/swirl-search/wiki)
 
 <br/>
 
@@ -66,7 +67,7 @@ Be sure to replace ```<your-admin-password>``` with the password you created ear
 
 # Hosted SWIRL
 
-If you are interested in trying SWIRL via a hosted offering, please [contact support](#support) for a free trial.
+If you are interested in a free trial of SWIRL as a managed service, please [contact support](#support)!
 
 <br/>
 
