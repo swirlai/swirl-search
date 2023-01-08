@@ -47,7 +47,7 @@ class RelevancyNewItemsMixer(Mixer):
 
         self.found = len(self.new_results)
         self.mix_wrapper['info']['results']['retrieved_total'] = self.found
-        self.mix_wrapper['messages'].append(f"[{datetime.now()}] RelevancyNewItemsMixer hid {int(self.found) - len(self.new_results)} old results")
+        self.mix_wrapper['messages'].append(f"[{datetime.now()}] RelevancyNewItemsMixer hid {len(self.all_results) - int(self.found)} old results")
 
         # sort by score
         self.mixed_results = sorted(sorted(sorted(self.new_results, key=itemgetter('searchprovider_rank')), key=itemgetter('date_published'), reverse=True), key=itemgetter('swirl_score'), reverse=True)

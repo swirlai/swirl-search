@@ -23,12 +23,29 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
     ############################################
 
-    def process(self):
+    def __init__(self, search_id):
 
-        RELEVANCY_CONFIG = settings.SWIRL_RELEVANCY_CONFIG
-        
-        # prep query string
-        query = clean_string(self.search.query_string_processed).strip()
+        self.query_stemmed_list = None
+        self.not_list = None
+        self.query_list = None
+        self.query_stemmed_target_list = None
+        self.query_target_list = None
+        self.query_has_numeric = None
+
+        return super().__init__(search_id)
+
+    ############################################
+
+    def prepare_query(self, q_string):
+
+        self.query_stemmed_list = []
+        self.not_list = []
+        self.query_list = []
+        self.query_stemmed_target_list = []
+        self.query_target_list = []
+        self.query_has_numeric = False
+
+        query = clean_string(q_string).strip()
         query_list = query.strip().split()
         # remove AND, OR
         if 'AND' in query_list:
@@ -76,9 +93,6 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
             self.warning("Query stemmed list is empty!")
             return self.results
 
-        updated = 0
-        dict_lens = {}
-
         # prepare query targets
         query_stemmed_target_list = []
         query_target_list = []
@@ -113,7 +127,25 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     continue
                 query_target_list.append([gram])
         if len(query_stemmed_target_list) != len(query_target_list):
+            # to do: handle more elegantly?!?
             self.error("len(query_stemmed_target_list) != len(query_target_list), highlighting errors may occur")
+
+        self.query_stemmed_list = query_stemmed_list
+        self.not_list = not_list
+        self.query_list = query_list
+        self.query_stemmed_target_list = query_stemmed_target_list
+        self.query_target_list = query_target_list
+        self.query_has_numeric = query_has_numeric
+
+    ############################################
+
+    def process(self):
+
+        RELEVANCY_CONFIG = settings.SWIRL_RELEVANCY_CONFIG
+        
+        updated = 0
+        dict_result_lens = {}
+        list_query_lens = []
 
         ############################################
         # PASS 1
@@ -124,10 +156,12 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
             highlighted_json_results = []
             if not results.json_results:
                 continue
+            # prepare the query for this result set
+            self.prepare_query(results.query_string_to_provider)
+            # capture query len
+            list_query_lens.append(len(results.query_string_to_provider.split()))
+            # iterate through the items in the result set
             for item in results.json_results:
-                # if results.status == 'UPDATED':
-                #     if not 'new' in item:
-                #         continue
                 if 'explain' in item:
                     dict_score = item['explain']
                     item['dict_score'] = dict_score
@@ -155,11 +189,11 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                 self.warning("duplicate field?")
                             else:
                                 dict_len[field] = len(result_field_list)
-                            if field in dict_lens:
-                                dict_lens[field].append(len(result_field_list))
+                            if field in dict_result_lens:
+                                dict_result_lens[field].append(len(result_field_list))
                             else:
-                                dict_lens[field] = []
-                                dict_lens[field].append(len(result_field_list))
+                                dict_result_lens[field] = []
+                                dict_result_lens[field].append(len(result_field_list))
                             # end if
                         # end if
                     # end for
@@ -168,7 +202,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                 ############################################
                 # result item
                 dict_score = {}
-                dict_score['stems'] = ' '.join(query_stemmed_list)
+                dict_score['stems'] = ' '.join(self.query_stemmed_list)
                 dict_len = {}
                 notted = ""
                 for field in RELEVANCY_CONFIG:
@@ -195,7 +229,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         if len(result_field_list) != len(result_field_stemmed_list):
                             self.error("len(result_field_list) != len(result_field_stemmed_list), highlighting errors may occur")
                         # NOT test
-                        for t in not_list:
+                        for t in self.not_list:
                             if t.lower() in (result_field.lower() for result_field in result_field_list):
                                 notted = {field: t}
                                 break
@@ -204,20 +238,20 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                             self.warning("duplicate field?")
                         else:
                             dict_len[field] = len(result_field_list)
-                        if field in dict_lens:
-                            dict_lens[field].append(len(result_field_list))
+                        if field in dict_result_lens:
+                            dict_result_lens[field].append(len(result_field_list))
                         else:
-                            dict_lens[field] = []
-                            dict_lens[field].append(len(result_field_list))
+                            dict_result_lens[field] = []
+                            dict_result_lens[field].append(len(result_field_list))
                         # initialize
                         dict_score[field] = {}
                         extracted_highlights = []
                         match_stems = []
                         ###########################################
                         # query vs result_field
-                        if match_any(query_stemmed_list, result_field_stemmed_list):
+                        if match_any(self.query_stemmed_list, result_field_stemmed_list):
                             # capitalize search terms that are capitalied in the result field
-                            query = ' '.join(capitalize_search(query_list, result_field_list))
+                            query = ' '.join(capitalize_search(self.query_list, result_field_list))
                             query_nlp = nlp(query)
                             # check for zero vector
                             empty_query_vector = False
@@ -247,10 +281,12 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                     qvr = query_nlp.similarity(result_field_nlp)
                             # end if
                             if qvr >= float(settings.SWIRL_MIN_SIMILARITY):
-                                dict_score[field]['_'.join(query_list)+label] = qvr
+                                dict_score[field]['_'.join(self.query_list)+label] = qvr
+                            else:
+                                logger.debug(f"{self}: item below SWIRL_MIN_SIMILARITY: {'_'.join(self.query_list)+label} ~?= {item}")
                         ############################################
                         # score each query target
-                        for stemmed_query_target, query_target in zip(query_stemmed_target_list, query_target_list):
+                        for stemmed_query_target, query_target in zip(self.query_stemmed_target_list, self.query_target_list):
                             query_slice_stemmed_list = stemmed_query_target
                             query_slice_stemmed_len = len(query_slice_stemmed_list)
                             if '_'.join(query_target) in dict_score[field]:
@@ -282,7 +318,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                     else:
                                         rw_list = result_field_list[match-(2*query_slice_stemmed_len)-1:match+(2*query_slice_stemmed_len)+1]
                                     # end if
-                                    if not query_has_numeric and has_numeric(rw_list):
+                                    if not self.query_has_numeric and has_numeric(rw_list):
                                         rw_list = remove_numeric(rw_list)
                                         if not rw_list:
                                             rw_list = result_field_list[match:match+(3*query_slice_stemmed_len)+1]
@@ -301,6 +337,8 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                             # self.warning(f"compare: {qw_nlp} sim? {rw_nlp} = {qw_nlp_sim}")
                                             if qw_nlp_sim >= float(settings.SWIRL_MIN_SIMILARITY):
                                                 dict_score[field][key] = qw_nlp_sim
+                                            else:
+                                                logger.debug(f"{self}: item below SWIRL_MIN_SIMILARITY: {' '.join(qw_list)} ~?= {item}")
                                     if dict_score[field][key] == 0.0:
                                         del dict_score[field][key]
                                     ######### COLLECT MATCHES FOR HIGHLIGHTING
@@ -330,10 +368,13 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
             # end for result in results.json_results:
         # end for results in self.results:
         ############################################
-        # Compute field means
+        # compute field means
         dict_len_median = {}
-        for field in dict_lens:
-            dict_len_median[field] = median(dict_lens[field])
+        for field in dict_result_lens:
+            dict_len_median[field] = median(dict_result_lens[field])
+        # compute query length adjustmnet
+        dict_query_lens = {}
+
         ############################################
         # PASS 2
         # score results by field, adjusting for field length
@@ -341,9 +382,6 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
             if not results.json_results:
                 continue
             for item in results.json_results:
-                # if results.status == 'UPDATED':
-                #     if not 'new' in item:
-                #         continue
                 item['swirl_score'] = 0.0
                 # check for not
                 if 'NOT' in item:
@@ -356,13 +394,11 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     dict_score = item['dict_score']
                     del item['dict_score']
                 else:
-                    # self.warning(f"pass 2: result {results}: {result} has no dict_score")
                     continue
                 if 'dict_len' in item:
                     dict_len = item['dict_len']
                     del item['dict_len']
                 else:
-                    # self.warning(f"pass 2: result {results}: {result} has no dict_len")
                     continue
                 # score the item 
                 dict_len_adjust = {}
@@ -373,6 +409,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         continue
                     len_adjust = float(dict_len_median[f] / dict_len[f])
                     dict_len_adjust[f] = len_adjust
+                    qlen_adjust = float(median(list_query_lens) / len(results.query_string_to_provider.strip().split()))
                     for k in dict_score[f]:
                         if k.startswith('_'):
                             continue
@@ -383,13 +420,14 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                             if k.endswith('_*') or k.endswith('_s*'):
                                 item['swirl_score'] = item['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k)) 
                             else:
-                                item['swirl_score'] = item['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k)) * (0.7 * len_adjust) * rank_adjust
+                                item['swirl_score'] = item['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k)) * len_adjust * qlen_adjust * rank_adjust
                         # end if
                     # end for
                 # end for
                 for f in dict_score:
                     if f in dict_len_adjust:
-                        dict_score[f]['length_adjust'] = dict_len_adjust[f]
+                        dict_score[f]['result_length_adjust'] = dict_len_adjust[f]
+                        dict_score[f]['query_length_adjust'] = qlen_adjust
                 ####### explain
                 item['explain'] = dict_score                
                 updated = updated + 1

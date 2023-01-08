@@ -26,41 +26,13 @@ from datetime import datetime
 # from django.conf import settings
 
 module_name = 'swirl.py'
-g_debug = False
 
 from swirl.banner import SWIRL_BANNER, bcolors
-
-# NOTE: ORDER BELOW IS IMPORTANT
-# NOTE: FIRST IN LIST IS FIRST STARTED
-# NOTE: FIRST IN LIST IS LAST STOPPED 
-
-SWIRL_SERVICES = [
-    {
-        'name': 'rabbitmq',
-        'path': 'rabbitmq-server'
-    },
-    {
-        'name': 'django',
-        'path': 'daphne swirl_server.asgi:application'     # 'python manage.py runserver'
-    },
-    {
-        'name': 'celery-worker',
-        'path': 'celery -A swirl_server worker --loglevel=info'
-    },
-    {
-        'name': 'celery-beats',
-        'path': 'celery -A swirl_server beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler'
-    }
-]
+from swirl.services import SWIRL_SERVICES, SWIRL_SERVICES_DEBUG, SWIRL_SERVICES_DICT, SWIRL_SERVICES_DEBUG_DICT, SERVICES, SERVICES_DICT
 
 SWIRL_CORE_SERVICES = ['django', 'celery-worker']
 
-# prepare service_dict 
-SWIRL_SERVICE_DICT = {}
-for swirl_service in SWIRL_SERVICES:
-    SWIRL_SERVICE_DICT[swirl_service['name']] = swirl_service['path']
-
-COMMAND_LIST = [ 'help', 'start', 'start_sleep', 'stop', 'restart', 'migrate', 'setup', 'status', 'watch', 'logs' ]
+COMMAND_LIST = [ 'help', 'start', 'debug', 'start_sleep', 'stop', 'restart', 'migrate', 'setup', 'status', 'watch', 'logs' ]
 
 ##################################################
 
@@ -86,7 +58,6 @@ def check_pid(pid):
     return str(pid) in result
 
 def show_pids(pid_string):
-    # to do: check if pid_string ends in , P3
     proc = subprocess.run(['ps','-p', pid_string[:-1]], capture_output=True)
     result = proc.stdout.decode('UTF-8')
     return result
@@ -168,7 +139,7 @@ def start(service_list):
     pids = ""
     flag = False
     for service_name in service_list:
-        if service_name in SWIRL_SERVICE_DICT:
+        if service_name in SERVICES_DICT:
             # Fix for https://github.com/sidprobstein/swirl-search/issues/47
             # if service_name == 'rabbitmq':
             #     # check to see if it is running
@@ -177,8 +148,8 @@ def start(service_list):
             #         print(f"Warning: rabbitmq appears to be running, skipping it:\n{rabbit}")
             #         continue
             # # end if
-            print(f"Start: {service_name} -> {SWIRL_SERVICE_DICT[service_name]} ... ", end='')
-            result = launch(service_name, SWIRL_SERVICE_DICT[service_name])
+            print(f"Start: {service_name} -> {SERVICES_DICT[service_name]} ... ", end='')
+            result = launch(service_name, SERVICES_DICT[service_name])
             time.sleep(5)        
             if result > 0:
                 print(f'Ok, pid: {result}')
@@ -213,6 +184,11 @@ def start_sleep (service_list):
     
     status = start(service_list)
     return status
+
+##################################################
+
+def debug(service_list):
+    pass
 
 ##################################################
 
@@ -346,7 +322,7 @@ def stop(service_list):
         # if in .swirl
         if service_name in service_list:
             # if specified as argument to command
-            if service_name == SWIRL_SERVICES[0]['name']:
+            if service_name == SERVICES[0]['name']:
                 # except for the first listed service
                 continue
             print(f"Stop: {service_name}, pid: {dict_pid[service_name]}... ", end='')
@@ -371,10 +347,10 @@ def stop(service_list):
     # end for
 
     # shut down the first service, last - IF specified
-    if SWIRL_SERVICES[0]['name'] in dict_pid:
-        if SWIRL_SERVICES[0]['name'] in service_list:
-            print(f"Stop: {SWIRL_SERVICES[0]['name']}, pid_group: {dict_pid[SWIRL_SERVICES[0]['name']]}... ", end='')
-            pid = int(dict_pid[SWIRL_SERVICES[0]['name']])
+    if SERVICES[0]['name'] in dict_pid:
+        if SERVICES[0]['name'] in service_list:
+            print(f"Stop: {SERVICES[0]['name']}, pid_group: {dict_pid[SERVICES[0]['name']]}... ", end='')
+            pid = int(dict_pid[SERVICES[0]['name']])
             try:
                 pgrp = os.getpgid(pid)
                 os.killpg(pgrp, signal.SIGTERM)
@@ -390,7 +366,7 @@ def stop(service_list):
                 flag = True
             else:
                 print(f"Ok")
-                stopped_names.append(SWIRL_SERVICES[0]['name'])
+                stopped_names.append(SERVICES[0]['name'])
             pids = pids + str(pid) + ','
             # end if
     # end if
@@ -447,7 +423,7 @@ def restart(service_list):
 def help(service_list):
     print("Usage: python swirl.py <command> [<service-list>]\n")
     print(f"Available commands: {', '.join(COMMAND_LIST)}")
-    print(f"Available services: {', '.join(SWIRL_SERVICE_DICT.keys())}, core ({', '.join(SWIRL_CORE_SERVICES)})\n")
+    print(f"Available services: {', '.join(SERVICES_DICT.keys())}, core ({', '.join(SWIRL_CORE_SERVICES)})\n")
     print("The start, status, stop and restart commands default to all SWIRL services.")
     print("Most optionally accept one or more SWIRL service names, separated by spaces.")
     print()
@@ -491,17 +467,20 @@ for command in COMMAND_LIST:
     COMMAND_DIR[command] = eval(command)
 
 def main(argv):
+    global SERVICES
+    global SERVICES_DICT
 
     print(f"{SWIRL_BANNER}")
     print()
 
     parser = argparse.ArgumentParser(description="Manage the SWIRL server")
     parser.add_argument('command', nargs='+', help="Specify 'help' to get a list of available commands")
-    parser.add_argument('-d', '--debug', action="store_true", help="provide debugging information")
+    parser.add_argument('-d', '--debug', action="store_true", help="start SWIRL in debug mode")
     args = parser.parse_args()
-
+    
     if args.debug:
-        g_debug = True
+        SERVICES = SWIRL_SERVICES_DEBUG
+        SERVICES_DICT = SWIRL_SERVICES_DEBUG_DICT
 
     # check to see that we are in a directory with swirl under it, and manage.py in it
     dir = os.getcwd()
@@ -517,16 +496,16 @@ def main(argv):
         service_list = args.command[1:]
         if service_list == [] or service_list[0].lower() == 'all':
             service_list = []
-            for service in SWIRL_SERVICES:
+            for service in SERVICES:
                 service_list.append(service['name'])
         elif service_list[0].lower() == 'core':
             service_list = SWIRL_CORE_SERVICES
         else:
             for service in service_list:
-                if not service in SWIRL_SERVICE_DICT:
+                if not service in SERVICES_DICT:
                     print(f"{bcolors.WARNING}Unknown service: {service}{bcolors.ENDC}")
                     print(f"Available services: ", end='')
-                    for swirl_service in SWIRL_SERVICE_DICT:
+                    for swirl_service in SERVICES_DICT:
                         print(f"{swirl_service} ", end='')
                     print()
                     return False

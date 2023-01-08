@@ -62,7 +62,7 @@ def search(id):
             tags_in_query_list.append(tag[:-1])
         else:
             tags_in_query_list.append(tag[:tag.find(':')])
-    logger.info(f"{module_name}: {tags_in_query_list}")
+    logger.debug(f"{module_name}: tags_in_query_list: {tags_in_query_list}")
     providers = SearchProvider.objects.filter(active=True, owner=search.owner) | SearchProvider.objects.filter(active=True, shared=True)
     new_provider_list = []
     if search.searchprovider_list:            
