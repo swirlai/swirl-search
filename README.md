@@ -35,20 +35,22 @@ docker pull sidprobstein/swirl-search
 docker compose up
 ```
 
-The container will start. Note down the container name, e.g. ```swirl-search-master-app-1```. After a minute or two you should see the following or similar:
+The container will start. Note the container name - for example ```swirl-search-app-1``` as shown below. 
+
+After a minute or two you should see the following or similar:
 
 ```
-swirl-search-master-app-1  | Command successful!
-swirl-search-master-app-1  | 2022-10-01 17:06:50,295 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
-swirl-search-master-app-1  | 2022-10-01 17:06:50,295 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
-swirl-search-master-app-1  | 2022-10-01 17:06:50,295 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
-swirl-search-master-app-1  | 2022-10-01 17:06:50,296 INFO     Listening on TCP address 0.0.0.0:8000
+swirl-search-app-1  | Command successful!
+swirl-search-app-1  | 2022-10-01 17:06:50,295 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
+swirl-search-app-1  | 2022-10-01 17:06:50,295 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+swirl-search-app-1  | 2022-10-01 17:06:50,295 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
+swirl-search-app-1  | 2022-10-01 17:06:50,296 INFO     Listening on TCP address 0.0.0.0:8000
 ```
 
 From the console, create a super user:
 
 ```
-docker exec -it swirl-search-master-app-1 python manage.py createsuperuser --username admin
+docker exec -it swirl-search-app-1 python manage.py createsuperuser --username admin
 ```
 
 Enter a password, twice. It will be needed in the next step.
@@ -56,18 +58,29 @@ Enter a password, twice. It will be needed in the next step.
 From the console, feed some search providers:
 
 ```
-docker exec -it swirl-search-master-app-1 python swirl_load.py SearchProviders/google_pse.json -u admin -p <your-admin-password>
+docker exec -it swirl-search-app-1 python swirl_load.py SearchProviders/google_pse.json -u admin -p <your-admin-password>
 ```
 
-Be sure to replace ```<your-admin-password>``` with the password you created earlier.
+Be sure to replace ```<swirl-search-app-1``` if the container name is different for your installation, and ```<your-admin-password>``` with the password created earlier.
+
+Now run a query from your browser:
+
+```
+http://localhost:8000/swirl/search/?q=enterprise+search
+```
+
+Results will appear in just a few seconds!
 
 :star: For more information please review the [Quick Start Guide](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
+
+:warning: Please note the Docker version of SWIRL does not retain results or configuration when shut down.
+
 
 <br/>
 
 # Hosted SWIRL
 
-If you are interested in a free trial of SWIRL as a managed service, please [contact support](#support)!
+If you are interested in a Docker w/PostgreSQL back-end, and/or a free trial of SWIRL as a managed service, please [contact support](#support)!
 
 <br/>
 
