@@ -200,10 +200,10 @@ CELERY_BEAT_SCHEDULE = {
          'task': 'expirer', 
          'schedule': crontab(minute=0,hour='*'),
         },          
-    # Executes every hour
+    # Executes every four hours
     'subscribe': { 
          'task': 'subscriber', 
-         'schedule': crontab(minute=0,hour='*'),   # minute='*/10'
+         'schedule': crontab(minute=0,hour='*/4'),   # minute='*/10'
         },          
 }
 
@@ -236,5 +236,5 @@ SWIRL_RELEVANCY_CONFIG = {
 }
 
 SWIRL_MAX_MATCHES = 5
-SWIRL_MIN_SIMILARITY = 0.54
+SWIRL_MIN_SIMILARITY = 0.51
 
