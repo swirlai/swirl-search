@@ -120,7 +120,7 @@ class Connector:
                         self.normalize_response()
                     if self.status not in ['FEDERATING', 'READY']:
                         self.error(f"normalize_response() failed, status {self.status}")
-                    if self.status == 'FEDERATING':
+                    else:
                         self.process_results()
                     if self.status == 'READY':
                         res = self.save_results()

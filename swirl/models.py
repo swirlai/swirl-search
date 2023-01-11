@@ -88,8 +88,8 @@ class Search(models.Model):
     ]
     post_result_processor = models.CharField(max_length=200, default='CosineRelevancyPostResultProcessor', blank=True, choices=POST_RESULT_PROCESSOR_CHOICES)
     post_result_processors = models.JSONField(default=list, blank=True)
-    result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)
-    new_result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s&new=true', blank=True)
+    result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d', blank=True)
+    new_result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=RelevancyNewItemsMixer', blank=True)
     messages = models.JSONField(default=list, blank=True)
     MIXER_CHOICES = [
         ('RelevancyMixer', 'RelevancyMixer'),

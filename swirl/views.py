@@ -478,6 +478,10 @@ class ResultViewSet(viewsets.ModelViewSet):
         if 'provider' in request.GET.keys():
             provider = int(request.GET['provider'])
 
+        mark_all_read = False
+        if 'mark_all_read' in request.GET.keys():
+            mark_all_read = bool(request.GET['mark_all_read'])
+
         if search_id:
             # security review for 1.7 - OK, filtered by owner
             if not Search.objects.filter(id=search_id, owner=self.request.user).exists():
@@ -489,10 +493,10 @@ class ResultViewSet(viewsets.ModelViewSet):
                 try:
                     if otf_result_mixer:
                         # call the specifixed mixer on the fly otf
-                        results = eval(otf_result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain, provider).mix()
+                        results = eval(otf_result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain, provider, mark_all_read).mix()
                     else:
                         # call the mixer for this search provider
-                        results = eval(search.result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain, provider).mix()
+                        results = eval(search.result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain, provider, mark_all_read).mix()
                 except NameError as err:
                     message = f'Error: NameError: {err}'
                     logger.error(f'{module_name}: {message}')

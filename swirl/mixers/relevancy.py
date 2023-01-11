@@ -43,11 +43,31 @@ class RelevancyNewItemsMixer(Mixer):
         # filter to new=True
         self.new_results = [result for result in self.all_results if 'new' in result]
 
-        # to do: handle 0 new items?!?
+        # to do: self.results is the result set 
+
+        # clear new flag if requested
+        if self.mark_all_read:
+            marked = 0
+            for result in self.results:
+                sv = False
+                for item in result.json_results:
+                    if 'new' in item:
+                        del item['new']
+                        marked = marked + 1
+                        sv = True
+                # end for
+                if sv:
+                    result.save()
+            # end for
+            self.mix_wrapper['messages'].append(f"[{datetime.now()}] RelevancyNewItemsMixer marked {marked} results as read")
+        # end if
 
         self.found = len(self.new_results)
         self.mix_wrapper['info']['results']['retrieved_total'] = self.found
-        self.mix_wrapper['messages'].append(f"[{datetime.now()}] RelevancyNewItemsMixer hid {len(self.all_results) - int(self.found)} old results")
+        if self.found == 0:
+            self.mix_wrapper['messages'].append(f"[{datetime.now()}] RelevancyNewItemsMixer found 0 new results")
+        else:
+            self.mix_wrapper['messages'].append(f"[{datetime.now()}] RelevancyNewItemsMixer hid {len(self.all_results) - int(self.found)} old results")
 
         # sort by score
         self.mixed_results = sorted(sorted(sorted(self.new_results, key=itemgetter('searchprovider_rank')), key=itemgetter('date_published'), reverse=True), key=itemgetter('swirl_score'), reverse=True)

@@ -97,6 +97,7 @@ class Elastic(Connector):
 
         # to do: work on error fatality!!
 
+        logger.debug(f"{self}: response: {response}")
         self.response = response
         return
 
@@ -126,6 +127,6 @@ class Elastic(Connector):
 
         retrieved = len(results)
         self.retrieved = retrieved
-        self.status = 'READY'
+
         return
 

@@ -35,7 +35,7 @@ class Mixer:
 
     ########################################
 
-    def __init__(self, search_id, results_requested, page, explain=False, provider=None):
+    def __init__(self, search_id, results_requested, page, explain=False, provider=None, mark_all_read=False):
 
         self.search_id = search_id
         self.results_requested = results_requested
@@ -50,6 +50,7 @@ class Mixer:
         self.mixed_results = None
         self.found = 0
         self.result_mixer = None
+        self.mark_all_read = mark_all_read
         self.status = "INIT"
         
         try:
