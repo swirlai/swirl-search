@@ -6,6 +6,7 @@
 
 from sys import path
 from os import environ
+from datetime import datetime
 
 import django
 from django.core.exceptions import ObjectDoesNotExist
@@ -34,7 +35,7 @@ class Mixer:
 
     ########################################
 
-    def __init__(self, search_id, results_requested, page, explain=False, provider=None):
+    def __init__(self, search_id, results_requested, page, explain=False, provider=None, mark_all_read=False):
 
         self.search_id = search_id
         self.results_requested = results_requested
@@ -49,6 +50,7 @@ class Mixer:
         self.mixed_results = None
         self.found = 0
         self.result_mixer = None
+        self.mark_all_read = mark_all_read
         self.status = "INIT"
         
         try:
@@ -76,29 +78,26 @@ class Mixer:
         self.mix_wrapper['info'] = {}
         self.mix_wrapper['results'] = None
 
-        result_messages = []
-        rewrote_messages = []
+        messages = []
         for result in self.results:
             for message in result.messages:
-                if 'rewrote' in message:
-                    rewrote_messages.append(message)
-                else:
-                    result_messages.append(message)
+                messages.append(message)
             self.mix_wrapper['info'][result.searchprovider] = {}
             self.mix_wrapper['info'][result.searchprovider]['found'] = result.found
             self.mix_wrapper['info'][result.searchprovider]['retrieved'] = result.retrieved
             self.mix_wrapper['info'][result.searchprovider]['filter_url'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search.id}&provider={result.provider_id}'
             self.mix_wrapper['info'][result.searchprovider]['query_string_to_provider'] = result.query_string_to_provider
             self.mix_wrapper['info'][result.searchprovider]['query_to_provider'] = result.query_to_provider
-            self.mix_wrapper['info'][result.searchprovider]['result_processor'] = result.result_processor
+            self.mix_wrapper['info'][result.searchprovider]['query_processors'] = result.query_processors
+            self.mix_wrapper['info'][result.searchprovider]['result_processors'] = result.result_processors
             self.mix_wrapper['info'][result.searchprovider]['search_time'] = result.time
-        result_messages = natsorted(result_messages, reverse=True)
-        rewrote_messages = natsorted(rewrote_messages)
-        self.mix_wrapper['messages'] = self.mix_wrapper['messages'] + result_messages + rewrote_messages
         
         if self.search.messages:
             for message in self.search.messages:
-                self.mix_wrapper['messages'].append(message)
+                messages.append(message)
+        
+        self.mix_wrapper['messages'] = self.mix_wrapper['messages'] + natsorted(messages) #, reverse=True)
+
         self.mix_wrapper['info']['search'] = {}
         if self.search.tags:
             self.mix_wrapper['info']['search']['tags'] = self.search.tags
@@ -174,7 +173,7 @@ class Mixer:
         if (int(self.page)-1)*int(self.results_requested) > len(self.mixed_results):
             self.error("Page not found, results exhausted")
             self.mix_wrapper['results'] = []
-            self.mix_wrapper['messages'].append(f"Results exhausted for {self.search_id}")
+            self.mix_wrapper['messages'].append(f"[{datetime.now()}] Results exhausted for {self.search_id}")
             return
 
         # number all mixed results
@@ -209,9 +208,9 @@ class Mixer:
         # last message 
         if len(self.mix_wrapper['results']) > 2:
             if self.result_mixer:
-                self.mix_wrapper['messages'].append(f"Results ordered by: {self.result_mixer}")
+                self.mix_wrapper['messages'].append(f"[{datetime.now()}] Results ordered by: {self.result_mixer}")
             else:
-                self.mix_wrapper['messages'].append(f"Results ordered by: {self.type}")     
+                self.mix_wrapper['messages'].append(f"[{datetime.now()}] Results ordered by: {self.type}")     
 
 
 

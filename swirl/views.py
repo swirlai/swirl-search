@@ -9,7 +9,7 @@ from datetime import datetime
 
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User, Group
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpRequest
 from django.conf import settings
 from django.db import Error
 from django.core.exceptions import ObjectDoesNotExist
@@ -18,6 +18,7 @@ from rest_framework.authentication import BasicAuthentication, SessionAuthentica
 from rest_framework import viewsets, status
 from rest_framework import permissions
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework.views import APIView
 
 from swirl.models import *
@@ -29,7 +30,13 @@ from swirl.mixers import *
 module_name = 'views.py'
 
 from swirl.tasks import search_task, rescore_task
-from swirl.search import search as execute_search
+from swirl.search import search as run_search
+
+SWIRL_OBJECT_LIST = Search.MIXER_CHOICES
+
+SWIRL_OBJECT_DICT = {}
+for t in SWIRL_OBJECT_LIST:
+    SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
 
 ########################################
 
@@ -42,7 +49,6 @@ def index(request):
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """
-    __S_W_I_R_L__1_._7______________________________________________________________
     API endpoint for managing SearchProviders. 
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH one.
@@ -50,7 +56,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
     queryset = SearchProvider.objects.all()
     serializer_class = SearchProviderSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    pagination_class = None 
+    # pagination_class = None 
 
     def list(self, request):
 
@@ -139,7 +145,6 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
 
 class SearchViewSet(viewsets.ModelViewSet):
     """
-    __S_W_I_R_L__1_._7______________________________________________________________
     API endpoint for managing Search objects. 
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH one.
@@ -176,6 +181,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
                 return Response(status=status.HTTP_403_FORBIDDEN)
             # run search
+            logger.info(f"{module_name}: Search.create() from ?q")
             try:
                 new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user)
             except Error as err:
@@ -213,6 +219,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
                 return Response(status=status.HTTP_403_FORBIDDEN)
             # run search
+            logger.info(f"{module_name}: Search.create() from ?qs")
             try:
                 # security review for 1.7 - OK, created with owner
                 new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user)
@@ -220,7 +227,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 self.error(f'Search.create() failed: {err}')            
             new_search.status = 'NEW_SEARCH'
             new_search.save()
-            res = execute_search(new_search.id)
+            res = run_search(new_search.id)
             if not res:
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             if not Search.objects.filter(id=new_search.id).exists():
@@ -231,7 +238,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 try:
                     if otf_result_mixer:
                         # call the specifixed mixer on the fly otf
-                        results = eval(otf_result_mixer)(search.id, search.results_requested, 1, explain, provider).mix()
+                        results = eval(otf_result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, 1, explain, provider).mix()
                     else:
                         # call the mixer for this search provider
                         results = eval(search.result_mixer)(search.id, search.results_requested, 1, explain, provider).mix()
@@ -265,15 +272,15 @@ class SearchViewSet(viewsets.ModelViewSet):
             if not Search.objects.filter(id=rerun_id, owner=self.request.user).exists():
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
             # security review for 1.7 - OK, filtered by search            
+            logger.info(f"{module_name}: ?rerun!")
             rerun_search = Search.objects.get(id=rerun_id)
             old_results = Result.objects.filter(search_id=rerun_search.id)
-            # to do: instead of deleting, copy the search copy to a new search? 
             logger.warning(f"{module_name}: deleting Result objects associated with search {rerun_id}")
             for old_result in old_results:
                 old_result.delete()
             rerun_search.status = 'NEW_SEARCH'
             # fix for https://github.com/sidprobstein/swirl-search/issues/35
-            message = f"Re-run on {datetime.now()}"
+            message = f"[{datetime.now()}] Rerun requested"
             rerun_search.messages = []
             rerun_search.messages.append(message)    
             rerun_search.save()
@@ -296,11 +303,35 @@ class SearchViewSet(viewsets.ModelViewSet):
             # security check
             if not Search.objects.filter(id=rescore_id, owner=self.request.user).exists():
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
+            logger.info(f"{module_name}: ?rescore!")
             rescore_task.delay(rescore_id)
             time.sleep(settings.SWIRL_RESCORE_WAIT)
             return redirect(f'/swirl/results?search_id={rescore_id}')
         
         ########################################
+
+        update_id = 0
+        if 'update' in request.GET.keys():
+            update_id = request.GET['update']
+
+        if update_id:
+            # check permissions
+            if not (request.user.has_perm('swirl.change_search') and request.user.has_perm('swirl.change_result')):
+                logger.warning(f"User {self.request.user} needs permissions change_search({request.user.has_perm('swirl.change_search')}), change_result({request.user.has_perm('swirl.change_result')})")
+                return Response(status=status.HTTP_403_FORBIDDEN)
+            # security check
+            if not Search.objects.filter(id=update_id, owner=self.request.user).exists():
+                return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
+            logger.info(f"{module_name}: ?update!")
+            search.status = 'UPDATE_SEARCH'
+            search.save()
+            search_task.delay(update_id)
+            time.sleep(settings.SWIRL_SUBSCRIBE_WAIT)
+            return redirect(f'/swirl/results?search_id={update_id}')
+
+        ########################################
+
+        logger.info(f"{module_name}: Search.list()!")
 
         # security review for 1.7 - OK, filtered by owner
         self.queryset = Search.objects.filter(owner=self.request.user)
@@ -316,11 +347,21 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
             return Response(status=status.HTTP_403_FORBIDDEN)
 
+        logger.info(f"{module_name}: Search.create() from POST")
+
         serializer = SearchSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         # security review for 1.7 - OK, create with owner
         serializer.save(owner=self.request.user)
-        search_task.delay(serializer.data['id'])
+
+        if not (self.request.user.has_perm('swirl.view_searchprovider')):
+            # TO DO: SECURITY REVIEW
+            if Search.objects.filter(id=serializer.data['id'], owner=self.request.user).exists():
+                search = Search.objects.get(id=serializer.data['id'])
+                search.status = 'ERR_NO_SEARCHPROVIDERS'
+                search.save
+        else:
+            search_task.delay(serializer.data['id'])
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -354,6 +395,8 @@ class SearchViewSet(viewsets.ModelViewSet):
         if not Search.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
+        logger.info(f"{module_name}: Search.update()!")
+
         search = Search.objects.get(pk=pk)
         search.date_updated = datetime.now()
         serializer = SearchSerializer(instance=search, data=request.data)
@@ -381,6 +424,8 @@ class SearchViewSet(viewsets.ModelViewSet):
         if not Search.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
+        logger.info(f"{module_name}: Search.destroy()!")
+
         search = Search.objects.get(pk=pk)
         search.delete()
         return Response('Search Object Deleted', status=status.HTTP_410_GONE)
@@ -390,7 +435,6 @@ class SearchViewSet(viewsets.ModelViewSet):
 
 class ResultViewSet(viewsets.ModelViewSet):
     """
-    __S_W_I_R_L__1_._7______________________________________________________________
     API endpoint for managing Result objects, including Mixed Results
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH one.
@@ -434,20 +478,25 @@ class ResultViewSet(viewsets.ModelViewSet):
         if 'provider' in request.GET.keys():
             provider = int(request.GET['provider'])
 
+        mark_all_read = False
+        if 'mark_all_read' in request.GET.keys():
+            mark_all_read = bool(request.GET['mark_all_read'])
+
         if search_id:
             # security review for 1.7 - OK, filtered by owner
             if not Search.objects.filter(id=search_id, owner=self.request.user).exists():
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
             # security review for 1.7 - OK, filtered by owner
+            logger.info(f"{module_name}: Calling mixer from ?search_id")
             search = Search.objects.get(id=search_id)
             if search.status.endswith('_READY') or search.status == 'RESCORING':
                 try:
                     if otf_result_mixer:
                         # call the specifixed mixer on the fly otf
-                        results = eval(otf_result_mixer)(search.id, search.results_requested, page, explain, provider).mix()
+                        results = eval(otf_result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain, provider, mark_all_read).mix()
                     else:
                         # call the mixer for this search provider
-                        results = eval(search.result_mixer)(search.id, search.results_requested, page, explain, provider).mix()
+                        results = eval(search.result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain, provider, mark_all_read).mix()
                 except NameError as err:
                     message = f'Error: NameError: {err}'
                     logger.error(f'{module_name}: {message}')
@@ -462,7 +511,7 @@ class ResultViewSet(viewsets.ModelViewSet):
             # end if
         else:
             # security review for 1.7 - OK, filtered by owner
-            self.queryset = reversed(Result.objects.filter(owner=self.request.user))
+            self.queryset = Result.objects.filter(owner=self.request.user)
             serializer = ResultSerializer(self.queryset, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         # end if
@@ -495,6 +544,8 @@ class ResultViewSet(viewsets.ModelViewSet):
         if not Result.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
+        logger.info(f"{module_name}: Result.update()!")
+
         result = Result.objects.get(pk=pk)
         result.date_updated = datetime.now()
         serializer = ResultSerializer(instance=result, data=request.data)
@@ -515,6 +566,8 @@ class ResultViewSet(viewsets.ModelViewSet):
         if not Result.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
+        logger.info(f"{module_name}: Result.destroy()!")
+
         result = Result.objects.get(pk=pk)
         result.delete()
         return Response('Result Object Deleted!', status=status.HTTP_410_GONE)
@@ -524,7 +577,6 @@ class ResultViewSet(viewsets.ModelViewSet):
 
 class UserViewSet(viewsets.ModelViewSet):
     """
-    __S_W_I_R_L__1_._7______________________________________________________________
     API endpoint that allows management of Users objects.
     Use GET to list all objects, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH one.
@@ -538,7 +590,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class GroupViewSet(viewsets.ModelViewSet):
     """
-    __S_W_I_R_L__1_._7______________________________________________________________
     API endpoint that allows management of Group objects.
     Use GET to list all objects, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH one.

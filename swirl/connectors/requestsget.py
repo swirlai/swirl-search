@@ -5,6 +5,8 @@
 
 from sys import path
 from os import environ
+from datetime import datetime
+
 import time
 
 import django
@@ -47,6 +49,8 @@ class RequestsGet(Connector):
 
     def construct_query(self):
 
+        logger.info(f"{self}: construct_query()")
+
         # to do: migrate this to Connector base class?
         query_to_provider = ""
         if self.provider.credentials.startswith('HTTP'):
@@ -60,7 +64,6 @@ class RequestsGet(Connector):
             self.warning(f'{{query_string}} missing from query_to_provider: {query_to_provider}')
 
         if self.search.sort.lower() == 'date':
-            logger.info(f"{self}: date sort specified")
             # insert before the last parameter, which is expected to be the user query
             sort_query = query_to_provider[:query_to_provider.rfind('&')]
             if 'DATE_SORT' in self.query_mappings:
@@ -85,6 +88,8 @@ class RequestsGet(Connector):
 
     def validate_query(self):
 
+        logger.info(f"{self}: validate_query()")
+
         query_to_provider = self.query_to_provider
         if '{' in query_to_provider or '}' in query_to_provider:
             self.warning(f"{self.provider.id} found braces {{ or }} in query")
@@ -95,6 +100,8 @@ class RequestsGet(Connector):
     ########################################
 
     def execute_search(self):
+
+        logger.info(f"{self}: execute_search()")
 
         # determine if paging is required
         pages = 1
@@ -131,16 +138,15 @@ class RequestsGet(Connector):
             if page_query == "":
                 self.error("page_query is blank")
                 return
-
+            
             # dictionary of authentication types permitted in the upcoming eval
-            dict_auth = { 'HTTPBasicAuth': HTTPBasicAuth, 'HTTPDigestAuth': HTTPDigestAuth, 'HTTProxyAuth': HTTPProxyAuth}
+            dict_auth = {'HTTPBasicAuth': HTTPBasicAuth, 'HTTPDigestAuth': HTTPDigestAuth, 'HTTProxyAuth': HTTPProxyAuth}
 
             # issue the query
-            logger.info(f"{self}: requesting: {self.provider.connector} -> {page_query}")
             try:
                 if self.provider.credentials.startswith('HTTP'):
                     # handle HTTPBasicAuth('user', 'pass') and other forms
-                    response = requests.get(page_query, auth=eval(self.provider.credentials, dict_auth))
+                    response = requests.get(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth))
                 else:
                     response = requests.get(page_query)
             except NewConnectionError as err:
@@ -204,9 +210,10 @@ class RequestsGet(Connector):
             if 'FOUND' in mapped_response:
                 found = int(mapped_response['FOUND'])
                 self.found = found
+            # check for 0 response
             if found == 0 or retrieved == 0:
                 # no results, not an error
-                self.messages.append(f"Retrieved 0 of 0 results from: {self.provider.name}")
+                self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.retrieved = 0
                 self.status = 'READY'
                 return   
@@ -217,7 +224,6 @@ class RequestsGet(Connector):
                 if not type(mapped_response['RESULTS']) == list:
                     # nlresearch single result
                     if type(mapped_response['RESULTS']) == dict:
-                        logger.info(f"{self}: received dict, appending to list")
                         tmp_list = []
                         tmp_list.append(mapped_response['RESULTS'])
                         mapped_response['RESULTS'] = tmp_list
@@ -273,11 +279,10 @@ class RequestsGet(Connector):
                 # for now, assume the source delivered what it found
                 found = len(response)
                 self.found = found
+            # check for 0 delivered results (different from above)
             if found == 0 or retrieved == 0:
                 # no results, not an error
-                message = f"Retrieved 0 of 0 results from: {self.provider.name}"
-                # logger.info(f'{module_name}: {message}')
-                self.messages.append(message)
+                self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.status = 'READY'
                 return
                   

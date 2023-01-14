@@ -15,7 +15,6 @@ environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 import logging as logger
-# logger.basicConfig(level=logger.debug)
 
 from operator import itemgetter
 
@@ -71,7 +70,6 @@ class StackNMixer(Mixer):
                         break
                 else:
                     # out of results for that provider
-                    # logger.debug(f'{module_name}: out of results for {searchprovider}')
                     pass
                 # end for
                 if len(stacked_results) == self.results_needed:

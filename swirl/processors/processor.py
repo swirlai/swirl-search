@@ -49,7 +49,7 @@ class Processor:
     def validate(self):
 
         '''
-        Verify input; tbd by derived classes
+        Verify input; TBD by derived classes
         '''
 
         return True
@@ -73,14 +73,20 @@ class QueryProcessor(Processor):
 
     ########################################
 
-    def __init__(self, query_string, query_mappings):
+    def __init__(self, query_string, query_mappings, tags):
 
         self.query_string = query_string
         self.query_mappings = query_mappings
+        self.tags = tags
 
     ########################################
 
     def validate(self):
+
+        '''
+        Validate the query
+        Returns: boolean
+        '''
 
         if not type(self.query_string) == str:
             self.error("self.query_string was not a str")
@@ -98,7 +104,8 @@ class QueryProcessor(Processor):
     def process(self):
         
         '''
-        Executes the workflow for a query processor; tbd by derived classes
+        Executes the workflow for a query processor; TBD by derived classes
+        Returns: transformed query_string
         '''
 
         return self.query_string
@@ -125,6 +132,7 @@ class ResultProcessor(Processor):
 
         '''
         Verify that there are results
+        Returns: boolean
         '''
 
         if not type(self.results) == list:
@@ -142,10 +150,11 @@ class ResultProcessor(Processor):
     def process(self):
 
         '''
-        Executes the workflow for a result processor; tbd by derived classes
+        Executes the workflow for a result processor; TBD by derived classes
+        Returns: transformed self.results
         '''
 
-        return self.processed_results
+        return self.results
         
 ########################################
 ########################################
@@ -188,6 +197,7 @@ class PostResultProcessor(Processor):
 
         '''
         Verify there is at least one result to process
+        Returns: boolean
         '''
 
         if self.results:
@@ -201,7 +211,8 @@ class PostResultProcessor(Processor):
     def process(self):
 
         '''
-        Executes the workflow for a result processor; tbd by derived classes
+        Executes the workflow for a result processor; TBD by derived classes
+        Returns: number of results updated
         '''
 
         return self.results_updated

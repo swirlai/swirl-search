@@ -6,6 +6,7 @@
 from sys import path
 from os import environ
 import logging as logger
+logger.basicConfig(level=logger.INFO)
 from datetime import timedelta
 
 import django
@@ -33,6 +34,7 @@ def expirer():
     # security review for 1.7 - OK - system function
     searches = Search.objects.filter(retention__gt=0)
     for search in searches:
+        logger.info(f"{module_name}: expirer checking: {search.id}")
         if search.retention == 0:
             # don't delete - this should not happen because of the filter above
             logger.warning(f"{module_name}: filter error, reviewed a search with retention = {search.retention}")
@@ -52,7 +54,7 @@ def expirer():
                 logger.error(f"{module_name}: unexpected retention setting: {search.retention}")
             if expired:
                 # to do: fix this to show local time, someday P4
-                logger.info(f"{module_name}: expiring search: {search.id} updated {search.date_updated} with retention {search.retention}")
+                logger.info(f"{module_name}: expirer deleted: {search.id}")
                 search.delete()
             # end if
         # end if

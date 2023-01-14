@@ -5,6 +5,7 @@
 
 from sys import path
 from os import environ
+from datetime import datetime
 
 import django
 
@@ -33,6 +34,8 @@ class Elastic(Connector):
 
     def construct_query(self):
 
+        logger.info(f"{self}: construct_query()")
+
         query_to_provider = bind_query_mappings(self.provider.query_template, self.provider.query_mappings)
 
         if '{query_string}' in self.provider.query_template:
@@ -54,7 +57,6 @@ class Elastic(Connector):
         else:
             elastic_query = 'es.search(' + query_to_provider + ', size=' + str(self.provider.results_per_query) + ')'
         # end if
-        logger.info(f"{self}: issuing query: {self.provider.connector} -> {elastic_query}")
 
         if elastic_query == "":
             self.error(f"elastic_query unexpectedly blank")
@@ -66,7 +68,10 @@ class Elastic(Connector):
 
     def execute_search(self):     
 
+        logger.info(f"{self}: execute_search()")
+
         try:
+            # security review 1.7 - OK - limited to Elasticsearch
             es = eval(f'Elasticsearch({self.provider.credentials}, {self.provider.url})')
         except NameError as err:
             self.error(f'NameError: {err}')
@@ -75,6 +80,7 @@ class Elastic(Connector):
 
         response = None
         try:
+            # security review 1.7 - OK - limited to Elasticsearch
             response = eval(self.query_to_provider)
         except ConnectionError as err:
             self.error(f"es.search reports: {err}")
@@ -91,6 +97,7 @@ class Elastic(Connector):
 
         # to do: work on error fatality!!
 
+        logger.debug(f"{self}: response: {response}")
         self.response = response
         return
 
@@ -98,6 +105,8 @@ class Elastic(Connector):
 
     def normalize_response(self):
         
+        logger.info(f"{self}: normalize_response()")
+
         if len(self.response) == 0:
             self.error("search succeeded, but found no json data in response")
 
@@ -109,7 +118,7 @@ class Elastic(Connector):
         if found == 0:
             # no results, not an error
             self.retrieved = 0
-            self.messages.append(f"Retrieved 0 of 0 results from: {self.provider.name}")
+            self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
             self.status = 'READY'
             return
 
@@ -118,6 +127,6 @@ class Elastic(Connector):
 
         retrieved = len(results)
         self.retrieved = retrieved
-        self.status = 'READY'
+
         return
 

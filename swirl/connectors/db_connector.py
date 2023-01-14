@@ -30,13 +30,15 @@ class DBConnector(Connector):
 
     ########################################
 
-    def __init__(self, provider_id, search_id):
+    def __init__(self, provider_id, search_id, update):
 
         self.count_query = ""
         self.column_names = []
-        return super().__init__(provider_id, search_id)
+        return super().__init__(provider_id, search_id, update)
 
     def construct_query(self):
+
+        logger.info(f"{self}: construct_query()")
 
         # handle ;
         if not self.provider.query_template.endswith(';'):
@@ -84,7 +86,7 @@ class DBConnector(Connector):
                 if sort_field:
                     query_to_provider = query_to_provider.replace(';', f' order by {sort_field} desc;')
                 else:
-                    logger.info(f"{self}: has no sort_field, ignoring request to sort this provider")
+                    logger.warning(f"{self}: has no sort_field, ignoring request to sort this provider")
                 # end if
             else:
                 self.warning(f"query_to_provider is missing ';' at end")
@@ -100,6 +102,8 @@ class DBConnector(Connector):
     ########################################
 
     def validate_query(self):
+
+        logger.info(f"{self}: validate_query()")
 
         if '{' in self.count_query or '}' in self.count_query:
             self.warning(f"found braces in count_query after template mapping")

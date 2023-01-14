@@ -25,7 +25,4 @@ def SpellcheckQueryProcessor(query_string):
     except TypeError as err:
         logger.warning(f'{module_name}: Error: TypeError: {err}')
 
-    if query_string != corrected_query_string:
-        logger.info(f"{module_name}: rewrote query from {query_string} to {corrected_query_string}")
-
     return corrected_query_string

@@ -7,7 +7,5 @@ services:
       - "8000:8000"
     command: >
       sh -c "python swirl.py setup &&
-             python manage.py migrate &&
-             python swirl.py stop rabbitmq celery-worker celery-beats &&
              python swirl.py start rabbitmq celery-worker celery-beats &&
              daphne -b 0.0.0.0 -p 8000 swirl_server.asgi:application"

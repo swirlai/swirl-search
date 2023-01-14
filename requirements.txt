@@ -17,5 +17,6 @@ django-environ
 statistics
 nltk
 bs4
+google-cloud-bigquery
 
 
