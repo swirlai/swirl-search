@@ -13,9 +13,7 @@
     "result_processors": [
         "MappingResultProcessor"
     ],
-    "response_mappings": "",
-    "result_mappings": "title='{company}',body='{company} raised ${raisedamt} series {round} on {fundeddate}. {company} is located in {city} {state} and has {numemps} employees.',url=permalink,date_published=fundeddate,NO_PAYLOAD",
-    "results_per_query": 10,
+    "result_mappings": "title='{company}',body='{company} raised ${raisedamt} series {round} on {fundeddate}. The company is located in {city} {state} and has {numemps} employees.',url=permalink,date_published=fundeddate,NO_PAYLOAD",
     "credentials": "/path/to/bigquery/token.json",
     "tags": [
         "Company"

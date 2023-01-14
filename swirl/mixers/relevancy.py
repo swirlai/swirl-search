@@ -43,8 +43,6 @@ class RelevancyNewItemsMixer(Mixer):
         # filter to new=True
         self.new_results = [result for result in self.all_results if 'new' in result]
 
-        # to do: self.results is the result set 
-
         # clear new flag if requested
         if self.mark_all_read:
             marked = 0

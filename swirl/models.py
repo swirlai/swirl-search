@@ -17,12 +17,8 @@ class SearchProvider(models.Model):
     CONNECTOR_CHOICES = [
         ('RequestsGet', 'HTTP/GET returning JSON'),
         ('Elastic', 'Elasticsearch Query String'),
-        # ('PostgreSQL', 'PostgreSQL'),
+#        ('PostgreSQL', 'PostgreSQL'),
         ('BigQuery', 'Google BigQuery'),
-        # ('M365OutlookMessages', 'Microsoft M365 Outlook Messages'),
-        # ('M365OutlookCalendar', 'Microsoft M365 Outlook Calendar'),
-        # ('M365OneDrive', 'Microsoft M365 OneDrive Files'),
-        # ('M365SharePoint', 'Microsoft M365 SharePoint Sites'),
         ('Sqlite3', 'Sqlite3')
     ]
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
@@ -99,7 +95,8 @@ class Search(models.Model):
         ('Stack2Mixer', 'Stack2Mixer'),
         ('Stack3Mixer', 'Stack3Mixer'),
         ('StackNMixer', 'StackNMixer'),
-        ('DateMixer', 'DateMixer')
+        ('DateMixer', 'DateMixer'),
+        ('DateNewItemsMixer', 'DateNewItemsMixer')
     ]
     result_mixer = models.CharField(max_length=200, default='RelevancyMixer', choices=MIXER_CHOICES)
     RETENTION_CHOICES = [
