@@ -235,7 +235,10 @@ def search(id):
     # fix the result url
     # to do: figure out a better solution P1
     search.result_url = f"{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results?search_id={search.id}&result_mixer={search.result_mixer}"
-    search.new_result_url = f"{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results?search_id={search.id}&result_mixer=RelevancyNewItemsMixer"
+    if {search.result_mixer} == 'DateMixer':
+        search.new_result_url = f"{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results?search_id={search.id}&result_mixer=DateNewItemsMixer"
+    else:
+        search.new_result_url = f"{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results?search_id={search.id}&result_mixer=RelevancyNewItemsMixer"
     # note the sort
     if search.sort.lower() == 'date':
         if not update:
