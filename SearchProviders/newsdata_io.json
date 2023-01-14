@@ -4,21 +4,42 @@
         "connector": "RequestsGet",
         "url": "https://newsdata.io/api/1/news?language=en&apikey={apikey}",
         "query_template": "{url}&q={query_string}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
         "query_mappings": "NOT_CHAR=-",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
         "response_mappings": "FOUND=totalResults,RESULTS=results",
-        "result_mappings": "body=content|description,url=link,date_published=pubDate,author=creator[0],source_id,NO_PAYLOAD",
-        "credentials": "apikey=newsdata-api-key-here"
+        "result_mappings": "body=content|description,url=link,date_published=pubDate,author=creator[0],source_id,category,keywords,country,NO_PAYLOAD",
+        "credentials": "apikey=news-data-api-key",
+        "tags": [
+            "News"
+        ]
     },
     {
-        "active": false,
         "name": "News Archive (web/newsdata.io)",
         "connector": "RequestsGet",
         "url": "https://newsdata.io/api/1/archive?language=en&apikey={apikey}",
         "query_template": "{url}&q={query_string}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
         "query_mappings": "NOT_CHAR=-",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
         "response_mappings": "FOUND=totalResults,RESULTS=results",
-        "result_mappings": "body=content|description=,url=link,date_published=pubDate,author=creator[0],source_id,NO_PAYLOAD",
-        "credentials": "apikey=newsdata-api-key-with-archive-enabled-here"
+        "result_mappings": "body=content|description,url=link,date_published=pubDate,author=creator[0],source_id,category,keywords,country,NO_PAYLOAD",
+        "credentials": "apikey=news-data-api-key",
+        "tags": [
+            "News"
+        ]
     
     }   
 ]

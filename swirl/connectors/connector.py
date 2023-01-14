@@ -331,7 +331,7 @@ class Connector:
             try:
                 result = Result.objects.filter(search_id=self.search, provider_id=self.provider.id)
             except ObjectDoesNotExist as err:
-                self.search.status = "ERROR_RESULT_NOT_FOUND"
+                self.search.status = "ERR_RESULT_NOT_FOUND"
                 self.error(f'Update failed: results not found: {err}', save_results=False)
                 return False
             if len(result) != 1:
