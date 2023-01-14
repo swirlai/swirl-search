@@ -281,10 +281,6 @@ def migrate(service_list):
     else:
         print(result)
 
-    if not any_change:
-        print("No changes detected, exiting")
-        return True
-
     print()
     print("Migrating:")
     print()
@@ -294,12 +290,8 @@ def migrate(service_list):
         print(f"Error: {proc.stderr.decode('UTF-8')}")
         return False
     result = proc.stdout.decode('UTF-8')
-    
-    if result.lower().strip().endswith('ok'):
-        print(result)
-        return True
-
-    return False
+    print(result)
+    return True
 
 ##################################################
 
