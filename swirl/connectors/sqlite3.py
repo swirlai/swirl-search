@@ -6,6 +6,7 @@
 import os
 from sys import path
 from os import environ
+from datetime import datetime
 
 import django
 from django.db import DataError
@@ -36,6 +37,8 @@ class Sqlite3(DBConnector):
 
     def execute_search(self):
 
+        logger.info(f"{self}: execute_search()")
+
         # connect to the db
         db_path = self.provider.url
         if not os.path.exists(db_path):
@@ -49,10 +52,8 @@ class Sqlite3(DBConnector):
         except Error as err:
             self.error(f"{err} connecting to {self.type}: {db_path}")
             return
-        logger.info(f"{self}: connected to {self.type}: {db_path}")
 
         # issue the count(*) query
-        logger.debug(f"{self}: requesting: {self.provider.connector} -> {self.count_query}")
         cursor = None
         rows = None
         found = None
@@ -70,12 +71,10 @@ class Sqlite3(DBConnector):
             found = found[0]
 
         if 'json' in self.count_query.lower():
-            logger.debug(f"{self}: ignoring 0 return from find, since 'json' appears in the query_string")
+            logger.warning(f"{self}: ignoring 0 return from find, since 'json' appears in the query_string")
         else:
             if found == 0:
-                message = f"Retrieved 0 of 0 results from: {self.provider.name}"
-                logger.info(f'{self}: {message}')
-                self.messages.append(message)
+                self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.status = 'READY'
                 self.found = 0
                 self.retrieved = 0
@@ -84,7 +83,6 @@ class Sqlite3(DBConnector):
         # end if
 
         # issue the main query
-        logger.debug(f"{self}: requesting: {self.provider.connector} -> {self.query_to_provider}")
         cursor = None
         rows = None
         try:
@@ -97,9 +95,8 @@ class Sqlite3(DBConnector):
             return
 
         if rows == None:
-            message = f"Retrieved 0 of 0 results from: {self.provider.name}"
-            logger.warning(f'{self}: {message}, but count_query returned {found}')
-            self.messages.append(message)
+            self.warning(f"Retrieved 0 results, but count_query returned {found}")
+            self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
             return
             # end if
         # end if
@@ -112,6 +109,8 @@ class Sqlite3(DBConnector):
 
     def normalize_response(self):
         
+        logger.info(f"{self}: normalize_response()")
+
         rows = self.response
         found = self.found
 

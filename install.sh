@@ -1,5 +1,13 @@
 #!/bin/sh
 
+if [ -f ".env" ]
+then
+echo "Install: .env found"
+else
+    echo "Copying: .env.dist -> .env"
+    cp .env.dist .env
+fi
+
 python swirl/banner.py
 echo ""
 

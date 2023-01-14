@@ -3,8 +3,19 @@
     "connector": "RequestsGet",
     "url": "https://nlresearch.com/results.php?datasource=BRECE&language=1&periodDate=-7&resultsPerPage=10&micpr=0&extended=1&output=json",
     "query_template": "{url}&login={login}&password={password}&textQuery={query_string}",
-    "query_mappings": "PAGE=startNumber=RESULT_INDEX,DATE_SORT=sort=2,RELEVANCY_SORT=sort=1,NOT=True,NOT_CHAR=1",
+    "query_processor": "",
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "PAGE=startNumber=RESULT_INDEX,DATE_SORT=sort=2,RELEVANCY_SORT=sort=1,NOT=true,NOT_CHAR=-",
+    "result_processor": "",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
     "response_mappings": "FOUND=header.@attributes.total_documents,RESULTS=result_list.result,RESULT=document",
     "result_mappings": "body=summary,date_published=date,author=publisher,type,source,country,language,NO_PAYLOAD",
-    "credentials": "login=your-username,password=your-password"
+    "credentials": "login=your-username,password=your-password",
+    "tags": [
+        "News"
+    ]
 }

@@ -1,5 +1,12 @@
 @echo off
 
+if exist .env (
+    echo "Install: .env found"
+) else (
+    echo "Copying: .env.dist -> .env"
+    copy .env.dist .env
+)
+
 python swirl/banner.py
 echo ""
 

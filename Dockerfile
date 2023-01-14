@@ -20,6 +20,7 @@ RUN python -m nltk.downloader punkt
 
 # Copy Swirl App to container
 RUN mkdir /app
+COPY ./.env.docker /app/.env
 ADD ./swirl /app/swirl
 ADD ./swirl_server /app/swirl_server
 ADD ./SearchProviders /app/SearchProviders
