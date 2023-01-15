@@ -12,9 +12,8 @@
     "result_processors": [
         "MappingResultProcessor"
     ],
-    "response_mappings": "",
     "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
-    "credentials": "http_auth=(\"elastic\", \"7fAatnLKbGnt1Ny8jhzq\")",
+    "credentials": "http_auth=(\"elastic\", \"elastic-password\")",
     "tags": [
         "Enron",
         "Elastic"

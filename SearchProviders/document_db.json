@@ -1,8 +1,20 @@
-{    
+{
     "name": "Curated Documents (local/Sqlite3)",
+    "default": false,
     "connector": "Sqlite3",
-    "url": "/Users/sid/code/swirl_server/db.sqlite3",
+    "url": "db.sqlite3",
     "query_template": "select {fields} from {table} where {field1} like '%%{query_string}%%' or {field2} like '%%{query_string}%%';",
-    "query_mappings": "fields=*,sort_by_date=date,table=documents,field1=title,field2=body",
-    "result_mappings": "date=date_published,NO_PAYLOAD"
+    "query_processor": "",
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "fields=*,table=documents,field1=title,field2=body",
+    "result_processor": "",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
+    "result_mappings": "date=date_published,NO_PAYLOAD",
+    "tags": [
+        "Company"
+    ]
 }

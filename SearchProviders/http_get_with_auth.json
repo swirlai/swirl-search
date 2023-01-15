@@ -1,9 +1,21 @@
 {
-    "name": "Simple HTTP/GET example with auth",
+    "name": "Sample HTTP Endpoint (web/Sample)",
     "connector": "RequestsGet",
-    "url": "http://your-url-here",
-    "query_template": "{url}?q={query_string}",
+    "url": "http://hostname/site/endpoint",
+    "query_template": "{url}&textQuery={query_string}",
+    "query_processor": "",
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
     "query_mappings": "PAGE=start=RESULT_INDEX,DATE_SORT=sort=date",
-    "result_mappings": "FOUND=count,RESULTS=items",
-    "credentials": "HTTPBasicAuth('your-username-here', 'your-password-here')"
+    "result_processor": "",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
+    "response_mappings": "FOUND=count,RESULTS=results",
+    "result_mappings": "body=content,date_published=date,author=creator",
+    "credentials": "HTTPBasicAuth('your-username-here', 'your-password-here')",
+    "tags": [
+        "News"
+    ]
 }

@@ -1,8 +1,6 @@
 {
     "name": "Company Funding Records (cloud/BigQuery)",
-    "default": false,
     "connector": "BigQuery",
-    "url": "",
     "query_template": "select {fields} from `{table}` where search({field1}, '{query_string}') or search({field2}, '{query_string}');",
     "query_processor": "",
     "query_processors": [
@@ -16,6 +14,7 @@
     "result_mappings": "title='{company}',body='{company} raised ${raisedamt} series {round} on {fundeddate}. The company is located in {city} {state} and has {numemps} employees.',url=permalink,date_published=fundeddate,NO_PAYLOAD",
     "credentials": "/path/to/bigquery/token.json",
     "tags": [
-        "Company"
+        "Company",
+        "BigQuery"
     ]
 }
