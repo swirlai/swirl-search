@@ -97,12 +97,11 @@ Results will appear in just a few seconds!
 
 # Documentation Wiki
 
-## [Home](https://github.com/sidprobstein/swirl-search/wiki)
-## [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
-## [User Guide](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide)
-## [Developer Guide](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide)
-## [Object Reference](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference)
-## [Admin Guide](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide)
+### [Home](https://github.com/sidprobstein/swirl-search/wiki)
+### [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
+### [User Guide](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide)
+### [Developer Guide](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide)
+### [Admin Guide](https://github.com/sidprobstein/swirl-search/wiki/4.-Admin-Guide)
 
 <br/>
 
