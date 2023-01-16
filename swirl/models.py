@@ -25,7 +25,8 @@ class SearchProvider(models.Model):
     CONNECTOR_CHOICES = [
         ('RequestsGet', 'HTTP/GET returning JSON'),
         ('Elastic', 'Elasticsearch Query String'),
-#       ('PostgreSQL', 'PostgreSQL'),
+        # Uncomment the line below to enable PostgreSQL
+        # ('PostgreSQL', 'PostgreSQL'),
         ('BigQuery', 'Google BigQuery'),
         ('Sqlite3', 'Sqlite3')
     ]
