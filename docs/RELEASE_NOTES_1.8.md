@@ -85,15 +85,9 @@ This configuration starts django using the built-in runserver, instead of daphne
 
 <br/>
 
-## Issues Resolved
-
-:small_blue_diamond: TO DO
-
-:small_blue_diamond: TO DO
-
-<br/>
-
 ## Known Issues
+
+:small_blue_diamond: PostgreSQL no longer causes errors in the celery-worker log; however, to enable PostgreSQL as of this verison please review the [installation instructions](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#installing-the-postgresql-driver). We hope to make this easier in a future release.
 
 :small_blue_diamond: [Creating searches from a browser with q=](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#creating-a-search-object-with-the-q-url-parameter) can sometimes create two Search objects. 
 
