@@ -90,7 +90,8 @@ If you are interested in a Docker w/PostgreSQL back-end, and/or a free trial of 
 
 | Version                     | Date                        | Notes | 
 | --------------------------- | --------------------------- | ----- |
-| [SWIRL SEARCH 1.7](https://github.com/sidprobstein/swirl-search/releases/tag/v1.7) | 12-3-2022 | [Release 1.7](./docs/RELEASE_NOTES_1.7.md) |
+| [SWIRL SEARCH 1.8](https://github.com/sidprobstein/swirl-search/releases/tag/v1.8) | 1-15-2022 | [Release 1.8](./docs/RELEASE_NOTES_1.8.md) BETA |
+| [SWIRL SEARCH 1.7](https://github.com/sidprobstein/swirl-search/releases/tag/v1.7) | 12-3-2022 | [Release 1.7](./docs/RELEASE_NOTES_1.7.md) KNOWN GOOD |
 | [Docker Image](https://hub.docker.com/r/sidprobstein/swirl-search) | * | [Setup Guide](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start#docker) - Note *does* *not* *persist* *data* after shutdown! | 
 
 <br/>

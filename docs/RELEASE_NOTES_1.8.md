@@ -38,6 +38,8 @@ More details: [Subscribing to a Search](https://github.com/sidprobstein/swirl-se
 
 :small_blue_diamond: The new DedupeByFieldPostResultProcessor detects and removes duplicates on any field - 'url' by default.
 
+<br/>
+
 :small_blue_diamond: The new DedupeBySimilarityPostResultProcessor detects and removes duplicates by similarity between - 'title' and 'body' field (by default), with a cut-off threshold of .95.
 
 <br/>
