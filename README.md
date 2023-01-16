@@ -15,7 +15,7 @@ Learn more about [Federated Search](https://en.wikipedia.org/wiki/Federated_sear
 
 # How to use SWIRL:
 
-1. Load [SearchProviders](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#searchproviders) as described in the [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start#install-searchproviders)
+1. Load [SearchProviders](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#searchproviders) as described in the [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start#install-searchproviders):
 
 ![SWIRL SearchProviders](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/swirl_providers_focus.png)
 
@@ -26,6 +26,7 @@ http://localhost:8000/swirl/search/?q=knowledge+management
 ```
 
 3. Get unified, AI-ranked results:
+
 ![SWIRL Results](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/swirl_results_focus.png)
 
 <br/>
