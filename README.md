@@ -6,7 +6,7 @@ SWIRL adapts and distributes queries to any data source with searchable API - se
 
 Built on the python/django/rabbit stack, SWIRL includes connectors to [elastic](https://www.elastic.co/cn/downloads/elasticsearch), apache [solr](https://solr.apache.org/), [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery) plus generic HTTP/GET/JSON with configurations for premium services like Google's Programmable Search Engine and NLResearch.com. 
 
-:star: Learn more about SWIRL SEARCH on the [Documentation Wiki](https://github.com/sidprobstein/swirl-search/wiki)
+:star: Learn more: [Documentation Wiki](https://github.com/sidprobstein/swirl-search/wiki)
 
 <br/>
 
@@ -73,15 +73,15 @@ Results will appear in just a few seconds!
 
 <br/>
 
-:warning: Please note the Docker version of SWIRL does not retain results or configuration when shut down. 
+:warning: Warning: The Docker version of SWIRL does *not* retain results or configuration when shut down!
 
-:star: For more information read the [Quick Start Guide](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
+:star: Learn more: [Quick Start Guide](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
 
 <br/>
 
 # Try Hosted SWIRL
 
-## If interested in a free trial of SWIRL as a managed service, please [contact support](#support)!
+### If interested in a free trial of SWIRL as a managed service, please [contact support](#support)!
 
 <br/>
 
@@ -97,11 +97,7 @@ Results will appear in just a few seconds!
 
 # Documentation Wiki
 
-### [Home](https://github.com/sidprobstein/swirl-search/wiki)
-### [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
-### [User Guide](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide)
-### [Developer Guide](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide)
-### [Admin Guide](https://github.com/sidprobstein/swirl-search/wiki/4.-Admin-Guide)
+### [Home](https://github.com/sidprobstein/swirl-search/wiki) | [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start) | [User Guide](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide) | [Developer Guide](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide) | [Admin Guide](https://github.com/sidprobstein/swirl-search/wiki/4.-Admin-Guide)
 
 <br/>
 
