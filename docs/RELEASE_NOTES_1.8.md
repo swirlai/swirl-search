@@ -44,6 +44,19 @@ More details: [Subscribing to a Search](https://github.com/sidprobstein/swirl-se
 
 <br/>
 
+:small_blue_diamond: SWIRL now supports pipelining of Processors for pre-query, query, result and post-result transformation of queries, responses and results.
+
+For example, the new Search post-result pipeline:
+
+```
+"post_result_processors": [
+        "DedupeByFieldPostResultProcessor",
+        "CosineRelevancyPostResultProcessor"
+]
+```
+
+<br/>
+
 :small_blue_diamond: New Google BigQuery connector & SearchProvider for the [funding database example]()
 
 ```

@@ -111,7 +111,9 @@ Results will appear in just a few seconds!
 
 * [Optional subscribe feature](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#subscribing-to-a-search) to continuously monitor any search for new results 
 
-* Data landed in Sqlite3 or PostgreSQL for post-processing, consumption and/or analytics
+* Pipelining of [Processor](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#processors) stages for real-time adaptation and transformation of queries, responses and results 
+
+* [Results landed](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#result-object) in Sqlite3 or PostgreSQL for post-processing, consumption and/or analytics
 
 * [Matching on word stems](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) and [handling of stopword](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference#stopwords-language) via NLTK
 
