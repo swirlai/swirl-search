@@ -128,10 +128,9 @@ Please [report any issues](https://github.com/sidprobstein/swirl-search/issues/)
 
 # Documentation Wiki
 
-* [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
-* [User Guide](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide)
-* [Developer Guide](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide)
-* [Admin Guide](https://github.com/sidprobstein/swirl-search/wiki/4.-Admin-Guide)
+:small_blue_diamond: [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
+:small_blue_diamond: [User Guide](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide)
+:small_blue_diamond: [Developer Guide](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide):small_blue_diamond: [Admin Guide](https://github.com/sidprobstein/swirl-search/wiki/4.-Admin-Guide)
 
 <br/>
 
