@@ -36,27 +36,6 @@ More details: [Subscribing to a Search](https://github.com/sidprobstein/swirl-se
 
 <br/>
 
-:small_blue_diamond: The new DedupeByFieldPostResultProcessor detects and removes duplicates on any field - 'url' by default.
-
-<br/>
-
-:small_blue_diamond: The new DedupeBySimilarityPostResultProcessor detects and removes duplicates by similarity between - 'title' and 'body' field (by default), with a cut-off threshold of .95.
-
-<br/>
-
-:small_blue_diamond: SWIRL now supports pipelining of Processors for pre-query, query, result and post-result transformation of queries, responses and results.
-
-For example, the new Search post-result pipeline:
-
-```
-"post_result_processors": [
-        "DedupeByFieldPostResultProcessor",
-        "CosineRelevancyPostResultProcessor"
-]
-```
-
-<br/>
-
 :small_blue_diamond: New Google BigQuery connector & SearchProvider for the [funding database example]()
 
 ```
@@ -83,6 +62,31 @@ For example, the new Search post-result pipeline:
 ```
 
 More details: [Google BigQuery Connector](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#bigquery)
+
+<br/>
+
+:small_blue_diamond: SWIRL 1.8 supports pipelining of Processors for pre-query, query, result and post-result transformation of queries, responses and results.
+
+For example, the new Search post-result pipeline:
+
+```
+"post_result_processors": [
+        "DedupeByFieldPostResultProcessor",
+        "CosineRelevancyPostResultProcessor"
+]
+```
+
+More details: [Processing Pipelines](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#processing-pipelines)
+
+<br/>
+
+:small_blue_diamond: The new DedupeByFieldPostResultProcessor detects and removes duplicates on any field - 'url' by default.
+
+<br/>
+
+:small_blue_diamond: The new DedupeBySimilarityPostResultProcessor detects and removes duplicates by similarity between - 'title' and 'body' field (by default), with a cut-off threshold of .95.
+
+More details: [Detecting and Removing Duplicate Results](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#detecting-and-removing-duplicate-results)
 
 <br/>
 
