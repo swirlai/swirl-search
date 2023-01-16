@@ -137,14 +137,6 @@ If you are interested in a Docker w/PostgreSQL back-end, and/or a free trial of 
 
 <br/>
 
-# Contributing
-
-* Review the [help wanted list](docs/help_wanted.md)
-
-* Submit a [pull request](https://github.com/sidprobstein/swirl-search/pulls) with changes
-
-<br/>
-
 # Support
 
 :small_blue_diamond: [Create an Issue](https://github.com/sidprobstein/swirl-search/issues) if something doesn't work, isn't clear, or should be documented
