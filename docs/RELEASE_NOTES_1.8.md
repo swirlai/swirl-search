@@ -28,6 +28,8 @@ The ```AdaptiveQueryProcessor``` rewrites this query to ```electric vehicle tesl
 
 The latter would not have matched the full query. Tag enables expressive querying where specific types of repositories are targeted with appropriate search terms, and SWIRL unifies the results.
 
+<br/>
+
 :small_blue_diamond: Subscribe to any Search. SWIRL will check for new results every few hours, and automatically detects & discards duplicates by URL or document similarity.
 
 ![SWIRL subscribe messages](images/swirl_subscribe.png)
@@ -36,7 +38,7 @@ More details: [Subscribing to a Search](https://github.com/sidprobstein/swirl-se
 
 <br/>
 
-:small_blue_diamond: New Google BigQuery connector & SearchProvider for the [funding database example]()
+:small_blue_diamond: New [Google BigQuery](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#bigquery) Connector plus SearchProvider for the [Funding Dataset](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#funding-data-set):
 
 ```
 {
