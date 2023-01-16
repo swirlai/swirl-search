@@ -1,19 +1,16 @@
 <h1> &nbsp; SWIRL SEARCH <img alt='SWIRL Logo' src='https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/swirl_logo_notext_200.jpg' width=38 align=left /></h1>
 
-## AI Federated Search Engine
-
-SWIRL queries any number of data sources - search engines, databases, noSQL engines, cloud/SaaS services with APIs etc - and uses [Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/) to re-rank the unified results *without* extracting and indexing *anything*. 
+SWIRL adapts and distributes queries to any data source with searchable API - search engines, databases, noSQL engines, cloud/SaaS services etc - and uses AI ([Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/)) to re-rank the unified results *without* extracting and indexing *anything*. It's intended for use by developers and data scientists who want to solve multi-silo search problems from enterprise search to new monitoring & alerting solutions that push information to users continuously.
 
 ![Federated search diagram](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/federation_diagram.png)
 
-Built on the python/django/rabbit stack, SWIRL includes connectors to [elastic](https://www.elastic.co/cn/downloads/elasticsearch), apache [solr](https://solr.apache.org/), [PostgreSQL](https://www.postgresql.org/) and generic HTTP/GET/JSON with configurations for premium services like Google's Programmable Search Engine, NLResearch.com, newsdata.io and more. 
+Built on the python/django/rabbit stack, SWIRL includes connectors to [elastic](https://www.elastic.co/cn/downloads/elasticsearch), apache [solr](https://solr.apache.org/), [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery) plus generic HTTP/GET/JSON with configurations for premium services like Google's Programmable Search Engine and NLResearch.com. 
 
-Learn more about [Federated Search](https://en.wikipedia.org/wiki/Federated_search) and 
-[SWIRL SEARCH on the project WIKI...](https://github.com/sidprobstein/swirl-search/wiki)
+:star: Learn more about SWIRL SEARCH on the [Documentation Wiki](https://github.com/sidprobstein/swirl-search/wiki)
 
 <br/>
 
-# How to use SWIRL:
+# Use SWIRL:
 
 1. Load [SearchProviders](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#searchproviders) as described in the [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start#install-searchproviders):
 
@@ -31,7 +28,7 @@ http://localhost:8000/swirl/search/?q=knowledge+management
 
 <br/>
 
-# Get SWIRL Now:
+# Try SWIRL Now:
 
 ```
 docker pull sidprobstein/swirl-search
@@ -82,9 +79,9 @@ Results will appear in just a few seconds!
 
 <br/>
 
-# Hosted SWIRL
+# Try Hosted SWIRL
 
-## If you are interested in a free trial of SWIRL as a managed service, please [contact support](#support)!
+## If interested in a free trial of SWIRL as a managed service, please [contact support](#support)!
 
 <br/>
 
@@ -117,15 +114,19 @@ Results will appear in just a few seconds!
 
 * [Synchronous or asynchronous search federation](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#architecture) via [APIs](http://localhost:8000/swirl/swagger-ui/)
 
-* Data landed in Sqlite3 or PostgreSQL for post-processing, consumption and analytics
+* [Optional subscribe feature](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#subscribing-to-a-search) to continuously monitor any search for new results 
+
+* Data landed in Sqlite3 or PostgreSQL for post-processing, consumption and/or analytics
 
 * [Matching on word stems](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) and [handling of stopword](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference#stopwords-language) via NLTK
 
+* [Duplicate detection](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#detecting-and-removing-duplicate-results) on field or by configurable Cosine Similarity threshold
+
 * Re-ranking of unified results [using Cosine Vector Similarity](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) based on [spaCy](https://spacy.io/)'s large language model and [NLTK](https://www.nltk.org/)
 
-* [Result mixers](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#result-mixers) order results by relevancy, date, stack or round-robin
+* [Result mixers](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#result-mixers) order results by relevancy, date or round-robin (stack) format, with optional filtering of just new items in subscribe modes
 
-* Page through all results requested, re-run and re-score searches using URLs provided in each result set
+* Page through all results requested, re-run, re-score and update searches using URLs provided with each result set
 
 * [Sample data sets](https://github.com/sidprobstein/swirl-search/tree/main/Data) for use with Sqlite3 and PostgreSQL
 
@@ -135,7 +136,7 @@ Results will appear in just a few seconds!
 
 * Easily extensible [Connector](https://github.com/sidprobstein/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/sidprobstein/swirl-search/tree/main/swirl/mixers) objects
 
-* [Available under the Apache 2.0 License](./LICENSE)
+* [Source code & docker images provided under the Apache 2.0 License](./LICENSE)
 
 <br/>
 
