@@ -1,6 +1,6 @@
 <h1> &nbsp; SWIRL SEARCH <img alt='SWIRL Logo' src='https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/swirl_logo_notext_200.jpg' width=38 align=left /></h1>
 
-## The AI Federated Search Engine
+## AI Federated Search Engine
 
 SWIRL queries any number of data sources - search engines, databases, noSQL engines, cloud/SaaS services with APIs etc - and uses [Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/) to re-rank the unified results *without* extracting and indexing *anything*. 
 
@@ -13,16 +13,16 @@ Learn more about [Federated Search](https://en.wikipedia.org/wiki/Federated_sear
 
 <br/>
 
-# How SWIRL Works
+# How to use SWIRL:
 
-1. Create/load SearchProviders
+1. Load [SearchProviders](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#searchproviders) as described in the [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start#install-searchproviders)
 
 ![SWIRL SearchProviders](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/swirl_providers_focus.png)
 
-2. Run a search:
+2. [Run a search](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#creating-a-search-object-with-the-q-url-parameter):
 
 ```
-http://localhost:8000/swirl/search/?q=your+query+here
+http://localhost:8000/swirl/search/?q=knowledge+management
 ```
 
 3. Get unified, AI-ranked results:
@@ -30,7 +30,7 @@ http://localhost:8000/swirl/search/?q=your+query+here
 
 <br/>
 
-# Try SWIRL Now!
+# Get SWIRL Now:
 
 ```
 docker pull sidprobstein/swirl-search
@@ -77,12 +77,13 @@ Results will appear in just a few seconds!
 
 :warning: Please note the Docker version of SWIRL does not retain results or configuration when shut down.
 
+:star: Read the [Quick Start Guide](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start) for full installation details
 
 <br/>
 
 # Hosted SWIRL
 
-If you are interested in a Docker w/PostgreSQL back-end, and/or a free trial of SWIRL as a managed service, please [contact support](#support)!
+## If you are interested in a free trial of SWIRL as a managed service, please [contact support](#support)!
 
 <br/>
 
@@ -96,14 +97,14 @@ If you are interested in a Docker w/PostgreSQL back-end, and/or a free trial of 
 
 <br/>
 
-# Documentation
+# Documentation Wiki
 
-* [Home](https://github.com/sidprobstein/swirl-search/wiki)
-* [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
-* [User Guide](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide)
-* [Developer Guide](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide)
-* [Object Reference](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference)
-* [Admin Guide](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide)
+## [Home](https://github.com/sidprobstein/swirl-search/wiki)
+## [Quick Start](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
+## [User Guide](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide)
+## [Developer Guide](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide)
+## [Object Reference](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference)
+## [Admin Guide](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide)
 
 <br/>
 
