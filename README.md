@@ -74,11 +74,11 @@ http://localhost:8000/swirl/search/?q=enterprise+search
 
 Results will appear in just a few seconds!
 
-:star: For more information please review the [Quick Start Guide](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
+<br/>
 
-:warning: Please note the Docker version of SWIRL does not retain results or configuration when shut down.
+:warning: Please note the Docker version of SWIRL does not retain results or configuration when shut down. 
 
-:star: Read the [Quick Start Guide](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start) for full installation details
+:star: For more information read the [Quick Start Guide](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start)
 
 <br/>
 
