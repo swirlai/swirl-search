@@ -31,6 +31,7 @@ http://localhost:8000/swirl/search/?q=knowledge+management
 # Try SWIRL Now:
 
 ```
+git clone https://github.com/sidprobstein/swirl-search
 docker pull sidprobstein/swirl-search
 docker compose up
 ```
