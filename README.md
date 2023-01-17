@@ -4,7 +4,7 @@ SWIRL adapts and distributes queries to any data source with searchable API - se
 
 ![Federated search diagram](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/federation_diagram.png)
 
-Built on the python/django/rabbit stack, SWIRL includes connectors to [elastic](https://www.elastic.co/cn/downloads/elasticsearch), apache [solr](https://solr.apache.org/), [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery) plus generic HTTP/GET/JSON with configurations for premium services like Google's Programmable Search Engine and NLResearch.com. 
+Built on the python/django/rabbit stack, SWIRL includes connectors to [elastic](https://www.elastic.co/cn/downloads/elasticsearch), apache [solr](https://solr.apache.org/), [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery) plus generic HTTP/GET/JSON with configurations for premium services like [Google's Programmable Search Engine](https://programmablesearchengine.google.com/about/) and [NLResearch.com](https://northernlight.com/). 
 
 :star: Learn more: [Documentation Wiki](https://github.com/sidprobstein/swirl-search/wiki)
 
