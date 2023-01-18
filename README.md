@@ -1,5 +1,9 @@
 <h1> &nbsp; SWIRL SEARCH <img alt='SWIRL Logo' src='https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/swirl_logo_notext_200.jpg' width=38 align=left /></h1>
 
+[![Slack](https://img.shields.io/badge/slack--channel-blue?logo=slack)](https://join.slack.com/t/swirlsearch/shared_invite/zt-1n7xophls-F4SzYecGniOFB95xI6WlAw)
+[![Newsletter](https://img.shields.io/badge/newsletter-blue?logo=revue)](https://groups.google.com/g/swirl-announce)
+
+
 SWIRL adapts and distributes queries to any data source with searchable API - search engines, databases, noSQL engines, cloud/SaaS services etc - and uses AI ([Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/)) to re-rank the unified results *without* extracting and indexing *anything*. It's intended for use by developers and data scientists who want to solve multi-silo search problems from enterprise search to new monitoring & alerting solutions that push information to users continuously.
 
 ![Federated search diagram](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/federation_diagram.png)
