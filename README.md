@@ -141,6 +141,8 @@ Results will appear in just a few seconds!
 
 # Support
 
+* [Join SWIRL SEARCH #support on Slack!](https://join.slack.com/t/swirlsearch/shared_invite/zt-1n7xophls-F4SzYecGniOFB95xI6WlAw)
+
 * [Create an Issue](https://github.com/sidprobstein/swirl-search/issues) if something doesn't work, isn't clear, or should be documented
 
 * Email: [support@swirl.today](mailto:support@swirl.today) with issues, requests, questions, etc - we'd love to hear from you!
