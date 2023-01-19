@@ -18,5 +18,8 @@ statistics
 nltk
 bs4
 google-cloud-bigquery
+opensearch-py
+
+
 
 
