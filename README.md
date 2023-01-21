@@ -21,7 +21,7 @@ Built on the python/django/rabbit stack, SWIRL includes connectors to [elastic](
 * From the console:
 
 ```
-docker-compose up
+docker compose up
 ```
 
 After a few minutes the following or similar should appear:
