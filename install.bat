@@ -7,6 +7,13 @@ if exist .env (
     copy .env.dist .env
 )
 
+if exist db.sqlite3 (
+    echo "Install: db.sqlite3 found"
+) else (
+    echo "Copying: db.sqlite3.dist -> db.sqlite3"
+    copy db.sqlite3.dist db.sqlite3
+)
+
 python swirl/banner.py
 echo ""
 

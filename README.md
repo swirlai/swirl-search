@@ -34,48 +34,50 @@ http://localhost:8000/swirl/search/?q=knowledge+management
 
 # Try SWIRL Now:
 
-```
-git clone https://github.com/sidprobstein/swirl-search
-cd swirl-search
-docker pull sidprobstein/swirl-search
-docker compose up
-```
+* Download [https://github.com/sidprobstein/swirl-search/blob/main/docker-compose.yaml](https://github.com/sidprobstein/swirl-search/blob/main/docker-compose.yaml) into a folder
 
-The container will start. Note the container name - for example ```swirl-search-app-1``` as shown below. 
-
-After a minute or two you should see the following or similar:
+* From the console:
 
 ```
-swirl-search-app-1  | Command successful!
-swirl-search-app-1  | 2022-10-01 17:06:50,295 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
-swirl-search-app-1  | 2022-10-01 17:06:50,295 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
-swirl-search-app-1  | 2022-10-01 17:06:50,295 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
-swirl-search-app-1  | 2022-10-01 17:06:50,296 INFO     Listening on TCP address 0.0.0.0:8000
+docker-compose up
 ```
 
-From the console, create a super user:
+After a few minutes the following or similar should appear:
 
 ```
-docker exec -it swirl-search-app-1 python manage.py createsuperuser --username admin
+ssdtest-app-1  | Command successful!
+ssdtest-app-1  | __S_W_I_R_L__1_._8______________________________________________________________
+ssdtest-app-1  | 
+ssdtest-app-1  | Warning: logs directory does not exist, creating it
+ssdtest-app-1  | Start: rabbitmq -> rabbitmq-server ... Ok, pid: 53
+ssdtest-app-1  | Start: celery-worker -> celery -A swirl_server worker ... Ok, pid: 577
+ssdtest-app-1  | Start: celery-beats -> celery -A swirl_server beat --scheduler django_celery_beat.schedulers:DatabaseScheduler ... Ok, pid: 609
+ssdtest-app-1  | Updating .swirl... Ok
+ssdtest-app-1  | 
+ssdtest-app-1  |   PID TTY          TIME CMD
+ssdtest-app-1  |    53 ?        00:00:00 rabbitmq-server
+ssdtest-app-1  |   577 ?        00:00:11 celery
+ssdtest-app-1  |   609 ?        00:00:06 celery
+ssdtest-app-1  | 
+ssdtest-app-1  | Command successful!
+ssdtest-app-1  | 2023-01-21 13:16:11,070 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
+ssdtest-app-1  | 2023-01-21 13:16:11,074 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+ssdtest-app-1  | 2023-01-21 13:16:11,075 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
+ssdtest-app-1  | 2023-01-21 13:16:11,079 INFO     Listening on TCP address 0.0.0.0:8000
+ssdtest-app-1  | 2023-01-21 13:18:43,470 WARNING  Forbidden: /swirl/search/
 ```
 
-Enter a password, twice. It will be needed in the next step.
-
-From the console, feed some search providers:
-
-```
-docker exec -it swirl-search-app-1 python swirl_load.py SearchProviders/google_pse.json -u admin -p <your-admin-password>
-```
-
-Be sure to replace ```<swirl-search-app-1``` if the container name is different for your installation, and ```<your-admin-password>``` with the password created earlier.
-
-Now run a query from your browser:
+* Open the following with a browser: 
 
 ```
 http://localhost:8000/swirl/search/?q=enterprise+search
 ```
 
-Results will appear in just a few seconds!
+Login with username `admin` and password `password`. Ranked results will appear in just a few seconds!
+
+```
+TO DO
+```
 
 <br/>
 
@@ -95,7 +97,7 @@ Results will appear in just a few seconds!
 
 | Version                     | Date                        | Notes | 
 | --------------------------- | --------------------------- | ----- |
-| [SWIRL SEARCH 1.8](https://github.com/sidprobstein/swirl-search/releases/tag/v1.8) | 1-15-2022 | [Release 1.8](./docs/RELEASE_NOTES_1.8.md) |
+| [SWIRL SEARCH 1.8.1](https://github.com/sidprobstein/swirl-search/releases/tag/v1.8.1) | 1-21-2022 | [Release 1.8.1](./docs/RELEASE_NOTES_1.8.1.md) |
 | [SWIRL SEARCH 1.7](https://github.com/sidprobstein/swirl-search/releases/tag/v1.7) | 12-3-2022 | [Release 1.7](./docs/RELEASE_NOTES_1.7.md) |
 | [Docker Image](https://hub.docker.com/r/sidprobstein/swirl-search) | * | [Setup Guide](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start#docker) - Note *does* *not* *persist* *data* after shutdown! | 
 

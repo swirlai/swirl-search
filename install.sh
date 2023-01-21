@@ -8,6 +8,14 @@ else
     cp .env.dist .env
 fi
 
+if [ -f "db.sqlite3" ]
+then
+echo "Install: db.sqlite3 found"
+else
+    echo "Copying: db.sqlite3.dist -> db.sqlite3"
+    cp db.sqlite3.dist db.sqlite3
+fi
+
 python swirl/banner.py
 echo ""
 
