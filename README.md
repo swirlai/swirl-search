@@ -46,16 +46,23 @@ ssdtest-app-1  | 2023-01-21 13:16:11,070 INFO     Starting server at tcp:port=80
 ssdtest-app-1  | 2023-01-21 13:16:11,074 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
 ssdtest-app-1  | 2023-01-21 13:16:11,075 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
 ssdtest-app-1  | 2023-01-21 13:16:11,079 INFO     Listening on TCP address 0.0.0.0:8000
-ssdtest-app-1  | 2023-01-21 13:18:43,470 WARNING  Forbidden: /swirl/search/
 ```
 
-* Open the following with a browser: 
+* Open the following URL with a browser: 
 
 ```
-http://localhost:8000/swirl/search/?q=enterprise+search
+http://localhost:8000/swirl/search/
 ```
 
-Login with username `admin` and password `password`. Ranked results will appear in just a few seconds!
+The search page will appear. Login with username `admin` and password `password`. 
+
+* Open the following URL with a browser: 
+
+```
+http://localhost:8000/swirl/search/?q=enterprise+search 
+```
+
+Ranked results will appear in just a few seconds!
 
 ```
 
