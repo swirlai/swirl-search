@@ -49,6 +49,7 @@ class Mixer:
         self.all_results = []
         self.mixed_results = None
         self.found = 0
+        self.stack = 0
         self.result_mixer = None
         self.mark_all_read = mark_all_read
         self.status = "INIT"

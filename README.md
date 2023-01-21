@@ -76,7 +76,172 @@ http://localhost:8000/swirl/search/?q=enterprise+search
 Login with username `admin` and password `password`. Ranked results will appear in just a few seconds!
 
 ```
-TO DO
+
+    "messages": [
+        "__S_W_I_R_L__1_._8______________________________________________________________",
+        "[2023-01-21 15:02:53.696346] Retrieved 10 of 3530 results from: Mergers & Acquisitions (web/Google PSE)",
+        "[2023-01-21 15:02:53.731620] Retrieved 10 of 2070000000 results from: Strategy Consulting (web/Google PSE)",
+        "[2023-01-21 15:02:53.854734] Retrieved 10 of 120000 results from: Enterprise Search (web/Google PSE)",
+        "[2023-01-21 15:02:54.228330] DedupeByFieldPostResultProcessor updated 1 results",
+        "[2023-01-21 15:02:55.203736] CosineRelevancyPostResultProcessor updated 29 results",
+        "[2023-01-21 15:02:59.241287] Results ordered by: RelevancyMixer"
+    ],
+    "info": {
+        "Enterprise Search (web/Google PSE)": {
+            "found": 120000,
+            "retrieved": 10,
+            "filter_url": "http://localhost:8000/swirl/results/?search_id=2&provider=1",
+            "query_string_to_provider": "enterprise search",
+            "query_to_provider": "https://www.googleapis.com/customsearch/v1?cx=0c38029ddd002c006&key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM&q=enterprise+search",
+            "query_processors": [
+                "AdaptiveQueryProcessor"
+            ],
+            "result_processors": [
+                "MappingResultProcessor"
+            ],
+            "search_time": 1.7
+        },
+        "Strategy Consulting (web/Google PSE)": {
+            "found": 2070000000,
+            "retrieved": 10,
+            "filter_url": "http://localhost:8000/swirl/results/?search_id=2&provider=2",
+            "query_string_to_provider": "enterprise search",
+            "query_to_provider": "https://www.googleapis.com/customsearch/v1?cx=7d473806dcdde5bc6&key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM&q=enterprise+search",
+            "query_processors": [
+                "AdaptiveQueryProcessor"
+            ],
+            "result_processors": [
+                "MappingResultProcessor"
+            ],
+            "search_time": 1.6
+        },
+        "Mergers & Acquisitions (web/Google PSE)": {
+            "found": 3530,
+            "retrieved": 10,
+            "filter_url": "http://localhost:8000/swirl/results/?search_id=2&provider=3",
+            "query_string_to_provider": "enterprise search",
+            "query_to_provider": "https://www.googleapis.com/customsearch/v1?cx=b384c4e79a5394479&key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM&q=enterprise+search",
+            "query_processors": [
+                "AdaptiveQueryProcessor"
+            ],
+            "result_processors": [
+                "MappingResultProcessor"
+            ],
+            "search_time": 1.6
+        },
+        "search": {
+            "query_string": "enterprise search",
+            "query_string_processed": "enterprise search",
+            "rescore_url": "http://localhost:8000/swirl/search/?rescore=2",
+            "rerun_url": "http://localhost:8000/swirl/search/?rerun=2"
+        },
+        "results": {
+            "retrieved_total": 29,
+            "retrieved": 10,
+            "federation_time": 3.0,
+            "next_page": "http://localhost:8000/swirl/results/?search_id=2&page=2"
+        }
+    },
+    "results": [
+        {
+            "swirl_rank": 1,
+            "swirl_score": 8641.028729276184,
+            "searchprovider": "Enterprise Search (web/Google PSE)",
+            "searchprovider_rank": 1,
+            "title": "*Enterprise* *search* - Wikipedia",
+            "url": "https://en.wikipedia.org/wiki/Enterprise_search",
+            "body": "*Enterprise* *search* is the practice of making content from multiple *enterprise-type* sources, such as databases and intranets, *searchable* to a defined audience ...",
+            "date_published": "unknown",
+            "date_retrieved": "2023-01-21 15:02:53.854964",
+            "author": "",
+            "payload": {
+                "cacheId": "D6cJRzESeEoJ"
+            },
+            "explain": {
+                "stems": "enterpris search",
+                "title": {
+                    "enterprise_search_*": 0.9434668430078893,
+                    "Enterprise_search_0": 0.9434668430078893,
+                    "Enterprise_0": 0.6651386968008296,
+                    "search_1": 0.9049768381205389,
+                    "result_length_adjust": 2.3333333333333335,
+                    "query_length_adjust": 1.0
+                },
+                "body": {
+                    "enterprise_search_*": 0.6018024110405671,
+                    "Enterprise_search_0": 0.571031804774827,
+                    "search_1": 0.5442048484158057,
+                    "result_length_adjust": 1.0,
+                    "query_length_adjust": 1.0
+                }
+            }
+        },
+        {
+            "swirl_rank": 2,
+            "swirl_score": 7348.585219407358,
+            "searchprovider": "Strategy Consulting (web/Google PSE)",
+            "searchprovider_rank": 6,
+            "title": "Intelligent *Enterprise* *Search*",
+            "url": "https://www.accenture.com/dk-en/services/applied-intelligence/intelligent-enterprise-search",
+            "body": "Accenture helps clients implement intelligent *enterprise* *search* solutions using AI technologies, such as natural language processing and machine learning.",
+            "date_published": "unknown",
+            "date_retrieved": "2023-01-21 15:02:53.780191",
+            "author": "",
+            "payload": {},
+            "explain": {
+                "stems": "enterpris search",
+                "title": {
+                    "enterprise_search_*": 0.9608442937138034,
+                    "Enterprise_Search_1": 1.0,
+                    "Enterprise_1": 0.7935776562186374,
+                    "Search_2": 1.0,
+                    "result_length_adjust": 2.3333333333333335,
+                    "query_length_adjust": 1.0
+                },
+                "body": {
+                    "enterprise_search_*": 0.7308253502908216,
+                    "enterprise_search_5": 0.7899886473674567,
+                    "enterprise_5": 0.8224356551634711,
+                    "search_6": 0.6706759394116855,
+                    "result_length_adjust": 1.1578947368421053,
+                    "query_length_adjust": 1.0
+                }
+            }
+        },
+        {
+            "swirl_rank": 3,
+            "swirl_score": 6636.90423527112,
+            "searchprovider": "Strategy Consulting (web/Google PSE)",
+            "searchprovider_rank": 2,
+            "title": "Intelligent *Enterprise* *Search* | Accenture",
+            "url": "https://www.accenture.com/us-en/services/applied-intelligence/intelligent-enterprise-search",
+            "body": "Intelligent *enterprise* *search* uses AI technologies, such as Natural Language Processing (NLP), semantic search, and Machine Learning (ML), to provide an engaged ...",
+            "date_published": "unknown",
+            "date_retrieved": "2023-01-21 15:02:53.745475",
+            "author": "",
+            "payload": {},
+            "explain": {
+                "stems": "enterpris search",
+                "title": {
+                    "enterprise_search_*": 0.9294430473589433,
+                    "Enterprise_Search_1": 0.9505501863924661,
+                    "Enterprise_1": 0.8166240031067878,
+                    "Search_2": 0.8792733859459471,
+                    "result_length_adjust": 1.75,
+                    "query_length_adjust": 1.0
+                },
+                "body": {
+                    "enterprise_search_*": 0.7327504309736037,
+                    "enterprise_search_1": 0.6809326651912151,
+                    "enterprise_1": 0.6592383943038718,
+                    "search_2": 0.5937011247188788,
+                    "search_13": 0.6189125063789584,
+                    "result_length_adjust": 1.0,
+                    "query_length_adjust": 1.0
+                }
+            }
+        }, 
+        ...etc...
 ```
 
 <br/>
@@ -113,7 +278,7 @@ TO DO
 
 * [Pre-built searchprovider definitions](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for apache solr, elastic, Sqlite3, PostgreSQL, generic http/get/auth/json and premium services like Google Programmable Search Engine, NLResearch.com and Newsdata.io that are configured - NOT coded - and easily [organized with properties and tags](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#organizing-searchproviders-with-active-default-and-tags)
 
-* [Adaptation of the query for each provider](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#search-syntax) such as rewriting ```NOT term``` to ```-term```, removing NOTted terms from providers that don't support NOT, and passing down AND, + and OR.
+* [Adaptation of the query for each provider](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#search-syntax) such as rewriting `NOT term` to `-term`, removing NOTted terms from providers that don't support NOT, and passing down AND, + and OR.
 
 * [Synchronous or asynchronous search federation](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#architecture) via [APIs](http://localhost:8000/swirl/swagger-ui/)
 

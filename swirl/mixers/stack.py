@@ -28,10 +28,6 @@ class StackNMixer(Mixer):
 
     type = "StackNMixer"
     
-    def __init__(self, search_id, results_requested, page, explain=False, provider=None):
-        self.stack = 0
-        super().__init__(search_id, results_requested, page, explain, provider)
-
     def order(self):
 
         # sort the json_results by score
