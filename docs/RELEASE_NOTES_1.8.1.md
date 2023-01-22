@@ -4,7 +4,7 @@
 
 # SWIRL SEARCH 1.8.1
 
-This version resolves issues found in 1.8 including:
+This version resolves issues found in 1.8, and eliminates two installation steps.
 
 ## PLEASE STAR OUR REPO: [http://swirl.today/](http://swirl.today)
 
@@ -12,7 +12,7 @@ This version resolves issues found in 1.8 including:
 
 ## New Features
 
-:small_blue_diamond: SWIRL 1.8.1 ships with a Sqlite3 database pre-loaded with a super user and the Google PSE examples
+:small_blue_diamond: SWIRL 1.8.1 ships with a Sqlite3 database pre-loaded with a super user and the Google PSE examples!
 
 This simplifies all Quick Start procedures dramatically.
 

@@ -149,8 +149,11 @@ class SearchViewSet(viewsets.ModelViewSet):
     Use GET to list all, POST to create a new one. 
     Add /<id>/ to DELETE, PUT or PATCH one.
     Add ?q=<query_string> to the URL to create a Search with default settings
+    Add ?qs=<query_string> to the URL to run a Search and get results directly
+    Add &providers=<provider1_id>,<provider2_tag> etc to specify SearchProvider(s)
     Add ?rerun=<query_id> to fully re-execute a query, discarding previous results
     Add ?rescore=<query_id> to re-run post-result processing, updating relevancy scores
+    Add ?update=<query_id> to update the Search with new results from all sources
     """
     queryset = Search.objects.all()
     serializer_class = SearchSerializer
@@ -440,7 +443,7 @@ class ResultViewSet(viewsets.ModelViewSet):
     Add /<id>/ to DELETE, PUT or PATCH one.
     Add ?search_id=<search_id> to the base URL to view mixed results with the default mixer
     Add &result_mixer=<MixerName> to the above URL specify the result mixer to use
-    Add &explain=True to display the relevancy explanation for each result
+    Add &explain=False to hide the relevancy explanation for each result
     Add &provider=<provider_id> to filter results to one SearchProvider
     """
     queryset = Result.objects.all()
