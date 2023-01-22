@@ -1,4 +1,4 @@
-FROM python:3.8-buster
+FROM python:3.11.1-slim
 
 # RUN sudo echo 'nameserver 8.8.8.8'>/etc/resolv.conf
 RUN apt-get update -y
