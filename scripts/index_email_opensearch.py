@@ -16,14 +16,14 @@ from opensearchpy import OpenSearch
 def main(argv):
 
     # arguments
-    parser = argparse.ArgumentParser(description="Bulk index email in CSV format to OpenSearch")
-    parser.add_argument('filespec', help="path to the csv file to load")
-    parser.add_argument('-o', '--opensearch', help="the URL to opensearch", default='http://localhost:9200/')
-    parser.add_argument('-i', '--index', help="the index to receive the email messages", default='email')
-    parser.add_argument('-m', '--max', help="maximum number of rows to index", default=0)
-    parser.add_argument('-u', '--username', default='admin', help="the OpenSearch user, default 'admin'")
-    parser.add_argument('-p', '--password', help="the password for the OpenSearch user")
-    args = parser.parse_args()
+    aparse = argparse.ArgumentParser(description="Bulk index email in CSV format to OpenSearch")
+    aparse.add_argument('filespec', help="path to the csv file to load")
+    aparse.add_argument('-o', '--opensearch', help="the URL to opensearch", default='http://localhost:9200/')
+    aparse.add_argument('-i', '--index', help="the index to receive the email messages", default='email')
+    aparse.add_argument('-m', '--max', help="maximum number of rows to index", default=0)
+    aparse.add_argument('-u', '--username', default='admin', help="the OpenSearch user, default 'admin'")
+    aparse.add_argument('-p', '--password', help="the password for the OpenSearch user")
+    args = aparse.parse_args()
 
     if not os.path.exists(args.filespec):
         print(f"Error: file not found: {args.filespec}")
