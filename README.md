@@ -16,7 +16,11 @@ Built on the python/django/rabbit stack, SWIRL includes connectors to [elastic](
 
 # Try SWIRL Now:
 
-* Download [https://github.com/sidprobstein/swirl-search/blob/main/docker-compose.yaml](https://github.com/sidprobstein/swirl-search/blob/main/docker-compose.yaml) into a folder
+* Download [https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docker-compose.yaml](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docker-compose.yaml)
+
+```
+curl https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
+```
 
 * From the console:
 
