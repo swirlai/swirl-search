@@ -8,7 +8,7 @@ SWIRL adapts and distributes queries to anything with a search API - search engi
 
 ![Federated search diagram](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/federation_diagram.png)
 
-Built on the python/django/rabbit stack, SWIRL includes connectors to [elastic](https://www.elastic.co/cn/downloads/elasticsearch), apache [solr](https://solr.apache.org/), [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery) plus generic HTTP/GET/JSON with configurations for premium services like [Google's Programmable Search Engine](https://programmablesearchengine.google.com/about/) and [NLResearch.com](https://northernlight.com/). 
+Built on the Python/Django/RabbitMQ stack, SWIRL includes connectors to [Elastic](https://www.elastic.co/cn/downloads/elasticsearch), Apache [Solr](https://solr.apache.org/), [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery) plus generic HTTP/GET/JSON with configurations for premium services like [Google's Programmable Search Engine](https://programmablesearchengine.google.com/about/) and [NLResearch.com](https://northernlight.com/). 
 
 :star: Learn more: [Documentation Wiki](https://github.com/sidprobstein/swirl-search/wiki)
 
@@ -255,9 +255,9 @@ Ranked results will appear in just a few seconds!
 
 | Version                     | Date                        | Notes | 
 | --------------------------- | --------------------------- | ----- |
-| [SWIRL SEARCH 1.8.1](https://github.com/sidprobstein/swirl-search/releases/tag/v1.8.1) | 1-21-2022 | [Release 1.8.1](./docs/RELEASE_NOTES_1.8.1.md) |
-| [SWIRL SEARCH 1.7](https://github.com/sidprobstein/swirl-search/releases/tag/v1.7) | 12-3-2022 | [Release 1.7](./docs/RELEASE_NOTES_1.7.md) |
-| [Docker Image](https://hub.docker.com/r/sidprobstein/swirl-search) | * | [Setup Guide](https://github.com/sidprobstein/swirl-search/wiki/1.-Quick-Start#docker) - Note *does* *not* *persist* *data* after shutdown! | 
+| [SWIRL SEARCH 1.8.2](https://github.com/sidprobstein/swirl-search/releases/tag/v1.8.2) | 01-22-2023 | [Release 1.8.2](./docs/RELEASE_NOTES_1.8.2.md) |
+| [SWIRL SEARCH 1.8.1](https://github.com/sidprobstein/swirl-search/releases/tag/v1.8.1) | 01-21-2023 | [Release 1.8.1](./docs/RELEASE_NOTES_1.8.1.md) |
+| [SWIRL SEARCH 1.7](https://github.com/sidprobstein/swirl-search/releases/tag/v1.7) | 12-03-2022 | [Release 1.7](./docs/RELEASE_NOTES_1.7.md) |
 
 <br/>
 
@@ -269,9 +269,9 @@ Ranked results will appear in just a few seconds!
 
 # Key Features
 
-* [Pre-built searchprovider definitions](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for apache solr, elastic, Sqlite3, PostgreSQL, generic http/get/auth/json and premium services like Google Programmable Search Engine, NLResearch.com and Newsdata.io that are configured - NOT coded - and easily [organized with properties and tags](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#organizing-searchproviders-with-active-default-and-tags)
+* [Pre-built SearchProvider definitions](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for Apache Solr, Elastic, SQLite3, PostgreSQL, generic HTTP/GET/AUTH/JSON and premium services like Google Programmable Search Engine, NLResearch.com and Newsdata.io that are configured - NOT coded - and easily [organized with properties and tags](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#organizing-searchproviders-with-active-default-and-tags)
 
-* [Adaptation of the query for each provider](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#search-syntax) such as rewriting `NOT term` to `-term`, removing NOTted terms from providers that don't support NOT, and passing down AND, + and OR.
+* [Adaptation of the query for each provider](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#search-syntax) such as rewriting `NOT term` to `-term`, removing NOTted terms from providers that don't support NOT, and passing down the AND, + and OR operators.
 
 * [Synchronous or asynchronous search federation](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#architecture) via [APIs](http://localhost:8000/swirl/swagger-ui/)
 
@@ -279,23 +279,23 @@ Ranked results will appear in just a few seconds!
 
 * Pipelining of [Processor](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#processors) stages for real-time adaptation and transformation of queries, responses and results 
 
-* [Results landed](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#result-object) in Sqlite3 or PostgreSQL for post-processing, consumption and/or analytics
+* [Results landed](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#result-object) in SQLite3 or PostgreSQL for post-processing, consumption and/or analytics
 
-* [Matching on word stems](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) and [handling of stopword](https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference#stopwords-language) via NLTK
+* [Matching on word stems](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) and [handling of stopword](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#stopwords-language) via NLTK
 
 * [Duplicate detection](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#detecting-and-removing-duplicate-results) on field or by configurable Cosine Similarity threshold
 
 * Re-ranking of unified results [using Cosine Vector Similarity](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) based on [spaCy](https://spacy.io/)'s large language model and [NLTK](https://www.nltk.org/)
 
-* [Result mixers](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#result-mixers) order results by relevancy, date or round-robin (stack) format, with optional filtering of just new items in subscribe modes
+* [Result mixers](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#result-mixers) order results by relevancy, date or round-robin (stack) format, with optional filtering of just new items in subscribe mode
 
 * Page through all results requested, re-run, re-score and update searches using URLs provided with each result set
 
-* [Sample data sets](https://github.com/sidprobstein/swirl-search/tree/main/Data) for use with Sqlite3 and PostgreSQL
+* [Sample data sets](https://github.com/sidprobstein/swirl-search/tree/main/Data) for use with SQLite3 and PostgreSQL
 
-* [Optional spell correction](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#spell-correction) using TextBlob
+* [Optional spell correction](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#spell-correction) using [TextBlob](https://textblob.readthedocs.io/en/dev/quickstart.html#spelling-correction)
 
-* [Optional search/result expiration service](https://github.com/sidprobstein/swirl-search/wiki/5.-Admin-Guide#search-expiration-service) to limit storage use
+* [Optional search/result expiration service](https://github.com/sidprobstein/swirl-search/wiki/4.-Admin-Guide#search-expiration-service) to limit storage use
 
 * Easily extensible [Connector](https://github.com/sidprobstein/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/sidprobstein/swirl-search/tree/main/swirl/mixers) objects
 
