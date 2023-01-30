@@ -269,7 +269,7 @@ Ranked results will appear in just a few seconds!
 
 # Key Features
 
-* [Pre-built SearchProvider definitions](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for Apache Solr, Elastic, SQLite3, PostgreSQL, generic HTTP/GET/AUTH/JSON and premium services like Google Programmable Search Engine, NLResearch.com and Newsdata.io that are configured - NOT coded - and easily [organized with properties and tags](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#organizing-searchproviders-with-active-default-and-tags)
+* [SearchProvider configurations](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for all included Connectors. They can be [organized with the active, default and tags properties](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#organizing-searchproviders-with-active-default-and-tags).
 
 * [Adaptation of the query for each provider](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#search-syntax) such as rewriting `NOT term` to `-term`, removing NOTted terms from providers that don't support NOT, and passing down the AND, + and OR operators.
 
@@ -279,7 +279,7 @@ Ranked results will appear in just a few seconds!
 
 * Pipelining of [Processor](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#processors) stages for real-time adaptation and transformation of queries, responses and results 
 
-* [Results landed](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#result-object) in SQLite3 or PostgreSQL for post-processing, consumption and/or analytics
+* [Results stored](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#result-object) in SQLite3 or PostgreSQL for post-processing, consumption and/or analytics
 
 * [Matching on word stems](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#relevancy) and [handling of stopword](https://github.com/sidprobstein/swirl-search/wiki/3.-Developer-Guide#stopwords-language) via NLTK
 
@@ -298,8 +298,6 @@ Ranked results will appear in just a few seconds!
 * [Optional search/result expiration service](https://github.com/sidprobstein/swirl-search/wiki/4.-Admin-Guide#search-expiration-service) to limit storage use
 
 * Easily extensible [Connector](https://github.com/sidprobstein/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/sidprobstein/swirl-search/tree/main/swirl/mixers) objects
-
-* [Source code & docker images provided under the Apache 2.0 License](./LICENSE)
 
 <br/>
 
