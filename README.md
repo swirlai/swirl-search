@@ -1,7 +1,6 @@
 <h1> &nbsp; SWIRL SEARCH <img alt='SWIRL Logo' src='https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/swirl_logo_notext_200.jpg' width=38 align=left /></h1>
 
 [![GitHub Release](https://img.shields.io/github/v/release/sidprobstein/swirl-search?style=flat)](https://github.com/sidprobstein/swirl-search/releases)
-[![GitHub Commit/Mo](https://img.shields.io/github/commit-activity/m/sidprobstein/swirl-search?style=flat)](https://github.com/sidprobstein/swirl-search/graphs/commit-activity)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=blue&logoColor=blue&style=flat)](https://opensource.org/licenses/Apache-2.0)
 [![Docker Build Status](https://img.shields.io/docker/cloud/build/sidprobstein/swirl-search?style=flat)](https://hub.docker.com/repository/docker/sidprobstein/swirl-search/builds) 
 [![Slack](https://img.shields.io/badge/slack--channel-gray?logo=slack&logoColor=black&style=flat)](https://join.slack.com/t/swirlsearch/shared_invite/zt-1n7xophls-F4SzYecGniOFB95xI6WlAw)
