@@ -7,6 +7,7 @@ from datetime import datetime
 import time
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User, Group
 from django.conf import settings
 
 from celery.utils.log import get_task_logger
@@ -63,6 +64,14 @@ def search(id):
         else:
             tags_in_query_list.append(tag[:tag.find(':')])
     logger.debug(f"{module_name}: tags_in_query_list: {tags_in_query_list}")
+
+    user = User.objects.get(id=search.owner.id)
+    if not user.has_perm('swirl.view_searchprovider'):
+        logger.warning(f"User {user} needs permission view_searchprovider")
+        search.status = 'ERR_NEED_PERMISSION'
+        search.save()
+        return False
+                
     providers = SearchProvider.objects.filter(active=True, owner=search.owner) | SearchProvider.objects.filter(active=True, shared=True)
     new_provider_list = []
     if search.searchprovider_list:            
