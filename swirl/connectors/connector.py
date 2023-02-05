@@ -161,21 +161,28 @@ class Connector:
         else:
             processor_list = self.provider.query_processors
 
+        if not processor_list:
+            self.query_string_to_provider = self.search.query_string_processed
+            return
+
+        query_temp = self.search.query_string_processed
         for processor in processor_list:
             logger.info(f"{self}: invoking processor: {processor}")
             try:
-                processed_query = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.search.query_string_processed, self.provider.query_mappings, self.provider.tags).process()
+                processed_query = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(query_temp, self.provider.query_mappings, self.provider.tags).process()
             except (NameError, TypeError, ValueError) as err:
                 self.error(f'{processor}: {err.args}, {err}')
                 return
             if processed_query:
-                if processed_query != self.search.query_string_processed:
+                if processed_query != query_temp:
                     self.message(f"{processor} rewrote {self.provider.name}'s query to: {processed_query}")
-                self.query_string_to_provider = processed_query
+                    query_temp = processed_query
             else:
-                self.query_string_to_provider = self.search.query_string_processed
-            # end if
+                self.error(f'{processor} returned an empty string, ignoring it!')
+                # processing will continue with query_temp which is not updated due to the error
         # end for
+        # to do: review this? is it correct?
+        self.query_string_to_provider = query_temp
         return
 
     ########################################
@@ -183,7 +190,7 @@ class Connector:
     def construct_query(self):
 
         '''
-        Turn the query_string_processed into the query_to_provider
+        Copy query_string_processed to query_to_provider
         ''' 
 
         logger.info(f"{self}: construct_query()")
@@ -230,7 +237,7 @@ class Connector:
     def normalize_response(self):
         
         '''
-        Transform the response from the provider into a json (list) and store as results
+        Transform the response from the provider into a json (list) and store as self.results
         ''' 
 
         logger.info(f"{self}: normalize_response()")
@@ -255,45 +262,47 @@ class Connector:
         ''' 
 
         logger.info(f"{self}: process_results()")
-        if self.found > 0:
-            # process results
-            if self.results:
-                retrieved = len(self.results)
-            if not self.update:
-                self.message(f"Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
-            processor_list = []
-            if self.provider.result_processor:
-                processor_list = [self.provider.result_processor]
-                if self.provider.result_processors:
-                    self.warning("Ignoring result_processors, since result_processor is specified")
+
+        if self.found == 0:
+            return
+
+        # process results
+        if self.results:
+            retrieved = len(self.results)
+        if not self.update:
+            self.message(f"Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
+
+        processor_list = []
+        if self.provider.result_processor:
+            processor_list = [self.provider.result_processor]
+            if self.provider.result_processors:
+                self.warning("Ignoring result_processors, since result_processor is specified")
+        else:
+            processor_list = self.provider.result_processors
+
+        if not processor_list:
+            self.processed_results = self.results
+            self.status = 'READY'
+            return
+
+        processed_results = None
+        result_temp = self.results
+        for processor in processor_list:
+            logger.info(f"{self}: invoking processor: {processor}")
+            try:
+                processed_results = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(result_temp, self.provider, self.query_string_to_provider).process()
+            except (NameError, TypeError, ValueError) as err:
+                self.error(f'{processor}: {err.args}, {err}')
+                return
+            if processed_results:
+                # to do: should we log this?
+                result_temp = processed_results
             else:
-                processor_list = self.provider.result_processors
-
-            processor_input = self.results
-            processor_output = None
-
-            for processor in processor_list:
-                
-                logger.info(f"{self}: invoking processor: {processor}")
-                try:
-                    processor_output = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(processor_input, self.provider, self.query_string_to_provider).process()
-                except (NameError, TypeError, ValueError) as err:
-                    self.error(f'{processor}: {err.args}, {err}')
-                    return
-
-                if processor_output:
-                    processor_input = processor_output
-                else:
-                    # to do: document
-                    self.search.status = "ERR_RESULT_PROCESSING"
-                    self.error(f"{processor} returned no results")
-                    return
-
-            self.processed_results = processor_output
-            if self.processed_results:
-                self.status = 'READY'
-
-        # end if
+                self.error(f"{processor} returned no results, ignoring!")
+            # end if
+        # end for
+        self.processed_results = result_temp
+        self.status = 'READY'
         return
 
     ########################################

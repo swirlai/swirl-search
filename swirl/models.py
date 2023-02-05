@@ -23,6 +23,7 @@ class SearchProvider(models.Model):
     active = models.BooleanField(default=True)
     default = models.BooleanField(default=True)
     CONNECTOR_CHOICES = [
+        ('ChatGPT', 'ChatGPT Query String'),
         ('RequestsGet', 'HTTP/GET returning JSON'),
         ('Elastic', 'Elasticsearch Query String'),
         ('OpenSearch', 'OpenSearch Query String'),
@@ -90,6 +91,7 @@ class Search(models.Model):
     time = models.FloatField(default=0.0)
     PRE_QUERY_PROCESSOR_CHOICES = [
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
+        ('QueryGPT3Processor', 'QueryGPT3Processor'),
         ('TestQueryProcessor', 'TestQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]

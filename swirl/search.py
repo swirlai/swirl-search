@@ -124,24 +124,30 @@ def search(id):
 
     ########################################
     # pre-query processing, which updates query_string_processed
-    if search.pre_query_processor or search.pre_query_processors:
-        search.status = 'PRE_QUERY_PROCESSING'
-        logger.info(f"{module_name}: {search.status}")
-        search.save()
-        # setup processor pipeline
-        processor_list = []
-        if search.pre_query_processor:
-            processor_list = [search.pre_query_processor]
-            if search.pre_query_processors:
-                logger.warning(f"{module_name}_{search.id}: Ignoring search.pre_query_processors, since search.pre_query_processor is specified")
-        else:
-            processor_list = search.pre_query_processors
-        # end if
+
+    search.status = 'PRE_QUERY_PROCESSING'
+    logger.info(f"{module_name}: {search.status}")
+    search.save()
+
+    processor_list = []
+    if search.pre_query_processor:
+        processor_list = [search.pre_query_processor]
+        if search.pre_query_processors:
+            logger.warning(f"{module_name}_{search.id}: Ignoring search.pre_query_processors, since search.pre_query_processor is specified")
+    else:
+        processor_list = search.pre_query_processors
+    # end if
+
+    if not processor_list:
+        search.query_string_processed = search.query_string
+    else:
+        processed_query = None
+        query_temp = search.query_string
         for processor in processor_list:
             try:
-                pre_query_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.query_string)
+                pre_query_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(query_temp, None, search.tags)
                 if pre_query_processor.validate():
-                    search.query_string_processed = pre_query_processor.process()
+                    processed_query = pre_query_processor.process()
                 else:
                     logger.error(f'{module_name}_{search.id}: {processor}.validate() failed')
                     return False
@@ -149,13 +155,16 @@ def search(id):
             except (NameError, TypeError, ValueError) as err:
                 logger.error(f'{module_name}_{search.id}: {processor}: {err.args}, {err}')
                 return False
-            if search.query_string_processed != search.query_string:
-                search.messages.append(f"[{datetime.now()}] {processor} rewrote query to: {search.query_string_processed}")
-                search.save()
+            if processed_query:           
+                if processed_query != query_temp:
+                    search.messages.append(f"[{datetime.now()}] {processor} rewrote query to: {processed_query}")
+                    search.save()
+                    query_temp = processed_query
+            else:
+                self.error(f'{processor} returned an empty query, ignoring!')
             # end if
         # end for
-    else:
-        search.query_string_processed = search.query_string
+        search.query_string_processed = query_temp
     # end if
     
     ########################################
@@ -260,7 +269,7 @@ def search(id):
         search.status = 'POST_RESULT_PROCESSING'
         logger.info(f"{module_name}: {search.status}")
         search.save()
-        # setup processor pipeline
+
         processor_list = []
         if search.post_result_processor:
             processor_list = [search.post_result_processor]
@@ -268,7 +277,7 @@ def search(id):
                 logger.warning(f"{module_name}_{search.id}: Ignoring search.post_result_processors, since search.post_result_processor is specified")
         else:
             processor_list = search.post_result_processors
-        # end if
+        
         for processor in processor_list:
             logger.info(f"{module_name}: invoking processor: {processor}")
             try:
