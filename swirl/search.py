@@ -54,7 +54,13 @@ def search(id):
     logger.info(f"{module_name}: {search.status}")
     search.save()
     # check for provider specification
-    # to do: add provider if tagged in query, e.g. electric vehicle company:tesla
+
+    # check for starting tag
+    start_tag = None
+    if search.query_string.strip().split():
+        if ':' in search.query_string.strip().split()[0]:
+            start_tag = search.query_string.strip().split()[0].split(':')[0]
+
     # identify tags in the query
     raw_tags_in_query_list = [tag for tag in search.query_string.strip().split() if ':' in tag]
     tags_in_query_list = []
@@ -73,7 +79,7 @@ def search(id):
         return False
                 
     providers = SearchProvider.objects.filter(active=True, owner=search.owner) | SearchProvider.objects.filter(active=True, shared=True)
-    new_provider_list = []
+    selected_provider_list = []
     if search.searchprovider_list:            
         # add providers to list by id, name or tag
         for provider in providers:
@@ -83,21 +89,21 @@ def search(id):
             else:
                 provider_key = provider.id
             if provider_key in search.searchprovider_list:
-                new_provider_list.append(provider)
+                selected_provider_list.append(provider)
                 continue
             if provider.name.lower() in [str(p).lower() for p in search.searchprovider_list]:
-                if not provider in new_provider_list:
-                    new_provider_list.append(provider)
+                if not provider in selected_provider_list:
+                    selected_provider_list.append(provider)
                     continue
             if provider.tags:
                 for tag in provider.tags:
                     if tag.lower() in [t.lower() for t in tags_in_query_list]:
-                        if not provider in new_provider_list:
-                            new_provider_list.append(provider)
+                        if not provider in selected_provider_list:
+                            selected_provider_list.append(provider)
                             continue
                     if tag.lower() in [p.lower() for p in search.searchprovider_list]:
-                        if not provider in new_provider_list:
-                            new_provider_list.append(provider)
+                        if not provider in selected_provider_list:
+                            selected_provider_list.append(provider)
                 # end if
             # end for
         # end for
@@ -106,16 +112,18 @@ def search(id):
         for provider in providers:
             # active status is determined later on
             if provider.default:
-                new_provider_list.append(provider)
+                if not start_tag:
+                    selected_provider_list.append(provider)
             else:
                 if provider.tags:
                     for tag in provider.tags:
                         if tag.lower() in [t.lower() for t in tags_in_query_list]: 
-                            if not provider in new_provider_list:
-                                new_provider_list.append(provider)
+                            if not provider in selected_provider_list:
+                                selected_provider_list.append(provider)
         # end for
     # end if
-    providers = new_provider_list
+
+    providers = selected_provider_list
     if len(providers) == 0:
         logger.error(f"{module_name}_{search.id}: no SearchProviders configured")
         search.status = 'ERR_NO_SEARCHPROVIDERS'
