@@ -19,9 +19,9 @@ import openai
 #############################################    
 #############################################    
 
-class QueryGPT3Processor(QueryProcessor):
+class ChatGPTQueryProcessor(QueryProcessor):
 
-    type = 'QueryGPT3Processor'
+    type = 'ChatGPTQueryProcessor'
 
     def __init__(self, query_string, query_mappings, tags):
 
@@ -33,7 +33,8 @@ class QueryGPT3Processor(QueryProcessor):
 
     def process(self):
         
-        openai.api_key = settings.OPENAI_API_KEY
+        if settings.OPENAI_API_KEY:
+            openai.api_key = settings.OPENAI_API_KEY
 
         completions = openai.Completion.create(
             engine="text-davinci-002",

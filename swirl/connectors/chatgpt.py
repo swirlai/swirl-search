@@ -37,7 +37,11 @@ class ChatGPT(Connector):
 
         logger.info(f"{self}: execute_search()")
         
-        openai.api_key = settings.OPENAI_API_KEY
+        if self.provider.credentials:
+            openai.api_key = self.provider.credentials
+        else:
+            if settings.OPENAI_API_KEY:
+                openai.api_key = settings.OPENAI_API_KEY
 
         completions = openai.Completion.create(
             engine="text-davinci-002",
@@ -49,7 +53,6 @@ class ChatGPT(Connector):
         )
 
         message = completions.choices[0].text     
-        self.warning(f"ChatGPT: {message}")
 
         # to do: review this
         self.found = 1

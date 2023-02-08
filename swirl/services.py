@@ -18,7 +18,7 @@ SWIRL_SERVICES = [
     },
     {
         'name': 'django',
-        'path': 'daphne swirl_server.asgi:application'
+        'path': 'daphne -b 0.0.0.0 -p 8000 swirl_server.asgi:application'
     },
     {
         'name': 'celery-worker',
