@@ -1,19 +1,26 @@
 {
     "name": "ChatGPT (web/OpenAI)",
     "active": true,
-    "default": false,
+    "default": true,
     "connector": "ChatGPT",
     "url": "",
     "query_template": "",
     "query_processor": "",
-    "query_processors": [],
+    "query_processors": [
+        "ChatGPTQueryMakeQuestionProcessor",
+        "AdaptiveQueryProcessor"
+    ],
     "query_mappings": "NOT=true",
-    "result_processor": "GenericResultProcessor",
-    "result_processors": [],
+    "result_processor": "",
+    "result_processors": [
+        "GenericResultProcessor"
+    ],
     "response_mappings": "",
     "result_mappings": "",
-    "credentials": "put-in-.env",
+    "results_per_query": 10,
+    "credentials": "your-openai-API-key-here",
     "tags": [
-        "ChatGPT", "Question"
+        "ChatGPT",
+        "Question"
     ]
 }

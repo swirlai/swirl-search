@@ -318,6 +318,7 @@ class Connector:
         end_time = time.time()
 
         # gather processor lists
+        # to do: review the below it's not great
         query_processors = []
         if self.search.pre_query_processor:
             query_processors.append(self.search.pre_query_processor)

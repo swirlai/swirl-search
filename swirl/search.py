@@ -137,6 +137,7 @@ def search(id):
     logger.info(f"{module_name}: {search.status}")
     search.save()
 
+    # to do: suspect we are not clearing this list for later use!
     processor_list = []
     if search.pre_query_processor:
         processor_list = [search.pre_query_processor]
@@ -169,7 +170,7 @@ def search(id):
                     search.save()
                     query_temp = processed_query
             else:
-                self.error(f'{processor} returned an empty query, ignoring!')
+                logger.error(f'{module_name}_{search.id}: {processor} returned an empty query, ignoring!')
             # end if
         # end for
         search.query_string_processed = query_temp
