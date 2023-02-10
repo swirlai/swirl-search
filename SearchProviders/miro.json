@@ -1,0 +1,21 @@
+{
+    "name": "Boards (web/Miro.com)",
+    "connector": "RequestsGet",
+    "url": "https://api.miro.com/v2/boards",
+    "query_template": "{url}?query={query_string}",
+    "query_processor": "",
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "PAGE=startNumber=RESULT_INDEX,DATE_SORT=sort=last_modified,RELEVANCY_SORT=sort=default",
+    "result_processor": "",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
+    "response_mappings": "FOUND=total,RESULTS=data",
+    "result_mappings": "title=name,body=description,url=viewLink,date_published=modifiedAt,owner.name,picture.imageURL,NO_PAYLOAD",
+    "credentials": "your-api-key-here",
+    "tags": [
+        "Drawings"
+    ]
+}

@@ -144,9 +144,17 @@ class RequestsGet(Connector):
 
             # issue the query
             try:
-                if self.provider.credentials.startswith('HTTP'):
-                    # handle HTTPBasicAuth('user', 'pass') and other forms
-                    response = requests.get(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth))
+                if self.provider.credentials:
+                    if self.provider.credentials.startswith('HTTP'):
+                        # handle HTTPBasicAuth('user', 'pass') etc
+                        response = requests.get(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth))
+                    else:
+                        # populate with bearer token
+                        headers = {
+                            "Authorization": f"Bearer {self.provider.credentials}"
+                        }
+                        response = requests.get(page_query, headers=headers)
+                    # end if
                 else:
                     response = requests.get(page_query)
             except NewConnectionError as err:
