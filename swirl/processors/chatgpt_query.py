@@ -60,15 +60,15 @@ class ChatGPTQueryProcessor(QueryProcessor):
 
         if message.endswith('?'):
             # question rewriting
-            return message.replace('\n', '')
+            return message.replace('\n\n', '')
 
         if len(message) <= 1.25 * len(self.query_string):
             # short response
-            return message.replace('\n', '')
+            return message.replace('\n\n', '')
 
         if ('OR' in message) or ('AND' in message):
             # boolean response
-            return message.replace('\n', '')
+            return message.replace('\n\n', '')
 
         if '?' in message:
             # restatement of question? bc it won't end with ?
