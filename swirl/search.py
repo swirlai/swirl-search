@@ -55,11 +55,16 @@ def search(id):
     search.save()
     # check for provider specification
 
+    # check for blank query
+    if not search.query_string:
+        search.status = 'ERR_NO_QUERY_STRING'
+        search.save()
+        return False
+
     # check for starting tag
     start_tag = None
-    if search.query_string.strip().split():
-        if ':' in search.query_string.strip().split()[0]:
-            start_tag = search.query_string.strip().split()[0].split(':')[0]
+    if ':' in search.query_string.strip().split()[0]:
+        start_tag = search.query_string.strip().split()[0].split(':')[0]
 
     # identify tags in the query
     raw_tags_in_query_list = [tag for tag in search.query_string.strip().split() if ':' in tag]
@@ -104,24 +109,36 @@ def search(id):
                     if tag.lower() in [p.lower() for p in search.searchprovider_list]:
                         if not provider in selected_provider_list:
                             selected_provider_list.append(provider)
-                # end if
-            # end for
+                        # end if
+                    # end if
+                # end for
+            # end if
         # end for
     else:
         # no provider list
         for provider in providers:
             # active status is determined later on
             if provider.default:
-                if not start_tag:
+                if start_tag:
+                    for tag in provider.tags:
+                        if tag.lower() == start_tag.lower():
+                            selected_provider_list.append(provider)
+                    # end for
+                else:
                     selected_provider_list.append(provider)
+                # end if
             else:
                 if provider.tags:
                     for tag in provider.tags:
                         if tag.lower() in [t.lower() for t in tags_in_query_list]: 
                             if not provider in selected_provider_list:
                                 selected_provider_list.append(provider)
+                            # end if
+                        # end if
+                    # end for
+            # end if
         # end for
-    # end if
+    # endif
 
     providers = selected_provider_list
     if len(providers) == 0:

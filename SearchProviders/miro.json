@@ -7,14 +7,15 @@
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
-    "query_mappings": "PAGE=startNumber=RESULT_INDEX,DATE_SORT=sort=last_modified,RELEVANCY_SORT=sort=default",
+    "query_mappings": "",
     "result_processor": "",
     "result_processors": [
         "MappingResultProcessor"
     ],
     "response_mappings": "FOUND=total,RESULTS=data",
     "result_mappings": "title=name,body=description,url=viewLink,date_published=modifiedAt,owner.name,picture.imageURL,NO_PAYLOAD",
-    "credentials": "your-api-key-here",
+    "results_per_query": 10,
+    "credentials": "bearer=your-miro-api-token",
     "tags": [
         "Drawings"
     ]

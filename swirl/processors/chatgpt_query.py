@@ -49,33 +49,47 @@ class ChatGPTQueryProcessor(QueryProcessor):
         )
 
         message = completions.choices[0].text
-        self.warning(f"message: {message}")
+        logger.info(f"{self}: {message}")
 
         if message.strip().lower() == self.query_string.strip().lower():
             return self.query_string
 
+        if len(message) > 5 * len(self.query_string):
+            self.warning(f"{self}: ChatGPT response too long, ignoring: {message}")
+            return self.query_string
+
+        if message.endswith('?'):
+            # question rewriting
+            return message.replace('\n', '')
+
         if len(message) <= 1.25 * len(self.query_string):
             # short response
-            return message
+            return message.replace('\n', '')
 
         if ('OR' in message) or ('AND' in message):
             # boolean response
-            return message
+            return message.replace('\n', '')
+
+        if '?' in message:
+            # restatement of question? bc it won't end with ?
+            message = message.split('?')[1]
+            # continue
+
+        if ':' in message:
+            # restatement of question?
+            message = message.split(':')[1]
+            # continue
 
         if '1.' in message:
             # '\n\n1. cryptocurrency\n2. Bitcoin\n3. blockchain\n4. Ethereum\n5. Litecoin'
             term_list = [term.strip().split('.')[1].strip() for term in message.strip().split('\n') if term.strip()]
             return ' OR '.join(term_list[:5])
 
-        if '\n\n' in message:
+        if message.startswith('\n\n'):
             # to do: watch for a restatement of the question! P1
             # '\n\n"management consulting"\n\n"management consulting firms"\n\n"management consulting services"\n\n"management consulting companies"'
             term_list = [term.strip().strip('"') for term in message.split("\n\n") if term.strip()]
             return ' OR '.join(term_list[:5])
-
-        if len(message) > 5 * len(self.query_string):
-            self.warning(f"{self}: ChatGPT response too long, ignoring: {message}")
-            return self.query_string
 
         self.warning(f"{self}: ChatGPT response didn't parse clean: {message}")
         return self.query_string
@@ -106,7 +120,7 @@ class ChatGPTQueryMakeQuestionProcessor(ChatGPTQueryProcessor):
             self.warning("query_string too long for making into a question")
             return self.query_string
 
-        self.prompt = "Turn this search query into a question: {query_string}"
+        self.prompt = "Rewrite this search query as a question: {query_string}"
         return super().process()
 
 #############################################    

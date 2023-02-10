@@ -53,6 +53,7 @@ class ChatGPT(Connector):
         )
 
         message = completions.choices[0].text     
+        logger.info(f"{self}: {message}")
 
         # to do: review this
         self.found = 1

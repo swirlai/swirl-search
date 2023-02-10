@@ -142,6 +142,7 @@ class RequestsGet(Connector):
             # dictionary of authentication types permitted in the upcoming eval
             dict_auth = {'HTTPBasicAuth': HTTPBasicAuth, 'HTTPDigestAuth': HTTPDigestAuth, 'HTTProxyAuth': HTTPProxyAuth}
 
+            response = None
             # issue the query
             try:
                 if self.provider.credentials:
@@ -149,11 +150,16 @@ class RequestsGet(Connector):
                         # handle HTTPBasicAuth('user', 'pass') etc
                         response = requests.get(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth))
                     else:
-                        # populate with bearer token
-                        headers = {
-                            "Authorization": f"Bearer {self.provider.credentials}"
-                        }
-                        response = requests.get(page_query, headers=headers)
+                        if self.provider.credentials.startswith('bearer='):
+                            # populate with bearer token
+                            headers = {
+                                "Authorization": f"Bearer {self.provider.credentials.split('=')[1]}"
+                            }
+                            response = requests.get(page_query, headers=headers)
+                            # all others
+                        else:
+                            response = requests.get(page_query)
+                        # end if
                     # end if
                 else:
                     response = requests.get(page_query)
