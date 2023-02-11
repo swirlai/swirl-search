@@ -19,6 +19,10 @@ import openai
 #############################################    
 #############################################    
 
+def clean_reply(message):
+    # to do: leave the quotes
+    return message.replace('\n\n', '') #.replace('\"','')
+
 class ChatGPTQueryProcessor(QueryProcessor):
 
     type = 'ChatGPTQueryProcessor'
@@ -60,15 +64,15 @@ class ChatGPTQueryProcessor(QueryProcessor):
 
         if message.endswith('?'):
             # question rewriting
-            return message.replace('\n\n', '')
+            return clean_reply(message)
 
         if len(message) <= 1.25 * len(self.query_string):
             # short response
-            return message.replace('\n\n', '')
+            return clean_reply(message)
 
         if ('OR' in message) or ('AND' in message):
             # boolean response
-            return message.replace('\n\n', '')
+            return clean_reply(message)
 
         if '?' in message:
             # restatement of question? bc it won't end with ?
@@ -140,5 +144,5 @@ class ChatGPTQueryBooleanProcessor(ChatGPTQueryProcessor):
     type = "ChatGPTQueryBooleanProcessor"
 
     def process(self):
-        self.prompt = "Write a boolean search query for: {query_string}"
+        self.prompt = "Rewrite this as a boolean query: {query_string}"
         return super().process()

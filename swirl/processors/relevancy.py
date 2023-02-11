@@ -45,7 +45,8 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         self.query_target_list = []
         self.query_has_numeric = False
 
-        query = clean_string(q_string).strip()
+        # remove quotes
+        query = clean_string(q_string).strip().replace('\"','')
         query_list = query.strip().split()
         # remove AND, OR
         if 'AND' in query_list:

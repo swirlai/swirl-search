@@ -37,6 +37,7 @@ class ChatGPT(Connector):
 
         logger.info(f"{self}: execute_search()")
         
+        # to do: move to base class
         if self.provider.credentials:
             openai.api_key = self.provider.credentials
         else:

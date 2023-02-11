@@ -153,8 +153,7 @@ def search(id):
     search.status = 'PRE_QUERY_PROCESSING'
     logger.info(f"{module_name}: {search.status}")
     search.save()
-
-    # to do: suspect we are not clearing this list for later use!
+    
     processor_list = []
     if search.pre_query_processor:
         processor_list = [search.pre_query_processor]
@@ -225,6 +224,8 @@ def search(id):
         if len(results) == len(providers):
             if update:
                 for result in results:
+                    # TO DO: review the below, this is good if the result set already exists, but what if it has already been updted? P1
+                    # TO DO: use the date_updated to handle
                     if result.status == 'UPDATED':
                         updated = updated + 1
                 if updated == len(providers):
