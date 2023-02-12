@@ -7,10 +7,9 @@
     "query_template": "",
     "query_processor": "",
     "query_processors": [
-        "ChatGPTQueryMakeQuestionProcessor",
         "AdaptiveQueryProcessor"
     ],
-    "query_mappings": "NOT=true",
+    "query_mappings": "PROMPT='Rewrite this search query as a question then answer it: {query_to_provider}'",
     "result_processor": "",
     "result_processors": [
         "GenericResultProcessor"

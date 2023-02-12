@@ -3,11 +3,6 @@
 @contact:    sid@swirl.today
 '''
 
-from datetime import datetime
-
-from jsonpath_ng import parse
-from jsonpath_ng.exceptions import JsonPathParserError
-
 from django.conf import settings
 
 from swirl.processors.processor import *
@@ -40,8 +35,10 @@ class ChatGPTQueryProcessor(QueryProcessor):
 
     def process(self):
         
-        if settings.OPENAI_API_KEY:
+        if getattr(settings, 'OPENAI_API_KEY', None):
             openai.api_key = settings.OPENAI_API_KEY
+        else:
+            return self.query_string
 
         completions = openai.Completion.create(
             engine="text-davinci-002",
@@ -99,6 +96,8 @@ class ChatGPTQueryProcessor(QueryProcessor):
         return self.query_string
 
 #############################################    
+
+# TO DO: rewrite these using the setter
 
 class ChatGPTQueryImproverProcessor(ChatGPTQueryProcessor):
 

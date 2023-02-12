@@ -37,12 +37,40 @@ class ChatGPT(Connector):
 
         logger.info(f"{self}: execute_search()")
         
-        # to do: move to base class
         if self.provider.credentials:
             openai.api_key = self.provider.credentials
         else:
-            if settings.OPENAI_API_KEY:
+            if getattr(settings, 'OPENAI_API_KEY', None):
                 openai.api_key = settings.OPENAI_API_KEY
+            else:
+                self.found = 0
+                self.retrieved = 0
+                self.response = []
+                self.status = "ERR_NO_CREDENTIALS"
+                return 
+
+        logger.info(f"{self}: p1")
+
+        prompted_query = ""
+        if self.query_to_provider.endswith('?'):
+            prompted_query = self.query_to_provider
+        else:
+            if 'PROMPT' in self.query_mappings:
+                prompted_query = self.query_mappings['PROMPT'].format(query_to_provider=self.query_to_provider)
+            else:
+                prompted_query = self.query_to_provider
+                self.warning(f'PROMPT not found in query_mappings!')
+
+        logger.info(f"{self}: prompted_query: {prompted_query}")
+
+        if not prompted_query:
+            self.found = 0
+            self.retrieved = 0
+            self.response = []
+            self.status = "ERR_PROMPT_FAILED"
+            return 
+
+        self.query_to_provider = prompted_query
 
         completions = openai.Completion.create(
             engine="text-davinci-002",
@@ -53,10 +81,9 @@ class ChatGPT(Connector):
             temperature=0.5,
         )
 
-        message = completions.choices[0].text     
-        logger.info(f"{self}: {message}")
+        message = completions.choices[0].text
+        logger.info(f"{self}: message: {message}")
 
-        # to do: review this
         self.found = 1
         self.retrieved = 1
         self.response = message
@@ -69,7 +96,7 @@ class ChatGPT(Connector):
 
         self.results = [
                 {
-                'title': f'{self.query_to_provider}',
+                'title': self.query_string_to_provider,
                 'body': f'{self.response}',
                 'author': 'CHATGPT',
                 'date_published': str(datetime.now())
