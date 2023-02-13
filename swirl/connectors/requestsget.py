@@ -312,8 +312,9 @@ class RequestsGet(Connector):
 
         self.found = found
         self.retrieved = retrieved
+        
         self.response = response
-        # self.results is set in the normalize_results() method, usually called by the base class
+        logger.debug(f"{self}: response: {self.response}")
         
         return
 

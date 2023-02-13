@@ -70,6 +70,10 @@ class Elastic(Connector):
 
         logger.info(f"{self}: execute_search()")
 
+        if not self.provider.credentials:
+            self.status = "ERR_NO_CREDENTIALS"
+            return
+
         try:
             # security review 1.7 - OK - limited to Elasticsearch
             es = eval(f'Elasticsearch({self.provider.credentials}, {self.provider.url})')
@@ -95,10 +99,9 @@ class Elastic(Connector):
         except ApiError as err:
             self.error(f"es.search reports '{err}'")
 
-        # to do: work on error fatality!!
-
-        logger.debug(f"{self}: response: {response}")
         self.response = response
+        logger.debug(f"{self}: response: {self.response}")
+
         return
 
     ########################################

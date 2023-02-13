@@ -44,9 +44,9 @@ class PostgreSQL(DBConnector):
         config = self.provider.url.split(':')
         if len(config) != 5:
             self.error(f'Invalid configuration: {config}')
+            self.status = 'ERR_INVALID_CONFIG'
             return
 
-        # localhost:5432:sid:sid:sid
         connection = None
         try:
             connection = psycopg2.connect(host=config[0], port=config[1], database=config[2], user=config[3], password=config[4])
@@ -108,8 +108,11 @@ class PostgreSQL(DBConnector):
         # end if
         
         self.response = rows
+        logger.debug(f"{self}: response: {self.response}")
+
         self.column_names = column_names
         self.found = found
+ 
         return
 
     ########################################
@@ -148,6 +151,6 @@ class PostgreSQL(DBConnector):
 
         self.found = found
         self.retrieved = retrieved
-        # self.messages.append(f"Retrieved1 {retrieved} of {found} results from: {self.provider.name}")
         self.results = trimmed_rows
+
         return

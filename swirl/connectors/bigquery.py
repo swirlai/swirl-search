@@ -39,7 +39,11 @@ class BigQuery(DBConnector):
 
         logger.info(f"{self}: execute_search()")
 
-        environ["GOOGLE_APPLICATION_CREDENTIALS"] = self.provider.credentials
+        if self.provider.credentials:
+            environ["GOOGLE_APPLICATION_CREDENTIALS"] = self.provider.credentials
+        else:
+            self.status = "ERR_NO_CREDENTIALS"
+            return
 
         # connect to the db
         try:
@@ -68,8 +72,11 @@ class BigQuery(DBConnector):
         query_job = client.query(self.query_to_provider)
         results = query_job.result()        
         self.response = list(results)
+        logger.debug(f"{self}: response: {self.response}")
+
         self.column_names = dict(self.response[0]).keys()
         self.found = found
+
         return
 
     ########################################

@@ -86,6 +86,7 @@ class OpenSearch(Connector):
             credential_list = self.provider.credentials.split(',')
             if len(credential_list) != 2:
                 self.error("invalid credentials: {self.provider.credentials}")
+                self.status = "ERR_INVALID_CREDENTIALS"
                 return
             username = credential_list[0][1:-1]
             password = credential_list[1][1:-1]
@@ -139,7 +140,8 @@ class OpenSearch(Connector):
 
         if not client:
             self.error("client failed to initialize")
-            # to do: handle this 
+            self.status = "ERR_CLIENT_INIT_FAILED"
+            return
 
         logger.debug(f"{self}: client.search()")
 

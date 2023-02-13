@@ -43,13 +43,8 @@ class ChatGPT(Connector):
             if getattr(settings, 'OPENAI_API_KEY', None):
                 openai.api_key = settings.OPENAI_API_KEY
             else:
-                self.found = 0
-                self.retrieved = 0
-                self.response = []
                 self.status = "ERR_NO_CREDENTIALS"
                 return 
-
-        logger.info(f"{self}: p1")
 
         prompted_query = ""
         if self.query_to_provider.endswith('?'):
@@ -60,8 +55,6 @@ class ChatGPT(Connector):
             else:
                 prompted_query = self.query_to_provider
                 self.warning(f'PROMPT not found in query_mappings!')
-
-        logger.info(f"{self}: prompted_query: {prompted_query}")
 
         if not prompted_query:
             self.found = 0
@@ -82,11 +75,13 @@ class ChatGPT(Connector):
         )
 
         message = completions.choices[0].text
-        logger.info(f"{self}: message: {message}")
 
         self.found = 1
         self.retrieved = 1
         self.response = message
+        logger.debug(f"{self}: response: {self.response}")
+
+        return
 
     ########################################
 
@@ -103,4 +98,5 @@ class ChatGPT(Connector):
             }
         ]
 
+        return
 
