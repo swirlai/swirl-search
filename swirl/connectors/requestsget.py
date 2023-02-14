@@ -142,11 +142,25 @@ class RequestsGet(Connector):
             # dictionary of authentication types permitted in the upcoming eval
             dict_auth = {'HTTPBasicAuth': HTTPBasicAuth, 'HTTPDigestAuth': HTTPDigestAuth, 'HTTProxyAuth': HTTPProxyAuth}
 
+            response = None
             # issue the query
             try:
-                if self.provider.credentials.startswith('HTTP'):
-                    # handle HTTPBasicAuth('user', 'pass') and other forms
-                    response = requests.get(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth))
+                if self.provider.credentials:
+                    if self.provider.credentials.startswith('HTTP'):
+                        # handle HTTPBasicAuth('user', 'pass') etc
+                        response = requests.get(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth))
+                    else:
+                        if self.provider.credentials.startswith('bearer='):
+                            # populate with bearer token
+                            headers = {
+                                "Authorization": f"Bearer {self.provider.credentials.split('=')[1]}"
+                            }
+                            response = requests.get(page_query, headers=headers)
+                            # all others
+                        else:
+                            response = requests.get(page_query)
+                        # end if
+                    # end if
                 else:
                     response = requests.get(page_query)
             except NewConnectionError as err:
@@ -298,8 +312,9 @@ class RequestsGet(Connector):
 
         self.found = found
         self.retrieved = retrieved
+        
         self.response = response
-        # self.results is set in the normalize_results() method, usually called by the base class
+        logger.debug(f"{self}: response: {self.response}")
         
         return
 

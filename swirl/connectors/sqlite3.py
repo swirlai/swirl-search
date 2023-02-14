@@ -102,6 +102,8 @@ class Sqlite3(DBConnector):
         # end if
 
         self.response = rows
+        logger.debug(f"{self}: response: {self.response}")
+
         self.found = found
         return
 

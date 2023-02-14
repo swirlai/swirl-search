@@ -23,6 +23,12 @@ class SearchProviderSerializer(serializers.ModelSerializer):
         model = SearchProvider
         fields = ['id', 'name', 'owner', 'shared', 'date_created', 'date_updated', 'active', 'default', 'connector', 'url', 'query_template', 'query_processor', 'query_processors', 'query_mappings', 'result_processor', 'result_processors', 'response_mappings', 'result_mappings', 'results_per_query', 'credentials', 'tags']
 
+class SearchProviderNoCredentialsSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+    class Meta:
+        model = SearchProvider
+        fields = ['id', 'name', 'owner', 'shared', 'date_created', 'date_updated', 'active', 'default', 'connector', 'url', 'query_template', 'query_processor', 'query_processors', 'query_mappings', 'result_processor', 'result_processors', 'response_mappings', 'result_mappings', 'results_per_query', 'tags']
+
 class SearchSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:

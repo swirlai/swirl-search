@@ -64,9 +64,12 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         if not request.user.has_perm('swirl.view_searchprovider'):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        self.queryset = SearchProvider.objects.filter(owner=self.request.user) | SearchProvider.objects.filter(shared=True) 
+        shared_providers = SearchProvider.objects.filter(shared=True)
+        self.queryset = shared_providers | SearchProvider.objects.filter(owner=self.request.user)
 
-        serializer = SearchProviderSerializer(self.queryset, many=True)
+        serializer = SearchProviderNoCredentialsSerializer(self.queryset, many=True)
+        if self.request.user.is_superuser:
+            serializer = SearchProviderSerializer(self.queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     ########################################
@@ -99,7 +102,12 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
             return Response('SearchProvider Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
         searchprovider = SearchProvider.objects.get(pk=pk)
-        serializer = SearchProviderSerializer(searchprovider)
+
+        if not self.request.user == searchprovider.owner:
+            serializer = SearchProviderNoCredentialsSerializer(searchprovider)
+        else:
+            serializer = SearchProviderSerializer(searchprovider)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     ########################################

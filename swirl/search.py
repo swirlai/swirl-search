@@ -54,7 +54,18 @@ def search(id):
     logger.info(f"{module_name}: {search.status}")
     search.save()
     # check for provider specification
-    # to do: add provider if tagged in query, e.g. electric vehicle company:tesla
+
+    # check for blank query
+    if not search.query_string:
+        search.status = 'ERR_NO_QUERY_STRING'
+        search.save()
+        return False
+
+    # check for starting tag
+    start_tag = None
+    if ':' in search.query_string.strip().split()[0]:
+        start_tag = search.query_string.strip().split()[0].split(':')[0]
+
     # identify tags in the query
     raw_tags_in_query_list = [tag for tag in search.query_string.strip().split() if ':' in tag]
     tags_in_query_list = []
@@ -73,7 +84,7 @@ def search(id):
         return False
                 
     providers = SearchProvider.objects.filter(active=True, owner=search.owner) | SearchProvider.objects.filter(active=True, shared=True)
-    new_provider_list = []
+    selected_provider_list = []
     if search.searchprovider_list:            
         # add providers to list by id, name or tag
         for provider in providers:
@@ -83,39 +94,53 @@ def search(id):
             else:
                 provider_key = provider.id
             if provider_key in search.searchprovider_list:
-                new_provider_list.append(provider)
+                selected_provider_list.append(provider)
                 continue
             if provider.name.lower() in [str(p).lower() for p in search.searchprovider_list]:
-                if not provider in new_provider_list:
-                    new_provider_list.append(provider)
+                if not provider in selected_provider_list:
+                    selected_provider_list.append(provider)
                     continue
             if provider.tags:
                 for tag in provider.tags:
                     if tag.lower() in [t.lower() for t in tags_in_query_list]:
-                        if not provider in new_provider_list:
-                            new_provider_list.append(provider)
+                        if not provider in selected_provider_list:
+                            selected_provider_list.append(provider)
                             continue
                     if tag.lower() in [p.lower() for p in search.searchprovider_list]:
-                        if not provider in new_provider_list:
-                            new_provider_list.append(provider)
-                # end if
-            # end for
+                        if not provider in selected_provider_list:
+                            selected_provider_list.append(provider)
+                        # end if
+                    # end if
+                # end for
+            # end if
         # end for
     else:
         # no provider list
         for provider in providers:
             # active status is determined later on
             if provider.default:
-                new_provider_list.append(provider)
+                if start_tag:
+                    for tag in provider.tags:
+                        if tag.lower() == start_tag.lower():
+                            selected_provider_list.append(provider)
+                    # end for
+                else:
+                    selected_provider_list.append(provider)
+                # end if
             else:
                 if provider.tags:
                     for tag in provider.tags:
                         if tag.lower() in [t.lower() for t in tags_in_query_list]: 
-                            if not provider in new_provider_list:
-                                new_provider_list.append(provider)
+                            if not provider in selected_provider_list:
+                                selected_provider_list.append(provider)
+                            # end if
+                        # end if
+                    # end for
+            # end if
         # end for
-    # end if
-    providers = new_provider_list
+    # endif
+
+    providers = selected_provider_list
     if len(providers) == 0:
         logger.error(f"{module_name}_{search.id}: no SearchProviders configured")
         search.status = 'ERR_NO_SEARCHPROVIDERS'
@@ -124,24 +149,30 @@ def search(id):
 
     ########################################
     # pre-query processing, which updates query_string_processed
-    if search.pre_query_processor or search.pre_query_processors:
-        search.status = 'PRE_QUERY_PROCESSING'
-        logger.info(f"{module_name}: {search.status}")
-        search.save()
-        # setup processor pipeline
-        processor_list = []
-        if search.pre_query_processor:
-            processor_list = [search.pre_query_processor]
-            if search.pre_query_processors:
-                logger.warning(f"{module_name}_{search.id}: Ignoring search.pre_query_processors, since search.pre_query_processor is specified")
-        else:
-            processor_list = search.pre_query_processors
-        # end if
+
+    search.status = 'PRE_QUERY_PROCESSING'
+    logger.info(f"{module_name}: {search.status}")
+    search.save()
+    
+    processor_list = []
+    if search.pre_query_processor:
+        processor_list = [search.pre_query_processor]
+        if search.pre_query_processors:
+            logger.warning(f"{module_name}_{search.id}: Ignoring search.pre_query_processors, since search.pre_query_processor is specified")
+    else:
+        processor_list = search.pre_query_processors
+    # end if
+
+    if not processor_list:
+        search.query_string_processed = search.query_string
+    else:
+        processed_query = None
+        query_temp = search.query_string
         for processor in processor_list:
             try:
-                pre_query_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.query_string)
+                pre_query_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(query_temp, None, search.tags)
                 if pre_query_processor.validate():
-                    search.query_string_processed = pre_query_processor.process()
+                    processed_query = pre_query_processor.process()
                 else:
                     logger.error(f'{module_name}_{search.id}: {processor}.validate() failed')
                     return False
@@ -149,13 +180,16 @@ def search(id):
             except (NameError, TypeError, ValueError) as err:
                 logger.error(f'{module_name}_{search.id}: {processor}: {err.args}, {err}')
                 return False
-            if search.query_string_processed != search.query_string:
-                search.messages.append(f"[{datetime.now()}] {processor} rewrote query to: {search.query_string_processed}")
-                search.save()
+            if processed_query:           
+                if processed_query != query_temp:
+                    search.messages.append(f"[{datetime.now()}] {processor} rewrote query to: {processed_query}")
+                    search.save()
+                    query_temp = processed_query
+            else:
+                logger.error(f'{module_name}_{search.id}: {processor} returned an empty query, ignoring!')
             # end if
         # end for
-    else:
-        search.query_string_processed = search.query_string
+        search.query_string_processed = query_temp
     # end if
     
     ########################################
@@ -178,40 +212,30 @@ def search(id):
     # end if
     ########################################
     # asynchronously collect results
-    time.sleep(2)
     ticks = 0
     error_flag = False
     at_least_one = False
     while 1:        
-        updated = 0
+        time.sleep(1)
+        ticks = ticks + 1
         # get the list of result objects
         # security review for 1.7 - OK - filtered by search object
         results = Result.objects.filter(search_id=search.id)
-        if len(results) == len(providers):
-            if update:
-                for result in results:
-                    if result.status == 'UPDATED':
-                        updated = updated + 1
-                if updated == len(providers):
-                    # every provider has updated a result object - exit
-                    logger.info(f"{module_name}_{search.id}: all results updated!")
-                    break
-            else:
-                # every provider has written a result object - exit
-                logger.info(f"{module_name}_{search.id}: all results received!")
-                break
-        if len(results) > 0:
-            if update:
-                if updated > 0:
-                    at_least_one = True
-            else:
+        updated = 0
+        for result in results:
+            if result.status == 'UPDATED':
+                updated = updated + 1
+            if result.status == 'ERROR':
+                error_flag = True
+            if result.status == 'READY':
                 at_least_one = True
-        ticks = ticks + 1
+        if len(results) == len(providers):
+            # every provider has written a result object - exit
+            logger.info(f"{module_name}_{search.id}: all results received!")
+            break
         search.status = f'FEDERATING_WAIT_{ticks}'
         logger.info(f"{module_name}: {search.status}")
-        search.save()    
-        time.sleep(1)
-        if (ticks + 2) > int(settings.SWIRL_TIMEOUT):
+        if ticks > int(settings.SWIRL_TIMEOUT):
             logger.info(f"{module_name}_{search.id}: timeout!")
             failed_providers = []
             responding_provider_names = []
@@ -235,7 +259,7 @@ def search(id):
         if at_least_one:
             search.status = 'PARTIAL_RESULTS'
         else:
-            search.status = 'NO_RESULTS'
+            search.status = 'NO_RESULTS_READY'
         # end if
     else:
         search.status = 'FULL_RESULTS'
@@ -253,6 +277,9 @@ def search(id):
         if not update:
             search.messages.append(f"[{datetime.now()}] Requested sort_by_date from all providers")
     search.save()
+    # no results ready?
+    if search.status == 'NO_RESULTS_READY':
+        return True
     ########################################
     # post_result_processing
     if search.post_result_processor or search.post_result_processors:
@@ -260,7 +287,7 @@ def search(id):
         search.status = 'POST_RESULT_PROCESSING'
         logger.info(f"{module_name}: {search.status}")
         search.save()
-        # setup processor pipeline
+
         processor_list = []
         if search.post_result_processor:
             processor_list = [search.post_result_processor]
@@ -268,7 +295,7 @@ def search(id):
                 logger.warning(f"{module_name}_{search.id}: Ignoring search.post_result_processors, since search.post_result_processor is specified")
         else:
             processor_list = search.post_result_processors
-        # end if
+        
         for processor in processor_list:
             logger.info(f"{module_name}: invoking processor: {processor}")
             try:

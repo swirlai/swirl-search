@@ -1,0 +1,25 @@
+{
+    "name": "ChatGPT (web/OpenAI)",
+    "active": true,
+    "default": true,
+    "connector": "ChatGPT",
+    "url": "",
+    "query_template": "",
+    "query_processor": "",
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "PROMPT='Rewrite this search query as a question then answer it: {query_to_provider}'",
+    "result_processor": "",
+    "result_processors": [
+        "GenericResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "",
+    "results_per_query": 10,
+    "credentials": "your-openai-API-key-here",
+    "tags": [
+        "ChatGPT",
+        "Question"
+    ]
+}

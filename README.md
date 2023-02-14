@@ -12,7 +12,7 @@ SWIRL adapts and distributes queries to anything with a search API - search engi
 
 ![Federated search diagram](https://raw.githubusercontent.com/sidprobstein/swirl-search/main/docs/images/federation_diagram.png)
 
-Built on the Python/Django/RabbitMQ stack, SWIRL includes connectors to [Elastic](https://www.elastic.co/cn/downloads/elasticsearch), Apache [Solr](https://solr.apache.org/), [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery) plus generic HTTP/GET/JSON with configurations for premium services like [Google's Programmable Search Engine](https://programmablesearchengine.google.com/about/) and [NLResearch.com](https://northernlight.com/). 
+Built on the Python/Django/RabbitMQ stack, SWIRL includes connectors to Apache [Solr](https://solr.apache.org/), [ChatGPT](https://openai.com/blog/chatgpt/), [Elastic](https://www.elastic.co/cn/downloads/elasticsearch), [OpenSearch](https://opensearch.org/downloads.html) | [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery) plus generic HTTP/GET/JSON with configurations for premium services like [Google's Programmable Search Engine](https://programmablesearchengine.google.com/about/), [Miro](https://miro.com/app/) and [Northern Light Research](https://northernlight.com/). 
 
 :star: Learn more: [Documentation Wiki](https://github.com/sidprobstein/swirl-search/wiki)
 
@@ -36,7 +36,7 @@ After a few minutes the following or similar should appear:
 
 ```
 ssdtest-app-1  | Command successful!
-ssdtest-app-1  | __S_W_I_R_L__1_._8______________________________________________________________
+ssdtest-app-1  | __S_W_I_R_L__1_._9______________________________________________________________
 ssdtest-app-1  | 
 ssdtest-app-1  | Warning: logs directory does not exist, creating it
 ssdtest-app-1  | Start: rabbitmq -> rabbitmq-server ... Ok, pid: 53
@@ -75,7 +75,7 @@ Ranked results will appear in just a few seconds!
 ```
 
     "messages": [
-        "__S_W_I_R_L__1_._8______________________________________________________________",
+        "__S_W_I_R_L__1_._9______________________________________________________________",
         "[2023-01-21 15:02:53.696346] Retrieved 10 of 3530 results from: Mergers & Acquisitions (web/Google PSE)",
         "[2023-01-21 15:02:53.731620] Retrieved 10 of 2070000000 results from: Strategy Consulting (web/Google PSE)",
         "[2023-01-21 15:02:53.854734] Retrieved 10 of 120000 results from: Enterprise Search (web/Google PSE)",
@@ -259,9 +259,7 @@ Ranked results will appear in just a few seconds!
 
 | Version                     | Date                        | Notes | 
 | --------------------------- | --------------------------- | ----- |
-| [SWIRL SEARCH 1.8.2](https://github.com/sidprobstein/swirl-search/releases/tag/v1.8.2) | 01-22-2023 | [Release 1.8.2](./docs/RELEASE_NOTES_1.8.2.md) |
-| [SWIRL SEARCH 1.8.1](https://github.com/sidprobstein/swirl-search/releases/tag/v1.8.1) | 01-21-2023 | [Release 1.8.1](./docs/RELEASE_NOTES_1.8.1.md) |
-| [SWIRL SEARCH 1.7](https://github.com/sidprobstein/swirl-search/releases/tag/v1.7) | 12-03-2022 | [Release 1.7](./docs/RELEASE_NOTES_1.7.md) |
+| [SWIRL SEARCH 1.9](https://github.com/sidprobstein/swirl-search/releases/tag/v1.9) | 02-14-2023 | [Release 1.9](./docs/RELEASE_NOTES_1.9.md) |
 
 <br/>
 
@@ -272,6 +270,8 @@ Ranked results will appear in just a few seconds!
 <br/>
 
 # Key Features
+
+* [Connectors](TO DO) to ...
 
 * [SearchProvider configurations](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for all included Connectors. They can be [organized with the active, default and tags properties](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#organizing-searchproviders-with-active-default-and-tags).
 

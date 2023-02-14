@@ -1,0 +1,257 @@
+[
+    {
+        "name": "Enterprise Search (web/Google PSE)",
+        "connector": "RequestsGet",
+        "url": "https://www.googleapis.com/customsearch/v1",
+        "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
+        "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
+        "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM",
+        "tags": [
+            "News",
+            "EnterpriseSearch"
+        ]
+    },
+    {
+        "name": "Strategy Consulting (web/Google PSE)",
+        "connector": "RequestsGet",
+        "url": "https://www.googleapis.com/customsearch/v1",
+        "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "cx=7d473806dcdde5bc6,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
+        "result_mappings": "url=link,body=htmlSnippet,cacheid,NO_PAYLOAD",
+        "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM",
+        "tags": [
+            "News",
+            "StrategyConsulting"
+        ]
+    },
+    {
+        "name": "Mergers & Acquisitions (web/Google PSE)",
+        "connector": "RequestsGet",
+        "url": "https://www.googleapis.com/customsearch/v1",
+        "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
+        "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
+        "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM",
+        "tags": [
+            "News",
+            "MergersAcquisitions"
+        ]
+    },
+    {
+        "name": "IT News (web/NLResearch.com)",
+        "active": false,
+        "connector": "RequestsGet",
+        "url": "https://nlresearch.com/results.php?datasource=BRECE&language=1&periodDate=-7&resultsPerPage=10&micpr=0&extended=1&output=json",
+        "query_template": "{url}&login={login}&password={password}&textQuery={query_string}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "PAGE=startNumber=RESULT_INDEX,DATE_SORT=sort=2,RELEVANCY_SORT=sort=1,NOT=true,NOT_CHAR=-",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=header.@attributes.total_documents,RESULTS=result_list.result,RESULT=document",
+        "result_mappings": "body=summary,date_published=date,author=publisher,type,source,country,language,NO_PAYLOAD",
+        "credentials": "login=your-NLResearch-username,password=your-NLResearch-password",
+        "tags": [
+            "News",
+            "MergersAcquisitions",
+            "StrategyConsulting"
+        ]
+    },
+    {
+        "name": "ChatGPT (web/OpenAI)",
+        "active": false,
+        "connector": "ChatGPT",
+        "url": "",
+        "query_template": "",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "PROMPT='Rewrite this search query as a question then answer it: {query_to_provider}'",
+        "result_processor": "",
+        "result_processors": [
+            "GenericResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "",
+        "results_per_query": 10,
+        "credentials": "your-openai-API-key-here",
+        "tags": [
+            "ChatGPT",
+            "Question"
+        ]
+    },
+    {
+        "name": "Boards (web/Miro.com)",
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://api.miro.com/v2/boards",
+        "query_template": "{url}?query={query_string}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=total,RESULTS=data",
+        "result_mappings": "title=name,body=description,url=viewLink,date_published=modifiedAt,owner.name,picture.imageURL,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=your-miro-api-token",
+        "tags": [
+            "Drawings"
+        ]
+    },
+    {
+        "name": "Company Funding Records (cloud/BigQuery)",
+        "active": false,
+        "default": false,
+        "connector": "BigQuery",
+        "query_template": "select {fields} from `{table}` where search({field1}, '{query_string}') or search({field2}, '{query_string}');",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "fields=*,sort_by_date=fundedDate,table=funding.funding,field1=company,field2=city",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "result_mappings": "title='{company}',body='{company} raised ${raisedamt} series {round} on {fundeddate}. The company is located in {city} {state} and has {numemps} employees.',url=permalink,date_published=fundeddate,NO_PAYLOAD",
+        "credentials": "/path/to/bigquery/token.json",
+        "tags": [
+            "Company",
+            "BigQuery"
+        ]
+    },
+    {
+        "name": "Company Funding Records (local/sqlite3)",
+        "active": false,
+        "default": false,
+        "connector": "Sqlite3",
+        "url": "db.sqlite3",
+        "query_template": "select {fields} from {table} where {field1} like '%%{query_string}%%' or {field2} like '%%{query_string}%%';",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "fields=*,sort_by_date=fundeddate,table=funding,field1=city,field2=company",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "result_mappings": "title='{company} series {round}',body='{city} {fundeddate}: {company} raised usd ${raisedamt}\nThe company is headquartered in {city} and employs {numemps}',date_published=fundeddate,NO_PAYLOAD",
+        "tags": [
+            "Company",
+            "Sqlite3"
+        ]
+    },
+    {
+        "name": "techproducts (local/solr)",
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "http://localhost:8983/solr/{collection}/select?wt=json",
+        "query_template": "{url}&q={query_string}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "collection=techproducts,PAGE=start=RESULT_ZERO_INDEX,NOT=True,NOT_CHAR=-",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=numFound,RESULTS=response.docs",
+        "result_mappings": "title=name,body=features,response",
+        "credentials": "HTTPBasicAuth('solr-username','solr-password')",
+        "tags": [
+            "Products",
+            "Solr",
+            "TechProducts"
+        ]
+    },
+    {
+        "name": "ENRON Email (local/OpenSearch)",
+        "active": false,
+        "default": false,
+        "connector": "OpenSearch",
+        "url": "http://localhost:9200/",
+        "query_template": "{'query': {'query_string': {'query': '{query_string}', 'default_field': '{default_field}', 'default_operator': 'and'}}}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "index_name=email,default_field=content,sort_by_date=date_published.keyword,NOT=true,NOT_CHAR=-",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
+        "credentials": "'admin','password'",
+        "tags": [
+            "Enron",
+            "Email",
+            "OpenSearch"
+        ]
+    },
+    {
+        "name": "ENRON Email (local/elastic)",
+        "active": false,
+        "default": false,
+        "connector": "Elastic",
+        "url": "hosts='http://localhost:9200/'",
+        "query_template": "index='{index_name}', query={'query_string': {'query': '{query_string}', 'default_field': '{default_field}'}}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "index_name=email,default_field=content,sort_by_date=date_published.keyword,NOT=true,NOT_CHAR=-",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
+        "credentials": "http_auth=(\"elastic\", \"elastic-password\")",
+        "tags": [
+            "Enron",
+            "Email",
+            "Elastic"
+        ]
+    }
+]

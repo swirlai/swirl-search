@@ -39,7 +39,11 @@ class BigQuery(DBConnector):
 
         logger.info(f"{self}: execute_search()")
 
-        environ["GOOGLE_APPLICATION_CREDENTIALS"] = self.provider.credentials
+        if self.provider.credentials:
+            environ["GOOGLE_APPLICATION_CREDENTIALS"] = self.provider.credentials
+        else:
+            self.status = "ERR_NO_CREDENTIALS"
+            return
 
         # connect to the db
         try:
@@ -53,8 +57,9 @@ class BigQuery(DBConnector):
         found = None
         query_job = client.query(self.count_query)
         results = query_job.result()
-        found = results.total_rows
-
+        list_results = list(results)
+        # fix for https://github.com/sidprobstein/swirl-search/issues/96
+        found = int(list_results[0][0])
         if found == 0:
             self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
             self.status = 'READY'
@@ -67,8 +72,11 @@ class BigQuery(DBConnector):
         query_job = client.query(self.query_to_provider)
         results = query_job.result()        
         self.response = list(results)
+        logger.debug(f"{self}: response: {self.response}")
+
         self.column_names = dict(self.response[0]).keys()
         self.found = found
+
         return
 
     ########################################

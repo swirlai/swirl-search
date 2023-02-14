@@ -23,6 +23,7 @@ class SearchProvider(models.Model):
     active = models.BooleanField(default=True)
     default = models.BooleanField(default=True)
     CONNECTOR_CHOICES = [
+        ('ChatGPT', 'ChatGPT Query String'),
         ('RequestsGet', 'HTTP/GET returning JSON'),
         ('Elastic', 'Elasticsearch Query String'),
         ('OpenSearch', 'OpenSearch Query String'),
@@ -50,7 +51,7 @@ class SearchProvider(models.Model):
         ('MappingResultProcessor', 'MappingResultProcessor')
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
-    result_processor = models.CharField(max_length=200, default='MappingResultProcessor', choices=RESULT_PROCESSOR_CHOICES, blank=True)
+    result_processor = models.CharField(max_length=200, default='', choices=RESULT_PROCESSOR_CHOICES, blank=True)
     result_processors = models.JSONField(default=getSearchProviderResultProcessorsDefault, blank=True)
     result_mappings = models.CharField(max_length=2048, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
@@ -67,6 +68,8 @@ class SearchProvider(models.Model):
     def __str__(self):
         return self.name
 
+def getSearchPreQueryProcessorsDefault():
+    return []
 
 def getSearchPostResultProcessorsDefault():
     return ["DedupeByFieldPostResultProcessor","CosineRelevancyPostResultProcessor"]
@@ -89,16 +92,20 @@ class Search(models.Model):
     status = models.CharField(max_length=50, default='NEW_SEARCH')
     time = models.FloatField(default=0.0)
     PRE_QUERY_PROCESSOR_CHOICES = [
+        ('ChatGPTQueryImproverProcessor', 'ChatGPTQueryImproverProcessor'),
+        ('ChatGPTQueryExpanderProcessor', 'ChatGPTQueryExpanderProcessor'),
+        ('ChatGPTQueryBooleanProcessor', 'ChatGPTQueryBooleanProcessor'),
+        ('ChatGPTQueryMakeQuestionProcessor', 'ChatGPTQueryMakeQuestionProcessor'),
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('TestQueryProcessor', 'TestQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]
-    pre_query_processor = models.CharField(max_length=200, default=str, blank=True, choices=PRE_QUERY_PROCESSOR_CHOICES)
-    pre_query_processors = models.JSONField(default=list, blank=True)
+    pre_query_processor = models.CharField(max_length=200, default='', blank=True, choices=PRE_QUERY_PROCESSOR_CHOICES)
+    pre_query_processors = models.JSONField(default=getSearchPreQueryProcessorsDefault, blank=True)
     POST_RESULT_PROCESSOR_CHOICES = [
+        ('CosineRelevancyPostResultProcessor', 'CosineRelevancyPostResultProcessor (w/spaCy)'),
         ('DedupeByFieldPostResultProcessor', 'DedupeByFieldPostResultProcessor'),
-        ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor'),
-        ('CosineRelevancyPostResultProcessor', 'CosineRelevancyPostResultProcessor (w/spaCy)')
+        ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor')
     ]
     post_result_processor = models.CharField(max_length=200, default='', blank=True, choices=POST_RESULT_PROCESSOR_CHOICES)
     post_result_processors = models.JSONField(default=getSearchPostResultProcessorsDefault, blank=True)
@@ -106,15 +113,15 @@ class Search(models.Model):
     new_result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=RelevancyNewItemsMixer', blank=True)
     messages = models.JSONField(default=list, blank=True)
     MIXER_CHOICES = [
+        ('DateMixer', 'DateMixer'),
+        ('DateNewItemsMixer', 'DateNewItemsMixer'),
         ('RelevancyMixer', 'RelevancyMixer'),
         ('RelevancyNewItemsMixer', 'RelevancyNewItemsMixer'),
         ('RoundRobinMixer', 'RoundRobinMixer'),
         ('Stack1Mixer', 'Stack1Mixer'),
         ('Stack2Mixer', 'Stack2Mixer'),
         ('Stack3Mixer', 'Stack3Mixer'),
-        ('StackNMixer', 'StackNMixer'),
-        ('DateMixer', 'DateMixer'),
-        ('DateNewItemsMixer', 'DateNewItemsMixer')
+        ('StackNMixer', 'StackNMixer')
     ]
     result_mixer = models.CharField(max_length=200, default='RelevancyMixer', choices=MIXER_CHOICES)
     RETENTION_CHOICES = [
