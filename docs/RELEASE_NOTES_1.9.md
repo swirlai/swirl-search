@@ -14,7 +14,7 @@ This version adds a ChatGPT connector, SearchProvider for Miro.com and more!
 
 :small_blue_diamond: OpenAI ChatGPT Connector & SearchProvider:
 
-[ChatGPT Response](./images/chatgpt_response.png)
+![ChatGPT Response](./images/chatgpt_response.png)
 
 The Connector rewrites keyword queries into question form, and answers them. It doesn't alter queries that are already questions, as shown above. ChatGPT responses are usually relevant, regardless of accuracy.
 
@@ -50,7 +50,7 @@ The Connector rewrites keyword queries into question form, and answers them. It 
 }
 ```
 
-[Miro Result](./images/miro_result.png)
+![Miro Result](./images/miro_result.png)
 
 <br/>
 
