@@ -88,7 +88,7 @@ class Connector:
 
     def error(self, message, save_results=True):
         logger.error(f'{self}: {message}')
-        self.message(f'Error: {message}')
+        self.message(f'Error: {self}: {message}')
         self.status = 'ERROR'
         if save_results:
             self.save_results()
@@ -116,10 +116,14 @@ class Connector:
                     self.execute_search()
                     if self.status not in ['FEDERATING', 'READY']:
                         self.error(f"execute_search() failed, status {self.status}")
+                        self.save_results()
+                        return False
                     if self.status == 'FEDERATING':
                         self.normalize_response()
                     if self.status not in ['FEDERATING', 'READY']:
                         self.error(f"normalize_response() failed, status {self.status}")
+                        self.save_results()
+                        return False
                     else:
                         self.process_results()
                     if self.status == 'READY':
@@ -375,7 +379,7 @@ class Connector:
 
         try:
             logger.info(f"{self}: Result.create()")
-            new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id, query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider, query_processors=query_processors, result_processors=result_processors, messages=self.messages, status='READY', found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}', json_results=self.processed_results, owner=self.search.owner)
+            new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id, query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider, query_processors=query_processors, result_processors=result_processors, messages=self.messages, status=self.status, found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}', json_results=self.processed_results, owner=self.search.owner)
             new_result.save()
         except Error as err:
             self.error(f'save_results() failed: {err.args}, {err}', save_results=False)

@@ -212,42 +212,30 @@ def search(id):
     # end if
     ########################################
     # asynchronously collect results
-    time.sleep(2)
     ticks = 0
     error_flag = False
     at_least_one = False
     while 1:        
-        updated = 0
+        time.sleep(1)
+        ticks = ticks + 1
         # get the list of result objects
         # security review for 1.7 - OK - filtered by search object
         results = Result.objects.filter(search_id=search.id)
-        if len(results) == len(providers):
-            if update:
-                for result in results:
-                    # TO DO: review the below, this is good if the result set already exists, but what if it has already been updted? P1
-                    # TO DO: use the date_updated to handle
-                    if result.status == 'UPDATED':
-                        updated = updated + 1
-                if updated == len(providers):
-                    # every provider has updated a result object - exit
-                    logger.info(f"{module_name}_{search.id}: all results updated!")
-                    break
-            else:
-                # every provider has written a result object - exit
-                logger.info(f"{module_name}_{search.id}: all results received!")
-                break
-        if len(results) > 0:
-            if update:
-                if updated > 0:
-                    at_least_one = True
-            else:
+        updated = 0
+        for result in results:
+            if result.status == 'UPDATED':
+                updated = updated + 1
+            if result.status == 'ERROR':
+                error_flag = True
+            if result.status == 'READY':
                 at_least_one = True
-        ticks = ticks + 1
+        if len(results) == len(providers):
+            # every provider has written a result object - exit
+            logger.info(f"{module_name}_{search.id}: all results received!")
+            break
         search.status = f'FEDERATING_WAIT_{ticks}'
         logger.info(f"{module_name}: {search.status}")
-        search.save()    
-        time.sleep(1)
-        if (ticks + 2) > int(settings.SWIRL_TIMEOUT):
+        if ticks > int(settings.SWIRL_TIMEOUT):
             logger.info(f"{module_name}_{search.id}: timeout!")
             failed_providers = []
             responding_provider_names = []
@@ -271,7 +259,7 @@ def search(id):
         if at_least_one:
             search.status = 'PARTIAL_RESULTS'
         else:
-            search.status = 'NO_RESULTS'
+            search.status = 'NO_RESULTS_READY'
         # end if
     else:
         search.status = 'FULL_RESULTS'
@@ -289,6 +277,9 @@ def search(id):
         if not update:
             search.messages.append(f"[{datetime.now()}] Requested sort_by_date from all providers")
     search.save()
+    # no results ready?
+    if search.status == 'NO_RESULTS_READY':
+        return True
     ########################################
     # post_result_processing
     if search.post_result_processor or search.post_result_processors:
