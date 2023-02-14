@@ -271,8 +271,6 @@ Ranked results will appear in just a few seconds!
 
 # Key Features
 
-* [Connectors](TO DO) to ...
-
 * [SearchProvider configurations](https://github.com/sidprobstein/swirl-search/tree/main/SearchProviders) for all included Connectors. They can be [organized with the active, default and tags properties](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#organizing-searchproviders-with-active-default-and-tags).
 
 * [Adaptation of the query for each provider](https://github.com/sidprobstein/swirl-search/wiki/2.-User-Guide#search-syntax) such as rewriting `NOT term` to `-term`, removing NOTted terms from providers that don't support NOT, and passing down the AND, + and OR operators.
