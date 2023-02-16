@@ -64,6 +64,7 @@ class ChatGPT(Connector):
             return 
 
         self.query_to_provider = prompted_query
+        logger.info(f"{self}: ChatGPT prompt: {self.query_to_provider}")
 
         completions = openai.Completion.create(
             engine="text-davinci-002",
@@ -75,11 +76,11 @@ class ChatGPT(Connector):
         )
 
         message = completions.choices[0].text
+        logger.info(f"{self}: ChatGPT response: {completions} -> {message}")
 
         self.found = 1
         self.retrieved = 1
-        self.response = message
-        logger.debug(f"{self}: response: {self.response}")
+        self.response = message.replace("\n\n", "")
 
         return
 

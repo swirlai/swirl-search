@@ -309,8 +309,11 @@ def search(id):
             except (NameError, TypeError, ValueError) as err:
                 logger.error(f'{module_name}_{search.id}: {processor}: {err.args}, {err}')
                 return False
-            if results_modified > 0:
-                message = f"[{datetime.now()}] {processor} updated {results_modified} results"
+            if not results_modified == 0:
+                if results_modified < 0:
+                    message = f"[{datetime.now()}] {processor} deleted {-1*results_modified} results"
+                else:
+                    message = f"[{datetime.now()}] {processor} updated {results_modified} results"
                 # don't repeat the same message - to do: test
                 last_message = search.messages[-1:]
                 if last_message:
