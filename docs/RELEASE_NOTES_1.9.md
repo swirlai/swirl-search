@@ -18,7 +18,7 @@ This version adds a ChatGPT connector, SearchProvider for Miro.com and more!
 
 The Connector rewrites keyword queries into question form, and answers them. It doesn't alter queries that are already questions, as shown above. ChatGPT responses are usually relevant, regardless of accuracy.
 
-:small_blue_diamond: A set of experiemental ChatGPT Processors can be used to rewrite queries as questions, booleans and more.
+:small_blue_diamond: A set of experimental ChatGPT Processors can be used to rewrite queries as questions, booleans and more.
 
 * ChatGPTQueryImproverProcessor - writes a better query
 * ChatGPTQueryExpanderProcessor - writes a broader query using top 5 concepts
