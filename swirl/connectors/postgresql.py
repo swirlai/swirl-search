@@ -23,7 +23,7 @@ logger = get_task_logger(__name__)
 try:
     import psycopg2
 except ImportError as e:
-    logger.error(f"postgresql.py: Error: can't load psycopg2: {e}, see https://github.com/swirl-ai/swirl-search/wiki/4.-Object-Reference#postgresql")
+    logger.error(f"postgresql.py: Error: can't load psycopg2: {e}, see https://github.com/swirlai/swirl-search/wiki/4.-Object-Reference#postgresql")
 
 from swirl.connectors.db_connector import DBConnector
 

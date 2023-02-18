@@ -85,7 +85,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
             # to do: handle more gracefully P1
             return self.results
 
-        # stem the query - fix for https://github.com/swirl-ai/swirl-search/issues/34
+        # stem the query - fix for https://github.com/swirlai/swirl-search/issues/34
         query_stemmed_list = stem_string(clean_string(query)).strip().split()
         query_stemmed_list_len = len(query_stemmed_list)
 
@@ -224,7 +224,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                 result_field = result_field.replace('-', ' ')
                         result_field_nlp = nlp(result_field)
                         result_field_list = result_field.strip().split()
-                        # fix for https://github.com/swirl-ai/swirl-search/issues/34
+                        # fix for https://github.com/swirlai/swirl-search/issues/34
                         result_field_stemmed = stem_string(result_field)
                         result_field_stemmed_list = result_field_stemmed.strip().split()
                         if len(result_field_list) != len(result_field_stemmed_list):
@@ -357,7 +357,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         ############################################
                         # highlight
                         item[field] = item[field].replace('*','')   # remove old
-                        # fix for https://github.com/swirl-ai/swirl-search/issues/33
+                        # fix for https://github.com/swirlai/swirl-search/issues/33
                         item[field] = highlight_list(remove_tags(item[field]), extracted_highlights)
                     # end if
                 # end for field in RELEVANCY_CONFIG:

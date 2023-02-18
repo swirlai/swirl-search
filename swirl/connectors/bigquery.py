@@ -58,7 +58,7 @@ class BigQuery(DBConnector):
         query_job = client.query(self.count_query)
         results = query_job.result()
         list_results = list(results)
-        # fix for https://github.com/swirl-ai/swirl-search/issues/96
+        # fix for https://github.com/swirlai/swirl-search/issues/96
         found = int(list_results[0][0])
         if found == 0:
             self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")

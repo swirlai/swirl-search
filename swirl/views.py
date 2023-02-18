@@ -290,7 +290,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             for old_result in old_results:
                 old_result.delete()
             rerun_search.status = 'NEW_SEARCH'
-            # fix for https://github.com/swirl-ai/swirl-search/issues/35
+            # fix for https://github.com/swirlai/swirl-search/issues/35
             message = f"[{datetime.now()}] Rerun requested"
             rerun_search.messages = []
             rerun_search.messages.append(message)
