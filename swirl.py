@@ -140,7 +140,7 @@ def start(service_list):
     flag = False
     for service_name in service_list:
         if service_name in SERVICES_DICT:
-            # Fix for https://github.com/swirl-ai/swirl-search/issues/47
+            # Fix for https://github.com/swirlai/swirl-search/issues/47
             # if service_name == 'rabbitmq':
             #     # check to see if it is running
             #     rabbit = check_rabbit()

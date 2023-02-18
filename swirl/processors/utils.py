@@ -23,7 +23,7 @@ def create_result_dictionary():
     return dict_result
 
 #############################################
-# fix for https://github.com/swirl-ai/swirl-search/issues/34
+# fix for https://github.com/swirlai/swirl-search/issues/34
 
 from ..nltk import ps
 
@@ -108,7 +108,7 @@ def highlight_list(text, word_list):
     return ' '.join(highlighted_list)
 
 #############################################
-# fix for https://github.com/swirl-ai/swirl-search/issues/33
+# fix for https://github.com/swirlai/swirl-search/issues/33
 
 from swirl.bs4 import bs
 
