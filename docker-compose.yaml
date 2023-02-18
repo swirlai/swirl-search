@@ -2,7 +2,7 @@ version: '3'
  
 services:
   app:
-    image: swirl-ai/swirl-search:latest
+    image: swirlai/swirl-search:latest
     ports:
       - "8000:8000"
     command: >
