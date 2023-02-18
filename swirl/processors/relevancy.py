@@ -14,8 +14,8 @@ from swirl.processors.utils import *
 from swirl.spacy import nlp
 from swirl.processors.processor import PostResultProcessor
 
-#############################################    
-#############################################    
+#############################################
+#############################################
 
 class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
@@ -85,7 +85,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
             # to do: handle more gracefully P1
             return self.results
 
-        # stem the query - fix for https://github.com/sidprobstein/swirl-search/issues/34
+        # stem the query - fix for https://github.com/swirl-ai/swirl-search/issues/34
         query_stemmed_list = stem_string(clean_string(query)).strip().split()
         query_stemmed_list_len = len(query_stemmed_list)
 
@@ -143,7 +143,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
     def process(self):
 
         RELEVANCY_CONFIG = settings.SWIRL_RELEVANCY_CONFIG
-        
+
         updated = 0
         dict_result_lens = {}
         list_query_lens = []
@@ -180,11 +180,11 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                             if result_field:
                                 if len(result_field) == 0:
                                     continue
-                            # prepare result field                        
+                            # prepare result field
                             if result_field.startswith('http'):
                                 # the field is a URL, split it on -
                                 if '-' in result_field:
-                                    result_field = result_field.replace('-', ' ')                            
+                                    result_field = result_field.replace('-', ' ')
                             result_field_list = result_field.strip().split()
                             if field in dict_len:
                                 self.warning("duplicate field?")
@@ -217,14 +217,14 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         if result_field:
                             if len(result_field) == 0:
                                 continue
-                        # prepare result field                        
+                        # prepare result field
                         if result_field.startswith('http'):
                             # the field is a URL, split it on -
                             if '-' in result_field:
-                                result_field = result_field.replace('-', ' ')                            
+                                result_field = result_field.replace('-', ' ')
                         result_field_nlp = nlp(result_field)
                         result_field_list = result_field.strip().split()
-                        # fix for https://github.com/sidprobstein/swirl-search/issues/34
+                        # fix for https://github.com/swirl-ai/swirl-search/issues/34
                         result_field_stemmed = stem_string(result_field)
                         result_field_stemmed_list = result_field_stemmed.strip().split()
                         if len(result_field_list) != len(result_field_stemmed_list):
@@ -258,7 +258,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                             empty_query_vector = False
                             if query_nlp.vector.all() == 0:
                                 empty_query_vector = True
-                            qvr = 0.0                          
+                            qvr = 0.0
                             label = '_*'
                             if empty_query_vector or result_field_nlp.vector.all() == 0:
                                 if len(result_field_list) == 0:
@@ -357,7 +357,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         ############################################
                         # highlight
                         item[field] = item[field].replace('*','')   # remove old
-                        # fix for https://github.com/sidprobstein/swirl-search/issues/33
+                        # fix for https://github.com/swirl-ai/swirl-search/issues/33
                         item[field] = highlight_list(remove_tags(item[field]), extracted_highlights)
                     # end if
                 # end for field in RELEVANCY_CONFIG:
@@ -401,7 +401,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     del item['dict_len']
                 else:
                     continue
-                # score the item 
+                # score the item
                 dict_len_adjust = {}
                 for f in dict_score:
                     if f in RELEVANCY_CONFIG:
@@ -419,7 +419,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         if dict_score[f][k] >= float(settings.SWIRL_MIN_SIMILARITY):
                             rank_adjust = 1.0 + (1.0 / sqrt(item['searchprovider_rank']))
                             if k.endswith('_*') or k.endswith('_s*'):
-                                item['swirl_score'] = item['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k)) 
+                                item['swirl_score'] = item['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k))
                             else:
                                 item['swirl_score'] = item['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k)) * len_adjust * qlen_adjust * rank_adjust
                         # end if
@@ -430,7 +430,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         dict_score[f]['result_length_adjust'] = dict_len_adjust[f]
                         dict_score[f]['query_length_adjust'] = qlen_adjust
                 ####### explain
-                item['explain'] = dict_score                
+                item['explain'] = dict_score
                 updated = updated + 1
                 # save highlighted version
                 highlighted_json_results.append(item)
@@ -440,5 +440,5 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         ############################################
 
         self.results_updated = int(updated)
-        
-        return self.results_updated                
+
+        return self.results_updated

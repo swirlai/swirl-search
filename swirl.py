@@ -20,7 +20,7 @@ from datetime import datetime
 # from os import environ
 # from swirl.utils import swirl_setdir
 # path.append(swirl_setdir()) # path to settings.py file
-# environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+# environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 # django.setup()
 
 # from django.conf import settings
@@ -49,7 +49,7 @@ def check_rabbit():
                 pass
             else:
                 return l
-        
+
     return ""
 
 def check_pid(pid):
@@ -85,7 +85,7 @@ def write_swirl_file(dict_pid):
     except OSError as err:
         print(f"Error: {err}")
         return False
-    
+
     return True
 
 ##################################################
@@ -150,7 +150,7 @@ def start(service_list):
             # # end if
             print(f"Start: {service_name} -> {SERVICES_DICT[service_name]} ... ", end='')
             result = launch(service_name, SERVICES_DICT[service_name])
-            time.sleep(5)        
+            time.sleep(5)
             if result > 0:
                 print(f'Ok, pid: {result}')
                 dict_pid[service_name] = result
@@ -181,7 +181,7 @@ def start(service_list):
 ##################################################
 
 def start_sleep (service_list):
-    
+
     status = start(service_list)
     return status
 
@@ -213,7 +213,7 @@ def logs(service_list):
 
     try:
         p = subprocess.Popen(['tail','-f','logs/django.log','logs/celery-worker.log'], stdout=subprocess.PIPE)
-        
+
         while p.poll() is None:
             l = p.stdout.readline()
             print(l.decode("utf-8").replace('\n',''))
@@ -227,7 +227,7 @@ def logs(service_list):
 ##################################################
 
 def status(service_list):
-       
+
     # check if .swirl exists
     dict_pid = load_swirl_file()
 
@@ -305,7 +305,7 @@ def stop(service_list):
     if not dict_pid:
         print(f"Error: .swirl not found, exiting")
         return False
-    
+
     # stop service_list
     pids = ""
     stopped_names = []
@@ -469,7 +469,7 @@ def main(argv):
     parser.add_argument('command', nargs='+', help="Specify 'help' to get a list of available commands")
     parser.add_argument('-d', '--debug', action="store_true", help="start SWIRL in debug mode")
     args = parser.parse_args()
-    
+
     if args.debug:
         SERVICES = SWIRL_SERVICES_DEBUG
         SERVICES_DICT = SWIRL_SERVICES_DEBUG_DICT
@@ -483,7 +483,7 @@ def main(argv):
 
     if not args.command[0] in COMMAND_LIST:
         print(f"Unknown command: '{args.command[0]}'")
-        return 0 
+        return 0
     else:
         service_list = args.command[1:]
         if service_list == [] or service_list[0].lower() == 'all':
@@ -508,7 +508,7 @@ def main(argv):
         # limit eval for security purposes
         result = eval(command + '(service_list)', {"command": command, "service_list": service_list, "__builtins__": None}, COMMAND_DIR)
     # end if
-    
+
     if result == False:
         print(f"{bcolors.FAIL}Command {args.command[0]} reported an error{bcolors.ENDC}")
         return 1
@@ -521,11 +521,11 @@ def main(argv):
                 except KeyboardInterrupt:
                     return 0
         else:
-            return 0 
+            return 0
     # end if
 
-#############################################    
-    
+#############################################
+
 if __name__ == "__main__":
     main(sys.argv)
 

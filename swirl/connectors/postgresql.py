@@ -12,8 +12,8 @@ from django.db import Error
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
-django.setup()    
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
+django.setup()
 
 from celery.utils.log import get_task_logger
 from logging import DEBUG
@@ -23,7 +23,7 @@ logger = get_task_logger(__name__)
 try:
     import psycopg2
 except ImportError as e:
-    logger.error(f"postgresql.py: Error: can't load psycopg2: {e}, see https://github.com/sidprobstein/swirl-search/wiki/4.-Object-Reference#postgresql")
+    logger.error(f"postgresql.py: Error: can't load psycopg2: {e}, see https://github.com/swirl-ai/swirl-search/wiki/4.-Object-Reference#postgresql")
 
 from swirl.connectors.db_connector import DBConnector
 
@@ -106,19 +106,19 @@ class PostgreSQL(DBConnector):
             return
             # end if
         # end if
-        
+
         self.response = rows
         logger.debug(f"{self}: response: {self.response}")
 
         self.column_names = column_names
         self.found = found
- 
+
         return
 
     ########################################
 
     def normalize_response(self):
-        
+
         logger.info(f"{self}: normalize_response()")
 
         rows = self.response
