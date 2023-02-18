@@ -17,13 +17,13 @@ Please [contact support](#support) for a docker image suitable for production de
 ## Clone the Repo Branch
 
 ```
-git clone https://github.com/swirl-ai/swirl-search
+git clone https://github.com/swirlai/swirl-search
 ```
 
 Feel free to specify the name of a new folder, instead of using the default (swirl-search):
 
 ```
-git clone https://github.com/swirl-ai/swirl-search my-folder
+git clone https://github.com/swirlai/swirl-search my-folder
 ```
 
 <br/>
@@ -32,7 +32,7 @@ git clone https://github.com/swirl-ai/swirl-search my-folder
 
 ```
 cd swirl-search
-docker build . -t swirl-ai/swirl-search:latest
+docker build . -t swirlai/swirl-search:latest
 ```
 
 If you cloned to a directory other than swirl-search, replace it above.
@@ -152,12 +152,12 @@ In the SearchProvider, replace localhost with the hostname:
 
 ## Documentation
 
-* [User Guide](https://github.com/swirl-ai/swirl-search/wiki/2.-User-Guide)
+* [User Guide](https://github.com/swirlai/swirl-search/wiki/2.-User-Guide)
 
 <br/>
 
 # Support
 
-:small_blue_diamond: [Create an Issue](https://github.com/swirl-ai/swirl-search/issues) if something doesn't work, isn't clear, or should be documented - we'd love to hear from you!
+:small_blue_diamond: [Create an Issue](https://github.com/swirlai/swirl-search/issues) if something doesn't work, isn't clear, or should be documented - we'd love to hear from you!
 
 :small_blue_diamond: Paid support and consulting are available... [contact SWIRL](mailto:support@swirl.today) for more information.
