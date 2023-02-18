@@ -49,14 +49,14 @@ def index(request):
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """
-    API endpoint for managing SearchProviders. 
-    Use GET to list all, POST to create a new one. 
+    API endpoint for managing SearchProviders.
+    Use GET to list all, POST to create a new one.
     Add /<id>/ to DELETE, PUT or PATCH one.
     """
     queryset = SearchProvider.objects.all()
     serializer_class = SearchProviderSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    # pagination_class = None 
+    # pagination_class = None
 
     def list(self, request):
 
@@ -153,8 +153,8 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
 
 class SearchViewSet(viewsets.ModelViewSet):
     """
-    API endpoint for managing Search objects. 
-    Use GET to list all, POST to create a new one. 
+    API endpoint for managing Search objects.
+    Use GET to list all, POST to create a new one.
     Add /<id>/ to DELETE, PUT or PATCH one.
     Add ?q=<query_string> to the URL to create a Search with default settings
     Add ?qs=<query_string> to the URL to run a Search and get results directly
@@ -235,7 +235,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 # security review for 1.7 - OK, created with owner
                 new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user)
             except Error as err:
-                self.error(f'Search.create() failed: {err}')            
+                self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
             new_search.save()
             res = run_search(new_search.id)
@@ -282,7 +282,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             # security check
             if not Search.objects.filter(id=rerun_id, owner=self.request.user).exists():
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
-            # security review for 1.7 - OK, filtered by search            
+            # security review for 1.7 - OK, filtered by search
             logger.info(f"{module_name}: ?rerun!")
             rerun_search = Search.objects.get(id=rerun_id)
             old_results = Result.objects.filter(search_id=rerun_search.id)
@@ -290,15 +290,15 @@ class SearchViewSet(viewsets.ModelViewSet):
             for old_result in old_results:
                 old_result.delete()
             rerun_search.status = 'NEW_SEARCH'
-            # fix for https://github.com/sidprobstein/swirl-search/issues/35
+            # fix for https://github.com/swirl-ai/swirl-search/issues/35
             message = f"[{datetime.now()}] Rerun requested"
             rerun_search.messages = []
-            rerun_search.messages.append(message)    
+            rerun_search.messages.append(message)
             rerun_search.save()
             search_task.delay(rerun_search.id)
             time.sleep(settings.SWIRL_RERUN_WAIT)
             return redirect(f'/swirl/results?search_id={rerun_search.id}')
-        # end if        
+        # end if
 
         ########################################
 
@@ -318,7 +318,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             rescore_task.delay(rescore_id)
             time.sleep(settings.SWIRL_RESCORE_WAIT)
             return redirect(f'/swirl/results?search_id={rescore_id}')
-        
+
         ########################################
 
         update_id = 0
@@ -424,7 +424,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     ########################################
-        
+
     def destroy(self, request, pk=None):
 
         # check permissions
@@ -447,7 +447,7 @@ class SearchViewSet(viewsets.ModelViewSet):
 class ResultViewSet(viewsets.ModelViewSet):
     """
     API endpoint for managing Result objects, including Mixed Results
-    Use GET to list all, POST to create a new one. 
+    Use GET to list all, POST to create a new one.
     Add /<id>/ to DELETE, PUT or PATCH one.
     Add ?search_id=<search_id> to the base URL to view mixed results with the default mixer
     Add &result_mixer=<MixerName> to the above URL specify the result mixer to use
@@ -566,7 +566,7 @@ class ResultViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     ########################################
-        
+
     def destroy(self, request, pk=None):
 
         # check permissions
@@ -589,7 +589,7 @@ class ResultViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows management of Users objects.
-    Use GET to list all objects, POST to create a new one. 
+    Use GET to list all objects, POST to create a new one.
     Add /<id>/ to DELETE, PUT or PATCH one.
     """
     queryset = User.objects.all().order_by('-date_joined')
@@ -602,10 +602,9 @@ class UserViewSet(viewsets.ModelViewSet):
 class GroupViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows management of Group objects.
-    Use GET to list all objects, POST to create a new one. 
+    Use GET to list all objects, POST to create a new one.
     Add /<id>/ to DELETE, PUT or PATCH one.
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
- 

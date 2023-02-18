@@ -12,8 +12,8 @@ from django.db import Error
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
-django.setup()    
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
+django.setup()
 
 from celery.utils.log import get_task_logger
 from logging import DEBUG
@@ -58,7 +58,7 @@ class BigQuery(DBConnector):
         query_job = client.query(self.count_query)
         results = query_job.result()
         list_results = list(results)
-        # fix for https://github.com/sidprobstein/swirl-search/issues/96
+        # fix for https://github.com/swirl-ai/swirl-search/issues/96
         found = int(list_results[0][0])
         if found == 0:
             self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
@@ -70,7 +70,7 @@ class BigQuery(DBConnector):
 
         # issue the main query
         query_job = client.query(self.query_to_provider)
-        results = query_job.result()        
+        results = query_job.result()
         self.response = list(results)
         logger.debug(f"{self}: response: {self.response}")
 
@@ -82,7 +82,7 @@ class BigQuery(DBConnector):
     ########################################
 
     def normalize_response(self):
-        
+
         logger.info(f"{self}: normalize_response()")
 
         rows = self.response

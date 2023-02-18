@@ -3,8 +3,8 @@
 @contact:    sid@swirl.today
 '''
 
-#############################################    
-#############################################    
+#############################################
+#############################################
 
 def create_result_dictionary():
 
@@ -23,12 +23,12 @@ def create_result_dictionary():
     return dict_result
 
 #############################################
-# fix for https://github.com/sidprobstein/swirl-search/issues/34
+# fix for https://github.com/swirl-ai/swirl-search/issues/34
 
 from ..nltk import ps
 
 def stem_string(s):
-        
+
     nl=[]
     for s in s.strip().split():
         nl.append(ps.stem(s))
@@ -58,7 +58,7 @@ def has_numeric(string_or_list):
             # end for
         # end if
     # end for
-         
+
     return False
 
 #############################################
@@ -73,7 +73,7 @@ def remove_numeric(string_or_list):
     if list_thing == []:
         return list_thing
 
-    list_new = []    
+    list_new = []
     for t in list_thing:
         if t.isalpha():
             list_new.append(t)
@@ -91,7 +91,7 @@ def remove_numeric(string_or_list):
 
     if type(string_or_list) == str:
         return ' '.join(list_new)
-        
+
     return list_new
 
 #############################################
@@ -104,24 +104,24 @@ def highlight_list(text, word_list):
             highlighted_list.append(f"*{term}*")
         else:
             highlighted_list.append(term)
-              
+
     return ' '.join(highlighted_list)
 
 #############################################
-# fix for https://github.com/sidprobstein/swirl-search/issues/33
+# fix for https://github.com/swirl-ai/swirl-search/issues/33
 
 from swirl.bs4 import bs
 
 # Function to remove tags
 def remove_tags(html):
-  
+
     # parse html content
     soup = bs(html, "html.parser")
-  
+
     for data in soup(['style', 'script']):
         # Remove tags
         data.decompose()
-  
+
     # return data by retrieving the tag content
     return ' '.join(soup.stripped_strings)
 
@@ -182,7 +182,7 @@ def match_all(list_find, list_targets):
         if find.lower() in ' '.join(list_targets[p:p+len(list_find)]).lower():
             match_list.append(p)
         p = p + 1
-    
+
     return match_list
 
 #############################################
@@ -208,7 +208,7 @@ def bigrams(list_terms):
 
     if len(list_terms) <= 2:
         return list_terms
-    
+
     bigrams = []
     p = 0
     while p < len(list_terms) - 1:
@@ -227,12 +227,12 @@ def capitalize(list_lower, list_unknown):
         return list_lower
 
     if not list_unknown:
-        return list_unknown    
-    
+        return list_unknown
+
     if len(list_lower) != len(list_unknown):
         logger.error("capitalize: inputs were not same length")
         return list_lower
-    
+
     list_capitalized = []
     for m in list_unknown:
         if m[0].isupper():
@@ -248,15 +248,15 @@ def capitalize_search(list_lower, list_unknown):
 
     if type(list_lower) != list:
         return None
-    
+
     if type(list_unknown) != list:
         return None
-     
+
     if not list_lower:
         return list_lower
 
     if not list_unknown:
-        return list_unknown    
+        return list_unknown
 
     list_capitalized = []
     for i in list_lower:
@@ -271,5 +271,5 @@ def capitalize_search(list_lower, list_unknown):
             continue
         list_capitalized.append(i)
     # end for
-        
+
     return list_capitalized
