@@ -1,28 +1,28 @@
-<h1> &nbsp; SWIRL METASEARCH <img alt='SWIRL Logo' src='https://raw.githubusercontent.com/swearl-ai/swirl-search/main/docs/images/swirl_logo_notext_200.jpg' width=38 align=left /></h1>
+<h1> &nbsp; SWIRL METASEARCH <img alt='SWIRL Logo' src='https://raw.githubusercontent.com/swirl-ai/swirl-search/main/docs/images/swirl_logo_notext_200.jpg' width=38 align=left /></h1>
 
-[![GitHub Release](https://img.shields.io/github/v/release/swearl-ai/swirl-search?style=flat)](https://github.com/swearl-ai/swirl-search/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/swirl-ai/swirl-search?style=flat)](https://github.com/swirl-ai/swirl-search/releases)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=blue&logoColor=blue&style=flat)](https://opensource.org/licenses/Apache-2.0)
-[![Docker Build Status](https://img.shields.io/docker/cloud/build/swearl-ai/swirl-search?style=flat)](https://hub.docker.com/repository/docker/swearl-ai/swirl-search/builds) 
+[![Docker Build Status](https://img.shields.io/docker/cloud/build/swirl-ai/swirl-search?style=flat)](https://hub.docker.com/repository/docker/swirl-ai/swirl-search/builds) 
 [![Slack](https://img.shields.io/badge/slack--channel-gray?logo=slack&logoColor=black&style=flat)](https://join.slack.com/t/swirlsearch/shared_invite/zt-1n7xophls-F4SzYecGniOFB95xI6WlAw)
 [![Newsletter](https://img.shields.io/badge/newsletter-gray?logo=revue&logoColor=black&style=flat)](https://groups.google.com/g/swirl-announce)
 [![Twitter](https://img.shields.io/twitter/follow/SWIRL_SEARCH?color=gray&logoColor=black&style=flat)](https://twitter.com/SWIRL_SEARCH)
  
 SWIRL adapts and distributes queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services etc - and uses AI ([Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/)) to re-rank the unified results *without* extracting and indexing *anything*. It's intended for use by developers and data scientists who want to solve multi-silo search problems from enterprise search to new monitoring & alerting solutions that push information to users continuously.
 
-![Metasearch diagram](https://raw.githubusercontent.com/swearl-ai/swirl-search/main/docs/images/federation_diagram.png)
+![Metasearch diagram](https://raw.githubusercontent.com/swirl-ai/swirl-search/main/docs/images/federation_diagram.png)
 
 Built on the Python/Django/RabbitMQ stack, SWIRL includes connectors to Apache [Solr](https://solr.apache.org/), [ChatGPT](https://openai.com/blog/chatgpt/), [Elastic](https://www.elastic.co/cn/downloads/elasticsearch), [OpenSearch](https://opensearch.org/downloads.html) | [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery) plus generic HTTP/GET/JSON with configurations for premium services like [Google's Programmable Search Engine](https://programmablesearchengine.google.com/about/), [Miro](https://miro.com/app/) and [Northern Light Research](https://northernlight.com/). 
 
-:star: Learn more: [Documentation Wiki](https://github.com/swearl-ai/swirl-search/wiki)
+:star: Learn more: [Documentation Wiki](https://github.com/swirl-ai/swirl-search/wiki)
 
 <br/>
 
 # Try SWIRL Now:
 
-* Download [https://raw.githubusercontent.com/swearl-ai/swirl-search/main/docker-compose.yaml](https://raw.githubusercontent.com/swearl-ai/swirl-search/main/docker-compose.yaml)
+* Download [https://raw.githubusercontent.com/swirl-ai/swirl-search/main/docker-compose.yaml](https://raw.githubusercontent.com/swirl-ai/swirl-search/main/docker-compose.yaml)
 
 ```
-curl https://raw.githubusercontent.com/swearl-ai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
+curl https://raw.githubusercontent.com/swirl-ai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
 ```
 
 * From the console:
@@ -244,7 +244,7 @@ Ranked results will appear in just a few seconds!
 
 :warning: Warning: The Docker version of SWIRL does *not* retain results or configuration when shut down!
 
-:star: Learn more: [Quick Start Guide](https://github.com/swearl-ai/swirl-search/wiki/1.-Quick-Start)
+:star: Learn more: [Quick Start Guide](https://github.com/swirl-ai/swirl-search/wiki/1.-Quick-Start)
 
 <br/>
 
@@ -258,47 +258,47 @@ Ranked results will appear in just a few seconds!
 
 | Version                     | Date                        | Notes | 
 | --------------------------- | --------------------------- | ----- |
-| [SWIRL SEARCH 1.9](https://github.com/swearl-ai/swirl-search/releases/tag/v1.9) | 02-14-2023 | [Release 1.9](./docs/RELEASE_NOTES_1.9.md) |
+| [SWIRL SEARCH 1.9](https://github.com/swirl-ai/swirl-search/releases/tag/v1.9) | 02-14-2023 | [Release 1.9](./docs/RELEASE_NOTES_1.9.md) |
 
 <br/>
 
 # Documentation Wiki
 
-### [Home](https://github.com/swearl-ai/swirl-search/wiki) | [Quick Start](https://github.com/swearl-ai/swirl-search/wiki/1.-Quick-Start) | [User Guide](https://github.com/swearl-ai/swirl-search/wiki/2.-User-Guide) | [Developer Guide](https://github.com/swearl-ai/swirl-search/wiki/3.-Developer-Guide) | [Admin Guide](https://github.com/swearl-ai/swirl-search/wiki/4.-Admin-Guide)
+### [Home](https://github.com/swirl-ai/swirl-search/wiki) | [Quick Start](https://github.com/swirl-ai/swirl-search/wiki/1.-Quick-Start) | [User Guide](https://github.com/swirl-ai/swirl-search/wiki/2.-User-Guide) | [Developer Guide](https://github.com/swirl-ai/swirl-search/wiki/3.-Developer-Guide) | [Admin Guide](https://github.com/swirl-ai/swirl-search/wiki/4.-Admin-Guide)
 
 <br/>
 
 # Key Features
 
-* [SearchProvider configurations](https://github.com/swearl-ai/swirl-search/tree/main/SearchProviders) for all included Connectors. They can be [organized with the active, default and tags properties](https://github.com/swearl-ai/swirl-search/wiki/2.-User-Guide#organizing-searchproviders-with-active-default-and-tags).
+* [SearchProvider configurations](https://github.com/swirl-ai/swirl-search/tree/main/SearchProviders) for all included Connectors. They can be [organized with the active, default and tags properties](https://github.com/swirl-ai/swirl-search/wiki/2.-User-Guide#organizing-searchproviders-with-active-default-and-tags).
 
-* [Adaptation of the query for each provider](https://github.com/swearl-ai/swirl-search/wiki/2.-User-Guide#search-syntax) such as rewriting `NOT term` to `-term`, removing NOTted terms from providers that don't support NOT, and passing down the AND, + and OR operators.
+* [Adaptation of the query for each provider](https://github.com/swirl-ai/swirl-search/wiki/2.-User-Guide#search-syntax) such as rewriting `NOT term` to `-term`, removing NOTted terms from providers that don't support NOT, and passing down the AND, + and OR operators.
 
-* [Synchronous or asynchronous search federation](https://github.com/swearl-ai/swirl-search/wiki/3.-Developer-Guide#architecture) via [APIs](http://localhost:8000/swirl/swagger-ui/)
+* [Synchronous or asynchronous search federation](https://github.com/swirl-ai/swirl-search/wiki/3.-Developer-Guide#architecture) via [APIs](http://localhost:8000/swirl/swagger-ui/)
 
-* [Optional subscribe feature](https://github.com/swearl-ai/swirl-search/wiki/2.-User-Guide#subscribing-to-a-search) to continuously monitor any search for new results 
+* [Optional subscribe feature](https://github.com/swirl-ai/swirl-search/wiki/2.-User-Guide#subscribing-to-a-search) to continuously monitor any search for new results 
 
-* Pipelining of [Processor](https://github.com/swearl-ai/swirl-search/wiki/3.-Developer-Guide#processors) stages for real-time adaptation and transformation of queries, responses and results 
+* Pipelining of [Processor](https://github.com/swirl-ai/swirl-search/wiki/3.-Developer-Guide#processors) stages for real-time adaptation and transformation of queries, responses and results 
 
-* [Results stored](https://github.com/swearl-ai/swirl-search/wiki/3.-Developer-Guide#result-object) in SQLite3 or PostgreSQL for post-processing, consumption and/or analytics
+* [Results stored](https://github.com/swirl-ai/swirl-search/wiki/3.-Developer-Guide#result-object) in SQLite3 or PostgreSQL for post-processing, consumption and/or analytics
 
-* [Matching on word stems](https://github.com/swearl-ai/swirl-search/wiki/2.-User-Guide#relevancy) and [handling of stopword](https://github.com/swearl-ai/swirl-search/wiki/3.-Developer-Guide#stopwords-language) via NLTK
+* [Matching on word stems](https://github.com/swirl-ai/swirl-search/wiki/2.-User-Guide#relevancy) and [handling of stopword](https://github.com/swirl-ai/swirl-search/wiki/3.-Developer-Guide#stopwords-language) via NLTK
 
-* [Duplicate detection](https://github.com/swearl-ai/swirl-search/wiki/2.-User-Guide#detecting-and-removing-duplicate-results) on field or by configurable Cosine Similarity threshold
+* [Duplicate detection](https://github.com/swirl-ai/swirl-search/wiki/2.-User-Guide#detecting-and-removing-duplicate-results) on field or by configurable Cosine Similarity threshold
 
-* Re-ranking of unified results [using Cosine Vector Similarity](https://github.com/swearl-ai/swirl-search/wiki/2.-User-Guide#relevancy) based on [spaCy](https://spacy.io/)'s large language model and [NLTK](https://www.nltk.org/)
+* Re-ranking of unified results [using Cosine Vector Similarity](https://github.com/swirl-ai/swirl-search/wiki/2.-User-Guide#relevancy) based on [spaCy](https://spacy.io/)'s large language model and [NLTK](https://www.nltk.org/)
 
-* [Result mixers](https://github.com/swearl-ai/swirl-search/wiki/2.-User-Guide#result-mixers) order results by relevancy, date or round-robin (stack) format, with optional filtering of just new items in subscribe mode
+* [Result mixers](https://github.com/swirl-ai/swirl-search/wiki/2.-User-Guide#result-mixers) order results by relevancy, date or round-robin (stack) format, with optional filtering of just new items in subscribe mode
 
 * Page through all results requested, re-run, re-score and update searches using URLs provided with each result set
 
-* [Sample data sets](https://github.com/swearl-ai/swirl-search/tree/main/Data) for use with SQLite3 and PostgreSQL
+* [Sample data sets](https://github.com/swirl-ai/swirl-search/tree/main/Data) for use with SQLite3 and PostgreSQL
 
-* [Optional spell correction](https://github.com/swearl-ai/swirl-search/wiki/2.-User-Guide#spell-correction) using [TextBlob](https://textblob.readthedocs.io/en/dev/quickstart.html#spelling-correction)
+* [Optional spell correction](https://github.com/swirl-ai/swirl-search/wiki/2.-User-Guide#spell-correction) using [TextBlob](https://textblob.readthedocs.io/en/dev/quickstart.html#spelling-correction)
 
-* [Optional search/result expiration service](https://github.com/swearl-ai/swirl-search/wiki/4.-Admin-Guide#search-expiration-service) to limit storage use
+* [Optional search/result expiration service](https://github.com/swirl-ai/swirl-search/wiki/4.-Admin-Guide#search-expiration-service) to limit storage use
 
-* Easily extensible [Connector](https://github.com/swearl-ai/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/swearl-ai/swirl-search/tree/main/swirl/mixers) objects
+* Easily extensible [Connector](https://github.com/swirl-ai/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/swirl-ai/swirl-search/tree/main/swirl/mixers) objects
 
 <br/>
 
@@ -306,7 +306,7 @@ Ranked results will appear in just a few seconds!
 
 * [Join SWIRL SEARCH #support on Slack!](https://join.slack.com/t/swirlsearch/shared_invite/zt-1n7xophls-F4SzYecGniOFB95xI6WlAw)
 
-* [Create an Issue](https://github.com/swearl-ai/swirl-search/issues) if something doesn't work, isn't clear, or should be documented
+* [Create an Issue](https://github.com/swirl-ai/swirl-search/issues) if something doesn't work, isn't clear, or should be documented
 
 * Email: [support@swirl.today](mailto:support@swirl.today) with issues, requests, questions, etc - we'd love to hear from you!
 
