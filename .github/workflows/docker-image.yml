@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: login to docker hub
-      run: echo "dckr_pat_AmMaKGgqRB2EH5C-BNjzJ6_MrqQ" | docker login -u "dnicoswirl" --password-stdin
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
     - name: builder bootstrap
       run: docker buildx create --name devBuilder --use --bootstrap
     - name: Build the Docker image   
