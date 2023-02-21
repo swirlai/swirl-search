@@ -5,6 +5,7 @@ RUN apt-get update -y
 RUN apt-get install apt-file -y
 RUN apt-file update
 RUN apt-get install -y python3-dev build-essential
+RUN pip install --upgrade pip
 
 ADD requirements.txt .
 RUN pip install -r requirements.txt
