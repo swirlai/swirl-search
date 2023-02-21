@@ -1,4 +1,6 @@
-FROM python:3.11.1-slim
+# syntax=docker/dockerfile:1
+
+FROM --platform=linux/amd64,linux/arm64 python:3.11.1-slim
 
 # RUN sudo echo 'nameserver 8.8.8.8'>/etc/resolv.conf
 RUN apt-get update -y
