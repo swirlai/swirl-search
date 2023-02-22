@@ -16,6 +16,20 @@ section {
     align-items: center;
   }
 
+header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
 div {
     width: 1280px;
     color: #fff;

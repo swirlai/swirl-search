@@ -14,12 +14,22 @@ from django.conf import settings
 from django.db import Error
 from django.core.exceptions import ObjectDoesNotExist
 
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.core.mail import send_mail
+from django.conf import settings
+from .forms import RegistrationForm
+
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework import viewsets, status
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.views import APIView
+
+import base64
+import hashlib
+import hmac
 
 from swirl.models import *
 from swirl.serializers import *
@@ -43,6 +53,62 @@ for t in SWIRL_OBJECT_LIST:
 def index(request):
     context = {'index': []}
     return render(request, 'index.html', context)
+
+########################################
+
+def registration(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+            login(request, user)
+            # Generate and sign token
+            token = base64.urlsafe_b64encode(user.id.to_bytes(4, 'big')).decode()
+            secret_key = settings.SECRET_KEY.encode()
+            signature = hmac.new(secret_key, token.encode(), hashlib.sha256).hexdigest()
+            # Construct the confirmation URL with the signed token
+            confirmation_url = reverse('registration_confirmation', args=[token, signature])
+            confirmation_url = request.build_absolute_uri(confirmation_url)
+            logger.info(f"{module_name}: User registered: {confirmation_url}")
+            send_mail(
+                'Register to try Swirl Metasearch Hosted!',
+                f'Hello! You have been invited to try Swirl Metasearch! Please click the following link to complete your registration: {confirmation_url}',
+                settings.EMAIL_HOST_USER,
+                [user.email],
+                fail_silently=False,
+            )
+            return redirect('registration_confirmation_sent')
+    else:
+        form = RegistrationForm()
+    return render(request, 'register.html', {'form': form})
+
+########################################
+
+def registration_confirmation_sent(request):
+    return render(request, 'register_sent.html')
+
+########################################
+
+def registration_confirmation(request, token, signature):
+    # Verify the token
+    secret_key = settings.SECRET_KEY.encode()
+    expected_signature = hmac.new(secret_key, token.encode(), hashlib.sha256).hexdigest()
+    if signature != expected_signature:
+        raise Http404
+    # Decode the token and activate the user
+    user_id = int.from_bytes(base64.urlsafe_b64decode(token.encode()), 'big')
+    user = get_object_or_404(User, id=user_id)
+    user.is_active = True
+    user.save()
+    # Add user to everyone group
+    group = Group.objects.get(name='everyone')
+    group.user_set.add(user)
+    group.save()
+    logger.info(f"{module_name}: User confirmed: {user.id} {user.username}")
+    login(request, user)
+    return redirect('index')
 
 ########################################
 ########################################
