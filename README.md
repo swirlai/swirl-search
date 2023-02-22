@@ -9,7 +9,7 @@
  
 SWIRL adapts and distributes queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services etc - and uses AI ([Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/)) to re-rank the unified results *without* extracting and indexing *anything*. It's intended for use by developers and data scientists who want to solve multi-silo search problems from enterprise search to new monitoring & alerting solutions that push information to users continuously.
 
-![Metasearch diagram](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/federation_diagram.png)
+![Metasearch diagram](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/swirl_arch_diagram.jpg)
 
 Built on the Python/Django/RabbitMQ stack, SWIRL includes connectors to Apache [Solr](https://solr.apache.org/), [ChatGPT](https://openai.com/blog/chatgpt/), [Elastic](https://www.elastic.co/cn/downloads/elasticsearch), [OpenSearch](https://opensearch.org/downloads.html) | [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery) plus generic HTTP/GET/JSON with configurations for premium services like [Google's Programmable Search Engine](https://programmablesearchengine.google.com/about/), [Miro](https://miro.com/app/) and [Northern Light Research](https://northernlight.com/). 
 
