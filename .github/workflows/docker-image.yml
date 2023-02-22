@@ -1,5 +1,7 @@
 name: Docker Image CI
 
+# Build a multi-arch docker image for SWIRL
+
 on:
   push:
     branches: [ "docker-workflows" ]
