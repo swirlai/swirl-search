@@ -1,0 +1,38 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% load static %}
+  {% load env_extras %}
+  <title>Swirl Metasearch Engine {% get_swirl_version %} - {% block title %}Home{% endblock %}</title>
+  <meta name="description" content="Swirl Metasearch Engine - Home">
+  <meta name="author" content="sid@swirl.today">
+  <meta property="og:description" content="Swirl Metasearch Engine - Home">
+  <link rel="stylesheet" href="{% static 'swirl.css' %}">
+  <link rel="icon" href="{% static 'favicon.ico' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+  <!---script src="js/scripts.js"></script--->
+  <centered>
+  <header>
+    <div class="centered"><a href="" target="_new"><img src="{% static 'swirl-logo-with-name-blue.png' %}" width=300 class="center" alt="Swirl Metasearch Engine{% get_swirl_version %} - Home"/></a></div>
+  </header>
+  {% load static %}
+  <section>
+    <div class="menu">
+      {% block content %}{% endblock %}
+    </div>
+  </section>
+  <footer>
+    <div class="centered">
+        <span class="fineprint"><a href="https://github.com/swirlai/swirl-search/">Swirl Metasearch Engine {% get_swirl_version %}</a> &nbsp;|&nbsp; <a href="https://github.com/swirlai/swirl-search/blob/main/LICENSE">LICENSE</a> &nbsp;|&nbsp; <a href="https://github.com/swirlai/swirl-search/blob/main/NOTICE">NOTICE</a></span>
+    </div>  
+  </footer>   
+  </centered>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>
