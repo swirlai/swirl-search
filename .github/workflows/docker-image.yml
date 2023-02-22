@@ -17,7 +17,7 @@ jobs:
     - name: install docker via brew
       run: brew install docker
     - name: install docker buildx
-      run: docker buildx version
+      run: docker buildx install
     - name: check buildx
       run: docker buildx version
     - name: login to docker hub
