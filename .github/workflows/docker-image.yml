@@ -16,6 +16,8 @@ jobs:
     - uses: actions/checkout@v3
     - name: install docker via brew
       run: brew install docker
+    - name: install docker buildx
+      run: docker buildx version
     - name: check buildx
       run: docker buildx version
     - name: login to docker hub
