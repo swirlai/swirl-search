@@ -1,4 +1,4 @@
-name: Swirl amd64,arm64 Docker Image CI
+name: Latest Docker Build
 
 # Build a multi-arch docker image for SWIRL
 
