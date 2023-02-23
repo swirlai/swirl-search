@@ -2,7 +2,7 @@
 
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat)](https://github.com/swirlai/swirl-search/releases)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=blue&logoColor=blue&style=flat)](https://opensource.org/licenses/Apache-2.0)
-![Docker Build Status(https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg)](https://github.com/swirlai/swirl-search)
+[![Docker Build Status(https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg)](https://github.com/swirlai/swirl-search)]
 [![Slack](https://img.shields.io/badge/slack--channel-gray?logo=slack&logoColor=black&style=flat)](https://join.slack.com/t/swirlsearch/shared_invite/zt-1n7xophls-F4SzYecGniOFB95xI6WlAw)
 [![Newsletter](https://img.shields.io/badge/newsletter-gray?logo=revue&logoColor=black&style=flat)](https://groups.google.com/g/swirl-announce)
 [![Twitter](https://img.shields.io/twitter/follow/SWIRL_SEARCH?color=gray&logoColor=black&style=flat)](https://twitter.com/SWIRL_SEARCH)
