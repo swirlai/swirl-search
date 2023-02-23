@@ -131,3 +131,9 @@ dmypy.json
 static/
 
 swirl/migrations/
+
+# emacs
+*~
+\#*\#
+.\#*
+
