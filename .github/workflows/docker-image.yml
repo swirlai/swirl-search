@@ -4,7 +4,7 @@ name: Swirl amd64,arm64 Docker Image CI
 
 on:
   schedule:
-  - cron: '55 01 * * *'
+  - cron: '03 02 * * *'
 
 jobs:
 
