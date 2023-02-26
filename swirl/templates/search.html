@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}Search {{ query }}{% endblock %}
+{% block title %}Search {{ query|escape }}{% endblock %}
 
 {% block content %}
 <div class="menu">
 
-    <form method="post">
+    <form method="get">
         {% csrf_token %}
-        <input type="text" name="query">
-        <button type="submit">Search</button>
+        <input type="text" id="query" name="q" value="{{ request.GET.q }}">
+        <button type="submit">&nbsp; Search &nbsp;</button>
     </form>
 
-    {% if search_results %}
-        <h2>Search Results for "{{ query }}"</h2>
-        <ul>
-            {% for result in search_results %}
+    {% if query %}
+        <h2>Search Results for "{{ query|escape }}"</h2>
+        <ol>
+            {% for result in results %}
                 <li>
                     <a href="{{ result.url }}">{{ result.title }}</a>
                     <p>{{ result.body }}</p>
@@ -39,7 +39,7 @@
                     {% endif %}
                 </li>
             {% endfor %}
-        </ul>
+        </ol>
     {% endif %}
 </div>
 {% endblock %}

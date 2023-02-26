@@ -39,3 +39,8 @@ class RegistrationForm(UserCreationForm):
             if commit:
                 user.save()
             return user
+    
+##################################################
+
+class SearchForm(forms.Form):
+    q = forms.CharField()

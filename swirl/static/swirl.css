@@ -77,6 +77,11 @@ div {
     font-size: 20px;
 }
 
+.form {
+    width: auto;
+    font-size: 14px;
+}
+
 .flex {
     display: flex;
 }

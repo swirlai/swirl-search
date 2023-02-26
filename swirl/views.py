@@ -108,55 +108,56 @@ def registration_confirmation(request, token, signature):
 
 ########################################
 
-import requests
-import json
+# from rest_framework.decorators import api_view, renderer_classes
+# from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
+# @renderer_classes((TemplateHTMLRenderer, JSONRenderer))
+
+from .forms import SearchForm
 
 def search(request):
-    if request.method == 'POST':
-        query = request.POST.get('query')
-        # Get the authenticated user from the request
+
+    # user = request.user
+    # login(request, user)
+
+    form = SearchForm(request.GET)
+    results = []
+    query = None
+
+    if form.is_valid():
+        logger.warning(f'valid!')
         user = request.user
-        login(request, user)
-        # Make a POST request to the model endpoint with the user's query
-        # to do: replace this with parameters
-        endpoint_url = 'http://localhost:8000/swirl/search/'
-        logger.error(f"foop: {user}")
-        return render(request, 'search.html')
-
-        # to do: rewrite
-        payload = {'query_string': query}
-
-        try:
-            response = requests.post(endpoint_url, json=payload, timeout=30, allow_redirects=False)
-            
-            # Follow the redirect and get the search results
-            while response.status_code == 302:
-                response = requests.get(response.headers['Location'], timeout=10)
-            
-            # Parse the JSON response and extract the search results
+        query = form.cleaned_data['query']
+        if query:
+            # execute the search
             try:
-                result = response.json()
-                search_results = result.get('results', [])
-            except json.JSONDecodeError as e:
-                search_results = []
-
-            # Render the search results and payload as a template
-            context = {
-                'query': query,
-                'search_results': search_results,
-                'payload': payload,
-            }
-            return render(request, 'search.html', context)
-
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 403:
-                error_message = "You need permissions to run a search."
+                new_search = Search.objects.create(query_string=query,searchprovider_list=[],owner=user)
+            except Error as err:
+                logger.error(f'Search.create() failed: {err}')
+            new_search.status = 'NEW_SEARCH'
+            new_search.save()
+            res = run_search(new_search.id)
+            if not res:
+                return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if not Search.objects.filter(id=new_search.id).exists():
+                return Response('Search object creation failed!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            search = Search.objects.get(id=new_search.id)
+            if search.status.endswith('_READY') or search.status == 'RESCORING':
+                try:
+                    results = eval(search.result_mixer)(search.id, search.results_requested, 1, settings.SWIRL_EXPLAIN, []).mix()
+                    results = results['results']
+                except (NameError, TypeError) as err:
+                    message = f'Error: {type(err).__name__}: {err}'
+                    logger.error(message)
+                    return Response('An error occurred during the search.', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
-                error_message = "An error occurred while processing your search request."
-            return render(request, 'error.html', {'error_message': error_message})
-        
+                return Response(f'Search error: {new_search.status}', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # end if
+        # end if
     else:
-        return render(request, 'search.html')
+        form = SearchForm()
+    # end if
+
+    return render(request, 'search.html', {'form': form, 'results': results, 'query': query})
 
 ########################################
 
@@ -383,6 +384,8 @@ class SearchViewSet(viewsets.ModelViewSet):
                 return Response(results, status=status.HTTP_200_OK)
             else:
                 tries = tries + 1
+                if tries > settings.SWIRL_RERUN_WAIT:
+                    return Response(f'Timeout: {tries}, {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 time.sleep(1)
             # end if
         # end if
