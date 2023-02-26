@@ -126,7 +126,7 @@ def search(request):
     if form.is_valid():
         logger.warning(f'valid!')
         user = request.user
-        query = form.cleaned_data['query']
+        query = form.cleaned_data['q']
         if query:
             # execute the search
             try:
