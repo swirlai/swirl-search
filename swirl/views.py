@@ -9,10 +9,9 @@ from datetime import datetime
 
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User, Group
-from django.http import Http404, HttpResponse, HttpRequest
+from django.http import Http404
 from django.conf import settings
 from django.db import Error
-from django.core.exceptions import ObjectDoesNotExist
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
@@ -24,8 +23,6 @@ from rest_framework.authentication import BasicAuthentication, SessionAuthentica
 from rest_framework import viewsets, status
 from rest_framework import permissions
 from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework.views import APIView
 
 import base64
 import hashlib
@@ -51,8 +48,7 @@ for t in SWIRL_OBJECT_LIST:
 ########################################
 
 def index(request):
-    context = {'index': []}
-    return render(request, 'index.html', context)
+    return render(request, 'index.html')
 
 ########################################
 
@@ -109,6 +105,63 @@ def registration_confirmation(request, token, signature):
     logger.info(f"{module_name}: User confirmed: {user.id} {user.username}")
     login(request, user)
     return redirect('index')
+
+########################################
+
+import requests
+import json
+
+def search(request):
+    if request.method == 'POST':
+        query = request.POST.get('query')
+        # Get the authenticated user from the request
+        user = request.user
+        login(request, user)
+        # Make a POST request to the model endpoint with the user's query
+        # to do: replace this with parameters
+        endpoint_url = 'http://localhost:8000/swirl/search/'
+        logger.error(f"foop: {user}")
+        return render(request, 'search.html')
+
+        # to do: rewrite
+        payload = {'query_string': query}
+
+        try:
+            response = requests.post(endpoint_url, json=payload, timeout=30, allow_redirects=False)
+            
+            # Follow the redirect and get the search results
+            while response.status_code == 302:
+                response = requests.get(response.headers['Location'], timeout=10)
+            
+            # Parse the JSON response and extract the search results
+            try:
+                result = response.json()
+                search_results = result.get('results', [])
+            except json.JSONDecodeError as e:
+                search_results = []
+
+            # Render the search results and payload as a template
+            context = {
+                'query': query,
+                'search_results': search_results,
+                'payload': payload,
+            }
+            return render(request, 'search.html', context)
+
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 403:
+                error_message = "You need permissions to run a search."
+            else:
+                error_message = "An error occurred while processing your search request."
+            return render(request, 'error.html', {'error_message': error_message})
+        
+    else:
+        return render(request, 'search.html')
+
+########################################
+
+def error(request):
+    return render(request, 'error.html')
 
 ########################################
 ########################################

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Search {{ query }}{% endblock %}
+
+{% block content %}
+<div class="menu">
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="query">
+        <button type="submit">Search</button>
+    </form>
+
+    {% if search_results %}
+        <h2>Search Results for "{{ query }}"</h2>
+        <ul>
+            {% for result in search_results %}
+                <li>
+                    <a href="{{ result.url }}">{{ result.title }}</a>
+                    <p>{{ result.body }}</p>
+                    <p>{{ result.author }}, {{ result.date_published }}, {{ result.date_retrieved }}</p>
+                    {% if result.payload %}
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Key</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key, value in result.payload.items %}
+                                    <tr>
+                                        <td>{{ key }}</td>
+                                        <td>{{ value }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}
+
