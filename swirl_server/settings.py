@@ -78,6 +78,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.csrf',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -196,6 +197,15 @@ CELERY_BEAT_SCHEDULE = {
          'schedule': crontab(minute=0,hour='*/4'),   # minute='*/10'
         },          
 }
+
+# EMAIL
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your_sendgrid_username'
+EMAIL_HOST_PASSWORD = 'your_sendgrid_password'
 
 #####################################
 # SWIRL SEARCH

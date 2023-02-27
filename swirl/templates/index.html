@@ -1,41 +1,16 @@
-<!doctype html>
+{% extends 'base.html' %}
 
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% load static %}
-  {% load env_extras %}
-  <title>Swirl Metasearch Engine {% get_swirl_version %} - HOME</title>
-  <meta name="description" content="Swirl Metasearch Engine - HOME">
-  <meta name="author" content="sid@swirl.today">
-  <meta property="og:description" content="Swirl Metasearch Engine - HOME">
-  <link rel="stylesheet" href="{% static 'swirl.css' %}">
-  <link rel="icon" href="{% static 'favicon.ico' %}">
-</head>
+{% block title %}Register!{% endblock %}
 
-<body>
-  <!---script src="js/scripts.js"></script--->
-  {% load static %}
-  <centered>
-    <section>
-      <div class="centered"><a href="https://github.com/swirlai/swirl-search" target="_new"><img src="{% static 'swirl_logo_text_500.jpg' %}" class="center" alt="SWIRL SEARCH {% get_swirl_version %} - HOME"/></a></div>
-    </section>
-    <section>
-      <div class="menu">
-        &#10230; <a href="/swirl/searchproviders/" target="_new">SearchProviders</a><br/>
-        &#10230; <a href="/swirl/search/" target="_new">Search</a><br/>
-        &#10230; <a href="/swirl/results/" target="_new">Results</a><br/><br/>
-        &#10230; <a href="/swirl/swagger-ui/" target="_new">Swagger</a><br/>
-        &#10230; <a href="/admin/" target="_new">Admin</a><br/>
-        &#10230; <a href="https://github.com/swirlai/swirl-search/wiki" target="_new">Documentation</a><br/>
-        &#10230; <a href="https://github.com/swirlai/swirl-search/issues" target="_new">Support</a><br/><br/>
+{% block content %}
+    <div class="menu">
+      &#10230; <a href="/swirl/register/" target="_new">Register</a><br/><br/>
+      &#10230; <a href="/swirl/searchproviders/" target="_new">SearchProviders</a><br/>
+      &#10230; <a href="/swirl/search/" target="_new">Search</a><br/>
+      &#10230; <a href="/swirl/results/" target="_new">Results</a><br/><br/>
+      &#10230; <a href="/swirl/swagger-ui/" target="_new">Swagger</a><br/>
+      &#10230; <a href="/admin/" target="_new">Admin</a><br/>
+      &#10230; <a href="https://github.com/swirlai/swirl-search/wiki" target="_new">Documentation</a><br/>
+      &#10230; <a href="https://github.com/swirlai/swirl-search/issues" target="_new">Support</a><br/><br/>
     </div>
-  </section>
-  <section>
-    <div class="centered">
-      <span class="fineprint"><a href="https://github.com/swirlai/swirl-search/">Swirl Metasearch Engine {% get_swirl_version %}</a> &nbsp;|&nbsp; <a href="https://github.com/swirlai/swirl-search/blob/main/LICENSE">LICENSE</a> &nbsp;|&nbsp; <a href="https://github.com/swirlai/swirl-search/blob/main/NOTICE">NOTICE</a></span>
-    </div>
-</section>
-</body>
-</html>
+{% endblock %}
