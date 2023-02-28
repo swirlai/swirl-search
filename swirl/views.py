@@ -16,6 +16,7 @@ from django.db import Error
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.core.mail import send_mail
+from swirl.utils import paginate
 from django.conf import settings
 from .forms import RegistrationForm
 
@@ -178,8 +179,9 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     # pagination_class = None
 
-    def list(self, request):
 
+    def list(self, request):
+            
         # check permissions
         if not request.user.has_perm('swirl.view_searchprovider'):
             return Response(status=status.HTTP_403_FORBIDDEN)
@@ -190,7 +192,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         serializer = SearchProviderNoCredentialsSerializer(self.queryset, many=True)
         if self.request.user.is_superuser:
             serializer = SearchProviderSerializer(self.queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(paginate(serializer.data, self.request), status=status.HTTP_200_OK)
 
     ########################################
 
@@ -288,7 +290,6 @@ class SearchViewSet(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
     def list(self, request):
-
         # check permissions
         if not request.user.has_perm('swirl.view_search'):
             return Response(status=status.HTTP_403_FORBIDDEN)
@@ -381,7 +382,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                     message = f'Error: TypeError: {err}'
                     logger.error(f'{module_name}: {message}')
                     return
-                return Response(results, status=status.HTTP_200_OK)
+                return Response(paginate(results, self.request), status=status.HTTP_200_OK)
             else:
                 tries = tries + 1
                 if tries > settings.SWIRL_RERUN_WAIT:
@@ -469,7 +470,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         # security review for 1.7 - OK, filtered by owner
         self.queryset = Search.objects.filter(owner=self.request.user)
         serializer = SearchSerializer(self.queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(paginate(serializer.data, self.request), status=status.HTTP_200_OK)
 
     ########################################
 
@@ -581,7 +582,6 @@ class ResultViewSet(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
     def list(self, request):
-
         # check permissions
         if not (request.user.has_perm('swirl.view_search') and request.user.has_perm('swirl.view_result')):
             logger.warning(f"User {self.request.user} needs permissions view_search({request.user.has_perm('swirl.view_search')}), view_result({request.user.has_perm('swirl.view_result')})")
@@ -638,7 +638,7 @@ class ResultViewSet(viewsets.ModelViewSet):
                     message = f'Error: TypeError: {err}'
                     logger.error(f'{module_name}: {message}')
                     return
-                return Response(results, status=status.HTTP_200_OK)
+                return Response(paginate(results, self.request), status=status.HTTP_200_OK)
             else:
                 return Response('Result Object Not Ready Yet', status=status.HTTP_503_SERVICE_UNAVAILABLE)
             # end if
@@ -646,7 +646,7 @@ class ResultViewSet(viewsets.ModelViewSet):
             # security review for 1.7 - OK, filtered by owner
             self.queryset = Result.objects.filter(owner=self.request.user)
             serializer = ResultSerializer(self.queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(paginate(serializer.data, self.request), status=status.HTTP_200_OK)
         # end if
 
     ########################################
