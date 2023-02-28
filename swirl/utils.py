@@ -6,6 +6,7 @@
 import os
 import logging as logger
 from pathlib import Path
+from django.core.paginator import Paginator
 
 ##################################################
 ##################################################
@@ -30,4 +31,24 @@ def swirl_setdir():
         logger.error("swirl_setdir(): error: append_path is empty string!!")
     if not os.path.exists(append_path):
        logger.error("swirl_setdir(): error: append_path does not exist!!")
-    return(append_path)    
+    return(append_path)
+
+def is_int(value):
+    try:
+        if not value:
+            return False
+        int_value = int(value)
+        if int_value > 0:
+            return True
+        return False
+    except ValueError:
+        return False
+    
+def paginate(data, request):
+    page = request.GET.get('page')
+    items = request.GET.get('items')
+    if data and is_int(page) and is_int(items):
+        paginator = Paginator(data, items)
+        page_obj = paginator.get_page(page)
+        return page_obj.object_list
+    return data
