@@ -1,4 +1,4 @@
-<h1> &nbsp; SWIRL METASEARCH <img alt='SWIRL Logo' src='https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/swirl_logo_notext_200.jpg' width=38 align=left /></h1>
+<h1> &nbsp; SWIRL METASEARCH <img alt='Swirl Metasearch Logo' src='https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/swirl-logo-only-blue.png' width=38 align=left /></h1>
 
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat)](https://github.com/swirlai/swirl-search/releases)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=blue&logoColor=blue&style=flat)](https://opensource.org/licenses/Apache-2.0)
