@@ -3,7 +3,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat)](https://github.com/swirlai/swirl-search/releases)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=blue&logoColor=blue&style=flat)](https://opensource.org/licenses/Apache-2.0)
 [![Docker Build Status(https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg)](https://hub.docker.com/r/swirlai/swirl-search)
-[![Slack](https://img.shields.io/badge/slack--channel-gray?logo=slack&logoColor=black&style=flat)](https://swirlmetasearch.slack.com/)
+[![Slack](https://img.shields.io/badge/slack--channel-gray?logo=slack&logoColor=black&style=flat)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 [![Newsletter](https://img.shields.io/badge/newsletter-gray?logo=revue&logoColor=black&style=flat)](https://groups.google.com/g/swirl-announce)
 [![Twitter](https://img.shields.io/twitter/follow/SWIRL_SEARCH?color=gray&logoColor=black&style=flat)](https://twitter.com/SWIRL_SEARCH)
  
@@ -304,7 +304,7 @@ Ranked results will appear in just a few seconds!
 
 # Support
 
-* [Join SWIRL SEARCH #support on Slack!](https://swirlmetasearch.slack.com/)
+* [Join Swirl Metasearch on Slack!](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 
 * [Create an Issue](https://github.com/swirlai/swirl-search/issues) if something doesn't work, isn't clear, or should be documented
 
