@@ -2,6 +2,11 @@
 @author:     Sid Probstein
 @contact:    sid@swirl.today
 '''
+import logging
+from celery.utils.log import get_task_logger
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger()
+
 
 from datetime import datetime
 
@@ -27,7 +32,7 @@ class MappingResultProcessor(ResultProcessor):
 
         list_results = []
         json_types = [str,int,float,list,dict]
-
+        log.info(f'DNDEBUG mapping results processor {self.provider.result_mappings}')
         use_payload = True
         if 'NO_PAYLOAD' in self.provider.result_mappings:
             use_payload = False
@@ -114,13 +119,17 @@ class MappingResultProcessor(ResultProcessor):
                         #############################################
                         # single mapping
                         for source_key in source_field_list:
+                            log.info(f'DNDEBUG single mapping case source_key: {source_key}, swirl_key:{swirl_key}')
                             if source_key in result_dict:
                                 if not result_dict[source_key]:
+                                    log.info(f'DNDEBUG not in result dict, skipping')
                                     # blank key
                                     continue
                                 if swirl_key:
                                     # provider specifies the target
                                     if swirl_key in swirl_result:
+                                        log.info(f'DNDEBUG found swirl_key in swirl_results result: {result_dict[source_key]}')
+                                        log.info(f'DNDEBUG json_types : {json_types} type(result):{type(result_dict[source_key])} type(swirl):{type(swirl_result[swirl_key])}')
                                         if not type(result_dict[source_key]) in json_types:
                                             if 'date' in source_key.lower():
                                                 # parser.parse will fill-in a missing time portion etc
@@ -130,6 +139,7 @@ class MappingResultProcessor(ResultProcessor):
                                             # end if
                                         # end if
                                         if type(swirl_result[swirl_key]) == type(result_dict[source_key]):
+                                            log.info(f'DNDEBUG In the equal types code')
                                             # same type, copy it
                                             if 'date' in swirl_key.lower():
                                                 if swirl_result[swirl_key] == "":
@@ -137,7 +147,8 @@ class MappingResultProcessor(ResultProcessor):
                                                 else:
                                                     payload[swirl_key+"_"+source_key] = str(parser.parse(result_dict[source_key]))
                                             else:
-                                                if swirl_result[swirl_key] == "":
+                                                log.info(f'DNDEBUG not a date')
+                                                if not swirl_result[swirl_key]:
                                                     swirl_result[swirl_key] = result_dict[source_key]
                                                 else:
                                                     payload[swirl_key+"_"+source_key] = result_dict[source_key]

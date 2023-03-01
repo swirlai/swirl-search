@@ -7,6 +7,9 @@
 import os
 from celery import Celery
 from celery.schedules import crontab
+from celery.signals import after_setup_logger
+import logging
+logging.basicConfig(level=logging.INFO)
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
@@ -25,3 +28,8 @@ app.autodiscover_tasks()
 @app.task(bind=True)
 def debug_task(self):
     print(f'Request: {self.request!r}')
+
+@after_setup_logger.connect
+def setup_loggers(logger, *args, **kwargs):
+    print('Setting logger level to INFO')
+    logger.setLevel(logging.INFO)

@@ -19,6 +19,7 @@ def create_result_dictionary():
     dict_result['date_published'] = ""
     dict_result['date_retrieved'] = ""
     dict_result['author'] = ""
+    dict_result['hit_highlights'] = {}
     dict_result['payload'] = {}
     return dict_result
 
