@@ -10,7 +10,7 @@ import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from celery.utils.log import get_task_logger
@@ -26,7 +26,7 @@ class Processor:
     ########################################
 
     def __init__(self):
-        
+
         self.status = "INIT"
 
     ########################################
@@ -63,7 +63,7 @@ class Processor:
         '''
 
         return None
-    
+
 ########################################
 ########################################
 
@@ -102,7 +102,7 @@ class QueryProcessor(Processor):
     ########################################
 
     def process(self):
-        
+
         '''
         Executes the workflow for a query processor; TBD by derived classes
         Returns: transformed query_string
@@ -155,7 +155,7 @@ class ResultProcessor(Processor):
         '''
 
         return self.results
-        
+
 ########################################
 ########################################
 
@@ -206,6 +206,15 @@ class PostResultProcessor(Processor):
 
         return True
 
+    ############################################
+
+    def get_terms_field_hit_info(self):
+        """
+        If the information was retfrom the server,
+        """
+
+
+
     ########################################
 
     def process(self):
@@ -216,4 +225,3 @@ class PostResultProcessor(Processor):
         '''
 
         return self.results_updated
-        

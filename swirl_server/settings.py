@@ -170,7 +170,7 @@ STATICFILES_FINDERS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CELERY
-from celery.schedules import crontab   
+from celery.schedules import crontab
 
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 CELERY_TASK_SERIALIZER = 'json'
@@ -232,7 +232,13 @@ SWIRL_RELEVANCY_CONFIG = {
     },
     'author': {
         'weight': 2.0
-    }
+    },
+    # 'title_hit_highlights': {
+    #     'weight': 1.0
+    # },
+    # 'body_hit_highlights': {
+    #     'weight': 1.0
+    # }
 }
 
 SWIRL_MAX_MATCHES = 5
@@ -240,5 +246,3 @@ SWIRL_MIN_SIMILARITY = 0.51
 
 if 'OPENAI_API_KEY' in env:
     OPENAI_API_KEY = env('OPENAI_API_KEY')
-
-

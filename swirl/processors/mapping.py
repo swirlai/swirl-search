@@ -9,12 +9,11 @@ log = logging.getLogger()
 
 
 from datetime import datetime
-
 from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
 from swirl.processors.processor import *
-from swirl.processors.utils import create_result_dictionary
+from swirl.processors.utils import create_result_dictionary, extract_text_from_tags
 
 #############################################
 #############################################
@@ -27,6 +26,16 @@ from re import error as re_error
 class MappingResultProcessor(ResultProcessor):
 
     type="MappingResultProcessor"
+
+    def putQueryTermsFromHighlight(self, swirl_key, text, ubuf):
+        if not ( swirl_key and text ):
+            return
+        if swirl_key not in ('title_hit_highlights','body_hit_highlights'):
+            return
+        for teaser_text in text:
+            hits = extract_text_from_tags(teaser_text, 'em')
+            for hit in hits:
+                ubuf.append(str(hit).lower())
 
     def process(self):
 
@@ -143,6 +152,9 @@ class MappingResultProcessor(ResultProcessor):
                                             else:
                                                 if not swirl_result[swirl_key]:
                                                     swirl_result[swirl_key] = result_dict[source_key]
+                                                    self.putQueryTermsFromHighlight(swirl_key,
+                                                                                    swirl_result[swirl_key],
+                                                                                    swirl_result['query_terms_from_highlights'])
                                                 else:
                                                     payload[swirl_key+"_"+source_key] = result_dict[source_key]
                                         else:
@@ -212,6 +224,8 @@ class MappingResultProcessor(ResultProcessor):
             result_number = result_number + 1
             if result_number > self.provider.results_per_query:
                 break
+            # unique list of terms from highligts
+            swirl_result['query_terms_from_highlights'] = list(set(swirl_result['query_terms_from_highlights']))
         # end for
 
         self.processed_results = list_results

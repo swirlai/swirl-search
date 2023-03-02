@@ -14,6 +14,11 @@ from swirl.processors.utils import *
 from swirl.spacy import nlp
 from swirl.processors.processor import PostResultProcessor
 
+import logging
+from celery.utils.log import get_task_logger
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger()
+
 #############################################
 #############################################
 
@@ -150,14 +155,16 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
         ############################################
         # PASS 1
+        # For each results set from all providers that returned one.
         # to do: refactor the names so it is clearer, e.g. json_result instead of result, result_set instead of results
         for results in self.results:
+
             ############################################
             # result set
             highlighted_json_results = []
             if not results.json_results:
                 continue
-            # prepare the query for this result set
+            # prepare the query for this result set, it can be different for each provider
             self.prepare_query(results.query_string_to_provider)
             # capture query len
             list_query_lens.append(len(results.query_string_to_provider.split()))

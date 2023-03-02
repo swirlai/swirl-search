@@ -7,6 +7,11 @@
 #############################################
 
 def create_result_dictionary():
+    """
+    Create an empty ressult dictionary, when entries are made this dictionary, the type must
+    correspond w/ the type that will be mapped from in results_mapping, if the types do not
+    agree, the mapped values will not be added to the results.
+    """
 
     dict_result = {}
     dict_result['swirl_rank'] = 0
@@ -19,7 +24,9 @@ def create_result_dictionary():
     dict_result['date_published'] = ""
     dict_result['date_retrieved'] = ""
     dict_result['author'] = ""
-    dict_result['hit_highlights'] = {}
+    dict_result['title_hit_highlights'] = []
+    dict_result['body_hit_highlights'] = []
+    dict_result['query_terms_from_highlights'] = []
     dict_result['payload'] = {}
     return dict_result
 
@@ -125,6 +132,16 @@ def remove_tags(html):
 
     # return data by retrieving the tag content
     return ' '.join(soup.stripped_strings)
+
+# Function to remove tags
+def extract_text_from_tags(html,tag):
+    # parse html content
+    soup = bs(html, "html.parser")
+    ret = []
+    for t in soup.find_all(tag):
+        ret.append(t.text)
+    # return data by retrieving the tag content
+    return ret
 
 #############################################
 
@@ -246,6 +263,9 @@ def capitalize(list_lower, list_unknown):
 #############################################
 
 def capitalize_search(list_lower, list_unknown):
+    """
+
+    """
 
     if type(list_lower) != list:
         return None
