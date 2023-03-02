@@ -225,7 +225,7 @@ class MappingResultProcessor(ResultProcessor):
             if result_number > self.provider.results_per_query:
                 break
             # unique list of terms from highligts
-            swirl_result['query_terms_from_highlights'] = list(set(swirl_result['query_terms_from_highlights']))
+            swirl_result['query_terms_from_highlights'] = sorted(list(set(swirl_result['query_terms_from_highlights'])))
         # end for
 
         self.processed_results = list_results
