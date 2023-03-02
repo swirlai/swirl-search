@@ -15,9 +15,9 @@ from jsonpath_ng.exceptions import JsonPathParserError
 
 from swirl.processors.processor import *
 from swirl.processors.utils import create_result_dictionary
-  
-#############################################    
-#############################################       
+
+#############################################
+#############################################
 
 from dateutil import parser
 
@@ -32,7 +32,6 @@ class MappingResultProcessor(ResultProcessor):
 
         list_results = []
         json_types = [str,int,float,list,dict]
-        log.info(f'DNDEBUG mapping results processor {self.provider.result_mappings}')
         use_payload = True
         if 'NO_PAYLOAD' in self.provider.result_mappings:
             use_payload = False
@@ -44,7 +43,7 @@ class MappingResultProcessor(ResultProcessor):
             # report searchprovider rank, not ours
             swirl_result['searchprovider_rank'] = result_number
             swirl_result['date_retrieved'] = str(datetime.now())
-            #############################################  
+            #############################################
             # mappings are in form swirl_key=source_key, where source_key can be a json_string e.g. _source.customer_full_name
             if self.provider.result_mappings:
                 mappings = self.provider.result_mappings.split(',')
@@ -94,7 +93,7 @@ class MappingResultProcessor(ResultProcessor):
                         jxp_key = f'$.{k[1:-1]}'
                         try:
                             jxp = parse(jxp_key)
-                            # search result for this 
+                            # search result for this
                             matches = [match.value for match in jxp.find(result)]
                         except JsonPathParserError:
                             self.error(f'JsonPathParser: {err} in jsonpath_ng.find: {jxp_key}')
@@ -119,17 +118,13 @@ class MappingResultProcessor(ResultProcessor):
                         #############################################
                         # single mapping
                         for source_key in source_field_list:
-                            log.info(f'DNDEBUG single mapping case source_key: {source_key}, swirl_key:{swirl_key}')
                             if source_key in result_dict:
                                 if not result_dict[source_key]:
-                                    log.info(f'DNDEBUG not in result dict, skipping')
                                     # blank key
                                     continue
                                 if swirl_key:
                                     # provider specifies the target
                                     if swirl_key in swirl_result:
-                                        log.info(f'DNDEBUG found swirl_key in swirl_results result: {result_dict[source_key]}')
-                                        log.info(f'DNDEBUG json_types : {json_types} type(result):{type(result_dict[source_key])} type(swirl):{type(swirl_result[swirl_key])}')
                                         if not type(result_dict[source_key]) in json_types:
                                             if 'date' in source_key.lower():
                                                 # parser.parse will fill-in a missing time portion etc
@@ -139,7 +134,6 @@ class MappingResultProcessor(ResultProcessor):
                                             # end if
                                         # end if
                                         if type(swirl_result[swirl_key]) == type(result_dict[source_key]):
-                                            log.info(f'DNDEBUG In the equal types code')
                                             # same type, copy it
                                             if 'date' in swirl_key.lower():
                                                 if swirl_result[swirl_key] == "":
@@ -147,7 +141,6 @@ class MappingResultProcessor(ResultProcessor):
                                                 else:
                                                     payload[swirl_key+"_"+source_key] = str(parser.parse(result_dict[source_key]))
                                             else:
-                                                log.info(f'DNDEBUG not a date')
                                                 if not swirl_result[swirl_key]:
                                                     swirl_result[swirl_key] = result_dict[source_key]
                                                 else:
@@ -175,7 +168,7 @@ class MappingResultProcessor(ResultProcessor):
                 # end for
             # end if
 
-            #############################################  
+            #############################################
             # copy remaining fields, avoiding collisions
             for key in result.keys():
                 if key in swirl_result.keys():
@@ -217,7 +210,7 @@ class MappingResultProcessor(ResultProcessor):
             swirl_result['searchprovider'] = self.provider.name
             list_results.append(swirl_result)
             result_number = result_number + 1
-            if result_number > self.provider.results_per_query:  
+            if result_number > self.provider.results_per_query:
                 break
         # end for
 
