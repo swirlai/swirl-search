@@ -3,45 +3,34 @@
 {% block title %}Search {{ query|escape }}{% endblock %}
 
 {% block content %}
-<div class="menu">
 
-    <form method="get">
-        {% csrf_token %}
-        <input type="text" id="query" name="q" value="{{ request.GET.q }}">
-        <button type="submit">&nbsp; Search &nbsp;</button>
-    </form>
+<form method="get">
+    <input type="text" id="query" name="q" value="{{ request.GET.q }}" class="searchbox">
+    <input type="hidden" id="search_id" name="search_id" value={{ search_id }}>
+    <button type="submit" class="button">Search</button>
+</form>
 
-    {% if query %}
-        <h2>Search Results for "{{ query|escape }}"</h2>
-        <ol>
-            {% for result in results %}
-                <li>
-                    <a href="{{ result.url }}">{{ result.title }}</a>
-                    <p>{{ result.body }}</p>
-                    <p>{{ result.author }}, {{ result.date_published }}, {{ result.date_retrieved }}</p>
-                    {% if result.payload %}
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Key</th>
-                                    <th>Value</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for key, value in result.payload.items %}
-                                    <tr>
-                                        <td>{{ key }}</td>
-                                        <td>{{ value }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% endif %}
-                    <br/>
-                </li>
-            {% endfor %}
-        </ol>
+{% if query %}
+    <h2>Metsearch results for: "{{ query|escape }}"</h2>
+    {% for result in results %}
+    {{ result.swirl_rank }}. <b><a href="{{ result.url }}" class="result-title">{{ result.title }}</a></b>
+    <p class="result-body">{{ result.body }}</p>
+    <p class="result-meta"><b>{{ result.searchprovider }}</b> | {{ result.searchprovider_rank }} | Author: {{ result.author }} | Published: {{ result.date_published }} | Retrieved: {{ result.date_retrieved }}</p>
+    {% if result.payload %}
+        <table>
+            <tbody>
+                {% for key, value in result.payload.items %}
+                    <tr>
+                        <td class="result-meta">{{ key }}</td>
+                        <td class="result-meta">{{ value }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% endif %}
-</div>
+    <br/><br/>
+    {% endfor %}
+{% endif %}
+
 {% endblock %}
 
