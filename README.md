@@ -258,7 +258,7 @@ Ranked results will appear in just a few seconds!
 
 | Version                     | Date                        | Notes | 
 | --------------------------- | --------------------------- | ----- |
-| [SWIRL SEARCH 1.9](https://github.com/swirlai/swirl-search/releases/tag/v1.9) | 02-14-2023 | [Release 1.9](./docs/RELEASE_NOTES_1.9.md) |
+| [Swirl Metasearch 1.9](https://github.com/swirlai/swirl-search/releases/tag/v1.9) | 02-14-2023 | [Release 1.9](https://github.com/swirlai/swirl-search/releases) |
 
 <br/>
 
