@@ -69,7 +69,9 @@ The search page will appear. Login with username `admin` and password `password`
 http://localhost:8000/swirl/search/?q=enterprise+search 
 ```
 
-Ranked results will appear in just a few seconds!
+* Ranked results will appear in just a few seconds!
+
+*SWIRL includes 3 Google Programmable Search Engines (PSEs), complete with shared credentials, to get you up and running with right away. These credentials are shared with the SWIRL Community and may return a 429 Too Many Requests error if they are overused.*
 
 ```
 
