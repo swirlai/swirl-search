@@ -233,12 +233,6 @@ SWIRL_RELEVANCY_CONFIG = {
     'author': {
         'weight': 2.0
     },
-    # 'title_hit_highlights': {
-    #     'weight': 1.0
-    # },
-    # 'body_hit_highlights': {
-    #     'weight': 1.0
-    # }
 }
 
 SWIRL_MAX_MATCHES = 5

@@ -22,7 +22,7 @@ SWIRL_SERVICES = [
     },
     {
         'name': 'celery-worker',
-        'path': 'celery -A swirl_server worker'
+        'path': 'celery -A swirl_server worker --loglevel INFO'
     },
     {
         'name': 'celery-beats',

@@ -50,6 +50,7 @@ class Connector:
         self.provider = None
         self.search = None
         self.query_string_to_provider = ""
+        self.result_processor_feedback_json = {}
         self.query_to_provider = ""
         self.query_mappings = {}
         self.response_mappings = {}
@@ -171,7 +172,7 @@ class Connector:
 
         query_temp = self.search.query_string_processed
         for processor in processor_list:
-            logger.info(f"{self}: invoking processor: {processor}")
+            logger.info(f"{self}: invoking processor: query processor: {processor}")
             try:
                 processed_query = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(query_temp, self.provider.query_mappings, self.provider.tags).process()
             except (NameError, TypeError, ValueError) as err:
@@ -292,9 +293,11 @@ class Connector:
         processed_results = None
         result_temp = self.results
         for processor in processor_list:
-            logger.info(f"{self}: invoking processor: {processor}")
+            logger.info(f"{self}: invoking processor: process results {processor}")
             try:
                 processed_results = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(result_temp, self.provider, self.query_string_to_provider).process()
+                if processed_results and 'result_processor_feedback' in processed_results[-1]:
+                    self.result_processor_feedback_json =  processed_results.pop(-1)
             except (NameError, TypeError, ValueError) as err:
                 self.error(f'{processor}: {err.args}, {err}')
                 return
@@ -379,7 +382,11 @@ class Connector:
 
         try:
             logger.info(f"{self}: Result.create()")
-            new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id, query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider, query_processors=query_processors, result_processors=result_processors, messages=self.messages, status=self.status, found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}', json_results=self.processed_results, owner=self.search.owner)
+            new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id,
+                                               query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider,
+                                               query_processors=query_processors, result_processors=result_processors, messages=self.messages,
+                                               status=self.status, found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}',
+                                               json_results=self.processed_results, owner=self.search.owner,result_processor_feedback_json=self.result_processor_feedback_json)
             new_result.save()
         except Error as err:
             self.error(f'save_results() failed: {err.args}, {err}', save_results=False)

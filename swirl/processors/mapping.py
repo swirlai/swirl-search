@@ -27,7 +27,8 @@ class MappingResultProcessor(ResultProcessor):
 
     type="MappingResultProcessor"
 
-    def putQueryTermsFromHighlight(self, swirl_key, text, ubuf):
+    def putQueryTermsFromProvider(self, swirl_key, text, lBuf):
+        """ remember query terms from the hihglight field of each result"""
         if not ( swirl_key and text ):
             return
         if swirl_key not in ('title_hit_highlights','body_hit_highlights'):
@@ -35,11 +36,26 @@ class MappingResultProcessor(ResultProcessor):
         for teaser_text in text:
             hits = extract_text_from_tags(teaser_text, 'em')
             for hit in hits:
-                ubuf.append(str(hit).lower())
+                lBuf.append(str(hit).lower())
+
+    def getQueryTermsFromProviderJSON(self, lBuf):
+        """
+        Create a JSON object from the list of query terms:
+        """
+        ret = {
+                'result_processor_feedback': {
+                'query': {
+	                'provider_query_terms': sorted(list(set(lBuf)))
+                }
+            }
+        }
+        return ret
 
     def process(self):
 
         list_results = []
+        provider_query_term_results = []
+
         json_types = [str,int,float,list,dict]
         use_payload = True
         if 'NO_PAYLOAD' in self.provider.result_mappings:
@@ -152,9 +168,9 @@ class MappingResultProcessor(ResultProcessor):
                                             else:
                                                 if not swirl_result[swirl_key]:
                                                     swirl_result[swirl_key] = result_dict[source_key]
-                                                    self.putQueryTermsFromHighlight(swirl_key,
+                                                    self.putQueryTermsFromProvider(swirl_key,
                                                                                     swirl_result[swirl_key],
-                                                                                    swirl_result['query_terms_from_highlights'])
+                                                                                    provider_query_term_results)
                                                 else:
                                                     payload[swirl_key+"_"+source_key] = result_dict[source_key]
                                         else:
@@ -225,8 +241,7 @@ class MappingResultProcessor(ResultProcessor):
             if result_number > self.provider.results_per_query:
                 break
             # unique list of terms from highligts
-            swirl_result['query_terms_from_highlights'] = sorted(list(set(swirl_result['query_terms_from_highlights'])))
         # end for
-
+        list_results.append(self.getQueryTermsFromProviderJSON(provider_query_term_results))
         self.processed_results = list_results
         return self.processed_results

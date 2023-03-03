@@ -26,7 +26,6 @@ def create_result_dictionary():
     dict_result['author'] = ""
     dict_result['title_hit_highlights'] = []
     dict_result['body_hit_highlights'] = []
-    dict_result['query_terms_from_highlights'] = []
     dict_result['payload'] = {}
     return dict_result
 
@@ -34,6 +33,24 @@ def create_result_dictionary():
 # fix for https://github.com/swirlai/swirl-search/issues/34
 
 from ..nltk import ps
+
+import json
+
+def decode_single_quote_json(json_string):
+    """
+        Replace single quotes with double quotes and
+        decode to a dictionary.
+        Log error and return empty on failure
+    """
+    if not json_string:
+        return {}
+
+    json_string = json_string.replace("'", '"')
+    try:
+        return json.JSONDecoder().decode(json_string)
+    except json.JSONDecodeError as e:
+        logger.error(f"Error decoding JSON: {e}")
+        return {}
 
 def stem_string(s):
 
