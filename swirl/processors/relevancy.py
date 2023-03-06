@@ -53,7 +53,8 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         self.query_has_numeric = False
 
         d = decode_single_quote_json(results_processor_feedback)
-        self.provider_query_terms = d.get('result_processor_feedback', []).get(
+        if d:
+            self.provider_query_terms = d.get('result_processor_feedback', []).get(
             'query', []).get('provider_query_terms', [])
 
         # remove quotes

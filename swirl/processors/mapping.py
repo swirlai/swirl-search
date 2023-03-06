@@ -38,10 +38,13 @@ class MappingResultProcessor(ResultProcessor):
             for hit in hits:
                 lBuf.append(str(hit).lower())
 
-    def getQueryTermsFromProviderJSON(self, lBuf):
+    def getOptResultProcessorFeedbackJSON(self, lBuf):
         """
         Create a JSON object from the list of query terms:
         """
+        if not lBuf or len(lBuf)<=0:
+            return
+
         ret = {
                 'result_processor_feedback': {
                 'query': {
@@ -242,6 +245,9 @@ class MappingResultProcessor(ResultProcessor):
                 break
             # unique list of terms from highligts
         # end for
-        list_results.append(self.getQueryTermsFromProviderJSON(provider_query_term_results))
+
+        fb = self.getOptResultProcessorFeedbackJSON(provider_query_term_results)
+        if fb:
+            list_results.append(fb)
         self.processed_results = list_results
         return self.processed_results
