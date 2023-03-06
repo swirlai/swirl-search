@@ -4,9 +4,9 @@
 
 {% block content %}
 
-<form method="get">
+<form method="get" action="{% url 'search_form' %}">
     <input type="text" id="query" name="q" value="{{ request.GET.q }}" class="searchbox">
-    <input type="hidden" id="search_id" name="search_id" value={{ search_id }}>
+    <!----input type="hidden" id="search_id" name="search_id" value={{ search_id }}-->
     <button type="submit" class="button">Search</button>
 </form>
 

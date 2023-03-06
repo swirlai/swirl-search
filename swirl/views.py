@@ -109,10 +109,6 @@ def registration_confirmation(request, token, signature):
 
 ########################################
 
-# from rest_framework.decorators import api_view, renderer_classes
-# from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
-# @renderer_classes((TemplateHTMLRenderer, JSONRenderer))
-
 from .forms import SearchForm
 
 def search(request):
@@ -123,36 +119,73 @@ def search(request):
     form = SearchForm(request.GET)
     results = []
     query = None
+    search_id = 0
+    search = None
+
+    page = 1
+    if 'page' in request.GET.keys():
+        page = int(request.GET['page'])
+
+    mixer = None
+    if 'result_mixer' in request.GET.keys():
+        mixer = str(request.GET['result_mixer'])
+
+    explain = settings.SWIRL_EXPLAIN
+    if 'explain' in request.GET.keys():
+        explain = str(request.GET['explain'])
+        if explain.lower() == 'false':
+            explain = False
+        elif explain.lower() == 'true':
+            explain = True
 
     if form.is_valid():
-        logger.warning(f'valid!')
         user = request.user
         query = form.cleaned_data['q']
+        # search_id = form.cleaned_data['search_id']
+        # if search_id == '':
+        #     search_id = 0  # or any other default value
+        # else:
+        #     search_id = int(search_id)
+        # # end if
+        ns = False
+        if search_id > 0:
+            search = Search.objects.get(id=search_id)
         if query:
-            # execute the search
+            if search:
+                if query != search.query_string:
+                    ns = True
+            else:
+                ns = True
+        # end if
+        if ns:
+            # new search
             try:
                 new_search = Search.objects.create(query_string=query,searchprovider_list=[],owner=user)
             except Error as err:
                 logger.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
             new_search.save()
-            res = run_search(new_search.id)
+            search_id = new_search.id
+            res = run_search(search_id)
             if not res:
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            if not Search.objects.filter(id=new_search.id).exists():
+            if not Search.objects.filter(id=search_id).exists():
                 return Response('Search object creation failed!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            search = Search.objects.get(id=new_search.id)
-            if search.status.endswith('_READY') or search.status == 'RESCORING':
-                try:
-                    results = eval(search.result_mixer)(search.id, search.results_requested, 1, settings.SWIRL_EXPLAIN, []).mix()
-                    results = results['results']
-                except (NameError, TypeError) as err:
-                    message = f'Error: {type(err).__name__}: {err}'
-                    logger.error(message)
-                    return Response('An error occurred during the search.', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                return Response(f'Search error: {new_search.status}', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            # end if
+            search = Search.objects.get(id=search_id)
+
+        # form.cleaned_data['search_id'] = search_id
+            
+        if search.status.endswith('_READY') or search.status == 'RESCORING':
+            try:
+                # to do: support mixer spec above
+                results = eval(search.result_mixer)(search.id, search.results_requested, page, explain).mix()
+                results = results['results']
+            except (NameError, TypeError) as err:
+                message = f'Error: {type(err).__name__}: {err}'
+                logger.error(message)
+                return Response('An error occurred during the search.', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response(f'Search error: {search.status}', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         # end if
     else:
         form = SearchForm()

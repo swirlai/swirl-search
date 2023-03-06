@@ -44,4 +44,4 @@ class RegistrationForm(UserCreationForm):
 
 class SearchForm(forms.Form):
     q = forms.CharField()
-    search_id = forms.IntegerField()
+    search_id = forms.IntegerField(required=False)
