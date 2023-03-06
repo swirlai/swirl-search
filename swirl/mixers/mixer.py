@@ -101,6 +101,8 @@ class Mixer:
         self.mix_wrapper['messages'] = self.mix_wrapper['messages'] + natsorted(messages) #, reverse=True)
 
         self.mix_wrapper['info']['search'] = {}
+        self.mix_wrapper['info']['search']['id'] = self.search_id
+
         if self.search.tags:
             self.mix_wrapper['info']['search']['tags'] = self.search.tags
         if self.search.searchprovider_list:
