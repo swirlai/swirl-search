@@ -13,11 +13,11 @@ SWIRL adapts and distributes queries to anything with a search API - search engi
 
 Built on the Python/Django/RabbitMQ stack, SWIRL includes connectors to Apache [Solr](https://solr.apache.org/), [ChatGPT](https://openai.com/blog/chatgpt/), [Elastic](https://www.elastic.co/cn/downloads/elasticsearch), [OpenSearch](https://opensearch.org/downloads.html) | [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery) plus generic HTTP/GET/JSON with configurations for premium services like [Google's Programmable Search Engine](https://programmablesearchengine.google.com/about/), [Miro](https://miro.com/app/) and [Northern Light Research](https://northernlight.com/). 
 
-:star: Learn more: [Documentation Wiki](https://github.com/swirlai/swirl-search/wiki)
+Learn more: [Documentation Wiki](https://github.com/swirlai/swirl-search/wiki)
 
 <br/>
 
-# Try SWIRL Now:
+# Try SWIRL Now
 
 * Download [https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml](https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml)
 
@@ -244,15 +244,15 @@ http://localhost:8000/swirl/search/?q=enterprise+search
 
 <br/>
 
-:warning: Warning: The Docker version of SWIRL does *not* retain results or configuration when shut down!
+**Warning: The Docker version of SWIRL does *not* retain results or configuration when shut down!**
 
-:star: Learn more: [Quick Start Guide](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start)
+Learn more: [Quick Start Guide](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start)
 
 <br/>
 
 # Try Hosted SWIRL
 
-### If interested in a free trial of SWIRL as a managed service, please [contact support](#support)!
+### If interested in a free trial of SWIRL as a managed service, please [contact support](mailto:support@swirl.today)!
 
 <br/>
 
