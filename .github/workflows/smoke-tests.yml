@@ -4,20 +4,25 @@ on:
     # only trigger on branches, not on tags
     # add a comment to trigger
     branches: 'auto-test-integration'
+
 jobs:
-  test:
+
+  build:
+
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-	      python-version: 3.10
-      - name: Install dependencies
-        run: |
-              ./install.sh
-      - name: Run tests
-        run: |
-          echo running test here 
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Set up Python
+    - uses: actions/setup-python@v4
+      with:
+	    python-version: '3.10'
+	    cache: 'pip' # caching pip dependencie
+    - name: Install dependencies
+      run: |
+      	   ./install.sh
+    - name: Run tests
+      run: |
+      	   echo running test here
 	  
