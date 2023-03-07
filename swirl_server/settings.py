@@ -187,15 +187,15 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BEAT_SCHEDULE = {
     # Executes every hour
-    'expire': { 
-         'task': 'expirer', 
+    'expire': {
+         'task': 'expirer',
          'schedule': crontab(minute=0,hour='*'),
-        },          
+        },
     # Executes every four hours
-    'subscribe': { 
-         'task': 'subscriber', 
+    'subscribe': {
+         'task': 'subscriber',
          'schedule': crontab(minute=0,hour='*/4'),   # minute='*/10'
-        },          
+        },
 }
 
 # EMAIL
@@ -232,7 +232,7 @@ SWIRL_RELEVANCY_CONFIG = {
     },
     'author': {
         'weight': 2.0
-    },
+    }
 }
 
 SWIRL_MAX_MATCHES = 5
