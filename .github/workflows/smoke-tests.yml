@@ -20,7 +20,13 @@ jobs:
             cache: 'pip' # caching pip dependencie
     - name: Run Install Swirl
       run: ./install.sh
+    - name: Run Install erlang
+      run: apt-get install -y erlang
+    - name: Run Install rabbitmq-server
+    - run: apt-get install -y rabbitmq-server
     - name: Set up SWIRL
       run: python swirl.py setup
     - name: Start up SWIRL
       run: python swirl.py start
+    - name: Run Smoke Tests
+      run: docker run swirlai/swirl-search:latest-smoke-test
