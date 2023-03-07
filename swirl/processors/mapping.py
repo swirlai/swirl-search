@@ -43,7 +43,7 @@ class MappingResultProcessor(ResultProcessor):
         Create a JSON object from the list of query terms:
         """
         if not lBuf or len(lBuf)<=0:
-            return
+            return None
 
         ret = {
                 'result_processor_feedback': {
