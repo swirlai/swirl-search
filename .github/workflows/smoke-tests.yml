@@ -21,9 +21,9 @@ jobs:
     - name: Run Install Swirl
       run: ./install.sh
     - name: Run Install erlang
-      run: apt-get install -y erlang
+      run: sudo apt install -y erlang
     - name: Run Install rabbitmq-server
-      run: apt-get install -y rabbitmq-server
+      run: sudo apt install -y rabbitmq-server
     - name: Set up SWIRL
       run: python swirl.py setup
     - name: Start up SWIRL
