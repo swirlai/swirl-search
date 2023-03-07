@@ -14,7 +14,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from django.conf import settings
@@ -103,8 +103,8 @@ class Connector:
 
         '''
         Executes the workflow for a given search and provider
-        ''' 
-        
+        '''
+
         self.start_time = time.time()
 
         if self.status == 'READY':
@@ -155,7 +155,7 @@ class Connector:
 
         '''
         Invoke the specified query_processor for this provider on search.query_string_processed, store the result in self.query_string_to_provider
-        ''' 
+        '''
 
         logger.info(f"{self}: process_query()")
         processor_list = []
@@ -196,7 +196,7 @@ class Connector:
 
         '''
         Copy query_string_processed to query_to_provider
-        ''' 
+        '''
 
         logger.info(f"{self}: construct_query()")
         self.query_to_provider = self.query_string_to_provider
@@ -205,10 +205,10 @@ class Connector:
     ########################################
 
     def validate_query(self):
-       
+
         '''
         Validate the query_to_provider, and return True or False
-        ''' 
+        '''
 
         logger.info(f"{self}: validate_query()")
         if self.query_to_provider == "":
@@ -219,18 +219,18 @@ class Connector:
     ########################################
 
     def execute_search(self):
-    
+
         '''
-        Connect to, query and save the response from this provider 
-        ''' 
+        Connect to, query and save the response from this provider
+        '''
 
         logger.info(f"{self}: execute_search()")
         self.found = 1
         self.retrieved = 1
-        self.response = [ 
+        self.response = [
             {
-                'title': f'{self.query_string_to_provider}', 
-                'body': f'Did you search for {self.query_string_to_provider}?', 
+                'title': f'{self.query_string_to_provider}',
+                'body': f'Did you search for {self.query_string_to_provider}?',
                 'author': f'{self}'
             }
         ]
@@ -240,10 +240,10 @@ class Connector:
     ########################################
 
     def normalize_response(self):
-        
+
         '''
         Transform the response from the provider into a json (list) and store as self.results
-        ''' 
+        '''
 
         logger.info(f"{self}: normalize_response()")
         if self.response:
@@ -264,7 +264,7 @@ class Connector:
 
         '''
         Process the json results through the specified result processor for the provider, updating processed_results
-        ''' 
+        '''
 
         logger.info(f"{self}: process_results()")
 
@@ -295,7 +295,12 @@ class Connector:
         for processor in processor_list:
             logger.info(f"{self}: invoking processor: process results {processor}")
             try:
-                processed_results = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(result_temp, self.provider, self.query_string_to_provider).process()
+                processed_results = eval(processor, {"processor": processor, "__builtins__": None},
+                                         SWIRL_OBJECT_DICT)(result_temp, self.provider,
+                                                            self.query_string_to_provider).process()
+                ## Check if this processor generated feed back and if so, remember it.
+                ## TODO: make this additive for multiple processor. For now the mapping processor
+                ## is the only one that generates this.
                 if processed_results and 'result_processor_feedback' in processed_results[-1]:
                     self.result_processor_feedback_json =  processed_results.pop(-1)
             except (NameError, TypeError, ValueError) as err:
@@ -318,7 +323,7 @@ class Connector:
 
         '''
         Store the transformed results as a Result object in the database, linked to the search_id
-        ''' 
+        '''
 
         logger.info(f"{self}: save_results()")
         # timing
@@ -358,7 +363,7 @@ class Connector:
                 return False
             # load the single result object now :\
             result = Result.objects.get(id=result[0].id)
-            # add new flag       
+            # add new flag
             for r in self.processed_results:
                 r['new'] = True
             try:
@@ -372,7 +377,7 @@ class Connector:
                 result.status = 'UPDATED'
                 logger.info(f"{self}: Result.save()")
                 result.save()
-            except Error as err:                 
+            except Error as err:
                 self.error(f'save_results() update failed: {err.args}, {err}', save_results=False)
                 return False
             logger.info(f"{self}: Update: added {len(self.processed_results)} new items to result {result.id}")
