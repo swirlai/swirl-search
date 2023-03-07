@@ -3,7 +3,7 @@ name: Smoke Test
 on:
   push:
     # only trigger on branches, not on tags
-    branches: 'auto-test-integration'
+    branches: 'main'
 
 jobs:
 
