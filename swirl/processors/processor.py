@@ -206,15 +206,6 @@ class PostResultProcessor(Processor):
 
         return True
 
-    ############################################
-
-    def get_terms_field_hit_info(self):
-        """
-        If the information was retfrom the server,
-        """
-
-
-
     ########################################
 
     def process(self):
