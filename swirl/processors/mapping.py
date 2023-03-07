@@ -172,8 +172,8 @@ class MappingResultProcessor(ResultProcessor):
                                                 if not swirl_result[swirl_key]:
                                                     swirl_result[swirl_key] = result_dict[source_key]
                                                     self.putQueryTermsFromProvider(swirl_key,
-                                                                                    swirl_result[swirl_key],
-                                                                                    provider_query_term_results)
+                                                                                   swirl_result[swirl_key],
+                                                                                   provider_query_term_results)
                                                 else:
                                                     payload[swirl_key+"_"+source_key] = result_dict[source_key]
                                         else:
