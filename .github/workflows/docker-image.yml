@@ -1,4 +1,4 @@
-name: Latest Docker Build
+name: Docker Build
 
 # Build a multi-arch docker image for SWIRL
 # comment to start build
