@@ -14,7 +14,7 @@ from django.conf import settings
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from celery.utils.log import get_task_logger
@@ -53,7 +53,7 @@ class Mixer:
         self.result_mixer = None
         self.mark_all_read = mark_all_read
         self.status = "INIT"
-        
+
         try:
             if self.provider:
                 if type(self.provider) == str:
@@ -88,7 +88,7 @@ class Mixer:
             self.mix_wrapper['info'][result.searchprovider]['retrieved'] = result.retrieved
             self.mix_wrapper['info'][result.searchprovider]['filter_url'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search.id}&provider={result.provider_id}'
             self.mix_wrapper['info'][result.searchprovider]['query_string_to_provider'] = result.query_string_to_provider
-            self.mix_wrapper['info'][result.searchprovider]['result_processor_feedback_json'] = result.result_processor_feedback_json
+            self.mix_wrapper['info'][result.searchprovider]['result_processor_json_feedback'] = result.result_processor_json_feedback
             self.mix_wrapper['info'][result.searchprovider]['query_to_provider'] = result.query_to_provider
             self.mix_wrapper['info'][result.searchprovider]['query_processors'] = result.query_processors
             self.mix_wrapper['info'][result.searchprovider]['result_processors'] = result.result_processors
@@ -168,10 +168,10 @@ class Mixer:
     ########################################
 
     def finalize(self):
-        
+
         '''
         Trims mixed_results if needed, updates mix_wrapper with counts
-        ''' 
+        '''
 
         # check for overrun
         if (int(self.page)-1)*int(self.results_requested) > len(self.mixed_results):
@@ -190,7 +190,7 @@ class Mixer:
                 if 'swirl_score' in result:
                     del result['swirl_score']
             result_number = result_number + 1
-  
+
         # extract the page of mixed results
         self.mix_wrapper['results'] = self.mixed_results[(int(self.page)-1)*int(self.results_requested):int(self.results_needed)]
         self.mix_wrapper['info']['results']['retrieved'] = len(self.mix_wrapper['results'])
@@ -209,12 +209,9 @@ class Mixer:
                 self.mix_wrapper['info']['results']['prev_page'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&result_mixer={self.result_mixer}&page={int(self.page)-1}'
             # end if
 
-        # last message 
+        # last message
         if len(self.mix_wrapper['results']) > 2:
             if self.result_mixer:
                 self.mix_wrapper['messages'].append(f"[{datetime.now()}] Results ordered by: {self.result_mixer}")
             else:
-                self.mix_wrapper['messages'].append(f"[{datetime.now()}] Results ordered by: {self.type}")     
-
-
-
+                self.mix_wrapper['messages'].append(f"[{datetime.now()}] Results ordered by: {self.type}")

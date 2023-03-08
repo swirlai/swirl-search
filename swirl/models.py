@@ -153,7 +153,7 @@ class Result(models.Model):
     provider_id = models.IntegerField(default=0)
     searchprovider = models.CharField(max_length=50, default=str)
     query_string_to_provider = models.CharField(max_length=256, default=str)
-    result_processor_feedback_json = models.CharField(max_length=2048, default=list)
+    result_processor_json_feedback = models.JSONField(default=list)
     query_to_provider = models.CharField(max_length=2048, default=str)
     query_processors = models.JSONField(default=list, blank=True)
     result_processors = models.JSONField(default=list, blank=True)

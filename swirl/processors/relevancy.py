@@ -52,10 +52,10 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         self.query_target_list = []
         self.query_has_numeric = False
 
-        d = decode_single_quote_json(results_processor_feedback)
-        if d:
-            self.provider_query_terms = d.get('result_processor_feedback', []).get(
-            'query', []).get('provider_query_terms', [])
+        if results_processor_feedback:
+            self.provider_query_terms = results_processor_feedback.get(
+                'result_processor_feedback', []).get('query', []).get(
+                'provider_query_terms', [])
 
         # remove quotes
         query = clean_string(q_string).strip().replace('\"','')
@@ -177,7 +177,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
             if not results.json_results:
                 continue
             # prepare the query for this result set, it can be different for each provider
-            self.prepare_query(results.query_string_to_provider, results.result_processor_feedback_json)
+            self.prepare_query(results.query_string_to_provider, results.result_processor_json_feedback)
             # capture query len
             list_query_lens.append(len(results.query_string_to_provider.split()))
             # iterate through the items in the result set

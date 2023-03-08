@@ -27,7 +27,7 @@ class MappingResultProcessor(ResultProcessor):
 
     type="MappingResultProcessor"
 
-    def putQueryTermsFromProvider(self, swirl_key, text, lBuf):
+    def put_query_terms_from_provider(self, swirl_key, text, lBuf):
         """ remember query terms from the hihglight field of each result"""
         if not ( swirl_key and text ):
             return
@@ -38,7 +38,7 @@ class MappingResultProcessor(ResultProcessor):
             for hit in hits:
                 lBuf.append(str(hit).lower())
 
-    def getOptResultProcessorFeedbackJSON(self, lBuf):
+    def get_opt_result_processor_feedback_json(self, lBuf):
         """
         Create a JSON object from the list of query terms:
         """
@@ -171,7 +171,7 @@ class MappingResultProcessor(ResultProcessor):
                                             else:
                                                 if not swirl_result[swirl_key]:
                                                     swirl_result[swirl_key] = result_dict[source_key]
-                                                    self.putQueryTermsFromProvider(swirl_key,
+                                                    self.put_query_terms_from_provider(swirl_key,
                                                                                    swirl_result[swirl_key],
                                                                                    provider_query_term_results)
                                                 else:
@@ -246,7 +246,7 @@ class MappingResultProcessor(ResultProcessor):
             # unique list of terms from highligts
         # end for
 
-        fb = self.getOptResultProcessorFeedbackJSON(provider_query_term_results)
+        fb = self.get_opt_result_processor_feedback_json(provider_query_term_results)
         if fb:
             list_results.append(fb)
         self.processed_results = list_results

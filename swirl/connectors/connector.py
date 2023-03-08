@@ -50,7 +50,7 @@ class Connector:
         self.provider = None
         self.search = None
         self.query_string_to_provider = ""
-        self.result_processor_feedback_json = {}
+        self.result_processor_json_feedback = {}
         self.query_to_provider = ""
         self.query_mappings = {}
         self.response_mappings = {}
@@ -302,7 +302,7 @@ class Connector:
                 ## TODO: make this additive for multiple processor. For now the mapping processor
                 ## is the only one that generates this.
                 if processed_results and 'result_processor_feedback' in processed_results[-1]:
-                    self.result_processor_feedback_json =  processed_results.pop(-1)
+                    self.result_processor_json_feedback =  processed_results.pop(-1)
             except (NameError, TypeError, ValueError) as err:
                 self.error(f'{processor}: {err.args}, {err}')
                 return
@@ -391,7 +391,7 @@ class Connector:
                                                query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider,
                                                query_processors=query_processors, result_processors=result_processors, messages=self.messages,
                                                status=self.status, found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}',
-                                               json_results=self.processed_results, owner=self.search.owner,result_processor_feedback_json=self.result_processor_feedback_json)
+                                               json_results=self.processed_results, owner=self.search.owner,result_processor_json_feedback=self.result_processor_json_feedback)
             new_result.save()
         except Error as err:
             self.error(f'save_results() failed: {err.args}, {err}', save_results=False)
