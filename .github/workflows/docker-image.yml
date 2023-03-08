@@ -3,9 +3,14 @@ name: Docker Build
 # Build a multi-arch docker image for SWIRL
 # comment to start build
 
+# on:  # disabling 05:05 daily build and leaving this syntax for posterity 
+#  schedule:
+#  - cron: '05 05 * * *'
+
 on:
-  schedule:
-  - cron: '05 05 * * *'
+  push:
+    # only trigger on branches, not on tags
+    branches: 'main'
 
 jobs:
 
