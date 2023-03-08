@@ -183,13 +183,20 @@ class MappingResultProcessor(ResultProcessor):
                                         # end if
                                     else:
                                         if use_payload:
-                                            payload[swirl_key] = result_dict[source_key]
+                                            # to do: check type!!!
+                                            if type(result_dict[source_key]) not in [str, int, list, dict]:
+                                                payload[swirl_key] = str(result_dict[source_key])
+                                            else:
+                                                payload[swirl_key] = result_dict[source_key]
                                         # end if
                                     # end if
                                 else:
                                     # no target key specified, so it will go into payload with that name
                                     # since it was specified we do not check NO_PAYLOAD
-                                    payload[source_key] = result_dict[source_key]
+                                    if type(result_dict[source_key]) not in [str, int, list, dict]:
+                                        payload[source_key] = str(result_dict[source_key])
+                                    else:
+                                        payload[source_key] = result_dict[source_key]
                                 # end if
                             else:
                                 # no results for this mapping were found - normal
