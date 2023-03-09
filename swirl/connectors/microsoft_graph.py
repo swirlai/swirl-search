@@ -49,7 +49,7 @@ class M365OutlookMessages(M365):
 
     def __init__(self, provider_id, search_id, update):
         super().__init__(provider_id, search_id, update)
-        self.provider.url = 'https://graph.microsoft.com/v1.0/me/messages'
+        self.provider.url = 'https://graph.microsoft.com/v1.0'
 
 class M365OutlookCalendar(M365):
 
