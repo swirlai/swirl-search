@@ -34,6 +34,7 @@ from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result
 from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer
 from swirl.mixers import *
+from swirl.authenticators.microsoft_test import get_session_data
 
 module_name = 'views.py'
 
@@ -166,7 +167,7 @@ def search(request):
             new_search.status = 'NEW_SEARCH'
             new_search.save()
             search_id = new_search.id
-            res = run_search(search_id)
+            res = run_search(search_id, get_session_data(request))
             if not res:
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             if not Search.objects.filter(id=search_id).exists():
@@ -353,7 +354,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
             new_search.save()
-            search_task.delay(new_search.id)
+            search_task.delay(new_search.id, get_session_data(request))
             time.sleep(settings.SWIRL_Q_WAIT)
             return redirect(f'/swirl/results?search_id={new_search.id}')
 
@@ -392,7 +393,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
             new_search.save()
-            res = run_search(new_search.id)
+            res = run_search(new_search.id, get_session_data(request))
             if not res:
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             if not Search.objects.filter(id=new_search.id).exists():
@@ -451,7 +452,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             rerun_search.messages = []
             rerun_search.messages.append(message)
             rerun_search.save()
-            search_task.delay(rerun_search.id)
+            search_task.delay(rerun_search.id, get_session_data(request))
             time.sleep(settings.SWIRL_RERUN_WAIT)
             return redirect(f'/swirl/results?search_id={rerun_search.id}')
         # end if
@@ -492,7 +493,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.info(f"{module_name}: ?update!")
             search.status = 'UPDATE_SEARCH'
             search.save()
-            search_task.delay(update_id)
+            search_task.delay(update_id, get_session_data(request))
             time.sleep(settings.SWIRL_SUBSCRIBE_WAIT)
             return redirect(f'/swirl/results?search_id={update_id}')
 
@@ -528,7 +529,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 search.status = 'ERR_NO_SEARCHPROVIDERS'
                 search.save
         else:
-            search_task.delay(serializer.data['id'])
+            search_task.delay(serializer.data['id'], get_session_data(request))
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -576,7 +577,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             if not (request.user.has_perm('swirl.add_search') and request.user.has_perm('swirl.change_search') and request.user.has_perm('swirl.add_result') and request.user.has_perm('swirl.change_result')):
                 logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
                 return Response(status=status.HTTP_403_FORBIDDEN)
-            search_task.delay(search.id)
+            search_task.delay(search.id, get_session_data(request))
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     ########################################
