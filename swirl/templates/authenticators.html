@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h2>Authenticators:</h2>
+    <table>
+        <tbody>
+            {% for a in authenticators %}
+                <form method="post">
+                    {% csrf_token %}
+                    <tr style="display: flex; flex-direction: row; width: 100%;">
+                        <td>{{ a.name }}</td>
+                        <td style="margin-left: 50px">
+                            <button type="submit" name="{{ a.name }}" onclick="{{ a.func }}">
+                                Refresh token
+                            </button>
+                        </td>
+                    </tr>
+                </form>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br/><br/>
+
+{% endblock %}
+

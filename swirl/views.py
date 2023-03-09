@@ -34,7 +34,7 @@ from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result
 from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer
 from swirl.mixers import *
-from swirl.authenticators.microsoft_test import get_session_data
+from swirl.authenticators.microsoft_test import get_session_data, set_session_data, get_auth_app, scopes, login as microsoft_login
 
 module_name = 'views.py'
 
@@ -196,6 +196,53 @@ def search(request):
 
 ########################################
 
+def authenticators(request):
+
+    def remove_duplicates(my_list):
+        new_list = []
+        seen = set()
+        for d in my_list:
+            key = (d['name'], d['func'])
+            if key not in seen:
+                new_list.append(d)
+                seen.add(key)
+        return new_list
+
+    def return_authenticators():
+        providers = SearchProvider.objects.filter(active=True, owner=request.user) | SearchProvider.objects.filter(active=True, shared=True)
+        results = list()
+        for provider in providers:
+            if 'M365' in provider.connector:
+                results.append({
+                    'name': 'Microsoft',
+                    'func': update_token
+                })
+        results = remove_duplicates(results)
+        return render(request, 'authenticators.html', {'authenticators': results})
+
+    def update_token():
+        app = get_auth_app(request)
+        session_data = get_session_data(request)
+        if session_data:
+            result = app.acquire_token_by_refresh_token(session_data['microsoft_refresh_token'], scopes=scopes)
+            if 'access_token' in result:
+                print(result['access_token'])
+                # set_session_data(request, result['access_token'], result['refresh_token'], int(now.timestamp()) + result['expires_in'])
+                # return True
+        print('redirect')
+        return microsoft_login(request)
+    
+    if request.method == 'POST':
+        res = update_token()
+        if res == True:
+            return return_authenticators()
+        return res
+        # return render(request, 'authenticators.html', {'authenticators': list([])})
+    else:
+        return return_authenticators()
+
+########################################
+
 def error(request):
     return render(request, 'error.html')
 
@@ -303,6 +350,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         searchprovider = SearchProvider.objects.get(pk=pk)
         searchprovider.delete()
         return Response('SearchProvider Object Deleted', status=status.HTTP_410_GONE)
+
 
 ########################################
 ########################################
