@@ -41,4 +41,3 @@ urlpatterns = [
     path('register/confirm_sent/', views.registration_confirmation_sent, name='registration_confirmation_sent'),
     path('', include(router.urls)),
 ]
-
