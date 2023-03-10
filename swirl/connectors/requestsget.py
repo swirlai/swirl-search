@@ -247,8 +247,10 @@ class RequestsGet(Connector):
                 # end if
             else:
                 # check json_data, if it is already a result set, just go with that
-                if type(json_data) == list and type(json_data[0]) == dict:
-                    mapped_response['RESULTS'] = json_data
+                if type(json_data) == list:
+                    if len(json_data) > 0:
+                        if type(json_data[0]) == dict:
+                            mapped_response['RESULTS'] = json_data
                 else:
                     self.error(f'{self}: RESULTS missing from mapped_response')
                     return
