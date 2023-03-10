@@ -153,7 +153,7 @@ class RequestsGet(Connector):
                         if self.provider.credentials.startswith('bearer='):
                             # populate with bearer token
                             headers = {
-                                "Authorization": f"Bearer {self.provider.credentials.split('=')[1]}"
+                                "Authorization": f"Bearer {self.provider.credentials.split('bearer=')[1]}"
                             }
                             response = requests.get(page_query, headers=headers)
                             # all others
