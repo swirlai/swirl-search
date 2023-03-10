@@ -13,6 +13,12 @@ from swirl.nltk import stopwords, sent_tokenize
 from swirl.processors.utils import *
 from swirl.spacy import nlp
 from swirl.processors.processor import PostResultProcessor
+import json
+
+import logging
+from celery.utils.log import get_task_logger
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger()
 
 #############################################
 #############################################
@@ -31,12 +37,13 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         self.query_stemmed_target_list = None
         self.query_target_list = None
         self.query_has_numeric = None
+        self.provider_query_terms = []
 
         return super().__init__(search_id)
 
     ############################################
 
-    def prepare_query(self, q_string):
+    def prepare_query(self, q_string, results_processor_feedback):
 
         self.query_stemmed_list = []
         self.not_list = []
@@ -45,9 +52,19 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         self.query_target_list = []
         self.query_has_numeric = False
 
+        if results_processor_feedback:
+            self.provider_query_terms = results_processor_feedback.get(
+                'result_processor_feedback', []).get('query', []).get(
+                'provider_query_terms', [])
+
         # remove quotes
         query = clean_string(q_string).strip().replace('\"','')
         query_list = query.strip().split()
+        ## I think the loop is okay since it's a very small list.
+        for term in self.provider_query_terms:
+            if not term in query_list:
+                query_list.append(term)
+
         # remove AND, OR
         if 'AND' in query_list:
             query_list.remove('AND')
@@ -150,15 +167,17 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
         ############################################
         # PASS 1
+        # For each results set from all providers that returned one.
         # to do: refactor the names so it is clearer, e.g. json_result instead of result, result_set instead of results
         for results in self.results:
+
             ############################################
             # result set
             highlighted_json_results = []
             if not results.json_results:
                 continue
-            # prepare the query for this result set
-            self.prepare_query(results.query_string_to_provider)
+            # prepare the query for this result set, it can be different for each provider
+            self.prepare_query(results.query_string_to_provider, results.result_processor_json_feedback)
             # capture query len
             list_query_lens.append(len(results.query_string_to_provider.split()))
             # iterate through the items in the result set
