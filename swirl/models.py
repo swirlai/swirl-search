@@ -143,16 +143,17 @@ class Search(models.Model):
     def __str__(self):
         signature = str(self.id) + ':' + str(self.searchprovider_list) + ':' + self.query_string
         return signature
-        
+
 class Result(models.Model):
     id = models.BigAutoField(primary_key=True)
     owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    search_id = models.ForeignKey(Search, on_delete=models.CASCADE) 
+    search_id = models.ForeignKey(Search, on_delete=models.CASCADE)
     provider_id = models.IntegerField(default=0)
     searchprovider = models.CharField(max_length=50, default=str)
     query_string_to_provider = models.CharField(max_length=256, default=str)
+    result_processor_json_feedback = models.JSONField(default=list)
     query_to_provider = models.CharField(max_length=2048, default=str)
     query_processors = models.JSONField(default=list, blank=True)
     result_processors = models.JSONField(default=list, blank=True)

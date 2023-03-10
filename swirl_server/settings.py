@@ -170,7 +170,7 @@ STATICFILES_FINDERS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CELERY
-from celery.schedules import crontab   
+from celery.schedules import crontab
 
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 CELERY_TASK_SERIALIZER = 'json'
@@ -187,15 +187,15 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BEAT_SCHEDULE = {
     # Executes every hour
-    'expire': { 
-         'task': 'expirer', 
+    'expire': {
+         'task': 'expirer',
          'schedule': crontab(minute=0,hour='*'),
-        },          
+        },
     # Executes every four hours
-    'subscribe': { 
-         'task': 'subscriber', 
+    'subscribe': {
+         'task': 'subscriber',
          'schedule': crontab(minute=0,hour='*/4'),   # minute='*/10'
-        },          
+        },
 }
 
 # EMAIL
@@ -242,5 +242,3 @@ SWIRL_HIGHLIGHT_END_CHAR = '</em>'
 
 if 'OPENAI_API_KEY' in env:
     OPENAI_API_KEY = env('OPENAI_API_KEY')
-
-

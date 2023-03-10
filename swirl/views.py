@@ -174,7 +174,7 @@ def search(request):
             search = Search.objects.get(id=search_id)
 
         # form.cleaned_data['search_id'] = search_id
-            
+
         if search.status.endswith('_READY') or search.status == 'RESCORING':
             try:
                 # to do: support mixer spec above
@@ -214,7 +214,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
 
 
     def list(self, request):
-            
+
         # check permissions
         if not request.user.has_perm('swirl.view_searchprovider'):
             return Response(status=status.HTTP_403_FORBIDDEN)
