@@ -246,8 +246,13 @@ class RequestsGet(Connector):
                         return
                 # end if
             else:
-                self.error(f'{self}: RESULTS missing from mapped_response')
-                return
+                # check json_data, if it is already a result set, just go with that
+                if type(json_data) == list and type(json_data[0]) == dict:
+                    mapped_response['RESULTS'] = json_data
+                else:
+                    self.error(f'{self}: RESULTS missing from mapped_response')
+                    return
+                # end if
             # end if
             response = []
             if 'RESULT' in self.response_mappings:
