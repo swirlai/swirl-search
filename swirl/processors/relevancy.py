@@ -356,7 +356,8 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                             del dict_score[field]
                         ############################################
                         # highlight
-                        item[field] = item[field].replace('*','')   # remove old
+                        item[field] = item[field].replace(settings.SWIRL_HIGHLIGHT_START_CHAR,'')   # remove old
+                        item[field] = item[field].replace(settings.SWIRL_HIGHLIGHT_END_CHAR,'')   # remove old
                         # fix for https://github.com/swirlai/swirl-search/issues/33
                         item[field] = highlight_list(remove_tags(item[field]), extracted_highlights)
                     # end if
