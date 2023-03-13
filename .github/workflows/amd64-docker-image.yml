@@ -18,13 +18,5 @@ jobs:
     - uses: actions/checkout@v3
     - name: login to docker hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-    - name: builder bootstrap
-      run: docker buildx create --name devBuilder --use --bootstrap
     - name: Build the Docker image
-      run: docker buildx build -t swirlai/swirl-search:latest-amd64 --platform linux/amd64 --push .
-    - name: Update repo description
-      uses: peter-evans/dockerhub-description@v3.3.0
-      with:
-        username: ${{ secrets.DOCKER_USERNAME_X }}
-        password: ${{ secrets.DOCKER_PASSWORD_X }}
-        repository: swirlai/swirl-search
+      run: docker build -t swirlai/swirl-search:latest-amd64 --push .
