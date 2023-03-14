@@ -18,4 +18,4 @@ jobs:
     - name: Build the Docker image   
       run: docker build -t swirlai/spyglass:latest  -f Dockerfile.spg .
     - name: Push the Docker image   
-      run: docker push dnicoswirl/spyglass
+      run: docker push swirlai/spyglass
