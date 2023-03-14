@@ -235,7 +235,8 @@ def search(id):
             break
         search.status = f'FEDERATING_WAIT_{ticks}'
         logger.info(f"{module_name}: {search.status}")
-        if ticks > int(settings.SWIRL_TIMEOUT):
+        SWIRL_TIMEOUT = getattr(settings, 'SWIRL_TIMEOUT', 10)
+        if ticks > int(SWIRL_TIMEOUT):
             logger.info(f"{module_name}_{search.id}: timeout!")
             failed_providers = []
             responding_provider_names = []
