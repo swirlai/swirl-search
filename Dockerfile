@@ -1,7 +1,6 @@
 FROM python:3.11.1-slim
 
 # try to upgrade to a more recent vesion of openssl
-
 RUN apt-get update
 RUN apt-get -y upgrade openssl
 
@@ -30,6 +29,11 @@ RUN mkdir /app
 COPY ./db.sqlite3.dist /app/db.sqlite3
 COPY ./.env.docker /app/.env
 ADD ./swirl /app/swirl
+
+# Install spy glass UI
+RUN mkdir /app/swirl/static/spyglass
+COPY --from=dnicoswirl/spyglass:latest /usr/src/spyglass/ui/dist/spyglass/browser/. /app/swirl/static/spyglass
+
 ADD ./swirl_server /app/swirl_server
 ADD ./SearchProviders /app/SearchProviders
 ADD ./scripts /app/scripts
