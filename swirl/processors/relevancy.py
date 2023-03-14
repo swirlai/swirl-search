@@ -13,7 +13,6 @@ from swirl.nltk import stopwords, sent_tokenize
 from swirl.processors.utils import *
 from swirl.spacy import nlp
 from swirl.processors.processor import PostResultProcessor
-import json
 
 import logging
 from celery.utils.log import get_task_logger
@@ -164,6 +163,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         updated = 0
         dict_result_lens = {}
         list_query_lens = []
+        hit_dict = {}
 
         ############################################
         # PASS 1
@@ -219,6 +219,8 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     # end for
                     item['dict_len'] = dict_len
                     continue
+                if not 'hits' in item:
+                    item['hits'] = {}
                 ############################################
                 # result item
                 dict_score = {}
@@ -375,7 +377,11 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                             del dict_score[field]
                         ############################################
                         # highlight
-                        item[field] = item[field].replace('*','')   # remove old
+                        item[field] = item[field].replace(settings.SWIRL_HIGHLIGHT_START_CHAR,'')   # remove old
+                        item[field] = item[field].replace(settings.SWIRL_HIGHLIGHT_END_CHAR,'')   # remove old
+                        field_hits = position_dict(remove_tags(item[field]), extracted_highlights)
+                        item['hits'][field] = {}
+                        item['hits'][field] = field_hits
                         # fix for https://github.com/swirlai/swirl-search/issues/33
                         item[field] = highlight_list(remove_tags(item[field]), extracted_highlights)
                     # end if
