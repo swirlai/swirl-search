@@ -16,6 +16,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image   
-      run: docker build -t dnicoswirl/spyglass:latest  -f Dockerfile.spg
+      run: docker build -t swirlai/spyglass:latest  -f Dockerfile.spg
     - name: Push the Docker image   
       run: docker push dnicoswirl/spyglass
