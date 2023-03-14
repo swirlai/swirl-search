@@ -15,7 +15,7 @@
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
-        "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM",
+        "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "tags": [
             "News",
             "EnterpriseSearch"
@@ -37,7 +37,7 @@
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=htmlSnippet,cacheid,NO_PAYLOAD",
-        "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM",
+        "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "tags": [
             "News",
             "StrategyConsulting"
@@ -59,7 +59,7 @@
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
-        "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM",
+        "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "tags": [
             "News",
             "MergersAcquisitions"
