@@ -121,16 +121,34 @@ def remove_numeric(string_or_list):
 
 #############################################
 
+from django.conf import settings
+
 def highlight_list(text, word_list):
 
     highlighted_list = []
     for term in text.split():
         if term in word_list:
-            highlighted_list.append(f"*{term}*")
+            highlighted_list.append(f"{settings.SWIRL_HIGHLIGHT_START_CHAR}{term}{settings.SWIRL_HIGHLIGHT_END_CHAR}")
         else:
             highlighted_list.append(term)
 
     return ' '.join(highlighted_list)
+
+#############################################
+
+def position_dict(text, word_list):
+
+    position_dict = {}
+    text_list = text.split()
+    for term in text_list:
+        if term in word_list:
+            if term in position_dict:
+                position_dict[term].append(text_list.index(term))
+            else:
+                position_dict[term] = []
+                position_dict[term].append(text_list.index(term))
+
+    return position_dict
 
 #############################################
 # fix for https://github.com/swirlai/swirl-search/issues/33
