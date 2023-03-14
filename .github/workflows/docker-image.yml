@@ -2,9 +2,12 @@ name: Latest Docker Build
 
 # Build a multi-arch docker image for SWIRL
 
+# on:
+#   schedule:
+#   - cron: '05 05 * * *'
+
 on:
-  schedule:
-  - cron: '05 05 * * *'
+  workflow_dispatch:
 
 
 jobs:
