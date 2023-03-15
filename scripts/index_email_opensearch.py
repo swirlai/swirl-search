@@ -29,6 +29,8 @@ def main(argv):
         print(f"Error: file not found: {args.filespec}")
         return
 
+    csv.field_size_limit(sys.maxsize)
+
     f = open(args.filespec, 'r')
     csvr = csv.reader(f, quoting=csv.QUOTE_ALL)
 
@@ -90,8 +92,8 @@ def main(argv):
     # end for
 
 
-#############################################    
-    
+#############################################
+
 if __name__ == "__main__":
     main(sys.argv)
 
