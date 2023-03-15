@@ -7,8 +7,8 @@ name: Latest Docker Build
 #   - cron: '05 05 * * *'
 
 on:
-  workflow_dispatch:
-
+  push:
+    branches: 'DS-136-spyglass-integration'
 
 jobs:
 

@@ -1,11 +1,11 @@
 name: Latest Spyglass Docker Build
 
-# on:
-#   workflow_dispatch:
-
 on:
-  push:
-    branches: 'DS-136-spyglass-integration'
+  workflow_dispatch:
+
+# on:
+#   push:
+#     branches: 'DS-136-spyglass-integration'
 
 jobs:
 

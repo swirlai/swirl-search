@@ -32,7 +32,7 @@ ADD ./swirl /app/swirl
 
 # Install spy glass UI
 RUN mkdir /app/swirl/static/spyglass
-COPY --from=dnicoswirl/spyglass:latest /usr/src/spyglass/ui/dist/spyglass/browser/. /app/swirl/static/spyglass
+COPY --from=swirlai/spyglass:latest /usr/src/spyglass/ui/dist/spyglass/browser/. /app/swirl/static/spyglass
 
 ADD ./swirl_server /app/swirl_server
 ADD ./SearchProviders /app/SearchProviders
