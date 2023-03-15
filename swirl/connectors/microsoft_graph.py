@@ -13,7 +13,7 @@ logger = get_task_logger(__name__)
 
 from swirl.connectors.mappings import *
 from swirl.connectors.requestsget import RequestsGet
-from swirl.authenticators.microsoft_test import is_authenticated
+from swirl.authenticators.microsoft import Microsoft
 
 ########################################
 ########################################
@@ -28,9 +28,10 @@ class M365(RequestsGet):
         super().__init__(provider_id, search_id, update)
         self.provider.eval_credentials = ""
         self.provider.credentials = "bearer="
+        self.authenticator = Microsoft()
 
     def validate_query(self, session):
-        is_valid_token = is_authenticated(session)
+        is_valid_token = self.authenticator.is_authenticated(session)
         if is_valid_token:
             return super().validate_query(session)
         self.error("M365 access token is not valid or missing")
@@ -39,6 +40,7 @@ class M365(RequestsGet):
     def execute_search(self, session):
         self.provider.response_mappings = 'RESULTS=value'
         self.provider.credentials = f"bearer={session['microsoft_access_token']}"
+        return super().execute_search(session)
 
 
 class M365OutlookMessages(M365):

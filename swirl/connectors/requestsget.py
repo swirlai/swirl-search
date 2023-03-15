@@ -160,7 +160,6 @@ class RequestsGet(Connector):
                                 "Authorization": f"Bearer {self.provider.credentials.split('bearer=')[1]}"
                             }
                             response = requests.get(page_query, headers=headers)
-                            print(response)
                             # all others
                         else:
                             response = requests.get(page_query)
@@ -324,7 +323,6 @@ class RequestsGet(Connector):
 
         self.found = found
         self.retrieved = retrieved
-        
         self.response = response
         logger.debug(f"{self}: response: {self.response}")
         
