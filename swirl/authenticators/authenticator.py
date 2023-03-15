@@ -9,9 +9,7 @@ class Authenticator:
 
     def get_session_data(self, request):
         if 'user' in request.session:
-            if self.expires_in_field in request.session['user']:
-                return request.session['user']
-            return False
+            return request.session['user']
         return False
 
     def set_session_data(self, request, access_token, refresh_token, expiration_time):
