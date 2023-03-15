@@ -8,10 +8,11 @@
             {% for a in authenticators %}
                 <form method="post">
                     {% csrf_token %}
+                    <input type="hidden" name="authenticator_name" value="{{ a.name }}"></input>
                     <tr style="display: flex; flex-direction: row; width: 100%;">
                         <td>{{ a.name }}</td>
                         <td style="margin-left: 50px">
-                            <button type="submit" name="{{ a.name }}" onclick="{{ a.func }}">
+                            <button type="submit" name="{{ a.name }}">
                                 Refresh token
                             </button>
                         </td>

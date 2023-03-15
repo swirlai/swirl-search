@@ -26,6 +26,12 @@ class SearchProvider(models.Model):
         ('Microsoft', 'Microsoft Authentication')
     ]
     authenticator = models.CharField(max_length=200, default='', choices=AUTHENTICATOR_CHOICES)
+    CONNECTORS_AUTHENTICATORS = dict({
+        'M365OutlookMessages': 'Microsoft',
+        'M365OneDrive': 'Microsoft',
+        'M365OutlookCalendar': 'Microsoft',
+        'M365SharePointSites': 'Microsoft'
+    })
     CONNECTOR_CHOICES = [
         ('ChatGPT', 'ChatGPT Query String'),
         ('RequestsGet', 'HTTP/GET returning JSON'),

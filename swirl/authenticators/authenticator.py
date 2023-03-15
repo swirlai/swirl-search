@@ -40,8 +40,11 @@ class Authenticator:
         except:
             return False
 
-    def login(request):
+    def login(self, request):
         return HttpResponseRedirect('http://example.com')
 
-    def callback(request):
+    def callback(self, request):
         return HttpResponseRedirect('/swirl/')
+    
+    def update_token(self, request):
+        return {}

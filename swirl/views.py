@@ -34,7 +34,10 @@ from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result
 from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer
 from swirl.mixers import *
-from swirl.authenticators.microsoft_test import get_session_data, set_session_data, get_auth_app, scopes, login as microsoft_login
+from swirl.authenticators.authenticator import Authenticator
+from swirl.authenticators import *
+
+
 
 module_name = 'views.py'
 
@@ -42,10 +45,15 @@ from swirl.tasks import search_task, rescore_task
 from swirl.search import search as run_search
 
 SWIRL_OBJECT_LIST = Search.MIXER_CHOICES
+SWIRL_AUTHENTICATORS_LIST = SearchProvider.AUTHENTICATOR_CHOICES
 
 SWIRL_OBJECT_DICT = {}
 for t in SWIRL_OBJECT_LIST:
     SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
+
+SWIRL_AUTHENTICATORS_DICT = {}
+for t in SWIRL_AUTHENTICATORS_LIST:
+    SWIRL_AUTHENTICATORS_DICT[t[0]]=eval(t[0])
 
 ########################################
 
@@ -167,7 +175,7 @@ def search(request):
             new_search.status = 'NEW_SEARCH'
             new_search.save()
             search_id = new_search.id
-            res = run_search(search_id, get_session_data(request))
+            res = run_search(search_id, Authenticator().get_session_data(request))
             if not res:
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             if not Search.objects.filter(id=search_id).exists():
@@ -202,44 +210,39 @@ def authenticators(request):
         new_list = []
         seen = set()
         for d in my_list:
-            key = (d['name'], d['func'])
+            key = (d['name'])
             if key not in seen:
                 new_list.append(d)
                 seen.add(key)
         return new_list
 
-    def return_authenticators():
+    def return_authenticators(request):
+        if not request.user.is_authenticated:
+            return redirect('/swirl/api-auth/login?next=/swirl/authenticators.html')
         providers = SearchProvider.objects.filter(active=True, owner=request.user) | SearchProvider.objects.filter(active=True, shared=True)
         results = list()
         for provider in providers:
-            if 'M365' in provider.connector:
-                results.append({
-                    'name': 'Microsoft',
-                    'func': update_token
-                })
+            name = None
+            try:
+                name = SearchProvider.CONNECTORS_AUTHENTICATORS[provider.connector]
+                if not name:
+                    continue
+            except:
+                continue
+            results.append({
+                'name': name
+            })
         results = remove_duplicates(results)
         return render(request, 'authenticators.html', {'authenticators': results})
-
-    def update_token():
-        app = get_auth_app(request)
-        session_data = get_session_data(request)
-        if session_data:
-            result = app.acquire_token_by_refresh_token(session_data['microsoft_refresh_token'], scopes=scopes)
-            if 'access_token' in result:
-                print(result['access_token'])
-                # set_session_data(request, result['access_token'], result['refresh_token'], int(now.timestamp()) + result['expires_in'])
-                # return True
-        print('redirect')
-        return microsoft_login(request)
     
     if request.method == 'POST':
-        res = update_token()
+        authenticator = request.POST.get('authenticator_name')
+        res = SWIRL_AUTHENTICATORS_DICT[authenticator]().update_token(request)
         if res == True:
-            return return_authenticators()
+            return return_authenticators(request)
         return res
-        # return render(request, 'authenticators.html', {'authenticators': list([])})
     else:
-        return return_authenticators()
+        return return_authenticators(request)
 
 ########################################
 
@@ -402,7 +405,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
             new_search.save()
-            search_task.delay(new_search.id, get_session_data(request))
+            search_task.delay(new_search.id, Authenticator().get_session_data(request))
             time.sleep(settings.SWIRL_Q_WAIT)
             return redirect(f'/swirl/results?search_id={new_search.id}')
 
@@ -441,7 +444,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
             new_search.save()
-            res = run_search(new_search.id, get_session_data(request))
+            res = run_search(new_search.id, Authenticator().get_session_data(request))
             if not res:
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             if not Search.objects.filter(id=new_search.id).exists():
@@ -500,7 +503,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             rerun_search.messages = []
             rerun_search.messages.append(message)
             rerun_search.save()
-            search_task.delay(rerun_search.id, get_session_data(request))
+            search_task.delay(rerun_search.id, Authenticator().get_session_data(request))
             time.sleep(settings.SWIRL_RERUN_WAIT)
             return redirect(f'/swirl/results?search_id={rerun_search.id}')
         # end if
@@ -541,7 +544,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.info(f"{module_name}: ?update!")
             search.status = 'UPDATE_SEARCH'
             search.save()
-            search_task.delay(update_id, get_session_data(request))
+            search_task.delay(update_id, Authenticator().get_session_data(request))
             time.sleep(settings.SWIRL_SUBSCRIBE_WAIT)
             return redirect(f'/swirl/results?search_id={update_id}')
 
@@ -577,7 +580,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 search.status = 'ERR_NO_SEARCHPROVIDERS'
                 search.save
         else:
-            search_task.delay(serializer.data['id'], get_session_data(request))
+            search_task.delay(serializer.data['id'], Authenticator().get_session_data(request))
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -625,7 +628,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             if not (request.user.has_perm('swirl.add_search') and request.user.has_perm('swirl.change_search') and request.user.has_perm('swirl.add_result') and request.user.has_perm('swirl.change_result')):
                 logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
                 return Response(status=status.HTTP_403_FORBIDDEN)
-            search_task.delay(search.id, get_session_data(request))
+            search_task.delay(search.id, Authenticator().get_session_data(request))
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     ########################################
