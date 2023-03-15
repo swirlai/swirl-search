@@ -1,8 +1,4 @@
-![SWIRL Logo](./images/swirl_logo_notext_200.jpg)
-
-<br/>
-
-# DOCKER BUILD for SWIRL
+# &nbsp; DOCKER BUILD for SWIRL <img alt='Swirl Metasearch Logo' src='https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl-logo-only-blue.png' width=38 align=left />
 
 :warning: Warning: when using docker the SWIRL database is instantly and irrevocably deleted upon container shutdown!
 
