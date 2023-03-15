@@ -1,12 +1,10 @@
 name: Docker Build for amd64
 
 # Build amd64 docker image for SWIRL
-# comment to start build
 
-on:
-  push:
-    # only trigger on branches, not on tags
-    branches: 'main'
+on: # build at 05:05 UTC each day
+ schedule:
+ - cron: '05 05 * * *'
 
 jobs:
 
