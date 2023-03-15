@@ -13,13 +13,20 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import os
 from django.conf import settings
 from django.contrib import admin
-from django.urls import include, path
+from django.views.static import serve
+from django.urls import include, path, re_path
 from django.shortcuts import redirect
 
 urlpatterns = [
+    re_path('spyglass', serve, {
+        'document_root': os.path.join(settings.BASE_DIR, 'static'),
+        'path': 'spyglass/index.html',
+    }),
     path('swirl/', include('swirl.urls')),
+    path('api/swirl/', include('swirl.urls')),
     path('', lambda req: redirect('/swirl/')),
     path('admin/', admin.site.urls)
 ]
