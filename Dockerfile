@@ -1,5 +1,10 @@
 FROM python:3.11.1-slim
 
+# try to upgrade to a more recent vesion of openssl
+
+RUN apt-get update
+RUN apt-get -y upgrade openssl
+
 # RUN sudo echo 'nameserver 8.8.8.8'>/etc/resolv.conf
 RUN apt-get update -y
 RUN apt-get install apt-file -y
