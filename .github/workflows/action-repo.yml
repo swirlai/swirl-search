@@ -13,7 +13,7 @@ jobs:
         uses: celinekurpershoek/link-checker@v1.0.2
         with:
           # Required:
-          url: "https://github.com/marketplace/actions/broken-link-check"
+          url: "https://github.com/swirlai/swirl-search"
           # optional:
           honorRobotExclusions: false
           ignorePatterns: "github,google"
