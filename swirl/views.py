@@ -46,6 +46,12 @@ SWIRL_OBJECT_DICT = {}
 for t in SWIRL_OBJECT_LIST:
     SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
 
+SWIRL_EXPLAIN = getattr(settings, 'SWIRL_EXPLAIN', True)
+SWIRL_RERUN_WAIT = getattr(settings, 'SWIRL_RERUN_WAIT', 8)
+SWIRL_RESCORE_WAIT = getattr(settings, 'SWIRL_RESCORE_WAIT', 5)
+SWIRL_SUBSCRIBE_WAIT = getattr(settings, 'SWIRL_SUBSCRIBE_WAIT', 20)
+SWIRL_Q_WAIT = getattr(settings, 'SWIRL_Q_WAIT', 7)
+
 ########################################
 
 def index(request):
@@ -130,7 +136,7 @@ def search(request):
     if 'result_mixer' in request.GET.keys():
         mixer = str(request.GET['result_mixer'])
 
-    explain = settings.SWIRL_EXPLAIN
+    explain = SWIRL_EXPLAIN
     if 'explain' in request.GET.keys():
         explain = str(request.GET['explain'])
         if explain.lower() == 'false':
@@ -354,7 +360,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             new_search.status = 'NEW_SEARCH'
             new_search.save()
             search_task.delay(new_search.id)
-            time.sleep(settings.SWIRL_Q_WAIT)
+            time.sleep(SWIRL_Q_WAIT)
             return redirect(f'/swirl/results?search_id={new_search.id}')
 
         ########################################
@@ -363,7 +369,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         if 'result_mixer' in request.GET.keys():
             otf_result_mixer = str(request.GET['result_mixer'])
 
-        explain = settings.SWIRL_EXPLAIN
+        explain = SWIRL_EXPLAIN
         if 'explain' in request.GET.keys():
             explain = str(request.GET['explain'])
             if explain.lower() == 'false':
@@ -418,7 +424,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 return Response(paginate(results, self.request), status=status.HTTP_200_OK)
             else:
                 tries = tries + 1
-                if tries > settings.SWIRL_RERUN_WAIT:
+                if tries > SWIRL_RERUN_WAIT:
                     return Response(f'Timeout: {tries}, {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 time.sleep(1)
             # end if
@@ -452,7 +458,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             rerun_search.messages.append(message)
             rerun_search.save()
             search_task.delay(rerun_search.id)
-            time.sleep(settings.SWIRL_RERUN_WAIT)
+            time.sleep(SWIRL_RERUN_WAIT)
             return redirect(f'/swirl/results?search_id={rerun_search.id}')
         # end if
 
@@ -472,7 +478,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
             logger.info(f"{module_name}: ?rescore!")
             rescore_task.delay(rescore_id)
-            time.sleep(settings.SWIRL_RESCORE_WAIT)
+            time.sleep(SWIRL_RESCORE_WAIT)
             return redirect(f'/swirl/results?search_id={rescore_id}')
 
         ########################################
@@ -493,7 +499,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             search.status = 'UPDATE_SEARCH'
             search.save()
             search_task.delay(update_id)
-            time.sleep(settings.SWIRL_SUBSCRIBE_WAIT)
+            time.sleep(SWIRL_SUBSCRIBE_WAIT)
             return redirect(f'/swirl/results?search_id={update_id}')
 
         ########################################
@@ -632,7 +638,7 @@ class ResultViewSet(viewsets.ModelViewSet):
         if 'result_mixer' in request.GET.keys():
             otf_result_mixer = str(request.GET['result_mixer'])
 
-        explain = settings.SWIRL_EXPLAIN
+        explain = SWIRL_EXPLAIN
         if 'explain' in request.GET.keys():
             explain = str(request.GET['explain'])
             if explain.lower() == 'false':

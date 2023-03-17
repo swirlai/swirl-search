@@ -123,12 +123,15 @@ def remove_numeric(string_or_list):
 
 from django.conf import settings
 
+SWIRL_HIGHLIGHT_START_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_START_CHAR', '*')
+SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')
+
 def highlight_list(text, word_list):
 
     highlighted_list = []
     for term in text.split():
         if term in word_list:
-            highlighted_list.append(f"{settings.SWIRL_HIGHLIGHT_START_CHAR}{term}{settings.SWIRL_HIGHLIGHT_END_CHAR}")
+            highlighted_list.append(f"{SWIRL_HIGHLIGHT_START_CHAR}{term}{SWIRL_HIGHLIGHT_END_CHAR}")
         else:
             highlighted_list.append(term)
 

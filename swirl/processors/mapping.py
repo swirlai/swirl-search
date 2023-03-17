@@ -7,7 +7,6 @@ from celery.utils.log import get_task_logger
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
 
-
 from datetime import datetime
 from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
@@ -168,6 +167,7 @@ class MappingResultProcessor(ResultProcessor):
                                                     swirl_result[swirl_key] = str(parser.parse(result_dict[source_key]))
                                                 else:
                                                     payload[swirl_key+"_"+source_key] = str(parser.parse(result_dict[source_key]))
+                                                # end if
                                             else:
                                                 if not swirl_result[swirl_key]:
                                                     swirl_result[swirl_key] = result_dict[source_key]
@@ -176,7 +176,15 @@ class MappingResultProcessor(ResultProcessor):
                                                                                    provider_query_term_results)
                                                 else:
                                                     payload[swirl_key+"_"+source_key] = result_dict[source_key]
+                                                # end if
                                         else:
+                                            # not same type, convert it
+                                            if 'date' in swirl_key.lower():
+                                                if swirl_result[swirl_key] == "":
+                                                    if type(result_dict[source_key]) == int:
+                                                        swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]/1000))
+                                                    # end if
+                                                # end if
                                             # different type, so payload it
                                             if use_payload:
                                                 payload[swirl_key] = result_dict[source_key]

@@ -19,6 +19,23 @@ from celery.utils.log import get_task_logger
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
 
+SWIRL_RELEVANCY_CONFIG = getattr(settings, 'SWIRL_RELEVANCY_CONFIG', {
+    'title': {
+        'weight': 3.0
+    },
+    'body': {
+        'weight': 1.0
+    },
+    'author': {
+        'weight': 2.0
+    }
+})
+
+SWIRL_MIN_SIMILARITY = getattr(settings, 'SWIRL_MIN_SIMILARITY', 0.51)
+SWIRL_MAX_MATCHES = getattr(settings, 'SWIRL_MAX_MATCHES', 5)
+SWIRL_HIGHLIGHT_START_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_START_CHAR', '*')
+SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')
+
 #############################################
 #############################################
 
@@ -158,7 +175,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
     def process(self):
 
-        RELEVANCY_CONFIG = settings.SWIRL_RELEVANCY_CONFIG
+        RELEVANCY_CONFIG = SWIRL_RELEVANCY_CONFIG
 
         updated = 0
         dict_result_lens = {}
@@ -302,7 +319,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                 else:
                                     qvr = query_nlp.similarity(result_field_nlp)
                             # end if
-                            if qvr >= float(settings.SWIRL_MIN_SIMILARITY):
+                            if qvr >= float(SWIRL_MIN_SIMILARITY):
                                 dict_score[field]['_'.join(self.query_list)+label] = qvr
                             else:
                                 logger.debug(f"{self}: item below SWIRL_MIN_SIMILARITY: {'_'.join(self.query_list)+label} ~?= {item}")
@@ -320,9 +337,9 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                             # match_all returns a list of result_field_list indexes that match
                             match_list = match_all(query_slice_stemmed_list, result_field_stemmed_list)
                             # truncate the match list, if longer than configured
-                            if len(match_list) > settings.SWIRL_MAX_MATCHES:
+                            if len(match_list) > SWIRL_MAX_MATCHES:
                                 self.warning(f"truncating matches for: {query_slice_stemmed_list}")
-                                match_list = match_list[:settings.SWIRL_MAX_MATCHES-1]
+                                match_list = match_list[:SWIRL_MAX_MATCHES-1]
                             qw_list = query_target
                             if match_list:
                                 key = ''
@@ -357,7 +374,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                         qw_nlp_sim = qw_nlp.similarity(rw_nlp)
                                         if qw_nlp_sim:
                                             # self.warning(f"compare: {qw_nlp} sim? {rw_nlp} = {qw_nlp_sim}")
-                                            if qw_nlp_sim >= float(settings.SWIRL_MIN_SIMILARITY):
+                                            if qw_nlp_sim >= float(SWIRL_MIN_SIMILARITY):
                                                 dict_score[field][key] = qw_nlp_sim
                                             else:
                                                 logger.debug(f"{self}: item below SWIRL_MIN_SIMILARITY: {' '.join(qw_list)} ~?= {item}")
@@ -377,8 +394,8 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                             del dict_score[field]
                         ############################################
                         # highlight
-                        item[field] = item[field].replace(settings.SWIRL_HIGHLIGHT_START_CHAR,'')   # remove old
-                        item[field] = item[field].replace(settings.SWIRL_HIGHLIGHT_END_CHAR,'')   # remove old
+                        item[field] = item[field].replace(SWIRL_HIGHLIGHT_START_CHAR,'')   # remove old
+                        item[field] = item[field].replace(SWIRL_HIGHLIGHT_END_CHAR,'')   # remove old
                         field_hits = position_dict(remove_tags(item[field]), extracted_highlights)
                         item['hits'][field] = {}
                         item['hits'][field] = field_hits
@@ -441,7 +458,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                             continue
                         if not dict_score[f][k]:
                             continue
-                        if dict_score[f][k] >= float(settings.SWIRL_MIN_SIMILARITY):
+                        if dict_score[f][k] >= float(SWIRL_MIN_SIMILARITY):
                             rank_adjust = 1.0 + (1.0 / sqrt(item['searchprovider_rank']))
                             if k.endswith('_*') or k.endswith('_s*'):
                                 item['swirl_score'] = item['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k))
