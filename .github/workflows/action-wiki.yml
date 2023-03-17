@@ -1,4 +1,4 @@
-name: Broken link check
+name: Broken link check for wiki
 on:
   workflow_dispatch:
 
@@ -6,7 +6,7 @@ on:
 jobs:
   broken_link_checker_job:
     runs-on: ubuntu-latest
-    name: Check for broken links
+    name: Check for broken links in wiki
     steps:
       - name: Check for broken links in wiki
         id: link-report
