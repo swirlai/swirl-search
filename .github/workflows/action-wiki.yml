@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Check for broken links
     steps:
-      - name: Check for broken links
+      - name: Check for broken links in wiki
         id: link-report
         uses: celinekurpershoek/link-checker@v1.0.2
         with:
