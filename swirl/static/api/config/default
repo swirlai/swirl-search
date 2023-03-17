@@ -1,0 +1,73 @@
+{
+    "type": "swirl",
+    "resultType": "card",
+    "resultLayout": {
+      "summary": [
+        [
+          [
+            [
+              {
+                "type": "title",
+                "fields": [
+                  "title",
+                  "swirl_rank",
+                  "url"
+                ]
+              },
+              {
+                "type": "authorship",
+                "fields": [
+                  "searchprovider",
+                  "author",
+                  "date_published"
+                ]
+              },
+              {
+                "type": "body",
+                "fields": [
+                  "body"
+                ],
+                "max_lines": 4
+              }
+            ]
+          ]
+        ],
+        [
+          [
+            [
+              {
+                "type": "json",
+                "label": null,
+                "fields": [
+                  "payload"
+                ],
+                "delimiter": ", "
+              }
+            ]
+          ]
+        ]
+      ]
+    },
+    "facetLayout": [{
+      "title": "Swirl Filters",
+      "facets": [
+        "Source"
+      ]
+    }],
+    "jsonFacet": {
+      "Source": {
+        "type": "terms",
+        "field": "Source"
+      }
+    },
+    "defaultFilters": {
+      "result_mixer": "result_mixer:RelevancyMixer"
+    },
+    "cart": {
+      "enabled": false,
+      "addText": "Add to Cart...",
+      "addImage": "assets/images/folder_into.png",
+      "removeText": "Remove from Cart...",
+      "removeImage": "assets/images/folder_out.png"
+    }
+  }
