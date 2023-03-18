@@ -254,7 +254,11 @@ class Connector:
                 self.status = 'READY'
                 return
 
-        # to do: review the below it may be dangerous
+        # trim response to requested length
+        if len(self.response) > self.provider.results_per_query:
+            self.response = self.response[:self.provider.results_per_query]
+            self.retrieved = self.provider.results_per_query
+
         self.results = self.response
         return
 
@@ -315,6 +319,7 @@ class Connector:
         # end for
         self.processed_results = result_temp
         self.status = 'READY'
+
         return
 
     ########################################
