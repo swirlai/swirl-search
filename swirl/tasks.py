@@ -14,7 +14,7 @@ import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 logger = get_task_logger(__name__)
@@ -44,7 +44,7 @@ def federate_task(search_id, provider_id, provider_connector, update):
     except TypeError as err:
         message = f'Error: TypeError: {err}'
         logger.error(f'{module_name}: {message}')
-    return 
+    return
 
 ##################################################
 

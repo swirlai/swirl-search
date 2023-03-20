@@ -78,6 +78,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.csrf',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -169,7 +170,7 @@ STATICFILES_FINDERS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CELERY
-from celery.schedules import crontab   
+from celery.schedules import crontab
 
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 CELERY_TASK_SERIALIZER = 'json'
@@ -186,16 +187,25 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BEAT_SCHEDULE = {
     # Executes every hour
-    'expire': { 
-         'task': 'expirer', 
+    'expire': {
+         'task': 'expirer',
          'schedule': crontab(minute=0,hour='*'),
-        },          
+        },
     # Executes every four hours
-    'subscribe': { 
-         'task': 'subscriber', 
+    'subscribe': {
+         'task': 'subscriber',
          'schedule': crontab(minute=0,hour='*/4'),   # minute='*/10'
-        },          
+        },
 }
+
+# EMAIL
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your_sendgrid_username'
+EMAIL_HOST_PASSWORD = 'your_sendgrid_password'
 
 #####################################
 # SWIRL SEARCH
@@ -227,8 +237,8 @@ SWIRL_RELEVANCY_CONFIG = {
 
 SWIRL_MAX_MATCHES = 5
 SWIRL_MIN_SIMILARITY = 0.51
+SWIRL_HIGHLIGHT_START_CHAR = '<em>'
+SWIRL_HIGHLIGHT_END_CHAR = '</em>'
 
 if 'OPENAI_API_KEY' in env:
     OPENAI_API_KEY = env('OPENAI_API_KEY')
-
-

@@ -16,6 +16,20 @@ section {
     align-items: center;
   }
 
+header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
 div {
     width: 1280px;
     color: #fff;
@@ -57,10 +71,14 @@ div {
     background: #0284E9;
 }
 
-
 .menu {
     width: auto;
     font-size: 20px;
+}
+
+.form {
+    width: auto;
+    font-size: 14px;
 }
 
 .flex {
@@ -97,6 +115,18 @@ div {
 
 .result {
     border: 1px solid silver;
+}
+
+.result-title {
+    font-size: 20px;
+}
+
+.result-body {
+    font-size: 17px;
+}
+
+.result-meta {
+    font-size: 13px;
 }
 
 .message{

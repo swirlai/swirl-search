@@ -17,13 +17,15 @@ from django.conf import settings
 
 #############################################    
 
+SWIRL_BANNER_TEXT = getattr(settings, 'SWIRL_BANNER_TEXT', '__S_W_I_R_L__1_._X_______________________________________________________________')
+
 def create_mix_wrapper(result_sets):
 
     # accepts: result sets
     # returns: wrapper around the results
 
     mix_wrapper = {}
-    mix_wrapper['messages'] = [ settings.SWIRL_BANNER_TEXT ]
+    mix_wrapper['messages'] = [ SWIRL_BANNER_TEXT ]
     mix_wrapper['info'] = {}
     for result_set in result_sets:
         for message in result_set.messages:

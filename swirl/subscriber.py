@@ -24,6 +24,8 @@ from datetime import datetime
 
 module_name = 'subscriber.py'
 
+SWIRL_SUBSCRIBE_WAIT = getattr(settings, 'SWIRL_SUBSCRIBE_WAIT', 20)
+
 ##################################################
 ##################################################
 
@@ -67,7 +69,7 @@ def subscriber():
                 search.subscribe = False
             search.save()
         # end if
-        time.sleep(settings.SWIRL_SUBSCRIBE_WAIT)
+        time.sleep(SWIRL_SUBSCRIBE_WAIT)
     # end for
 
     return True

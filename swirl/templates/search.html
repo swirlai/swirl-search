@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Search {{ query|escape }}{% endblock %}
+
+{% block content %}
+
+<form method="get" action="{% url 'search_form' %}">
+    <input type="text" id="query" name="q" value="{{ request.GET.q }}" class="searchbox">
+    <!----input type="hidden" id="search_id" name="search_id" value={{ search_id }}-->
+    <button type="submit" class="button">Search</button>
+</form>
+
+{% if query %}
+    <h2>Metasearch results for: "{{ query|escape }}"</h2>
+    {% for result in results %}
+    {{ result.swirl_rank }}. <b><a href="{{ result.url }}" class="result-title">{{ result.title|safe }}</a></b>
+    <p class="result-body">{{ result.body|safe }}</p>
+    <p class="result-meta"><b>{{ result.searchprovider }}</b> | {{ result.searchprovider_rank }} | Author: {{ result.author|safe }} | Published: {{ result.date_published }} | Retrieved: {{ result.date_retrieved }}</p>
+    {% if result.payload %}
+        <table>
+            <tbody>
+                {% for key, value in result.payload.items %}
+                    <tr>
+                        <td class="result-meta">{{ key }}</td>
+                        <td class="result-meta">{{ value }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    <br/><br/>
+    {% endfor %}
+{% endif %}
+
+{% endblock %}
+

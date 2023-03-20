@@ -9,17 +9,25 @@ from datetime import datetime
 
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User, Group
-from django.http import Http404, HttpResponse, HttpRequest
+from django.http import Http404
 from django.conf import settings
 from django.db import Error
-from django.core.exceptions import ObjectDoesNotExist
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.core.mail import send_mail
+from swirl.utils import paginate
+from django.conf import settings
+from .forms import RegistrationForm
 
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework import viewsets, status
 from rest_framework import permissions
 from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework.views import APIView
+
+import base64
+import hashlib
+import hmac
 
 from swirl.models import *
 from swirl.serializers import *
@@ -38,11 +46,163 @@ SWIRL_OBJECT_DICT = {}
 for t in SWIRL_OBJECT_LIST:
     SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
 
+SWIRL_EXPLAIN = getattr(settings, 'SWIRL_EXPLAIN', True)
+SWIRL_RERUN_WAIT = getattr(settings, 'SWIRL_RERUN_WAIT', 8)
+SWIRL_RESCORE_WAIT = getattr(settings, 'SWIRL_RESCORE_WAIT', 5)
+SWIRL_SUBSCRIBE_WAIT = getattr(settings, 'SWIRL_SUBSCRIBE_WAIT', 20)
+SWIRL_Q_WAIT = getattr(settings, 'SWIRL_Q_WAIT', 7)
+
 ########################################
 
 def index(request):
-    context = {'index': []}
-    return render(request, 'index.html', context)
+    return render(request, 'index.html')
+
+########################################
+
+def registration(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+            login(request, user)
+            # Generate and sign token
+            token = base64.urlsafe_b64encode(user.id.to_bytes(4, 'big')).decode()
+            secret_key = settings.SECRET_KEY.encode()
+            signature = hmac.new(secret_key, token.encode(), hashlib.sha256).hexdigest()
+            # Construct the confirmation URL with the signed token
+            confirmation_url = reverse('registration_confirmation', args=[token, signature])
+            confirmation_url = request.build_absolute_uri(confirmation_url)
+            logger.info(f"{module_name}: User registered: {confirmation_url}")
+            send_mail(
+                'Register to try Swirl Metasearch Hosted!',
+                f'Hello! You have been invited to try Swirl Metasearch! Please click the following link to complete your registration: {confirmation_url}',
+                settings.EMAIL_HOST_USER,
+                [user.email],
+                fail_silently=False,
+            )
+            return redirect('registration_confirmation_sent')
+    else:
+        form = RegistrationForm()
+    return render(request, 'register.html', {'form': form})
+
+########################################
+
+def registration_confirmation_sent(request):
+    return render(request, 'register_sent.html')
+
+########################################
+
+def registration_confirmation(request, token, signature):
+    # Verify the token
+    secret_key = settings.SECRET_KEY.encode()
+    expected_signature = hmac.new(secret_key, token.encode(), hashlib.sha256).hexdigest()
+    if signature != expected_signature:
+        raise Http404
+    # Decode the token and activate the user
+    user_id = int.from_bytes(base64.urlsafe_b64decode(token.encode()), 'big')
+    user = get_object_or_404(User, id=user_id)
+    user.is_active = True
+    user.save()
+    # Add user to everyone group
+    group = Group.objects.get(name='everyone')
+    group.user_set.add(user)
+    group.save()
+    logger.info(f"{module_name}: User confirmed: {user.id} {user.username}")
+    login(request, user)
+    return redirect('index')
+
+########################################
+
+from .forms import SearchForm
+
+def search(request):
+
+    # user = request.user
+    # login(request, user)
+
+    form = SearchForm(request.GET)
+    results = []
+    query = None
+    search_id = 0
+    search = None
+
+    page = 1
+    if 'page' in request.GET.keys():
+        page = int(request.GET['page'])
+
+    mixer = None
+    if 'result_mixer' in request.GET.keys():
+        mixer = str(request.GET['result_mixer'])
+
+    explain = SWIRL_EXPLAIN
+    if 'explain' in request.GET.keys():
+        explain = str(request.GET['explain'])
+        if explain.lower() == 'false':
+            explain = False
+        elif explain.lower() == 'true':
+            explain = True
+
+    if form.is_valid():
+        user = request.user
+        query = form.cleaned_data['q']
+        # search_id = form.cleaned_data['search_id']
+        # if search_id == '':
+        #     search_id = 0  # or any other default value
+        # else:
+        #     search_id = int(search_id)
+        # # end if
+        ns = False
+        if search_id > 0:
+            search = Search.objects.get(id=search_id)
+        if query:
+            if search:
+                if query != search.query_string:
+                    ns = True
+            else:
+                ns = True
+        # end if
+        if ns:
+            # new search
+            try:
+                new_search = Search.objects.create(query_string=query,searchprovider_list=[],owner=user)
+            except Error as err:
+                logger.error(f'Search.create() failed: {err}')
+            new_search.status = 'NEW_SEARCH'
+            new_search.save()
+            search_id = new_search.id
+            res = run_search(search_id)
+            if not res:
+                return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if not Search.objects.filter(id=search_id).exists():
+                return Response('Search object creation failed!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            search = Search.objects.get(id=search_id)
+
+        # form.cleaned_data['search_id'] = search_id
+
+        if search.status.endswith('_READY') or search.status == 'RESCORING':
+            try:
+                # to do: support mixer spec above
+                results = eval(search.result_mixer, {f"{search.result_mixer}": search.result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain).mix()
+                results = results['results']
+            except (NameError, TypeError) as err:
+                message = f'Error: {type(err).__name__}: {err}'
+                logger.error(message)
+                return Response('An error occurred during the search.', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response(f'Search error: {search.status}', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # end if
+    else:
+        form = SearchForm()
+    # end if
+
+    return render(request, 'search.html', {'form': form, 'results': results, 'query': query})
+
+########################################
+
+def error(request):
+    return render(request, 'error.html')
 
 ########################################
 ########################################
@@ -58,6 +218,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     # pagination_class = None
 
+
     def list(self, request):
 
         # check permissions
@@ -70,7 +231,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         serializer = SearchProviderNoCredentialsSerializer(self.queryset, many=True)
         if self.request.user.is_superuser:
             serializer = SearchProviderSerializer(self.queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(paginate(serializer.data, self.request), status=status.HTTP_200_OK)
 
     ########################################
 
@@ -168,7 +329,6 @@ class SearchViewSet(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
     def list(self, request):
-
         # check permissions
         if not request.user.has_perm('swirl.view_search'):
             return Response(status=status.HTTP_403_FORBIDDEN)
@@ -200,7 +360,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             new_search.status = 'NEW_SEARCH'
             new_search.save()
             search_task.delay(new_search.id)
-            time.sleep(settings.SWIRL_Q_WAIT)
+            time.sleep(SWIRL_Q_WAIT)
             return redirect(f'/swirl/results?search_id={new_search.id}')
 
         ########################################
@@ -209,7 +369,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         if 'result_mixer' in request.GET.keys():
             otf_result_mixer = str(request.GET['result_mixer'])
 
-        explain = settings.SWIRL_EXPLAIN
+        explain = SWIRL_EXPLAIN
         if 'explain' in request.GET.keys():
             explain = str(request.GET['explain'])
             if explain.lower() == 'false':
@@ -252,7 +412,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                         results = eval(otf_result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, 1, explain, provider).mix()
                     else:
                         # call the mixer for this search provider
-                        results = eval(search.result_mixer)(search.id, search.results_requested, 1, explain, provider).mix()
+                        results = eval(search.result_mixer, {f"{search.result_mixer}": search.result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, 1, explain, provider).mix()
                 except NameError as err:
                     message = f'Error: NameError: {err}'
                     logger.error(f'{module_name}: {message}')
@@ -261,9 +421,11 @@ class SearchViewSet(viewsets.ModelViewSet):
                     message = f'Error: TypeError: {err}'
                     logger.error(f'{module_name}: {message}')
                     return
-                return Response(results, status=status.HTTP_200_OK)
+                return Response(paginate(results, self.request), status=status.HTTP_200_OK)
             else:
                 tries = tries + 1
+                if tries > SWIRL_RERUN_WAIT:
+                    return Response(f'Timeout: {tries}, {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 time.sleep(1)
             # end if
         # end if
@@ -296,7 +458,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             rerun_search.messages.append(message)
             rerun_search.save()
             search_task.delay(rerun_search.id)
-            time.sleep(settings.SWIRL_RERUN_WAIT)
+            time.sleep(SWIRL_RERUN_WAIT)
             return redirect(f'/swirl/results?search_id={rerun_search.id}')
         # end if
 
@@ -316,7 +478,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
             logger.info(f"{module_name}: ?rescore!")
             rescore_task.delay(rescore_id)
-            time.sleep(settings.SWIRL_RESCORE_WAIT)
+            time.sleep(SWIRL_RESCORE_WAIT)
             return redirect(f'/swirl/results?search_id={rescore_id}')
 
         ########################################
@@ -337,7 +499,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             search.status = 'UPDATE_SEARCH'
             search.save()
             search_task.delay(update_id)
-            time.sleep(settings.SWIRL_SUBSCRIBE_WAIT)
+            time.sleep(SWIRL_SUBSCRIBE_WAIT)
             return redirect(f'/swirl/results?search_id={update_id}')
 
         ########################################
@@ -347,7 +509,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         # security review for 1.7 - OK, filtered by owner
         self.queryset = Search.objects.filter(owner=self.request.user)
         serializer = SearchSerializer(self.queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(paginate(serializer.data, self.request), status=status.HTTP_200_OK)
 
     ########################################
 
@@ -459,7 +621,6 @@ class ResultViewSet(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
     def list(self, request):
-
         # check permissions
         if not (request.user.has_perm('swirl.view_search') and request.user.has_perm('swirl.view_result')):
             logger.warning(f"User {self.request.user} needs permissions view_search({request.user.has_perm('swirl.view_search')}), view_result({request.user.has_perm('swirl.view_result')})")
@@ -477,7 +638,7 @@ class ResultViewSet(viewsets.ModelViewSet):
         if 'result_mixer' in request.GET.keys():
             otf_result_mixer = str(request.GET['result_mixer'])
 
-        explain = settings.SWIRL_EXPLAIN
+        explain = SWIRL_EXPLAIN
         if 'explain' in request.GET.keys():
             explain = str(request.GET['explain'])
             if explain.lower() == 'false':
@@ -516,7 +677,7 @@ class ResultViewSet(viewsets.ModelViewSet):
                     message = f'Error: TypeError: {err}'
                     logger.error(f'{module_name}: {message}')
                     return
-                return Response(results, status=status.HTTP_200_OK)
+                return Response(paginate(results, self.request), status=status.HTTP_200_OK)
             else:
                 return Response('Result Object Not Ready Yet', status=status.HTTP_503_SERVICE_UNAVAILABLE)
             # end if
@@ -524,7 +685,7 @@ class ResultViewSet(viewsets.ModelViewSet):
             # security review for 1.7 - OK, filtered by owner
             self.queryset = Result.objects.filter(owner=self.request.user)
             serializer = ResultSerializer(self.queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(paginate(serializer.data, self.request), status=status.HTTP_200_OK)
         # end if
 
     ########################################

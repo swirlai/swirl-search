@@ -235,7 +235,8 @@ def search(id):
             break
         search.status = f'FEDERATING_WAIT_{ticks}'
         logger.info(f"{module_name}: {search.status}")
-        if ticks > int(settings.SWIRL_TIMEOUT):
+        SWIRL_TIMEOUT = getattr(settings, 'SWIRL_TIMEOUT', 10)
+        if ticks > int(SWIRL_TIMEOUT):
             logger.info(f"{module_name}_{search.id}: timeout!")
             failed_providers = []
             responding_provider_names = []
@@ -383,7 +384,7 @@ def rescore(id):
         # end if
         for processor in processor_list:
             try:
-                logger.info(f"{module_name}: invoking processor: {processor}")
+                logger.info(f"{module_name}: invoking processor: rescoring: {processor}")
                 post_result_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id)
                 if post_result_processor.validate():
                     results_modified = post_result_processor.process()

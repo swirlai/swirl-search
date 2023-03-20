@@ -4,6 +4,10 @@ FROM python:3.11.1-slim
 RUN apt-get update
 RUN apt-get -y upgrade openssl
 
+# try to upgrade to a more recent vesion of openssl
+RUN apt-get update
+RUN apt-get -y upgrade openssl
+
 # RUN sudo echo 'nameserver 8.8.8.8'>/etc/resolv.conf
 RUN apt-get update -y
 RUN apt-get install apt-file -y
@@ -29,6 +33,11 @@ RUN mkdir /app
 COPY ./db.sqlite3.dist /app/db.sqlite3
 COPY ./.env.docker /app/.env
 ADD ./swirl /app/swirl
+
+# Install spy glass UI
+RUN mkdir /app/swirl/static/spyglass
+COPY --from=swirlai/spyglass:latest /usr/src/spyglass/ui/dist/spyglass/browser/. /app/swirl/static/spyglass
+
 ADD ./swirl_server /app/swirl_server
 ADD ./SearchProviders /app/SearchProviders
 ADD ./scripts /app/scripts

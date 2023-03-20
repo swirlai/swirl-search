@@ -7,6 +7,11 @@
 #############################################
 
 def create_result_dictionary():
+    """
+    Create an empty ressult dictionary, when entries are made this dictionary, the type must
+    correspond w/ the type that will be mapped from in results_mapping, if the types do not
+    agree, the mapped values will not be added to the results.
+    """
 
     dict_result = {}
     dict_result['swirl_rank'] = 0
@@ -19,6 +24,8 @@ def create_result_dictionary():
     dict_result['date_published'] = ""
     dict_result['date_retrieved'] = ""
     dict_result['author'] = ""
+    dict_result['title_hit_highlights'] = []
+    dict_result['body_hit_highlights'] = []
     dict_result['payload'] = {}
     return dict_result
 
@@ -26,6 +33,24 @@ def create_result_dictionary():
 # fix for https://github.com/swirlai/swirl-search/issues/34
 
 from ..nltk import ps
+
+import json
+
+def decode_single_quote_json(json_string):
+    """
+        Replace single quotes with double quotes and
+        decode to a dictionary.
+        Log error and return empty on failure
+    """
+    if not json_string:
+        return {}
+
+    json_string = json_string.replace("'", '"')
+    try:
+        return json.JSONDecoder().decode(json_string)
+    except json.JSONDecodeError as e:
+        logger.error(f"Error decoding JSON: {e}")
+        return {}
 
 def stem_string(s):
 
@@ -96,16 +121,35 @@ def remove_numeric(string_or_list):
 
 #############################################
 
+from django.conf import settings
+
+SWIRL_HIGHLIGHT_START_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_START_CHAR', '*')
+SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')
+
 def highlight_list(text, word_list):
 
     highlighted_list = []
     for term in text.split():
         if term in word_list:
-            highlighted_list.append(f"*{term}*")
+            highlighted_list.append(f"{SWIRL_HIGHLIGHT_START_CHAR}{term}{SWIRL_HIGHLIGHT_END_CHAR}")
         else:
             highlighted_list.append(term)
 
     return ' '.join(highlighted_list)
+
+#############################################
+
+def position_dict(text, word_list):
+    if type(word_list) != list:
+        return []
+    if word_list == []:
+        return []  
+    positions = {word: [] for word in word_list}
+    words = text.split()
+    for i, word in enumerate(words):
+        if word in word_list:
+            positions[word].append(i)
+    return positions
 
 #############################################
 # fix for https://github.com/swirlai/swirl-search/issues/33
@@ -124,6 +168,16 @@ def remove_tags(html):
 
     # return data by retrieving the tag content
     return ' '.join(soup.stripped_strings)
+
+# Function to remove tags
+def extract_text_from_tags(html,tag):
+    # parse html content
+    soup = bs(html, "html.parser")
+    ret = []
+    for t in soup.find_all(tag):
+        ret.append(t.text)
+    # return data by retrieving the tag content
+    return ret
 
 #############################################
 
@@ -245,6 +299,9 @@ def capitalize(list_lower, list_unknown):
 #############################################
 
 def capitalize_search(list_lower, list_unknown):
+    """
+
+    """
 
     if type(list_lower) != list:
         return None

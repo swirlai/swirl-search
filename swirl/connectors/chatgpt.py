@@ -64,7 +64,6 @@ class ChatGPT(Connector):
             return 
 
         self.query_to_provider = prompted_query
-        logger.info(f"{self}: ChatGPT prompt: {self.query_to_provider}")
 
         completions = openai.Completion.create(
             engine="text-davinci-002",

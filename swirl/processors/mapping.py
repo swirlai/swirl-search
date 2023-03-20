@@ -2,17 +2,20 @@
 @author:     Sid Probstein
 @contact:    sid@swirl.today
 '''
+import logging
+from celery.utils.log import get_task_logger
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger()
 
 from datetime import datetime
-
 from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
 from swirl.processors.processor import *
-from swirl.processors.utils import create_result_dictionary
-  
-#############################################    
-#############################################       
+from swirl.processors.utils import create_result_dictionary, extract_text_from_tags
+
+#############################################
+#############################################
 
 from dateutil import parser
 
@@ -23,11 +26,39 @@ class MappingResultProcessor(ResultProcessor):
 
     type="MappingResultProcessor"
 
+    def put_query_terms_from_provider(self, swirl_key, text, lBuf):
+        """ remember query terms from the hihglight field of each result"""
+        if not ( swirl_key and text ):
+            return
+        if swirl_key not in ('title_hit_highlights','body_hit_highlights'):
+            return
+        for teaser_text in text:
+            hits = extract_text_from_tags(teaser_text, 'em')
+            for hit in hits:
+                lBuf.append(str(hit).lower())
+
+    def get_opt_result_processor_feedback_json(self, lBuf):
+        """
+        Create a JSON object from the list of query terms:
+        """
+        if not lBuf or len(lBuf)<=0:
+            return None
+
+        ret = {
+                'result_processor_feedback': {
+                'query': {
+	                'provider_query_terms': sorted(list(set(lBuf)))
+                }
+            }
+        }
+        return ret
+
     def process(self):
 
         list_results = []
-        json_types = [str,int,float,list,dict]
+        provider_query_term_results = []
 
+        json_types = [str,int,float,list,dict]
         use_payload = True
         if 'NO_PAYLOAD' in self.provider.result_mappings:
             use_payload = False
@@ -39,7 +70,7 @@ class MappingResultProcessor(ResultProcessor):
             # report searchprovider rank, not ours
             swirl_result['searchprovider_rank'] = result_number
             swirl_result['date_retrieved'] = str(datetime.now())
-            #############################################  
+            #############################################
             # mappings are in form swirl_key=source_key, where source_key can be a json_string e.g. _source.customer_full_name
             if self.provider.result_mappings:
                 mappings = self.provider.result_mappings.split(',')
@@ -89,7 +120,7 @@ class MappingResultProcessor(ResultProcessor):
                         jxp_key = f'$.{k[1:-1]}'
                         try:
                             jxp = parse(jxp_key)
-                            # search result for this 
+                            # search result for this
                             matches = [match.value for match in jxp.find(result)]
                         except JsonPathParserError:
                             self.error(f'JsonPathParser: {err} in jsonpath_ng.find: {jxp_key}')
@@ -136,25 +167,44 @@ class MappingResultProcessor(ResultProcessor):
                                                     swirl_result[swirl_key] = str(parser.parse(result_dict[source_key]))
                                                 else:
                                                     payload[swirl_key+"_"+source_key] = str(parser.parse(result_dict[source_key]))
+                                                # end if
                                             else:
-                                                if swirl_result[swirl_key] == "":
+                                                if not swirl_result[swirl_key]:
                                                     swirl_result[swirl_key] = result_dict[source_key]
+                                                    self.put_query_terms_from_provider(swirl_key,
+                                                                                   swirl_result[swirl_key],
+                                                                                   provider_query_term_results)
                                                 else:
                                                     payload[swirl_key+"_"+source_key] = result_dict[source_key]
+                                                # end if
                                         else:
+                                            # not same type, convert it
+                                            if 'date' in swirl_key.lower():
+                                                if swirl_result[swirl_key] == "":
+                                                    if type(result_dict[source_key]) == int:
+                                                        swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]/1000))
+                                                    # end if
+                                                # end if
                                             # different type, so payload it
                                             if use_payload:
                                                 payload[swirl_key] = result_dict[source_key]
                                         # end if
                                     else:
                                         if use_payload:
-                                            payload[swirl_key] = result_dict[source_key]
+                                            # to do: check type!!!
+                                            if type(result_dict[source_key]) not in [str, int, list, dict]:
+                                                payload[swirl_key] = str(result_dict[source_key])
+                                            else:
+                                                payload[swirl_key] = result_dict[source_key]
                                         # end if
                                     # end if
                                 else:
                                     # no target key specified, so it will go into payload with that name
                                     # since it was specified we do not check NO_PAYLOAD
-                                    payload[source_key] = result_dict[source_key]
+                                    if type(result_dict[source_key]) not in [str, int, list, dict]:
+                                        payload[source_key] = str(result_dict[source_key])
+                                    else:
+                                        payload[source_key] = result_dict[source_key]
                                 # end if
                             else:
                                 # no results for this mapping were found - normal
@@ -164,7 +214,7 @@ class MappingResultProcessor(ResultProcessor):
                 # end for
             # end if
 
-            #############################################  
+            #############################################
             # copy remaining fields, avoiding collisions
             for key in result.keys():
                 if key in swirl_result.keys():
@@ -206,9 +256,15 @@ class MappingResultProcessor(ResultProcessor):
             swirl_result['searchprovider'] = self.provider.name
             list_results.append(swirl_result)
             result_number = result_number + 1
-            if result_number > self.provider.results_per_query:  
+            # stop if we have enough results
+            if result_number > self.provider.results_per_query:
+                logger.warning("Truncating extra results, found & retrieved may be incorrect")
                 break
+            # unique list of terms from highligts
         # end for
 
+        fb = self.get_opt_result_processor_feedback_json(provider_query_term_results)
+        if fb:
+            list_results.append(fb)
         self.processed_results = list_results
         return self.processed_results

@@ -30,7 +30,11 @@ urlpatterns = [
     ), name='swagger-ui'),
     path('', views.index, name='index'),
     path('index.html', views.index, name='index'),
+    path('error.html', views.error, name='error'),
+    path('search.html', views.search, name='search_form'),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('register/', views.registration, name='register'),
+    path('register/confirm/<str:token>/<str:signature>/', views.registration_confirmation, name='registration_confirmation'),
+    path('register/confirm_sent/', views.registration_confirmation_sent, name='registration_confirmation_sent'),
     path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
-
