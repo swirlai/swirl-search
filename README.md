@@ -1,6 +1,6 @@
 <h1>&nbsp; SWIRL METASEARCH <img alt='Swirl Metasearch Logo' src='https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl-logo-only-blue.png' width=38 align=left /></h1>
 
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=blue&logoColor=blue&style=flat)](https://github.com/swirlai/swirl-search/blob/main/LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=blue&logoColor=blue&style=flat)](https://opensource.org/license/apache-2-0/)
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat&label=Release)](https://github.com/swirlai/swirl-search/releases)
 [![Docker Build](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml)
 [![Tests](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml)
