@@ -1,23 +1,24 @@
-<h1> &nbsp; SWIRL METASEARCH <img alt='SWIRL Logo' src='https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/swirl_logo_notext_200.jpg' width=38 align=left /></h1>
+<h1>&nbsp; SWIRL METASEARCH <img alt='Swirl Metasearch Logo' src='https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl-logo-only-blue.png' width=38 align=left /></h1>
 
-[![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat)](https://github.com/swirlai/swirl-search/releases)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=blue&logoColor=blue&style=flat)](https://opensource.org/licenses/Apache-2.0)
-![Docker Build Status(https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg)
-[![Slack](https://img.shields.io/badge/slack--channel-gray?logo=slack&logoColor=black&style=flat)](https://join.slack.com/t/swirlsearch/shared_invite/zt-1n7xophls-F4SzYecGniOFB95xI6WlAw)
-[![Newsletter](https://img.shields.io/badge/newsletter-gray?logo=revue&logoColor=black&style=flat)](https://groups.google.com/g/swirl-announce)
-[![Twitter](https://img.shields.io/twitter/follow/SWIRL_SEARCH?color=gray&logoColor=black&style=flat)](https://twitter.com/SWIRL_SEARCH)
- 
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=blue&logoColor=blue&style=flat)](https://opensource.org/license/apache-2-0)
+[![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat&label=Release)](https://github.com/swirlai/swirl-search/releases)
+[![Docker Build](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml)
+[![Tests](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml)
+[![Slack](https://img.shields.io/badge/Slack--channel-gray?logo=slack&logoColor=black&style=flat)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
+[![Newsletter](https://img.shields.io/badge/Newsletter-gray?logo=revue&logoColor=black&style=flat)](https://groups.google.com/g/swirl-announce)
+[![Twitter](https://img.shields.io/twitter/follow/SWIRL_SEARCH?label=Follow%20%40SWIRL_SEARCH&color=gray&logoColor=black&style=flat)](https://twitter.com/SWIRL_SEARCH)
+
 SWIRL adapts and distributes queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services etc - and uses AI ([Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/)) to re-rank the unified results *without* extracting and indexing *anything*. It's intended for use by developers and data scientists who want to solve multi-silo search problems from enterprise search to new monitoring & alerting solutions that push information to users continuously.
 
-![Metasearch diagram](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/swirl_arch_diagram.jpg)
+![Metasearch diagram](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_arch_diagram.jpg)
 
 Built on the Python/Django/RabbitMQ stack, SWIRL includes connectors to Apache [Solr](https://solr.apache.org/), [ChatGPT](https://openai.com/blog/chatgpt/), [Elastic](https://www.elastic.co/cn/downloads/elasticsearch), [OpenSearch](https://opensearch.org/downloads.html) | [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery) plus generic HTTP/GET/JSON with configurations for premium services like [Google's Programmable Search Engine](https://programmablesearchengine.google.com/about/), [Miro](https://miro.com/app/) and [Northern Light Research](https://northernlight.com/). 
 
-:star: Learn more: [Documentation Wiki](https://github.com/swirlai/swirl-search/wiki)
+Learn more: [Documentation Wiki](https://github.com/swirlai/swirl-search/wiki)
 
 <br/>
 
-# Try SWIRL Now:
+# Try SWIRL Now
 
 * Download [https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml](https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml)
 
@@ -69,7 +70,9 @@ The search page will appear. Login with username `admin` and password `password`
 http://localhost:8000/swirl/search/?q=enterprise+search 
 ```
 
-Ranked results will appear in just a few seconds!
+* Ranked results will appear in just a few seconds!
+
+*SWIRL includes 3 Google Programmable Search Engines (PSEs), complete with shared credentials, to get you up and running with right away. These credentials are shared with the SWIRL Community and may return a 429 Too Many Requests error if they are overused.*
 
 ```
 
@@ -242,15 +245,15 @@ Ranked results will appear in just a few seconds!
 
 <br/>
 
-:warning: Warning: The Docker version of SWIRL does *not* retain results or configuration when shut down!
+**Warning: The Docker version of SWIRL does *not* retain results or configuration when shut down!**
 
-:star: Learn more: [Quick Start Guide](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start)
+Learn more: [Quick Start Guide](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start)
 
 <br/>
 
 # Try Hosted SWIRL
 
-### If interested in a free trial of SWIRL as a managed service, please [contact support](#support)!
+### If interested in a free trial of SWIRL as a managed service, please [contact support](mailto:support@swirl.today)!
 
 <br/>
 
@@ -258,7 +261,7 @@ Ranked results will appear in just a few seconds!
 
 | Version                     | Date                        | Notes | 
 | --------------------------- | --------------------------- | ----- |
-| [SWIRL SEARCH 1.9](https://github.com/swirlai/swirl-search/releases/tag/v1.9) | 02-14-2023 | [Release 1.9](./docs/RELEASE_NOTES_1.9.md) |
+| [Swirl Metasearch 1.9](https://github.com/swirlai/swirl-search/releases/tag/v1.9) | 02-14-2023 | [Release 1.9](https://github.com/swirlai/swirl-search/releases) |
 
 <br/>
 
@@ -304,7 +307,7 @@ Ranked results will appear in just a few seconds!
 
 # Support
 
-* [Join SWIRL SEARCH #support on Slack!](https://join.slack.com/t/swirlsearch/shared_invite/zt-1n7xophls-F4SzYecGniOFB95xI6WlAw)
+* [Join Swirl Metasearch on Slack!](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 
 * [Create an Issue](https://github.com/swirlai/swirl-search/issues) if something doesn't work, isn't clear, or should be documented
 

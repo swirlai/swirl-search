@@ -1,4 +1,8 @@
 FROM python:3.11.1-slim
+# try to upgrade to a more recent vesion of openssl
+
+RUN apt-get update
+RUN apt-get -y upgrade openssl
 
 # try to upgrade to a more recent vesion of openssl
 RUN apt-get update
