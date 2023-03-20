@@ -184,7 +184,7 @@ def search(request):
         if search.status.endswith('_READY') or search.status == 'RESCORING':
             try:
                 # to do: support mixer spec above
-                results = eval(search.result_mixer)(search.id, search.results_requested, page, explain).mix()
+                results = eval(search.result_mixer, {f"{search.result_mixer}": search.result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain).mix()
                 results = results['results']
             except (NameError, TypeError) as err:
                 message = f'Error: {type(err).__name__}: {err}'
@@ -412,7 +412,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                         results = eval(otf_result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, 1, explain, provider).mix()
                     else:
                         # call the mixer for this search provider
-                        results = eval(search.result_mixer)(search.id, search.results_requested, 1, explain, provider).mix()
+                        results = eval(search.result_mixer, {f"{search.result_mixer}": search.result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, 1, explain, provider).mix()
                 except NameError as err:
                     message = f'Error: NameError: {err}'
                     logger.error(f'{module_name}: {message}')

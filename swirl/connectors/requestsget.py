@@ -286,14 +286,15 @@ class RequestsGet(Connector):
             # check retrieved 
             if response:
                 if retrieved > -1 and retrieved != len(response):
-                    self.warning(f"retrieved does not match length of response {len(response)}")
+                    self.warning(f"retrieved != length of response {len(response)}")
             else:
                 # to do: review
                 self.error(f"no results extracted from response! found:{found}")
                 if found != 0:
                     found = retrieved = 0
                 # end if
-            if retrieved == -1:       
+            if retrieved == -1:   
+                # to do: this is probably wrong    
                 retrieved = len(response)
                 self.retrieved = retrieved
             if found == -1:
@@ -311,6 +312,7 @@ class RequestsGet(Connector):
             if retrieved < 10:
                 # no more pages, so don't request any
                 break
+
             start = start + 10 # get only as many pages as required to satisfy provider results_per_query setting, in increments of 10
 
             time.sleep(1)
@@ -318,10 +320,8 @@ class RequestsGet(Connector):
         # end for
 
         self.found = found
-        self.retrieved = retrieved
-        
+        self.retrieved = retrieved        
         self.response = response
-        logger.debug(f"{self}: response: {self.response}")
         
         return
 
