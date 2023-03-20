@@ -1,10 +1,16 @@
-name: Latest Docker Build
+name: Docker Build
 
 # Build a multi-arch docker image for SWIRL
+# comment to start build
+
+# on:  # disabling 05:05 daily build and leaving this syntax for posterity 
+#  schedule:
+#  - cron: '05 05 * * *'
 
 on:
-  schedule:
-  - cron: '05 05 * * *'
+  push:
+    # only trigger on branches, not on tags
+    branches: 'main'
 
 jobs:
 
@@ -18,5 +24,11 @@ jobs:
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
     - name: builder bootstrap
       run: docker buildx create --name devBuilder --use --bootstrap
-    - name: Build the Docker image   
+    - name: Build the Docker image
       run: docker buildx build -t swirlai/swirl-search:latest --platform linux/amd64,linux/arm64 --push .
+    - name: Update repo description
+      uses: peter-evans/dockerhub-description@v3.3.0
+      with:
+        username: ${{ secrets.DOCKER_USERNAME_X }}
+        password: ${{ secrets.DOCKER_PASSWORD_X }}
+        repository: swirlai/swirl-search
