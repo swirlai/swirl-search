@@ -123,12 +123,15 @@ def remove_numeric(string_or_list):
 
 from django.conf import settings
 
+SWIRL_HIGHLIGHT_START_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_START_CHAR', '*')
+SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')
+
 def highlight_list(text, word_list):
 
     highlighted_list = []
     for term in text.split():
         if term in word_list:
-            highlighted_list.append(f"{settings.SWIRL_HIGHLIGHT_START_CHAR}{term}{settings.SWIRL_HIGHLIGHT_END_CHAR}")
+            highlighted_list.append(f"{SWIRL_HIGHLIGHT_START_CHAR}{term}{SWIRL_HIGHLIGHT_END_CHAR}")
         else:
             highlighted_list.append(term)
 
@@ -137,18 +140,16 @@ def highlight_list(text, word_list):
 #############################################
 
 def position_dict(text, word_list):
-
-    position_dict = {}
-    text_list = text.split()
-    for term in text_list:
-        if term in word_list:
-            if term in position_dict:
-                position_dict[term].append(text_list.index(term))
-            else:
-                position_dict[term] = []
-                position_dict[term].append(text_list.index(term))
-
-    return position_dict
+    if type(word_list) != list:
+        return []
+    if word_list == []:
+        return []  
+    positions = {word: [] for word in word_list}
+    words = text.split()
+    for i, word in enumerate(words):
+        if word in word_list:
+            positions[word].append(i)
+    return positions
 
 #############################################
 # fix for https://github.com/swirlai/swirl-search/issues/33

@@ -12,9 +12,10 @@ from nltk.corpus import stopwords
 module_name = 'nltk.py'
 
 try:
-    stopwords = set(stopwords.words(settings.SWIRL_DEFAULT_QUERY_LANGUAGE))
+    SWIRL_DEFAULT_QUERY_LANGUAGE = getattr(settings, 'SWIRL_DEFAULT_QUERY_LANGUAGE', 'english')
+    stopwords = set(stopwords.words(SWIRL_DEFAULT_QUERY_LANGUAGE))
 except OSError:
-    logger.warning(f"{module_name}: Warning: No stopwords for language: {settings.SWIRL_DEFAULT_QUERY_LANGUAGE}, check SWIRL_DEFAULT_QUERY_LANGUAGE in swirl_server/settings.py")
+    logger.warning(f"{module_name}: Warning: No stopwords for language: {SWIRL_DEFAULT_QUERY_LANGUAGE}, check SWIRL_DEFAULT_QUERY_LANGUAGE in swirl_server/settings.py")
     logger.warning(f"{module_name}: Warning: Using english stopwords")
     stopwords = set(stopwords.words('english'))
 

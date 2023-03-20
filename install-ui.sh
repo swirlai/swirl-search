@@ -9,6 +9,7 @@
 # Options:
 #   -h, --help           Display this help message
 # Parse command-line options
+
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -h|--help) print_help=true ;;
