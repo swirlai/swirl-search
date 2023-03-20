@@ -115,8 +115,6 @@ After 5-7 seconds, this should bring up a unified, relevancy ranked result list:
 
 ![SWIRL Search Results, Google PSE](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/pse/swirl_results_mixed_1.png)
 
-<br/>
-
 ### Congratulations, SWIRL docker is installed!
 
 ## Notes
@@ -127,7 +125,7 @@ Please [contact support](#support) for a docker image suitable for production de
 
 <br/>
 
-:info: Important: SWIRL in Docker cannot use localhost to connect to local endpoints!
+**Important: SWIRL in Docker cannot use localhost to connect to local endpoints!**
 
 For example: if you have solr running on localhost:8983, SWIRL will be unable to contact it from inside the docker container using that URL.
 
