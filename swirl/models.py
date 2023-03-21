@@ -45,7 +45,7 @@ class SearchProvider(models.Model):
         ('M365OneDrive', 'M365 One Drive'),
         ('M365OutlookCalendar', 'M365 Outlook Calendar'),
         ('M365SharePointSites', 'M365 SharePoint Sites'),
-    ]
+   ]
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
     query_template = models.CharField(max_length=2048, default='{url}?q={query_string}', blank=True)
@@ -190,3 +190,18 @@ class Result(models.Model):
     def __str__(self):
         signature = str(self.id) + ':' + str(self.search_id) + ':' + str(self.searchprovider)
         return signature
+
+class QueryTransform(models.Model) :
+    id = models.BigAutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    shared = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+    QUERY_TRASNSFORM_TYPE_CHOICES = [
+        ('rewrite', 'Rewrite'),
+        ('synonym', 'Synonym' ),
+        ('bag', 'Synonym Bag' )
+    ]
+    qrx_type =  models.CharField(max_length=64, default='', choices=QUERY_TRASNSFORM_TYPE_CHOICES)
+    config_content = models.TextField()

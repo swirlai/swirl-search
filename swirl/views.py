@@ -3,6 +3,7 @@
 @contact:    sid@swirl.today
 '''
 
+from swirl.mixers import *
 import time
 import logging as logger
 from datetime import datetime
@@ -18,22 +19,22 @@ from django.contrib.auth import login
 from django.core.mail import send_mail
 from swirl.utils import paginate
 from django.conf import settings
-from .forms import RegistrationForm
+from .forms import RegistrationForm, QueryTransformForm
 
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework import viewsets, status
 from rest_framework import permissions
 from rest_framework.response import Response
 
+import csv
 import base64
 import hashlib
 import hmac
 
 from swirl.models import *
 from swirl.serializers import *
-from swirl.models import SearchProvider, Search, Result
-from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer
-from swirl.mixers import *
+from swirl.models import SearchProvider, Search, Result, QueryTransform
+from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTrasnformNoCredentialsSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
 
@@ -239,7 +240,7 @@ def authenticators(request):
             })
         results = remove_duplicates(results)
         return render(request, 'authenticators.html', {'authenticators': results})
-    
+
     if request.method == 'POST':
         authenticator = request.POST.get('authenticator_name')
         res = SWIRL_AUTHENTICATORS_DICT[authenticator]().update_token(request)
@@ -820,3 +821,139 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
+
+########################################
+########################################
+
+class QueryTransformViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for managing SearchProviders.
+    Use GET to list all, POST to create a new one.
+    Add /<id>/ to DELETE, PUT or PATCH one.
+    """
+    queryset = QueryTransform.objects.all()
+    serializer_class = QueryTransformSerializer
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    # pagination_class = None
+
+    def list(self, request):
+
+        # check permissions
+        # TODO: fix perm
+        if not request.user.has_perm('swirl.view_searchprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        shared_xforms = QueryTransform.objects.filter(shared=True)
+        self.queryset = shared_xforms | QueryTransform.objects.filter(owner=self.request.user)
+
+        serializer = QueryTransformSerializer(self.queryset, many=True)
+        if self.request.user.is_superuser:
+            serializer = QueryTransformSerializer(self.queryset, many=True)
+        return Response(paginate(serializer.data, self.request), status=status.HTTP_200_OK)
+
+    ########################################
+
+    def create(self, request):
+
+        # check permissions
+        # DN FIX ME, perms
+        if not request.user.has_perm('swirl.add_searchprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        # by default, if the user is superuser, the searchprovider is shared
+        if self.request.user.is_superuser:
+           request.data['shared'] = 'true'
+
+        serializer = QueryTransformSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(owner=self.request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    ########################################
+
+    def retrieve(self, request, pk=None):
+
+        # check permissions
+        ## DN FIX ME PERSM
+        if not request.user.has_perm('swirl.view_searchprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        # security review for 1.7 - OK, filtered by owner
+        if not (QueryTransform.objects.filter(pk=pk, owner=self.request.user).exists() or QueryTransform.objects.filter(pk=pk, shared=True).exists()):
+            return Response('QueryTransform Object Not Found', status=status.HTTP_404_NOT_FOUND)
+
+        query_xfr = QueryTransform.objects.get(pk=pk)
+
+        if not self.request.user == query_xfr.owner:
+            serializer = QueryTrasnformNoCredentialsSerializer(query_xfr)
+        else:
+            serializer = QueryTransform(query_xfr)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    ########################################
+
+    def update(self, request, pk=None):
+
+        # check permissions
+        ## FIXEM DN PERMS
+        if not request.user.has_perm('swirl.change_searchprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        # security review for 1.7 - OK, filtered by owner
+        # note: shared providers cannot be updated
+        if not QueryTransform.objects.filter(pk=pk, owner=self.request.user).exists():
+            return Response('QueryTransform Object Not Found', status=status.HTTP_404_NOT_FOUND)
+
+        query_xfr = SearchProvider.objects.get(pk=pk)
+        query_xfr.date_updated = datetime.now()
+        serializer = SearchProviderSerializer(instance=query_xfr, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        # security review for 1.7 - OK, saved with owner
+        serializer.save(owner=self.request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    ########################################
+
+    def destroy(self, request, pk=None):
+        # check permissions
+        ## DN FIX ME PERMS
+        if not request.user.has_perm('swirl.delete_searchprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        # security review for 1.7 - OK, filtered by owner
+        # note: shared providers cannot be destroyed
+        if not QueryTransform.objects.filter(pk=pk, owner=self.request.user).exists():
+            return Response('QueryTransform Object Not Found', status=status.HTTP_404_NOT_FOUND)
+
+        searchprovider = SearchProvider.objects.get(pk=pk)
+        searchprovider.delete()
+        return Response('QueryTranformation Object Deleted', status=status.HTTP_410_GONE)
+
+def query_transform_form(request):
+    if request.method == 'POST':
+        form = QueryTransformForm(request.POST, request.FILES)
+        if form.is_valid():
+            csv_file = request.FILES['file']
+            content = csv_file.read().decode('utf-8')
+            reader = csv.reader(content.splitlines())
+
+            # Convert the CSV data to a string format suitable for the TextField
+            csv_content = "\n".join([",".join(row) for row in reader])
+
+            # Get the name from the form or set it to None if it's not provided
+            qrx_name = form.cleaned_data['name'] or None
+
+            # Get the type of the transform
+            in_type = form.cleaned_data.get('content_type')
+
+            # Save the content in a new CSVData object
+            qrx_data = QueryTransform(config_content=csv_content, qrx_type=in_type, owner=request.user, name=qrx_name)
+
+            # Persist it
+            qrx_data.save()
+
+            return redirect('index') # Replace 'success' with the name of your success URL
+    else:
+        form = QueryTransformForm
+    return render(request, 'query_transform.html', {'form': form})

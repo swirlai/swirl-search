@@ -16,6 +16,7 @@ router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'searchproviders', views.SearchProviderViewSet, basename='searchproviders')
+router.register(r'querytransforms', views.QueryTransformViewSet, basename='querytransforms')
 router.register(r'search', views.SearchViewSet, basename='search')
 router.register(r'results', views.ResultViewSet, basename='results')
 
@@ -29,6 +30,7 @@ urlpatterns = [
         template_name='swagger-ui.html',
         extra_context={'schema_url':'openapi-schema'}
     ), name='swagger-ui'),
+    path('query_transform_form/', views.query_transform_form, name='query_transform_form'),
     path('', views.index, name='index'),
     path('index.html', views.index, name='index'),
     path('error.html', views.error, name='error'),

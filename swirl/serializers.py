@@ -5,7 +5,7 @@
 
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from swirl.models import SearchProvider, Search, Result
+from swirl.models import SearchProvider, Search, Result,QueryTransform
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -40,3 +40,15 @@ class ResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = Result
         fields = ['id', 'owner', 'date_created', 'date_updated', 'search_id', 'searchprovider', 'query_to_provider', 'query_processors', 'result_processors', 'result_processor_json_feedback', 'messages', 'status', 'retrieved', 'found', 'time', 'json_results', 'tags']
+
+class QueryTransformSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+    class Meta:
+        model = QueryTransform
+        fields = ['id', 'name','owner','shared','date_created','date_updated','qrx_type','config_content']
+
+class QueryTrasnformNoCredentialsSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+    class Meta:
+        model = QueryTransform
+        fields = ['id', 'name','owner','shared', 'date_created','date_updated','qrx_type','config_content']
