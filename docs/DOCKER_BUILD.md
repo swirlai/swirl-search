@@ -65,7 +65,7 @@ The container ID in this example is swirl-c-app-1. It will be different if you c
 
 Moments later, Docker desktop will reflect the running container:
 
-![SWIRL running in Docker](/docs/images/swirl_docker.png)
+![SWIRL running in Docker](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_docker.png)
 
 <br/>
 
@@ -105,7 +105,7 @@ swirl_load.py: fed 3 into SWIRL, 0 errors
 
 This should bring up the following, or similar:
 
-![SWIRL Search Provider List, Google PSE](/docs/images/pse/swirl_spl_list.png)
+![SWIRL Search Provider List, Google PSE](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/pse/swirl_spl_list.png)
 
 ## Run a Query!
 
@@ -113,9 +113,7 @@ This should bring up the following, or similar:
 
 After 5-7 seconds, this should bring up a unified, relevancy ranked result list:
 
-![SWIRL Search Results, Google PSE](/docs/images/pse/swirl_results_mixed_1.png)
-
-<br/>
+![SWIRL Search Results, Google PSE](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/pse/swirl_results_mixed_1.png)
 
 ### Congratulations, SWIRL docker is installed!
 
@@ -127,7 +125,7 @@ Please [contact support](#support) for a docker image suitable for production de
 
 <br/>
 
-:info: Important: SWIRL in Docker cannot use localhost to connect to local endpoints!
+**Important: SWIRL in Docker cannot use localhost to connect to local endpoints!**
 
 For example: if you have solr running on localhost:8983, SWIRL will be unable to contact it from inside the docker container using that URL.
 
