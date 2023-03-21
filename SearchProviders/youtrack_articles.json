@@ -1,0 +1,24 @@
+{
+    "name": "Articles (web/YouTrack.cloud)",
+    "active": true,
+    "default": true,
+    "connector": "RequestsGet",
+    "url": "https://<your-domain>.youtrack.cloud/api/articles?fields=idReadable,reporter(fullName),summary,content,attachments(name),project(name),parentArticle(summary),childArticles(summary),created,updatedBy(fullName),comments(text)",
+    "query_template": "{url}&query={query_string}",
+    "query_processor": "",
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "",
+    "result_processor": "",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "title=summary,body=content,date_published=created,author=reporter.fullName,url='https://<your-domain>.youtrack.cloud/articles/{idReadable}',project.name,attachments[*].name,parentArticle.summary,childArticles[*].summary,updatedBy.fullName,comments[*].text,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "bearer=your-youtrack-permanent-token",
+    "tags": [
+        "Articles"
+    ]
+}

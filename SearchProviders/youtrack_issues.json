@@ -1,0 +1,24 @@
+{
+    "name": "Issues (web/YouTrack.cloud)",
+    "active": false,
+    "default": false,
+    "connector": "RequestsGet",
+    "url": "https://<your-domain>.youtrack.cloud/api/issues?fields=project(name),idReadable,tags(name),summary,description,reporter(fullName),created,votes,commentsCount,comments(text),updater(fullName)",
+    "query_template": "{url}&query={query_string}",
+    "query_processor": "",
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "",
+    "result_processor": "",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "title=summary,body=description,date_published=created,author=reporter.fullName,url='https://<your-domain>.youtrack.cloud/issue/{idReadable}',project.name,tags[*].name,votes,commentsCount,comments[*].text,updater.fullName,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "bearer=your-youtrack-permanent-token",
+    "tags": [
+        "Issues"
+    ]
+}

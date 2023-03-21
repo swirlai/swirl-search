@@ -185,10 +185,12 @@ class RequestsGet(Connector):
             mapped_response = {}
             json_data = response.json()
             if not json_data:
-                self.error("Err")
-            if len(json_data) == 0:
-                self.error("request.get succeeded, but no json data returned")
-                return
+                # no results, not an error
+                self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
+                self.retrieved = 0
+                self.found = 0
+                self.status = 'READY'
+                return   
             # extract results using mappings
             for mapping in RESPONSE_MAPPING_KEYS:
                 if mapping == 'RESULT':
