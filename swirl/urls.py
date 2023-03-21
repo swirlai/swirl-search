@@ -31,6 +31,8 @@ urlpatterns = [
         extra_context={'schema_url':'openapi-schema'}
     ), name='swagger-ui'),
     path('query_transform_form/', views.query_transform_form, name='query_transform_form'),
+
+    path('querytransforms/list', views.QueryTransformViewSet.as_view({'get': 'list'}), name='querytransforms/list'),
     path('', views.index, name='index'),
     path('index.html', views.index, name='index'),
     path('error.html', views.error, name='error'),
