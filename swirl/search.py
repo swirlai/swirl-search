@@ -28,7 +28,7 @@ for t in SWIRL_OBJECT_LIST:
 
 module_name = 'search.py'
 
-def search(id):
+def search(id, session):
 
     '''
     Execute the search task workflow
@@ -202,7 +202,7 @@ def search(id):
     for provider in providers:
         at_least_one = True
         federation_status[provider.id] = None
-        federation_result[provider.id] = federate_task.delay(search.id, provider.id, provider.connector, update)
+        federation_result[provider.id] = federate_task.delay(search.id, provider.id, provider.connector, update, session)
     # end for
     if not at_least_one:
         logger.warning(f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}")

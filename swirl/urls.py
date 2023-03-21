@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 from rest_framework.schemas import get_schema_view
 from rest_framework import routers
 from . import views
+from swirl.authenticators import Microsoft
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -32,7 +33,9 @@ urlpatterns = [
     path('index.html', views.index, name='index'),
     path('error.html', views.error, name='error'),
     path('search.html', views.search, name='search_form'),
+    path('authenticators.html', views.authenticators, name='authenticators'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('microsoft-callback', Microsoft().callback, name='microsoft_callback'),
     path('register/', views.registration, name='register'),
     path('register/confirm/<str:token>/<str:signature>/', views.registration_confirmation, name='registration_confirmation'),
     path('register/confirm_sent/', views.registration_confirmation_sent, name='registration_confirmation_sent'),

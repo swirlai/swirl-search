@@ -22,6 +22,16 @@ class SearchProvider(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
     default = models.BooleanField(default=True)
+    AUTHENTICATOR_CHOICES = [
+        ('Microsoft', 'Microsoft Authentication')
+    ]
+    authenticator = models.CharField(max_length=200, default='', choices=AUTHENTICATOR_CHOICES)
+    CONNECTORS_AUTHENTICATORS = dict({
+        'M365OutlookMessages': 'Microsoft',
+        'M365OneDrive': 'Microsoft',
+        'M365OutlookCalendar': 'Microsoft',
+        'M365SharePointSites': 'Microsoft'
+    })
     CONNECTOR_CHOICES = [
         ('ChatGPT', 'ChatGPT Query String'),
         ('RequestsGet', 'HTTP/GET returning JSON'),
@@ -30,7 +40,11 @@ class SearchProvider(models.Model):
         # Uncomment the line below to enable PostgreSQL
         # ('PostgreSQL', 'PostgreSQL'),
         ('BigQuery', 'Google BigQuery'),
-        ('Sqlite3', 'Sqlite3')
+        ('Sqlite3', 'Sqlite3'),
+        ('M365OutlookMessages', 'M365 Outlook Messages'),
+        ('M365OneDrive', 'M365 One Drive'),
+        ('M365OutlookCalendar', 'M365 Outlook Calendar'),
+        ('M365SharePointSites', 'M365 SharePoint Sites'),
     ]
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
@@ -55,6 +69,7 @@ class SearchProvider(models.Model):
     result_processors = models.JSONField(default=getSearchProviderResultProcessorsDefault, blank=True)
     result_mappings = models.CharField(max_length=2048, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
+    eval_credentials = models.CharField(max_length=100, default=str, blank=True)
     credentials = models.CharField(max_length=512, default=str, blank=True)
     tags = models.JSONField(default=list)
 

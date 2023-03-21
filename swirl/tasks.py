@@ -33,11 +33,11 @@ for t in SWIRL_OBJECT_LIST:
 ##################################################
 
 @shared_task(name='federate', ignore_result=True)
-def federate_task(search_id, provider_id, provider_connector, update):
+def federate_task(search_id, provider_id, provider_connector, update, session):
     logger.info(f"{module_name}: federate_task: {search_id}_{provider_id}_{provider_connector} update: {update}")
     try:
         connector = eval(provider_connector, {"provider_connector": provider_connector, "__builtins__": None}, SWIRL_OBJECT_DICT)(provider_id, search_id, update)
-        connector.federate()
+        connector.federate(session)
     except NameError as err:
         message = f'Error: NameError: {err}'
         logger.error(f'{module_name}: {message}')
@@ -51,9 +51,9 @@ def federate_task(search_id, provider_id, provider_connector, update):
 from swirl.search import search
 
 @shared_task(name='search', ignore_result=True)
-def search_task(search_id):
+def search_task(search_id, session):
     logger.info(f"{module_name}: search_task: {search_id}")
-    return search(search_id)
+    return search(search_id, session)
 
 ##################################################
 

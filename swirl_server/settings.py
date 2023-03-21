@@ -242,3 +242,8 @@ SWIRL_HIGHLIGHT_END_CHAR = '</em>'
 
 if 'OPENAI_API_KEY' in env:
     OPENAI_API_KEY = env('OPENAI_API_KEY')
+
+
+MICROSOFT_CLIENT_ID = 'd0c86695-c744-460e-8e92-d79bedc7ee37'
+MICROSOFT_CLIENT_SECRET = 'FSc8Q~UIl9~pfSzSfrS0fdaAtJ86i25Fsqvh6bxl'
+MICROSOFT_REDIRECT_URI = 'http://localhost:8000/swirl/microsoft-callback'
