@@ -32,7 +32,10 @@ urlpatterns = [
     ), name='swagger-ui'),
     path('query_transform_form/', views.query_transform_form, name='query_transform_form'),
 
+    # this appears to be necessary to access the view from a pytest API unit test
     path('querytransforms/list', views.QueryTransformViewSet.as_view({'get': 'list'}), name='querytransforms/list'),
+    path('querytransforms/create', views.QueryTransformViewSet.as_view({'post': 'create'}), name='querytransforms/create'),
+
     path('', views.index, name='index'),
     path('index.html', views.index, name='index'),
     path('error.html', views.error, name='error'),
