@@ -1,0 +1,26 @@
+name: Unit Tests
+
+on:
+  push:
+    # only trigger on branches, not on tags
+    branches: 'DS-178-query-xform'
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+            python-version: '3.10'
+            cache: 'pip' # caching pip stuff
+    - name: Run Install Swirl
+      run: ./install.sh
+    - name: Run Install Swirl
+      run: ./install-test.sh
+    - name: Run pytest unit tests
+      run: pytest
