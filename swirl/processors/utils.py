@@ -152,7 +152,7 @@ def position_dict(text, word_list):
     if type(word_list) != list:
         return []
     if word_list == []:
-        return []  
+        return []
     positions = {word: [] for word in word_list}
     words = text.split()
     for i, word in enumerate(words):
@@ -339,3 +339,37 @@ def capitalize_search(list_lower, list_unknown):
     # end for
 
     return list_capitalized
+
+#############################################
+
+def get_mappings_dict(mappings):
+
+    '''
+    accepts: any provider mapping
+    returns: dict of the mappings by swirl_key
+    warns if any swirl_key is repeated
+    '''
+
+    module_name = 'get_mappings'
+
+    dict_mappings = {}
+
+    mappings = mappings.split(',')
+    if mappings:
+        for mapping in mappings:
+            stripped_mapping = mapping.strip()
+            if '=' in stripped_mapping:
+                swirl_key = stripped_mapping[:stripped_mapping.find('=')]
+                source_key = stripped_mapping[stripped_mapping.find('=')+1:]
+            else:
+                source_key = None
+                swirl_key = stripped_mapping
+            # end if
+            if swirl_key in dict_mappings:
+                logger.warning(f"{module_name}: Warning: control mapping {swirl_key} found more than once, ignoring")
+                continue
+            dict_mappings[swirl_key] = source_key
+        # end for
+    # end if
+
+    return dict_mappings

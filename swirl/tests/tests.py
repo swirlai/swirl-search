@@ -1,8 +1,12 @@
 from django.test import TestCase
 import pytest
+import logging
 from django.urls import reverse
 from rest_framework.test import APIClient
 from django.contrib.auth.models import User
+from swirl.processors.transform_query_processor import *
+
+logger = logging.getLogger(__name__)
 
 ######################################################################
 ## fixtures
@@ -37,6 +41,32 @@ def qrx_record_1():
         "config_content": "# This is a test\n# column1, colum2\nmobiles; ombile; mo bile, mobile\ncheapest smartphones, cheap smartphone"
 }
 
+@pytest.fixture
+def qrx_rewrite():
+    return {
+        "name": "xxx",
+        "shared": True,
+        "qrx_type": "rewrite",
+        "config_content": "# This is a test\n# column1, colum2\nmobiles; ombile; mo bile, mobile\ncheapest smartphones, cheap smartphone"
+}
+
+@pytest.fixture
+def qrx_synonym():
+    return {
+        "name": "xxx",
+        "shared": True,
+        "qrx_type": "synonym",
+        "config_content": "# column1, column2\nnotebook, laptop\nlaptop, personal computer\npc, personal computer\npersonal computer, pc"
+}
+
+@pytest.fixture
+def qrx_synonym_bag():
+    return {
+        "name": "xxx",
+        "shared": True,
+        "qrx_type": "bag",
+        "config_content": "# column1....columnN\nnotebook, personal computer, laptop, pc\ncar,automobile, ride"
+}
 ######################################################################
 ## tests
 ######################################################################
@@ -65,3 +95,20 @@ def test_query_trasnform_viewset_create_and_list(api_client, test_suser, test_su
     assert content.get('shared','') == qrx_record_1.get('shared')
     assert content.get('qrx_type','') == qrx_record_1.get('qrx_type')
     assert content.get('config_content','') == qrx_record_1.get('config_content')
+
+@pytest.mark.django_db
+def test_query_trasnform_allocation(qrx_rewrite, qrx_synonym, qrx_synonym_bag):
+    ret = TransformQueryProcessorFactory.alloc_query_transform(qrx_rewrite.get('qrx_type'),
+                                        qrx_rewrite.get('name'),
+                                        qrx_rewrite.get('config_content'))
+    assert str(ret) == 'RewriteQueryProcessor'
+
+    ret = TransformQueryProcessorFactory.alloc_query_transform(qrx_synonym.get('qrx_type'),
+                                        qrx_rewrite.get('name'),
+                                        qrx_rewrite.get('config_content'))
+    assert str(ret) == 'SynonymQueryProcessor'
+
+    ret = TransformQueryProcessorFactory.alloc_query_transform(qrx_synonym_bag.get('qrx_type'),
+                                        qrx_rewrite.get('name'),
+                                        qrx_rewrite.get('config_content'))
+    assert str(ret) == 'SynonymBagQueryProcessor'
