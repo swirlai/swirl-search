@@ -20,7 +20,7 @@ jobs:
             cache: 'pip' # caching pip stuff
     - name: Run Install Swirl
       run: ./install.sh
-    - name: Run Install Swirl
+    - name: Run Install Tests Swirl
       run: ./install-test.sh
     - name: Run pytest unit tests
       run: pytest
