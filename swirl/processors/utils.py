@@ -203,12 +203,15 @@ def clean_string(s):
             # numbers
             if ch.isnumeric():
                 string_clean = string_clean + ch
+                continue
             # letters
             if ch.isalpha():
                 string_clean = string_clean + ch
+                continue
             if ch in [ '"', "'", '’', ' ', '-', '$', '%', '?', ':', '(', ')' ]:
                 string_clean = string_clean + ch
-            if ch in [ '\n', '!', ';', '/', '_' ]:
+                continue
+            if ch in [ '\n', '!', ';', '/', '_', '|', '.' ]:
                 string_clean = string_clean + ' '
         # end for
     except NameError as err:

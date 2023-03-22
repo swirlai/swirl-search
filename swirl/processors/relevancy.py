@@ -196,7 +196,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
             # prepare the query for this result set, it can be different for each provider
             self.prepare_query(results.query_string_to_provider, results.result_processor_json_feedback)
             # capture query len
-            list_query_lens.append(len(results.query_string_to_provider.split()))
+            list_query_lens.append(len(self.query_list))
             # iterate through the items in the result set
             for item in results.json_results:
                 if 'explain' in item:
@@ -416,7 +416,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         for field in dict_result_lens:
             dict_len_median[field] = median(dict_result_lens[field])
         # compute query length adjustmnet
-        dict_query_lens = {}
+        # dict_query_lens = {}
 
         ############################################
         # PASS 2
