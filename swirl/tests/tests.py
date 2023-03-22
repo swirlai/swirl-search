@@ -97,7 +97,7 @@ def test_query_trasnform_viewset_create_and_list(api_client, test_suser, test_su
     assert content.get('config_content','') == qrx_record_1.get('config_content')
 
 @pytest.mark.django_db
-def test_query_trasnform_allocation(qrx_rewrite, qrx_synonym, qrx_synonym_bag):
+def test_query_transform_allocation(qrx_rewrite, qrx_synonym, qrx_synonym_bag):
     ret = TransformQueryProcessorFactory.alloc_query_transform(qrx_rewrite.get('qrx_type'),
                                         qrx_rewrite.get('name'),
                                         qrx_rewrite.get('config_content'))
@@ -112,3 +112,17 @@ def test_query_trasnform_allocation(qrx_rewrite, qrx_synonym, qrx_synonym_bag):
                                         qrx_rewrite.get('name'),
                                         qrx_rewrite.get('config_content'))
     assert str(ret) == 'SynonymBagQueryProcessor'
+
+@pytest.mark.django_db
+def test_query_transform_rewwrite_parse(qrx_rewrite, qrx_synonym, qrx_synonym_bag):
+    rw_qxr = TransformQueryProcessorFactory.alloc_query_transform(qrx_rewrite.get('qrx_type'),
+                                        qrx_rewrite.get('name'),
+                                        qrx_rewrite.get('config_content'))
+    assert str(rw_qxr) == 'RewriteQueryProcessor'
+    rw_qxr.parse_config()
+    rps = rw_qxr.get_replace_patterns()
+    assert len(rps) == 4
+    assert str(rps[0]) == "<<mobiles>> -> <<mobile>>"
+    assert str(rps[1]) == "<<ombile>> -> <<mobile>>"
+    assert str(rps[2]) == "<<mo bile>> -> <<mobile>>"
+    assert str(rps[3]) == "<<cheapest smartphones>> -> <<cheap smartphone>>"
