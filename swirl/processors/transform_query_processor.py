@@ -9,6 +9,7 @@ from abc import ABCMeta, abstractmethod
 
 import csv
 import io
+import re
 
 from swirl.processors.processor import *
 from swirl.processors.utils import clean_string
@@ -17,16 +18,16 @@ from swirl.processors.utils import clean_string
 #############################################
 class TransformQueryProcessorFactory():
     @staticmethod
-    def alloc_query_transform(qxf_type, name, config):
+    def alloc_query_transform(qxf_type, query_string, name, config):
         """
         Get the query transformer based on type
         """
         if qxf_type == "rewrite":
-            return RewriteQueryProcessor(name, config)
+            return RewriteQueryProcessor(query_string, name,  config)
         elif qxf_type == "synonym":
-             return SynonymQueryProcessor(name, config)
+             return SynonymQueryProcessor(query_string, name, config)
         elif qxf_type == "bag":
-             return SynonymBagQueryProcessor(name, config)
+             return SynonymBagQueryProcessor(query_string, name,  config)
         else:
             raise ValueError("Invalid Query Transform Processor type")
 
@@ -43,10 +44,11 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
     Holder for Query shared transform fuctionality and interfaces
     """
 
-
-    def __init__(self, name, config):
+    def __init__(self,  query_string, name, config):
+        super().__init__(query_string=query_string, query_mappings={}, tags=[])
         self._name = name
         self._config = config
+        self._config_parsed = False
 
     def _config_start(self):
         """Prepare to read the config as a csv"""
@@ -79,6 +81,8 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
             return None
 
     def parse_config(self):
+        if self._config_parsed:
+            return
         logger.info(f'parse config {self.type}')
         conf_lines = self._config_start()
         if not conf_lines:
@@ -87,11 +91,12 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
         while (cline := self._config_next_line(conf_lines)) is not None:
             n = n + 1
             self._parse_cline(cline,n)
+        self._config_parsed = True
 
-    def _cline_is_valid(self, cline, nth, expected_num_cols):
+    def _cline_is_valid(self, cline, nth, min_num_cols):
         if not cline:
             return False # not valid, not not an error
-        if expected_num_cols and len(cline) != expected_num_cols:
+        if min_num_cols and len(cline) < min_num_cols:
             logger.warning(f'ignoring malformed line {nth} in {self._name}')
             return False
         return True
@@ -123,15 +128,25 @@ class RewriteQueryProcessor(AbstractTransformQueryProcessor):
 
     def _parse_cline(self, cline, nth):
         """ parse line and add to replace patterns """
-        if not super()._cline_is_valid(cline, nth, 2):
+        if not super()._cline_is_valid(cline, nth, 1):
             return
-        pats = cline[0]
-        repl = cline [1]
+
+        if len(cline) == 1:
+            pats = r'\b'+cline[0]+r'\b\s?'
+            repl = ''
+        else:
+            pats = cline[0]
+            repl = cline[1]
         for p in pats.split(';'):
             self.replace_patterns.append(_ConfigReplacePattern(p.strip(), [repl.strip()]))
 
     def process(self):
-        return clean_string(self.query_string).strip()
+        super().parse_config()
+        ret = clean_string(self.query_string).strip()
+        logger.info(f'{self.type} {self._name} processing query')
+        for rp in self.replace_patterns:
+            ret = re.sub(rp.pattern, rp.replace[0], ret)
+        return ret
 
 #############################################
 
