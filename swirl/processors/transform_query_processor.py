@@ -77,15 +77,19 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
             logger.error(f'Exception {e} while parsing CSV ')
             return None
 
-    @abstractmethod
     def parse_config(self):
-        """Parse config and extract the rules or fail if the config is not correct"""
-        pass
-
+        logger.info(f'parse config {self.type}')
+        conf_lines = self._config_start()
+        if not conf_lines:
+            return
+        n = 0
+        while (cline := self._config_next_line(conf_lines)) is not None:
+            n = n + 1
+            self._parse_cline(cline,n)
 
     @abstractmethod
-    def parse_config(self):
-        """Parse config and extract the rules or fail if the config is not correct"""
+    def _parse_cline(self, cline, nth):
+        """ parse line and add to replace patterns """
         pass
 
     @abstractmethod
@@ -104,7 +108,7 @@ class RewriteQueryProcessor(AbstractTransformQueryProcessor):
 
     relace_patterns = []
 
-    def __parse_cline(self, cline, nth):
+    def _parse_cline(self, cline, nth):
         """ parse line and add to replace patterns """
         if not cline:
             return
@@ -115,16 +119,6 @@ class RewriteQueryProcessor(AbstractTransformQueryProcessor):
         repl = cline [1]
         for p in pats.split(';'):
             self.relace_patterns.append(_ConfigReplacePattern(p.strip(), repl.strip()))
-
-    def parse_config(self):
-        logger.info(f'parse config {self.type}')
-        conf_lines = super()._config_start()
-        if not conf_lines:
-            return
-        n = 0
-        while (cline := super()._config_next_line(conf_lines)) is not None:
-            n = n + 1
-            self.__parse_cline(cline,n)
 
     def get_replace_patterns(self):
         return self.relace_patterns
@@ -138,8 +132,9 @@ class SynonymQueryProcessor(AbstractTransformQueryProcessor):
 
     type = 'SynonymQueryProcessor'
 
-    def parse_config(self):
-        logger.info(f'parse config {self.type}')
+
+    def _parse_cline(self, cline, nth):
+        """ parse line and add to replace patterns """
         pass
 
     def get_replace_patterns(self):
@@ -155,8 +150,8 @@ class SynonymBagQueryProcessor(AbstractTransformQueryProcessor):
 
     type = 'SynonymBagQueryProcessor'
 
-    def parse_config(self):
-        logger.info(f'parse config {self.type}')
+    def _parse_cline(self, cline, nth):
+        """ parse line and add to replace patterns """
         pass
 
     def get_replace_patterns(self):
