@@ -43,7 +43,6 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
     Holder for Query shared transform fuctionality and interfaces
     """
 
-    replace_patterns = []
 
     def __init__(self, name, config):
         self._name = name
@@ -89,9 +88,18 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
             n = n + 1
             self._parse_cline(cline,n)
 
+    def _cline_is_valid(self, cline, nth, expected_num_cols):
+        if not cline:
+            return False # not valid, not not an error
+        if expected_num_cols and len(cline) != expected_num_cols:
+            logger.warning(f'ignoring malformed line {nth} in {self._name}')
+            return False
+        return True
+
+    @abstractmethod
     def get_replace_patterns(self):
         """return the replace patterns"""
-        return self.replace_patterns
+        pass
 
     @abstractmethod
     def _parse_cline(self, cline, nth):
@@ -108,19 +116,19 @@ class RewriteQueryProcessor(AbstractTransformQueryProcessor):
 
     type = 'RewriteQueryProcessor'
 
+    replace_patterns = []
+
+    def get_replace_patterns(self):
+        return self.replace_patterns
 
     def _parse_cline(self, cline, nth):
         """ parse line and add to replace patterns """
-        if not cline:
-            return
-        if len(cline) != 2:
-            logger.warning(f'ignoring malformed line {nth} in {self._name}')
+        if not super()._cline_is_valid(cline, nth, 2):
             return
         pats = cline[0]
         repl = cline [1]
         for p in pats.split(';'):
-            self.replace_patterns.append(_ConfigReplacePattern(p.strip(), repl.strip()))
-
+            self.replace_patterns.append(_ConfigReplacePattern(p.strip(), [repl.strip()]))
 
     def process(self):
         return clean_string(self.query_string).strip()
@@ -131,10 +139,15 @@ class SynonymQueryProcessor(AbstractTransformQueryProcessor):
 
     type = 'SynonymQueryProcessor'
 
+    replace_patterns = []
+
+    def get_replace_patterns(self):
+        return self.replace_patterns
 
     def _parse_cline(self, cline, nth):
-        """ parse line and add to replace patterns """
-        pass
+        if not super()._cline_is_valid(cline, nth, 2):
+            return
+        self.replace_patterns.append(_ConfigReplacePattern(cline[0].strip(), [cline [1].strip()]))
 
     def process(self):
         return clean_string(self.query_string).strip() + " test"
@@ -145,9 +158,21 @@ class SynonymBagQueryProcessor(AbstractTransformQueryProcessor):
 
     type = 'SynonymBagQueryProcessor'
 
+    # note : different structure from the above, need to find all matches for any word
+    replace_index = {}
+
+    def get_replace_patterns(self):
+        return list(self.replace_index.values())
+
     def _parse_cline(self, cline, nth):
-        """ parse line and add to replace patterns """
-        pass
+        if not super()._cline_is_valid(cline, nth, None):
+            return
+        s_cline = [w.strip() for w in cline]
+        for word in s_cline:
+            if self.replace_index.get(word, None):
+                logger.warn(f'word : {word} is used in multiple bags in {self._name} on the first will be kept')
+                continue
+            self.replace_index[word] = _ConfigReplacePattern(word,s_cline)
 
     def process(self):
         return clean_string(self.query_string).strip() + " test"

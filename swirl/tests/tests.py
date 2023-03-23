@@ -114,7 +114,7 @@ def test_query_transform_allocation(qrx_rewrite, qrx_synonym, qrx_synonym_bag):
     assert str(ret) == 'SynonymBagQueryProcessor'
 
 @pytest.mark.django_db
-def test_query_transform_rewwrite_parse(qrx_rewrite, qrx_synonym, qrx_synonym_bag):
+def test_query_transform_rewwrite_parse(qrx_rewrite):
     rw_qxr = TransformQueryProcessorFactory.alloc_query_transform(qrx_rewrite.get('qrx_type'),
                                         qrx_rewrite.get('name'),
                                         qrx_rewrite.get('config_content'))
@@ -122,7 +122,37 @@ def test_query_transform_rewwrite_parse(qrx_rewrite, qrx_synonym, qrx_synonym_ba
     rw_qxr.parse_config()
     rps = rw_qxr.get_replace_patterns()
     assert len(rps) == 4
-    assert str(rps[0]) == "<<mobiles>> -> <<mobile>>"
-    assert str(rps[1]) == "<<ombile>> -> <<mobile>>"
-    assert str(rps[2]) == "<<mo bile>> -> <<mobile>>"
-    assert str(rps[3]) == "<<cheapest smartphones>> -> <<cheap smartphone>>"
+    assert str(rps[0]) == "<<mobiles>> -> <<['mobile']>>"
+    assert str(rps[1]) == "<<ombile>> -> <<['mobile']>>"
+    assert str(rps[2]) == "<<mo bile>> -> <<['mobile']>>"
+    assert str(rps[3]) == "<<cheapest smartphones>> -> <<['cheap smartphone']>>"
+
+@pytest.mark.django_db
+def test_query_transform_synonym_parse(qrx_synonym):
+    sy_qxr = TransformQueryProcessorFactory.alloc_query_transform(qrx_synonym.get('qrx_type'),
+                                        qrx_synonym.get('name'),
+                                        qrx_synonym.get('config_content'))
+    assert str(sy_qxr) == 'SynonymQueryProcessor'
+    sy_qxr.parse_config()
+    rps = sy_qxr.get_replace_patterns()
+    assert len(rps) == 4
+    assert str(rps[0]) == "<<notebook>> -> <<['laptop']>>"
+    assert str(rps[1]) == "<<laptop>> -> <<['personal computer']>>"
+    assert str(rps[2]) == "<<pc>> -> <<['personal computer']>>"
+    assert str(rps[3]) == "<<personal computer>> -> <<['pc']>>"
+
+@pytest.mark.django_db
+def test_query_transform_synonym_bag_parse(qrx_synonym_bag):
+    sy_qxr = TransformQueryProcessorFactory.alloc_query_transform(qrx_synonym_bag.get('qrx_type'),
+                                        qrx_synonym_bag.get('name'),
+                                        qrx_synonym_bag.get('config_content'))
+    assert str(sy_qxr) == 'SynonymBagQueryProcessor'
+    sy_qxr.parse_config()
+    rps = sy_qxr.get_replace_patterns()
+    assert str(rps[0]) == "<<notebook>> -> <<['notebook', 'personal computer', 'laptop', 'pc']>>"
+    assert str(rps[1]) == "<<personal computer>> -> <<['notebook', 'personal computer', 'laptop', 'pc']>>"
+    assert str(rps[2]) == "<<laptop>> -> <<['notebook', 'personal computer', 'laptop', 'pc']>>"
+    assert str(rps[3]) == "<<pc>> -> <<['notebook', 'personal computer', 'laptop', 'pc']>>"
+    assert str(rps[4]) == "<<car>> -> <<['car', 'automobile', 'ride']>>"
+    assert str(rps[5]) == "<<automobile>> -> <<['car', 'automobile', 'ride']>>"
+    assert str(rps[6]) == "<<ride>> -> <<['car', 'automobile', 'ride']>>"
