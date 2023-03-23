@@ -43,6 +43,8 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
     Holder for Query shared transform fuctionality and interfaces
     """
 
+    replace_patterns = []
+
     def __init__(self, name, config):
         self._name = name
         self._config = config
@@ -87,15 +89,15 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
             n = n + 1
             self._parse_cline(cline,n)
 
+    def get_replace_patterns(self):
+        """return the replace patterns"""
+        return self.replace_patterns
+
     @abstractmethod
     def _parse_cline(self, cline, nth):
         """ parse line and add to replace patterns """
         pass
 
-    @abstractmethod
-    def get_replace_patterns(self):
-        """return the replace patterns"""
-        pass
 
 class RewriteQueryProcessor(AbstractTransformQueryProcessor):
 
@@ -106,7 +108,6 @@ class RewriteQueryProcessor(AbstractTransformQueryProcessor):
 
     type = 'RewriteQueryProcessor'
 
-    relace_patterns = []
 
     def _parse_cline(self, cline, nth):
         """ parse line and add to replace patterns """
@@ -118,10 +119,8 @@ class RewriteQueryProcessor(AbstractTransformQueryProcessor):
         pats = cline[0]
         repl = cline [1]
         for p in pats.split(';'):
-            self.relace_patterns.append(_ConfigReplacePattern(p.strip(), repl.strip()))
+            self.replace_patterns.append(_ConfigReplacePattern(p.strip(), repl.strip()))
 
-    def get_replace_patterns(self):
-        return self.relace_patterns
 
     def process(self):
         return clean_string(self.query_string).strip()
@@ -137,10 +136,6 @@ class SynonymQueryProcessor(AbstractTransformQueryProcessor):
         """ parse line and add to replace patterns """
         pass
 
-    def get_replace_patterns(self):
-        """return the replace patterns"""
-        pass
-
     def process(self):
         return clean_string(self.query_string).strip() + " test"
 
@@ -152,10 +147,6 @@ class SynonymBagQueryProcessor(AbstractTransformQueryProcessor):
 
     def _parse_cline(self, cline, nth):
         """ parse line and add to replace patterns """
-        pass
-
-    def get_replace_patterns(self):
-        """return the replace patterns"""
         pass
 
     def process(self):
