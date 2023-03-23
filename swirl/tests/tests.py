@@ -172,20 +172,30 @@ def test_query_transform_rewwrite_parse(noop_query_string, qrx_rewrite):
 
 @pytest.fixture
 def qrx_rewrite_test_queries():
-    return ['mobile phone', 'mobiles','ombile', 'mo bile', 'on computing']
+    return ['mobile phone', 'mobiles','ombile', 'mo bile', 'on computing', 'cheaper smartphones']
 
 @pytest.fixture
 def qrx_rewrite_expected_queries():
-    return ['mobile phone', 'mobile','mobile', 'mobile', 'computing']
+    return ['mobile phone', 'mobile','mobile', 'mobile', 'computing', 'cheap smartphone']
+
+@pytest.fixture
+def qrx_rewrite_process():
+    return {
+        "name": "rewrite 1",
+        "shared": True,
+        "qrx_type": "rewrite",
+        "config_content": "# This is a test\n# column1, colum2\nmobiles; ombile; mo bile, mobile\ncheap.* smartphones, cheap smartphone\non"
+}
 
 @pytest.mark.django_db
-def test_query_transform_rewwrite_process(qrx_rewrite_test_queries, qrx_rewrite_expected_queries, qrx_rewrite):
+def test_query_transform_rewwrite_process(qrx_rewrite_test_queries, qrx_rewrite_expected_queries, qrx_rewrite_process):
+    assert len(qrx_rewrite_test_queries) == len (qrx_rewrite_expected_queries)
     i = 0
     for q in qrx_rewrite_test_queries:
-        rw_qxr = TransformQueryProcessorFactory.alloc_query_transform(qrx_rewrite.get('qrx_type'),
+        rw_qxr = TransformQueryProcessorFactory.alloc_query_transform(qrx_rewrite_process.get('qrx_type'),
                                             q,
-                                            qrx_rewrite.get('name'),
-                                            qrx_rewrite.get('config_content'))
+                                            qrx_rewrite_process.get('name'),
+                                            qrx_rewrite_process.get('config_content'))
         ret = rw_qxr.process()
         assert ret == qrx_rewrite_expected_queries[i]
         i = i + 1

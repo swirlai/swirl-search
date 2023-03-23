@@ -49,6 +49,8 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
         self._name = name
         self._config = config
         self._config_parsed = False
+        self.replace_patterns = []
+        self.replace_index = {}
 
     def _config_start(self):
         """Prepare to read the config as a csv"""
@@ -121,8 +123,6 @@ class RewriteQueryProcessor(AbstractTransformQueryProcessor):
 
     type = 'RewriteQueryProcessor'
 
-    replace_patterns = []
-
     def get_replace_patterns(self):
         return self.replace_patterns
 
@@ -154,7 +154,6 @@ class SynonymQueryProcessor(AbstractTransformQueryProcessor):
 
     type = 'SynonymQueryProcessor'
 
-    replace_patterns = []
 
     def get_replace_patterns(self):
         return self.replace_patterns
@@ -172,9 +171,6 @@ class SynonymQueryProcessor(AbstractTransformQueryProcessor):
 class SynonymBagQueryProcessor(AbstractTransformQueryProcessor):
 
     type = 'SynonymBagQueryProcessor'
-
-    # note : different structure from the above, need to find all matches for any word
-    replace_index = {}
 
     def get_replace_patterns(self):
         return list(self.replace_index.values())
