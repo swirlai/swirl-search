@@ -82,6 +82,14 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
             logger.error(f'Exception {e} while parsing CSV ')
             return None
 
+    def _get_synonyms(self, word):
+        if not self.replace_index:
+            return []
+        entry = self.replace_index.get(word, None)
+        if not entry:
+            return []
+        return entry.replace
+
     def parse_config(self):
         if self._config_parsed:
             return
@@ -143,6 +151,8 @@ class RewriteQueryProcessor(AbstractTransformQueryProcessor):
     def process(self):
         super().parse_config()
         ret = clean_string(self.query_string).strip()
+        if not ret:
+            return ret
         logger.info(f'{self.type} {self._name} processing query')
         for rp in self.replace_patterns:
             ret = re.sub(rp.pattern, rp.replace[0], ret)
@@ -154,17 +164,35 @@ class SynonymQueryProcessor(AbstractTransformQueryProcessor):
 
     type = 'SynonymQueryProcessor'
 
-
     def get_replace_patterns(self):
-        return self.replace_patterns
+        return list(self.replace_index.values())
 
     def _parse_cline(self, cline, nth):
         if not super()._cline_is_valid(cline, nth, 2):
             return
-        self.replace_patterns.append(_ConfigReplacePattern(cline[0].strip(), [cline [1].strip()]))
+        word = cline[0].strip()
+        repl = cline [1].strip()
+        entry = self.replace_index.get(word, None)
+        if not entry:
+            self.replace_index[word] = (_ConfigReplacePattern(word, [repl]))
+        else:
+            entry.replace.append(repl)
 
     def process(self):
-        return clean_string(self.query_string).strip() + " test"
+        super().parse_config()
+        ret = clean_string(self.query_string).strip()
+        if not ret:
+            return ret
+        q_toks = ret.split()
+        ret_toks = []
+        for tok in q_toks:
+            syns = super()._get_synonyms(tok)
+            if syns:
+                ret_toks.append('(' + ' OR '.join([tok] + list(syns)) + ')')
+            else:
+                ret_toks.append(tok)
+        return ' '.join(ret_toks)
+
 
 #############################################
 
@@ -179,6 +207,7 @@ class SynonymBagQueryProcessor(AbstractTransformQueryProcessor):
         if not super()._cline_is_valid(cline, nth, None):
             return
         s_cline = [w.strip() for w in cline]
+        # DN remove the restriction below.
         for word in s_cline:
             if self.replace_index.get(word, None):
                 logger.warn(f'word : {word} is used in multiple bags in {self._name} on the first will be kept')
@@ -186,4 +215,4 @@ class SynonymBagQueryProcessor(AbstractTransformQueryProcessor):
             self.replace_index[word] = _ConfigReplacePattern(word,s_cline)
 
     def process(self):
-        return clean_string(self.query_string).strip() + " test"
+        return clean_string(self.query_string).strip()

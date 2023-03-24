@@ -196,6 +196,39 @@ def test_query_transform_rewwrite_process(qrx_rewrite_test_queries, qrx_rewrite_
                                             q,
                                             qrx_rewrite_process.get('name'),
                                             qrx_rewrite_process.get('config_content'))
+        assert str(rw_qxr) == 'RewriteQueryProcessor'
         ret = rw_qxr.process()
         assert ret == qrx_rewrite_expected_queries[i]
+        i = i + 1
+
+
+@pytest.fixture
+def qrx_synonym_test_queries():
+    return ['robot human']
+
+@pytest.fixture
+def qrx_synonym_expected_queries():
+    return ['robot human']
+
+@pytest.fixture
+def qrx_synonym_process():
+    return {
+        "name": "synonym 1",
+        "shared": True,
+        "qrx_type": "synonym",
+        "config_content": "# column1, column2\nnotebook, laptop\nlaptop, personal computer\npc, personal computer\npersonal computer, pc"
+}
+
+@pytest.mark.django_db
+def test_query_transform_synonym_process(qrx_synonym_test_queries, qrx_synonym_expected_queries, qrx_synonym_process):
+    assert len(qrx_synonym_test_queries) == len (qrx_synonym_expected_queries)
+    i = 0
+    for q in qrx_synonym_test_queries:
+        rw_qxr = TransformQueryProcessorFactory.alloc_query_transform(qrx_synonym_process.get('qrx_type'),
+                                            q,
+                                            qrx_synonym_process.get('name'),
+                                            qrx_synonym_process.get('config_content'))
+        assert str(rw_qxr) == 'SynonymQueryProcessor'
+        ret = rw_qxr.process()
+        assert ret == qrx_synonym_expected_queries[i]
         i = i + 1
