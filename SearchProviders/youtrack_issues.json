@@ -19,6 +19,7 @@
     "results_per_query": 10,
     "credentials": "bearer=your-youtrack-permanent-token",
     "tags": [
-        "Issues"
+        "Issues",
+        "YouTrack"
     ]
 }
