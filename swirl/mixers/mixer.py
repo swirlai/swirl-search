@@ -61,8 +61,10 @@ class Mixer:
                 if type(self.provider) == int:
                     # security review for 1.7 - OK, filtered by search ID
                     self.results = Result.objects.filter(search_id=search_id,provider_id=self.provider)
-                else:
-                    self.warning(f"Unknown provider_list: {self.provider}")
+                if type(self.provider) == list:
+                    self.results = Result.objects.filter(search_id=search_id,provider_id__in=self.provider) 
+                if type(self.provider) not in [str, int, list]:
+                    self.warning(f"Unknown provider specification: {self.provider}")
                 # end if
             else:
                 # security review for 1.7 - OK, filtered by search ID
