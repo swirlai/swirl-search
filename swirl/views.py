@@ -698,9 +698,21 @@ class ResultViewSet(viewsets.ModelViewSet):
             elif explain.lower() == 'true':
                 explain = True
 
+        providers = []
+        if 'providers' in request.GET.keys():
+            providers = request.GET['providers']
+            if ',' in providers:
+                providers = providers.split(',')
+            else:
+                providers = [providers]
+
         provider = None
         if 'provider' in request.GET.keys():
             provider = int(request.GET['provider'])
+
+        if len(providers) > 0:
+            # ignore provider if providers is specified
+            provider = providers
 
         mark_all_read = False
         if 'mark_all_read' in request.GET.keys():
