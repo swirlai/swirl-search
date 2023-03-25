@@ -1,7 +1,7 @@
 {
     "name": "Articles (web/YouTrack.cloud)",
-    "active": true,
-    "default": true,
+    "active": false,
+    "default": false,
     "connector": "RequestsGet",
     "url": "https://<your-domain>.youtrack.cloud/api/articles?fields=idReadable,reporter(fullName),summary,content,attachments(name),project(name),parentArticle(summary),childArticles(summary),created,updatedBy(fullName),comments(text)",
     "query_template": "{url}&query={query_string}",
@@ -19,6 +19,8 @@
     "results_per_query": 10,
     "credentials": "bearer=your-youtrack-permanent-token",
     "tags": [
-        "Articles"
+        "Articles",
+        "Wiki",
+        "YouTrack"
     ]
 }
