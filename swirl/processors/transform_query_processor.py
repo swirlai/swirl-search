@@ -13,6 +13,7 @@ import re
 
 from swirl.processors.processor import *
 from swirl.processors.utils import clean_string
+from swirl.processors.utils import str_tok_get_prefixes
 
 #############################################
 #############################################
@@ -71,8 +72,8 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
             if not csv_reader:
                 return None
             while (ret := next(csv_reader, None)) is not None:
-                # check the first character of first filed for comment character and skip line if present
-                if ret[0][0] == '#':
+                # skip comments and empty lines
+                if not ret or len(ret) == 0 or len(ret[0]) == 0 or ret[0][0] == '#':
                     continue
                 break
             return ret
@@ -171,26 +172,45 @@ class SynonymQueryProcessor(AbstractTransformQueryProcessor):
         if not super()._cline_is_valid(cline, nth, 2):
             return
         word = cline[0].strip()
+
+        # tokenizer the matching word(s)
+        tmp_toks = word.split()
+        normal_word = ' '.join(tmp_toks)
         repl = cline [1].strip()
         entry = self.replace_index.get(word, None)
         if not entry:
-            self.replace_index[word] = (_ConfigReplacePattern(word, [repl]))
+            self.replace_index[word] = (_ConfigReplacePattern(normal_word, [repl]))
         else:
             entry.replace.append(repl)
 
     def process(self):
+        """
+        limits: does not handle overlapping rules, only the longest rule wins.
+        If you have two rules A B => x and B = y, the Query A B will return
+        A B OR x. The query B will return B OR y
+        """
         super().parse_config()
         ret = clean_string(self.query_string).strip()
         if not ret:
             return ret
-        q_toks = ret.split()
+        q_toks = ret.split() # simple tokenze query
+        q_len = len(q_toks)
+        prfx_strs = str_tok_get_prefixes(q_toks) # all prefix strings
         ret_toks = []
-        for tok in q_toks:
-            syns = super()._get_synonyms(tok)
+        # for all of the prefix strings, look for a match in the synonm lib
+        n_q_toks_processed = 0
+        index_p_str = 0
+        while n_q_toks_processed < q_len:
+            p_str = prfx_strs[index_p_str]
+            p_str_len = len(p_str.split())
+            syns = super()._get_synonyms(p_str)
             if syns:
-                ret_toks.append('(' + ' OR '.join([tok] + list(syns)) + ')')
-            else:
-                ret_toks.append(tok)
+                ret_toks.append('(' + ' OR '.join([p_str] + list(syns)) + ')')
+                n_q_toks_processed = n_q_toks_processed + p_str_len
+            elif p_str_len == 1:
+                ret_toks.append(p_str)
+                n_q_toks_processed = n_q_toks_processed + 1
+            index_p_str = index_p_str + 1 # next prefix string
         return ' '.join(ret_toks)
 
 

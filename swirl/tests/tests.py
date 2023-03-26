@@ -5,6 +5,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 from swirl.processors.transform_query_processor import *
+from swirl.processors.utils import str_tok_get_prefixes
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +68,32 @@ def noop_query_string():
 ######################################################################
 ## tests
 ######################################################################
+
+@pytest.fixture
+def prefix_toks_test_cases():
+    return [
+        ['one'],
+        ['one','two'],
+        ['one','two', 'three']
+    ]
+
+@pytest.fixture
+def prefix_toks_test_expected():
+    return [
+        ['one'],
+        ['one two','one','two'],
+        ['one two three','one two','one','two three','two','three']
+    ]
+
+@pytest.mark.django_db
+def test_utils_prefix_toks(prefix_toks_test_cases, prefix_toks_test_expected):
+    assert prefix_toks_test_cases[0] == ['one']
+    i = 0
+    for c in prefix_toks_test_cases:
+        ret = str_tok_get_prefixes(c)
+        assert ret == prefix_toks_test_expected[i]
+        i = i + 1
+
 @pytest.mark.django_db
 def test_query_trasnform_viewset_create_and_list(api_client, test_suser, test_suser_pw, qrx_record_1):
 
@@ -93,6 +120,7 @@ def test_query_trasnform_viewset_create_and_list(api_client, test_suser, test_su
     assert content.get('qrx_type','') == qrx_record_1.get('qrx_type')
     assert content.get('config_content','') == qrx_record_1.get('config_content')
 
+######################################################################
 @pytest.mark.django_db
 def test_query_transform_allocation(noop_query_string, qrx_rewrite, qrx_synonym, qrx_synonym_bag):
     ret = TransformQueryProcessorFactory.alloc_query_transform(qrx_rewrite.get('qrx_type'),
@@ -113,6 +141,7 @@ def test_query_transform_allocation(noop_query_string, qrx_rewrite, qrx_synonym,
                                         qrx_rewrite.get('config_content'))
     assert str(ret) == 'SynonymBagQueryProcessor'
 
+######################################################################
 @pytest.mark.django_db
 def test_query_transform_synonym_parse(noop_query_string, qrx_synonym):
     sy_qxr = TransformQueryProcessorFactory.alloc_query_transform(qrx_synonym.get('qrx_type'),
@@ -128,6 +157,7 @@ def test_query_transform_synonym_parse(noop_query_string, qrx_synonym):
     assert str(rps[2]) == "<<pc>> -> <<['personal computer']>>"
     assert str(rps[3]) == "<<personal computer>> -> <<['pc']>>"
 
+######################################################################
 @pytest.mark.django_db
 def test_query_transform_synonym_bag_parse(noop_query_string, qrx_synonym_bag):
     sy_qxr = TransformQueryProcessorFactory.alloc_query_transform(qrx_synonym_bag.get('qrx_type'),
@@ -145,6 +175,7 @@ def test_query_transform_synonym_bag_parse(noop_query_string, qrx_synonym_bag):
     assert str(rps[5]) == "<<automobile>> -> <<['car', 'automobile', 'ride']>>"
     assert str(rps[6]) == "<<ride>> -> <<['car', 'automobile', 'ride']>>"
 
+######################################################################
 @pytest.fixture
 def qrx_rewrite():
     return {
@@ -184,7 +215,14 @@ def qrx_rewrite_process():
         "name": "rewrite 1",
         "shared": True,
         "qrx_type": "rewrite",
-        "config_content": "# This is a test\n# column1, colum2\nmobiles; ombile; mo bile, mobile\ncheap.* smartphones, cheap smartphone\non"
+        "config_content":
+        """
+# This is a test
+# column1, colum2
+mobiles; ombile; mo bile, mobile
+cheap.* smartphones, cheap smartphone
+on
+"""
 }
 
 @pytest.mark.django_db
@@ -201,14 +239,30 @@ def test_query_transform_rewwrite_process(qrx_rewrite_test_queries, qrx_rewrite_
         assert ret == qrx_rewrite_expected_queries[i]
         i = i + 1
 
-
+######################################################################
 @pytest.fixture
 def qrx_synonym_test_queries():
-    return ['robot human']
+    return [
+        '',
+        'a',
+        'robot human',
+        'notebook',
+        'pc',
+        'personal computer',
+        'I love my notebook'
+        ]
 
 @pytest.fixture
 def qrx_synonym_expected_queries():
-    return ['robot human']
+    return [
+        '',
+        'a',
+        'robot human',
+        '(notebook OR laptop)',
+        '(pc OR personal computer)',
+        '(personal computer OR pc)',
+        'I love my (notebook OR laptop)'
+        ]
 
 @pytest.fixture
 def qrx_synonym_process():
@@ -216,12 +270,19 @@ def qrx_synonym_process():
         "name": "synonym 1",
         "shared": True,
         "qrx_type": "synonym",
-        "config_content": "# column1, column2\nnotebook, laptop\nlaptop, personal computer\npc, personal computer\npersonal computer, pc"
+        "config_content":
+        """
+# column1, column2
+notebook, laptop
+laptop, personal computer
+pc, personal computer
+personal computer, pc
+"""
 }
 
 @pytest.mark.django_db
 def test_query_transform_synonym_process(qrx_synonym_test_queries, qrx_synonym_expected_queries, qrx_synonym_process):
-    assert len(qrx_synonym_test_queries) == len (qrx_synonym_expected_queries)
+    assert len(qrx_synonym_test_queries) == len(qrx_synonym_expected_queries)
     i = 0
     for q in qrx_synonym_test_queries:
         rw_qxr = TransformQueryProcessorFactory.alloc_query_transform(qrx_synonym_process.get('qrx_type'),
@@ -231,4 +292,45 @@ def test_query_transform_synonym_process(qrx_synonym_test_queries, qrx_synonym_e
         assert str(rw_qxr) == 'SynonymQueryProcessor'
         ret = rw_qxr.process()
         assert ret == qrx_synonym_expected_queries[i]
+        i = i + 1
+
+
+@pytest.fixture
+def qrx_synonym_bag_process():
+    return {
+        "name": "bag 1",
+        "shared": True,
+        "qrx_type": "bag",
+        "config_content": "# column1....columnN\nnotebook, personal computer, laptop, pc\ncar,automobile, ride"
+}
+
+######################################################################
+@pytest.fixture
+def qrx_synonym_bag_test_queries():
+    return [
+        '',
+        'a',
+        'robot human',
+        ]
+
+@pytest.fixture
+def qrx_synonym_bag_expected_queries():
+    return [
+        '',
+        'a',
+        'robot human'
+        ]
+
+@pytest.mark.django_db
+def test_query_transform_synonym_bag_process(qrx_synonym_bag_test_queries, qrx_synonym_bag_expected_queries, qrx_synonym_bag_process):
+    assert len(qrx_synonym_bag_test_queries) == len(qrx_synonym_bag_expected_queries)
+    i = 0
+    for q in qrx_synonym_bag_test_queries:
+        rw_qxr = TransformQueryProcessorFactory.alloc_query_transform(qrx_synonym_bag_process.get('qrx_type'),
+                                            q,
+                                            qrx_synonym_bag_process.get('name'),
+                                            qrx_synonym_bag_process.get('config_content'))
+        assert str(rw_qxr) == 'SynonymBagQueryProcessor'
+        ret = rw_qxr.process()
+        assert ret == qrx_synonym_bag_expected_queries[i]
         i = i + 1

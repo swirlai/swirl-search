@@ -344,6 +344,23 @@ def capitalize_search(list_lower, list_unknown):
     return list_capitalized
 
 #############################################
+def str_tok_get_prefixes(toks, sep = ' '):
+    """
+    given a list of tokens, get a list of the
+    of token lists, one for each pre-fix of
+    the input.
+    """
+    lt = len(toks)
+    if not toks or lt <= 0:
+        return []
+    ret = []
+    for i in range(lt):
+        for r  in range (lt - 1, i - 1, -1 ):
+            prfx = toks[i : r + 1]
+            ret.append(' '.join(prfx))
+    return ret
+
+#############################################
 
 def get_mappings_dict(mappings):
 
