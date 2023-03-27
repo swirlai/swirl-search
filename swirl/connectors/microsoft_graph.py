@@ -75,7 +75,7 @@ class M365SearchQuery(M365Post):
 
     def __init__(self, provider_id, search_id, update):
         super().__init__(provider_id, search_id, update)
-        self.provider.response_mappings = 'FOUND=value[0].hitsContainers[0].total,RESULTS=value[0].hitsContainers[0].hits'
+        self.provider.response_mappings = self.provider.response_mappings | 'FOUND=value[0].hitsContainers[0].total,RESULTS=value[0].hitsContainers[0].hits'
         self.response_mappings = get_mappings_dict(self.provider.response_mappings)
         self.provider.url = 'https://graph.microsoft.com/beta/search/query'
         self.entity_type = ""
