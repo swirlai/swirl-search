@@ -246,4 +246,4 @@ if 'OPENAI_API_KEY' in env:
 
 MICROSOFT_CLIENT_ID = ''
 MICROSOFT_CLIENT_SECRET = ''
-MICROSOFT_REDIRECT_URI = ''
+MICROSOFT_REDIRECT_URI = 'http://localhost:8000/swirl/microsoft-callback'
