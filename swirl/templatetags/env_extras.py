@@ -17,3 +17,7 @@ def get_swirl_version():
 @register.simple_tag
 def get_swirl_url():
     return f"{settings.PROTOCOL}://{settings.HOSTNAME}:8000/"
+
+@register.simple_tag
+def get_search_form_url():
+    return f"{settings.SWIRL_SEARCH_FORM_URL}"
