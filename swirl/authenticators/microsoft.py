@@ -5,7 +5,7 @@ from datetime import datetime
 from swirl.authenticators.authenticator import Authenticator
 from django.conf import settings
 
-scopes = ["User.Read", "Mail.Read", "Files.Read.All", "Calendars.Read", "Sites.Read.All"]
+scopes = ["User.Read", "Mail.Read", "Files.Read.All", "Calendars.Read", "Sites.Read.All", "Chat.Read"]
 
 graph_url = 'https://graph.microsoft.com/v1.0'
 
