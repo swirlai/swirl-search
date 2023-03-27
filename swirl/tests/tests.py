@@ -310,7 +310,7 @@ def qrx_synonym_bag_test_queries():
     return [
         '',
         'a',
-        'robot human',
+        'machine human',
         ]
 
 @pytest.fixture
@@ -318,7 +318,7 @@ def qrx_synonym_bag_expected_queries():
     return [
         '',
         'a',
-        'robot human'
+        'machine human'
         ]
 
 @pytest.mark.django_db
