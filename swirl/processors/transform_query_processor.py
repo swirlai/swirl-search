@@ -14,6 +14,7 @@ import re
 from swirl.processors.processor import *
 from swirl.processors.utils import clean_string
 from swirl.processors.utils import str_tok_get_prefixes
+from swirl.nltk import word_tokenize
 
 #############################################
 #############################################
@@ -197,7 +198,7 @@ class SynonymQueryProcessor(AbstractTransformQueryProcessor):
         ret = clean_string(self.query_string).strip()
         if not ret:
             return ret
-        q_toks = ret.split() # simple tokenze query
+        q_toks = word_tokenize(self.query_string)
         q_len = len(q_toks)
         prfx_strs = str_tok_get_prefixes(q_toks) # all prefix strings
         ret_toks = []
@@ -220,7 +221,7 @@ class SynonymQueryProcessor(AbstractTransformQueryProcessor):
 
 #############################################
 
-class SynonymBagQueryProcessor(AbstractTransformQueryProcessor):
+class SynonymBagQueryProcessor(SynonymQueryProcessor):
 
     type = 'SynonymBagQueryProcessor'
 
@@ -235,7 +236,4 @@ class SynonymBagQueryProcessor(AbstractTransformQueryProcessor):
             normal_word = super(SynonymBagQueryProcessor, self)._normalize_word(word)
             # noramlize and add to the config replace pattern
             word_buf = [bw for w in cline if (bw := super(SynonymBagQueryProcessor,self)._normalize_word(w)) != normal_word ]
-            self.replace_index[word] = _ConfigReplacePattern(normal_word, word_buf)
-
-    def process(self):
-        return clean_string(self.query_string).strip()
+            self.replace_index[normal_word] = _ConfigReplacePattern(normal_word, word_buf)
