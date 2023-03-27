@@ -15,7 +15,7 @@
     "result_processors": [
         "MappingResultProcessor"
     ],
-    "response_mappings": "RESULTS=value",
+    "response_mappings": "",
     "result_mappings": "",
     "results_per_query": 10,
     "credentials": "",

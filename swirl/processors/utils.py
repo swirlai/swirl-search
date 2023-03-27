@@ -126,16 +126,25 @@ from django.conf import settings
 SWIRL_HIGHLIGHT_START_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_START_CHAR', '*')
 SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')
 
-def highlight_list(text, word_list):
+import re
 
-    highlighted_list = []
-    for term in text.split():
-        if term in word_list:
-            highlighted_list.append(f"{SWIRL_HIGHLIGHT_START_CHAR}{term}{SWIRL_HIGHLIGHT_END_CHAR}")
+def highlight_list(target_str, word_list):
+    # Split the source string into words
+    source_words = word_list
+
+    # Split the target string into words and iterate over them
+    highlighted_words = []
+    for word in re.findall(r'\w+|\W+', target_str):
+        # If the word matches any of the source words, add it to the list of highlighted words
+        if re.sub(r'\W+', '', word).lower() in [re.sub(r'\W+', '', source_word).lower() for source_word in source_words]:
+            highlighted_words.append(f'{SWIRL_HIGHLIGHT_START_CHAR}{word}{SWIRL_HIGHLIGHT_END_CHAR}')
         else:
-            highlighted_list.append(term)
+            highlighted_words.append(word)
 
-    return ' '.join(highlighted_list)
+    # Join the highlighted words into a new string
+    highlighted_str = ''.join(highlighted_words)
+
+    return highlighted_str
 
 #############################################
 
@@ -194,12 +203,15 @@ def clean_string(s):
             # numbers
             if ch.isnumeric():
                 string_clean = string_clean + ch
+                continue
             # letters
             if ch.isalpha():
                 string_clean = string_clean + ch
+                continue
             if ch in [ '"', "'", '’', ' ', '-', '$', '%', '?', ':', '(', ')' ]:
                 string_clean = string_clean + ch
-            if ch in [ '\n', '!', ';', '/', '_' ]:
+                continue
+            if ch in [ '\n', '!', ';', '/', '_', '|', '.' ]:
                 string_clean = string_clean + ' '
         # end for
     except NameError as err:
