@@ -30,7 +30,8 @@ class SearchProvider(models.Model):
         'M365OutlookMessages': 'Microsoft',
         'M365OneDrive': 'Microsoft',
         'M365OutlookCalendar': 'Microsoft',
-        'M365SharePointSites': 'Microsoft'
+        'M365SharePointSites': 'Microsoft',
+        'MicrosoftTeams': 'Microsoft',
     })
     CONNECTOR_CHOICES = [
         ('ChatGPT', 'ChatGPT Query String'),
@@ -45,6 +46,7 @@ class SearchProvider(models.Model):
         ('M365OneDrive', 'M365 One Drive'),
         ('M365OutlookCalendar', 'M365 Outlook Calendar'),
         ('M365SharePointSites', 'M365 SharePoint Sites'),
+        ('MicrosoftTeams', 'Microsoft Teams'),
     ]
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
