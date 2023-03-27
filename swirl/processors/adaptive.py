@@ -3,19 +3,17 @@
 @contact:    sid@swirl.today
 '''
 
-from datetime import datetime
 
 from swirl.processors.processor import *
-from swirl.processors.utils import clean_string
-from swirl.connectors.utils import get_mappings_dict
-  
-#############################################    
-#############################################    
+from swirl.processors.utils import clean_string, get_mappings_dict
+
+#############################################
+#############################################
 
 class AdaptiveQueryProcessor(QueryProcessor):
 
     type = 'AdaptiveQueryProcessor'
-    
+
     def process(self):
 
         # TAG: processing
@@ -25,8 +23,8 @@ class AdaptiveQueryProcessor(QueryProcessor):
         dict_tags = {}
         tag = ""
 
-        for term in self.query_string.strip().split():      
-            val = ""      
+        for term in self.query_string.strip().split():
+            val = ""
             if ':' in term:
                 if term.endswith(':'):
                     # next term is tag
@@ -93,7 +91,7 @@ class AdaptiveQueryProcessor(QueryProcessor):
                     list_and.append(q)
             # end for
         # end if
-    
+
         if len(list_not) > 0:
             processed_query = ""
             dict_query_mappings = get_mappings_dict(self.query_mappings)
@@ -122,4 +120,3 @@ class AdaptiveQueryProcessor(QueryProcessor):
         # self.warning(f"query: {query}")
 
         return query
-
