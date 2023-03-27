@@ -15,8 +15,8 @@
     "result_processors": [
         "MappingResultProcessor"
     ],
-    "response_mappings": "RESULTS=value",
-    "result_mappings": "",
+    "response_mappings": "",
+    "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.from.emailAddress.address,NO_PAYLOAD",
     "results_per_query": 10,
     "credentials": "",
     "eval_credentials": "",
