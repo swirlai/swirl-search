@@ -167,13 +167,13 @@ def test_query_transform_synonym_bag_parse(noop_query_string, qrx_synonym_bag):
     assert str(sy_qxr) == 'SynonymBagQueryProcessor'
     sy_qxr.parse_config()
     rps = sy_qxr.get_replace_patterns()
-    assert str(rps[0]) == "<<notebook>> -> <<['notebook', 'personal computer', 'laptop', 'pc']>>"
-    assert str(rps[1]) == "<<personal computer>> -> <<['notebook', 'personal computer', 'laptop', 'pc']>>"
-    assert str(rps[2]) == "<<laptop>> -> <<['notebook', 'personal computer', 'laptop', 'pc']>>"
-    assert str(rps[3]) == "<<pc>> -> <<['notebook', 'personal computer', 'laptop', 'pc']>>"
-    assert str(rps[4]) == "<<car>> -> <<['car', 'automobile', 'ride']>>"
-    assert str(rps[5]) == "<<automobile>> -> <<['car', 'automobile', 'ride']>>"
-    assert str(rps[6]) == "<<ride>> -> <<['car', 'automobile', 'ride']>>"
+    assert str(rps[0]) == "<<notebook>> -> <<['personal computer', 'laptop', 'pc']>>"
+    assert str(rps[1]) == "<<personal computer>> -> <<['notebook', 'laptop', 'pc']>>"
+    assert str(rps[2]) == "<<laptop>> -> <<['notebook', 'personal computer', 'pc']>>"
+    assert str(rps[3]) == "<<pc>> -> <<['notebook', 'personal computer', 'laptop']>>"
+    assert str(rps[4]) == "<<car>> -> <<['automobile', 'ride']>>"
+    assert str(rps[5]) == "<<automobile>> -> <<['car', 'ride']>>"
+    assert str(rps[6]) == "<<ride>> -> <<['car', 'automobile']>>"
 
 ######################################################################
 @pytest.fixture

@@ -46,7 +46,7 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
     """
 
     def __init__(self,  query_string, name, config):
-        super().__init__(query_string=query_string, query_mappings={}, tags=[])
+        super(AbstractTransformQueryProcessor,self).__init__(query_string=query_string, query_mappings={}, tags=[])
         self._name = name
         self._config = config
         self._config_parsed = False
@@ -112,6 +112,11 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
             return False
         return True
 
+    def _normalize_word(self, word):
+        """ Strip and normalize whitespace """
+        tmp_toks = word.strip().split()
+        return ' '.join(tmp_toks)
+
     @abstractmethod
     def get_replace_patterns(self):
         """return the replace patterns"""
@@ -137,7 +142,7 @@ class RewriteQueryProcessor(AbstractTransformQueryProcessor):
 
     def _parse_cline(self, cline, nth):
         """ parse line and add to replace patterns """
-        if not super()._cline_is_valid(cline, nth, 1):
+        if not super(RewriteQueryProcessor, self)._cline_is_valid(cline, nth, 1):
             return
 
         if len(cline) == 1:
@@ -150,7 +155,7 @@ class RewriteQueryProcessor(AbstractTransformQueryProcessor):
             self.replace_patterns.append(_ConfigReplacePattern(p.strip(), [repl.strip()]))
 
     def process(self):
-        super().parse_config()
+        super(RewriteQueryProcessor, self).parse_config()
         ret = clean_string(self.query_string).strip()
         if not ret:
             return ret
@@ -169,13 +174,12 @@ class SynonymQueryProcessor(AbstractTransformQueryProcessor):
         return list(self.replace_index.values())
 
     def _parse_cline(self, cline, nth):
-        if not super()._cline_is_valid(cline, nth, 2):
+        if not super(SynonymQueryProcessor, self)._cline_is_valid(cline, nth, 2):
             return
         word = cline[0].strip()
 
         # tokenizer the matching word(s)
-        tmp_toks = word.split()
-        normal_word = ' '.join(tmp_toks)
+        normal_word = super(SynonymQueryProcessor, self)._normalize_word(word)
         repl = cline [1].strip()
         entry = self.replace_index.get(word, None)
         if not entry:
@@ -189,7 +193,7 @@ class SynonymQueryProcessor(AbstractTransformQueryProcessor):
         If you have two rules A B => x and B = y, the Query A B will return
         A B OR x. The query B will return B OR y
         """
-        super().parse_config()
+        super(SynonymQueryProcessor,self).parse_config()
         ret = clean_string(self.query_string).strip()
         if not ret:
             return ret
@@ -203,7 +207,7 @@ class SynonymQueryProcessor(AbstractTransformQueryProcessor):
         while n_q_toks_processed < q_len:
             p_str = prfx_strs[index_p_str]
             p_str_len = len(p_str.split())
-            syns = super()._get_synonyms(p_str)
+            syns = super(SynonymQueryProcessor,self)._get_synonyms(p_str)
             if syns:
                 ret_toks.append('(' + ' OR '.join([p_str] + list(syns)) + ')')
                 n_q_toks_processed = n_q_toks_processed + p_str_len
@@ -224,15 +228,14 @@ class SynonymBagQueryProcessor(AbstractTransformQueryProcessor):
         return list(self.replace_index.values())
 
     def _parse_cline(self, cline, nth):
-        if not super()._cline_is_valid(cline, nth, None):
+        if not super(SynonymBagQueryProcessor, self)._cline_is_valid(cline, nth, None):
             return
-        s_cline = [w.strip() for w in cline]
         # DN remove the restriction below.
-        for word in s_cline:
-            if self.replace_index.get(word, None):
-                logger.warn(f'word : {word} is used in multiple bags in {self._name} on the first will be kept')
-                continue
-            self.replace_index[word] = _ConfigReplacePattern(word,s_cline)
+        for word in cline:
+            normal_word = super(SynonymBagQueryProcessor, self)._normalize_word(word)
+            # noramlize and add to the config replace pattern
+            word_buf = [bw for w in cline if (bw := super(SynonymBagQueryProcessor,self)._normalize_word(w)) != normal_word ]
+            self.replace_index[word] = _ConfigReplacePattern(normal_word, word_buf)
 
     def process(self):
         return clean_string(self.query_string).strip()
