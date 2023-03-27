@@ -103,7 +103,7 @@ class M365OutlookMessages(M365SearchQuery):
 
     def __init__(self, provider_id, search_id, update):
         super().__init__(provider_id, search_id, update)
-        self.provider.result_mappings = 'title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.from.emailAddress.address,NO_PAYLOAD'
+        self.provider.result_mappings = self.provider.result_mappings | 'title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.from.emailAddress.address,NO_PAYLOAD'
         self.result_mappings = get_mappings_dict(self.provider.result_mappings)
         self.entity_type = "message"
 
@@ -115,7 +115,7 @@ class M365OutlookCalendar(M365SearchQuery):
 
     def __init__(self, provider_id, search_id, update):
         super().__init__(provider_id, search_id, update)
-        self.provider.result_mappings = 'title=resource.subject,body=summary,date_published=resource.start.dateTime,NO_PAYLOAD'
+        self.provider.result_mappings = self.result_mappings | 'title=resource.subject,body=summary,date_published=resource.start.dateTime,NO_PAYLOAD'
         self.result_mappings = get_mappings_dict(self.provider.result_mappings)
         self.entity_type = "event"
 
@@ -127,12 +127,12 @@ class M365OneDrive(M365SearchQuery):
 
     def __init__(self, provider_id, search_id, update):
         super().__init__(provider_id, search_id, update)
-        self.provider.result_mappings = 'title=resource.name,body=summary,date_published=resource.createdDateTime,NO_PAYLOAD'
+        self.provider.result_mappings = self.result_mappings | 'title=resource.name,body=summary,date_published=resource.createdDateTime,NO_PAYLOAD'
         self.result_mappings = get_mappings_dict(self.provider.result_mappings)
         self.entity_type = "driveItem"
 
     def send_request(self, url, params=None, query=None, **kwargs):
-        return super().send_request(url, params=params, query=query+'*', **kwargs)
+        return super().send_request(url, params=params, query=query, **kwargs)
 
 
 class M365SharePointSites(M365SearchQuery):
@@ -143,7 +143,7 @@ class M365SharePointSites(M365SearchQuery):
 
     def __init__(self, provider_id, search_id, update):
         super().__init__(provider_id, search_id, update)
-        self.provider.result_mappings = 'title=resource.name,body=resource.description,date_published=resource.createdDateTime,NO_PAYLOAD'
+        self.provider.result_mappings = self.result_mappings | 'title=resource.name,body=resource.description,date_published=resource.createdDateTime,NO_PAYLOAD'
         self.result_mappings = get_mappings_dict(self.provider.result_mappings)
         self.entity_type = "site"
 
@@ -156,6 +156,6 @@ class MicrosoftTeams(M365SearchQuery):
 
     def __init__(self, provider_id, search_id, update):
         super().__init__(provider_id, search_id, update)
-        self.provider.result_mappings = 'title=summary,date_published=resource.createdDateTime,author=resource.from.emailAddress.address,NO_PAYLOAD'
+        self.provider.result_mappings = self.result_mappings | 'title=summary,date_published=resource.createdDateTime,author=resource.from.emailAddress.address,NO_PAYLOAD'
         self.result_mappings = get_mappings_dict(self.provider.result_mappings)
         self.entity_type = "chatMessage"
