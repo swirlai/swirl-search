@@ -24,14 +24,19 @@ from swirl.connectors.requests import Requests
 ########################################
 ########################################
 
-class RequestsGet(Requests):
+class RequestsPost(Requests):
 
-    type = "RequestsGet"
+    type = "RequestsPost"
 
     ########################################
 
     def get_method(self):
-        return 'get'
+        return 'post'
 
     def send_request(self, url, params=None, query=None, **kwargs):
-        return requests.get(url, params=params, **kwargs)
+        headers = dict({
+            "Content-Type": "application/json"
+        })
+        headers.update(kwargs.get("headers", {}))
+        kwargs['headers'] = headers
+        return requests.post(url, params=params, json=query, **kwargs)
