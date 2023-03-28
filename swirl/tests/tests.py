@@ -167,13 +167,13 @@ def test_query_transform_synonym_bag_parse(noop_query_string, qrx_synonym_bag):
     assert str(sy_qxr) == 'SynonymBagQueryProcessor'
     sy_qxr.parse_config()
     rps = sy_qxr.get_replace_patterns()
-    assert str(rps[0]) == "<<notebook>> -> <<['notebook', 'personal computer', 'laptop', 'pc']>>"
-    assert str(rps[1]) == "<<personal computer>> -> <<['notebook', 'personal computer', 'laptop', 'pc']>>"
-    assert str(rps[2]) == "<<laptop>> -> <<['notebook', 'personal computer', 'laptop', 'pc']>>"
-    assert str(rps[3]) == "<<pc>> -> <<['notebook', 'personal computer', 'laptop', 'pc']>>"
-    assert str(rps[4]) == "<<car>> -> <<['car', 'automobile', 'ride']>>"
-    assert str(rps[5]) == "<<automobile>> -> <<['car', 'automobile', 'ride']>>"
-    assert str(rps[6]) == "<<ride>> -> <<['car', 'automobile', 'ride']>>"
+    assert str(rps[0]) == "<<notebook>> -> <<['personal computer', 'laptop', 'pc']>>"
+    assert str(rps[1]) == "<<personal computer>> -> <<['notebook', 'laptop', 'pc']>>"
+    assert str(rps[2]) == "<<laptop>> -> <<['notebook', 'personal computer', 'pc']>>"
+    assert str(rps[3]) == "<<pc>> -> <<['notebook', 'personal computer', 'laptop']>>"
+    assert str(rps[4]) == "<<car>> -> <<['automobile', 'ride']>>"
+    assert str(rps[5]) == "<<automobile>> -> <<['car', 'ride']>>"
+    assert str(rps[6]) == "<<ride>> -> <<['car', 'automobile']>>"
 
 ######################################################################
 @pytest.fixture
@@ -301,7 +301,11 @@ def qrx_synonym_bag_process():
         "name": "bag 1",
         "shared": True,
         "qrx_type": "bag",
-        "config_content": "# column1....columnN\nnotebook, personal computer, laptop, pc\ncar,automobile, ride"
+        "config_content": """
+# column1....columnN
+notebook, personal computer, laptop, pc
+car,automobile, ride
+"""
 }
 
 ######################################################################
@@ -311,6 +315,13 @@ def qrx_synonym_bag_test_queries():
         '',
         'a',
         'machine human',
+        'car',
+        'automobile',
+        'ride',
+        'pimp my ride',
+        'automobile, yours is fast',
+        'I love the movie The Notebook',
+        'My new notebook is slow'
         ]
 
 @pytest.fixture
@@ -318,7 +329,14 @@ def qrx_synonym_bag_expected_queries():
     return [
         '',
         'a',
-        'machine human'
+        'machine human',
+        '(car OR automobile OR ride)',
+        '(automobile OR car OR ride)',
+        '(ride OR car OR automobile)',
+        'pimp my (ride OR car OR automobile)',
+       '(automobile OR car OR ride) , yours is fast',
+        'I love the movie The Notebook',
+        'My new (notebook OR personal computer OR laptop OR pc) is slow'
         ]
 
 @pytest.mark.django_db
