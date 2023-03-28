@@ -82,7 +82,7 @@ def prefix_toks_test_expected():
     return [
         ['one'],
         ['one two','one','two'],
-        ['one two three','one two','one','two three','two','three']
+        ['one two three','one two','one','two three','two','three'],
     ]
 
 @pytest.mark.django_db
@@ -203,11 +203,11 @@ def test_query_transform_rewwrite_parse(noop_query_string, qrx_rewrite):
 
 @pytest.fixture
 def qrx_rewrite_test_queries():
-    return ['mobile phone', 'mobiles','ombile', 'mo bile', 'on computing', 'cheaper smartphones']
+    return ['mobile phone', 'mobiles','ombile', 'mo bile', 'on computing', 'cheaper smartphones','computers, go figure']
 
 @pytest.fixture
 def qrx_rewrite_expected_queries():
-    return ['mobile phone', 'mobile','mobile', 'mobile', 'computing', 'cheap smartphone']
+    return ['mobile phone', 'mobile','mobile', 'mobile', 'computing', 'cheap smartphone','computer go figure']
 
 @pytest.fixture
 def qrx_rewrite_process():
@@ -220,6 +220,7 @@ def qrx_rewrite_process():
 # This is a test
 # column1, colum2
 mobiles; ombile; mo bile, mobile
+computers, computer
 cheap.* smartphones, cheap smartphone
 on
 """
@@ -249,7 +250,9 @@ def qrx_synonym_test_queries():
         'notebook',
         'pc',
         'personal computer',
-        'I love my notebook'
+        'I love my notebook',
+        'This pc, it is better than a notebook',
+        'My favorite song is "You got a fast car"'
         ]
 
 @pytest.fixture
@@ -261,7 +264,9 @@ def qrx_synonym_expected_queries():
         '(notebook OR laptop)',
         '(pc OR personal computer)',
         '(personal computer OR pc)',
-        'I love my (notebook OR laptop)'
+        'I love my (notebook OR laptop)',
+        'This (pc OR personal computer) , it is better than a (notebook OR laptop)',
+        'My favorite song is " You got a fast (car OR ride) "'
         ]
 
 @pytest.fixture
@@ -277,6 +282,7 @@ notebook, laptop
 laptop, personal computer
 pc, personal computer
 personal computer, pc
+car, ride
 """
 }
 
@@ -334,7 +340,7 @@ def qrx_synonym_bag_expected_queries():
         '(automobile OR car OR ride)',
         '(ride OR car OR automobile)',
         'pimp my (ride OR car OR automobile)',
-       '(automobile OR car OR ride) , yours is fast',
+        '(automobile OR car OR ride) , yours is fast',
         'I love the movie The Notebook',
         'My new (notebook OR personal computer OR laptop OR pc) is slow'
         ]

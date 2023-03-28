@@ -23,6 +23,8 @@ class TransformQueryProcessorFactory():
     def alloc_query_transform(qxf_type, query_string, name, config):
         """
         Get the query transformer based on type
+        DN TODO : This class should parse the config so it only has to be
+        done once and can be seperated out from query processing
         """
         if qxf_type == "rewrite":
             return RewriteQueryProcessor(query_string, name,  config)
@@ -113,6 +115,13 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
             return False
         return True
 
+    def _clean_word_tok_quote_artificats(self, q_new, q_org):
+        if not '"' in q_org:
+            return q_new
+        q_new = q_new.replace('``','"')
+        q_new = q_new.replace("''",'"')
+        return q_new
+
     def _normalize_word(self, word):
         """ Strip and normalize whitespace """
         tmp_toks = word.strip().split()
@@ -195,9 +204,9 @@ class SynonymQueryProcessor(AbstractTransformQueryProcessor):
         A B OR x. The query B will return B OR y
         """
         super(SynonymQueryProcessor,self).parse_config()
-        ret = clean_string(self.query_string).strip()
-        if not ret:
-            return ret
+        clean_query = clean_string(self.query_string).strip()
+        if not clean_query:
+            return clean_query
         q_toks = word_tokenize(self.query_string)
         q_len = len(q_toks)
         prfx_strs = str_tok_get_prefixes(q_toks) # all prefix strings
@@ -216,7 +225,7 @@ class SynonymQueryProcessor(AbstractTransformQueryProcessor):
                 ret_toks.append(p_str)
                 n_q_toks_processed = n_q_toks_processed + 1
             index_p_str = index_p_str + 1 # next prefix string
-        return ' '.join(ret_toks)
+        return super(SynonymQueryProcessor,self)._clean_word_tok_quote_artificats(' '.join(ret_toks), clean_query)
 
 
 #############################################
