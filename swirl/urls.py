@@ -34,7 +34,10 @@ urlpatterns = [
 
     # this appears to be necessary to access the view from a pytest API unit test
     path('querytransforms/list', views.QueryTransformViewSet.as_view({'get': 'list'}), name='querytransforms/list'),
-    path('querytransforms/create', views.QueryTransformViewSet.as_view({'post': 'create'}), name='querytransforms/create'),
+    path('querytransforms/create', views.QueryTransformViewSet.as_view({'post': 'create'}), name='create'),
+    path('querytransforms/retrieve/<int:pk>/', views.QueryTransformViewSet.as_view({'get': 'retrieve'}), name='retrieve'),
+    path('querytransforms/update/<int:pk>/', views.QueryTransformViewSet.as_view({'put': 'update'}), name='update'),
+    path('querytransforms/delete/<int:pk>/', views.QueryTransformViewSet.as_view({'delete': 'destroy'}), name='delete'),
 
     path('', views.index, name='index'),
     path('index.html', views.index, name='index'),

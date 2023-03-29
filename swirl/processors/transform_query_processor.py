@@ -23,17 +23,20 @@ class TransformQueryProcessorFactory():
     def alloc_query_transform(qxf_type, query_string, name, config):
         """
         Get the query transformer based on type
-        DN TODO : This class should parse the config so it only has to be
-        done once and can be seperated out from query processing
+        TODO : Cache?
         """
+        ret = None
         if qxf_type == "rewrite":
-            return RewriteQueryProcessor(query_string, name,  config)
+            ret =  RewriteQueryProcessor(query_string, name,  config)
         elif qxf_type == "synonym":
-             return SynonymQueryProcessor(query_string, name, config)
+            ret =  SynonymQueryProcessor(query_string, name, config)
         elif qxf_type == "bag":
-             return SynonymBagQueryProcessor(query_string, name,  config)
+            ret =  SynonymBagQueryProcessor(query_string, name,  config)
         else:
             raise ValueError("Invalid Query Transform Processor type")
+        if (ret):
+            ret.parse_config()
+        return ret
 
 class _ConfigReplacePattern ():
     def __init__(self, pat, rep):

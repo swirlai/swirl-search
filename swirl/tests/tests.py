@@ -1,4 +1,5 @@
 from django.test import TestCase
+import json
 import pytest
 import logging
 from django.urls import reverse
@@ -101,7 +102,7 @@ def test_query_trasnform_viewset_create_and_list(api_client, test_suser, test_su
 
     # Check if the login was successful
     assert is_logged_in, 'Client login failed'
-    response = api_client.post(reverse('querytransforms/create'),data=qrx_record_1, format='json')
+    response = api_client.post(reverse('create'),data=qrx_record_1, format='json')
 
     assert response.status_code == 201, 'Expected HTTP status code 201'
     # Call the viewset
@@ -119,6 +120,35 @@ def test_query_trasnform_viewset_create_and_list(api_client, test_suser, test_su
     assert content.get('shared','') == qrx_record_1.get('shared')
     assert content.get('qrx_type','') == qrx_record_1.get('qrx_type')
     assert content.get('config_content','') == qrx_record_1.get('config_content')
+
+    # test retrieve
+    purl = reverse('retrieve', kwargs={'pk': 1})
+    response = api_client.get(purl,  format='json')
+    assert response.status_code == 200, 'Expected HTTP status code 201'
+    logging.info(f'DNDEBUG : json: {json.dumps(response.json())}')
+    assert len(response.json()) == 8, 'Expected 1 transform'
+    content = response.json()
+    assert content.get('name','') == qrx_record_1.get('name')
+    assert content.get('shared','') == qrx_record_1.get('shared')
+    assert content.get('qrx_type','') == qrx_record_1.get('qrx_type')
+    assert content.get('config_content','') == qrx_record_1.get('config_content')
+
+    # test update
+    qrx_record_1['config_content'] = "# This is an update\n# column1, colum2\nmobiles; ombile; mo bile, mobile\ncheapest smartphones, cheap smartphone"
+    purl = reverse('update', kwargs={'pk': 1})
+    response = api_client.put(purl, data=qrx_record_1, format='json')
+    assert response.status_code == 201, 'Expected HTTP status code 201'
+    response = api_client.get(reverse('querytransforms/list'))
+    assert response.status_code == 200, 'Expected HTTP status code 200'
+    assert len(response.json()) == 1, 'Expected 1 transform'
+    content = response.json()[0]
+    assert content.get('config_content','') == qrx_record_1.get('config_content')
+
+    # test delete
+    purl = reverse('delete', kwargs={'pk': 1})
+    response = api_client.delete(purl)
+    assert response.status_code == 410, 'Expected HTTP status code 410'
+
 
 ######################################################################
 @pytest.mark.django_db

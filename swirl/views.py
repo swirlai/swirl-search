@@ -329,7 +329,6 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         # check permissions
         if not request.user.has_perm('swirl.change_searchprovider'):
             return Response(status=status.HTTP_403_FORBIDDEN)
-
         # security review for 1.7 - OK, filtered by owner
         # note: shared providers cannot be updated
         if not SearchProvider.objects.filter(pk=pk, owner=self.request.user).exists():
@@ -884,8 +883,6 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
     ########################################
 
     def retrieve(self, request, pk=None):
-
-        # check permissions
         ## DN FIX ME PERSM
         if not request.user.has_perm('swirl.view_searchprovider'):
             return Response(status=status.HTTP_403_FORBIDDEN)
@@ -899,7 +896,7 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
         if not self.request.user == query_xfr.owner:
             serializer = QueryTrasnformNoCredentialsSerializer(query_xfr)
         else:
-            serializer = QueryTransform(query_xfr)
+            serializer = QueryTransformSerializer(query_xfr)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -917,9 +914,9 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
         if not QueryTransform.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('QueryTransform Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
-        query_xfr = SearchProvider.objects.get(pk=pk)
+        query_xfr = QueryTransform.objects.get(pk=pk)
         query_xfr.date_updated = datetime.now()
-        serializer = SearchProviderSerializer(instance=query_xfr, data=request.data)
+        serializer = QueryTransformSerializer(instance=query_xfr, data=request.data)
         serializer.is_valid(raise_exception=True)
         # security review for 1.7 - OK, saved with owner
         serializer.save(owner=self.request.user)
@@ -938,7 +935,7 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
         if not QueryTransform.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('QueryTransform Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
-        searchprovider = SearchProvider.objects.get(pk=pk)
+        searchprovider = QueryTransform.objects.get(pk=pk)
         searchprovider.delete()
         return Response('QueryTranformation Object Deleted', status=status.HTTP_410_GONE)
 
