@@ -374,6 +374,7 @@ class SearchViewSet(viewsets.ModelViewSet):
     Add ?rerun=<query_id> to fully re-execute a query, discarding previous results
     Add ?rescore=<query_id> to re-run post-result processing, updating relevancy scores
     Add ?update=<query_id> to update the Search with new results from all sources
+    Add ?pre_query_processor=<query_processor_name>
     """
     queryset = Search.objects.all()
     serializer_class = SearchSerializer
@@ -385,6 +386,8 @@ class SearchViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         ########################################
+
+        pre_query_processor_in = request.GET.get('pre_query_processor', None)
 
         providers = []
         if 'providers' in request.GET.keys():
@@ -405,7 +408,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             # run search
             logger.info(f"{module_name}: Search.create() from ?q")
             try:
-                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user)
+                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user, pre_query_processor=pre_query_processor_in)
             except Error as err:
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
@@ -444,7 +447,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.info(f"{module_name}: Search.create() from ?qs")
             try:
                 # security review for 1.7 - OK, created with owner
-                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user)
+                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user,pre_query_processor=pre_query_processor_in)
             except Error as err:
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
