@@ -67,6 +67,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         self.query_stemmed_target_list = []
         self.query_target_list = []
         self.query_has_numeric = False
+        self.provider_query_terms = []
 
         if results_processor_feedback:
             self.provider_query_terms = results_processor_feedback.get(
