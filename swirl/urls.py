@@ -39,6 +39,8 @@ urlpatterns = [
     path('querytransforms/update/<int:pk>/', views.QueryTransformViewSet.as_view({'put': 'update'}), name='update'),
     path('querytransforms/delete/<int:pk>/', views.QueryTransformViewSet.as_view({'delete': 'destroy'}), name='delete'),
 
+    path('search/search', views.SearchViewSet.as_view({'get': 'list'}), name='search'),
+
     path('', views.index, name='index'),
     path('index.html', views.index, name='index'),
     path('error.html', views.error, name='error'),
