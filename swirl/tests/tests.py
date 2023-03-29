@@ -125,7 +125,6 @@ def test_query_trasnform_viewset_create_and_list(api_client, test_suser, test_su
     purl = reverse('retrieve', kwargs={'pk': 1})
     response = api_client.get(purl,  format='json')
     assert response.status_code == 200, 'Expected HTTP status code 201'
-    logging.info(f'DNDEBUG : json: {json.dumps(response.json())}')
     assert len(response.json()) == 8, 'Expected 1 transform'
     content = response.json()
     assert content.get('name','') == qrx_record_1.get('name')
