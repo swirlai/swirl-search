@@ -20,8 +20,10 @@ jobs:
             cache: 'pip' # caching pip stuff
     - name: Run Install Swirl
       run: ./install.sh
+    - name: Update apt
+      run: sudo apt -o Acquire::Retries=3 update
     - name: Run Install erlang
-      run: sudo apt install -y erlang
+      run: sudo apt -o Acquire::Retries=3 install -y erlang
     - name: Run Install rabbitmq-server
       run: sudo apt install -y rabbitmq-server
     - name: Set up SWIRL
