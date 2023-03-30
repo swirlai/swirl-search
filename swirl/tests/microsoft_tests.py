@@ -204,7 +204,7 @@ class MicrosoftAPITestCase(TestCase):
         assert result is True
 
     @responses.activate
-    def test_outlook_messages_api(self):
+    def test_microsoft_api(self):
         ### CHECKING FOR PARENT CLASS
         if self._get_connector_name() == '':
             return
