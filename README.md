@@ -4,6 +4,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat&label=Release)](https://github.com/swirlai/swirl-search/releases)
 [![Docker Build](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml)
 [![Tests](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml)
+[![Built with spaCy](https://img.shields.io/badge/Built%20with-spaCy-09a3d5.svg?color=blue)](https://spacy.io)
 [![Slack](https://img.shields.io/badge/Slack--channel-gray?logo=slack&logoColor=black&style=flat)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 [![Newsletter](https://img.shields.io/badge/Newsletter-gray?logo=revue&logoColor=black&style=flat)](https://groups.google.com/g/swirl-announce)
 [![Twitter](https://img.shields.io/twitter/follow/SWIRL_SEARCH?label=Follow%20%40SWIRL_SEARCH&color=gray&logoColor=black&style=flat)](https://twitter.com/SWIRL_SEARCH)
@@ -36,7 +37,7 @@ After a few minutes the following or similar should appear:
 
 ```
 ssdtest-app-1  | Command successful!
-ssdtest-app-1  | __S_W_I_R_L__1_._9______________________________________________________________
+ssdtest-app-1  | __S_W_I_R_L__1_._1_0____________________________________________________________
 ssdtest-app-1  | 
 ssdtest-app-1  | Warning: logs directory does not exist, creating it
 ssdtest-app-1  | Start: rabbitmq -> rabbitmq-server ... Ok, pid: 53
@@ -77,7 +78,7 @@ http://localhost:8000/swirl/search/?q=enterprise+search
 ```
 
     "messages": [
-        "__S_W_I_R_L__1_._9______________________________________________________________",
+        "__S_W_I_R_L__1_._1_0____________________________________________________________",
         "[2023-01-21 15:02:53.696346] Retrieved 10 of 3530 results from: Mergers & Acquisitions (web/Google PSE)",
         "[2023-01-21 15:02:53.731620] Retrieved 10 of 2070000000 results from: Strategy Consulting (web/Google PSE)",
         "[2023-01-21 15:02:53.854734] Retrieved 10 of 120000 results from: Enterprise Search (web/Google PSE)",
@@ -261,7 +262,7 @@ Learn more: [Quick Start Guide](https://github.com/swirlai/swirl-search/wiki/1.-
 
 | Version                     | Date                        | Notes | 
 | --------------------------- | --------------------------- | ----- |
-| [Swirl Metasearch 1.9](https://github.com/swirlai/swirl-search/releases/tag/v1.9) | 02-14-2023 | [Release 1.9](https://github.com/swirlai/swirl-search/releases) |
+| [Swirl Metasearch 1.10](https://github.com/swirlai/swirl-search/releases/tag/v1.10) | 03-28-2023 | [Release 1.10](https://github.com/swirlai/swirl-search/releases) |
 
 <br/>
 

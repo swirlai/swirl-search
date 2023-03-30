@@ -209,3 +209,7 @@ class QueryTransform(models.Model) :
     ]
     qrx_type =  models.CharField(max_length=64, default='', choices=QUERY_TRASNSFORM_TYPE_CHOICES)
     config_content = models.TextField()
+    class Meta:
+        unique_together = [
+            ('name', 'qrx_type'),
+        ]

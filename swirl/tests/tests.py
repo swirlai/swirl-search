@@ -1,4 +1,6 @@
+import json
 from django.test import TestCase
+import swirl_server.settings as settings
 import pytest
 import logging
 from django.urls import reverse
@@ -82,7 +84,7 @@ def prefix_toks_test_expected():
     return [
         ['one'],
         ['one two','one','two'],
-        ['one two three','one two','one','two three','two','three']
+        ['one two three','one two','one','two three','two','three'],
     ]
 
 @pytest.mark.django_db
@@ -94,14 +96,38 @@ def test_utils_prefix_toks(prefix_toks_test_cases, prefix_toks_test_expected):
         assert ret == prefix_toks_test_expected[i]
         i = i + 1
 
+
+class SearchTestCase(TestCase):
+    @pytest.fixture(autouse=True)
+    def _init_fixtures(self, api_client,test_suser, test_suser_pw):
+        self._api_client = api_client
+        self._test_suser = test_suser
+        self._test_suser_pw = test_suser_pw
+
+    def setUp(self):
+        settings.CELERY_TASK_ALWAYS_EAGER = True
+
+    def tearDown(self):
+        settings.CELERY_TASK_ALWAYS_EAGER = False
+
+    def test_query_search_viewset_search(self):
+        is_logged_in = self._api_client.login(username=self._test_suser.username, password=self._test_suser_pw)
+        # Check if the login was successful
+        assert is_logged_in, 'Client login failed'
+        # Call the viewset
+        surl = reverse('search')
+        response = self._api_client.get(surl, {'qs': 'notebook', 'pre_query_processor':'foo.bar'})
+
+
+
 @pytest.mark.django_db
-def test_query_trasnform_viewset_create_and_list(api_client, test_suser, test_suser_pw, qrx_record_1):
+def test_query_transform_viewset_crud(api_client, test_suser, test_suser_pw, qrx_record_1):
 
     is_logged_in = api_client.login(username=test_suser.username, password=test_suser_pw)
 
     # Check if the login was successful
     assert is_logged_in, 'Client login failed'
-    response = api_client.post(reverse('querytransforms/create'),data=qrx_record_1, format='json')
+    response = api_client.post(reverse('create'),data=qrx_record_1, format='json')
 
     assert response.status_code == 201, 'Expected HTTP status code 201'
     # Call the viewset
@@ -119,6 +145,64 @@ def test_query_trasnform_viewset_create_and_list(api_client, test_suser, test_su
     assert content.get('shared','') == qrx_record_1.get('shared')
     assert content.get('qrx_type','') == qrx_record_1.get('qrx_type')
     assert content.get('config_content','') == qrx_record_1.get('config_content')
+
+    # test retrieve
+    purl = reverse('retrieve', kwargs={'pk': 1})
+    response = api_client.get(purl,  format='json')
+    assert response.status_code == 200, 'Expected HTTP status code 201'
+    assert len(response.json()) == 8, 'Expected 1 transform'
+    content = response.json()
+    assert content.get('name','') == qrx_record_1.get('name')
+    assert content.get('shared','') == qrx_record_1.get('shared')
+    assert content.get('qrx_type','') == qrx_record_1.get('qrx_type')
+    assert content.get('config_content','') == qrx_record_1.get('config_content')
+
+    # test update
+    qrx_record_1['config_content'] = "# This is an update\n# column1, colum2\nmobiles; ombile; mo bile, mobile\ncheapest smartphones, cheap smartphone"
+    purl = reverse('update', kwargs={'pk': 1})
+    response = api_client.put(purl, data=qrx_record_1, format='json')
+    assert response.status_code == 201, 'Expected HTTP status code 201'
+    response = api_client.get(reverse('querytransforms/list'))
+    assert response.status_code == 200, 'Expected HTTP status code 200'
+    assert len(response.json()) == 1, 'Expected 1 transform'
+    content = response.json()[0]
+    assert content.get('config_content','') == qrx_record_1.get('config_content')
+
+    # test delete
+    purl = reverse('delete', kwargs={'pk': 1})
+    response = api_client.delete(purl)
+    assert response.status_code == 410, 'Expected HTTP status code 410'
+
+@pytest.mark.django_db
+def test_query_trasnform_unique(api_client, test_suser, test_suser_pw, qrx_record_1):
+
+    is_logged_in = api_client.login(username=test_suser.username, password=test_suser_pw)
+
+    # Check if the login was successful
+    assert is_logged_in, 'Client login failed'
+    response = api_client.post(reverse('create'),data=qrx_record_1, format='json')
+
+    assert response.status_code == 201, 'Expected HTTP status code 201'
+    # Call the viewset
+    response = api_client.get(reverse('querytransforms/list'))
+
+    # Check if the response is successful
+    assert response.status_code == 200, 'Expected HTTP status code 200'
+
+    # Check if the number of users in the response is correct
+    assert len(response.json()) == 1, 'Expected 1 transform'
+
+    # Check if the data is correct
+    content = response.json()[0]
+    assert content.get('name','') == qrx_record_1.get('name')
+    assert content.get('shared','') == qrx_record_1.get('shared')
+    assert content.get('qrx_type','') == qrx_record_1.get('qrx_type')
+    assert content.get('config_content','') == qrx_record_1.get('config_content')
+
+    ## try to create it again
+    response = api_client.post(reverse('create'),data=qrx_record_1, format='json')
+    assert response.status_code == 400, 'Expected HTTP status code 400'
+
 
 ######################################################################
 @pytest.mark.django_db
@@ -203,11 +287,11 @@ def test_query_transform_rewwrite_parse(noop_query_string, qrx_rewrite):
 
 @pytest.fixture
 def qrx_rewrite_test_queries():
-    return ['mobile phone', 'mobiles','ombile', 'mo bile', 'on computing', 'cheaper smartphones']
+    return ['mobile phone', 'mobiles','ombile', 'mo bile', 'on computing', 'cheaper smartphones','computers, go figure']
 
 @pytest.fixture
 def qrx_rewrite_expected_queries():
-    return ['mobile phone', 'mobile','mobile', 'mobile', 'computing', 'cheap smartphone']
+    return ['mobile phone', 'mobile','mobile', 'mobile', 'computing', 'cheap smartphone','computer go figure']
 
 @pytest.fixture
 def qrx_rewrite_process():
@@ -220,6 +304,7 @@ def qrx_rewrite_process():
 # This is a test
 # column1, colum2
 mobiles; ombile; mo bile, mobile
+computers, computer
 cheap.* smartphones, cheap smartphone
 on
 """
@@ -249,7 +334,9 @@ def qrx_synonym_test_queries():
         'notebook',
         'pc',
         'personal computer',
-        'I love my notebook'
+        'I love my notebook',
+        'This pc, it is better than a notebook',
+        'My favorite song is "You got a fast car"'
         ]
 
 @pytest.fixture
@@ -261,7 +348,9 @@ def qrx_synonym_expected_queries():
         '(notebook OR laptop)',
         '(pc OR personal computer)',
         '(personal computer OR pc)',
-        'I love my (notebook OR laptop)'
+        'I love my (notebook OR laptop)',
+        'This (pc OR personal computer) , it is better than a (notebook OR laptop)',
+        'My favorite song is " You got a fast (car OR ride) "'
         ]
 
 @pytest.fixture
@@ -277,6 +366,7 @@ notebook, laptop
 laptop, personal computer
 pc, personal computer
 personal computer, pc
+car, ride
 """
 }
 
@@ -334,7 +424,7 @@ def qrx_synonym_bag_expected_queries():
         '(automobile OR car OR ride)',
         '(ride OR car OR automobile)',
         'pimp my (ride OR car OR automobile)',
-       '(automobile OR car OR ride) , yours is fast',
+        '(automobile OR car OR ride) , yours is fast',
         'I love the movie The Notebook',
         'My new (notebook OR personal computer OR laptop OR pc) is slow'
         ]
