@@ -21,7 +21,7 @@ jobs:
     - name: Run Install Swirl
       run: ./install.sh
     - name: Run Install erlang
-      run: sudo apt install -y erlang
+      run: sudo apt install --fix-mising -y erlang
     - name: Run Install rabbitmq-server
       run: sudo apt install -y rabbitmq-server
     - name: Set up SWIRL
