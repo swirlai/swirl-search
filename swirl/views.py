@@ -408,7 +408,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             # run search
             logger.info(f"{module_name}: Search.create() from ?q")
             try:
-                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user, pre_query_processor=pre_query_processor_in)
+                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user)
             except Error as err:
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
