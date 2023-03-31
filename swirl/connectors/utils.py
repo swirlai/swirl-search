@@ -10,7 +10,7 @@ import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
 django.setup()
 
 from swirl.models import Result
@@ -19,14 +19,14 @@ from swirl.connectors.mappings import *
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
-#############################################
-#############################################
+#############################################    
+#############################################    
 
 def save_result(search, provider, query_to_provider="", messages=[], found=0, retrieved=0, provider_results=[]):
 
     '''
     accepts: model data
-    returns: results of saving those items
+    returns: results of saving those items 
     makes no changes
     '''
 
@@ -34,7 +34,7 @@ def save_result(search, provider, query_to_provider="", messages=[], found=0, re
     new_result.save()
     return new_result
 
-#############################################
+#############################################    
 
 def bind_query_mappings(query_template, query_mappings, url=None, credentials=None):
 
@@ -85,7 +85,7 @@ def bind_query_mappings(query_template, query_mappings, url=None, credentials=No
 
     return bound_query_template
 
-#############################################
+#############################################    
 
 def get_mappings_dict(mappings):
 
@@ -98,7 +98,7 @@ def get_mappings_dict(mappings):
     module_name = 'get_mappings'
 
     dict_mappings = {}
-
+    
     mappings = mappings.split(',')
     if mappings:
         for mapping in mappings:
@@ -116,7 +116,7 @@ def get_mappings_dict(mappings):
             dict_mappings[swirl_key] = source_key
         # end for
     # end if
-
+            
     return dict_mappings
 
-
+        
