@@ -3,7 +3,7 @@ name: Unit Tests
 on:
   push:
     # only trigger on branches, not on tags
-    branches: '1.11'
+    branches: 'main'
 
 jobs:
 
