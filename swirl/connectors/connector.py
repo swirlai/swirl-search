@@ -99,7 +99,7 @@ class Connector:
 
     ########################################
 
-    def federate(self, session):
+    def federate(self):
 
         '''
         Executes the workflow for a given search and provider
@@ -112,9 +112,9 @@ class Connector:
             try:
                 self.process_query()
                 self.construct_query()
-                v = self.validate_query(session)
+                v = self.validate_query()
                 if v:
-                    self.execute_search(session)
+                    self.execute_search()
                     if self.status not in ['FEDERATING', 'READY']:
                         self.error(f"execute_search() failed, status {self.status}")
                         self.save_results()
@@ -218,12 +218,12 @@ class Connector:
 
     ########################################
 
-    def execute_search(self, session):
+    def execute_search(self):
 
         '''
         Connect to, query and save the response from this provider
         '''
-        
+
         logger.info(f"{self}: execute_search()")
         self.found = 1
         self.retrieved = 1

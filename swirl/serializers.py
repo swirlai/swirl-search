@@ -5,7 +5,7 @@
 
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from swirl.models import SearchProvider, Search, Result,QueryTransform
+from swirl.models import SearchProvider, Search, Result
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -21,7 +21,7 @@ class SearchProviderSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = SearchProvider
-        fields = ['id', 'name', 'owner', 'shared', 'date_created', 'date_updated', 'active', 'default', 'connector', 'url', 'query_template', 'query_processor', 'query_processors', 'query_mappings', 'result_processor', 'result_processors', 'response_mappings', 'result_mappings', 'results_per_query', 'credentials', 'eval_credentials', 'tags']
+        fields = ['id', 'name', 'owner', 'shared', 'date_created', 'date_updated', 'active', 'default', 'connector', 'url', 'query_template', 'query_processor', 'query_processors', 'query_mappings', 'result_processor', 'result_processors', 'response_mappings', 'result_mappings', 'results_per_query', 'credentials', 'tags']
 
 class SearchProviderNoCredentialsSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
@@ -40,15 +40,3 @@ class ResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = Result
         fields = ['id', 'owner', 'date_created', 'date_updated', 'search_id', 'searchprovider', 'query_to_provider', 'query_processors', 'result_processors', 'result_processor_json_feedback', 'messages', 'status', 'retrieved', 'found', 'time', 'json_results', 'tags']
-
-class QueryTransformSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
-    class Meta:
-        model = QueryTransform
-        fields = ['id', 'name','owner','shared','date_created','date_updated','qrx_type','config_content']
-
-class QueryTrasnformNoCredentialsSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
-    class Meta:
-        model = QueryTransform
-        fields = ['id', 'name','owner','shared', 'date_created','date_updated','qrx_type','config_content']

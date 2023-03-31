@@ -10,27 +10,28 @@ from jsonpath_ng.exceptions import JsonPathParserError
 
 from swirl.processors.processor import *
 from swirl.processors.utils import clean_string, create_result_dictionary
-
-#############################################
-#############################################
+from swirl.connectors.utils import get_mappings_dict
+  
+#############################################    
+#############################################    
 
 class GenericQueryProcessor(QueryProcessor):
 
     type = 'GenericQueryProcessor'
-
+    
     def process(self):
         return clean_string(self.query_string).strip()
 
-#############################################
+#############################################    
 
 class TestQueryProcessor(QueryProcessor):
 
     type = 'TestQueryProcessor'
-
+    
     def process(self):
         return clean_string(self.query_string).strip() + " test"
 
-#############################################
+#############################################    
 
 class GenericResultProcessor(ResultProcessor):
 
@@ -47,7 +48,7 @@ class GenericResultProcessor(ResultProcessor):
             swirl_result['searchprovider_rank'] = result_number
             swirl_result['date_retrieved'] = str(datetime.now())
 
-            #############################################
+            #############################################  
             # copy fields, avoiding collisions
             for key in result.keys():
                 if key in swirl_result.keys():
@@ -72,7 +73,7 @@ class GenericResultProcessor(ResultProcessor):
             swirl_result['searchprovider'] = self.provider.name
             list_results.append(swirl_result)
             result_number = result_number + 1
-            if result_number > self.provider.results_per_query:
+            if result_number > self.provider.results_per_query:  
                 logger.warning("Truncating extra results, found & retrieved may be incorrect")
                 break
         # end for
@@ -80,7 +81,7 @@ class GenericResultProcessor(ResultProcessor):
         self.processed_results = list_results
         return self.processed_results
 
-#############################################
+#############################################    
 
 class TestResultProcessor(ResultProcessor):
 
@@ -95,7 +96,7 @@ class TestResultProcessor(ResultProcessor):
         self.processed_results = self.results
         return self.processed_results
 
-#############################################
+#############################################    
 
 class DuplicateHalfResultProcessor(ResultProcessor):
 
@@ -118,3 +119,4 @@ class DuplicateHalfResultProcessor(ResultProcessor):
 
         self.processed_results = self.results + results_hd
         return self.processed_results
+

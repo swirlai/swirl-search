@@ -152,7 +152,7 @@ def position_dict(text, word_list):
     if type(word_list) != list:
         return []
     if word_list == []:
-        return []
+        return []  
     positions = {word: [] for word in word_list}
     words = text.split()
     for i, word in enumerate(words):
@@ -342,54 +342,3 @@ def capitalize_search(list_lower, list_unknown):
     # end for
 
     return list_capitalized
-
-#############################################
-def str_tok_get_prefixes(toks, sep = ' '):
-    """
-    given a list of tokens, get a list of the
-    of token lists, one for each pre-fix of
-    the input.
-    """
-    lt = len(toks)
-    if not toks or lt <= 0:
-        return []
-    ret = []
-    for i in range(lt):
-        for r  in range (lt - 1, i - 1, -1 ):
-            prfx = toks[i : r + 1]
-            ret.append(' '.join(prfx))
-    return ret
-
-#############################################
-
-def get_mappings_dict(mappings):
-
-    '''
-    accepts: any provider mapping
-    returns: dict of the mappings by swirl_key
-    warns if any swirl_key is repeated
-    '''
-
-    module_name = 'get_mappings'
-
-    dict_mappings = {}
-
-    mappings = mappings.split(',')
-    if mappings:
-        for mapping in mappings:
-            stripped_mapping = mapping.strip()
-            if '=' in stripped_mapping:
-                swirl_key = stripped_mapping[:stripped_mapping.find('=')]
-                source_key = stripped_mapping[stripped_mapping.find('=')+1:]
-            else:
-                source_key = None
-                swirl_key = stripped_mapping
-            # end if
-            if swirl_key in dict_mappings:
-                logger.warning(f"{module_name}: Warning: control mapping {swirl_key} found more than once, ignoring")
-                continue
-            dict_mappings[swirl_key] = source_key
-        # end for
-    # end if
-
-    return dict_mappings
