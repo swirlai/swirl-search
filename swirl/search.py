@@ -28,12 +28,12 @@ for t in SWIRL_OBJECT_LIST:
 
 module_name = 'search.py'
 
-def search(id):
+def search(id, session):
 
     '''
     Execute the search task workflow
     '''
-    
+
     update = False
     start_time = time.time()
 
@@ -82,10 +82,10 @@ def search(id):
         search.status = 'ERR_NEED_PERMISSION'
         search.save()
         return False
-                
+
     providers = SearchProvider.objects.filter(active=True, owner=search.owner) | SearchProvider.objects.filter(active=True, shared=True)
     selected_provider_list = []
-    if search.searchprovider_list:            
+    if search.searchprovider_list:
         # add providers to list by id, name or tag
         for provider in providers:
             provider_key = None
@@ -130,7 +130,7 @@ def search(id):
             else:
                 if provider.tags:
                     for tag in provider.tags:
-                        if tag.lower() in [t.lower() for t in tags_in_query_list]: 
+                        if tag.lower() in [t.lower() for t in tags_in_query_list]:
                             if not provider in selected_provider_list:
                                 selected_provider_list.append(provider)
                             # end if
@@ -153,7 +153,7 @@ def search(id):
     search.status = 'PRE_QUERY_PROCESSING'
     logger.info(f"{module_name}: {search.status}")
     search.save()
-    
+
     processor_list = []
     if search.pre_query_processor:
         processor_list = [search.pre_query_processor]
@@ -180,7 +180,7 @@ def search(id):
             except (NameError, TypeError, ValueError) as err:
                 logger.error(f'{module_name}_{search.id}: {processor}: {err.args}, {err}')
                 return False
-            if processed_query:           
+            if processed_query:
                 if processed_query != query_temp:
                     search.messages.append(f"[{datetime.now()}] {processor} rewrote query to: {processed_query}")
                     search.save()
@@ -191,18 +191,18 @@ def search(id):
         # end for
         search.query_string_processed = query_temp
     # end if
-    
+
     ########################################
     search.status = 'FEDERATING'
     logger.info(f"{module_name}: {search.status}")
-    search.save()        
+    search.save()
     federation_result = {}
     federation_status = {}
     at_least_one = False
     for provider in providers:
         at_least_one = True
         federation_status[provider.id] = None
-        federation_result[provider.id] = federate_task.delay(search.id, provider.id, provider.connector, update)
+        federation_result[provider.id] = federate_task.delay(search.id, provider.id, provider.connector, update, session)
     # end for
     if not at_least_one:
         logger.warning(f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}")
@@ -215,7 +215,7 @@ def search(id):
     ticks = 0
     error_flag = False
     at_least_one = False
-    while 1:        
+    while 1:
         time.sleep(1)
         ticks = ticks + 1
         # get the list of result objects
@@ -296,7 +296,7 @@ def search(id):
                 logger.warning(f"{module_name}_{search.id}: Ignoring search.post_result_processors, since search.post_result_processor is specified")
         else:
             processor_list = search.post_result_processors
-        
+
         for processor in processor_list:
             logger.info(f"{module_name}: invoking processor: {processor}")
             try:
@@ -319,10 +319,10 @@ def search(id):
                 last_message = search.messages[-1:]
                 if last_message:
                     if last_message[0].lower().strip() != message.lower().strip():
-                        search.messages.append(message)   
+                        search.messages.append(message)
                     # end if
                 else:
-                    search.messages.append(message)   
+                    search.messages.append(message)
                 # end if
             # end if
         # end for
@@ -341,7 +341,7 @@ def search(id):
     end_time = time.time()
     search.time = f"{(end_time - start_time):.1f}"
     logger.info(f"{module_name}: search time: {search.time}")
-    search.save()    
+    search.save()
 
     return True
 

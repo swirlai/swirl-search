@@ -3,6 +3,7 @@
 @contact:    sid@swirl.today
 '''
 
+from swirl.mixers import *
 import time
 import logging as logger
 from datetime import datetime
@@ -18,22 +19,26 @@ from django.contrib.auth import login
 from django.core.mail import send_mail
 from swirl.utils import paginate
 from django.conf import settings
-from .forms import RegistrationForm
+from .forms import RegistrationForm, QueryTransformForm
 
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework import viewsets, status
 from rest_framework import permissions
 from rest_framework.response import Response
 
+import csv
 import base64
 import hashlib
 import hmac
 
 from swirl.models import *
 from swirl.serializers import *
-from swirl.models import SearchProvider, Search, Result
-from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer
-from swirl.mixers import *
+from swirl.models import SearchProvider, Search, Result, QueryTransform
+from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTrasnformNoCredentialsSerializer
+from swirl.authenticators.authenticator import Authenticator
+from swirl.authenticators import *
+
+
 
 module_name = 'views.py'
 
@@ -41,11 +46,15 @@ from swirl.tasks import search_task, rescore_task
 from swirl.search import search as run_search
 
 SWIRL_OBJECT_LIST = Search.MIXER_CHOICES
+SWIRL_AUTHENTICATORS_LIST = SearchProvider.AUTHENTICATOR_CHOICES
 
 SWIRL_OBJECT_DICT = {}
 for t in SWIRL_OBJECT_LIST:
     SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
 
+SWIRL_AUTHENTICATORS_DICT = {}
+for t in SWIRL_AUTHENTICATORS_LIST:
+    SWIRL_AUTHENTICATORS_DICT[t[0]]=eval(t[0])
 SWIRL_EXPLAIN = getattr(settings, 'SWIRL_EXPLAIN', True)
 SWIRL_RERUN_WAIT = getattr(settings, 'SWIRL_RERUN_WAIT', 8)
 SWIRL_RESCORE_WAIT = getattr(settings, 'SWIRL_RESCORE_WAIT', 5)
@@ -172,7 +181,7 @@ def search(request):
             new_search.status = 'NEW_SEARCH'
             new_search.save()
             search_id = new_search.id
-            res = run_search(search_id)
+            res = run_search(search_id, Authenticator().get_session_data(request))
             if not res:
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             if not Search.objects.filter(id=search_id).exists():
@@ -198,6 +207,48 @@ def search(request):
     # end if
 
     return render(request, 'search.html', {'form': form, 'results': results, 'query': query})
+
+########################################
+
+def authenticators(request):
+
+    def remove_duplicates(my_list):
+        new_list = []
+        seen = set()
+        for d in my_list:
+            key = (d['name'])
+            if key not in seen:
+                new_list.append(d)
+                seen.add(key)
+        return new_list
+
+    def return_authenticators(request):
+        if not request.user.is_authenticated:
+            return redirect('/swirl/api-auth/login?next=/swirl/authenticators.html')
+        providers = SearchProvider.objects.filter(active=True, owner=request.user) | SearchProvider.objects.filter(active=True, shared=True)
+        results = list()
+        for provider in providers:
+            name = None
+            try:
+                name = SearchProvider.CONNECTORS_AUTHENTICATORS[provider.connector]
+                if not name:
+                    continue
+            except:
+                continue
+            results.append({
+                'name': name
+            })
+        results = remove_duplicates(results)
+        return render(request, 'authenticators.html', {'authenticators': results})
+
+    if request.method == 'POST':
+        authenticator = request.POST.get('authenticator_name')
+        res = SWIRL_AUTHENTICATORS_DICT[authenticator]().update_token(request)
+        if res == True:
+            return return_authenticators(request)
+        return res
+    else:
+        return return_authenticators(request)
 
 ########################################
 
@@ -278,7 +329,6 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         # check permissions
         if not request.user.has_perm('swirl.change_searchprovider'):
             return Response(status=status.HTTP_403_FORBIDDEN)
-
         # security review for 1.7 - OK, filtered by owner
         # note: shared providers cannot be updated
         if not SearchProvider.objects.filter(pk=pk, owner=self.request.user).exists():
@@ -309,6 +359,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         searchprovider.delete()
         return Response('SearchProvider Object Deleted', status=status.HTTP_410_GONE)
 
+
 ########################################
 ########################################
 
@@ -323,6 +374,7 @@ class SearchViewSet(viewsets.ModelViewSet):
     Add ?rerun=<query_id> to fully re-execute a query, discarding previous results
     Add ?rescore=<query_id> to re-run post-result processing, updating relevancy scores
     Add ?update=<query_id> to update the Search with new results from all sources
+    Add ?pre_query_processor=<query_processor_name>
     """
     queryset = Search.objects.all()
     serializer_class = SearchSerializer
@@ -334,6 +386,8 @@ class SearchViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         ########################################
+
+        pre_query_processor_in = request.GET.get('pre_query_processor', None)
 
         providers = []
         if 'providers' in request.GET.keys():
@@ -354,12 +408,12 @@ class SearchViewSet(viewsets.ModelViewSet):
             # run search
             logger.info(f"{module_name}: Search.create() from ?q")
             try:
-                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user)
+                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user, pre_query_processor=pre_query_processor_in)
             except Error as err:
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
             new_search.save()
-            search_task.delay(new_search.id)
+            search_task.delay(new_search.id, Authenticator().get_session_data(request))
             time.sleep(SWIRL_Q_WAIT)
             return redirect(f'/swirl/results?search_id={new_search.id}')
 
@@ -393,12 +447,12 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.info(f"{module_name}: Search.create() from ?qs")
             try:
                 # security review for 1.7 - OK, created with owner
-                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user)
+                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user,pre_query_processor=pre_query_processor_in)
             except Error as err:
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
             new_search.save()
-            res = run_search(new_search.id)
+            res = run_search(new_search.id, Authenticator().get_session_data(request))
             if not res:
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             if not Search.objects.filter(id=new_search.id).exists():
@@ -457,7 +511,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             rerun_search.messages = []
             rerun_search.messages.append(message)
             rerun_search.save()
-            search_task.delay(rerun_search.id)
+            search_task.delay(rerun_search.id, Authenticator().get_session_data(request))
             time.sleep(SWIRL_RERUN_WAIT)
             return redirect(f'/swirl/results?search_id={rerun_search.id}')
         # end if
@@ -498,7 +552,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.info(f"{module_name}: ?update!")
             search.status = 'UPDATE_SEARCH'
             search.save()
-            search_task.delay(update_id)
+            search_task.delay(update_id, Authenticator().get_session_data(request))
             time.sleep(SWIRL_SUBSCRIBE_WAIT)
             return redirect(f'/swirl/results?search_id={update_id}')
 
@@ -534,7 +588,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 search.status = 'ERR_NO_SEARCHPROVIDERS'
                 search.save
         else:
-            search_task.delay(serializer.data['id'])
+            search_task.delay(serializer.data['id'], Authenticator().get_session_data(request))
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -582,7 +636,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             if not (request.user.has_perm('swirl.add_search') and request.user.has_perm('swirl.change_search') and request.user.has_perm('swirl.add_result') and request.user.has_perm('swirl.change_result')):
                 logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
                 return Response(status=status.HTTP_403_FORBIDDEN)
-            search_task.delay(search.id)
+            search_task.delay(search.id, Authenticator().get_session_data(request))
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     ########################################
@@ -781,3 +835,137 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
+
+########################################
+########################################
+
+class QueryTransformViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for managing SearchProviders.
+    Use GET to list all, POST to create a new one.
+    Add /<id>/ to DELETE, PUT or PATCH one.
+    """
+    queryset = QueryTransform.objects.all()
+    serializer_class = QueryTransformSerializer
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    # pagination_class = None
+
+    def list(self, request):
+
+        # check permissions
+        # TODO: fix perm
+        if not request.user.has_perm('swirl.view_searchprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        shared_xforms = QueryTransform.objects.filter(shared=True)
+        self.queryset = shared_xforms | QueryTransform.objects.filter(owner=self.request.user)
+
+        serializer = QueryTransformSerializer(self.queryset, many=True)
+        if self.request.user.is_superuser:
+            serializer = QueryTransformSerializer(self.queryset, many=True)
+        return Response(paginate(serializer.data, self.request), status=status.HTTP_200_OK)
+
+    ########################################
+
+    def create(self, request):
+
+        # check permissions
+        # DN FIX ME, perms
+        if not request.user.has_perm('swirl.add_searchprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        # by default, if the user is superuser, the searchprovider is shared
+        if self.request.user.is_superuser:
+           request.data['shared'] = 'true'
+
+        serializer = QueryTransformSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(owner=self.request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    ########################################
+
+    def retrieve(self, request, pk=None):
+        ## DN FIX ME PERSM
+        if not request.user.has_perm('swirl.view_searchprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        # security review for 1.7 - OK, filtered by owner
+        if not (QueryTransform.objects.filter(pk=pk, owner=self.request.user).exists() or QueryTransform.objects.filter(pk=pk, shared=True).exists()):
+            return Response('QueryTransform Object Not Found', status=status.HTTP_404_NOT_FOUND)
+
+        query_xfr = QueryTransform.objects.get(pk=pk)
+
+        if not self.request.user == query_xfr.owner:
+            serializer = QueryTrasnformNoCredentialsSerializer(query_xfr)
+        else:
+            serializer = QueryTransformSerializer(query_xfr)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    ########################################
+
+    def update(self, request, pk=None):
+
+        # check permissions
+        ## FIXEM DN PERMS
+        if not request.user.has_perm('swirl.change_searchprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        # security review for 1.7 - OK, filtered by owner
+        # note: shared providers cannot be updated
+        if not QueryTransform.objects.filter(pk=pk, owner=self.request.user).exists():
+            return Response('QueryTransform Object Not Found', status=status.HTTP_404_NOT_FOUND)
+
+        query_xfr = QueryTransform.objects.get(pk=pk)
+        query_xfr.date_updated = datetime.now()
+        serializer = QueryTransformSerializer(instance=query_xfr, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        # security review for 1.7 - OK, saved with owner
+        serializer.save(owner=self.request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    ########################################
+
+    def destroy(self, request, pk=None):
+        # check permissions
+        ## DN FIX ME PERMS
+        if not request.user.has_perm('swirl.delete_searchprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        # security review for 1.7 - OK, filtered by owner
+        # note: shared providers cannot be destroyed
+        if not QueryTransform.objects.filter(pk=pk, owner=self.request.user).exists():
+            return Response('QueryTransform Object Not Found', status=status.HTTP_404_NOT_FOUND)
+
+        searchprovider = QueryTransform.objects.get(pk=pk)
+        searchprovider.delete()
+        return Response('QueryTranformation Object Deleted', status=status.HTTP_410_GONE)
+
+def query_transform_form(request):
+    if request.method == 'POST':
+        form = QueryTransformForm(request.POST, request.FILES)
+        if form.is_valid():
+            csv_file = request.FILES['file']
+            content = csv_file.read().decode('utf-8')
+            reader = csv.reader(content.splitlines())
+
+            # Convert the CSV data to a string format suitable for the TextField
+            csv_content = "\n".join([",".join(row) for row in reader])
+
+            # Get the name from the form or set it to None if it's not provided
+            qrx_name = form.cleaned_data['name'] or None
+
+            # Get the type of the transform
+            in_type = form.cleaned_data.get('content_type')
+
+            # Save the content in a new CSVData object
+            qrx_data = QueryTransform(config_content=csv_content, qrx_type=in_type, owner=request.user, name=qrx_name)
+
+            # Persist it
+            qrx_data.save()
+
+            return redirect('index') # Replace 'success' with the name of your success URL
+    else:
+        form = QueryTransformForm
+    return render(request, 'query_transform.html', {'form': form})
