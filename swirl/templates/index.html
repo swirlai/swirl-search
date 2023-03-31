@@ -2,16 +2,28 @@
 
 {% block title %}Register!{% endblock %}
 
-{% block content %}
-&#10230; <a href="/swirl/search.html" target="_new">Search Form</a><br/><br/>
-APIs:<br/>
-&#10230; <a href="/swirl/searchproviders/" target="_new">SearchProviders</a><br/>
-&#10230; <a href="/swirl/search/" target="_new">Search</a><br/>
-&#10230; <a href="/swirl/results/" target="_new">Results</a><br/>
-&#10230; <a href="/swirl/swagger-ui/" target="_new">Swagger</a><br/><br/>
-Utilities:<br/>
-&#10230; <a href="/swirl/register/" target="_new">Register</a><br/>
-&#10230; <a href="/admin/" target="_new">Admin</a><br/>
-&#10230; <a href="https://github.com/swirlai/swirl-search/wiki" target="_new">Documentation</a><br/>
-&#10230; <a href="https://github.com/swirlai/swirl-search/issues" target="_new">Support</a><br/><br/>
-{% endblock %}
+<body>
+  <!---script src="js/scripts.js"></script--->
+  {% load static %}
+  <centered>
+    <section>
+      <div class="centered"><a href="https://github.com/swirlai/swirl-search" target="_new"><img src="{% static 'swirl_logo_with_name_blue.png' %}" width=300 class="center" alt="Swirl Metasearch {% get_swirl_version %} - HOME"/></a></div>
+    </section>
+    <section>
+      <div class="menu">
+        &#10230; <a href="/swirl/searchproviders/" target="_new">SearchProviders</a><br/>
+        &#10230; <a href="/swirl/search/" target="_new">Search</a><br/>
+        &#10230; <a href="/swirl/results/" target="_new">Results</a><br/><br/>
+        &#10230; <a href="/swirl/swagger-ui/" target="_new">Swagger</a><br/>
+        &#10230; <a href="/admin/" target="_new">Admin</a><br/>
+        &#10230; <a href="https://github.com/swirlai/swirl-search/wiki" target="_new">Documentation</a><br/>
+        &#10230; <a href="https://github.com/swirlai/swirl-search/issues" target="_new">Support</a><br/><br/>
+    </div>
+  </section>
+  <section>
+    <div class="centered">
+      <span class="fineprint"><a href="https://github.com/swirlai/swirl-search/">Swirl Metasearch Engine {% get_swirl_version %}</a> &nbsp;|&nbsp; <a href="https://github.com/swirlai/swirl-search/blob/main/LICENSE">LICENSE</a> &nbsp;|&nbsp; <a href="https://github.com/swirlai/swirl-search/blob/main/NOTICE">NOTICE</a></span>
+    </div>
+</section>
+</body>
+</html>
