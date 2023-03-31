@@ -4,6 +4,7 @@ import requests
 from datetime import datetime
 from swirl.authenticators.authenticator import Authenticator
 from django.conf import settings
+from django.shortcuts import redirect
 
 scopes = ["User.Read", "Mail.Read", "Files.Read.All", "Calendars.Read", "Sites.Read.All", "Chat.Read"]
 
@@ -73,6 +74,8 @@ class Microsoft(Authenticator):
         return result
 
     def login(self, request):
+        if not request.user.is_authenticated:
+            return redirect('/swirl/api-auth/login?next=/swirl/authenticators.html')
         app = self._get_auth_app()
         result = app.initiate_auth_code_flow(
             scopes=scopes,
