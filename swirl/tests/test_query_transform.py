@@ -1,7 +1,8 @@
 import os
 import json
+import re
 from swirl.serializers import SearchProviderSerializer
-import swirl_server.settings as settings
+from django.conf import settings
 import pytest
 from django.test import TestCase
 from django.urls import reverse
@@ -10,6 +11,7 @@ from swirl.processors.transform_query_processor import TransformQueryProcessorFa
 from django.contrib.auth.models import User
 from unittest.mock import patch, ANY, MagicMock
 import responses
+import requests
 
 ## General and shared
 
@@ -51,14 +53,42 @@ def qrx_synonym_search_test():
         "config_content": "# column1, column2\nnotebook, laptop\nlaptop, personal computer\npc, personal computer\npersonal computer, pc"
 }
 
+@pytest.fixture
+def mock_result():
+    return {
+    "items": [
+    {
+      "kind": "customsearch#result",
+      "title": "Notebook | Financial Times",
+      "htmlTitle": "\u003cb\u003eNotebook\u003c/b\u003e | Financial Times",
+      "link": "https://www.ft.com/content/b6f32818-aeda-11da-b04a-0000779e2340",
+      "displayLink": "www.ft.com",
+      "snippet": "Mar 8, 2006 ... We'll send you a myFT Daily Digest email rounding up the latest MG Rover Group Ltd news every morning. Patricia Hewitt once confided to Notebook ...",
+      "htmlSnippet": "Mar 8, 2006 \u003cb\u003e...\u003c/b\u003e We&#39;ll send you a myFT Daily Digest email rounding up the latest MG Rover Group Ltd news every morning. Patricia Hewitt once confided to \u003cb\u003eNotebook\u003c/b\u003e&nbsp;...",
+      "formattedUrl": "https://www.ft.com/content/b6f32818-aeda-11da-b04a-0000779e2340",
+      "htmlFormattedUrl": "https://www.ft.com/content/b6f32818-aeda-11da-b04a-0000779e2340",
+      "pagemap": {
+        "cse_thumbnail": [
+          {
+            "src": "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSr8n8mzhsf6uFZw3uY-3pizLTj1JFydMfMwCQ3e_GZTxjRnHSAXg5apLU",
+            "width": "310",
+            "height": "163"
+          }
+        ],
+      }
+    }
+  ]
+}
+
 class SearchQueryTransformTestCase(TestCase):
     @pytest.fixture(autouse=True)
-    def _init_fixtures(self, api_client,test_suser, test_suser_pw, seach_provider_data, qrx_synonym_search_test):
+    def _init_fixtures(self, api_client,test_suser, test_suser_pw, seach_provider_data, qrx_synonym_search_test, mock_result):
         self._api_client = api_client
         self._test_suser = test_suser
         self._test_suser_pw = test_suser_pw
         self._search_provider = seach_provider_data
         self._qrx_synonym = qrx_synonym_search_test
+        self._mock_result = mock_result
 
     def setUp(self):
         settings.SWIRL_TIMEOUT = 1
@@ -67,6 +97,10 @@ class SearchQueryTransformTestCase(TestCase):
     def tearDown(self):
         settings.SWIRL_TIMEOUT = 10
         settings.CELERY_TASK_ALWAYS_EAGER = False
+
+    def get_data(self, url):
+        response = requests.get(url)
+        return response.json()
 
     @responses.activate
     def test_query_search_transform_allocation(self):
@@ -95,12 +129,15 @@ class SearchQueryTransformTestCase(TestCase):
                                         self._qrx_synonym.get('config_content'))
         mock_alloc = MagicMock(return_value=ret)
         mock_process= MagicMock(return_value = '(notebook OR laptop)')
-        responses.add(responses.GET, self._search_provider.get('url'), body=json.dumps({}).encode('utf-8'), status=200)
+        json_response = self._mock_result
+        url_pattern = re.compile(r'https://www\.googleapis\.com/customsearch/.*')
+        responses.add(responses.GET,url_pattern , json=json_response, status=200)
         with patch('swirl.processors.transform_query_processor.TransformQueryProcessorFactory.alloc_query_transform',new=mock_alloc):
             with patch('swirl.processors.transform_query_processor.SynonymQueryProcessor.process', new=mock_process):
                 response = self._api_client.get(surl, {'qs': 'notebook', 'pre_query_processor':'test one.synonym'})
                 mock_alloc.assert_called_once_with('notebook', 'test one','synonym', ANY)
                 mock_process.assert_called_once()
+
         purl = reverse('delete', kwargs={'pk': 1})
         response = self._api_client.delete(purl)
         assert response.status_code == 410, 'Expected HTTP status code 410'
