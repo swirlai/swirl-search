@@ -447,7 +447,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.info(f"{module_name}: Search.create() from ?qs")
             try:
                 # security review for 1.7 - OK, created with owner
-                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user,pre_query_processor=pre_query_processor_in)
+                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user)
             except Error as err:
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
