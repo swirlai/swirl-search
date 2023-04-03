@@ -9,8 +9,8 @@ from rest_framework.test import APIClient
 from swirl.processors.transform_query_processor import TransformQueryProcessorFactory, SynonymQueryProcessor
 from django.contrib.auth.models import User
 from unittest.mock import patch, ANY, MagicMock
+import responses
 
-import logging
 ## General and shared
 
 @pytest.fixture
@@ -61,11 +61,14 @@ class SearchQueryTransformTestCase(TestCase):
         self._qrx_synonym = qrx_synonym_search_test
 
     def setUp(self):
+        settings.SWIRL_TIMEOUT = 1
         settings.CELERY_TASK_ALWAYS_EAGER = True
 
     def tearDown(self):
+        settings.SWIRL_TIMEOUT = 10
         settings.CELERY_TASK_ALWAYS_EAGER = False
 
+    @responses.activate
     def test_query_search_transform_allocation(self):
         is_logged_in = self._api_client.login(username=self._test_suser.username, password=self._test_suser_pw)
         # Check if the login was successful
@@ -92,7 +95,7 @@ class SearchQueryTransformTestCase(TestCase):
                                         self._qrx_synonym.get('config_content'))
         mock_alloc = MagicMock(return_value=ret)
         mock_process= MagicMock(return_value = '(notebook OR laptop)')
-
+        responses.add(responses.GET, self._search_provider.get('url'), body=json.dumps({}).encode('utf-8'), status=200)
         with patch('swirl.processors.transform_query_processor.TransformQueryProcessorFactory.alloc_query_transform',new=mock_alloc):
             with patch('swirl.processors.transform_query_processor.SynonymQueryProcessor.process', new=mock_process):
                 response = self._api_client.get(surl, {'qs': 'notebook', 'pre_query_processor':'test one.synonym'})

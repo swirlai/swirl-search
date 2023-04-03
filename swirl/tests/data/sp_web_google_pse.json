@@ -1,21 +1,21 @@
 {
-    "name": "Enterprise Search (web/Google PSE)",
+    "name": "Fake Search (web/Google PSE)",
     "active": "true",
     "default": "true",
     "connector": "RequestsGet",
-    "url": "https://www.googleapis.com/customsearch/v1",
-    "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+    "url": "http://www.google.com/",
+    "query_template": "{url}",
     "query_processor": "",
     "query_processors": [
       "AdaptiveQueryProcessor"
     ],
-    "query_mappings": "cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
-    "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
+    "query_mappings": "",
+    "response_mappings": "",
     "result_processor": "",
     "result_processors": [
       "MappingResultProcessor"
     ],
-    "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
+    "result_mappings": "",
     "results_per_query": 10,
     "credentials": "key=",
     "tags": [
