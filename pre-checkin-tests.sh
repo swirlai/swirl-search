@@ -31,11 +31,18 @@ pytest
 echo $PROG "unit tests succeeded"
 
 ## Smoke integration tests
-echo $PROG "running smoke integration  tests"
+export ALLOWED_HOSTS=localhost,host.docker.internal
+echo $PROG "running smoke integration tests"
 if [ ! -e ".swirl" ]; then
+    echo $PROG "starting SWIRL"
     python swirl.py start core
 
 fi
+
 docker run -e SWIRL_TEST_HOST=host.docker.internal --net=host -t swirlai/swirl-search:latest-smoke-test sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
 
-echo $PROG "smoke-integraion tests succeeded"
+echo $PROG "smoke-integration tests succeeded"
+if [ -e ".swirl" ]; then
+        echo $PROG "stoping SWIRL"
+    python swirl.py stop core
+fi

@@ -178,9 +178,3 @@ def test_query_trasnform_unique(api_client, test_suser, test_suser_pw, qrx_recor
     ## try to create it again
     response = api_client.post(reverse('create'),data=qrx_record_1, format='json')
     assert response.status_code == 400, 'Expected HTTP status code 400'
-
-
-
-
-
-

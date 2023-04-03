@@ -19,8 +19,9 @@ from swirl.nltk import word_tokenize
 #############################################
 #############################################
 class TransformQueryProcessorFactory():
+
     @staticmethod
-    def alloc_query_transform(qxf_type, query_string, name, config):
+    def alloc_query_transform(query_string, name, qxf_type, config):
         """
         Get the query transformer based on type
         TODO : Cache?
@@ -34,8 +35,7 @@ class TransformQueryProcessorFactory():
             ret =  SynonymBagQueryProcessor(query_string, name,  config)
         else:
             raise ValueError("Invalid Query Transform Processor type")
-        if (ret):
-            ret.parse_config()
+        ret.parse_config()
         return ret
 
 class _ConfigReplacePattern ():
