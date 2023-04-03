@@ -1,0 +1,25 @@
+{
+    "name": "Issues (web/Atlassian.com)",
+    "active": false,
+    "default": false,
+    "connector": "RequestsGet",
+    "url": "https://<your-domain>.atlassian.net/rest/api/3/search?fields=*all",
+    "query_template": "{url}&jql={query_string}",
+    "query_processor": "",
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "",
+    "result_processor": "",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
+    "response_mappings": "FOUND=total,RESULTS=issues",
+    "result_mappings": "title=fields.summary,body=fields[description].content[*].content[*].text,date_published=fields[*].created,author=fields[reporter].displayName,url='https://<your-domain>.atlassian.net/browse/{key}',fields[project].name,key,fields[priority].name,fields[status].name,fields[fixVersions].name,fields[assignee].displayName,fields[votes].votes,fields.labels,fields[comment].comments[*].body[*].content[*].content[*].text,fields[*].fixVersions[*].name,fields[*].subtasks[*].fields[*].summary,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "HTTPBasicAuth('<your-user>','<your-api-token>')",
+    "tags": [
+        "Jira",
+        "Issues"
+    ]
+}
