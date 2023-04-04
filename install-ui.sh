@@ -8,7 +8,7 @@
 #
 # Options:
 #   -h, --help           Display this help message
-#   -p, --preview y
+#   -p, --preview
 # Parse command-line options
 
 while [[ "$#" -gt 0 ]]; do
