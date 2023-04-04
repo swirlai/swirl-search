@@ -1,4 +1,4 @@
-name: Latest Spyglass Docker Build
+name: PREVIEW Latest Spyglass Docker Build
 
 on:
   workflow_dispatch:
