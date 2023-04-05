@@ -13,7 +13,7 @@ import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 import requests
@@ -83,16 +83,16 @@ class Requests(Connector):
                 sort_query = sort_query + '&' + self.query_mappings['RELEVANCY_SORT'] + query_to_provider[query_to_provider.rfind('&'):]
                 query_to_provider = sort_query
             else:
-                # self.warning(f'RELEVANCY_SORT missing from self.query_mappings: {self.query_mappings}')      
+                # self.warning(f'RELEVANCY_SORT missing from self.query_mappings: {self.query_mappings}')
                 pass
 
-        self.query_to_provider = query_to_provider    
+        self.query_to_provider = query_to_provider
 
         return
 
     ########################################
 
-    def validate_query(self, session):
+    def validate_query(self, session=None):
 
         logger.info(f"{self}: validate_query()")
 
@@ -100,12 +100,12 @@ class Requests(Connector):
         if '{' in query_to_provider or '}' in query_to_provider:
             self.warning(f"{self.provider.id} found braces {{ or }} in query")
             return False
-        
+
         return super().validate_query()
 
     ########################################
 
-    def execute_search(self, session):
+    def execute_search(self, session=None):
 
         logger.info(f"{self}: execute_search()")
 
@@ -144,14 +144,14 @@ class Requests(Connector):
             if page_query == "":
                 self.error("page_query is blank")
                 return
-            
+
             # dictionary of authentication types permitted in the upcoming eval
             dict_auth = {'HTTPBasicAuth': HTTPBasicAuth, 'HTTPDigestAuth': HTTPDigestAuth, 'HTTProxyAuth': HTTPProxyAuth}
 
             response = None
             # issue the query
             try:
-                if self.provider.credentials:
+                if session and self.provider.credentials:
                     if self.provider.eval_credentials and '{credentials}' in self.provider.credentials:
                         dict_credentials = {'session': session}
                         credentials = eval(self.provider.eval_credentials , {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_credentials)
@@ -216,11 +216,11 @@ class Requests(Connector):
                     except (NameError, TypeError, ValueError) as err:
                         self.error(f'{err.args}, {err} in provider.self.response_mappings: {self.provider.response_mappings}')
                         return
-                    # end try    
-                    if matches:   
+                    # end try
+                    if matches:
                         if len(matches) == 0:
                             # no matches
-                            continue      
+                            continue
                         if len(matches) == 1:
                             mapped_response[mapping] = matches[0]
                         else:
@@ -233,7 +233,7 @@ class Requests(Connector):
             # end for
             # count results etc
             found = retrieved = -1
-            if 'RETRIEVED' in mapped_response:        
+            if 'RETRIEVED' in mapped_response:
                 retrieved = int(mapped_response['RETRIEVED'])
                 self.retrieved = retrieved
             if 'FOUND' in mapped_response:
@@ -245,7 +245,7 @@ class Requests(Connector):
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.retrieved = 0
                 self.status = 'READY'
-                return   
+                return
             # process the results
             if 'RESULTS' in mapped_response:
                 if not mapped_response['RESULTS']:
@@ -273,7 +273,7 @@ class Requests(Connector):
             # end if
             response = []
             if 'RESULT' in self.response_mappings:
-                for result in mapped_response['RESULTS']:                
+                for result in mapped_response['RESULTS']:
                     try:
                         jxp_key = f"$.{self.response_mappings['RESULT']}"
                         jxp = parse(jxp_key)
@@ -298,7 +298,7 @@ class Requests(Connector):
             else:
                 # no RESULT key specified
                 response = mapped_response['RESULTS']
-            # check retrieved 
+            # check retrieved
             if response:
                 if retrieved > -1 and retrieved != len(response):
                     self.warning(f"retrieved != length of response {len(response)}")
@@ -308,8 +308,8 @@ class Requests(Connector):
                 if found != 0:
                     found = retrieved = 0
                 # end if
-            if retrieved == -1:   
-                # to do: this is probably wrong    
+            if retrieved == -1:
+                # to do: this is probably wrong
                 retrieved = len(response)
                 self.retrieved = retrieved
             if found == -1:
@@ -322,7 +322,7 @@ class Requests(Connector):
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.status = 'READY'
                 return
-                  
+
             # check count
             if retrieved < 10:
                 # no more pages, so don't request any
@@ -335,8 +335,7 @@ class Requests(Connector):
         # end for
 
         self.found = found
-        self.retrieved = retrieved        
+        self.retrieved = retrieved
         self.response = response
-        
-        return
 
+        return

@@ -387,7 +387,7 @@ class SearchViewSet(viewsets.ModelViewSet):
 
         ########################################
 
-        pre_query_processor_in = request.GET.get('pre_query_processor', None)
+        pre_query_processor_in = request.GET.get('pre_query_processor', '')
 
         providers = []
         if 'providers' in request.GET.keys():

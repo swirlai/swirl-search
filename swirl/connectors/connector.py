@@ -25,6 +25,7 @@ logger = get_task_logger(__name__)
 from swirl.models import Search, Result, SearchProvider
 from swirl.connectors.utils import get_mappings_dict
 from swirl.processors import *
+from swirl.processors.transform_query_processor_utils import get_query_processor_or_transform
 
 SWIRL_OBJECT_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
 
@@ -174,7 +175,7 @@ class Connector:
         for processor in processor_list:
             logger.info(f"{self}: invoking processor: query processor: {processor}")
             try:
-                processed_query = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(query_temp, self.provider.query_mappings, self.provider.tags).process()
+                processed_query = get_query_processor_or_transform(processor, query_temp, SWIRL_OBJECT_DICT, self.provider.query_mappings, self.provider.tags).process()
             except (NameError, TypeError, ValueError) as err:
                 self.error(f'{processor}: {err.args}, {err}')
                 return
@@ -204,7 +205,7 @@ class Connector:
 
     ########################################
 
-    def validate_query(self):
+    def validate_query(self, session=None):
 
         '''
         Validate the query_to_provider, and return True or False
@@ -218,12 +219,12 @@ class Connector:
 
     ########################################
 
-    def execute_search(self, session):
+    def execute_search(self, session=None):
 
         '''
         Connect to, query and save the response from this provider
         '''
-        
+
         logger.info(f"{self}: execute_search()")
         self.found = 1
         self.retrieved = 1

@@ -26,11 +26,13 @@ PROG=`basename $0`
 set -e
 
 # Unit tests
+
 echo $PROG "running pytest unit tests"
 pytest
 echo $PROG "unit tests succeeded"
 
 ## Smoke integration tests
+
 export ALLOWED_HOSTS=localhost,host.docker.internal
 echo $PROG "running smoke integration tests"
 if [ ! -e ".swirl" ]; then
@@ -38,6 +40,9 @@ if [ ! -e ".swirl" ]; then
     python swirl.py start core
 
 fi
+
+# make sure we always have the latest
+docker pull swirlai/swirl-search:latest-smoke-test
 
 docker run -e SWIRL_TEST_HOST=host.docker.internal --net=host -t swirlai/swirl-search:latest-smoke-test sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
 
