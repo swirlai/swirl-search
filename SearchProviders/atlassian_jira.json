@@ -4,7 +4,7 @@
     "default": false,
     "connector": "RequestsGet",
     "url": "https://<your-domain>.atlassian.net/rest/api/3/search?fields=*all",
-    "query_template": "{url}&jql={query_string}",
+    "query_template": "{url}&jql=text~{query_string}",
     "query_processor": "",
     "query_processors": [
         "AdaptiveQueryProcessor"
