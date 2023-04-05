@@ -48,7 +48,7 @@ def get_pre_query_processor_or_transform(processor, query_temp, swirl_object_dic
 
 def get_query_processor_or_transform(processor, query_temp, swirl_object_dict, tags, mappings):
     """
-    Get the query processed based on an entry from from the pre_query_processor(s) fields
+    Get the query processed based on an entry from from the query_processor(s) fields
     """
     try:
         query_processor = eval(processor, {"processor": processor, "__builtins__": None}, swirl_object_dict)(query_temp, mappings, tags)
