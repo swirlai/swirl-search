@@ -243,7 +243,6 @@ class SynonymBagQueryProcessor(SynonymQueryProcessor):
     def _parse_cline(self, cline, nth):
         if not super(SynonymBagQueryProcessor, self)._cline_is_valid(cline, nth, None):
             return
-        # DN remove the restriction below.
         for word in cline:
             normal_word = super(SynonymBagQueryProcessor, self)._normalize_word(word)
             # noramlize and add to the config replace pattern
