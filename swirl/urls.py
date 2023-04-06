@@ -53,5 +53,8 @@ urlpatterns = [
     path('register/confirm_sent/', views.registration_confirmation_sent, name='registration_confirmation_sent'),
 
     path('login/', views.LoginView.as_view()),
+    path('spyglass/search/', views.SearchViewSet.as_view({'get': 'list'})),
+    path('spyglass/results/', views.ResultViewSet.as_view({'get': 'list'})),
+
     path('', include(router.urls)),
 ]
