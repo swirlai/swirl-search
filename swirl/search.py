@@ -171,7 +171,7 @@ def search(id, session):
         query_temp = search.query_string
         for processor in processor_list:
             try:
-                pre_query_processor = get_pre_query_processor_or_transform(processor, query_temp, SWIRL_OBJECT_DICT, search.tags)
+                pre_query_processor = get_pre_query_processor_or_transform(processor, query_temp, SWIRL_OBJECT_DICT, search.tags, user)
                 if pre_query_processor.validate():
                     processed_query = pre_query_processor.process()
                 else:

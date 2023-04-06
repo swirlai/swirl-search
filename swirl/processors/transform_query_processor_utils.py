@@ -8,18 +8,22 @@ from swirl.models import QueryTransform
 from swirl.processors.transform_query_processor import TransformQueryProcessorFactory
 
 module_name = 'transform_query_processor_utils'
-def __find_query_transform(name, type):
+def __find_query_transform(name, type, user=None):
     """
     Atttempt to find the trasnform in the DB
     """
     try:
+        if user:
+            if not user.has_perm('swirl.view_querytransform'):
+                logger.warning(f"User {user} needs permission view_querytransform")
+                return False
         return QueryTransform.objects.get(name=name,qrx_type=type)
     except ObjectDoesNotExist as err:
         # It's okay for it to not be there, just warning
         logger.warn(f'{module_name}_{id}: ObjectDoesNotExist: {err}')
         return False
 
-def __fall_back_to_query_transform(processor, query, err):
+def __fall_back_to_query_transform(processor, query, err, user=None):
         """
         To be called after we failed to find a processor using eval
         """
@@ -29,12 +33,12 @@ def __fall_back_to_query_transform(processor, query, err):
             raise err # throw the original error
         name = tmp[0].strip()
         qrx_type = tmp[1].strip()
-        if not (qxr := __find_query_transform(name=name, type=qrx_type)):
+        if not (qxr := __find_query_transform(name=name, type=qrx_type, user=user)):
             raise err # throw the original error
         return TransformQueryProcessorFactory.alloc_query_transform(query, name, qrx_type,
-                                                                                   qxr.config_content)
+                                                                                 qxr.config_content)
 
-def get_pre_query_processor_or_transform(processor, query_temp, swirl_object_dict, tags):
+def get_pre_query_processor_or_transform(processor, query_temp, swirl_object_dict, tags, user=None ):
     """
     Get the pre-query processed based on an entry from from the pre_query_processor(s) fields
     """
@@ -42,17 +46,17 @@ def get_pre_query_processor_or_transform(processor, query_temp, swirl_object_dic
         pre_query_processor = eval(processor, {"processor": processor, "__builtins__": None}, swirl_object_dict)(query_temp, None, tags)
     except (Exception) as err:
         # catch all exceptions here, because anything can come back from eval
-        pre_query_processor = __fall_back_to_query_transform(processor, query_temp, err)
+        pre_query_processor = __fall_back_to_query_transform(processor, query_temp, err, user)
 
     return pre_query_processor
 
-def get_query_processor_or_transform(processor, query_temp, swirl_object_dict, tags, mappings):
+def get_query_processor_or_transform(processor, query_temp, swirl_object_dict, tags, mappings, user=None):
     """
     Get the query processed based on an entry from from the query_processor(s) fields
     """
     try:
         query_processor = eval(processor, {"processor": processor, "__builtins__": None}, swirl_object_dict)(query_temp, mappings, tags)
     except (Exception) as err:
-        query_processor = __fall_back_to_query_transform(processor, query_temp, err)
+        query_processor = __fall_back_to_query_transform(processor, query_temp, err, user)
 
     return query_processor

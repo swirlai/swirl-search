@@ -218,7 +218,6 @@ class Result(models.Model):
 
 class QueryTransform(models.Model) :
     id = models.BigAutoField(primary_key=True)
-    # DN : TODO name should be unique.
     name = models.CharField(max_length=255)
     owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     shared = models.BooleanField(default=False)

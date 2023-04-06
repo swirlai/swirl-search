@@ -10,6 +10,7 @@ import time
 
 import django
 from django.db import Error
+from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
 from swirl.utils import swirl_setdir
@@ -63,6 +64,7 @@ class Connector:
         self.processed_results = []
         self.messages = []
         self.start_time = None
+        self.search_user = None
 
         # get the provider and query
         try:
@@ -71,6 +73,11 @@ class Connector:
         except ObjectDoesNotExist as err:
             self.error(f'ObjectDoesNotExist: {err}')
             return
+
+        try:
+            self.seach_user = User.objects.get(id=self.search_id)
+        except ObjectDoesNotExist as err:
+            logger.warn("unable to find search user, no auth check")
 
         self.query_mappings = get_mappings_dict(self.provider.query_mappings)
         self.response_mappings = get_mappings_dict(self.provider.response_mappings)
@@ -175,7 +182,7 @@ class Connector:
         for processor in processor_list:
             logger.info(f"{self}: invoking processor: query processor: {processor}")
             try:
-                processed_query = get_query_processor_or_transform(processor, query_temp, SWIRL_OBJECT_DICT, self.provider.query_mappings, self.provider.tags).process()
+                processed_query = get_query_processor_or_transform(processor, query_temp, SWIRL_OBJECT_DICT, self.provider.query_mappings, self.provider.tags, self.seach_user).process()
             except (NameError, TypeError, ValueError) as err:
                 self.error(f'{processor}: {err.args}, {err}')
                 return
