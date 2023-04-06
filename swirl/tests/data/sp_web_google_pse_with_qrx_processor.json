@@ -1,0 +1,25 @@
+{
+    "name": "FAKE Enterprise Search (web/Google PSE) with qxr query_processor",
+    "active": "true",
+    "default": "true",
+    "connector": "RequestsGet",
+    "url": "https://www.googleapis.com/customsearch/v1",
+    "query_template": "{url}",
+    "query_processor": "test one.synonym",
+    "query_processors": [
+      "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
+    "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
+    "result_processor": "",
+    "result_processors": [
+      "MappingResultProcessor"
+    ],
+    "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "key=",
+    "tags": [
+      "News",
+      "EnterpriseSearch"
+    ]
+  }

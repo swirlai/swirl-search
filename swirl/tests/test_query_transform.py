@@ -1,12 +1,14 @@
 import os
 import json
 import re
+from sqlite3 import IntegrityError
 from swirl.serializers import SearchProviderSerializer
 from django.conf import settings
 import pytest
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
+from django.core.exceptions import ObjectDoesNotExist
 from swirl.processors.transform_query_processor import TransformQueryProcessorFactory, SynonymQueryProcessor
 from django.contrib.auth.models import User
 from unittest.mock import patch, ANY, MagicMock
@@ -25,6 +27,14 @@ def test_suser_pw():
 
 @pytest.fixture
 def test_suser(test_suser_pw):
+    """
+    return the user if it's aleady there, otherwise create it.
+    """
+    try:
+        return User.objects.get(username='admin')
+    except ObjectDoesNotExist:
+        pass
+
     return User.objects.create_user(
         username='admin',
         password=test_suser_pw,
@@ -33,7 +43,7 @@ def test_suser(test_suser_pw):
     )
 
 @pytest.fixture
-def seach_provider_data():
+def search_provider_pre_query_data():
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
     # Build the absolute file path for the JSON file in the 'data' subdirectory
@@ -43,6 +53,31 @@ def seach_provider_data():
     with open(json_file_path, 'r') as file:
         data = json.load(file)
     return data
+
+@pytest.fixture
+def search_provider_query_data():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Build the absolute file path for the JSON file in the 'data' subdirectory
+    json_file_path = os.path.join(script_dir, 'data', 'sp_web_google_pse_with_qrx_processor.json')
+
+    # Read the JSON file
+    with open(json_file_path, 'r') as file:
+        data = json.load(file)
+    return data
+
+@pytest.fixture
+def search_provider_open_search_query_data():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Build the absolute file path for the JSON file in the 'data' subdirectory
+    json_file_path = os.path.join(script_dir, 'data', 'open_search_provider.json')
+
+    # Read the JSON file
+    with open(json_file_path, 'r') as file:
+        data = json.load(file)
+    return data
+
 
 @pytest.fixture
 def qrx_synonym_search_test():
@@ -82,34 +117,35 @@ def mock_result():
 
 class SearchQueryTransformTestCase(TestCase):
     @pytest.fixture(autouse=True)
-    def _init_fixtures(self, api_client,test_suser, test_suser_pw, seach_provider_data, qrx_synonym_search_test, mock_result):
+    def _init_fixtures(self, api_client,test_suser, test_suser_pw, search_provider_pre_query_data, search_provider_query_data, search_provider_open_search_query_data,
+                       qrx_synonym_search_test, mock_result):
         self._api_client = api_client
         self._test_suser = test_suser
         self._test_suser_pw = test_suser_pw
-        self._search_provider = seach_provider_data
+        self._search_provider_pre_query = search_provider_pre_query_data
+        self._search_provider_query = search_provider_query_data
+        self._search_provider_open_search_query_data = search_provider_open_search_query_data
         self._qrx_synonym = qrx_synonym_search_test
         self._mock_result = mock_result
 
     def setUp(self):
         settings.SWIRL_TIMEOUT = 1
         settings.CELERY_TASK_ALWAYS_EAGER = True
-
-    def tearDown(self):
-        settings.SWIRL_TIMEOUT = 10
-        settings.CELERY_TASK_ALWAYS_EAGER = False
-
-    def get_data(self, url):
-        response = requests.get(url)
-        return response.json()
-
-    @responses.activate
-    def test_query_search_transform_allocation(self):
         is_logged_in = self._api_client.login(username=self._test_suser.username, password=self._test_suser_pw)
         # Check if the login was successful
         assert is_logged_in, 'Client login failed'
 
         # Create a search provider
-        serializer = SearchProviderSerializer(data=self._search_provider)
+        #1
+        serializer = SearchProviderSerializer(data=self._search_provider_pre_query)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(owner=self._test_suser)
+        #2
+        serializer = SearchProviderSerializer(data=self._search_provider_query)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(owner=self._test_suser)
+        #3
+        serializer = SearchProviderSerializer(data=self._search_provider_open_search_query_data)
         serializer.is_valid(raise_exception=True)
         serializer.save(owner=self._test_suser)
 
@@ -120,9 +156,21 @@ class SearchQueryTransformTestCase(TestCase):
         assert response.status_code == 200, 'Expected HTTP status code 200'
         assert len(response.json()) == 1, 'Expected 1 transform'
 
+    def tearDown(self):
+        purl = reverse('delete', kwargs={'pk': 1})
+        response = self._api_client.delete(purl)
+        assert response.status_code == 410, 'Expected HTTP status code 410'
+        settings.SWIRL_TIMEOUT = 10
+        settings.CELERY_TASK_ALWAYS_EAGER = False
+
+    def get_data(self, url):
+        response = requests.get(url)
+        return response.json()
+
+    @responses.activate
+    def test_pre_query_transform_processor(self):
         # Call the viewset
         surl = reverse('search')
-
         ret = TransformQueryProcessorFactory.alloc_query_transform('notebook',
                                         self._qrx_synonym.get('name'),
                                         self._qrx_synonym.get('qrx_type'),
@@ -134,13 +182,30 @@ class SearchQueryTransformTestCase(TestCase):
         responses.add(responses.GET,url_pattern , json=json_response, status=200)
         with patch('swirl.processors.transform_query_processor.TransformQueryProcessorFactory.alloc_query_transform',new=mock_alloc):
             with patch('swirl.processors.transform_query_processor.SynonymQueryProcessor.process', new=mock_process):
-                response = self._api_client.get(surl, {'qs': 'notebook', 'pre_query_processor':'test one.synonym'})
+                response = self._api_client.get(surl, {'qs': 'notebook', 'pre_query_processor':'test one.synonym','providers':1})
                 mock_alloc.assert_called_once_with('notebook', 'test one','synonym', ANY)
                 mock_process.assert_called_once()
 
-        purl = reverse('delete', kwargs={'pk': 1})
-        response = self._api_client.delete(purl)
-        assert response.status_code == 410, 'Expected HTTP status code 410'
+    @responses.activate
+    def test_query_transform_processor(self):
+        # Call the viewset
+        surl = reverse('search')
+        ret = TransformQueryProcessorFactory.alloc_query_transform('notebook',
+                                        self._qrx_synonym.get('name'),
+                                        self._qrx_synonym.get('qrx_type'),
+                                        self._qrx_synonym.get('config_content'))
+        mock_alloc = MagicMock(return_value=ret)
+        mock_process= MagicMock(return_value = '(notebook OR laptop)')
+        json_response = self._mock_result
+        url_pattern = re.compile(r'https://www\.googleapis\.com/customsearch/.*')
+        responses.add(responses.GET,url_pattern , json=json_response, status=200)
+        with patch('swirl.processors.transform_query_processor.TransformQueryProcessorFactory.alloc_query_transform',new=mock_alloc):
+            with patch('swirl.processors.transform_query_processor.SynonymQueryProcessor.process', new=mock_process):
+                response = self._api_client.get(surl, {'qs': 'notebook','providers':2})
+                mock_alloc.assert_called_once_with('notebook', 'test one','synonym', ANY)
+                mock_process.assert_called_once()
+
+
 
 
 ################################################################################
