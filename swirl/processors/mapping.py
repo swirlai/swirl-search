@@ -181,7 +181,7 @@ class MappingResultProcessor(ResultProcessor):
                                             # not same type, convert it
                                             if 'date' in swirl_key.lower():
                                                 if swirl_result[swirl_key] == "":
-                                                    if type(result_dict[source_key]) == int:
+                                                    if type(result_dict[source_key]) in [int, float]:
                                                         swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]/1000))
                                                     # end if
                                                 # end if
