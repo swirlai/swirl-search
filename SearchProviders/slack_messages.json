@@ -1,0 +1,24 @@
+{
+    "name": "Messages (web/Slack.com)",
+    "active": false,
+    "default": false,
+    "connector": "RequestsGet",
+    "url": "https://slack.com/api/search.messages",
+    "query_template": "{url}?query={query_string}",
+    "query_processor": "",
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "",
+    "result_processor": "",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
+    "response_mappings": "FOUND=messages.total,RESULTS=messages.matches",
+    "result_mappings": "title=channel.name,body=text,author=username,url=permalink,date_published=ts,channel.name,channel.is_channel,channel.is_group,channel.is_im,files[*].name,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "bearer=<your-slack-user-token>",
+    "tags": [
+        "Slack",
+        "Messages"
+    ]
