@@ -185,6 +185,8 @@ class MappingResultProcessor(ResultProcessor):
                                                         swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]/1000))
                                                     # end if
                                                 # end if
+                                            if type(swirl_result[swirl_key]) == str and type(result_dict[source_key]) == list:
+                                                swirl_result[swirl_key] = ' '.join(result_dict[source_key])
                                             # different type, so payload it
                                             if use_payload:
                                                 payload[swirl_key] = result_dict[source_key]
