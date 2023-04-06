@@ -182,7 +182,7 @@ class Connector:
         for processor in processor_list:
             logger.info(f"{self}: invoking processor: query processor: {processor}")
             try:
-                processed_query = get_query_processor_or_transform(processor, query_temp, SWIRL_OBJECT_DICT, self.provider.query_mappings, self.provider.tags, self.seach_user).process()
+                processed_query = get_query_processor_or_transform(processor, query_temp, SWIRL_OBJECT_DICT, self.provider.query_mappings, self.provider.tags, self.search_user).process()
             except (NameError, TypeError, ValueError) as err:
                 self.error(f'{processor}: {err.args}, {err}')
                 return
