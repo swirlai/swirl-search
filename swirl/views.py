@@ -15,7 +15,7 @@ from django.conf import settings
 from django.db import Error
 
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.core.mail import send_mail
 from swirl.utils import paginate
 from django.conf import settings
@@ -25,6 +25,8 @@ from rest_framework.authentication import BasicAuthentication, SessionAuthentica
 from rest_framework import viewsets, status
 from rest_framework import permissions
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
 
 import csv
 import base64
@@ -257,6 +259,18 @@ def error(request):
 
 ########################################
 ########################################
+
+class LoginView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(request, username=username, password=password)
+        print(f'user: {user}')
+        if user is not None:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key})
+        else:
+            return Response({'error': 'Invalid credentials'})
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """
