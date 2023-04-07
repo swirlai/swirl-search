@@ -152,7 +152,7 @@ def position_dict(text, word_list):
     if type(word_list) != list:
         return []
     if word_list == []:
-        return []  
+        return []
     positions = {word: [] for word in word_list}
     words = text.split()
     for i, word in enumerate(words):
@@ -342,3 +342,29 @@ def capitalize_search(list_lower, list_unknown):
     # end for
 
     return list_capitalized
+
+def json_to_flat_string(json_data, separator=' ', deadman=None):
+    """
+    A flat string representation of any JSON object.
+    use deadman to limit recursion into JSON objects.
+    Separator the character the individual data pieces will be joined on.
+    """
+    if isinstance(json_data, str):
+        return json_data
+
+    if deadman:
+        deadman = deadman - 1
+        if deadman <= 0:
+            raise ValueError('recursion limit reached in JSON structure')
+
+    if isinstance(json_data, dict):
+        return separator.join(json_to_flat_string(v, deadman=deadman) for v in json_data.values())
+    elif isinstance(json_data, list):
+        return separator.join(json_to_flat_string(v, deadman=deadman) for v in json_data)
+    elif isinstance(json_data, (int, float, bool)):
+        return str(json_data)
+    elif json_data is None:
+        return 'null'
+    else:
+        raise TypeError(f"Unsupported JSON data type: {type(json_data)}")
+    
