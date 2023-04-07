@@ -1,32 +1,6 @@
 {
     "type": "swirl",
-    "resultType": "hybrid",
-    "resultColumns": [
-      {
-        "field": "searchprovider",
-        "label": "Provider",
-        "text_align": "left",
-        "width": 1
-      },
-      {
-        "field": "title",
-        "label": "Title",
-        "text_align": "left",
-        "width": 1
-      },
-      {
-        "field": "author",
-        "label": "Author",
-        "text_align": "left",
-        "width": 1
-      },
-      {
-        "field": "body",
-        "label": "Body",
-        "text_align": "left",
-        "width": 2
-      }
-    ],
+    "resultType": "card",
     "resultLayout": {
       "summary": [
         [
@@ -44,8 +18,8 @@
                 "type": "authorship",
                 "fields": [
                   "searchprovider",
-                  "searchprovider_rank",
-                  "author"
+                  "author",
+                  "date_published"
                 ]
               },
               {
@@ -61,21 +35,6 @@
         [
           [
             [
-              {
-                "type": "string",
-                "label": "Published",
-                "format": "medium",
-                "fields": [
-                  "date_published"
-                ]
-              },
-              {
-                "type": "string",
-                "label": "Search Provider Rank",
-                "fields": [
-                  "searchprovider_rank"
-                ]
-              },
               {
                 "type": "json",
                 "label": null,
@@ -98,8 +57,7 @@
     "jsonFacet": {
       "Source": {
         "type": "terms",
-        "displayField": "Source",
-        "facetField": "searchprovider_rank"
+        "field": "Source"
       }
     },
     "defaultFilters": {
@@ -113,4 +71,3 @@
       "removeImage": "assets/images/folder_out.png"
     }
   }
-

@@ -8,13 +8,11 @@
 #
 # Options:
 #   -h, --help           Display this help message
-#   -p, --preview
 # Parse command-line options
 
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -h|--help) print_help=true ;;
-	-p|--preview) preview_image=true ;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
     shift
@@ -47,17 +45,8 @@ cleanup() {
 }
 trap 'cleanup' ERR
 
-if [ "$preview_image" = true ]; then
-    echo $PROG "PREVIEW IMAGE"
-    image="swirlai/spyglass:preview"
-else
-    echo $PROG "LATEST IMAGE"
-    image="swirlai/spyglass"
-fi
-
 mkdir $work_dir
-docker pull swirlai/spyglass:latest
-docker create --name $work_container $image
+docker create --name $work_container swirlai/spyglass
 docker cp "$work_container:/usr/src/spyglass/ui/dist/spyglass/browser/." $work_dir
 docker rm -f $work_container
 rm -rf $target_dir/spyglass
