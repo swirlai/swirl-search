@@ -358,13 +358,12 @@ def json_to_flat_string(json_data, separator=' ', deadman=None):
             raise ValueError('recursion limit reached in JSON structure')
 
     if isinstance(json_data, dict):
-        return separator.join(json_to_flat_string(v, deadman=deadman) for v in json_data.values())
+        return separator.join(json_to_flat_string(v, separator=separator, deadman=deadman) for v in json_data.values())
     elif isinstance(json_data, list):
-        return separator.join(json_to_flat_string(v, deadman=deadman) for v in json_data)
+        return separator.join(json_to_flat_string(v, separator=separator, deadman=deadman) for v in json_data)
     elif isinstance(json_data, (int, float, bool)):
         return str(json_data)
     elif json_data is None:
         return 'null'
     else:
         raise TypeError(f"Unsupported JSON data type: {type(json_data)}")
-    
