@@ -1,4 +1,4 @@
-name: Latest Spyglass Docker Build
+name: PREVIEW Latest Spyglass Docker Build
 
 on:
   workflow_dispatch:
@@ -17,8 +17,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build --no-cache -t swirlai/spyglass:latest  -f Dockerfile.spg .
+      run: docker build --no-cache -t swirlai/spyglass:preview  -f Dockerfile.spg .
     - name: login to docker hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
     - name: Push the Docker image
-      run: docker push swirlai/spyglass
+      run: docker push swirlai/spyglass:preview

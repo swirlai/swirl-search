@@ -68,12 +68,32 @@ The search page will appear. Login with username `admin` and password `password`
 * Open the following URL with a browser: 
 
 ```
-http://localhost:8000/swirl/search/?q=enterprise+search 
+http://localhost:8000/spyglass/
 ```
 
-* Ranked results will appear in just a few seconds!
+The Spyglass search form should appear:
 
-*SWIRL includes 3 Google Programmable Search Engines (PSEs), complete with shared credentials, to get you up and running with right away. These credentials are shared with the SWIRL Community and may return a 429 Too Many Requests error if they are overused.*
+![Spyglass search form](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/spyglass_search_form.png)
+
+* Enter a search into the search box, and click the `Search` button. A spinner will appear briefly, before ranked results appear:
+
+![Spyglass search results](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/spyglass_result_1.png)
+
+* To switch to table view, click the `Table View` button:
+
+![Spyglass search results, table view](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/spyglass_result_2.png)
+
+* To view the JSON response, open the following URL:
+
+```
+http://localhost:8000/swirl/search/
+```
+
+The most recent Search object will be displayed. Click the result_url to view the JSON Response. 
+
+<details>
+  <summary>View JSON Response</summary>
+
 
 ```
 
@@ -243,6 +263,7 @@ http://localhost:8000/swirl/search/?q=enterprise+search
         }, 
         ...etc...
 ```
+</details>
 
 <br/>
 
