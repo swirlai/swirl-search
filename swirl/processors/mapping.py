@@ -135,7 +135,6 @@ class MappingResultProcessor(ResultProcessor):
                             result_dict[k[1:-1]] = matches
                     if source_key.startswith("'"):
                         # template
-                        # bound_template =  source_key.format(**result_dict)
                         bound_template =  str_safe_format(source_key, result_dict)
                         if swirl_key:
                             if swirl_key in swirl_result:
