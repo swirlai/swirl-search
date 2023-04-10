@@ -367,3 +367,26 @@ def json_to_flat_string(json_data, separator=' ', deadman=None):
         return 'null'
     else:
         raise TypeError(f"Unsupported JSON data type: {type(json_data)}")
+
+def str_replace_all_keys(s, d):
+    """
+    Simple one pass replace, does not handle nested replacement.
+    """
+    if len(s) <= 0 or not d:
+        return s
+    ret = s
+    for k in d.keys():
+        ret = ret.replace(k, d[k])
+    return ret
+
+def str_safe_format(s, d):
+    """
+    Safer string replace, uses format, if there is a key error, attempts string replace.
+    """
+    if len(s) <=0 or not d:
+        return s
+    try:
+        ret = s.format(**d)
+    except KeyError:
+        ret = str_replace_all_keys(s,d)
+    return ret
