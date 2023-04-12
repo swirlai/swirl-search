@@ -42,7 +42,7 @@ class Microsoft(Authenticator):
             client_credential=settings.MICROSOFT_CLIENT_SECRET,
             authority="https://login.microsoftonline.com/common",
             token_cache=cache
-        ) 
+        )
         return auth_app
 
     def get_auth_app(self, request):
@@ -93,7 +93,7 @@ class Microsoft(Authenticator):
         user = self.get_user(result['access_token'])
         self.store_user(request, user, result)
         return HttpResponseRedirect('/swirl/')
-    
+
     def update_token(self, request):
         app = self.get_auth_app(request)
         session_data = self.get_session_data(request)
@@ -103,6 +103,7 @@ class Microsoft(Authenticator):
                 print(result['access_token'])
                 now = datetime.now()
                 self.set_session_data(request, result['access_token'], result['refresh_token'], int(now.timestamp()) + result['expires_in'])
+                request.session.save()
                 return True
         print('redirect')
         return self.login(request)
