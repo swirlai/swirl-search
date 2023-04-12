@@ -3,7 +3,7 @@
     "shared": true,
     "active": true,
     "default": true,
-    "connector": "M365SharepointSites",
+    "connector": "M365SharePointSites",
     "url": "",
     "query_template": "{url}",
     "query_processor": "",
