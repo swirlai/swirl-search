@@ -12,7 +12,7 @@ from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
 from swirl.processors.processor import *
-from swirl.processors.utils import create_result_dictionary, extract_text_from_tags
+from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format
 
 #############################################
 #############################################
@@ -122,7 +122,7 @@ class MappingResultProcessor(ResultProcessor):
                             jxp = parse(jxp_key)
                             # search result for this
                             matches = [match.value for match in jxp.find(result)]
-                        except JsonPathParserError:
+                        except JsonPathParserError as err:
                             self.error(f'JsonPathParser: {err} in jsonpath_ng.find: {jxp_key}')
                             return []
                         except (NameError, TypeError, ValueError) as err:
@@ -135,7 +135,7 @@ class MappingResultProcessor(ResultProcessor):
                             result_dict[k[1:-1]] = matches
                     if source_key.startswith("'"):
                         # template
-                        bound_template = source_key.format(**result_dict)
+                        bound_template =  str_safe_format(source_key, result_dict)
                         if swirl_key:
                             if swirl_key in swirl_result:
                                 swirl_result[swirl_key] = bound_template[1:-1]
@@ -185,6 +185,8 @@ class MappingResultProcessor(ResultProcessor):
                                                         swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]/1000))
                                                     # end if
                                                 # end if
+                                            if type(swirl_result[swirl_key]) == str and type(result_dict[source_key]) == list:
+                                                swirl_result[swirl_key] = ' '.join(result_dict[source_key])
                                             # different type, so payload it
                                             if use_payload:
                                                 payload[swirl_key] = result_dict[source_key]
