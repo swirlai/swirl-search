@@ -3,10 +3,6 @@ name: Docker Build
 # Build a multi-arch docker image for SWIRL
 # comment to start build
 
-# on:  # disabling 05:05 daily build and leaving this syntax for posterity 
-#  schedule:
-#  - cron: '05 05 * * *'
-
 on:
   push:
     # only trigger on branches, not on tags
@@ -27,7 +23,7 @@ jobs:
     - name: builder bootstrap
       run: docker buildx create --name devBuilder --use --bootstrap
     - name: Build the Docker image
-      run: docker buildx build -t swirlai/swirl-search:latest --platform linux/amd64,linux/arm64 --push .
+      run: docker buildx build -t swirlai/swirl-search:develop --platform linux/amd64,linux/arm64 --push .
     - name: Update repo description
       uses: peter-evans/dockerhub-description@v3.3.0
       with:
