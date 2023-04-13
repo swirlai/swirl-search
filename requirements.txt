@@ -21,8 +21,4 @@ google-cloud-bigquery
 opensearch-py
 openai
 msal
-
-
-
-
-
+PyJWT

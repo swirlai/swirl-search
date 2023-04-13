@@ -13,6 +13,7 @@ from django.contrib.auth.models import User, Group
 from django.http import Http404
 from django.conf import settings
 from django.db import Error
+from django.views.decorators.csrf import csrf_exempt
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
@@ -62,6 +63,56 @@ SWIRL_RERUN_WAIT = getattr(settings, 'SWIRL_RERUN_WAIT', 8)
 SWIRL_RESCORE_WAIT = getattr(settings, 'SWIRL_RESCORE_WAIT', 5)
 SWIRL_SUBSCRIBE_WAIT = getattr(settings, 'SWIRL_SUBSCRIBE_WAIT', 20)
 SWIRL_Q_WAIT = getattr(settings, 'SWIRL_Q_WAIT', 7)
+
+
+def remove_duplicates(my_list):
+    new_list = []
+    seen = set()
+    for d in my_list:
+        key = (d['name'])
+        if key not in seen:
+            new_list.append(d)
+            seen.add(key)
+    return new_list
+
+
+def return_authenticators(request):
+    if not request.user.is_authenticated:
+        return redirect('/swirl/api-auth/login?next=/swirl/authenticators.html')
+    providers = SearchProvider.objects.filter(active=True, owner=request.user) | SearchProvider.objects.filter(active=True, shared=True)
+    results = list()
+    for provider in providers:
+        name = None
+        try:
+            name = SearchProvider.CONNECTORS_AUTHENTICATORS[provider.connector]
+            if not name:
+                continue
+        except:
+            continue
+        results.append({
+            'name': name
+        })
+    results = remove_duplicates(results)
+    return render(request, 'authenticators.html', {'authenticators': results})
+
+def return_authenticators_list(request):
+    if not request.user.is_authenticated:
+        return redirect('/swirl/api-auth/login?next=/swirl/authenticators.html')
+    providers = SearchProvider.objects.filter(active=True, owner=request.user) | SearchProvider.objects.filter(active=True, shared=True)
+    results = list()
+    for provider in providers:
+        name = None
+        try:
+            name = SearchProvider.CONNECTORS_AUTHENTICATORS[provider.connector]
+            if not name:
+                continue
+        except:
+            continue
+        results.append({
+            'name': name
+        })
+    results = remove_duplicates(results)
+    return Response(results, status=status.HTTP_200_OK)
 
 ########################################
 
@@ -212,37 +263,11 @@ def search(request):
 
 ########################################
 
+class AuthenticatorViewSet(viewsets.ModelViewSet):
+    def list(self, request):
+        return return_authenticators_list(request)
+
 def authenticators(request):
-
-    def remove_duplicates(my_list):
-        new_list = []
-        seen = set()
-        for d in my_list:
-            key = (d['name'])
-            if key not in seen:
-                new_list.append(d)
-                seen.add(key)
-        return new_list
-
-    def return_authenticators(request):
-        if not request.user.is_authenticated:
-            return redirect('/swirl/api-auth/login?next=/swirl/authenticators.html')
-        providers = SearchProvider.objects.filter(active=True, owner=request.user) | SearchProvider.objects.filter(active=True, shared=True)
-        results = list()
-        for provider in providers:
-            name = None
-            try:
-                name = SearchProvider.CONNECTORS_AUTHENTICATORS[provider.connector]
-                if not name:
-                    continue
-            except:
-                continue
-            results.append({
-                'name': name
-            })
-        results = remove_duplicates(results)
-        return render(request, 'authenticators.html', {'authenticators': results})
-
     if request.method == 'POST':
         authenticator = request.POST.get('authenticator_name')
         res = SWIRL_AUTHENTICATORS_DICT[authenticator]().update_token(request)
@@ -265,7 +290,6 @@ class LoginView(APIView):
         username = request.data.get('username')
         password = request.data.get('password')
         user = authenticate(request, username=username, password=password)
-        print(f'user: {user}')
         if user is not None:
             token, created = Token.objects.get_or_create(user=user)
             return Response({'token': token.key})
@@ -402,7 +426,6 @@ class SearchViewSet(viewsets.ModelViewSet):
         ########################################
 
         pre_query_processor_in = request.GET.get('pre_query_processor', None)
-
         providers = []
         if 'providers' in request.GET.keys():
             providers = request.GET['providers']

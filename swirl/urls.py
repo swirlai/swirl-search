@@ -20,6 +20,12 @@ router.register(r'querytransforms', views.QueryTransformViewSet, basename='query
 router.register(r'search', views.SearchViewSet, basename='search')
 router.register(r'results', views.ResultViewSet, basename='results')
 
+router.register(r'sapi/search', views.SearchViewSet, basename='spyglass-search')
+router.register(r'sapi/results', views.ResultViewSet, basename='spyglass-results')
+router.register(r'sapi/authenticators', views.AuthenticatorViewSet, basename='spyglass-authenticators')
+router.register(r'sapi/searchproviders', views.SearchProviderViewSet, basename='spyglass-searchproviders'),
+
+
 urlpatterns = [
     path('openapi', get_schema_view(
             title="SWIRL Swagger",
@@ -53,8 +59,6 @@ urlpatterns = [
     path('register/confirm_sent/', views.registration_confirmation_sent, name='registration_confirmation_sent'),
 
     path('login/', views.LoginView.as_view()),
-    path('spyglass/search/', views.SearchViewSet.as_view({'get': 'list'})),
-    path('spyglass/results/', views.ResultViewSet.as_view({'get': 'list'})),
 
     path('', include(router.urls)),
 ]
