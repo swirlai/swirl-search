@@ -183,7 +183,8 @@ class MappingResultProcessor(ResultProcessor):
                                                 if swirl_result[swirl_key] == "":
                                                     if type(result_dict[source_key]) == int:
                                                         swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]/1000))
-                                                    # end if
+                                                    if type(result_dict[source_key]) == float:
+                                                        swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]))
                                                 # end if
                                             if type(swirl_result[swirl_key]) == str and type(result_dict[source_key]) == list:
                                                 swirl_result[swirl_key] = ' '.join(result_dict[source_key])
