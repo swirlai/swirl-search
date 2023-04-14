@@ -479,11 +479,10 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                 item['explain'] = dict_score
                 possible_hits = item.get('hits', None)
                 if possible_hits:
-                    logger.info('DNDEBUG : moving hits')
                     item['explain']['hits'] = item['hits']
                     del item['hits']
                 else:
-                    logger.info('DNDEBUG : no hits to move')
+                    logger.debug('no hits to move')
 
                 updated = updated + 1
                 # save highlighted version
