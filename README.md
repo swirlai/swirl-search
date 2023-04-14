@@ -37,7 +37,7 @@ After a few minutes the following or similar should appear:
 
 ```
 ssdtest-app-1  | Command successful!
-ssdtest-app-1  | __S_W_I_R_L__1_._1_0____________________________________________________________
+ssdtest-app-1  | __S_W_I_R_L__1_._1_0_._1________________________________________________________
 ssdtest-app-1  | 
 ssdtest-app-1  | Warning: logs directory does not exist, creating it
 ssdtest-app-1  | Start: rabbitmq -> rabbitmq-server ... Ok, pid: 53
@@ -98,7 +98,7 @@ The most recent Search object will be displayed. Click the result_url to view th
 ```
 
     "messages": [
-        "__S_W_I_R_L__1_._1_0____________________________________________________________",
+        "__S_W_I_R_L__1_._1_0_._1__________________________________________________________",
         "[2023-01-21 15:02:53.696346] Retrieved 10 of 3530 results from: Mergers & Acquisitions (web/Google PSE)",
         "[2023-01-21 15:02:53.731620] Retrieved 10 of 2070000000 results from: Strategy Consulting (web/Google PSE)",
         "[2023-01-21 15:02:53.854734] Retrieved 10 of 120000 results from: Enterprise Search (web/Google PSE)",
@@ -283,7 +283,7 @@ Learn more: [Quick Start Guide](https://github.com/swirlai/swirl-search/wiki/1.-
 
 | Version                     | Date                        | Notes | 
 | --------------------------- | --------------------------- | ----- |
-| [Swirl Metasearch 1.10](https://github.com/swirlai/swirl-search/releases/tag/v1.10) | 03-28-2023 | [Release 1.10](https://github.com/swirlai/swirl-search/releases) |
+| [Swirl Metasearch 1.10.1](https://github.com/swirlai/swirl-search/releases/tag/v1.10.1) | 04-14-2023 | [Release 1.10.1](https://github.com/swirlai/swirl-search/releases) |
 
 <br/>
 
