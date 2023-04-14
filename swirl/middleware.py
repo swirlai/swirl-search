@@ -43,5 +43,7 @@ class SpyglassAuthenticatorsMiddleware:
                     expires_in = int(jwt.decode(token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
                     ## Do we need refresh token ?
                     SWIRL_AUTHENTICATORS_DICT[authenticator]().set_session_data(request, token, '', expires_in)
+                else:
+                    SWIRL_AUTHENTICATORS_DICT[authenticator]().set_session_data(request, '', '', 0)
         return self.get_response(request)
         
