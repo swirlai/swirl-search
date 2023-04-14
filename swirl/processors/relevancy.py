@@ -477,8 +477,13 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         dict_score[f]['query_length_adjust'] = qlen_adjust
                 ####### explain
                 item['explain'] = dict_score
-                item['explain']['hits'] = item['hits']
-                del item['hits']
+                possible_hits = item.get('hits', None)
+                if possible_hits:
+                    item['explain']['hits'] = item['hits']
+                    del item['hits']
+                else:
+                    logger.debug('no hits to move')
+
                 updated = updated + 1
                 # save highlighted version
                 highlighted_json_results.append(item)
