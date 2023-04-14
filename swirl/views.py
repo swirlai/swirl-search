@@ -425,7 +425,8 @@ class SearchViewSet(viewsets.ModelViewSet):
 
         ########################################
 
-        pre_query_processor_in = request.GET.get('pre_query_processor', None)
+        pre_query_processor_in = request.GET.get('pre_query_processor', '')
+
         providers = []
         if 'providers' in request.GET.keys():
             providers = request.GET['providers']
@@ -484,7 +485,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.info(f"{module_name}: Search.create() from ?qs")
             try:
                 # security review for 1.7 - OK, created with owner
-                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user)
+                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user,pre_query_processor=pre_query_processor_in)
             except Error as err:
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
@@ -890,8 +891,7 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
     def list(self, request):
 
         # check permissions
-        # TODO: fix perm
-        if not request.user.has_perm('swirl.view_searchprovider'):
+        if not request.user.has_perm('swirl.view_querytransform'):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         shared_xforms = QueryTransform.objects.filter(shared=True)
@@ -907,8 +907,7 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
     def create(self, request):
 
         # check permissions
-        # DN FIX ME, perms
-        if not request.user.has_perm('swirl.add_searchprovider'):
+        if not request.user.has_perm('swirl.add_querytransform'):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         # by default, if the user is superuser, the searchprovider is shared
@@ -923,8 +922,7 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
     ########################################
 
     def retrieve(self, request, pk=None):
-        ## DN FIX ME PERSM
-        if not request.user.has_perm('swirl.view_searchprovider'):
+        if not request.user.has_perm('swirl.view_querytransform'):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         # security review for 1.7 - OK, filtered by owner
@@ -945,8 +943,7 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
 
         # check permissions
-        ## FIXEM DN PERMS
-        if not request.user.has_perm('swirl.change_searchprovider'):
+        if not request.user.has_perm('swirl.change_querytransform'):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         # security review for 1.7 - OK, filtered by owner
@@ -966,8 +963,7 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, pk=None):
         # check permissions
-        ## DN FIX ME PERMS
-        if not request.user.has_perm('swirl.delete_searchprovider'):
+        if not request.user.has_perm('swirl.delete_querytransform'):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         # security review for 1.7 - OK, filtered by owner

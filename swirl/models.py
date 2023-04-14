@@ -12,6 +12,28 @@ def getSearchProviderQueryProcessorsDefault():
 def getSearchProviderResultProcessorsDefault():
     return ["MappingResultProcessor"]
 
+class FlexibleChoiceField(models.CharField):
+    """
+    Allow choices and free text so we can have a user named and shared query transform
+    in a seacrh provider
+    """
+    def __init__(self, *args, **kwargs):
+        self.custom_choices = kwargs.pop("choices", [])
+        super().__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        kwargs["choices"] = self.custom_choices
+        return name, path, args, kwargs
+
+    def to_python(self, value):
+        if value in dict(self.custom_choices):
+            return value
+        return super().to_python(value)
+
+    def validate(self, value, model_instance):
+        if value not in dict(self.custom_choices):
+            return super().validate(value, model_instance)
 
 class SearchProvider(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -58,7 +80,7 @@ class SearchProvider(models.Model):
         ('AdaptiveQueryProcessor', 'AdaptiveQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]
-    query_processor = models.CharField(max_length=200, default='', choices=QUERY_PROCESSOR_CHOICES, blank=True)
+    query_processor = FlexibleChoiceField(max_length=200, default='', choices=QUERY_PROCESSOR_CHOICES, blank=True )
     query_processors = models.JSONField(default=getSearchProviderQueryProcessorsDefault, blank=True)
     query_mappings = models.CharField(max_length=2048, default=str, blank=True)
     RESULT_PROCESSOR_CHOICES = [
@@ -196,7 +218,6 @@ class Result(models.Model):
 
 class QueryTransform(models.Model) :
     id = models.BigAutoField(primary_key=True)
-    # DN : TODO name should be unique.
     name = models.CharField(max_length=255)
     owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     shared = models.BooleanField(default=False)

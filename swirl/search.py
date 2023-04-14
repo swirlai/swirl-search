@@ -13,9 +13,10 @@ from django.conf import settings
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
-from swirl.models import Search, SearchProvider, Result
+from swirl.models import QueryTransform, Search, SearchProvider, Result
 from swirl.tasks import federate_task
 from swirl.processors import *
+from swirl.processors.transform_query_processor_utils import get_pre_query_processor_or_transform
 
 SWIRL_OBJECT_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
 
@@ -170,7 +171,7 @@ def search(id, session):
         query_temp = search.query_string
         for processor in processor_list:
             try:
-                pre_query_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(query_temp, None, search.tags)
+                pre_query_processor = get_pre_query_processor_or_transform(processor, query_temp, SWIRL_OBJECT_DICT, search.tags, user)
                 if pre_query_processor.validate():
                     processed_query = pre_query_processor.process()
                 else:
