@@ -7,7 +7,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 from swirl.processors.transform_query_processor import *
-from swirl.processors.utils import str_tok_get_prefixes
+from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp
 
 logger = logging.getLogger(__name__)
 
@@ -93,6 +93,23 @@ def test_utils_prefix_toks(prefix_toks_test_cases, prefix_toks_test_expected):
     for c in prefix_toks_test_cases:
         ret = str_tok_get_prefixes(c)
         assert ret == prefix_toks_test_expected[i]
+        i = i + 1
+
+
+@pytest.fixture
+def utils_date_str_to_timestamp_cases():
+    return ['1681393728.832229','1681393728','Jan 17, 1975']
+
+@pytest.fixture
+def utils_date_str_to_timestamp_expected():
+    return['2023-04-13 09:48:48.832229','2023-04-13 09:48:48','1975-01-17 00:00:00']
+
+@pytest.mark.django_db
+def test_utils_date_str_to_timestamp(utils_date_str_to_timestamp_cases, utils_date_str_to_timestamp_expected):
+    i = 0
+    for c in utils_date_str_to_timestamp_cases:
+        ret = date_str_to_timestamp(c)
+        assert ret == utils_date_str_to_timestamp_expected[i]
         i = i + 1
 
 

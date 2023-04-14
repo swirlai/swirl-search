@@ -360,6 +360,7 @@ def str_tok_get_prefixes(toks, sep = ' '):
             ret.append(' '.join(prfx))
     return ret
 
+
 #############################################
 
 def get_mappings_dict(mappings):
@@ -393,3 +394,52 @@ def get_mappings_dict(mappings):
     # end if
 
     return dict_mappings
+
+def str_safe_format(s, d):
+    """
+    Safer string replace, uses format, if there is a key error, attempts string replace.
+    """
+    if len(s) <=0 or not d:
+        return s
+    try:
+        ret = s.format(**d)
+    except KeyError:
+        ret = str_replace_all_keys(s,d)
+    return ret
+
+from dateutil import parser
+
+def _date_str_parse_to_timestamp(s):
+    """
+        try to parse the string as a date to a timestampe
+    """
+    ret = ""
+    try:
+        ret = str(parser.parse(str(s)))
+    except Exception as x:
+        logger.debug(f'{x} : unable to convert {s} as string to timestamp')
+    return ret
+
+import datetime as x_datetime
+def _date_float_parse_to_timestamp(s):
+    """
+        convert to a string then to float and try to make a timestamp out of it.
+    """
+    ret = ""
+    try:
+        dtf = float(str(s))
+        ret = str(x_datetime.datetime.fromtimestamp(dtf))
+    except Exception as x:
+        logger.debug(f'{x} : unable to convert {s} as float to timestamp')
+    return ret
+
+def date_str_to_timestamp(s):
+    """
+        Convert the input to a string and try to make a timestamp from it using known string formats
+        and raw numeric values
+    """
+    ret = _date_str_parse_to_timestamp(s)
+    if not ret: ret = _date_float_parse_to_timestamp(s)
+    if not ret:
+        logger.error(f'Unable to convert {s} to timestamp using any known type')
+    return ret
