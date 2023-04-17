@@ -1,6 +1,8 @@
 [
     {
         "name": "Enterprise Search (web/Google PSE)",
+        "active": true,
+        "default": true,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
@@ -15,7 +17,8 @@
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
-        "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM",
+        "results_per_query": 10,
+        "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "tags": [
             "News",
             "EnterpriseSearch"
@@ -23,6 +26,8 @@
     },
     {
         "name": "Strategy Consulting (web/Google PSE)",
+        "active": true,
+        "default": true,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
@@ -37,7 +42,8 @@
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=htmlSnippet,cacheid,NO_PAYLOAD",
-        "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM",
+        "results_per_query": 10,
+        "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "tags": [
             "News",
             "StrategyConsulting"
@@ -45,6 +51,8 @@
     },
     {
         "name": "Mergers & Acquisitions (web/Google PSE)",
+        "active": true,
+        "default": true,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
@@ -59,7 +67,8 @@
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
-        "credentials": "key=AIzaSyDeB1y9l6OQW0dhVdZ9X_Xb2br_SK1K8YM",
+        "results_per_query": 10,
+        "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "tags": [
             "News",
             "MergersAcquisitions"
@@ -68,6 +77,7 @@
     {
         "name": "IT News (web/NLResearch.com)",
         "active": false,
+        "default": true,
         "connector": "RequestsGet",
         "url": "https://nlresearch.com/results.php?datasource=BRECE&language=1&periodDate=-7&resultsPerPage=10&micpr=0&extended=1&output=json",
         "query_template": "{url}&login={login}&password={password}&textQuery={query_string}",
@@ -82,6 +92,7 @@
         ],
         "response_mappings": "FOUND=header.@attributes.total_documents,RESULTS=result_list.result,RESULT=document",
         "result_mappings": "body=summary,date_published=date,author=publisher,type,source,country,language,NO_PAYLOAD",
+        "results_per_query": 10,
         "credentials": "login=your-NLResearch-username,password=your-NLResearch-password",
         "tags": [
             "News",
@@ -92,6 +103,7 @@
     {
         "name": "ChatGPT (web/OpenAI)",
         "active": false,
+        "default": true,
         "connector": "ChatGPT",
         "url": "",
         "query_template": "",
@@ -99,7 +111,7 @@
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
-        "query_mappings": "PROMPT='Rewrite this search query as a question then answer it: {query_to_provider}'",
+        "query_mappings": "PROMPT='Tell me about: {query_to_provider}'",
         "result_processor": "",
         "result_processors": [
             "GenericResultProcessor"
@@ -107,7 +119,7 @@
         "response_mappings": "",
         "result_mappings": "",
         "results_per_query": 10,
-        "credentials": "your-openai-API-key-here",
+        "credentials": "your-OpenAI-API-key-here",
         "tags": [
             "ChatGPT",
             "Question"
@@ -132,7 +144,7 @@
         "response_mappings": "FOUND=total,RESULTS=data",
         "result_mappings": "title=name,body=description,url=viewLink,date_published=modifiedAt,owner.name,picture.imageURL,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "bearer=your-miro-api-token",
+        "credentials": "bearer=your-Miro-api-token",
         "tags": [
             "Drawings"
         ]
@@ -142,6 +154,7 @@
         "active": false,
         "default": false,
         "connector": "BigQuery",
+        "url": "",
         "query_template": "select {fields} from `{table}` where search({field1}, '{query_string}') or search({field2}, '{query_string}');",
         "query_processor": "",
         "query_processors": [
@@ -152,7 +165,9 @@
         "result_processors": [
             "MappingResultProcessor"
         ],
+        "response_mappings": "",
         "result_mappings": "title='{company}',body='{company} raised ${raisedamt} series {round} on {fundeddate}. The company is located in {city} {state} and has {numemps} employees.',url=permalink,date_published=fundeddate,NO_PAYLOAD",
+        "results_per_query": 10,
         "credentials": "/path/to/bigquery/token.json",
         "tags": [
             "Company",
@@ -175,7 +190,10 @@
         "result_processors": [
             "MappingResultProcessor"
         ],
+        "response_mappings": "",
         "result_mappings": "title='{company} series {round}',body='{city} {fundeddate}: {company} raised usd ${raisedamt}\nThe company is headquartered in {city} and employs {numemps}',date_published=fundeddate,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
         "tags": [
             "Company",
             "Sqlite3"
@@ -199,6 +217,7 @@
         ],
         "response_mappings": "FOUND=numFound,RESULTS=response.docs",
         "result_mappings": "title=name,body=features,response",
+        "results_per_query": 10,
         "credentials": "HTTPBasicAuth('solr-username','solr-password')",
         "tags": [
             "Products",
@@ -222,7 +241,9 @@
         "result_processors": [
             "MappingResultProcessor"
         ],
+        "response_mappings": "",
         "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
+        "results_per_query": 10,
         "credentials": "'admin','password'",
         "tags": [
             "Enron",
@@ -246,12 +267,118 @@
         "result_processors": [
             "MappingResultProcessor"
         ],
+        "response_mappings": "",
         "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
+        "results_per_query": 10,
         "credentials": "http_auth=(\"elastic\", \"elastic-password\")",
         "tags": [
             "Enron",
             "Email",
             "Elastic"
+        ]
+    },
+    {
+        "name": "Articles (web/YouTrack.cloud)",
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://<your-domain>.youtrack.cloud/api/articles?fields=idReadable,reporter(fullName),summary,content,attachments(name),project(name),parentArticle(summary),childArticles(summary),created,updatedBy(fullName),comments(text)",
+        "query_template": "{url}&query={query_string}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=summary,body=content,date_published=created,author=reporter.fullName,url='https://<your-domain>.youtrack.cloud/articles/{idReadable}',project.name,attachments[*].name,parentArticle.summary,childArticles[*].summary,updatedBy.fullName,comments[*].text,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=your-youtrack-permanent-token",
+        "tags": [
+            "Articles",
+            "Wiki",
+            "YouTrack"
+        ]
+    },
+    {
+        "name": "Issues (web/YouTrack.cloud)",
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://<your-domain>.youtrack.cloud/api/issues?fields=project(name),idReadable,tags(name),summary,description,reporter(fullName),created,votes,commentsCount,comments(text),updater(fullName)",
+        "query_template": "{url}&query={query_string}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=summary,body=description,date_published=created,author=reporter.fullName,url='https://<your-domain>.youtrack.cloud/issue/{idReadable}',project.name,tags[*].name,votes,commentsCount,comments[*].text,updater.fullName,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=your-youtrack-permanent-token",
+        "tags": [
+            "Issues",
+            "YouTrack"
+        ]
+    },
+    {
+        "name": "Wiki (web/Atlassian.com)",
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://<your-domain>.atlassian.net/wiki/rest/api/content/search?expand=history,space,metadata.labels.results,children.attachment,children.page,children.comment,ancestors,body.view",
+        "query_template": "{url}&cql=text~'{query_string}'",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=size,RESULTS=results",
+        "result_mappings": "title=title,body=body[*].view[*].value,author=history[*].createdBy[*].publicName,date_published=history[*].createdDate,url='https://<your-domain>.atlassian.net/wiki{_links[*].webui}',space.name,metadata[*].labels[*].results[*].name,children[*].attachment[*].results[*].title,children[*].page[*].results[*].title,ancestors[*].title,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
+        "tags": [
+            "Confluence",
+            "Articles",
+            "Wiki",
+            "Atlassian"
+        ]
+    },
+    {
+        "name": "Issues (web/Atlassian.com)",
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://<your-domain>.atlassian.net/rest/api/3/search?fields=*all",
+        "query_template": "{url}&jql=text~'{query_string}'",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=total,RESULTS=issues",
+        "result_mappings": "title=fields.summary,body=fields[description].content[*].content[*].text,date_published=fields[*].created,author=fields[reporter].displayName,url='https://<your-domain>.atlassian.net/browse/{key}',fields[project].name,key,fields[priority].name,fields[status].name,fields[assignee].displayName,fields[*].fixVersions[*].name,fields[votes].votes,fields.labels,fields[comment].comments[*].body[*].content[*].content[*].text,fields[*].subtasks[*].fields[*].summary,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
+        "tags": [
+            "Jira",
+            "Issues",
+            "Atlassian"
         ]
     }
 ]
