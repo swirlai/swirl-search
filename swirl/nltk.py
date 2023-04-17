@@ -23,3 +23,4 @@ from nltk.stem import PorterStemmer
 ps = PorterStemmer()
 
 from nltk.tokenize import sent_tokenize
+from nltk.tokenize import word_tokenize

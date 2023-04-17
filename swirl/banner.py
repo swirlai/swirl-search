@@ -10,13 +10,14 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
 
+
 SWIRL_VERSION = '1.10.1'
 
 SWIRL_BANNER_TEXT = "__S_W_I_R_L__1_._1_0_._1________________________________________________________"
 SWIRL_BANNER = f'{bcolors.BOLD}{SWIRL_BANNER_TEXT}{bcolors.ENDC}'
 
-#############################################    
-    
+#############################################
+
 if __name__ == "__main__":
     print(SWIRL_BANNER)
 
