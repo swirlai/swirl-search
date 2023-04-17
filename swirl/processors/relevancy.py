@@ -251,6 +251,9 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                             # to do: handle this better
                             item[field] = item[field][0]
                         # result_field is shorthand for item[field]
+                        # item[field] needs to be a string from this point forward.
+                        # code expects this and blows up otherwise.
+                        item[field] = json_to_flat_string(item[field],deadman=100)
                         result_field = clean_string(item[field]).strip()
                         # check for zero-length result
                         if result_field:
@@ -474,6 +477,13 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         dict_score[f]['query_length_adjust'] = qlen_adjust
                 ####### explain
                 item['explain'] = dict_score
+                possible_hits = item.get('hits', None)
+                if possible_hits:
+                    item['explain']['hits'] = item['hits']
+                    del item['hits']
+                else:
+                    logger.debug('no hits to move')
+
                 updated = updated + 1
                 # save highlighted version
                 highlighted_json_results.append(item)
