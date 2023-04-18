@@ -56,7 +56,7 @@ else
 fi
 
 mkdir $work_dir
-docker pull swirlai/spyglass:latest
+docker pull $image
 docker create --name $work_container $image
 docker cp "$work_container:/usr/src/spyglass/ui/dist/spyglass/browser/." $work_dir
 docker rm -f $work_container
