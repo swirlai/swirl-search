@@ -12,7 +12,7 @@ from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
 from swirl.processors.processor import *
-
+from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
 from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format, date_str_to_timestamp
 
 #############################################
@@ -118,11 +118,12 @@ class MappingResultProcessor(ResultProcessor):
                     result_dict = {}
                     # self.warning(f"template_list: {template_list}")
                     for k in template_list:
-                        jxp_key = f'$.{k[1:-1]}'
+                        uc = ResultMapUrlEncoder(f'$.{k[1:-1]}')
+                        jxp_key = uc.get_key()
                         try:
                             jxp = parse(jxp_key)
                             # search result for this
-                            matches = [match.value for match in jxp.find(result)]
+                            matches = [uc.get_value(match.value) for match in jxp.find(result)]
                         except JsonPathParserError as err:
                             self.error(f'JsonPathParser: {err} in jsonpath_ng.find: {jxp_key}')
                             return []

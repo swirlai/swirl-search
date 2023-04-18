@@ -8,6 +8,7 @@ from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 from swirl.processors.transform_query_processor import *
 from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp
+from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +70,52 @@ def noop_query_string():
 ######################################################################
 ## tests
 ######################################################################
+
+@pytest.fixture
+def rm_url_encoder_test_cases():
+    return {
+        'foo':'bar',
+        'sw_urlencode(bar)':'baz',
+        'sw_urlencode(yyz)':'foo==',
+        'sw_urlencode(yyz':'foo==',
+        'foo(yyz)':'foo==',
+        'sw_urlencode(hitId)':'askjfasdkj,,l::":kajsdf==alksfja;lkdjs==='
+    }
+
+@pytest.fixture
+def rm_url_encoder_test_expected():
+    return {
+        'foo':{'key':'foo', 'value':'bar'},
+        'sw_urlencode(bar)':{'key':'bar', 'value':'baz'},
+        'sw_urlencode(yyz)':{'key':'yyz', 'value':'foo%3D%3D'},
+        'sw_urlencode(yyz': {'key':'sw_urlencode(yyz', 'value':'foo=='},
+        'foo(yyz)': {'key':'foo(yyz)', 'value':'foo=='},
+        'sw_urlencode(hitId)': {'key':'hitId', 'value':'askjfasdkj%2C%2Cl%3A%3A%22%3Akajsdf%3D%3Dalksfja%3Blkdjs%3D%3D%3D'}
+    }
+
+@pytest.mark.django_db
+def test_rm_url_encoder(rm_url_encoder_test_cases, rm_url_encoder_test_expected):
+    for k in rm_url_encoder_test_cases.keys():
+        uc  = ResultMapUrlEncoder(k)
+        assert uc.get_key() == rm_url_encoder_test_expected[k].get('key')
+        assert uc.get_value(rm_url_encoder_test_cases.get(k)) == rm_url_encoder_test_expected[k].get('value')
+
+    # Boundary cases:
+    uc  = ResultMapUrlEncoder(None)
+    k = uc.get_key()
+    v = uc.get_value('foo')
+    assert k == None
+    assert v == 'foo'
+
+    uc  = ResultMapUrlEncoder('')
+    k = uc.get_key()
+    v = uc.get_value('foo')
+    assert k == ''
+    assert v == 'foo'
+
+
+
+
 
 @pytest.fixture
 def prefix_toks_test_cases():
