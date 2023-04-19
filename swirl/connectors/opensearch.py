@@ -60,10 +60,9 @@ class OpenSearch(Connector):
                 # to do: support ascending??? p2
                 query_to_provider['sort'] = [
                     {
-                        '{sort_field}': 'desc'
+                        f'{sort_field}': 'desc'
                     }
                 ]
-
         self.query_to_provider = query_to_provider
         return
 
@@ -154,8 +153,8 @@ class OpenSearch(Connector):
             self.error(f"client.search reports SSL Error: {err}")
         except NotFoundError:
             self.error(f"client.search reports HTTP/404 (Not Found)")
-        except RequestError:
-            self.error(f"client.search reports Bad Request")
+        except RequestError as err:
+            self.error(f"client.search reports Bad Request {err}")
         except AuthenticationException:
             self.error(f"client.search reports HTTP/401 (Forbidden)")
         except AuthorizationException:
