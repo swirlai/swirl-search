@@ -343,6 +343,7 @@ def capitalize_search(list_lower, list_unknown):
 
     return list_capitalized
 
+
 def json_to_flat_string(json_data, separator=' ', deadman=None):
     """
     A flat string representation of any JSON object.
@@ -379,6 +380,59 @@ def str_replace_all_keys(s, d):
         ret = ret.replace("{"+k+"}", d[k])
     return ret
 
+
+#############################################
+def str_tok_get_prefixes(toks, sep = ' '):
+    """
+    given a list of tokens, get a list of the
+    of token lists, one for each pre-fix of
+    the input.
+    """
+    lt = len(toks)
+    if not toks or lt <= 0:
+        return []
+    ret = []
+    for i in range(lt):
+        for r  in range (lt - 1, i - 1, -1 ):
+            prfx = toks[i : r + 1]
+            ret.append(' '.join(prfx))
+    return ret
+
+
+#############################################
+
+def get_mappings_dict(mappings):
+
+    '''
+    accepts: any provider mapping
+    returns: dict of the mappings by swirl_key
+    warns if any swirl_key is repeated
+    '''
+
+    module_name = 'get_mappings'
+
+    dict_mappings = {}
+
+    mappings = mappings.split(',')
+    if mappings:
+        for mapping in mappings:
+            stripped_mapping = mapping.strip()
+            if '=' in stripped_mapping:
+                swirl_key = stripped_mapping[:stripped_mapping.find('=')]
+                source_key = stripped_mapping[stripped_mapping.find('=')+1:]
+            else:
+                source_key = None
+                swirl_key = stripped_mapping
+            # end if
+            if swirl_key in dict_mappings:
+                logger.warning(f"{module_name}: Warning: control mapping {swirl_key} found more than once, ignoring")
+                continue
+            dict_mappings[swirl_key] = source_key
+        # end for
+    # end if
+
+    return dict_mappings
+
 def str_safe_format(s, d):
     """
     Safer string replace, uses format, if there is a key error, attempts string replace.
@@ -390,3 +444,41 @@ def str_safe_format(s, d):
     except KeyError:
         ret = str_replace_all_keys(s,d)
     return ret
+
+from dateutil import parser
+
+def _date_str_parse_to_timestamp(s):
+    """
+        try to parse the string as a date to a timestampe
+    """
+    ret = ""
+    try:
+        ret = str(parser.parse(str(s)))
+    except Exception as x:
+        logger.debug(f'{x} : unable to convert {s} as string to timestamp')
+    return ret
+
+import datetime as x_datetime
+def _date_float_parse_to_timestamp(s):
+    """
+        convert to a string then to float and try to make a timestamp out of it.
+    """
+    ret = ""
+    try:
+        dtf = float(str(s))
+        ret = str(x_datetime.datetime.fromtimestamp(dtf))
+    except Exception as x:
+        logger.debug(f'{x} : unable to convert {s} as float to timestamp')
+    return ret
+
+def date_str_to_timestamp(s):
+    """
+        Convert the input to a string and try to make a timestamp from it using known string formats
+        and raw numeric values
+    """
+    ret = _date_str_parse_to_timestamp(s)
+    if not ret: ret = _date_float_parse_to_timestamp(s)
+    if not ret:
+        logger.error(f'Unable to convert {s} to timestamp using any known type')
+    return ret
+

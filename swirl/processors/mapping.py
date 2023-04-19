@@ -12,7 +12,8 @@ from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
 from swirl.processors.processor import *
-from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format
+from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
+from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format, date_str_to_timestamp
 
 #############################################
 #############################################
@@ -117,11 +118,12 @@ class MappingResultProcessor(ResultProcessor):
                     result_dict = {}
                     # self.warning(f"template_list: {template_list}")
                     for k in template_list:
-                        jxp_key = f'$.{k[1:-1]}'
+                        uc = ResultMapUrlEncoder(f'$.{k[1:-1]}')
+                        jxp_key = uc.get_key()
                         try:
                             jxp = parse(jxp_key)
                             # search result for this
-                            matches = [match.value for match in jxp.find(result)]
+                            matches = [uc.get_value(match.value) for match in jxp.find(result)]
                         except JsonPathParserError as err:
                             self.error(f'JsonPathParser: {err} in jsonpath_ng.find: {jxp_key}')
                             return []
@@ -155,7 +157,7 @@ class MappingResultProcessor(ResultProcessor):
                                         if not type(result_dict[source_key]) in json_types:
                                             if 'date' in source_key.lower():
                                                 # parser.parse will fill-in a missing time portion etc
-                                                result_dict[source_key] = str(parser.parse(str(result_dict[source_key])))
+                                                result_dict[source_key] = date_str_to_timestamp(result_dict[source_key])
                                             else:
                                                 result_dict[source_key] = str(result_dict[source_key])
                                             # end if
@@ -164,9 +166,9 @@ class MappingResultProcessor(ResultProcessor):
                                             # same type, copy it
                                             if 'date' in swirl_key.lower():
                                                 if swirl_result[swirl_key] == "":
-                                                    swirl_result[swirl_key] = str(parser.parse(result_dict[source_key]))
+                                                    swirl_result[swirl_key] = date_str_to_timestamp(result_dict[source_key])
                                                 else:
-                                                    payload[swirl_key+"_"+source_key] = str(parser.parse(result_dict[source_key]))
+                                                    payload[swirl_key+"_"+source_key] = date_str_to_timestamp(result_dict[source_key])
                                                 # end if
                                             else:
                                                 if not swirl_result[swirl_key]:

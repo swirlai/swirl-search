@@ -12,6 +12,28 @@ def getSearchProviderQueryProcessorsDefault():
 def getSearchProviderResultProcessorsDefault():
     return ["MappingResultProcessor"]
 
+class FlexibleChoiceField(models.CharField):
+    """
+    Allow choices and free text so we can have a user named and shared query transform
+    in a seacrh provider
+    """
+    def __init__(self, *args, **kwargs):
+        self.custom_choices = kwargs.pop("choices", [])
+        super().__init__(*args, **kwargs)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        kwargs["choices"] = self.custom_choices
+        return name, path, args, kwargs
+
+    def to_python(self, value):
+        if value in dict(self.custom_choices):
+            return value
+        return super().to_python(value)
+
+    def validate(self, value, model_instance):
+        if value not in dict(self.custom_choices):
+            return super().validate(value, model_instance)
 
 class SearchProvider(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -22,6 +44,17 @@ class SearchProvider(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
     default = models.BooleanField(default=True)
+    AUTHENTICATOR_CHOICES = [
+        ('Microsoft', 'Microsoft Authentication')
+    ]
+    authenticator = models.CharField(max_length=200, default='', choices=AUTHENTICATOR_CHOICES)
+    CONNECTORS_AUTHENTICATORS = dict({
+        'M365OutlookMessages': 'Microsoft',
+        'M365OneDrive': 'Microsoft',
+        'M365OutlookCalendar': 'Microsoft',
+        'M365SharePointSites': 'Microsoft',
+        'MicrosoftTeams': 'Microsoft',
+    })
     CONNECTOR_CHOICES = [
         ('ChatGPT', 'ChatGPT Query String'),
         ('RequestsGet', 'HTTP/GET returning JSON'),
@@ -30,8 +63,14 @@ class SearchProvider(models.Model):
         # Uncomment the line below to enable PostgreSQL
         # ('PostgreSQL', 'PostgreSQL'),
         ('BigQuery', 'Google BigQuery'),
-        ('Sqlite3', 'Sqlite3')
+        ('Sqlite3', 'Sqlite3'),
+        ('M365OutlookMessages', 'M365 Outlook Messages'),
+        ('M365OneDrive', 'M365 One Drive'),
+        ('M365OutlookCalendar', 'M365 Outlook Calendar'),
+        ('M365SharePointSites', 'M365 SharePoint Sites'),
+        ('MicrosoftTeams', 'Microsoft Teams'),
     ]
+
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
     query_template = models.CharField(max_length=2048, default='{url}?q={query_string}', blank=True)
@@ -41,7 +80,7 @@ class SearchProvider(models.Model):
         ('AdaptiveQueryProcessor', 'AdaptiveQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]
-    query_processor = models.CharField(max_length=200, default='', choices=QUERY_PROCESSOR_CHOICES, blank=True)
+    query_processor = FlexibleChoiceField(max_length=200, default='', choices=QUERY_PROCESSOR_CHOICES, blank=True )
     query_processors = models.JSONField(default=getSearchProviderQueryProcessorsDefault, blank=True)
     query_mappings = models.CharField(max_length=2048, default=str, blank=True)
     RESULT_PROCESSOR_CHOICES = [
@@ -55,6 +94,7 @@ class SearchProvider(models.Model):
     result_processors = models.JSONField(default=getSearchProviderResultProcessorsDefault, blank=True)
     result_mappings = models.CharField(max_length=2048, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
+    eval_credentials = models.CharField(max_length=100, default=str, blank=True)
     credentials = models.CharField(max_length=512, default=str, blank=True)
     tags = models.JSONField(default=list)
 
@@ -175,3 +215,22 @@ class Result(models.Model):
     def __str__(self):
         signature = str(self.id) + ':' + str(self.search_id) + ':' + str(self.searchprovider)
         return signature
+
+class QueryTransform(models.Model) :
+    id = models.BigAutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    shared = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+    QUERY_TRASNSFORM_TYPE_CHOICES = [
+        ('rewrite', 'Rewrite'),
+        ('synonym', 'Synonym' ),
+        ('bag', 'Synonym Bag' )
+    ]
+    qrx_type =  models.CharField(max_length=64, default='', choices=QUERY_TRASNSFORM_TYPE_CHOICES)
+    config_content = models.TextField()
+    class Meta:
+        unique_together = [
+            ('name', 'qrx_type'),
+        ]

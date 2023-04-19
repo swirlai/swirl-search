@@ -3,7 +3,7 @@ name: Tests
 on:
   push:
     # only trigger on branches, not on tags
-    branches: 'develop'
+    branches: '1.11'
 
 jobs:
 

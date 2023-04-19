@@ -1,0 +1,26 @@
+{
+    "name": "M365 Email",
+    "active": true,
+    "default": false,
+    "connector": "M365OutlookMessages",
+    "url": "",
+    "query_template": "{url}",
+    "query_processor": "",
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "NOT=true,NOT_CHAR=-",
+    "result_processor": "",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "",
+    "eval_credentials": "",
+    "tags": [
+        "Microsoft",
+        "Email"
+    ]
+}
