@@ -46,7 +46,10 @@ cleanup() {
 trap 'cleanup' ERR
 
 mkdir $work_dir
-docker create --name $work_container swirlai/spyglass
+
+docker pull $image
+docker create --name $work_container $image
+
 docker cp "$work_container:/usr/src/spyglass/ui/dist/spyglass/browser/." $work_dir
 docker rm -f $work_container
 rm -rf $target_dir/spyglass
