@@ -8,9 +8,11 @@ name: Docker Build
 #  - cron: '05 05 * * *'
 
 on:
+  workflow_dispatch:
   push:
     # only trigger on branches, not on tags
     branches: 'main'
+
 
 jobs:
 
