@@ -184,7 +184,12 @@ class MappingResultProcessor(ResultProcessor):
                                             if 'date' in swirl_key.lower():
                                                 if swirl_result[swirl_key] == "":
                                                     if type(result_dict[source_key]) == int:
-                                                        swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]/1000))
+                                                        # check for int vs long fix for DS-320
+                                                        if result_dict[source_key] > 2147483647:
+                                                            swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]/1000))
+                                                        else:
+                                                            swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]))
+                                                        # end if
                                                     if type(result_dict[source_key]) == float:
                                                         swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]))
                                                 # end if
