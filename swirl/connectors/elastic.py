@@ -11,7 +11,7 @@ import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from celery.utils.log import get_task_logger
@@ -52,7 +52,7 @@ class Elastic(Connector):
         if self.search.sort.lower() == 'date':
             if sort_field:
                 # to do: support ascending??? p2
-                elastic_query = 'es.search(' + query_to_provider + f", sort=[{{'{sort_field}': 'desc'}}], size=" + str(self.provider.results_per_query) + ')'
+                elastic_query = 'es.search(' + query_to_provider + f", sort=[{{f'{sort_field}': 'desc'}}], size=" + str(self.provider.results_per_query) + ')'
             # endif
         else:
             elastic_query = 'es.search(' + query_to_provider + ', size=' + str(self.provider.results_per_query) + ')'
@@ -66,7 +66,7 @@ class Elastic(Connector):
 
     ########################################
 
-    def execute_search(self):     
+    def execute_search(self):
 
         logger.info(f"{self}: execute_search()")
 
@@ -90,8 +90,8 @@ class Elastic(Connector):
             self.error(f"es.search reports: {err}")
         except NotFoundError:
             self.error(f"es.search reports HTTP/404 (Not Found)")
-        except RequestError:
-            self.error(f"es.search reports Bad Request")
+        except RequestError as err:
+            self.error(f"es.search reports Bad Request {err}")
         except AuthenticationException:
             self.error(f"es.search reports HTTP/401 (Forbidden)")
         except AuthorizationException:
@@ -107,7 +107,7 @@ class Elastic(Connector):
     ########################################
 
     def normalize_response(self):
-        
+
         logger.info(f"{self}: normalize_response()")
 
         if len(self.response) == 0:
@@ -132,4 +132,3 @@ class Elastic(Connector):
         self.retrieved = retrieved
 
         return
-

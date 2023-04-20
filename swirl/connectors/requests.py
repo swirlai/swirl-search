@@ -151,8 +151,8 @@ class Requests(Connector):
             response = None
             # issue the query
             try:
-                if session and self.provider.credentials:
-                    if self.provider.eval_credentials and '{credentials}' in self.provider.credentials:
+                if self.provider.credentials:
+                    if session and self.provider.eval_credentials and '{credentials}' in self.provider.credentials:
                         dict_credentials = {'session': session}
                         credentials = eval(self.provider.eval_credentials , {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_credentials)
                         self.provider.credentials = self.provider.credentials.replace('{credentials}', credentials)

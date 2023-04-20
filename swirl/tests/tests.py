@@ -7,7 +7,8 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 from swirl.processors.transform_query_processor import *
-from swirl.processors.utils import str_tok_get_prefixes
+from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp
+from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -71,6 +72,52 @@ def noop_query_string():
 ######################################################################
 
 @pytest.fixture
+def rm_url_encoder_test_cases():
+    return {
+        'foo':'bar',
+        'sw_urlencode(bar)':'baz',
+        'sw_urlencode(yyz)':'foo==',
+        'sw_urlencode(yyz':'foo==',
+        'foo(yyz)':'foo==',
+        'sw_urlencode(hitId)':'askjfasdkj,,l::":kajsdf==alksfja;lkdjs==='
+    }
+
+@pytest.fixture
+def rm_url_encoder_test_expected():
+    return {
+        'foo':{'key':'foo', 'value':'bar'},
+        'sw_urlencode(bar)':{'key':'bar', 'value':'baz'},
+        'sw_urlencode(yyz)':{'key':'yyz', 'value':'foo%3D%3D'},
+        'sw_urlencode(yyz': {'key':'sw_urlencode(yyz', 'value':'foo=='},
+        'foo(yyz)': {'key':'foo(yyz)', 'value':'foo=='},
+        'sw_urlencode(hitId)': {'key':'hitId', 'value':'askjfasdkj%2C%2Cl%3A%3A%22%3Akajsdf%3D%3Dalksfja%3Blkdjs%3D%3D%3D'}
+    }
+
+@pytest.mark.django_db
+def test_rm_url_encoder(rm_url_encoder_test_cases, rm_url_encoder_test_expected):
+    for k in rm_url_encoder_test_cases.keys():
+        uc  = ResultMapUrlEncoder(k)
+        assert uc.get_key() == rm_url_encoder_test_expected[k].get('key')
+        assert uc.get_value(rm_url_encoder_test_cases.get(k)) == rm_url_encoder_test_expected[k].get('value')
+
+    # Boundary cases:
+    uc  = ResultMapUrlEncoder(None)
+    k = uc.get_key()
+    v = uc.get_value('foo')
+    assert k == None
+    assert v == 'foo'
+
+    uc  = ResultMapUrlEncoder('')
+    k = uc.get_key()
+    v = uc.get_value('foo')
+    assert k == ''
+    assert v == 'foo'
+
+
+
+
+
+@pytest.fixture
 def prefix_toks_test_cases():
     return [
         ['one'],
@@ -93,6 +140,23 @@ def test_utils_prefix_toks(prefix_toks_test_cases, prefix_toks_test_expected):
     for c in prefix_toks_test_cases:
         ret = str_tok_get_prefixes(c)
         assert ret == prefix_toks_test_expected[i]
+        i = i + 1
+
+
+@pytest.fixture
+def utils_date_str_to_timestamp_cases():
+    return ['1681393728.832229','1681393728','Jan 17, 1975']
+
+@pytest.fixture
+def utils_date_str_to_timestamp_expected():
+    return['2023-04-13 09:48:48.832229','2023-04-13 09:48:48','1975-01-17 00:00:00']
+
+@pytest.mark.django_db
+def test_utils_date_str_to_timestamp(utils_date_str_to_timestamp_cases, utils_date_str_to_timestamp_expected):
+    i = 0
+    for c in utils_date_str_to_timestamp_cases:
+        ret = date_str_to_timestamp(c)
+        assert ret == utils_date_str_to_timestamp_expected[i]
         i = i + 1
 
 

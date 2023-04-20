@@ -343,6 +343,44 @@ def capitalize_search(list_lower, list_unknown):
 
     return list_capitalized
 
+
+def json_to_flat_string(json_data, separator=' ', deadman=None):
+    """
+    A flat string representation of any JSON object.
+    use deadman to limit recursion into JSON objects.
+    Separator the character the individual data pieces will be joined on.
+    """
+    if isinstance(json_data, str):
+        return json_data
+
+    if deadman:
+        deadman = deadman - 1
+        if deadman <= 0:
+            raise ValueError('recursion limit reached in JSON structure')
+
+    if isinstance(json_data, dict):
+        return separator.join(json_to_flat_string(v, separator=separator, deadman=deadman) for v in json_data.values())
+    elif isinstance(json_data, list):
+        return separator.join(json_to_flat_string(v, separator=separator, deadman=deadman) for v in json_data)
+    elif isinstance(json_data, (int, float, bool)):
+        return str(json_data)
+    elif json_data is None:
+        return 'null'
+    else:
+        raise TypeError(f"Unsupported JSON data type: {type(json_data)}")
+
+def str_replace_all_keys(s, d):
+    """
+    Simple one pass replace, does not handle nested replacement.
+    """
+    if len(s) <= 0 or not d:
+        return s
+    ret = s
+    for k in d.keys():
+        ret = ret.replace("{"+k+"}", d[k])
+    return ret
+
+
 #############################################
 def str_tok_get_prefixes(toks, sep = ' '):
     """
@@ -359,6 +397,7 @@ def str_tok_get_prefixes(toks, sep = ' '):
             prfx = toks[i : r + 1]
             ret.append(' '.join(prfx))
     return ret
+
 
 #############################################
 
@@ -393,3 +432,53 @@ def get_mappings_dict(mappings):
     # end if
 
     return dict_mappings
+
+def str_safe_format(s, d):
+    """
+    Safer string replace, uses format, if there is a key error, attempts string replace.
+    """
+    if len(s) <=0 or not d:
+        return s
+    try:
+        ret = s.format(**d)
+    except KeyError:
+        ret = str_replace_all_keys(s,d)
+    return ret
+
+from dateutil import parser
+
+def _date_str_parse_to_timestamp(s):
+    """
+        try to parse the string as a date to a timestampe
+    """
+    ret = ""
+    try:
+        ret = str(parser.parse(str(s)))
+    except Exception as x:
+        logger.debug(f'{x} : unable to convert {s} as string to timestamp')
+    return ret
+
+import datetime as x_datetime
+def _date_float_parse_to_timestamp(s):
+    """
+        convert to a string then to float and try to make a timestamp out of it.
+    """
+    ret = ""
+    try:
+        dtf = float(str(s))
+        ret = str(x_datetime.datetime.fromtimestamp(dtf))
+    except Exception as x:
+        logger.debug(f'{x} : unable to convert {s} as float to timestamp')
+    return ret
+
+def date_str_to_timestamp(s):
+    """
+        Convert the input to a string and try to make a timestamp from it using known string formats
+        and raw numeric values
+    """
+    ret = _date_str_parse_to_timestamp(s)
+    if not ret: ret = _date_float_parse_to_timestamp(s)
+    if not ret:
+        logger.error(f'Unable to convert {s} to timestamp using any known type')
+    return ret
+
