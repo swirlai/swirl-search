@@ -1,6 +1,6 @@
 {
-    "name": "Files (web/Slack.com)",
-    "active": false,
+    "name": "Slack Files (web/Slack.com)",
+    "active": true,
     "default": false,
     "connector": "RequestsGet",
     "url": "https://slack.com/api/search.files",
@@ -18,6 +18,7 @@
     "result_mappings": "title=title,body=name,author=user,url=permalink,date_published=created,filetype,pretty_type,size,channels,groups,ims,shares[*].private,shares[*].public,NO_PAYLOAD",
     "results_per_query": 10,
     "credentials": "bearer=<your-slack-user-token>",
+    "eval_credentials": "",
     "tags": [
         "Slack",
         "Files"
