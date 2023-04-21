@@ -29,7 +29,7 @@ for t in SWIRL_OBJECT_LIST:
 
 module_name = 'search.py'
 
-def search(id, session):
+def search(id, session=None):
 
     '''
     Execute the search task workflow
