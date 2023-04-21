@@ -9,9 +9,10 @@ from statistics import mean, median
 from django.conf import settings
 
 # to do: detect language and load all stopwords? P1
-from swirl.nltk import stopwords, sent_tokenize
+from swirl.nltk import stopwords, sent_tokenize, word_tokenize, is_punctuation
 from swirl.processors.utils import *
 from swirl.spacy import nlp
+
 from swirl.processors.processor import PostResultProcessor
 
 import logging
@@ -76,17 +77,15 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
         # remove quotes
         query = clean_string(q_string).strip().replace('\"','')
-        query_list = query.strip().split()
+        query_list = word_tokenize(query)
         ## I think the loop is okay since it's a very small list.
         for term in self.provider_query_terms:
             if not term in query_list:
                 query_list.append(term)
 
-        # remove AND, OR
-        if 'AND' in query_list:
-            query_list.remove('AND')
-        if 'OR' in query_list:
-            query_list.remove('OR')
+        # remove AND, OR and parens
+        query_list = [s for s in query_list if s not in ["AND","OR"] and not is_punctuation(s)]
+
         # check for numeric
         query_has_numeric = has_numeric(query_list)
         # not list
