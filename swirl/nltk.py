@@ -24,3 +24,14 @@ ps = PorterStemmer()
 
 from nltk.tokenize import sent_tokenize
 from nltk.tokenize import word_tokenize
+from nltk.tokenize.punkt import PunktToken
+
+def is_punctuation(c):
+    if not c:
+        return False
+
+    if len(c) > 1:
+        return False
+
+    t = PunktToken(c)
+    return not t.is_non_punct
