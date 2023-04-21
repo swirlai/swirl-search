@@ -1,7 +1,7 @@
 {
     "name": "M365 Calendar",
     "active": true,
-    "default": false,
+    "default": true,
     "connector": "M365OutlookCalendar",
     "url": "",
     "query_template": "{url}",

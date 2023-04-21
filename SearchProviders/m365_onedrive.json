@@ -1,7 +1,7 @@
 {
     "name": "M365 OneDrive",
     "active": true,
-    "default": false,
+    "default": true,
     "connector": "M365OneDrive",
     "url": "",
     "query_template": "{url}",
