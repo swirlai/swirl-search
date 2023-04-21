@@ -1,7 +1,7 @@
 {
     "name": "M365 Email",
     "active": true,
-    "default": false,
+    "default": true,
     "connector": "M365OutlookMessages",
     "url": "",
     "query_template": "{url}",
