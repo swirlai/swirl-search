@@ -8,7 +8,8 @@
 #
 # Options:
 #   -h, --help           Display this help message
-#   -p, --preview
+#   -p, --preview        Use Preview image
+#   -x, --x-fork         Use Experimental fork image
 # Parse command-line options
 
 while [[ "$#" -gt 0 ]]; do
