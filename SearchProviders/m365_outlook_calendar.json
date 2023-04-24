@@ -15,7 +15,7 @@
         "MappingResultProcessor"
     ],
     "response_mappings": "",
-    "result_mappings": "title=resource.subject,body=resource.body,date_published=resource.start.dateTime,url='https://outlook.office.com/calendar/item/{sw_urlencode(hitId)}',resource.sensitivity,resource.type,resource.hasAttachments,NO_PAYLOAD",
+    "result_mappings": "title=resource.subject,body=summary,date_published=resource.start.dateTime,url='https://outlook.office.com/calendar/item/{sw_urlencode(hitId)}',resource.sensitivity,resource.type,resource.hasAttachments,NO_PAYLOAD",
     "results_per_query": 10,
     "credentials": "",
     "eval_credentials": "",
