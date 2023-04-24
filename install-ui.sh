@@ -14,7 +14,8 @@
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -h|--help) print_help=true ;;
-	-p|--preview) preview_image=true ;;
+        -p|--preview) preview_image=true ;;
+        -x|--x-fork) experimental_image=true ;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
     shift
@@ -22,6 +23,12 @@ done
 # Print help message if requested
 if [ "$print_help" = true ]; then
     sed -n '/^# Usage:/,/^$/p' "$0"
+    exit
+fi
+
+if [ "$preview_image" = true -a "$experimental_image" = true ]; then
+    sed -n '/^# Usage:/,/^$/p' "$0"
+    echo $PROG ERROR must specify preview or experimental, not both
     exit
 fi
 
@@ -50,6 +57,9 @@ trap 'cleanup' ERR
 if [ "$preview_image" = true ]; then
     echo $PROG "PREVIEW IMAGE"
     image="swirlai/spyglass:preview"
+elif [ "$experimental_image" = true ]; then
+    echo $PROG "EXPERIMENTAL IMAGE"
+    image="swirlai/spyglass:fork-x"
 else
     echo $PROG "LATEST IMAGE"
     image="swirlai/spyglass"
