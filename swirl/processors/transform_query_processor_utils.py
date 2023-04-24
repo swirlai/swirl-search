@@ -50,7 +50,7 @@ def get_pre_query_processor_or_transform(processor, query_temp, swirl_object_dic
 
     return pre_query_processor
 
-def get_query_processor_or_transform(processor, query_temp, swirl_object_dict, tags, mappings, user=None):
+def get_query_processor_or_transform(processor, query_temp, swirl_object_dict, mappings, tags, user=None):
     """
     Get the query processed based on an entry from from the query_processor(s) fields
     """
