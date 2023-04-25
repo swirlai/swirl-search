@@ -51,9 +51,6 @@ class AdaptiveQueryProcessor(QueryProcessor):
                 # end if
             # end if
 
-        self.warning(f"dict_tags: {dict_tags}")
-        self.warning(f"query_wot_list: {query_wot_list}")
-
         if self.tags:
             # if this provider has tags
             self.warning(f"tags: {self.tags}")
@@ -62,16 +59,15 @@ class AdaptiveQueryProcessor(QueryProcessor):
                 if tag.lower() in dict_tags:
                     # if the provider has a tag specified in this query
                     adapted_query_list.append(' '.join(dict_tags[tag.lower()]))
-            # DS-351 if tag:foo, then aqlist will have foo
-            # if tag:foo NOT bar, then aqlist will only have foo and NOT processing never happens
-            self.warning(f"aqlist: {adapted_query_list}")
-            if adapted_query_list:
+            lower_adapted_query = ' '.join(adapted_query_list).lower()
+            if 'not' in lower_adapted_query:
+                self.query_string = ' '.join(adapted_query_list)
+            else:
                 # replace the query with just that text
                 return ' '.join(adapted_query_list)
             # end if
-        # end if
-
-        self.query_string = ' '.join(query_wot_list)
+        else: 
+            self.query_string = ' '.join(query_wot_list)
 
         query = clean_string(self.query_string).strip()
         query_list = query.split()
