@@ -53,21 +53,25 @@ class AdaptiveQueryProcessor(QueryProcessor):
 
         if self.tags:
             # if this provider has tags
-            self.warning(f"tags: {self.tags}")
             adapted_query_list = []
             for tag in self.tags:
                 if tag.lower() in dict_tags:
                     # if the provider has a tag specified in this query
                     adapted_query_list.append(' '.join(dict_tags[tag.lower()]))
-            lower_adapted_query = ' '.join(adapted_query_list).lower()
-            if 'not' in lower_adapted_query:
-                self.query_string = ' '.join(adapted_query_list)
+            if adapted_query_list:
+                lower_adapted_query = ' '.join(adapted_query_list).lower()
+                if 'not' in lower_adapted_query:
+                    self.query_string = ' '.join(adapted_query_list)
+                else:
+                    # replace the query with just that text
+                    return ' '.join(adapted_query_list)
             else:
-                # replace the query with just that text
-                return ' '.join(adapted_query_list)
+                self.query_string = ' '.join(query_wot_list)
             # end if
         else: 
             self.query_string = ' '.join(query_wot_list)
+
+        self.warning(f"self.query_string: {self.query_string}")
 
         query = clean_string(self.query_string).strip()
         query_list = query.split()
