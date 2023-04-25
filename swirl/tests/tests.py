@@ -82,7 +82,7 @@ def aqp_test_cases():
 def aqp_test_expected():
     return['-foo',
            'elon -twitter',
-           'elon'  # DS-351
+           'elon NOT twitter'
         ]
 
 @pytest.mark.django_db
