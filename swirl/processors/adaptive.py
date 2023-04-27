@@ -51,8 +51,6 @@ class AdaptiveQueryProcessor(QueryProcessor):
                 # end if
             # end if
 
-        self.warning(f"dict_tags:{dict_tags}")
-
         if self.tags:
             # if this provider has tags
             adapted_query_list = []
@@ -72,8 +70,6 @@ class AdaptiveQueryProcessor(QueryProcessor):
             # end if
         else: 
             self.query_string = ' '.join(query_wot_list)
-
-        self.warning(f"self.query_string: {self.query_string}")
 
         query = clean_string(self.query_string).strip()
         query_list = query.split()
