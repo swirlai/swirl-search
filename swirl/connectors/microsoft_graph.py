@@ -127,7 +127,7 @@ class M365OneDrive(M365SearchQuery):
 
     def __init__(self, provider_id, search_id, update):
         super().__init__(provider_id, search_id, update)
-        self.provider.result_mappings = self.provider.result_mappings or 'title=resource.name,body=summary,date_published=resource.createdDateTime,NO_PAYLOAD'
+        self.provider.result_mappings = self.provider.result_mappings or 'title=resource.name,body=summary,date_published=resource.createdDateTime,FILE_SYSTEM,NO_PAYLOAD'
         self.result_mappings = get_mappings_dict(self.provider.result_mappings)
         self.entity_type = "driveItem"
 
