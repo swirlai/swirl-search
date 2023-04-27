@@ -180,7 +180,6 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         updated = 0
         dict_result_lens = {}
         list_query_lens = []
-        hit_dict = {}
 
         ############################################
         # PASS 1
@@ -238,6 +237,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     continue
                 if not 'hits' in item:
                     item['hits'] = {}
+
                 ############################################
                 # result item
                 dict_score = {}
@@ -277,7 +277,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                 break
                         # field length
                         if field in dict_len:
-                            self.warning("duplicate field?")
+                            self.warning(f"duplicate field detected: {field}")
                         else:
                             dict_len[field] = len(result_field_list)
                         if field in dict_result_lens:
@@ -423,6 +423,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
         ############################################
         # PASS 2
+        
         # score results by field, adjusting for field length
         for results in self.results:
             if not results.json_results:
@@ -446,11 +447,32 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     del item['dict_len']
                 else:
                     continue
+                relevancy_model = ""
+                # check for _relevancy_model
+                if '_relevancy_model' in item:
+                    relevancy_model = item['_relevancy_model']
+                    del item['_relevancy_model']
+                fs_flag_boost_body = False
+                if relevancy_model:
+                    if relevancy_model == 'FILE_SYSTEM':
+                        # if title has no matches, and body does, copy body to title; delete it from explain
+                        if not 'title' in dict_score:
+                            # no matches on title
+                            if 'body' in dict_score:
+                                if len(item['body']) > 0:
+                                    # match on body, none on title -> use title boost on body
+                                    fs_flag_boost_body = True
                 # score the item
                 dict_len_adjust = {}
                 for f in dict_score:
                     if f in RELEVANCY_CONFIG:
                         weight = RELEVANCY_CONFIG[f]['weight']
+                        if f == 'body':
+                            if fs_flag_boost_body:
+                                if 'title' in RELEVANCY_CONFIG:
+                                    weight = RELEVANCY_CONFIG['title']['weight']
+                                else:
+                                    self.warning(f"title field missing when applying relevancy model: FILE_SYSTEM")
                     else:
                         continue
                     len_adjust = float(dict_len_median[f] / dict_len[f])
@@ -482,6 +504,8 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     del item['hits']
                 else:
                     logger.debug('no hits to move')
+                if fs_flag_boost_body:
+                    item['explain']['boosts'] = 'FILE_SYSTEM'
 
                 updated = updated + 1
                 # save highlighted version
