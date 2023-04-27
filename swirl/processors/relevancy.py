@@ -180,7 +180,6 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         updated = 0
         dict_result_lens = {}
         list_query_lens = []
-        relevancy_model = "" # default
 
         ############################################
         # PASS 1
@@ -448,23 +447,21 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     del item['dict_len']
                 else:
                     continue
+                relevancy_model = ""
                 # check for _relevancy_model
                 if '_relevancy_model' in item:
                     relevancy_model = item['_relevancy_model']
                     del item['_relevancy_model']
                 fs_flag_boost_body = False
-                fs_flag_folder = False
                 if relevancy_model:
                     if relevancy_model == 'FILE_SYSTEM':
                         # if title has no matches, and body does, copy body to title; delete it from explain
                         if not 'title' in dict_score:
                             # no matches on title
                             if 'body' in dict_score:
-                                # match on body, none on title -> use title boost on body
-                                fs_flag_boost_body = True
-                            else:
-                                # no hits in title or body, probably a folder
-                                fs_flag_folder = True
+                                if len(item['body']) > 0:
+                                    # match on body, none on title -> use title boost on body
+                                    fs_flag_boost_body = True
                 # score the item
                 dict_len_adjust = {}
                 for f in dict_score:
@@ -475,15 +472,8 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                 if 'title' in RELEVANCY_CONFIG:
                                     weight = RELEVANCY_CONFIG['title']['weight']
                                 else:
-                                    # to do: warning
                                     self.warning(f"title field missing when applying relevancy model: FILE_SYSTEM")
-                        if f == 'author':
-                            if fs_flag_folder:
-                                # don't boost on author-only hits in file system
-                                weight = 1.0
                     else:
-                        if not f == 'stems':
-                            self.warning(f"field in dict_score not in RELEVANCY_CONFIG, ignoring: {f}")
                         continue
                     len_adjust = float(dict_len_median[f] / dict_len[f])
                     dict_len_adjust[f] = len_adjust
@@ -506,12 +496,6 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     if f in dict_len_adjust:
                         dict_score[f]['result_length_adjust'] = dict_len_adjust[f]
                         dict_score[f]['query_length_adjust'] = qlen_adjust
-                # relevancy model post
-                if relevancy_model:
-                    if relevancy_model == 'FILE_SYSTEM':
-                        # delete copied body from title so it doesn't appear in explain
-                        if 'title' in dict_score:
-                            del dict_score['title']
                 ####### explain
                 item['explain'] = dict_score
                 possible_hits = item.get('hits', None)
@@ -522,8 +506,6 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     logger.debug('no hits to move')
                 if fs_flag_boost_body:
                     item['explain']['boosts'] = 'FILE_SYSTEM'
-                if fs_flag_folder:
-                    item['explain']['flags'] = 'FILE_SYSTEM_FOLDER'
 
                 updated = updated + 1
                 # save highlighted version
