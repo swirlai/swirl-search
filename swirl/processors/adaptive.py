@@ -44,12 +44,14 @@ class AdaptiveQueryProcessor(QueryProcessor):
             # end if
             if tag:
                 if val:
-                    if not tag in dict_tags:
+                    if not tag.lower() in dict_tags:
                         dict_tags[tag.lower()] = []
                     dict_tags[tag.lower()].append(val)
                     query_wot_list.append(val)
                 # end if
             # end if
+
+        self.warning(f"dict_tags:{dict_tags}")
 
         if self.tags:
             # if this provider has tags
