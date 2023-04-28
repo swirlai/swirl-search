@@ -15,6 +15,8 @@ from swirl.processors.processor import *
 from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
 from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format, date_str_to_timestamp
 
+from swirl.connectors.mappings import RESULT_MAPPING_COMMANDS
+
 #############################################
 #############################################
 
@@ -61,8 +63,11 @@ class MappingResultProcessor(ResultProcessor):
 
         json_types = [str,int,float,list,dict]
         use_payload = True
+        file_system = False
         if 'NO_PAYLOAD' in self.provider.result_mappings:
             use_payload = False
+        if 'FILE_SYSTEM' in self.provider.result_mappings:
+            file_system = True
 
         result_number = 1
         for result in self.results:
@@ -77,9 +82,9 @@ class MappingResultProcessor(ResultProcessor):
                 mappings = self.provider.result_mappings.split(',')
                 for mapping in mappings:
                     stripped_mapping = mapping.strip()
-                    # control codez
-                    if stripped_mapping == 'NO_PAYLOAD':
-                        use_payload = False
+                    # control codez NO_PAYLOAD, FILE_SYSTEM
+                    if stripped_mapping in RESULT_MAPPING_COMMANDS:
+                        # ignore, values were set above
                         continue
                     # extract source_key=swirl_key
                     swirl_key = ""
@@ -263,6 +268,9 @@ class MappingResultProcessor(ResultProcessor):
                     swirl_result['title'] = swirl_result['author']
                 # end if
             # end if
+            # mark results from SearchProviders with result_mapping FILE_SYSTEM
+            if file_system:
+                swirl_result['_relevancy_model'] = 'FILE_SYSTEM' 
             swirl_result['searchprovider'] = self.provider.name
             list_results.append(swirl_result)
             result_number = result_number + 1

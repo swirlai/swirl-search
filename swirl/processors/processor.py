@@ -77,7 +77,10 @@ class QueryProcessor(Processor):
 
         self.query_string = query_string
         self.query_mappings = query_mappings
-        self.tags = tags
+        if type(tags) == str:
+            self.tags = [tags]
+        else:
+            self.tags = tags
 
     ########################################
 

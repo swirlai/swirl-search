@@ -55,7 +55,20 @@ def search_provider_pre_query_data():
     return data
 
 @pytest.fixture
-def search_provider_query_data():
+def web_google_pse_sample_results_data():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Build the absolute file path for the JSON file in the 'data' subdirectory
+    json_file_path = os.path.join(script_dir, 'data', 'web_google_pse_sample_results.json')
+
+    # Read the JSON file
+    with open(json_file_path, 'r') as file:
+        data = json.load(file)
+    return data
+
+
+@pytest.fixture
+def search_provider_query_processor_data():
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
     # Build the absolute file path for the JSON file in the 'data' subdirectory
@@ -65,6 +78,19 @@ def search_provider_query_data():
     with open(json_file_path, 'r') as file:
         data = json.load(file)
     return data
+
+@pytest.fixture
+def search_provider_query_processors_data():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Build the absolute file path for the JSON file in the 'data' subdirectory
+    json_file_path = os.path.join(script_dir, 'data', 'sp_web_google_pse_with_qrx_processors.json')
+
+    # Read the JSON file
+    with open(json_file_path, 'r') as file:
+        data = json.load(file)
+    return data
+
 
 @pytest.fixture
 def search_provider_open_search_query_data():
@@ -89,7 +115,7 @@ def qrx_synonym_search_test():
 }
 
 @pytest.fixture
-def mock_result():
+def mock_small_result():
     return {
     "items": [
     {
@@ -117,16 +143,19 @@ def mock_result():
 
 class SearchQueryTransformTestCase(TestCase):
     @pytest.fixture(autouse=True)
-    def _init_fixtures(self, api_client,test_suser, test_suser_pw, search_provider_pre_query_data, search_provider_query_data, search_provider_open_search_query_data,
-                       qrx_synonym_search_test, mock_result):
+    def _init_fixtures(self, api_client,test_suser, test_suser_pw, search_provider_pre_query_data, search_provider_query_processors_data,
+                       search_provider_query_processor_data, search_provider_open_search_query_data,
+                       qrx_synonym_search_test, mock_small_result, web_google_pse_sample_results_data):
         self._api_client = api_client
         self._test_suser = test_suser
         self._test_suser_pw = test_suser_pw
         self._search_provider_pre_query = search_provider_pre_query_data
-        self._search_provider_query = search_provider_query_data
+        self._search_provider_query_processor = search_provider_query_processor_data
+        self._search_provider_query_processors = search_provider_query_processors_data
         self._search_provider_open_search_query_data = search_provider_open_search_query_data
         self._qrx_synonym = qrx_synonym_search_test
-        self._mock_result = mock_result
+        self._mock_result = mock_small_result
+        self._web_google_pse_sample_results_data = web_google_pse_sample_results_data
 
     def setUp(self):
         settings.SWIRL_TIMEOUT = 1
@@ -141,11 +170,15 @@ class SearchQueryTransformTestCase(TestCase):
         serializer.is_valid(raise_exception=True)
         serializer.save(owner=self._test_suser)
         #2
-        serializer = SearchProviderSerializer(data=self._search_provider_query)
+        serializer = SearchProviderSerializer(data=self._search_provider_query_processor)
         serializer.is_valid(raise_exception=True)
         serializer.save(owner=self._test_suser)
         #3
         serializer = SearchProviderSerializer(data=self._search_provider_open_search_query_data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(owner=self._test_suser)
+        #4
+        serializer = SearchProviderSerializer(data=self._search_provider_query_processors)
         serializer.is_valid(raise_exception=True)
         serializer.save(owner=self._test_suser)
 
@@ -204,6 +237,49 @@ class SearchQueryTransformTestCase(TestCase):
                 response = self._api_client.get(surl, {'qs': 'notebook','providers':2})
                 mock_alloc.assert_called_once_with('notebook', 'test one','synonym', ANY)
                 mock_process.assert_called_once()
+
+    @responses.activate
+    def test_query_transform_processor_with_tag(self):
+        # Call the viewset
+        surl = reverse('search')
+        ret = TransformQueryProcessorFactory.alloc_query_transform('notebook',
+                                        self._qrx_synonym.get('name'),
+                                        self._qrx_synonym.get('qrx_type'),
+                                        self._qrx_synonym.get('config_content'))
+        mock_alloc = MagicMock(return_value=ret)
+        mock_process= MagicMock(return_value = '(notebook OR laptop)')
+        json_response = self._mock_result
+        url_pattern = re.compile(r'https://www\.googleapis\.com/customsearch/.*')
+        responses.add(responses.GET,url_pattern , json=json_response, status=200)
+        with patch('swirl.processors.transform_query_processor.TransformQueryProcessorFactory.alloc_query_transform',new=mock_alloc):
+            with patch('swirl.processors.transform_query_processor.SynonymQueryProcessor.process', new=mock_process):
+                response = self._api_client.get(surl, {'qs': 'xnews:notebook'})
+                mock_alloc.assert_called_once_with('notebook', 'test one','synonym', ANY)
+                mock_process.assert_called_once()
+
+    @responses.activate
+    def test_query_transform_processor_full_results(self):
+        # Call the viewset
+        surl = reverse('search')
+        ret = TransformQueryProcessorFactory.alloc_query_transform('notebook',
+                                        self._qrx_synonym.get('name'),
+                                        self._qrx_synonym.get('qrx_type'),
+                                        self._qrx_synonym.get('config_content'))
+        mock_alloc = MagicMock(return_value=ret)
+        mock_process= MagicMock(return_value = '(notebook OR laptop)')
+        json_response = self._web_google_pse_sample_results_data
+        url_pattern = re.compile(r'https://www\.googleapis\.com/customsearch/.*')
+        responses.add(responses.GET,url_pattern , json=json_response, status=200)
+        with patch('swirl.processors.transform_query_processor.TransformQueryProcessorFactory.alloc_query_transform',new=mock_alloc):
+            with patch('swirl.processors.transform_query_processor.SynonymQueryProcessor.process', new=mock_process):
+                response = self._api_client.get(surl, {'qs': 'notebook','providers':2})
+                mock_alloc.assert_called_once_with('notebook', 'test one','synonym', ANY)
+                mock_process.assert_called_once()
+        assert response
+        assert response.data.get('results', False)
+        assert len(response.data['results']) == 7
+        assert response.data['results'][0].get('body',False)
+        assert "<em>notebook</em>" in response.data['results'][0]['body']
 
 
 

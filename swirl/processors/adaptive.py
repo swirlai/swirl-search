@@ -36,12 +36,7 @@ class AdaptiveQueryProcessor(QueryProcessor):
                 # end if
             else:
                 if tag:
-                    if term.strip().lower() != 'not':
-                        val = term
-                    else:
-                        tag = ""
-                        query_wot_list.append(term)
-                        continue
+                    val = term
                 else:
                     query_wot_list.append(term)
                     continue
@@ -49,7 +44,7 @@ class AdaptiveQueryProcessor(QueryProcessor):
             # end if
             if tag:
                 if val:
-                    if not tag in dict_tags:
+                    if not tag.lower() in dict_tags:
                         dict_tags[tag.lower()] = []
                     dict_tags[tag.lower()].append(val)
                     query_wot_list.append(val)
@@ -64,12 +59,17 @@ class AdaptiveQueryProcessor(QueryProcessor):
                     # if the provider has a tag specified in this query
                     adapted_query_list.append(' '.join(dict_tags[tag.lower()]))
             if adapted_query_list:
-                # replace the query with just that text
-                return ' '.join(adapted_query_list)
+                lower_adapted_query = ' '.join(adapted_query_list).lower()
+                if 'not' in lower_adapted_query:
+                    self.query_string = ' '.join(adapted_query_list)
+                else:
+                    # replace the query with just that text
+                    return ' '.join(adapted_query_list)
+            else:
+                self.query_string = ' '.join(query_wot_list)
             # end if
-        # end if
-
-        self.query_string = ' '.join(query_wot_list)
+        else: 
+            self.query_string = ' '.join(query_wot_list)
 
         query = clean_string(self.query_string).strip()
         query_list = query.split()

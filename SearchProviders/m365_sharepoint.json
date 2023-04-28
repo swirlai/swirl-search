@@ -1,7 +1,7 @@
 {
     "name": "M365 SharePoint",
-    "active": true,
-    "default": false,
+    "active": false,
+    "default": true,
     "connector": "M365SharePointSites",
     "url": "",
     "query_template": "{url}",

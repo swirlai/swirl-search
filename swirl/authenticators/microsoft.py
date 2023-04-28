@@ -40,7 +40,7 @@ class Microsoft(Authenticator):
         auth_app = msal.ConfidentialClientApplication(
             client_id=settings.MICROSOFT_CLIENT_ID,
             client_credential=settings.MICROSOFT_CLIENT_SECRET,
-            authority="https://login.microsoftonline.com/common",
+            authority="https://login.microsoftonline.com/common", ## may need to change to the tenan ID, not the common?
             token_cache=cache
         )
         return auth_app
@@ -61,6 +61,7 @@ class Microsoft(Authenticator):
         # If cache has changed, persist back to session
         if cache.has_state_changed:
             request.session['token_cache'] = cache.serialize()
+            request.session.save()
 
     def get_token_from_code(self, request):
         cache = self.load_cache(request)

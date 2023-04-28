@@ -6,6 +6,7 @@ import logging
 from django.urls import reverse
 from rest_framework.test import APIClient
 from django.contrib.auth.models import User
+from swirl.processors.adaptive import *
 from swirl.processors.transform_query_processor import *
 from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp
 from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
@@ -70,6 +71,31 @@ def noop_query_string():
 ######################################################################
 ## tests
 ######################################################################
+
+@pytest.fixture
+def aqp_test_cases():
+    return ['NOT foo',
+            'elon NOT twitter',
+            'news:elon NOT twitter']
+
+@pytest.fixture
+def aqp_test_expected():
+    return['-foo',
+           'elon -twitter',
+           'elon -twitter'
+        ]
+
+@pytest.mark.django_db
+def test_aqp(aqp_test_cases, aqp_test_expected):
+    i = 0
+    for tc in aqp_test_cases:
+        aqp = AdaptiveQueryProcessor(tc,
+            'cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-',
+            ['News', 'EnterpriseSearch']
+        )
+        actual = aqp.process()
+        assert actual == aqp_test_expected[i]
+        i = i + 1
 
 @pytest.fixture
 def rm_url_encoder_test_cases():
