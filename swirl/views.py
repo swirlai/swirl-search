@@ -295,6 +295,16 @@ class LoginView(APIView):
             return Response({'token': token.key, 'user': user.username})
         else:
             return Response({'error': 'Invalid credentials'})
+        
+class LogoutView(APIView):
+    
+    @csrf_exempt
+    def post(self, request):
+        print('LOGOUT VIEW')
+        token = Token.objects.get(user=request.user)
+        if token:
+            token.delete()
+        return Response({'status': 'OK'})
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """
