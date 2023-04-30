@@ -30,7 +30,6 @@ class DedupeByFieldPostResultProcessor(PostResultProcessor):
                         if item[SWIRL_DEDUPE_FIELD] in dedupe_key_dict:
                             # dupe
                             dupes = dupes + 1
-                            logger.info(f"{self}: Excluding duplicate: {item[SWIRL_DEDUPE_FIELD]}")
                             continue
                         else:
                             # not dupe
@@ -81,7 +80,6 @@ class DedupeBySimilarityPostResultProcessor(PostResultProcessor):
                         # similar
                         dupe = True
                         dupes = dupes + 1
-                        logger.info(f"{self}: Excluding dupe: {sim} for {item['title']}")
                         break
                     else:
                         if sim > max_sim:

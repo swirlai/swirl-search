@@ -9,7 +9,7 @@ from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
 from swirl.processors.processor import *
-from swirl.processors.utils import clean_string, create_result_dictionary
+from swirl.processors.utils import clean_string, create_result_dictionary, get_mappings_dict
 
 #############################################
 #############################################
@@ -32,14 +32,26 @@ class TestQueryProcessor(QueryProcessor):
 
 #############################################
 
+
 class GenericResultProcessor(ResultProcessor):
 
     type="GenericResultProcessor"
 
     def process(self):
 
+        use_payload = True
+        file_system = False
+        result_block = None
+        if 'NO_PAYLOAD' in self.provider.result_mappings:
+            self.warning(f"NO_PAYLOAD is not supported by GenericResultProcessor, ignoring")
+        if 'FILE_SYSTEM' in self.provider.result_mappings:
+            file_system = True
+        if 'BLOCK' in self.provider.result_mappings:
+            result_block = get_mappings_dict(self.provider.result_mappings)['BLOCK']
+
         list_results = []
         result_number = 1
+
         for result in self.results:
             swirl_result = create_result_dictionary()
             # payload = {}
@@ -58,9 +70,17 @@ class GenericResultProcessor(ResultProcessor):
             if swirl_result['date_published'] == "":
                 swirl_result['date_published'] = 'unknown'
 
+            #############################################
             # final assembly
-
             swirl_result['payload'] = {}
+
+            # mark results from SearchProviders with result_mapping FILE_SYSTEM
+            if file_system:
+                swirl_result['_relevancy_model'] = 'FILE_SYSTEM' 
+
+            if result_block:
+                swirl_result['result_block'] = result_block
+
             # try to find a title, if none provided
             if swirl_result['title'] == "":
                 if swirl_result['url']:
@@ -73,7 +93,7 @@ class GenericResultProcessor(ResultProcessor):
             list_results.append(swirl_result)
             result_number = result_number + 1
             if result_number > self.provider.results_per_query:
-                logger.warning("Truncating extra results, found & retrieved may be incorrect")
+                self.warning("Truncating extra results, found & retrieved may be incorrect")
                 break
         # end for
 

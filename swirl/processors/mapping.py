@@ -60,6 +60,7 @@ class MappingResultProcessor(ResultProcessor):
 
         list_results = []
         provider_query_term_results = []
+        result_block = ""
 
         json_types = [str,int,float,list,dict]
         use_payload = True
@@ -97,8 +98,12 @@ class MappingResultProcessor(ResultProcessor):
                         source_key = stripped_mapping
                     # control codez
                     if swirl_key.isupper():
-                        # ignore for now
-                        continue
+                        # to do: check the result mappings list???
+                        if swirl_key == 'BLOCK':
+                            result_block = source_key
+                        else:
+                            # ignore for now
+                            continue
                     # check for field list |
                     source_field_list = []
                     if '|' in source_key:
@@ -260,6 +265,8 @@ class MappingResultProcessor(ResultProcessor):
             # final assembly
             if payload:
                 swirl_result['payload'] = payload
+            if result_block:
+                swirl_result['result_block'] = result_block
             # try to find a title, if none provided
             if swirl_result['title'] == "":
                 if swirl_result['url']:
@@ -276,7 +283,7 @@ class MappingResultProcessor(ResultProcessor):
             result_number = result_number + 1
             # stop if we have enough results
             if result_number > self.provider.results_per_query:
-                logger.warning("Truncating extra results, found & retrieved may be incorrect")
+                self.warning("Truncating extra results, found & retrieved may be incorrect")
                 break
             # unique list of terms from highligts
         # end for
