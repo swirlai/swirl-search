@@ -128,23 +128,20 @@ SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')
 
 import re
 
+WORD_CHAR_PAT = r'[A-Za-z0-9]+'
+
 def highlight_list(target_str, word_list):
-    # Split the source string into words
-    source_words = word_list
+    # Create canonical word list in lower case
+    source_words = [w.lower() for w in word_list]
 
+    ret = target_str
     # Split the target string into words and iterate over them
-    highlighted_words = []
-    for word in re.findall(r'\w+|\W+', target_str):
+    for word in re.findall(WORD_CHAR_PAT, target_str):
         # If the word matches any of the source words, add it to the list of highlighted words
-        if re.sub(r'\W+', '', word).lower() in [re.sub(r'\W+', '', source_word).lower() for source_word in source_words]:
-            highlighted_words.append(f'{SWIRL_HIGHLIGHT_START_CHAR}{word}{SWIRL_HIGHLIGHT_END_CHAR}')
-        else:
-            highlighted_words.append(word)
+        if word.lower() in source_words:
+            ret = ret.replace(word,f'{SWIRL_HIGHLIGHT_START_CHAR}{word}{SWIRL_HIGHLIGHT_END_CHAR}')
 
-    # Join the highlighted words into a new string
-    highlighted_str = ''.join(highlighted_words)
-
-    return highlighted_str
+    return ret
 
 #############################################
 
@@ -481,4 +478,3 @@ def date_str_to_timestamp(s):
     if not ret:
         logger.error(f'Unable to convert {s} to timestamp using any known type')
     return ret
-
