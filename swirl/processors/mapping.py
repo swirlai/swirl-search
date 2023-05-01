@@ -14,8 +14,7 @@ from jsonpath_ng.exceptions import JsonPathParserError
 from swirl.processors.processor import *
 from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
 from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format, date_str_to_timestamp
-
-from swirl.connectors.mappings import RESULT_MAPPING_COMMANDS
+from swirl.swirl_common import RESULT_MAPPING_COMMANDS
 
 #############################################
 #############################################
@@ -270,7 +269,7 @@ class MappingResultProcessor(ResultProcessor):
             # end if
             # mark results from SearchProviders with result_mapping FILE_SYSTEM
             if file_system:
-                swirl_result['_relevancy_model'] = 'FILE_SYSTEM' 
+                swirl_result['_relevancy_model'] = 'FILE_SYSTEM'
             swirl_result['searchprovider'] = self.provider.name
             list_results.append(swirl_result)
             result_number = result_number + 1
