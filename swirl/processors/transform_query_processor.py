@@ -11,7 +11,7 @@ import csv
 import io
 import re
 
-from swirl.processors.processor import *
+from swirl.processors.processor import QueryProcessor
 from swirl.processors.utils import clean_string
 from swirl.processors.utils import str_tok_get_prefixes
 from swirl.nltk import word_tokenize
