@@ -135,8 +135,17 @@ def highlight_list(target_str, word_list):
     source_words = [w.lower() for w in word_list]
 
     ret = target_str
-    # Split the target string into words and iterate over them
-    for word in re.findall(WORD_CHAR_PAT, target_str):
+
+    # create a unique list of words from the target, so that we only highlight each once.
+    all_words = []
+    seen_words = set()
+    for aw in re.findall(WORD_CHAR_PAT, target_str):
+        aw_lower = aw.lower()
+        if aw_lower not in seen_words:
+            seen_words.add(aw_lower)
+            all_words.append(aw)
+
+    for word in all_words:
         # If the word matches any of the source words, add it to the list of highlighted words
         if word.lower() in source_words:
             ret = ret.replace(word,f'{SWIRL_HIGHLIGHT_START_CHAR}{word}{SWIRL_HIGHLIGHT_END_CHAR}')
