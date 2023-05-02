@@ -5,9 +5,9 @@
     "connector": "RequestsGet",
     "url": "https://www.googleapis.com/customsearch/v1",
     "query_template": "{url}",
-    "query_processor": "test one.synonym",
     "query_processors": [
-      "AdaptiveQueryProcessor"
+      "AdaptiveQueryProcessor",
+      "test one.synonym"
     ],
     "query_mappings": "cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
     "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
