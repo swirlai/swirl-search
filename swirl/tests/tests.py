@@ -75,6 +75,7 @@ def noop_query_string():
 @pytest.fixture
 def hll_test_cases():
     return [
+            ['The same same word twice',['same']],
             ['Swirl_Pitch_1234412',['swirl']],
             ['Swirl Pitch 1234412',['swirl']],
             ['I love programming in Python',['programming', 'Python']],
@@ -87,6 +88,7 @@ def hll_test_cases():
 @pytest.fixture
 def hll_test_expected():
     return[
+        'The <em>same</em> <em>same</em> word twice',
         '<em>Swirl</em>_Pitch_1234412',
         '<em>Swirl</em> Pitch 1234412',
         'I love <em>programming</em> in <em>Python</em>',
