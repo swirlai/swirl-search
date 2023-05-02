@@ -16,6 +16,7 @@ from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
+from django.conf import settings
 
 from celery.utils.log import get_task_logger
 from logging import DEBUG
@@ -93,7 +94,7 @@ class Mixer:
             self.mix_wrapper['info'][result.searchprovider]['result_processor_json_feedback'] = result.result_processor_json_feedback
             self.mix_wrapper['info'][result.searchprovider]['query_to_provider'] = result.query_to_provider
             self.mix_wrapper['info'][result.searchprovider]['query_processors'] = result.query_processors
-            self.mix_wrapper['info'][result.searchprovider]['result_processors'] = result.result_processors
+            self.mix_wrapper['info'][result.searchprovider]['result_processors'] = result.result_processors                
             if result.json_results:
                 if 'result_block' in result.json_results[0]:
                     self.mix_wrapper['info'][result.searchprovider]['result_block'] = result.json_results[0]['result_block']
@@ -215,17 +216,24 @@ class Mixer:
             # end if
         # end for
         
-        # save block results, if any
+        # block results
         self.mix_wrapper['info']['results']['result_blocks'] = []
+
+        # default block, if specified in settings
+        if settings.SWIRL_DEFAULT_RESULT_BLOCK:
+            self.mix_wrapper['info']['results']['result_blocks'].append(settings.SWIRL_DEFAULT_RESULT_BLOCK)
+            self.mix_wrapper[settings.SWIRL_DEFAULT_RESULT_BLOCK] = []
+
+        # blocks specified by provider(s)
         for block in block_dict:
             self.mix_wrapper[block] = block_dict[block]
-            self.mix_wrapper['info']['results']['result_blocks'].append(block)
+            if not block in self.mix_wrapper['info']['results']['result_blocks']:
+                self.mix_wrapper['info']['results']['result_blocks'].append(block)
 
         # extract the page of mixed results
         self.mixed_results = mixed_results
         self.mix_wrapper['results'] = self.mixed_results[(int(self.page)-1)*int(self.results_requested):int(self.results_needed)]
         self.mix_wrapper['info']['results']['retrieved'] = len(self.mix_wrapper['results'])
-
 
         # next page
         if self.found > int(self.results_needed):
