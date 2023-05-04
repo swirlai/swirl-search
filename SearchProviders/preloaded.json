@@ -16,7 +16,7 @@
             "MappingResultProcessor"
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
-        "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
+        "result_mappings": "url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "tags": [
@@ -41,7 +41,7 @@
             "MappingResultProcessor"
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
-        "result_mappings": "url=link,body=htmlSnippet,cacheid,NO_PAYLOAD",
+        "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['authors-name'],cacheId,pagemap.metatags[*].['articletype'],pagemap.metatags[*].['practice-name'],pagemap.metatags[*].['searchresults-tags'],pagemap.metatags[*].['site_name'],pagemap.metatags[*].['twitter:description'],NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "tags": [
@@ -66,7 +66,7 @@
             "MappingResultProcessor"
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
-        "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
+        "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['article:publisher'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['article:tag'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "tags": [
@@ -379,6 +379,136 @@
             "Jira",
             "Issues",
             "Atlassian"
+        ]
+    },
+    {
+        "name": "M365 Email",
+        "active": true,
+        "default": true,
+        "connector": "M365OutlookMessages",
+        "url": "",
+        "query_template": "{url}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true,NOT_CHAR=-",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Microsoft",
+            "Email"
+        ]
+    },
+    {
+        "name": "M365 Calendar",
+        "active": true,
+        "default": true,
+        "connector": "M365OutlookCalendar",
+        "url": "",
+        "query_template": "{url}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true,NOT_CHAR=-",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=resource.subject,body=summary,date_published=resource.start.dateTime,url='https://outlook.office.com/calendar/item/{sw_urlencode(hitId)}',resource.sensitivity,resource.type,resource.hasAttachments,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Microsoft",
+            "Calendar"
+        ]
+    },
+    {
+        "name": "M365 OneDrive",
+        "active": true,
+        "default": true,
+        "connector": "M365OneDrive",
+        "url": "",
+        "query_template": "{url}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true,NOT_CHAR=-",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=resource.name,body='{resource.name} - {summary}',date_published=resource.createdDateTime,url=resource.webUrl,author=resource.createdBy.user.displayName,resource.lastModifiedBy.user.displayName,resource.lastModifiedDateTime,FILE_SYSTEM,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Microsoft",
+            "OneDrive"
+        ]
+    },
+    {
+        "name": "M365 SharePoint",
+        "active": false,
+        "default": true,
+        "connector": "M365SharePointSites",
+        "url": "",
+        "query_template": "{url}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true,NOT_CHAR=-",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=resource.displayName,body=summary,date_published=resource.createdDateTime,url=resource.webUrl,resource.lastModifiedDateTime,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Microsoft",
+            "SharePoint"
+        ]
+    },
+    {
+        "name": "Microsoft Teams",
+        "active": true,
+        "default": true,
+        "connector": "MicrosoftTeams",
+        "url": "",
+        "query_template": "{url}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true,NOT_CHAR=-",
+        "result_processor": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=summary,body=summary,date_published=resource.createdDateTime,author=resource.from.emailAddress.name,url=resource.webLink,resource.importance,resource.channelIdentity.channelId,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Microsoft",
+            "Teams"
         ]
     }
 ]

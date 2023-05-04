@@ -7,9 +7,10 @@
 # before this command can be used.
 #
 # Options:
-#   -h, --help           Display this help message
-#   -p, --preview        Use Preview image
-#   -x, --x-fork         Use Experimental fork image
+#   -h, --help       Display this help message
+#   -p, --preview    Use Preview image
+#   -x, --x-fork     Use Experimental fork image
+#   -d, --directory  Directory on local machine
 # Parse command-line options
 
 while [[ "$#" -gt 0 ]]; do
@@ -17,6 +18,7 @@ while [[ "$#" -gt 0 ]]; do
         -h|--help) print_help=true ;;
         -p|--preview) preview_image=true ;;
         -x|--x-fork) experimental_image=true ;;
+	-d|--directory) shift; source_dir=$1 ;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
     shift
@@ -41,6 +43,20 @@ set -e
 work_container=sw-spg-build_$$
 work_dir=/tmp/swirl_ui_install_work_dir_$$
 target_dir=./static
+
+## if Source dir is set, just copy from there.
+if [ -n "$source_dir" ]; then
+    if ( test -d "$source_dir" ); then
+	echo $PROG "source_dir: $source_dir target_dir: $target_dir"
+	echo "cp -r $source_dir/ui/dist/spyglass/browser/* $target_dir/spyglass"
+	mkdir -p $target_dir/spyglass
+	cp -rv $source_dir/ui/dist/spyglass/browser/* $target_dir/spyglass
+	exit 0
+    else
+	echo $PROG "ERROR : source_dir:$source_dir does not exist or is not a directory"
+	exit 1
+    fi
+fi
 
 # check environment
 if ! [ -d "$target_dir" ]; then

@@ -16,6 +16,7 @@ from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
+from django.conf import settings
 
 from celery.utils.log import get_task_logger
 from logging import DEBUG
@@ -93,7 +94,10 @@ class Mixer:
             self.mix_wrapper['info'][result.searchprovider]['result_processor_json_feedback'] = result.result_processor_json_feedback
             self.mix_wrapper['info'][result.searchprovider]['query_to_provider'] = result.query_to_provider
             self.mix_wrapper['info'][result.searchprovider]['query_processors'] = result.query_processors
-            self.mix_wrapper['info'][result.searchprovider]['result_processors'] = result.result_processors
+            self.mix_wrapper['info'][result.searchprovider]['result_processors'] = result.result_processors                
+            if result.json_results:
+                if 'result_block' in result.json_results[0]:
+                    self.mix_wrapper['info'][result.searchprovider]['result_block'] = result.json_results[0]['result_block']
             self.mix_wrapper['info'][result.searchprovider]['search_time'] = result.time
 
         if self.search.messages:
@@ -182,18 +186,52 @@ class Mixer:
             self.mix_wrapper['messages'].append(f"[{datetime.now()}] Results exhausted for {self.search_id}")
             return
 
-        # number all mixed results
-        result_number = 1
+        # number all result blocks
+        mixed_result_number = 1
+        mixed_results = []
+        block_dict = {}
         for result in self.mixed_results:
-            result['swirl_rank'] = result_number
             if not self.explain:
                 if 'explain' in result:
                     del result['explain']
                 if 'swirl_score' in result:
                     del result['swirl_score']
-            result_number = result_number + 1
+            # end if
+            if 'result_block' in result:
+                block_name = result['result_block']
+                del result['result_block']
+                if block_name in block_dict:
+                    block_count = block_count + 1
+                    result['swirl_rank'] = block_count
+                    block_dict[block_name].append(result)
+                else:
+                    block_count = 1
+                    result['swirl_rank'] = block_count
+                    block_dict[block_name] = [result]
+                # end if
+            else:
+                result['swirl_rank'] = mixed_result_number
+                mixed_results.append(result)
+                mixed_result_number = mixed_result_number + 1
+            # end if
+        # end for
+        
+        # block results
+        self.mix_wrapper['info']['results']['result_blocks'] = []
+
+        # default block, if specified in settings
+        if settings.SWIRL_DEFAULT_RESULT_BLOCK:
+            self.mix_wrapper['info']['results']['result_blocks'].append(settings.SWIRL_DEFAULT_RESULT_BLOCK)
+            self.mix_wrapper[settings.SWIRL_DEFAULT_RESULT_BLOCK] = []
+
+        # blocks specified by provider(s)
+        for block in block_dict:
+            self.mix_wrapper[block] = block_dict[block]
+            if not block in self.mix_wrapper['info']['results']['result_blocks']:
+                self.mix_wrapper['info']['results']['result_blocks'].append(block)
 
         # extract the page of mixed results
+        self.mixed_results = mixed_results
         self.mix_wrapper['results'] = self.mixed_results[(int(self.page)-1)*int(self.results_requested):int(self.results_needed)]
         self.mix_wrapper['info']['results']['retrieved'] = len(self.mix_wrapper['results'])
 

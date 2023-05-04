@@ -8,7 +8,7 @@ from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 from swirl.processors.adaptive import *
 from swirl.processors.transform_query_processor import *
-from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp
+from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list
 from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
 
 logger = logging.getLogger(__name__)
@@ -71,6 +71,39 @@ def noop_query_string():
 ######################################################################
 ## tests
 ######################################################################
+
+@pytest.fixture
+def hll_test_cases():
+    return [
+            ['The same same word twice',['same']],
+            ['Swirl_Pitch_1234412',['swirl']],
+            ['Swirl Pitch 1234412',['swirl']],
+            ['I love programming in Python',['programming', 'Python']],
+            ['The quick brown fox jumps over the lazy dog',['quick', 'jumps', 'dog']],
+            ['The weather is nice today',['rain', 'snow', 'sun']],
+            ['ChatGPT is an AI language model', ['ChatGPT', 'AI', 'language', 'model']],
+            ['This is a case insensitive test',["this", "Test"]]
+        ]
+
+@pytest.fixture
+def hll_test_expected():
+    return[
+        'The <em>same</em> <em>same</em> word twice',
+        '<em>Swirl</em>_Pitch_1234412',
+        '<em>Swirl</em> Pitch 1234412',
+        'I love <em>programming</em> in <em>Python</em>',
+        'The <em>quick</em> brown fox <em>jumps</em> over the lazy <em>dog</em>',
+        'The weather is nice today',
+        '<em>ChatGPT</em> is an <em>AI</em> <em>language</em> <em>model</em>',
+        '<em>This</em> is a case insensitive <em>test</em>'
+    ]
+
+def test_highlght_list(hll_test_cases, hll_test_expected):
+    i = 0
+    for c in hll_test_cases:
+        x = highlight_list(c[0],c[1])
+        assert x == hll_test_expected[i]
+        i = i + 1
 
 @pytest.fixture
 def aqp_test_cases():
