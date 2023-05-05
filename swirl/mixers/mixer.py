@@ -225,11 +225,17 @@ class Mixer:
             self.mix_wrapper[settings.SWIRL_DEFAULT_RESULT_BLOCK] = []
 
         # blocks specified by provider(s)
+        moved_to_block = 0
         for block in block_dict:
             self.mix_wrapper[block] = block_dict[block]
+            moved_to_block = moved_to_block + len(block_dict[block])
             if not block in self.mix_wrapper['info']['results']['result_blocks']:
                 self.mix_wrapper['info']['results']['result_blocks'].append(block)
-
+        if moved_to_block > 0:
+            self.mix_wrapper['info']['results']['retrieved_total'] = self.found - moved_to_block
+            if self.mix_wrapper['info']['results']['retrieved_total'] < 0:
+                self.warning("Block count exceeds result count")
+                
         # extract the page of mixed results
         self.mixed_results = mixed_results
         self.mix_wrapper['results'] = self.mixed_results[(int(self.page)-1)*int(self.results_requested):int(self.results_needed)]
