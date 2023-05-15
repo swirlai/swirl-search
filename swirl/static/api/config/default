@@ -69,5 +69,12 @@
       "addImage": "assets/images/folder_into.png",
       "removeText": "Remove from Cart...",
       "removeImage": "assets/images/folder_out.png"
+    },
+    "msalConfig" :{
+      "auth": {
+        "clientId": "<client-id>",
+        "authority": "<authority-url>",
+        "redirectUri": "http://localhost:8000/spyglass/microsoft-callback"
+      }
     }
   }
