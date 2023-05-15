@@ -23,6 +23,7 @@ class Authenticator:
             request.session['user'][self.access_token_field] = access_token
             request.session['user'][self.refresh_token_field] = refresh_token
             request.session['user'][self.expires_in_field] = expiration_time
+        request.session.save()
 
     def get_auth_app(self, request):
         return {}
