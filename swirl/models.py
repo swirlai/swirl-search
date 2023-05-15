@@ -70,7 +70,6 @@ class SearchProvider(models.Model):
         ('M365SharePointSites', 'M365 SharePoint Sites'),
         ('MicrosoftTeams', 'Microsoft Teams'),
     ]
-
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
     query_template = models.CharField(max_length=2048, default='{url}?q={query_string}', blank=True)
@@ -80,7 +79,6 @@ class SearchProvider(models.Model):
         ('AdaptiveQueryProcessor', 'AdaptiveQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]
-    query_processor = FlexibleChoiceField(max_length=200, default='', choices=QUERY_PROCESSOR_CHOICES, blank=True )
     query_processors = models.JSONField(default=getSearchProviderQueryProcessorsDefault, blank=True)
     query_mappings = models.CharField(max_length=2048, default=str, blank=True)
     RESULT_PROCESSOR_CHOICES = [
@@ -90,7 +88,6 @@ class SearchProvider(models.Model):
         ('MappingResultProcessor', 'MappingResultProcessor')
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
-    result_processor = models.CharField(max_length=200, default='', choices=RESULT_PROCESSOR_CHOICES, blank=True)
     result_processors = models.JSONField(default=getSearchProviderResultProcessorsDefault, blank=True)
     result_mappings = models.CharField(max_length=2048, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
@@ -140,14 +137,12 @@ class Search(models.Model):
         ('TestQueryProcessor', 'TestQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]
-    pre_query_processor = models.CharField(max_length=200, default='', blank=True, choices=PRE_QUERY_PROCESSOR_CHOICES)
     pre_query_processors = models.JSONField(default=getSearchPreQueryProcessorsDefault, blank=True)
     POST_RESULT_PROCESSOR_CHOICES = [
         ('CosineRelevancyPostResultProcessor', 'CosineRelevancyPostResultProcessor (w/spaCy)'),
         ('DedupeByFieldPostResultProcessor', 'DedupeByFieldPostResultProcessor'),
         ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor')
     ]
-    post_result_processor = models.CharField(max_length=200, default='', blank=True, choices=POST_RESULT_PROCESSOR_CHOICES)
     post_result_processors = models.JSONField(default=getSearchPostResultProcessorsDefault, blank=True)
     result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)
     new_result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=RelevancyNewItemsMixer', blank=True)

@@ -156,12 +156,7 @@ def search(id, session=None):
     search.save()
 
     processor_list = []
-    if search.pre_query_processor:
-        processor_list = [search.pre_query_processor]
-        if search.pre_query_processors:
-            logger.warning(f"{module_name}_{search.id}: Ignoring search.pre_query_processors, since search.pre_query_processor is specified")
-    else:
-        processor_list = search.pre_query_processors
+    processor_list = search.pre_query_processors
     # end if
 
     if not processor_list:
@@ -284,19 +279,13 @@ def search(id, session=None):
         return True
     ########################################
     # post_result_processing
-    if search.post_result_processor or search.post_result_processors:
+    if search.post_result_processors:
         last_status = search.status
         search.status = 'POST_RESULT_PROCESSING'
         logger.info(f"{module_name}: {search.status}")
         search.save()
 
-        processor_list = []
-        if search.post_result_processor:
-            processor_list = [search.post_result_processor]
-            if search.post_result_processors:
-                logger.warning(f"{module_name}_{search.id}: Ignoring search.post_result_processors, since search.post_result_processor is specified")
-        else:
-            processor_list = search.post_result_processors
+        processor_list = search.post_result_processors
 
         for processor in processor_list:
             logger.info(f"{module_name}: invoking processor: {processor}")
@@ -371,17 +360,11 @@ def rescore(id):
         logger.error(f"{module_name}_{search.id}: No results to rescore!")
         return False
 
-    if search.post_result_processor or search.post_result_processors:
+    if search.post_result_processors:
         search.status = 'RESCORING'
         search.save()
         # setup processor pipeline
-        processor_list = []
-        if search.post_result_processor:
-            processor_list = [search.post_result_processor]
-            if search.post_result_processors:
-                logger.warning(f"{module_name}_{search.id}: Ignoring search.post_result_processors, since search.post_result_processor is specified")
-        else:
-            processor_list = search.post_result_processors
+        processor_list = search.post_result_processors
         # end if
         for processor in processor_list:
             try:

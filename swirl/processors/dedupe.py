@@ -36,10 +36,12 @@ class DedupeByFieldPostResultProcessor(PostResultProcessor):
                             dedupe_key_dict[item[SWIRL_DEDUPE_FIELD]] = 1
                     else:
                         # dedupe key blank
-                        logger.info(f"{self}: Ignoring result {item}, {SWIRL_DEDUPE_FIELD} is blank")
+                        # logger.info(f"{self}: Ignoring result {item}, {SWIRL_DEDUPE_FIELD} is blank")
+                        pass
                 else:
                     # dedupe key missing
-                    self.warning(f"Ignoring result {item}, {SWIRL_DEDUPE_FIELD} is missing")
+                    # self.warning(f"Ignoring result {item}, {SWIRL_DEDUPE_FIELD} is missing")
+                    pass
                 # end if
                 deduped_item_list.append(item)
             # end for

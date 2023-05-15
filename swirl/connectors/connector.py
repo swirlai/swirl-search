@@ -167,12 +167,7 @@ class Connector:
 
         logger.info(f"{self}: process_query()")
         processor_list = []
-        if self.provider.query_processor:
-            processor_list = [self.provider.query_processor]
-            if self.provider.query_processors:
-                self.warning("Ignoring searchprovider.query_processors, since searchprovider.query_processor is specified")
-        else:
-            processor_list = self.provider.query_processors
+        processor_list = self.provider.query_processors
 
         if not processor_list:
             self.query_string_to_provider = self.search.query_string_processed
@@ -290,12 +285,7 @@ class Connector:
             self.message(f"Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
 
         processor_list = []
-        if self.provider.result_processor:
-            processor_list = [self.provider.result_processor]
-            if self.provider.result_processors:
-                self.warning("Ignoring result_processors, since result_processor is specified")
-        else:
-            processor_list = self.provider.result_processors
+        processor_list = self.provider.result_processors
 
         if not processor_list:
             self.processed_results = self.results
@@ -343,23 +333,9 @@ class Connector:
         end_time = time.time()
 
         # gather processor lists
-        # to do: review the below it's not great
         query_processors = []
-        if self.search.pre_query_processor:
-            query_processors.append(self.search.pre_query_processor)
-        else:
-            query_processors = query_processors + self.search.pre_query_processors
-        # end if
-        if self.provider.query_processor:
-            query_processors.append(self.provider.query_processor)
-        else:
-            query_processors = query_processors + self.provider.query_processors
-        # end if
-        result_processors = []
-        if self.provider.result_processor:
-            result_processors = [self.provider.result_processor]
-        else:
-            result_processors = self.provider.result_processors
+        query_processors = query_processors + self.search.pre_query_processors + self.provider.query_processors
+        result_processors = self.provider.result_processors
         # end if
 
         if self.update:
