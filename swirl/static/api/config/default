@@ -7,19 +7,19 @@
           [
             [
               {
-                "type": "title",
-                "fields": [
-                  "title",
-                  "swirl_rank",
-                  "url"
-                ]
-              },
-              {
                 "type": "authorship",
                 "fields": [
                   "searchprovider",
                   "author",
                   "date_published"
+                ]
+              },
+              {
+                "type": "title",
+                "fields": [
+                  "title",
+                  "swirl_rank",
+                  "url"
                 ]
               },
               {
