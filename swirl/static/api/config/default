@@ -73,8 +73,8 @@
     },
     "msalConfig" :{
       "auth": {
-        "clientId": "16e91968-9b2c-4e30-b38c-38e2b6ac71c1",
-        "authority": "https://login.microsoftonline.com/2c1f7fec-50db-4d19-99c2-073454d5e3c2",
+        "clientId": "<client-id>",
+        "authority": "<authority-url>",
         "redirectUri": "http://localhost:8000/spyglass/microsoft-callback"
       }
     }
