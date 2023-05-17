@@ -7,15 +7,6 @@
           [
             [
               {
-                "type": "authorship",
-                "fields": [
-                  "searchprovider",
-                  "author",
-                  "date_published",
-                  "url"
-                ]
-              },
-              {
                 "type": "title",
                 "fields": [
                   "title",
@@ -29,6 +20,15 @@
                   "body"
                 ],
                 "max_lines": 4
+              },
+              {
+                "type": "authorship",
+                "fields": [
+                  "searchprovider",
+                  "author",
+                  "date_published",
+                  "url"
+                ]
               }
             ]
           ]
