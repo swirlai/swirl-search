@@ -20,15 +20,6 @@
                   "body"
                 ],
                 "max_lines": 4
-              },
-              {
-                "type": "authorship",
-                "fields": [
-                  "searchprovider",
-                  "author",
-                  "date_published",
-                  "url"
-                ]
               }
             ]
           ]
@@ -43,6 +34,15 @@
                   "payload"
                 ],
                 "delimiter": ", "
+              },
+              {
+                "type": "authorship",
+                "fields": [
+                  "searchprovider",
+                  "author",
+                  "date_published",
+                  "url"
+                ]
               }
             ]
           ]
