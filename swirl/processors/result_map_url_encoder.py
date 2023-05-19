@@ -21,7 +21,7 @@ class ResultMapUrlEncoder():
     def __optional_encode_value(self, v):
         """encode if needed"""
         if self.__found_encode_directive:
-            return quote(str(v))
+            return quote(str(v),safe='')
         return v
 
     def get_key(self):
