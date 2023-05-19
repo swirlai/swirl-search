@@ -15,7 +15,7 @@
         "GenericResultProcessor"
     ],
     "response_mappings": "",
-    "result_mappings": "",
+    "result_mappings": "BLOCK=ai_summary",
     "results_per_query": 10,
     "credentials": "your-openai-API-key-here",
     "tags": [
