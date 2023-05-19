@@ -138,7 +138,8 @@ def rm_url_encoder_test_cases():
         'sw_urlencode(yyz)':'foo==',
         'sw_urlencode(yyz':'foo==',
         'foo(yyz)':'foo==',
-        'sw_urlencode(hitId)':'askjfasdkj,,l::":kajsdf==alksfja;lkdjs==='
+        'sw_urlencode(hitId)':'askjfasdkj,,l::":kajsdf==alksfja;lkdjs===',
+        'sw_urlencode(slashes)':'askjfasdkj,,l::":kajsdf//alksfja;lkdjs==='
     }
 
 @pytest.fixture
@@ -149,7 +150,8 @@ def rm_url_encoder_test_expected():
         'sw_urlencode(yyz)':{'key':'yyz', 'value':'foo%3D%3D'},
         'sw_urlencode(yyz': {'key':'sw_urlencode(yyz', 'value':'foo=='},
         'foo(yyz)': {'key':'foo(yyz)', 'value':'foo=='},
-        'sw_urlencode(hitId)': {'key':'hitId', 'value':'askjfasdkj%2C%2Cl%3A%3A%22%3Akajsdf%3D%3Dalksfja%3Blkdjs%3D%3D%3D'}
+        'sw_urlencode(hitId)': {'key':'hitId', 'value':'askjfasdkj%2C%2Cl%3A%3A%22%3Akajsdf%3D%3Dalksfja%3Blkdjs%3D%3D%3D'},
+        'sw_urlencode(slashes)':{'key':'slashes', 'value':'askjfasdkj%2C%2Cl%3A%3A%22%3Akajsdf%2F%2Falksfja%3Blkdjs%3D%3D%3D'}
     }
 
 @pytest.mark.django_db
