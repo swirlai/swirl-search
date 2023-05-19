@@ -48,6 +48,6 @@ class SearchForm(forms.Form):
     search_id = forms.IntegerField(required=False)
 
 class QueryTransformForm(forms.Form):
-    file = forms.FileField(label='CSV File Name')
-    name = forms.CharField(max_length=255, required=False, label='Query Xform Name')
-    content_type = forms.ChoiceField(choices=QueryTransform.QUERY_TRASNSFORM_TYPE_CHOICES, label='Query Xform Type')
+    file = forms.FileField(label='CSV Filename')
+    name = forms.CharField(max_length=255, required=False, label='Name')
+    content_type = forms.ChoiceField(choices=QueryTransform.QUERY_TRASNSFORM_TYPE_CHOICES, label='Type')
