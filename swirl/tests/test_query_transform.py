@@ -413,15 +413,16 @@ mobiles; ombile; mo bile, mobile
 computers, computer
 cheap.* smartphones, cheap smartphone
 on
+to
 """
 }
 @pytest.fixture
 def qrx_rewrite_test_queries():
-    return ['mobile phone', 'mobiles','ombile', 'mo bile', 'on computing', 'cheaper smartphones','computers, go figure']
+    return ['mobile phone', 'mobiles','ombile', 'mo bile', 'on computing', 'cheaper smartphones','computers, go figure','to the moon and back']
 
 @pytest.fixture
 def qrx_rewrite_expected_queries():
-    return ['mobile phone', 'mobile','mobile', 'mobile', 'computing', 'cheap smartphone','computer go figure']
+    return ['mobile phone', 'mobile','mobile', 'mobile', 'computing', 'cheap smartphone','computer go figure','the moon and back']
 @pytest.mark.django_db
 def test_query_transform_rewwrite_process(qrx_rewrite_test_queries, qrx_rewrite_expected_queries, qrx_rewrite_process):
     assert len(qrx_rewrite_test_queries) == len (qrx_rewrite_expected_queries)
