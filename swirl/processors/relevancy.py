@@ -9,9 +9,10 @@ from statistics import mean, median
 from django.conf import settings
 
 # to do: detect language and load all stopwords? P1
-from swirl.nltk import stopwords, sent_tokenize
+from swirl.nltk import stopwords, sent_tokenize, word_tokenize, is_punctuation
 from swirl.processors.utils import *
 from swirl.spacy import nlp
+
 from swirl.processors.processor import PostResultProcessor
 
 import logging
@@ -76,17 +77,15 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
         # remove quotes
         query = clean_string(q_string).strip().replace('\"','')
-        query_list = query.strip().split()
+        query_list = word_tokenize(query)
         ## I think the loop is okay since it's a very small list.
         for term in self.provider_query_terms:
             if not term in query_list:
                 query_list.append(term)
 
-        # remove AND, OR
-        if 'AND' in query_list:
-            query_list.remove('AND')
-        if 'OR' in query_list:
-            query_list.remove('OR')
+        # remove AND, OR and parens
+        query_list = [s for s in query_list if s not in ["AND","OR"] and not is_punctuation(s)]
+
         # check for numeric
         query_has_numeric = has_numeric(query_list)
         # not list
@@ -181,7 +180,6 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         updated = 0
         dict_result_lens = {}
         list_query_lens = []
-        hit_dict = {}
 
         ############################################
         # PASS 1
@@ -239,6 +237,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     continue
                 if not 'hits' in item:
                     item['hits'] = {}
+
                 ############################################
                 # result item
                 dict_score = {}
@@ -278,7 +277,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                 break
                         # field length
                         if field in dict_len:
-                            self.warning("duplicate field?")
+                            self.warning(f"duplicate field detected: {field}")
                         else:
                             dict_len[field] = len(result_field_list)
                         if field in dict_result_lens:
@@ -424,6 +423,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
         ############################################
         # PASS 2
+        
         # score results by field, adjusting for field length
         for results in self.results:
             if not results.json_results:
@@ -447,11 +447,32 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     del item['dict_len']
                 else:
                     continue
+                relevancy_model = ""
+                # check for _relevancy_model
+                if '_relevancy_model' in item:
+                    relevancy_model = item['_relevancy_model']
+                    del item['_relevancy_model']
+                fs_flag_boost_body = False
+                if relevancy_model:
+                    if relevancy_model == 'FILE_SYSTEM':
+                        # if title has no matches, and body does, copy body to title; delete it from explain
+                        if not 'title' in dict_score:
+                            # no matches on title
+                            if 'body' in dict_score:
+                                if len(item['body']) > 0:
+                                    # match on body, none on title -> use title boost on body
+                                    fs_flag_boost_body = True
                 # score the item
                 dict_len_adjust = {}
                 for f in dict_score:
                     if f in RELEVANCY_CONFIG:
                         weight = RELEVANCY_CONFIG[f]['weight']
+                        if f == 'body':
+                            if fs_flag_boost_body:
+                                if 'title' in RELEVANCY_CONFIG:
+                                    weight = RELEVANCY_CONFIG['title']['weight']
+                                else:
+                                    self.warning(f"title field missing when applying relevancy model: FILE_SYSTEM")
                     else:
                         continue
                     len_adjust = float(dict_len_median[f] / dict_len[f])
@@ -483,6 +504,8 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     del item['hits']
                 else:
                     logger.debug('no hits to move')
+                if fs_flag_boost_body:
+                    item['explain']['boosts'] = 'FILE_SYSTEM'
 
                 updated = updated + 1
                 # save highlighted version

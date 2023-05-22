@@ -10,6 +10,7 @@ import time
 
 import django
 from django.db import Error
+from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
 from swirl.utils import swirl_setdir
@@ -25,6 +26,7 @@ logger = get_task_logger(__name__)
 from swirl.models import Search, Result, SearchProvider
 from swirl.connectors.utils import get_mappings_dict
 from swirl.processors import *
+from swirl.processors.transform_query_processor_utils import get_query_processor_or_transform
 
 SWIRL_OBJECT_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
 
@@ -62,6 +64,7 @@ class Connector:
         self.processed_results = []
         self.messages = []
         self.start_time = None
+        self.search_user = None
 
         # get the provider and query
         try:
@@ -70,6 +73,11 @@ class Connector:
         except ObjectDoesNotExist as err:
             self.error(f'ObjectDoesNotExist: {err}')
             return
+
+        try:
+            self.search_user = User.objects.get(id=self.search_id)
+        except ObjectDoesNotExist as err:
+            logger.warn("unable to find search user, no auth check")
 
         self.query_mappings = get_mappings_dict(self.provider.query_mappings)
         self.response_mappings = get_mappings_dict(self.provider.response_mappings)
@@ -99,7 +107,7 @@ class Connector:
 
     ########################################
 
-    def federate(self):
+    def federate(self, session):
 
         '''
         Executes the workflow for a given search and provider
@@ -112,9 +120,9 @@ class Connector:
             try:
                 self.process_query()
                 self.construct_query()
-                v = self.validate_query()
+                v = self.validate_query(session)
                 if v:
-                    self.execute_search()
+                    self.execute_search(session)
                     if self.status not in ['FEDERATING', 'READY']:
                         self.error(f"execute_search() failed, status {self.status}")
                         self.save_results()
@@ -159,12 +167,7 @@ class Connector:
 
         logger.info(f"{self}: process_query()")
         processor_list = []
-        if self.provider.query_processor:
-            processor_list = [self.provider.query_processor]
-            if self.provider.query_processors:
-                self.warning("Ignoring searchprovider.query_processors, since searchprovider.query_processor is specified")
-        else:
-            processor_list = self.provider.query_processors
+        processor_list = self.provider.query_processors
 
         if not processor_list:
             self.query_string_to_provider = self.search.query_string_processed
@@ -174,7 +177,7 @@ class Connector:
         for processor in processor_list:
             logger.info(f"{self}: invoking processor: query processor: {processor}")
             try:
-                processed_query = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(query_temp, self.provider.query_mappings, self.provider.tags).process()
+                processed_query = get_query_processor_or_transform(processor, query_temp, SWIRL_OBJECT_DICT, self.provider.query_mappings, self.provider.tags, self.search_user).process()
             except (NameError, TypeError, ValueError) as err:
                 self.error(f'{processor}: {err.args}, {err}')
                 return
@@ -204,7 +207,7 @@ class Connector:
 
     ########################################
 
-    def validate_query(self):
+    def validate_query(self, session=None):
 
         '''
         Validate the query_to_provider, and return True or False
@@ -218,7 +221,7 @@ class Connector:
 
     ########################################
 
-    def execute_search(self):
+    def execute_search(self, session=None):
 
         '''
         Connect to, query and save the response from this provider
@@ -282,12 +285,7 @@ class Connector:
             self.message(f"Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
 
         processor_list = []
-        if self.provider.result_processor:
-            processor_list = [self.provider.result_processor]
-            if self.provider.result_processors:
-                self.warning("Ignoring result_processors, since result_processor is specified")
-        else:
-            processor_list = self.provider.result_processors
+        processor_list = self.provider.result_processors
 
         if not processor_list:
             self.processed_results = self.results
@@ -335,23 +333,9 @@ class Connector:
         end_time = time.time()
 
         # gather processor lists
-        # to do: review the below it's not great
         query_processors = []
-        if self.search.pre_query_processor:
-            query_processors.append(self.search.pre_query_processor)
-        else:
-            query_processors = query_processors + self.search.pre_query_processors
-        # end if
-        if self.provider.query_processor:
-            query_processors.append(self.provider.query_processor)
-        else:
-            query_processors = query_processors + self.provider.query_processors
-        # end if
-        result_processors = []
-        if self.provider.result_processor:
-            result_processors = [self.provider.result_processor]
-        else:
-            result_processors = self.provider.result_processors
+        query_processors = query_processors + self.search.pre_query_processors + self.provider.query_processors
+        result_processors = self.provider.result_processors
         # end if
 
         if self.update:
