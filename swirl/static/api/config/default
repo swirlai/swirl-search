@@ -15,14 +15,6 @@
                 ]
               },
               {
-                "type": "authorship",
-                "fields": [
-                  "searchprovider",
-                  "author",
-                  "date_published"
-                ]
-              },
-              {
                 "type": "body",
                 "fields": [
                   "body"
@@ -42,6 +34,15 @@
                   "payload"
                 ],
                 "delimiter": ", "
+              },
+              {
+                "type": "authorship",
+                "fields": [
+                  "searchprovider",
+                  "author",
+                  "date_published",
+                  "url"
+                ]
               }
             ]
           ]
