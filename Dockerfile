@@ -8,6 +8,8 @@ RUN apt-get -y upgrade openssl
 RUN apt-get update
 RUN apt-get -y upgrade openssl
 
+RUN apt-get -y jq
+
 # RUN sudo echo 'nameserver 8.8.8.8'>/etc/resolv.conf
 RUN apt-get update -y
 RUN apt-get install apt-file -y
@@ -34,6 +36,11 @@ COPY ./db.sqlite3.dist /app/db.sqlite3
 COPY ./.env.docker /app/.env
 COPY ./install-ui.sh /app/install-ui.sh
 ADD ./swirl /app/swirl
+
+# Install spy glass UI
+RUN mkdir /app/swirl/static/spyglass
+COPY --from=swirlai/spyglass:deploy /usr/src/spyglass/ui/dist/spyglass/browser/. /app/swirl/static/spyglass
+COPY --from=swirlai/spyglass:deploy /usr/src/spyglass/ui/config-swirl-demo.db.json /app/
 
 ADD ./swirl_server /app/swirl_server
 ADD ./SearchProviders /app/SearchProviders
