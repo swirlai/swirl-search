@@ -35,7 +35,7 @@ class BigQuery(DBConnector):
 
     ########################################
 
-    def execute_search(self):
+    def execute_search(self, session=None):
 
         logger.info(f"{self}: execute_search()")
 

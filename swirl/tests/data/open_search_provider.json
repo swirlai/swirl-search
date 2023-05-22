@@ -1,0 +1,31 @@
+{
+    "id": 14,
+    "name": "Test Email (local/Test)",
+    "owner": "admin",
+    "shared": "true",
+    "date_created": "2023-04-05T13:14:25.115074-04:00",
+    "date_updated": "2023-04-05T13:14:25.115123-04:00",
+    "active": "true",
+    "default": "true",
+    "connector": "OpenSearch",
+    "url": "http://localhost:9999/",
+    "query_template": "{ 'highlight': { 'fields': { '*': {} } }, 'query': { 'querqy': { 'matching_query': { 'query': '{query_string}' }, 'query_fields': [ 'subject^3.0', 'to^2.0', 'content'], 'rewriters': [ 'common_rules'] } } }",
+    "query_processor": "",
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "index_name=email,default_field=content,sort_by_date=date_published.keyword,NOT=true,NOT_CHAR=-",
+    "result_processor": "",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,body_hit_highlights=highlight.content, title_hit_highlights=highlight.subject,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "'admin','admin'",
+    "eval_credentials": "",
+    "tags": [
+        "Enron",
+        "OpenSearch"
+    ]
+}

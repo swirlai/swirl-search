@@ -1,0 +1,322 @@
+{
+    "kind": "customsearch#search",
+    "url": {
+      "type": "application/json",
+      "template": "https://www.googleapis.com/customsearch/v1?q={searchTerms}&num={count?}&start={startIndex?}&lr={language?}&safe={safe?}&cx={cx?}&sort={sort?}&filter={filter?}&gl={gl?}&cr={cr?}&googlehost={googleHost?}&c2coff={disableCnTwTranslation?}&hq={hq?}&hl={hl?}&siteSearch={siteSearch?}&siteSearchFilter={siteSearchFilter?}&exactTerms={exactTerms?}&excludeTerms={excludeTerms?}&linkSite={linkSite?}&orTerms={orTerms?}&relatedSite={relatedSite?}&dateRestrict={dateRestrict?}&lowRange={lowRange?}&highRange={highRange?}&searchType={searchType}&fileType={fileType?}&rights={rights?}&imgSize={imgSize?}&imgType={imgType?}&imgColorType={imgColorType?}&imgDominantColor={imgDominantColor?}&alt=json"
+    },
+    "queries": {
+      "request": [
+        {
+          "title": "Google Custom Search - (notebook OR laptop)",
+          "totalResults": "7",
+          "searchTerms": "(notebook OR laptop)",
+          "count": 7,
+          "startIndex": 1,
+          "inputEncoding": "utf8",
+          "outputEncoding": "utf8",
+          "safe": "off",
+          "cx": "0c38029ddd002c006"
+        }
+      ]
+    },
+    "context": {
+      "title": "Enterprise Search Engines"
+    },
+    "searchInformation": {
+      "searchTime": 0.240771,
+      "formattedSearchTime": "0.24",
+      "totalResults": "7",
+      "formattedTotalResults": "7"
+    },
+    "items": [
+      {
+        "kind": "customsearch#result",
+        "title": "Jupyter Support in Fusion | Lucidworks Documentation",
+        "htmlTitle": "Jupyter Support in Fusion | Lucidworks Documentation",
+        "link": "https://doc.lucidworks.com/fusion/5.4/118/jupyter-support-in-fusion",
+        "displayLink": "doc.lucidworks.com",
+        "snippet": "The Jupyter pod does not have access to create or delete pods in a Kubernetes cluster, and therefore you cannot run jobs from Jupyter notebook in a ...",
+        "htmlSnippet": "The Jupyter pod does not have access to create or delete pods in a Kubernetes cluster, and therefore you cannot run jobs from Jupyter \u003cb\u003enotebook\u003c/b\u003e in a&nbsp;...",
+        "cacheId": "gHCXu7VncKIJ",
+        "formattedUrl": "https://doc.lucidworks.com/fusion/5.4/118/jupyter-support-in-fusion",
+        "htmlFormattedUrl": "https://doc.lucidworks.com/fusion/5.4/118/jupyter-support-in-fusion",
+        "pagemap": {
+          "metatags": [
+            {
+              "theme-color": "#ED3088",
+              "og:type": "website",
+              "twitter:card": "summary_large_image",
+              "twitter:title": "Jupyter Support in Fusion",
+              "twitter:url": "https://doc.lucidworks.com",
+              "og:title": "Jupyter Support in Fusion",
+              "productversion": "5.4",
+              "og:description": "Jupyter is an open-source web application that allows you to create and share documents that contain live code, equations, visualizations, and narrative text.",
+              "doctype": "reference",
+              "viewport": "width=device-width, initial-scale=1, shrink-to-fit=no",
+              "twitter:description": "Jupyter is an open-source web application that allows you to create and share documents that contain live code, equations, visualizations, and narrative text.",
+              "productname": "fusion",
+              "og:url": "https://doc.lucidworks.com/fusion/5.4/118",
+              "permalink": "118"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "Solr JDBC - Apache Zeppelin | Apache Solr Reference Guide 6.6",
+        "htmlTitle": "Solr JDBC - Apache Zeppelin | Apache Solr Reference Guide 6.6",
+        "link": "https://solr.apache.org/guide/6_6/solr-jdbc-apache-zeppelin.html",
+        "displayLink": "solr.apache.org",
+        "snippet": "Create the Apache Solr JDBC Interpreter; Create a Notebook; Query with the Notebook. The Solr JDBC driver can support Apache Zeppelin.",
+        "htmlSnippet": "Create the Apache Solr JDBC Interpreter; Create a \u003cb\u003eNotebook\u003c/b\u003e; Query with the \u003cb\u003eNotebook\u003c/b\u003e. The Solr JDBC driver can support Apache Zeppelin.",
+        "cacheId": "Y6hCReH7UzwJ",
+        "formattedUrl": "https://solr.apache.org/guide/6_6/solr-jdbc-apache-zeppelin.html",
+        "htmlFormattedUrl": "https://solr.apache.org/guide/6_6/solr-jdbc-apache-zeppelin.html",
+        "pagemap": {
+          "cse_thumbnail": [
+            {
+              "src": "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQBRb6p2Cw7c_GxQf0uk0eNl5-kAlRwQerdkV0-fBr3K87O9WSyxDDt-oGc",
+              "width": "242",
+              "height": "208"
+            }
+          ],
+          "metatags": [
+            {
+              "viewport": "width=device-width, initial-scale=1"
+            }
+          ],
+          "cse_image": [
+            {
+              "src": "https://solr.apache.org/guide/6_6/images/solr-jdbc-apache-zeppelin/zeppelin_solrjdbc_3.png"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "JDBC with Apache Zeppelin :: Apache Solr Reference Guide",
+        "htmlTitle": "JDBC with Apache Zeppelin :: Apache Solr Reference Guide",
+        "link": "https://solr.apache.org/guide/solr/latest/query-guide/jdbc-zeppelin.html",
+        "displayLink": "solr.apache.org",
+        "snippet": "Create the Apache Solr JDBC Interpreter; Create a Notebook; JDBC Interpreter Copy Sheet; Query with the Notebook. The Solr JDBC driver can support Apache ...",
+        "htmlSnippet": "Create the Apache Solr JDBC Interpreter; Create a \u003cb\u003eNotebook\u003c/b\u003e; JDBC Interpreter Copy Sheet; Query with the \u003cb\u003eNotebook\u003c/b\u003e. The Solr JDBC driver can support Apache&nbsp;...",
+        "cacheId": "aW6B9PVjAtoJ",
+        "formattedUrl": "https://solr.apache.org/guide/solr/latest/query-guide/jdbc-zeppelin.html",
+        "htmlFormattedUrl": "https://solr.apache.org/guide/solr/latest/query-guide/jdbc-zeppelin.html",
+        "pagemap": {
+          "cse_thumbnail": [
+            {
+              "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCArEuwdGP2bYm4Ruq4kV_fqRc8QXrae7ypSlAfqkZy_t2Kua3oShDymY",
+              "width": "348",
+              "height": "145"
+            }
+          ],
+          "metatags": [
+            {
+              "viewport": "width=device-width,initial-scale=1"
+            }
+          ],
+          "cse_image": [
+            {
+              "src": "https://solr.apache.org/guide/solr/latest/query-guide/_images/jdbc-zeppelin/zeppelin_solrjdbc_1.png"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "Lucid Thoughts Christmas Day Marathon! - Lucidworks",
+        "htmlTitle": "Lucid Thoughts Christmas Day Marathon! - Lucidworks",
+        "link": "https://lucidworks.com/post/machine-learning-explainer-videos/",
+        "displayLink": "lucidworks.com",
+        "snippet": "And yeah of course we're going to recommend our AI explainer video series, Lucid Thoughts! So bundle up with your laptop and your headphones, and let's have ...",
+        "htmlSnippet": "And yeah of course we&#39;re going to recommend our AI explainer video series, Lucid Thoughts! So bundle up with your \u003cb\u003elaptop\u003c/b\u003e and your headphones, and let&#39;s have&nbsp;...",
+        "cacheId": "jloO-t7DaYgJ",
+        "formattedUrl": "https://lucidworks.com/post/machine-learning-explainer-videos/",
+        "htmlFormattedUrl": "https://lucidworks.com/post/machine-learning-explainer-videos/",
+        "pagemap": {
+          "cse_thumbnail": [
+            {
+              "src": "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRpKIE-hnoIKk3Odgr7rPXgjvFz9VnEss6KDnBSTAJJE6eXcJiy-HxasgQy",
+              "width": "300",
+              "height": "168"
+            }
+          ],
+          "metatags": [
+            {
+              "og:image": "https://lucidworks.com/wp-content/uploads/2019/09/what-is-learning-to-rank.png",
+              "article:published_time": "2020-12-14T16:30:31+00:00",
+              "og:image:width": "1600",
+              "twitter:card": "summary_large_image",
+              "og:site_name": "Lucidworks",
+              "twitter:label1": "Written by",
+              "twitter:label2": "Est. reading time",
+              "og:image:type": "image/png",
+              "msapplication-tileimage": "https://lucidworks.com/wp-content/uploads/2021/09/cropped-favicon-512x512-1-1-270x270.png",
+              "og:description": "Exhausted from the holidays and need a break? We've got a dozen short explainer videos about AI, ML, and deep learning, ready to inform and soothe.",
+              "twitter:creator": "@lucidworks",
+              "article:publisher": "https://www.facebook.com/lucidworks",
+              "twitter:data1": "Andy Wibbels",
+              "twitter:data2": "2 minutes",
+              "twitter:site": "@lucidworks",
+              "article:modified_time": "2022-04-19T21:49:10+00:00",
+              "solution": "CXC",
+              "og:type": "article",
+              "author": "Andy Wibbels",
+              "og:title": "Lucid Thoughts Christmas Day Marathon!",
+              "og:image:height": "900",
+              "facebook-domain-verification": "esav5ou27cmvvnvyszx3shqqcia4q1",
+              "viewport": "width=device-width, initial-scale=1.0",
+              "og:locale": "en_US",
+              "og:url": "https://lucidworks.com/post/machine-learning-explainer-videos/"
+            }
+          ],
+          "cse_image": [
+            {
+              "src": "https://lucidworks.com/wp-content/uploads/2019/09/what-is-learning-to-rank.png"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "Take Your Content Health Evaluation Several Notches Higher with ...",
+        "htmlTitle": "Take Your Content Health Evaluation Several Notches Higher with ...",
+        "link": "https://www.searchunify.com/sudo-technical-blogs/take-your-content-health-evaluation-several-notches-higher-with-machine-learning/",
+        "displayLink": "www.searchunify.com",
+        "snippet": "Jan 23, 2023 ... Electronic and Laptop are two tags in the article. Then the algorithm will check whether these tags are present in the description or not.",
+        "htmlSnippet": "Jan 23, 2023 \u003cb\u003e...\u003c/b\u003e Electronic and \u003cb\u003eLaptop\u003c/b\u003e are two tags in the article. Then the algorithm will check whether these tags are present in the description or not.",
+        "cacheId": "7VLuv8vUHUYJ",
+        "formattedUrl": "https://www.searchunify.com/.../take-your-content-health-evaluation-several- notches-higher-with-machine-learning/",
+        "htmlFormattedUrl": "https://www.searchunify.com/.../take-your-content-health-evaluation-several- notches-higher-with-machine-learning/",
+        "pagemap": {
+          "cse_thumbnail": [
+            {
+              "src": "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSTgLqFCNhtEzjrtITQE5G2Gk3pif22kW34TczdirDlWwuQDxxqhPJVEHc",
+              "width": "318",
+              "height": "159"
+            }
+          ],
+          "metatags": [
+            {
+              "og:image": "https://www.searchunify.com/wp-content/uploads/2023/01/take-your-content-health-evaluation-several-notches-higher-with-machine-learning-1-1024x512.jpg",
+              "og:type": "article",
+              "article:published_time": "2023-01-23T13:30:14Z",
+              "twitter:card": "summary",
+              "twitter:title": "Take Your Content Health Evaluation Several Notches Higher with Machine Learning",
+              "og:site_name": "Enterprise Search and Analytics",
+              "og:title": "Take Your Content Health Evaluation Several Notches Higher with Machine Learning",
+              "msapplication-tileimage": "https://www.searchunify.com/wp-content/uploads/2018/12/cropped-su-android-chrome-512x512-288x288.png",
+              "og:description": "Content Standard Checklist can help you decipher the broader picture of your article. Discover more about it and the best automation tool to skyrocket your efforts!",
+              "og:image:secure_url": "https://www.searchunify.com/wp-content/uploads/2023/01/take-your-content-health-evaluation-several-notches-higher-with-machine-learning-1-1024x512.jpg",
+              "twitter:image": "https://www.searchunify.com/wp-content/uploads/2023/01/take-your-content-health-evaluation-several-notches-higher-with-machine-learning-1-1024x512.jpg",
+              "article:modified_time": "2023-04-03T09:16:35Z",
+              "viewport": "width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=2,user-scalable=yes",
+              "twitter:description": "Content Standard Checklist can help you decipher the broader picture of your article. Discover more about it and the best automation tool to skyrocket your efforts!",
+              "og:url": "https://www.searchunify.com/sudo-technical-blogs/take-your-content-health-evaluation-several-notches-higher-with-machine-learning/"
+            }
+          ],
+          "cse_image": [
+            {
+              "src": "https://www.searchunify.com/wp-content/uploads/2023/01/take-your-content-health-evaluation-several-notches-higher-with-machine-learning-1-1024x512.jpg"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "Enterprise Search Engine - Amazon Kendra - AWS",
+        "htmlTitle": "Enterprise Search Engine - Amazon Kendra - AWS",
+        "link": "https://aws.amazon.com/kendra/",
+        "displayLink": "aws.amazon.com",
+        "snippet": "Use natural language processing (NLP) to get highly accurate answers without the need for machine learning (ML) expertise. Fine-tune your search results based ...",
+        "htmlSnippet": "Use natural language processing (NLP) to get highly accurate answers without the need for machine learning (ML) expertise. Fine-tune your search results based&nbsp;...",
+        "cacheId": "aTYiOXNP-mIJ",
+        "formattedUrl": "https://aws.amazon.com/kendra/",
+        "htmlFormattedUrl": "https://aws.amazon.com/kendra/",
+        "pagemap": {
+          "cse_thumbnail": [
+            {
+              "src": "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSp5HPWn8V5ECfH7SCra5frHu0UHU6E_WROkaw5fS7SUfstMRB1oAIiSew",
+              "width": "150",
+              "height": "79"
+            }
+          ],
+          "metatags": [
+            {
+              "og:image": "https://a0.awsstatic.com/libra-css/images/logos/aws_logo_smile_1200x630.png",
+              "twitter:card": "summary",
+              "twitter:title": "Enterprise Search Engine - Amazon Kendra - AWS",
+              "og:type": "company",
+              "og:site_name": "Amazon Web Services, Inc.",
+              "msvalidate.01": "6F92E52A288E266E30C2797ECB5FCCF3",
+              "og:title": "Enterprise Search Engine - Amazon Kendra - AWS",
+              "shenma-site-verification": "79b94bb338f010af876605819a332e19_1617844070",
+              "fb:pages": "153063591397681",
+              "twitter:image": "https://a0.awsstatic.com/libra-css/images/logos/aws_logo_smile_179x109.png",
+              "360-site-verification": "cbe5c6f0249e273e71fffd6d6580ce09",
+              "baidu-site-verification": "pjxJUyWxae",
+              "twitter:site": "@awscloud",
+              "viewport": "width=device-width, initial-scale=1.0",
+              "sogou_site_verification": "Ow8cCy3Hgq",
+              "twitter:description": "Amazon Kendra offers an intelligent enterprise search solution that increases employee productivity and improves customer satisfaction.",
+              "og:url": "https://aws.amazon.com/kendra/"
+            }
+          ],
+          "videoobject": [
+            {
+              "embedurl": "https://www.youtube.com/watch?v=Xj_d2eX4nTY",
+              "name": "What is Intelligent Search? (2:57)"
+            }
+          ],
+          "cse_image": [
+            {
+              "src": "https://a0.awsstatic.com/libra-css/images/logos/aws_logo_smile_1200x630.png"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "Sunsetting our Places feature - Algolia Blog | Algolia Blog",
+        "htmlTitle": "Sunsetting our Places feature - Algolia Blog | Algolia Blog",
+        "link": "https://www.algolia.com/blog/product/sunsetting-our-places-feature/",
+        "displayLink": "www.algolia.com",
+        "snippet": "Nov 29, 2020 ... Originally created in 2014, Algolia Places was a great alternative to Google Places Autocomplete and addressed a market demand for an ...",
+        "htmlSnippet": "Nov 29, 2020 \u003cb\u003e...\u003c/b\u003e Originally created in 2014, Algolia Places was a great alternative to Google Places Autocomplete and addressed a market demand for an&nbsp;...",
+        "cacheId": "k-294utLYswJ",
+        "formattedUrl": "https://www.algolia.com/blog/product/sunsetting-our-places-feature/",
+        "htmlFormattedUrl": "https://www.algolia.com/blog/product/sunsetting-our-places-feature/",
+        "pagemap": {
+          "cse_thumbnail": [
+            {
+              "src": "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSjl6aRo-pevXDoG5M3ERIs9rLBj5TJiYZlE_OFtXOlf5oR2VJOgUy66H9J",
+              "width": "301",
+              "height": "167"
+            }
+          ],
+          "metatags": [
+            {
+              "msapplication-tilecolor": "#00a300",
+              "og:image": "https://res.cloudinary.com/hilnmyskv/image/upload/q_auto,f_auto/v1669660138/Algolia_com_Blog_assets/Featured_images/product/sunsetting-our-places-feature/faxhja2myq54fvfzzzmv.png",
+              "next-head-count": "43",
+              "og:type": "article",
+              "twitter:card": "summary_large_image",
+              "theme-color": "#23263B",
+              "og:site_name": "Algolia Blog",
+              "twitter:site": "@algolia",
+              "viewport": "width=device-width",
+              "og:title": "Sunsetting our Places feature - Algolia Blog",
+              "og:url": "https://algolia.com/blog/product/sunsetting-our-places-feature/",
+              "og:description": "After careful consideration, we have decided to sunset our Places feature. Our customers can continue to use Places without disruption until May 2022."
+            }
+          ],
+          "cse_image": [
+            {
+              "src": "https://res.cloudinary.com/hilnmyskv/image/upload/q_auto,f_auto/v1669660138/Algolia_com_Blog_assets/Featured_images/product/sunsetting-our-places-feature/faxhja2myq54fvfzzzmv.png"
+            }
+          ]
+        }
+      }
+    ]
+  }
