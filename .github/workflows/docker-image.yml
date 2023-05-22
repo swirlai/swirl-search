@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   push:
     # only trigger on branches, not on tags
-    branches: 'main'
+    branches: 'develop'
 
 
 jobs:
@@ -20,8 +20,6 @@ jobs:
     - uses: actions/checkout@v3
     - name: login to docker hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-    - name: pull latest UI image
-      run: docker pull swirlai/spyglass:latest
     - name: builder bootstrap
       run: docker buildx create --name devBuilder --use --bootstrap
     - name: Build the Docker image
