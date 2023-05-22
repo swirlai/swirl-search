@@ -6,13 +6,11 @@
 from django.conf import settings
 
 from swirl.processors.processor import *
-from swirl.processors.utils import clean_string, create_result_dictionary
-from swirl.connectors.utils import get_mappings_dict
 
 import openai
-  
-#############################################    
-#############################################    
+
+#############################################
+#############################################
 
 def clean_reply(message):
     # to do: leave the quotes
@@ -34,7 +32,7 @@ class ChatGPTQueryProcessor(QueryProcessor):
         return str(self.prompt)
 
     def process(self):
-        
+
         if getattr(settings, 'OPENAI_API_KEY', None):
             openai.api_key = settings.OPENAI_API_KEY
         else:
@@ -95,7 +93,7 @@ class ChatGPTQueryProcessor(QueryProcessor):
         self.warning(f"{self}: ChatGPT response didn't parse clean: {message}")
         return self.query_string
 
-#############################################    
+#############################################
 
 # TO DO: rewrite these using the setter
 
@@ -107,7 +105,7 @@ class ChatGPTQueryImproverProcessor(ChatGPTQueryProcessor):
         self.prompt = "Improve this search query max 5 words: {query_string}"
         return super().process()
 
-#############################################    
+#############################################
 
 class ChatGPTQueryMakeQuestionProcessor(ChatGPTQueryProcessor):
 
@@ -126,7 +124,7 @@ class ChatGPTQueryMakeQuestionProcessor(ChatGPTQueryProcessor):
         self.prompt = "Rewrite this search query as a question: {query_string}"
         return super().process()
 
-#############################################    
+#############################################
 
 class ChatGPTQueryExpanderProcessor(ChatGPTQueryProcessor):
 
@@ -136,7 +134,7 @@ class ChatGPTQueryExpanderProcessor(ChatGPTQueryProcessor):
         self.prompt = "What are the top 5 search terms related to: {query_string}"
         return super().process()
 
-#############################################    
+#############################################
 
 class ChatGPTQueryBooleanProcessor(ChatGPTQueryProcessor):
 

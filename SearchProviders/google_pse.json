@@ -14,7 +14,7 @@
             "MappingResultProcessor"
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
-        "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
+        "result_mappings": "url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
         "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "tags": [
             "News",
@@ -36,7 +36,7 @@
             "MappingResultProcessor"
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
-        "result_mappings": "url=link,body=htmlSnippet,cacheid,NO_PAYLOAD",
+        "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['authors-name'],cacheId,pagemap.metatags[*].['articletype'],pagemap.metatags[*].['practice-name'],pagemap.metatags[*].['searchresults-tags'],pagemap.metatags[*].['site_name'],pagemap.metatags[*].['twitter:description'],NO_PAYLOAD",
         "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "tags": [
             "News",
@@ -58,7 +58,7 @@
             "MappingResultProcessor"
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
-        "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
+        "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['article:publisher'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['article:tag'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
         "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "tags": [
             "News",

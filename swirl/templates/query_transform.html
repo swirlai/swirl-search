@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Query Transform</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <table>
+      <tr>
+        <td width="300">{{ form.name.label_tag }}</td>
+        <td>{{ form.name }}</td>
+      </tr>
+      <tr>
+        <td>{{ form.content_type.label_tag }}</td>
+        <td>{{ form.content_type }}</td>
+      </tr>
+      <tr valign="top">
+        <td>{{ form.file.label_tag }}</td>
+        <td>{{ form.file }}<br/><button type="submit">Upload</button></td>
+      </tr>
+    </table>
+    
+  </form>
+{% endblock %}

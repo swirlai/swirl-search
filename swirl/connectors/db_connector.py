@@ -101,7 +101,7 @@ class DBConnector(Connector):
 
     ########################################
 
-    def validate_query(self):
+    def validate_query(self, session=None):
 
         logger.info(f"{self}: validate_query()")
 
