@@ -1,6 +1,6 @@
 {
     "name": "M365 Email",
-    "active": true,
+    "active": false,
     "default": true,
     "connector": "M365OutlookMessages",
     "url": "",

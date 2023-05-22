@@ -1,6 +1,6 @@
 {
     "name": "Microsoft Teams",
-    "active": true,
+    "active": false,
     "default": true,
     "connector": "MicrosoftTeams",
     "url": "",
