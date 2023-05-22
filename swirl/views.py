@@ -13,9 +13,10 @@ from django.contrib.auth.models import User, Group
 from django.http import Http404
 from django.conf import settings
 from django.db import Error
+from django.views.decorators.csrf import csrf_exempt
 
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.core.mail import send_mail
 from swirl.utils import paginate
 from django.conf import settings
@@ -25,6 +26,8 @@ from rest_framework.authentication import BasicAuthentication, SessionAuthentica
 from rest_framework import viewsets, status
 from rest_framework import permissions
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
 
 import csv
 import base64
@@ -60,6 +63,56 @@ SWIRL_RERUN_WAIT = getattr(settings, 'SWIRL_RERUN_WAIT', 8)
 SWIRL_RESCORE_WAIT = getattr(settings, 'SWIRL_RESCORE_WAIT', 5)
 SWIRL_SUBSCRIBE_WAIT = getattr(settings, 'SWIRL_SUBSCRIBE_WAIT', 20)
 SWIRL_Q_WAIT = getattr(settings, 'SWIRL_Q_WAIT', 7)
+
+
+def remove_duplicates(my_list):
+    new_list = []
+    seen = set()
+    for d in my_list:
+        key = (d['name'])
+        if key not in seen:
+            new_list.append(d)
+            seen.add(key)
+    return new_list
+
+
+def return_authenticators(request):
+    if not request.user.is_authenticated:
+        return redirect('/swirl/api-auth/login?next=/swirl/authenticators.html')
+    providers = SearchProvider.objects.filter(active=True, owner=request.user) | SearchProvider.objects.filter(active=True, shared=True)
+    results = list()
+    for provider in providers:
+        name = None
+        try:
+            name = SearchProvider.CONNECTORS_AUTHENTICATORS[provider.connector]
+            if not name:
+                continue
+        except:
+            continue
+        results.append({
+            'name': name
+        })
+    results = remove_duplicates(results)
+    return render(request, 'authenticators.html', {'authenticators': results})
+
+def return_authenticators_list(request):
+    if not request.user.is_authenticated:
+        return redirect('/swirl/api-auth/login?next=/swirl/authenticators.html')
+    providers = SearchProvider.objects.filter(active=True, owner=request.user) | SearchProvider.objects.filter(active=True, shared=True)
+    results = list()
+    for provider in providers:
+        name = None
+        try:
+            name = SearchProvider.CONNECTORS_AUTHENTICATORS[provider.connector]
+            if not name:
+                continue
+        except:
+            continue
+        results.append({
+            'name': name
+        })
+    results = remove_duplicates(results)
+    return Response(results, status=status.HTTP_200_OK)
 
 ########################################
 
@@ -210,37 +263,11 @@ def search(request):
 
 ########################################
 
+class AuthenticatorViewSet(viewsets.ModelViewSet):
+    def list(self, request):
+        return return_authenticators_list(request)
+
 def authenticators(request):
-
-    def remove_duplicates(my_list):
-        new_list = []
-        seen = set()
-        for d in my_list:
-            key = (d['name'])
-            if key not in seen:
-                new_list.append(d)
-                seen.add(key)
-        return new_list
-
-    def return_authenticators(request):
-        if not request.user.is_authenticated:
-            return redirect('/swirl/api-auth/login?next=/swirl/authenticators.html')
-        providers = SearchProvider.objects.filter(active=True, owner=request.user) | SearchProvider.objects.filter(active=True, shared=True)
-        results = list()
-        for provider in providers:
-            name = None
-            try:
-                name = SearchProvider.CONNECTORS_AUTHENTICATORS[provider.connector]
-                if not name:
-                    continue
-            except:
-                continue
-            results.append({
-                'name': name
-            })
-        results = remove_duplicates(results)
-        return render(request, 'authenticators.html', {'authenticators': results})
-
     if request.method == 'POST':
         authenticator = request.POST.get('authenticator_name')
         res = SWIRL_AUTHENTICATORS_DICT[authenticator]().update_token(request)
@@ -257,6 +284,27 @@ def error(request):
 
 ########################################
 ########################################
+
+class LoginView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key, 'user': user.username})
+        else:
+            return Response({'error': 'Invalid credentials'})
+        
+class LogoutView(APIView):
+    
+    @csrf_exempt
+    def post(self, request):
+        print('LOGOUT VIEW')
+        token = Token.objects.get(user=request.user)
+        if token:
+            token.delete()
+        return Response({'status': 'OK'})
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """

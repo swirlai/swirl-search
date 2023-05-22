@@ -86,10 +86,15 @@ mkdir $work_dir
 docker pull $image
 docker create --name $work_container $image
 docker cp "$work_container:/usr/src/spyglass/ui/dist/spyglass/browser/." $work_dir
+docker cp "$work_container:/usr/src/spyglass/ui/config-swirl-demo.db.json" $work_dir
 docker rm -f $work_container
 rm -rf $target_dir/spyglass
 mkdir $target_dir/spyglass
 cp -r $work_dir/* $target_dir/spyglass
+jq '.default' $work_dir/config-swirl-demo.db.json | sed -e "s/<msal-app-id>/$MSAL_APP_ID/" \
+-e "s/<msal-tenant-id>/$MSAL_TENANT_ID/" \
+-e "s/<msal-port>/$MSAL_CB_PORT/" \
+> $target_dir/api/config/default
 
 rm -rf $work_dir
 echo $PROG : "Completed normally"

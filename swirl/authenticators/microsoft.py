@@ -101,10 +101,8 @@ class Microsoft(Authenticator):
         if session_data:
             result = app.acquire_token_by_refresh_token(session_data[self.refresh_token_field], scopes=scopes)
             if 'access_token' in result:
-                print(result['access_token'])
                 now = datetime.now()
                 self.set_session_data(request, result['access_token'], result['refresh_token'], int(now.timestamp()) + result['expires_in'])
                 request.session.save()
                 return True
-        print('redirect')
         return self.login(request)

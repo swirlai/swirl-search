@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'celery',
     'django_celery_beat',
     'rest_framework_swagger',
+    'rest_framework.authtoken',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -63,6 +64,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'swirl.middleware.TokenMiddleware',
+    'swirl.middleware.SpyglassAuthenticatorsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -254,3 +257,5 @@ if 'OPENAI_API_KEY' in env:
 MICROSOFT_CLIENT_ID= env('MICROSOFT_CLIENT_ID')
 MICROSOFT_CLIENT_SECRET = env('MICROSOFT_CLIENT_SECRET')
 MICROSOFT_REDIRECT_URI = env('MICROSOFT_REDIRECT_URI')
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:4200']
