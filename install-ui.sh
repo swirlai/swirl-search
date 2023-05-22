@@ -18,7 +18,7 @@ while [[ "$#" -gt 0 ]]; do
         -h|--help) print_help=true ;;
         -p|--preview) preview_image=true ;;
         -x|--x-fork) experimental_image=true ;;
-	-d|--directory) shift; source_dir=$1 ;;
+	    -d|--directory) shift; source_dir=$1 ;;
         *) echo "Unknown parameter passed: $1"; exit 1 ;;
     esac
     shift
@@ -67,7 +67,7 @@ fi
 # Clean up on errors
 cleanup() {
     rm -rf $work_dir
-    docker rm -f $work_container    
+    docker rm -f $work_container
 }
 trap 'cleanup' ERR
 
