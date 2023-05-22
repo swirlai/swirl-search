@@ -94,6 +94,7 @@ cp -r $work_dir/* $target_dir/spyglass
 jq '.default' $work_dir/config-swirl-demo.db.json | sed -e "s/<msal-app-id>/$MSAL_APP_ID/" \
 -e "s/<msal-tenant-id>/$MSAL_TENANT_ID/" \
 -e "s/<msal-port>/$MSAL_CB_PORT/" \
+-e "s/<msal-host>/$MSAL_HOST/" \
 > $target_dir/api/config/default
 
 rm -rf $work_dir
