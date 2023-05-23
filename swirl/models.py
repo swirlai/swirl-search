@@ -35,6 +35,8 @@ class FlexibleChoiceField(models.CharField):
         if value not in dict(self.custom_choices):
             return super().validate(value, model_instance)
 
+class Authenticator(models.Model):
+    name = models.CharField(max_length=100)
 class SearchProvider(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=200)

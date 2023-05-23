@@ -36,7 +36,7 @@ import hmac
 
 from swirl.models import *
 from swirl.serializers import *
-from swirl.models import SearchProvider, Search, Result, QueryTransform
+from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel
 from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTrasnformNoCredentialsSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
@@ -263,7 +263,14 @@ def search(request):
 
 ########################################
 
+class AuthenticatorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AuthenticatorModel
+        fields = '__all__'  # Replace with the actual fields you want to include
+
 class AuthenticatorViewSet(viewsets.ModelViewSet):
+    serializer_class = AuthenticatorSerializer
+
     def list(self, request):
         return return_authenticators_list(request)
 
