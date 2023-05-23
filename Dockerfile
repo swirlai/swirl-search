@@ -8,7 +8,7 @@ RUN apt-get -y upgrade openssl
 RUN apt-get update
 RUN apt-get -y upgrade openssl
 
-RUN apt-get -y jq
+RUN apt-get -y install jq
 
 # RUN sudo echo 'nameserver 8.8.8.8'>/etc/resolv.conf
 RUN apt-get update -y
