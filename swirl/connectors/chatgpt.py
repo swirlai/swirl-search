@@ -33,7 +33,7 @@ class ChatGPT(Connector):
 
     type = "ChatGPT"
 
-    def execute_search(self):
+    def execute_search(self, session=None):
 
         logger.info(f"{self}: execute_search()")
         
@@ -75,7 +75,6 @@ class ChatGPT(Connector):
         )
 
         message = completions.choices[0].text
-        logger.info(f"{self}: ChatGPT response: {completions} -> {message}")
 
         self.found = 1
         self.retrieved = 1

@@ -1,32 +1,6 @@
 {
     "type": "swirl",
-    "resultType": "hybrid",
-    "resultColumns": [
-      {
-        "field": "searchprovider",
-        "label": "Provider",
-        "text_align": "left",
-        "width": 1
-      },
-      {
-        "field": "title",
-        "label": "Title",
-        "text_align": "left",
-        "width": 1
-      },
-      {
-        "field": "author",
-        "label": "Author",
-        "text_align": "left",
-        "width": 1
-      },
-      {
-        "field": "body",
-        "label": "Body",
-        "text_align": "left",
-        "width": 2
-      }
-    ],
+    "resultType": "card",
     "resultLayout": {
       "summary": [
         [
@@ -38,14 +12,6 @@
                   "title",
                   "swirl_rank",
                   "url"
-                ]
-              },
-              {
-                "type": "authorship",
-                "fields": [
-                  "searchprovider",
-                  "searchprovider_rank",
-                  "author"
                 ]
               },
               {
@@ -62,27 +28,21 @@
           [
             [
               {
-                "type": "string",
-                "label": "Published",
-                "format": "medium",
-                "fields": [
-                  "date_published"
-                ]
-              },
-              {
-                "type": "string",
-                "label": "Search Provider Rank",
-                "fields": [
-                  "searchprovider_rank"
-                ]
-              },
-              {
                 "type": "json",
                 "label": null,
                 "fields": [
                   "payload"
                 ],
                 "delimiter": ", "
+              },
+              {
+                "type": "authorship",
+                "fields": [
+                  "searchprovider",
+                  "author",
+                  "date_published",
+                  "url"
+                ]
               }
             ]
           ]
@@ -98,8 +58,7 @@
     "jsonFacet": {
       "Source": {
         "type": "terms",
-        "displayField": "Source",
-        "facetField": "searchprovider_rank"
+        "field": "Source"
       }
     },
     "defaultFilters": {
@@ -111,6 +70,12 @@
       "addImage": "assets/images/folder_into.png",
       "removeText": "Remove from Cart...",
       "removeImage": "assets/images/folder_out.png"
+    },
+    "msalConfig" :{
+      "auth": {
+        "clientId": "<client-id>",
+        "authority": "<authority-url>",
+        "redirectUri": "http://localhost:8000/spyglass/microsoft-callback"
+      }
     }
   }
-

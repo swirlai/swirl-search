@@ -12,7 +12,9 @@ from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
 from swirl.processors.processor import *
-from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format
+from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
+from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format, date_str_to_timestamp
+from swirl.swirl_common import RESULT_MAPPING_COMMANDS
 
 #############################################
 #############################################
@@ -57,11 +59,15 @@ class MappingResultProcessor(ResultProcessor):
 
         list_results = []
         provider_query_term_results = []
+        result_block = ""
 
         json_types = [str,int,float,list,dict]
         use_payload = True
+        file_system = False
         if 'NO_PAYLOAD' in self.provider.result_mappings:
             use_payload = False
+        if 'FILE_SYSTEM' in self.provider.result_mappings:
+            file_system = True
 
         result_number = 1
         for result in self.results:
@@ -76,9 +82,9 @@ class MappingResultProcessor(ResultProcessor):
                 mappings = self.provider.result_mappings.split(',')
                 for mapping in mappings:
                     stripped_mapping = mapping.strip()
-                    # control codez
-                    if stripped_mapping == 'NO_PAYLOAD':
-                        use_payload = False
+                    # control codez NO_PAYLOAD, FILE_SYSTEM
+                    if stripped_mapping in RESULT_MAPPING_COMMANDS:
+                        # ignore, values were set above
                         continue
                     # extract source_key=swirl_key
                     swirl_key = ""
@@ -91,8 +97,12 @@ class MappingResultProcessor(ResultProcessor):
                         source_key = stripped_mapping
                     # control codez
                     if swirl_key.isupper():
-                        # ignore for now
-                        continue
+                        # to do: check the result mappings list???
+                        if swirl_key == 'BLOCK':
+                            result_block = source_key
+                        else:
+                            # ignore for now
+                            continue
                     # check for field list |
                     source_field_list = []
                     if '|' in source_key:
@@ -117,11 +127,12 @@ class MappingResultProcessor(ResultProcessor):
                     result_dict = {}
                     # self.warning(f"template_list: {template_list}")
                     for k in template_list:
-                        jxp_key = f'$.{k[1:-1]}'
+                        uc = ResultMapUrlEncoder(f'$.{k[1:-1]}')
+                        jxp_key = uc.get_key()
                         try:
                             jxp = parse(jxp_key)
                             # search result for this
-                            matches = [match.value for match in jxp.find(result)]
+                            matches = [uc.get_value(match.value) for match in jxp.find(result)]
                         except JsonPathParserError as err:
                             self.error(f'JsonPathParser: {err} in jsonpath_ng.find: {jxp_key}')
                             return []
@@ -155,7 +166,7 @@ class MappingResultProcessor(ResultProcessor):
                                         if not type(result_dict[source_key]) in json_types:
                                             if 'date' in source_key.lower():
                                                 # parser.parse will fill-in a missing time portion etc
-                                                result_dict[source_key] = str(parser.parse(str(result_dict[source_key])))
+                                                result_dict[source_key] = date_str_to_timestamp(result_dict[source_key])
                                             else:
                                                 result_dict[source_key] = str(result_dict[source_key])
                                             # end if
@@ -164,9 +175,9 @@ class MappingResultProcessor(ResultProcessor):
                                             # same type, copy it
                                             if 'date' in swirl_key.lower():
                                                 if swirl_result[swirl_key] == "":
-                                                    swirl_result[swirl_key] = str(parser.parse(result_dict[source_key]))
+                                                    swirl_result[swirl_key] = date_str_to_timestamp(result_dict[source_key])
                                                 else:
-                                                    payload[swirl_key+"_"+source_key] = str(parser.parse(result_dict[source_key]))
+                                                    payload[swirl_key+"_"+source_key] = date_str_to_timestamp(result_dict[source_key])
                                                 # end if
                                             else:
                                                 if not swirl_result[swirl_key]:
@@ -182,7 +193,12 @@ class MappingResultProcessor(ResultProcessor):
                                             if 'date' in swirl_key.lower():
                                                 if swirl_result[swirl_key] == "":
                                                     if type(result_dict[source_key]) == int:
-                                                        swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]/1000))
+                                                        # check for int vs long fix for DS-320
+                                                        if result_dict[source_key] > 2147483647:
+                                                            swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]/1000))
+                                                        else:
+                                                            swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]))
+                                                        # end if
                                                     if type(result_dict[source_key]) == float:
                                                         swirl_result[swirl_key] = str(datetime.fromtimestamp(result_dict[source_key]))
                                                 # end if
@@ -248,6 +264,8 @@ class MappingResultProcessor(ResultProcessor):
             # final assembly
             if payload:
                 swirl_result['payload'] = payload
+            if result_block:
+                swirl_result['result_block'] = result_block
             # try to find a title, if none provided
             if swirl_result['title'] == "":
                 if swirl_result['url']:
@@ -256,12 +274,15 @@ class MappingResultProcessor(ResultProcessor):
                     swirl_result['title'] = swirl_result['author']
                 # end if
             # end if
+            # mark results from SearchProviders with result_mapping FILE_SYSTEM
+            if file_system:
+                swirl_result['_relevancy_model'] = 'FILE_SYSTEM'
             swirl_result['searchprovider'] = self.provider.name
             list_results.append(swirl_result)
             result_number = result_number + 1
             # stop if we have enough results
             if result_number > self.provider.results_per_query:
-                logger.warning("Truncating extra results, found & retrieved may be incorrect")
+                self.warning("Truncating extra results, found & retrieved may be incorrect")
                 break
             # unique list of terms from highligts
         # end for
