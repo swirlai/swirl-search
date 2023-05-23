@@ -75,13 +75,15 @@ Enter username `admin` and password `password`. Then click Login.
 
 ![Swirl Metasearch 2.0 Results](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_metasearch_results.png)
 
-:info: Swirl includes three (3) Google Programmable Search Engines (PSEs), complete with shared credentials, to get you up and running with right away. These credentials are shared with the SWIRL Community.
+:warning: The Docker version of SWIRL does *not* retain results or configuration when shut down!
 
-:info: Using Swirl with Microsoft 365 requires installation and approval by an authorized company administrator. For more information please review the [M365 Guide](https://github.com/swirlai/swirl-search/wiki/5.-M365-Guide) or [contact us](mailto:hello@swirl.today) for more information.
+:key: Swirl includes three (3) Google Programmable Search Engines (PSEs), complete with shared credentials, to get you up and running with right away. These credentials are shared with the SWIRL Community.
 
-:Warning: The Docker version of SWIRL does *not* retain results or configuration when shut down!
+:key: Using Swirl with Microsoft 365 requires installation and approval by an authorized company administrator. For more information please review the [M365 Guide](https://github.com/swirlai/swirl-search/wiki/5.-M365-Guide) or [contact us](mailto:hello@swirl.today) for more information.
 
-Learn more: [Quick Start Guide](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start)
+<br/>
+
+Learn more: [Quick Start](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start)
 
 <br/>
 
