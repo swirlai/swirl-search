@@ -2,11 +2,15 @@ version: '3'
  
 services:
   app:
-    image: swirlai/swirl-search:latest
+    image: swirlai/swirl-search:develop
     ports:
       - "8000:8000"
     command: >
-      sh -c "rm -fr ./.swirl && python swirl.py setup &&
+      sh -c 'rm -fr ./.swirl && python swirl.py setup &&
+             /usr/bin/jq ".default" ./config-swirl-demo.db.json | sed -e "s/<msal-app-id>/$MSAL_APP_ID/" \
+                 -e "s/<msal-tenant-id>/$MSAL_TENANT_ID/" \
+                 -e "s/<msal-port>/$MSAL_CB_PORT/" \
+                 -e "s/<msal-host>/$MSAL_HOST/" > static/api/config/default &&
              python swirl.py start rabbitmq celery-worker celery-beats &&
-             daphne -b 0.0.0.0 -p 8000 swirl_server.asgi:application"
+             daphne -b 0.0.0.0 -p 8000 swirl_server.asgi:application'
              
