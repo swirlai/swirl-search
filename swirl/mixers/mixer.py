@@ -209,6 +209,9 @@ class Mixer:
                     result['swirl_rank'] = block_count
                     block_dict[block_name] = [result]
                 # end if
+                if self.mix_wrapper['info'][result['searchprovider']]:
+                    del self.mix_wrapper['info'][result['searchprovider']]
+                # end if
             else:
                 result['swirl_rank'] = mixed_result_number
                 mixed_results.append(result)
