@@ -12,7 +12,31 @@ def getSearchProviderQueryProcessorsDefault():
 def getSearchProviderResultProcessorsDefault():
     return ["MappingResultProcessor"]
 
+class FlexibleChoiceField(models.CharField):
+    """
+    Allow choices and free text so we can have a user named and shared query transform
+    in a seacrh provider
+    """
+    def __init__(self, *args, **kwargs):
+        self.custom_choices = kwargs.pop("choices", [])
+        super().__init__(*args, **kwargs)
 
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        kwargs["choices"] = self.custom_choices
+        return name, path, args, kwargs
+
+    def to_python(self, value):
+        if value in dict(self.custom_choices):
+            return value
+        return super().to_python(value)
+
+    def validate(self, value, model_instance):
+        if value not in dict(self.custom_choices):
+            return super().validate(value, model_instance)
+
+class Authenticator(models.Model):
+    name = models.CharField(max_length=100)
 class SearchProvider(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=200)
@@ -22,6 +46,17 @@ class SearchProvider(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
     default = models.BooleanField(default=True)
+    AUTHENTICATOR_CHOICES = [
+        ('Microsoft', 'Microsoft Authentication')
+    ]
+    authenticator = models.CharField(max_length=200, default='', choices=AUTHENTICATOR_CHOICES)
+    CONNECTORS_AUTHENTICATORS = dict({
+        'M365OutlookMessages': 'Microsoft',
+        'M365OneDrive': 'Microsoft',
+        'M365OutlookCalendar': 'Microsoft',
+        'M365SharePointSites': 'Microsoft',
+        'MicrosoftTeams': 'Microsoft',
+    })
     CONNECTOR_CHOICES = [
         ('ChatGPT', 'ChatGPT Query String'),
         ('RequestsGet', 'HTTP/GET returning JSON'),
@@ -30,7 +65,12 @@ class SearchProvider(models.Model):
         # Uncomment the line below to enable PostgreSQL
         # ('PostgreSQL', 'PostgreSQL'),
         ('BigQuery', 'Google BigQuery'),
-        ('Sqlite3', 'Sqlite3')
+        ('Sqlite3', 'Sqlite3'),
+        ('M365OutlookMessages', 'M365 Outlook Messages'),
+        ('M365OneDrive', 'M365 One Drive'),
+        ('M365OutlookCalendar', 'M365 Outlook Calendar'),
+        ('M365SharePointSites', 'M365 SharePoint Sites'),
+        ('MicrosoftTeams', 'Microsoft Teams'),
     ]
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
@@ -41,7 +81,6 @@ class SearchProvider(models.Model):
         ('AdaptiveQueryProcessor', 'AdaptiveQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]
-    query_processor = models.CharField(max_length=200, default='', choices=QUERY_PROCESSOR_CHOICES, blank=True)
     query_processors = models.JSONField(default=getSearchProviderQueryProcessorsDefault, blank=True)
     query_mappings = models.CharField(max_length=2048, default=str, blank=True)
     RESULT_PROCESSOR_CHOICES = [
@@ -51,10 +90,10 @@ class SearchProvider(models.Model):
         ('MappingResultProcessor', 'MappingResultProcessor')
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
-    result_processor = models.CharField(max_length=200, default='', choices=RESULT_PROCESSOR_CHOICES, blank=True)
     result_processors = models.JSONField(default=getSearchProviderResultProcessorsDefault, blank=True)
     result_mappings = models.CharField(max_length=2048, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
+    eval_credentials = models.CharField(max_length=100, default=str, blank=True)
     credentials = models.CharField(max_length=512, default=str, blank=True)
     tags = models.JSONField(default=list)
 
@@ -100,14 +139,12 @@ class Search(models.Model):
         ('TestQueryProcessor', 'TestQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
     ]
-    pre_query_processor = models.CharField(max_length=200, default='', blank=True, choices=PRE_QUERY_PROCESSOR_CHOICES)
     pre_query_processors = models.JSONField(default=getSearchPreQueryProcessorsDefault, blank=True)
     POST_RESULT_PROCESSOR_CHOICES = [
         ('CosineRelevancyPostResultProcessor', 'CosineRelevancyPostResultProcessor (w/spaCy)'),
         ('DedupeByFieldPostResultProcessor', 'DedupeByFieldPostResultProcessor'),
         ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor')
     ]
-    post_result_processor = models.CharField(max_length=200, default='', blank=True, choices=POST_RESULT_PROCESSOR_CHOICES)
     post_result_processors = models.JSONField(default=getSearchPostResultProcessorsDefault, blank=True)
     result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)
     new_result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=RelevancyNewItemsMixer', blank=True)
@@ -175,3 +212,22 @@ class Result(models.Model):
     def __str__(self):
         signature = str(self.id) + ':' + str(self.search_id) + ':' + str(self.searchprovider)
         return signature
+
+class QueryTransform(models.Model) :
+    id = models.BigAutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    shared = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+    QUERY_TRASNSFORM_TYPE_CHOICES = [
+        ('rewrite', 'Rewrite'),
+        ('synonym', 'Synonym' ),
+        ('bag', 'Synonym Bag' )
+    ]
+    qrx_type =  models.CharField(max_length=64, default='', choices=QUERY_TRASNSFORM_TYPE_CHOICES)
+    config_content = models.TextField()
+    class Meta:
+        unique_together = [
+            ('name', 'qrx_type'),
+        ]

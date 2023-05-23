@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'celery',
     'django_celery_beat',
     'rest_framework_swagger',
+    'rest_framework.authtoken',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -63,6 +64,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'swirl.middleware.TokenMiddleware',
+    'swirl.middleware.SpyglassAuthenticatorsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -177,6 +180,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_RESULT_BACKEND='rpc://'
+CELERY_TASK_ALWAYS_EAGER = False
 
 CELERY_WORKER_CANCEL_LONG_RUNNING_TASKS_ON_CONNECTION_LOSS = False
 
@@ -236,13 +240,22 @@ SWIRL_RELEVANCY_CONFIG = {
 }
 
 SWIRL_MAX_MATCHES = 5
-SWIRL_MIN_SIMILARITY = 0.51
+SWIRL_MIN_SIMILARITY_DEFAULT = 0.51
+SWIRL_MIN_SIMILARITY = env.float('SWIRL_MIN_SIMILARITY', default=SWIRL_MIN_SIMILARITY_DEFAULT)
+
 SWIRL_HIGHLIGHT_START_CHAR = '<em>'
 SWIRL_HIGHLIGHT_END_CHAR = '</em>'
 
-SWIRL_SEARCH_FORM_URL = '/swirl/search.html'
-if 'SWIRL_SEARCH_FORM_URL' in env:
-    SWIRL_SEARCH_FORM_URL = env('SWIRL_SEARCH_FORM_URL')
+SWIRL_SEARCH_FORM_URL_DEF = '/swirl/search.html'
+SWIRL_SEARCH_FORM_URL = env('SWIRL_SEARCH_FORM_URL', default=SWIRL_SEARCH_FORM_URL_DEF)
+
+SWIRL_DEFAULT_RESULT_BLOCK = 'ai_summary'
 
 if 'OPENAI_API_KEY' in env:
     OPENAI_API_KEY = env('OPENAI_API_KEY')
+
+MICROSOFT_CLIENT_ID= env('MICROSOFT_CLIENT_ID')
+MICROSOFT_CLIENT_SECRET = env('MICROSOFT_CLIENT_SECRET')
+MICROSOFT_REDIRECT_URI = env('MICROSOFT_REDIRECT_URI')
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:4200']

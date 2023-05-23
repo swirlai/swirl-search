@@ -12,7 +12,7 @@ import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from celery.utils.log import get_task_logger
@@ -41,7 +41,7 @@ class OpenSearch(Connector):
         logger.debug(f"base_query: {base_query}")
 
         if '{query_string}' in self.provider.query_template:
-            base_query = base_query.replace('{query_string}', self.query_string_to_provider)        
+            base_query = base_query.replace('{query_string}', self.query_string_to_provider)
 
         query_to_provider = eval(base_query, {}, {})
         if type(query_to_provider) != dict:
@@ -60,16 +60,15 @@ class OpenSearch(Connector):
                 # to do: support ascending??? p2
                 query_to_provider['sort'] = [
                     {
-                        '{sort_field}': 'desc'
+                        f'{sort_field}': 'desc'
                     }
                 ]
-
         self.query_to_provider = query_to_provider
         return
 
     ########################################
 
-    def execute_search(self):     
+    def execute_search(self, session=None):
 
         logger.info(f"{self}: execute_search()")
 
@@ -90,7 +89,7 @@ class OpenSearch(Connector):
                 return
             username = credential_list[0][1:-1]
             password = credential_list[1][1:-1]
-            auth = (username, password) 
+            auth = (username, password)
             # ca_certs_path = '/full/path/to/root-ca.pem' # Provide a CA bundle if you use intermediate CAs with your root CA.
             # Optional client certificates if you don't want to use HTTP basic authentication.
             # client_cert_path = '/full/path/to/client.pem'
@@ -154,8 +153,8 @@ class OpenSearch(Connector):
             self.error(f"client.search reports SSL Error: {err}")
         except NotFoundError:
             self.error(f"client.search reports HTTP/404 (Not Found)")
-        except RequestError:
-            self.error(f"client.search reports Bad Request")
+        except RequestError as err:
+            self.error(f"client.search reports Bad Request {err}")
         except AuthenticationException:
             self.error(f"client.search reports HTTP/401 (Forbidden)")
         except AuthorizationException:
@@ -172,7 +171,7 @@ class OpenSearch(Connector):
     ########################################
 
     def normalize_response(self):
-        
+
         logger.info(f"{self}: normalize_response()")
 
         if len(self.response) == 0:
@@ -197,4 +196,3 @@ class OpenSearch(Connector):
         self.retrieved = retrieved
 
         return
-
