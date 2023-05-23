@@ -383,7 +383,7 @@
     },
     {
         "name": "M365 Email",
-        "active": true,
+        "active": false,
         "default": true,
         "connector": "M365OutlookMessages",
         "url": "",
@@ -409,7 +409,7 @@
     },
     {
         "name": "M365 OneDrive",
-        "active": true,
+        "active": false,
         "default": true,
         "connector": "M365OneDrive",
         "url": "",
@@ -461,7 +461,7 @@
     },
     {
         "name": "Microsoft Teams",
-        "active": true,
+        "active": false,
         "default": true,
         "connector": "MicrosoftTeams",
         "url": "",
