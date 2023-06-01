@@ -6,20 +6,34 @@
 from swirl.processors.processor import *
 from django.conf import settings
 from swirl.spacy import nlp
-  
-#############################################    
-#############################################    
+
+#############################################
+#############################################
 
 SWIRL_DEDUPE_FIELD = getattr(settings, 'SWIRL_DEDUPE_FIELD', 'url')
 SWIRL_DEDUPE_SIMILARITY_FIELDS = getattr(settings, 'SWIRL_DEDUPE_SIMILARITY_FIELDS', ['title', 'body'])
 SWIRL_DEDUPE_SIMILARITY_MINIMUM = getattr(settings, 'SWIRL_DEDUPE_SIMILARITY_MINIMUM', 0.95)
+
+class DedupeByFieldResultProcessor(ResultProcessor):
+
+    type="DedupeByFieldResultProcessor"
+
+    def process(self):
+        results = self.results = results
+        provider = self.provider = provider
+        ## nothing to do
+        if not provider.result_grouping_field:
+            self.processed_results = results
+            return results
+        for result in self.results:
+            
 
 class DedupeByFieldPostResultProcessor(PostResultProcessor):
 
     type="DedupeByFieldPostResultProcessor"
 
     def process(self):
-        
+
         dupes = 0
         dedupe_key_dict = {}
         for result in self.results:
@@ -52,14 +66,14 @@ class DedupeByFieldPostResultProcessor(PostResultProcessor):
         self.results_updated = dupes
         return self.results_updated
 
-#############################################    
+#############################################
 
 class DedupeBySimilarityPostResultProcessor(PostResultProcessor):
 
     type="DedupeBySimilarityPostResultProcessor"
 
     def process(self):
-        
+
         dupes = 0
         nlp_list = []
         for result in self.results:
@@ -71,7 +85,7 @@ class DedupeBySimilarityPostResultProcessor(PostResultProcessor):
                         if field:
                             content = content + ' ' + item[field].strip()
                         # end if
-                # end for                    
+                # end for
                 content = content.strip()
                 nlp_content = nlp(content)
                 dupe = False
@@ -97,6 +111,6 @@ class DedupeBySimilarityPostResultProcessor(PostResultProcessor):
             logger.info(f"{self}: result.save()")
             result.save()
         # end for
-        
+
         self.results_updated = dupes
         return self.results_updated
