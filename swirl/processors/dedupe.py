@@ -14,6 +14,33 @@ SWIRL_DEDUPE_FIELD = getattr(settings, 'SWIRL_DEDUPE_FIELD', 'url')
 SWIRL_DEDUPE_SIMILARITY_FIELDS = getattr(settings, 'SWIRL_DEDUPE_SIMILARITY_FIELDS', ['title', 'body'])
 SWIRL_DEDUPE_SIMILARITY_MINIMUM = getattr(settings, 'SWIRL_DEDUPE_SIMILARITY_MINIMUM', 0.95)
 
+
+def __dedup_results (results, dedupe_key_dict, deduped_item_list):
+    dupes = 0
+    for item in results:
+        if SWIRL_DEDUPE_FIELD in item:
+            if item[SWIRL_DEDUPE_FIELD]:
+                if item[SWIRL_DEDUPE_FIELD] in dedupe_key_dict:
+                    # dupe
+                    dupes = dupes + 1
+                    continue
+                else:
+                    # not dupe
+                    dedupe_key_dict[item[SWIRL_DEDUPE_FIELD]] = 1
+            else:
+                # dedupe key blank
+                # logger.info(f"{self}: Ignoring result {item}, {SWIRL_DEDUPE_FIELD} is blank")
+                pass
+        else:
+            # dedupe key missing
+            # self.warning(f"Ignoring result {item}, {SWIRL_DEDUPE_FIELD} is missing")
+            pass
+        # end if
+        deduped_item_list.append(item)
+    # end for
+    return dupes
+
+
 class DedupeByFieldResultProcessor(ResultProcessor):
 
     type="DedupeByFieldResultProcessor"
@@ -25,8 +52,7 @@ class DedupeByFieldResultProcessor(ResultProcessor):
         if not provider.result_grouping_field:
             self.processed_results = results
             return results
-        for result in self.results:
-            
+        return results
 
 class DedupeByFieldPostResultProcessor(PostResultProcessor):
 
