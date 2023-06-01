@@ -229,18 +229,18 @@ SWIRL_EXPLAIN = bool(env('SWIRL_EXPLAIN'))
 
 SWIRL_RELEVANCY_CONFIG = {
     'title': {
-        'weight': 3.0
+        'weight': 1.5
     },
     'body': {
         'weight': 1.0
     },
     'author': {
-        'weight': 2.0
+        'weight': 1.0
     }
 }
 
 SWIRL_MAX_MATCHES = 5
-SWIRL_MIN_SIMILARITY_DEFAULT = 0.51
+SWIRL_MIN_SIMILARITY_DEFAULT = 0.01
 SWIRL_MIN_SIMILARITY = env.float('SWIRL_MIN_SIMILARITY', default=SWIRL_MIN_SIMILARITY_DEFAULT)
 
 SWIRL_HIGHLIGHT_START_CHAR = '<em>'
