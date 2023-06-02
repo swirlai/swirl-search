@@ -48,5 +48,6 @@ class WriteToFileSystemPostResultProcessor(PostResultProcessor):
             json.dump(result_item_list, file)
 
         logger.info(f"{self.type}: wrote {len(result_item_list)} records to {target_filename}")
-
-        return len(result_item_list)
+        
+        # this processor does not modify anything
+        return 0

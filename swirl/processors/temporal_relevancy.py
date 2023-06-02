@@ -37,12 +37,12 @@ class TemporalRelevancyPostResultProcessor(PostResultProcessor):
                     if float(item['swirl_score']) <= settings.SWIRL_MIN_RELEVANCY_SCORE:
                         removed = removed + 1
                         continue
-                    # scan for date
                     if item['date_published'] != 'unknown':
                         date = datetime.strptime(item['date_published'], '%Y-%m-%d %H:%M:%S')
                         if settings.SWIRL_MAX_TEMPORAL_DISTANCE_UNITS == 'days':
                             if current_time - date <= timedelta(days=settings.SWIRL_MAX_TEMPORAL_DISTANCE):
                                 item['explain']['temporal_match'] = item['date_published']
+                                # self.warning('Alert the Doctor! Temporal Hit!')
                                 temporal_results.append(item)
                                 temporally_relevant = temporally_relevant + 1
                             else:
@@ -51,6 +51,7 @@ class TemporalRelevancyPostResultProcessor(PostResultProcessor):
                         if settings.SWIRL_MAX_TEMPORAL_DISTANCE_UNITS == 'hours':
                             if current_time - date <= timedelta(hours=settings.SWIRL_MAX_TEMPORAL_DISTANCE):
                                 item['explain']['temporal_match'] = item['date_published']
+                                # self.warning('Alert the Doctor! Temporal Hit!')
                                 temporal_results.append(item)
                                 temporally_relevant = temporally_relevant + 1
                             else:

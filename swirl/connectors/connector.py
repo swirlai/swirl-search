@@ -7,6 +7,7 @@
 from sys import path
 from os import environ
 import time
+import copy
 
 import django
 from django.db import Error
@@ -175,7 +176,7 @@ class Connector:
 
         query_temp = self.search.query_string_processed
         for processor in processor_list:
-            logger.info(f"{self}: invoking processor: query processor: {processor}")
+            logger.info(f"{self}: invoking query processor: {processor}")
             try:
                 processed_query = get_query_processor_or_transform(processor, query_temp, SWIRL_OBJECT_DICT, self.provider.query_mappings, self.provider.tags, self.search_user).process()
             except (NameError, TypeError, ValueError) as err:
@@ -271,6 +272,7 @@ class Connector:
 
         '''
         Process the json results through the specified result processor for the provider, updating processed_results
+        Each processor is expected to MODIFY self.results and RETURN the number of records modified
         '''
 
         logger.info(f"{self}: process_results()")
@@ -292,35 +294,32 @@ class Connector:
             self.status = 'READY'
             return
 
-        processed_results = None
-        result_temp = self.results
         for processor in processor_list:
-            logger.info(f"{self}: invoking processor: process results {processor}")
+            logger.info(f"{self}: invoking result processor: {processor}")
+            last_results = copy.deepcopy(self.results)
             try:
-                processed_results = eval(processor, {"processor": processor, "__builtins__": None},
-                                         SWIRL_OBJECT_DICT)(result_temp, self.provider,
-                                                            self.query_string_to_provider).process()
+                proc = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.results, self.provider, self.query_string_to_provider)
+                modified = proc.process()
+                self.results = proc.get_results()
                 ## Check if this processor generated feed back and if so, remember it.
                 ## TODO: make this additive for multiple processor. For now the mapping processor
                 ## is the only one that generates this.
-                if processed_results and 'result_processor_feedback' in processed_results[-1]:
-                    self.result_processor_json_feedback =  processed_results.pop(-1)
+                if self.results and 'result_processor_feedback' in self.results[-1]:
+                    self.result_processor_json_feedback =  self.results.pop(-1)
             except (NameError, TypeError, ValueError) as err:
                 self.error(f'{processor}: {err.args}, {err}')
                 return
-            if processed_results:
-                if processed_results != result_temp:
-                    updated = 0
-                    for index, item in enumerate(processed_results):
-                        if item != result_temp[index]:
-                            updated = updated + 1
-                    self.message(f"{processor} updated {updated} results")
-                result_temp = processed_results
+            if modified < 0:
+                if len(last_results) + modified != len(self.results):
+                    self.warning(f"{processor} reported {modified} modified results, but returned {len(self.results)}!!")
+                self.message(f"{processor} deleted {-1*modified} results from: {self.provider.name}")
             else:
-                self.error(f"{processor} returned no results, ignoring!")
-            # end if
+                if len(self.results) != len(last_results):
+                    self.warning(f"{processor} updated {modified} results but returned {len(self.results)}!!")
+                self.message(f"{processor} updated {modified} results from: {self.provider.name}")
+            del last_results
         # end for
-        self.processed_results = result_temp
+        self.processed_results = self.results
         self.status = 'READY'
 
         return

@@ -126,6 +126,7 @@ class ResultProcessor(Processor):
         self.results = results
         self.provider = provider
         self.query_string = query_string
+        self.modified = 0
         self.processed_results = None
 
     ########################################
@@ -153,11 +154,16 @@ class ResultProcessor(Processor):
 
         '''
         Executes the workflow for a result processor; TBD by derived classes
-        Returns: transformed self.results
+        Returns: # of results modified
         '''
 
-        return self.results
+        return self.modified
 
+    ########################################
+
+    def get_results(self):
+        return self.processed_results
+    
 ########################################
 ########################################
 
