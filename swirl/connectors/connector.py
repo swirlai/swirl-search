@@ -309,7 +309,12 @@ class Connector:
                 self.error(f'{processor}: {err.args}, {err}')
                 return
             if processed_results:
-                # to do: should we log this?
+                if processed_results != result_temp:
+                    updated = 0
+                    for index, item in enumerate(processed_results):
+                        if item != result_temp[index]:
+                            updated = updated + 1
+                    self.message(f"{processor} updated {updated} results")
                 result_temp = processed_results
             else:
                 self.error(f"{processor} returned no results, ignoring!")

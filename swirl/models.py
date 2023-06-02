@@ -10,7 +10,7 @@ def getSearchProviderQueryProcessorsDefault():
     return ["AdaptiveQueryProcessor"]
 
 def getSearchProviderResultProcessorsDefault():
-    return ["MappingResultProcessor"]
+    return ["MappingResultProcessor","DateFinderResultProcessor"]
 
 class FlexibleChoiceField(models.CharField):
     """
@@ -79,7 +79,7 @@ class SearchProvider(models.Model):
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('TestQueryProcessor', 'TestQueryProcessor'),
         ('AdaptiveQueryProcessor', 'AdaptiveQueryProcessor'),
-        ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
+        ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor')
     ]
     query_processors = models.JSONField(default=getSearchProviderQueryProcessorsDefault, blank=True)
     query_mappings = models.CharField(max_length=2048, default=str, blank=True)
@@ -87,7 +87,8 @@ class SearchProvider(models.Model):
         ('GenericResultProcessor', 'GenericResultProcessor'),
         ('DuplicateHalfResultProcessor', 'DuplicateHalfResultProcessor'),
         ('TestResultProcessor', 'TestResultProcessor'),
-        ('MappingResultProcessor', 'MappingResultProcessor')
+        ('MappingResultProcessor', 'MappingResultProcessor'),
+        ('DateFinderResultProcessor','DateFinderResultProcessor')
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
     result_processors = models.JSONField(default=getSearchProviderResultProcessorsDefault, blank=True)
@@ -137,13 +138,15 @@ class Search(models.Model):
         ('ChatGPTQueryMakeQuestionProcessor', 'ChatGPTQueryMakeQuestionProcessor'),
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('TestQueryProcessor', 'TestQueryProcessor'),
-        ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
+        ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor')
     ]
     pre_query_processors = models.JSONField(default=getSearchPreQueryProcessorsDefault, blank=True)
     POST_RESULT_PROCESSOR_CHOICES = [
-        ('CosineRelevancyPostResultProcessor', 'CosineRelevancyPostResultProcessor (w/spaCy)'),
+        ('CosineRelevancyPostResultProcessor', 'CosineRelevancyPostResultProcessor'),
         ('DedupeByFieldPostResultProcessor', 'DedupeByFieldPostResultProcessor'),
-        ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor')
+        ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor'),
+        ('WriteToFileSystemPostResultProcessor', 'WriteToFileSystemPostResultProcessor'),
+        ('TemporalRelevancyPostResultProcessor', 'TemporalRelevancyPostResultProcessor')
     ]
     post_result_processors = models.JSONField(default=getSearchPostResultProcessorsDefault, blank=True)
     result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)
