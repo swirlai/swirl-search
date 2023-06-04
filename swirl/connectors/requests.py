@@ -168,6 +168,12 @@ class Requests(Connector):
                             }
                             # response = requests.get(page_query, headers=headers)
                             response = self.send_request(page_query, headers=headers, query=self.query_string_to_provider)
+                        elif self.provider.credentials.startswith('X-Api-Key='):
+                            headers = {
+                                "X-Api-Key": f"{self.provider.credentials.split('X-Api-Key=')[1]}"
+                            }
+                            logger.info(f"{self}: sending request with auth header X-Api-Key")
+                            response = self.send_request(page_query, headers=headers, query=self.query_string_to_provider)
                             # all others
                         else:
                             # response = requests.get(page_query)
