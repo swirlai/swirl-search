@@ -32,14 +32,14 @@ curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.
 * From the console:
 
 ```
-docker compose up
+docker-compose pull && docker-compose up
 ```
 
 After a few minutes the following or similar should appear:
 
 ```
 ssdtest-app-1  | Command successful!
-ssdtest-app-1  | __S_W_I_R_L__2_._0______________________________________________________________
+ssdtest-app-1  | __S_W_I_R_L__2_._0_._1_________________________________________________________
 ssdtest-app-1  |
 ssdtest-app-1  | Warning: logs directory does not exist, creating it
 ssdtest-app-1  | Start: rabbitmq -> rabbitmq-server ... Ok, pid: 53
