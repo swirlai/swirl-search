@@ -1,5 +1,5 @@
 {
-    "name": "M365 Email via HTTP POST Endpoint",
+    "name": "TEST HTTP POST Endpoint",
     "active": true,
     "default": true,
     "connector": "RequestsPost",
