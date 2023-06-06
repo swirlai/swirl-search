@@ -6,12 +6,10 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -31,12 +29,10 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "cx=7d473806dcdde5bc6,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -56,12 +52,10 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -81,12 +75,10 @@
         "connector": "RequestsGet",
         "url": "https://nlresearch.com/results.php?datasource=BRECE&language=1&periodDate=-7&resultsPerPage=10&micpr=0&extended=1&output=json",
         "query_template": "{url}&login={login}&password={password}&textQuery={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "PAGE=startNumber=RESULT_INDEX,DATE_SORT=sort=2,RELEVANCY_SORT=sort=1,NOT=true,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -107,12 +99,10 @@
         "connector": "ChatGPT",
         "url": "",
         "query_template": "",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "PROMPT='Tell me about: {query_to_provider}'",
-        "result_processor": "",
         "result_processors": [
             "GenericResultProcessor"
         ],
@@ -132,12 +122,10 @@
         "connector": "RequestsGet",
         "url": "https://api.miro.com/v2/boards",
         "query_template": "{url}?query={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -156,12 +144,10 @@
         "connector": "BigQuery",
         "url": "",
         "query_template": "select {fields} from `{table}` where search({field1}, '{query_string}') or search({field2}, '{query_string}');",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "fields=*,sort_by_date=fundedDate,table=funding.funding,field1=company,field2=city",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -181,12 +167,10 @@
         "connector": "Sqlite3",
         "url": "db.sqlite3",
         "query_template": "select {fields} from {table} where {field1} like '%%{query_string}%%' or {field2} like '%%{query_string}%%';",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "fields=*,sort_by_date=fundeddate,table=funding,field1=city,field2=company",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -206,12 +190,10 @@
         "connector": "RequestsGet",
         "url": "http://localhost:8983/solr/{collection}/select?wt=json",
         "query_template": "{url}&q={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "collection=techproducts,PAGE=start=RESULT_ZERO_INDEX,NOT=True,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -232,12 +214,10 @@
         "connector": "OpenSearch",
         "url": "http://localhost:9200/",
         "query_template": "{'query': {'query_string': {'query': '{query_string}', 'default_field': '{default_field}', 'default_operator': 'and'}}}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "index_name=email,default_field=content,sort_by_date=date_published.keyword,NOT=true,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -258,12 +238,10 @@
         "connector": "Elastic",
         "url": "hosts='http://localhost:9200/'",
         "query_template": "index='{index_name}', query={'query_string': {'query': '{query_string}', 'default_field': '{default_field}'}}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "index_name=email,default_field=content,sort_by_date=date_published.keyword,NOT=true,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -284,12 +262,10 @@
         "connector": "RequestsGet",
         "url": "https://<your-domain>.youtrack.cloud/api/articles?fields=idReadable,reporter(fullName),summary,content,attachments(name),project(name),parentArticle(summary),childArticles(summary),created,updatedBy(fullName),comments(text)",
         "query_template": "{url}&query={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -310,12 +286,10 @@
         "connector": "RequestsGet",
         "url": "https://<your-domain>.youtrack.cloud/api/issues?fields=project(name),idReadable,tags(name),summary,description,reporter(fullName),created,votes,commentsCount,comments(text),updater(fullName)",
         "query_template": "{url}&query={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -335,12 +309,10 @@
         "connector": "RequestsGet",
         "url": "https://<your-domain>.atlassian.net/wiki/rest/api/content/search?expand=history,space,metadata.labels.results,children.attachment,children.page,children.comment,ancestors,body.view",
         "query_template": "{url}&cql=text~'{query_string}'",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -362,12 +334,10 @@
         "connector": "RequestsGet",
         "url": "https://<your-domain>.atlassian.net/rest/api/3/search?fields=*all",
         "query_template": "{url}&jql=text~'{query_string}'",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -388,12 +358,10 @@
         "connector": "M365OutlookMessages",
         "url": "",
         "query_template": "{url}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "NOT=true,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -414,12 +382,10 @@
         "connector": "M365OneDrive",
         "url": "",
         "query_template": "{url}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "NOT=true,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -440,12 +406,10 @@
         "connector": "M365SharePointSites",
         "url": "",
         "query_template": "{url}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "NOT=true,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -466,12 +430,10 @@
         "connector": "MicrosoftTeams",
         "url": "",
         "query_template": "{url}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "NOT=true,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],

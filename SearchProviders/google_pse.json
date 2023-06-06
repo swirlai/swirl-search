@@ -4,12 +4,10 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -26,12 +24,10 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "cx=7d473806dcdde5bc6,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -48,12 +44,10 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],

@@ -4,12 +4,10 @@
         "connector": "RequestsGet",
         "url": "https://newsdata.io/api/1/news?language=en&apikey={apikey}",
         "query_template": "{url}&q={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -25,12 +23,10 @@
         "connector": "RequestsGet",
         "url": "https://newsdata.io/api/1/archive?language=en&apikey={apikey}",
         "query_template": "{url}&q={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
