@@ -5,12 +5,10 @@
     "connector": "RequestsGet",
     "url": "https://<your-domain>.atlassian.net/wiki/rest/api/content/search?expand=history,space,metadata.labels.results,children.attachment,children.page,children.comment,ancestors,body.view",
     "query_template": "{url}&cql=text~'{query_string}'",
-    "query_processor": "",
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
     "query_mappings": "",
-    "result_processor": "",
     "result_processors": [
         "MappingResultProcessor"
     ],

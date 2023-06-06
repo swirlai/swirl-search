@@ -5,12 +5,10 @@
     "connector": "RequestsGet",
     "url": "https://<your-domain>.youtrack.cloud/api/articles?fields=idReadable,reporter(fullName),summary,content,attachments(name),project(name),parentArticle(summary),childArticles(summary),created,updatedBy(fullName),comments(text)",
     "query_template": "{url}&query={query_string}",
-    "query_processor": "",
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
     "query_mappings": "",
-    "result_processor": "",
     "result_processors": [
         "MappingResultProcessor"
     ],

@@ -5,12 +5,10 @@
     "connector": "RequestsGet",
     "url": "https://<your-domain>.youtrack.cloud/api/issues?fields=project(name),idReadable,tags(name),summary,description,reporter(fullName),created,votes,commentsCount,comments(text),subtasks(issues(idReadable)),customFields(name,value(name))",
     "query_template": "{url}&query={query_string}",
-    "query_processor": "",
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
     "query_mappings": "",
-    "result_processor": "",
     "result_processors": [
         "MappingResultProcessor"
     ],
