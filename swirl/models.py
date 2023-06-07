@@ -60,6 +60,7 @@ class SearchProvider(models.Model):
     CONNECTOR_CHOICES = [
         ('ChatGPT', 'ChatGPT Query String'),
         ('RequestsGet', 'HTTP/GET returning JSON'),
+        ('RequestsPost', 'HTTP/POST returning JSON'),
         ('Elastic', 'Elasticsearch Query String'),
         ('OpenSearch', 'OpenSearch Query String'),
         # Uncomment the line below to enable PostgreSQL

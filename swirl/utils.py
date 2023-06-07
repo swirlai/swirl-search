@@ -5,11 +5,19 @@
 
 import os
 import logging as logger
+import json
 from pathlib import Path
 from django.core.paginator import Paginator
 
 ##################################################
 ##################################################
+
+def is_valid_json(j):
+    try:
+        json.loads(j)
+    except ValueError:
+        return False
+    return True
 
 def swirl_setdir():
     # Get the current path and append it to the path
@@ -19,7 +27,7 @@ def swirl_setdir():
     slash = '\\'
     if '/' in this_file:
         slash = '/'
-    this_path = this_file[:this_file.rfind(slash)] 
+    this_path = this_file[:this_file.rfind(slash)]
     this_folder = this_path[this_path.rfind(slash)+1:]
     append_path = ""
     if this_folder == "swirl":
@@ -43,7 +51,7 @@ def is_int(value):
         return False
     except ValueError:
         return False
-    
+
 def paginate(data, request):
     page = request.GET.get('page')
     items = request.GET.get('items')

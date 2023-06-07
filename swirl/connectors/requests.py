@@ -11,7 +11,7 @@ import time
 
 import django
 
-from swirl.utils import swirl_setdir
+from swirl.utils import swirl_setdir, is_valid_json
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
@@ -55,6 +55,16 @@ class Requests(Connector):
 
     def construct_query(self):
 
+        """
+        Contstruct the query to provider is actually constructing a URL to the provider
+        As part of this it handles next page logic. This is approproaye for GET requests
+        but less necessary for a POST.
+
+        As such when the self.provider.query_template contains well formed JSON it is a
+        assumed that this IS the query string to provider and the and the url will be
+        the query to provider.
+        """
+
         logger.info(f"{self}: construct_query()")
 
         # to do: migrate this to Connector base class?
@@ -68,6 +78,15 @@ class Requests(Connector):
             query_to_provider = query_to_provider.replace('{query_string}', urllib.parse.quote_plus(self.query_string_to_provider))
         else:
             self.warning(f'{{query_string}} missing from query_to_provider: {query_to_provider}')
+
+        # Restating this because IT IS confusing. It is assumped that if the query template is valid
+        # jSON that it is being used as a POST body and in that case, all next page logic would be
+        # self contained in that body (although THAT is NOT handled here and should be handled in the POST
+        # implementation)
+        if is_valid_json(self.provider.query_template):
+            self.query_string_to_provider = query_to_provider
+            self.query_to_provider = self.provider.url
+            return
 
         if self.search.sort.lower() == 'date':
             # insert before the last parameter, which is expected to be the user query
