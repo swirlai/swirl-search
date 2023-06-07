@@ -50,5 +50,4 @@ class RequestsPost(Requests):
         })
         headers.update(kwargs.get("headers", {}))
         kwargs['headers'] = headers
-        ret = requests.post(url, params=params, json=query, **kwargs)
-        return ret
+        return requests.post(url, params=params, json=query, **kwargs)
