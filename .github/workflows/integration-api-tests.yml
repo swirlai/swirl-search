@@ -3,7 +3,7 @@ name: Ingegration API Tests
 on:
   push:
     # only trigger on branches, not on tags
-    branches: 'DS-493-post-request-support'
+    branches: 'develop'
 
 jobs:
 
