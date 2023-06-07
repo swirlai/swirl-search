@@ -39,7 +39,7 @@ After a few minutes the following or similar should appear:
 
 ```
 ssdtest-app-1  | Command successful!
-ssdtest-app-1  | __S_W_I_R_L__2_._0_._2________________________________________________________
+ssdtest-app-1  | __S_W_I_R_L__2_._0_._3________________________________________________________
 ssdtest-app-1  |
 ssdtest-app-1  | Warning: logs directory does not exist, creating it
 ssdtest-app-1  | Start: rabbitmq -> rabbitmq-server ... Ok, pid: 53
@@ -53,10 +53,10 @@ ssdtest-app-1  |   577 ?        00:00:11 celery
 ssdtest-app-1  |   609 ?        00:00:06 celery
 ssdtest-app-1  |
 ssdtest-app-1  | Command successful!
-ssdtest-app-1  | 2023-05-23 13:16:11,070 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
-ssdtest-app-1  | 2023-05-23 13:16:11,074 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
-ssdtest-app-1  | 2023-05-23 13:16:11,075 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
-ssdtest-app-1  | 2023-05-23 13:16:11,079 INFO     Listening on TCP address 0.0.0.0:8000
+ssdtest-app-1  | 2023-06-07 13:16:11,070 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
+ssdtest-app-1  | 2023-06-07 13:16:11,074 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+ssdtest-app-1  | 2023-06-07 13:16:11,075 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
+ssdtest-app-1  | 2023-06-07 13:16:11,079 INFO     Listening on TCP address 0.0.0.0:8000
 ```
 
 * Open this URL with a browser: http://localhost:8000/spyglass/

@@ -8,9 +8,11 @@ from os import environ
 
 import django
 
+import json
+
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 import requests
@@ -29,6 +31,15 @@ class RequestsPost(Requests):
     type = "RequestsPost"
 
     ########################################
+
+    def validate_query(self, session=None):
+        logger.info(f"{self}: https post request validate_query() returning true")
+        try:
+            json_object = json.loads(self.query_string_to_provider)
+        except ValueError as e:
+            logger.warning(f"{self}: https post request validate_query() failed JSON validation, passing anyways")
+            return True
+        return True
 
     def get_method(self):
         return 'post'
