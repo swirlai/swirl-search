@@ -1,21 +1,23 @@
 {
-    "name": "M365 Email",
-    "active": false,
+    "name": "HTTP POST Endpoint Example",
+    "active": true,
     "default": true,
-    "connector": "M365OutlookMessages",
-    "url": "",
-    "query_template": "{url}",
+    "connector": "RequestsPost",
+    "url": "Request URL: https://go.apis.huit.harvard.edu/ats/person/v3/search",
+    "query_template": "{ \"fields\": [\"title\", \"author\", \"body\"], \"conditions\": { \"text\": \"{query-string}\" } }",
+    "query_processor": "",
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
     "query_mappings": "NOT=true,NOT_CHAR=-",
+    "result_processor": "",
     "result_processors": [
         "MappingResultProcessor"
     ],
     "response_mappings": "",
     "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
     "results_per_query": 10,
-    "credentials": "",
+    "credentials": "X-Api-Key=<your-api-key>",
     "eval_credentials": "",
     "tags": [
         "Microsoft",
