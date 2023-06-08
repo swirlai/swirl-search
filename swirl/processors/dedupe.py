@@ -14,45 +14,51 @@ SWIRL_DEDUPE_FIELD = getattr(settings, 'SWIRL_DEDUPE_FIELD', 'url')
 SWIRL_DEDUPE_SIMILARITY_FIELDS = getattr(settings, 'SWIRL_DEDUPE_SIMILARITY_FIELDS', ['title', 'body'])
 SWIRL_DEDUPE_SIMILARITY_MINIMUM = getattr(settings, 'SWIRL_DEDUPE_SIMILARITY_MINIMUM', 0.95)
 
+def _get_field_value_top_level_or_payload (item, field):
+    """
+    try to get the field value in both the top level record and the payload sidecar.
+    """
+    ret = item.get(field, None)
+    if not ret and item.get('payload', None):
+        ret = item['payload'].get(field, None)
+    return ret
 
-def __dedup_results (results, dedupe_key_dict, deduped_item_list):
-    dupes = 0
+def _dedup_results (results, dedupe_key_dict, deduped_item_list, grouping_field):
+    n_dups = 0
     for item in results:
-        if SWIRL_DEDUPE_FIELD in item:
-            if item[SWIRL_DEDUPE_FIELD]:
-                if item[SWIRL_DEDUPE_FIELD] in dedupe_key_dict:
-                    # dupe
-                    dupes = dupes + 1
-                    continue
-                else:
-                    # not dupe
-                    dedupe_key_dict[item[SWIRL_DEDUPE_FIELD]] = 1
+        f_value = _get_field_value_top_level_or_payload(item, grouping_field)
+        if f_value:
+            if f_value in dedupe_key_dict:
+                n_dups = n_dups + 1
+                continue # skip item, it's a duplicate
             else:
-                # dedupe key blank
-                # logger.info(f"{self}: Ignoring result {item}, {SWIRL_DEDUPE_FIELD} is blank")
-                pass
+                dedupe_key_dict[f_value] = 1 ## add item, not a dup
         else:
-            # dedupe key missing
-            # self.warning(f"Ignoring result {item}, {SWIRL_DEDUPE_FIELD} is missing")
-            pass
+            pass # add item, not a dup
         # end if
         deduped_item_list.append(item)
     # end for
-    return dupes
-
+    return n_dups
 
 class DedupeByFieldResultProcessor(ResultProcessor):
 
     type="DedupeByFieldResultProcessor"
 
     def process(self):
-        results = self.results = results
-        provider = self.provider = provider
         ## nothing to do
-        if not provider.result_grouping_field:
+        if not self.provider.result_grouping_field:
             self.processed_results = results
             return results
-        return results
+
+        results = self.results
+        provider = self.provider
+
+        dedupe_key_dict = {}
+        deduped_item_list = []
+        dupes = 0
+        dupes = dupes + _dedup_results(results, dedupe_key_dict, deduped_item_list, self.provider.result_grouping_field)
+        logger.info(f'removed {dupes} using field {provider.result_grouping_field} from result with length : {len(results)}')
+        return deduped_item_list
 
 class DedupeByFieldPostResultProcessor(PostResultProcessor):
 
@@ -64,27 +70,7 @@ class DedupeByFieldPostResultProcessor(PostResultProcessor):
         dedupe_key_dict = {}
         for result in self.results:
             deduped_item_list = []
-            for item in result.json_results:
-                if SWIRL_DEDUPE_FIELD in item:
-                    if item[SWIRL_DEDUPE_FIELD]:
-                        if item[SWIRL_DEDUPE_FIELD] in dedupe_key_dict:
-                            # dupe
-                            dupes = dupes + 1
-                            continue
-                        else:
-                            # not dupe
-                            dedupe_key_dict[item[SWIRL_DEDUPE_FIELD]] = 1
-                    else:
-                        # dedupe key blank
-                        # logger.info(f"{self}: Ignoring result {item}, {SWIRL_DEDUPE_FIELD} is blank")
-                        pass
-                else:
-                    # dedupe key missing
-                    # self.warning(f"Ignoring result {item}, {SWIRL_DEDUPE_FIELD} is missing")
-                    pass
-                # end if
-                deduped_item_list.append(item)
-            # end for
+            dupes = dupes + _dedup_results(result.json_results, dedupe_key_dict, deduped_item_list, SWIRL_DEDUPE_FIELD)
             result.json_results = deduped_item_list
             result.save()
         # end for

@@ -1,4 +1,5 @@
 from django.test import RequestFactory, Client, TestCase
+import os
 from django.http import HttpResponseRedirect
 from django.db import Error
 import pytest
@@ -91,7 +92,7 @@ class MicrosoftAuthTestCase(TestCase):
         settings.CELERY_TASK_ALWAYS_EAGER = False
 
     def test_user_can_login_in_microsoft(self):
-        is_logged_in = self._client.login(username=self._test_suser.username, password=self._test_suser_pw)    
+        is_logged_in = self._client.login(username=self._test_suser.username, password=self._test_suser_pw)
 
         # Check if the login was successful
         assert is_logged_in, 'Client login failed'
@@ -138,7 +139,7 @@ class MicrosoftAPITestCase(TestCase):
 
     def _get_connector_name(self):
         return ''
-    
+
     def _get_provider_data(self):
         return {
             "name": self._get_connector_name(),
@@ -163,10 +164,10 @@ class MicrosoftAPITestCase(TestCase):
             "credentials": "",
             "eval_credentials": ""
         }
-    
+
     def _get_hits(self):
         return []
-    
+
     def _mock_response(self):
         return {
             'value': [
@@ -179,7 +180,7 @@ class MicrosoftAPITestCase(TestCase):
                 }
             ]
         }
-    
+
     def _create_provider(self):
         provider = self._get_provider_data()
         serializer = SearchProviderSerializer(data=provider)
@@ -187,7 +188,7 @@ class MicrosoftAPITestCase(TestCase):
         serializer.save(owner=self._test_suser)
         provider_id = serializer.data['id']
         return provider_id
-    
+
     def _create_search(self):
         provider_id = self._create_provider()
         try:
@@ -209,14 +210,14 @@ class MicrosoftAPITestCase(TestCase):
         if self._get_connector_name() == '':
             return
         responses.add(responses.POST, self._microsoft_api_url, body=json.dumps(self._mock_response()).encode('utf-8'), status=200)
-        self._run_search()
-    
+        result = self._run_search()
+
 
 class MicrosoftOutlookMessagesAPITestCase(MicrosoftAPITestCase):
 
     def _get_connector_name(self):
         return 'M365OutlookMessages'
-    
+
     def _get_hits(self):
         return [
             {
@@ -238,7 +239,7 @@ class MicrosoftOutlookCalendarAPITestCase(MicrosoftAPITestCase):
 
     def _get_connector_name(self):
         return 'M365OutlookCalendar'
-    
+
     def _get_hits(self):
         return [
             {
@@ -257,7 +258,7 @@ class MicrosoftOneDriveAPITestCase(MicrosoftAPITestCase):
 
     def _get_connector_name(self):
         return 'M365OneDrive'
-    
+
     def _get_hits(self):
         return [
             {
@@ -268,13 +269,13 @@ class MicrosoftOneDriveAPITestCase(MicrosoftAPITestCase):
                 }
             }
         ]
-        
+
 
 class MicrosoftSharePointAPITestCase(MicrosoftAPITestCase):
 
     def _get_connector_name(self):
         return 'M365SharePointSites'
-    
+
     def _get_hits(self):
         return [
             {
@@ -292,7 +293,7 @@ class MicrosoftTeamsAPITestCase(MicrosoftAPITestCase):
 
     def _get_connector_name(self):
         return 'MicrosoftTeams'
-    
+
     def _get_hits(self):
         return [
             {
@@ -309,3 +310,48 @@ class MicrosoftTeamsAPITestCase(MicrosoftAPITestCase):
                 }
             }
         ]
+
+class MicrosoftOutlookMessagesGroupConversations(MicrosoftAPITestCase):
+
+    def _get_connector_name(self):
+        return 'M365OutlookMessages'
+
+    def _get_provider_data(self):
+        return {
+            "name": self._get_connector_name(),
+            "shared": True,
+            "active": True,
+            "default": True,
+            "connector": self._get_connector_name(),
+            "url": "",
+            "query_template": "{url}",
+            "query_processor": "",
+            "query_processors": [
+                "AdaptiveQueryProcessor"
+            ],
+            "query_mappings": "NOT=true,NOT_CHAR=-",
+            "result_processor": "",
+            "result_grouping_field":"resource.conversationId",
+            "result_processors": [
+                "MappingResultProcessor",
+                "DedupeByFieldResultProcessor"
+            ],
+            "response_mappings": "",
+            "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.conversationId,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
+            "results_per_query": 10,
+            "credentials": "",
+            "eval_credentials": ""
+        }
+
+    def _get_hits(self):
+        data_dir = os.path.dirname(os.path.abspath(__file__))
+        # Build the absolute file path for the JSON file in the 'data' subdirectory
+        json_file_path = os.path.join(data_dir, 'data', 'outlook_message_results.json')
+
+        # Read the JSON file
+        with open(json_file_path, 'r') as file:
+            data = json.load(file)
+        return data
+
+    def _mock_response(self):
+        return self._get_hits()

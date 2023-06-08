@@ -5,7 +5,7 @@ import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from celery.utils.log import get_task_logger
@@ -38,7 +38,7 @@ class M365(RequestsGet):
             return super().validate_query(session)
         self.error("M365 access token is not valid or missing")
         return False
-    
+
     def execute_search(self, session):
         self.provider.credentials = f"bearer={session['microsoft_access_token']}"
         return super().execute_search(session)
@@ -61,11 +61,11 @@ class M365Post(RequestsPost):
             return super().validate_query(session)
         self.error("M365 access token is not valid or missing")
         return False
-    
+
     def execute_search(self, session):
         self.provider.credentials = f"bearer={session['microsoft_access_token']}"
         return super().execute_search(session)
-    
+
 
 class M365SearchQuery(M365Post):
 
@@ -79,7 +79,7 @@ class M365SearchQuery(M365Post):
         self.response_mappings = get_mappings_dict(self.provider.response_mappings)
         self.provider.url = 'https://graph.microsoft.com/beta/search/query'
         self.entity_type = ""
-    
+
     def send_request(self, url, params=None, query=None, **kwargs):
         json = dict({
             "requests": [

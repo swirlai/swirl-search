@@ -88,7 +88,8 @@ class SearchProvider(models.Model):
         ('GenericResultProcessor', 'GenericResultProcessor'),
         ('DuplicateHalfResultProcessor', 'DuplicateHalfResultProcessor'),
         ('TestResultProcessor', 'TestResultProcessor'),
-        ('MappingResultProcessor', 'MappingResultProcessor')
+        ('MappingResultProcessor', 'MappingResultProcessor',),
+        ('DedupeByFieldResultProcessor', 'DedupeByFieldResultProcessor',)
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
 

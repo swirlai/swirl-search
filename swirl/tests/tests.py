@@ -1,5 +1,8 @@
 import json
+import os
 from django.test import TestCase
+from swirl.models import SearchProvider
+from swirl.serializers import SearchProviderSerializer
 import swirl_server.settings as settings
 import pytest
 import logging
@@ -10,6 +13,7 @@ from swirl.processors.adaptive import *
 from swirl.processors.transform_query_processor import *
 from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list
 from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
+from swirl.processors.dedupe import DedupeByFieldResultProcessor
 
 logger = logging.getLogger(__name__)
 
@@ -117,6 +121,76 @@ def aqp_test_expected():
            'elon -twitter',
            'elon -twitter'
         ]
+
+@pytest.fixture
+def test_suser_pw():
+    return 'password'
+
+def get_ddrp_suser(pw):
+    return User.objects.create_user(
+        username=''.join('test_ddrp_user'),
+        password=pw,
+        is_staff=True,  # Set to True if your view requires a staff user
+        is_superuser=True,  # Set to True if your view requires a superuser
+    )
+
+def create_ddrp_provider(password):
+    provider = get_ddrp_provider_data()
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=get_ddrp_suser(password))
+    provider_id = serializer.data['id']
+    return provider_id
+
+def get_ddrp_provider_data():
+    return {
+        "name": "test DDRP",
+        "shared": True,
+        "active": True,
+        "default": True,
+        "connector": "M365OutlookMessages",
+        "url": "",
+        "query_template": "{url}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true,NOT_CHAR=-",
+        "result_processor": "",
+        "result_grouping_field":"conversationId",
+        "result_processors": [
+            "MappingResultProcessor",
+            "DedupeByFieldResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.conversationId,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": ""
+    }
+
+@pytest.fixture
+def ms_message_result_converation():
+    data_dir = os.path.dirname(os.path.abspath(__file__))
+    # Build the absolute file path for the JSON file in the 'data' subdirectory
+    json_file_path = os.path.join(data_dir, 'data', 'outlook_message_results.json')
+
+    # Read the JSON file
+    with open(json_file_path, 'r') as file:
+        data = json.load(file)
+    results = data.get('value')[0].get('hitsContainers')[0].get('hits')
+    for i in results:
+        i['conversationId'] = i['resource']['conversationId']
+    return results
+
+@pytest.mark.django_db
+def test_dd_result_processor(ms_message_result_converation, test_suser_pw):
+    ddrp_id = create_ddrp_provider(test_suser_pw)
+    ddrp_provider = SearchProvider.objects.get(pk=ddrp_id)
+    ddrp = DedupeByFieldResultProcessor(ms_message_result_converation, ddrp_provider, "dune")
+    r = ddrp.process()
+    assert len(r) == 1
+    logger.info(f'dedupped results {r}')
 
 @pytest.mark.django_db
 def test_aqp(aqp_test_cases, aqp_test_expected):
