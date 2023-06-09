@@ -146,7 +146,8 @@ class Search(models.Model):
         ('DedupeByFieldPostResultProcessor', 'DedupeByFieldPostResultProcessor'),
         ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor'),
         ('WriteToFileSystemPostResultProcessor', 'WriteToFileSystemPostResultProcessor'),
-        ('TemporalRelevancyPostResultProcessor', 'TemporalRelevancyPostResultProcessor')
+        ('TemporalRelevancyPostResultProcessor', 'TemporalRelevancyPostResultProcessor'),
+        ('EntityMatcherPostResultProcessor', 'EntityMatcherPostResultProcessor')
     ]
     post_result_processors = models.JSONField(default=getSearchPostResultProcessorsDefault, blank=True)
     result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)

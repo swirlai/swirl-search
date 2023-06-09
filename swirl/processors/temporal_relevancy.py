@@ -27,12 +27,10 @@ class TemporalRelevancyPostResultProcessor(PostResultProcessor):
 
         # mark time
         current_time = datetime.now()
+        temporal_results = []
 
         for result in self.results:
-
             if result.json_results:
-                temporal_results = []
-
                 for item in result.json_results:
                     if float(item['swirl_score']) <= settings.SWIRL_MIN_RELEVANCY_SCORE:
                         removed = removed + 1
@@ -67,5 +65,7 @@ class TemporalRelevancyPostResultProcessor(PostResultProcessor):
                     result.json_results = temporal_results
                     result.save()
                 # end if
+            # end if
+        # end for
 
         return -1 * removed
