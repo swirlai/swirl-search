@@ -5,6 +5,9 @@ from datetime import datetime
 from swirl.authenticators.authenticator import Authenticator
 from django.conf import settings
 from django.shortcuts import redirect
+from celery.utils.log import get_task_logger
+logger = get_task_logger(__name__)
+
 
 scopes = ["User.Read", "Mail.Read", "Files.Read.All", "Calendars.Read", "Sites.Read.All", "Chat.Read"]
 
@@ -91,9 +94,15 @@ class Microsoft(Authenticator):
 
     def callback(self, request):
         result = self.get_token_from_code(request)
-        user = self.get_user(result['access_token'])
+        tok = result.get('access_token', None)
+        if not tok:
+            logger.error(f'acccess token not presdent in call back result {result}')
+            raise ValueError(result)
+
+        user = self.get_user(tok)
         self.store_user(request, user, result)
         return HttpResponseRedirect('/swirl/')
+
 
     def update_token(self, request):
         app = self.get_auth_app(request)
