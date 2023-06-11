@@ -41,6 +41,9 @@ def _dedup_results (results, dedupe_key_dict, deduped_item_list, grouping_field)
     return n_dups
 
 class DedupeByFieldResultProcessor(ResultProcessor):
+    """
+    This is meant to remove duplcates from a single source, this is what differentiates from a post result processor
+    """
 
     type="DedupeByFieldResultProcessor"
 
