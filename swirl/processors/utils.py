@@ -383,7 +383,7 @@ def str_replace_all_keys(s, d):
         return s
     ret = s
     for k in d.keys():
-        ret = ret.replace("{"+k+"}", d[k])
+        ret = ret.replace("{"+k+"}", str(d[k]))
     return ret
 
 
