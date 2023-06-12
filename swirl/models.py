@@ -88,15 +88,22 @@ class SearchProvider(models.Model):
         ('GenericResultProcessor', 'GenericResultProcessor'),
         ('DuplicateHalfResultProcessor', 'DuplicateHalfResultProcessor'),
         ('TestResultProcessor', 'TestResultProcessor'),
-        ('MappingResultProcessor', 'MappingResultProcessor')
+        ('MappingResultProcessor', 'MappingResultProcessor',),
+        ('DedupeByFieldResultProcessor', 'DedupeByFieldResultProcessor',)
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
+
+    ## if set, and the field exists in the results set, records w/ the same value will
+    ## be grouped together and only one result will be returned to the caller
+
+    result_grouping_field = models.CharField(max_length=1024, default=str, blank=True)
     result_processors = models.JSONField(default=getSearchProviderResultProcessorsDefault, blank=True)
     result_mappings = models.CharField(max_length=2048, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
     eval_credentials = models.CharField(max_length=100, default=str, blank=True)
     credentials = models.CharField(max_length=512, default=str, blank=True)
     tags = models.JSONField(default=list)
+
 
     class Meta:
         ordering = ['id']
