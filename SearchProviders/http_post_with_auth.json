@@ -1,11 +1,21 @@
 {
-    "name": "Sample HTTP POST Endpoint (web/Sample)",
-    "active": false,
-    "default": false,
+    "name": "TEST HTTP POST Endpoint",
+    "active": true,
+    "default": true,
     "connector": "RequestsPost",
-    "url": "http://hostname/site/endpoint",
-    "query_template": "{ \"fields\": [\"title\", \"author\", \"body\"], \"conditions\": { \"text\": \"{query-string}\" } }",
+    "url": "https://xx.apis.huit.harvard.edu/ats/person/v3/search",
+    "query_template": "{url}?Query={query_string}",
     "query_processor": "",
+    "post_query_template": {
+        "fields": [
+          "names.personNameKey",
+          "names.firstName",
+          "names.lastName"
+        ],
+        "conditions": {
+          "names.name": "*{query_string}*"
+        }
+    },
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
@@ -15,7 +25,7 @@
         "MappingResultProcessor"
     ],
     "response_mappings": "FOUND=count,RESULTS=results",
-    "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
+    "result_mappings": "titles=names[0].name,url=names[0].personNameKey,body='{names[0].name} ID#: {names[*].personNameKey}'",
     "results_per_query": 10,
     "credentials": "X-Api-Key=<your-api-key>",
     "eval_credentials": "",
