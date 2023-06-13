@@ -1,0 +1,29 @@
+{
+    "name": "M365 Calendar",
+    "owner": "admin",
+    "shared": true,
+    "active": false,
+    "default": false,
+    "connector": "M365OutlookCalendar",
+    "url": "",
+    "query_template": "{url}",
+    "post_query_template": "{}",
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "NOT=true,NOT_CHAR=-",
+    "result_grouping_field": "title",
+    "result_processors": [
+        "MappingResultProcessor",
+        "DedupeByFieldResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "title=resource.subject,body=summary,date_published=resource.start.dateTime,url='https://outlook.office.com/calendar/item/{sw_urlencode(hitId)}',resource.sensitivity,resource.type,resource.hasAttachments,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "",
+    "eval_credentials": "",
+    "tags": [
+         "Microsoft",
+        "Calendar"
+    ]
+}
