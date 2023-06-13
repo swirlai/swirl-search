@@ -44,7 +44,7 @@ def search(id, session=None):
         logger.error(f'{module_name}_{id}: ObjectDoesNotExist: {err}')
         return False
     if not search.status.upper() in ['NEW_SEARCH', 'UPDATE_SEARCH']:
-        logger.warning(f"{module_name}_{search.id}: unexpected status {search.status}")
+        logger.info(f"{module_name}_{search.id}: unexpected status {search.status}")
         return False
     if search.status.upper() == 'UPDATE_SEARCH':
         logger.info(f"{module_name}: {search.id}.status == UPDATE_SEARCH")
@@ -75,11 +75,10 @@ def search(id, session=None):
             tags_in_query_list.append(tag[:-1])
         else:
             tags_in_query_list.append(tag[:tag.find(':')])
-    logger.debug(f"{module_name}: tags_in_query_list: {tags_in_query_list}")
 
     user = User.objects.get(id=search.owner.id)
     if not user.has_perm('swirl.view_searchprovider'):
-        logger.warning(f"User {user} needs permission view_searchprovider")
+        logger.info(f"User {user} needs permission view_searchprovider")
         search.status = 'ERR_NEED_PERMISSION'
         search.save()
         return False
@@ -117,7 +116,6 @@ def search(id, session=None):
         # end for
     else:
         # no provider list
-        is_tag_exists = False
         for provider in providers:
             # active status is determined later on
             if provider.default:
@@ -125,7 +123,6 @@ def search(id, session=None):
                     for tag in provider.tags:
                         if tag.lower() == start_tag.lower():
                             selected_provider_list.append(provider)
-                            is_tag_exists = True
                     # end for
                 else:
                     selected_provider_list.append(provider)
@@ -139,13 +136,13 @@ def search(id, session=None):
                             # end if
                         # end if
                     # end for
+                # end if 
             # end if
         # end for
-        if not is_tag_exists:
-            selected_provider_list = providers
     # endif
 
     providers = selected_provider_list
+
     if len(providers) == 0:
         logger.error(f"{module_name}_{search.id}: no SearchProviders configured")
         search.status = 'ERR_NO_SEARCHPROVIDERS'
@@ -205,7 +202,7 @@ def search(id, session=None):
         federation_result[provider.id] = federate_task.delay(search.id, provider.id, provider.connector, update, session)
     # end for
     if not at_least_one:
-        logger.warning(f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}")
+        logger.info(f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}")
         search.status = 'ERR_NO_ACTIVE_SEARCHPROVIDERS'
         search.save()
         return False
@@ -246,7 +243,7 @@ def search(id, session=None):
                 if not provider.name in responding_provider_names:
                     failed_providers.append(provider.name)
                     error_flag = True
-                    logger.warning(f"{module_name}_{search.id}: timeout waiting for: {failed_providers}")
+                    logger.info(f"{module_name}_{search.id}: timeout waiting for: {failed_providers}")
                     search.messages.append(f"[{datetime.now()}] Timeout waiting for: {failed_providers}")
                     search.save()
                 # end if
@@ -357,7 +354,7 @@ def rescore(id):
 
     last_status = search.status
     if not (search.status.endswith('_READY') or search.status == 'RESCORING'):
-        logger.warning(f"{module_name}_{search.id}: unexpected status {search.status}, rescore may not work")
+        logger.info(f"{module_name}_{search.id}: unexpected status {search.status}, rescore may not work")
         last_status = None
 
     if len(results) == 0:
@@ -396,5 +393,5 @@ def rescore(id):
         search.save()
         return True
     else:
-        logger.warning(f"{module_name}_{search.id}: No post_result_processor or post_result_processors defined")
+        logger.info(f"{module_name}_{search.id}: No post_result_processor or post_result_processors defined")
         return False
