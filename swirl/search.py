@@ -67,8 +67,6 @@ def search(id, session=None):
     if ':' in search.query_string.strip().split()[0]:
         start_tag = search.query_string.strip().split()[0].split(':')[0]
 
-    logger.info(f"start_tag: {start_tag}")
-
     # identify tags in the query
     raw_tags_in_query_list = [tag for tag in search.query_string.strip().split() if ':' in tag]
     tags_in_query_list = []
@@ -77,8 +75,6 @@ def search(id, session=None):
             tags_in_query_list.append(tag[:-1])
         else:
             tags_in_query_list.append(tag[:tag.find(':')])
-
-    logger.info(f"{module_name}: tags_in_query_list: {tags_in_query_list}")
 
     user = User.objects.get(id=search.owner.id)
     if not user.has_perm('swirl.view_searchprovider'):
@@ -126,21 +122,17 @@ def search(id, session=None):
                 if start_tag:
                     for tag in provider.tags:
                         if tag.lower() == start_tag.lower():
-                            logger.info(f"start_tag found for provider {provider.name}")
                             selected_provider_list.append(provider)
                     # end for
                 else:
                     selected_provider_list.append(provider)
-                    logger.info(f"adding provider {provider.name}")
                 # end if
             else:
                 if provider.tags:
                     for tag in provider.tags:
                         if tag.lower() in [t.lower() for t in tags_in_query_list]:
-                            logger.info(f"found provider {provider.name}")
                             if not provider in selected_provider_list:
                                 selected_provider_list.append(provider)
-                                logger.info(f"adding found provider {provider.name}")
                             # end if
                         # end if
                     # end for
@@ -150,7 +142,6 @@ def search(id, session=None):
     # endif
 
     providers = selected_provider_list
-    logger.info(f"providers!! = {providers}")
 
     if len(providers) == 0:
         logger.error(f"{module_name}_{search.id}: no SearchProviders configured")
