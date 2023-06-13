@@ -1,6 +1,6 @@
 {
     "name": "M365 Calendar",
-    "owner": "admin",
+
     "shared": true,
     "active": false,
     "default": false,
@@ -23,7 +23,7 @@
     "credentials": "",
     "eval_credentials": "",
     "tags": [
-         "Microsoft",
+        "Microsoft",
         "Calendar"
     ]
 }
