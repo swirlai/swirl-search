@@ -22,6 +22,7 @@ def create_result_dictionary():
     dict_result['url'] = ""
     dict_result['body'] = ""
     dict_result['date_published'] = ""
+    dict_result['date_published_display'] = ""
     dict_result['date_retrieved'] = ""
     dict_result['author'] = ""
     dict_result['title_hit_highlights'] = []
@@ -452,6 +453,13 @@ def str_safe_format(s, d):
     return ret
 
 from dateutil import parser
+from datetime import datetime
+
+def get_jan_1_year(year):
+    # Parse the year as a string with January 1st as the default date
+    date_string = f"Jan 1 {year}"
+    date = parser.parse(date_string, default=datetime(datetime.now().year, 1, 1))
+    return str(date)
 
 def _date_str_parse_to_timestamp(s):
     """
@@ -459,7 +467,12 @@ def _date_str_parse_to_timestamp(s):
     """
     ret = ""
     try:
-        ret = str(parser.parse(str(s)))
+        date_str = str(s)
+        # stabalize day of year for dates that consist only of a year.
+        if len(date_str) == 4:
+            ret = get_jan_1_year(date_str)
+        else:
+            ret = str(parser.parse(date_str))
     except Exception as x:
         logger.debug(f'{x} : unable to convert {s} as string to timestamp')
     return ret
@@ -486,4 +499,5 @@ def date_str_to_timestamp(s):
     if not ret: ret = _date_float_parse_to_timestamp(s)
     if not ret:
         logger.error(f'Unable to convert {s} to timestamp using any known type')
+        return s
     return ret
