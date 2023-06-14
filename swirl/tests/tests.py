@@ -280,11 +280,11 @@ def test_utils_prefix_toks(prefix_toks_test_cases, prefix_toks_test_expected):
 
 @pytest.fixture
 def utils_date_str_to_timestamp_cases():
-    return ['1681393728.832229','1681393728','Jan 17, 1975']
+    return ['2008','1681393728.832229','1681393728','Jan 17, 1975']
 
 @pytest.fixture
 def utils_date_str_to_timestamp_expected():
-    return['2023-04-13 09:48:48.832229','2023-04-13 09:48:48','1975-01-17 00:00:00']
+    return['2008-01-01 00:00:00','2023-04-13 09:48:48.832229','2023-04-13 09:48:48','1975-01-17 00:00:00']
 
 @pytest.mark.django_db
 def test_utils_date_str_to_timestamp(utils_date_str_to_timestamp_cases, utils_date_str_to_timestamp_expected):
