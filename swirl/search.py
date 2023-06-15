@@ -116,6 +116,7 @@ def search(id, session=None):
         # end for
     else:
         # no provider list
+        is_tag_exists = False
         for provider in providers:
             # active status is determined later on
             if provider.default:
@@ -123,6 +124,7 @@ def search(id, session=None):
                     for tag in provider.tags:
                         if tag.lower() == start_tag.lower():
                             selected_provider_list.append(provider)
+                            is_tag_exists = True
                     # end for
                 else:
                     selected_provider_list.append(provider)
@@ -136,9 +138,11 @@ def search(id, session=None):
                             # end if
                         # end if
                     # end for
-                # end if 
+                # end if
             # end if
         # end for
+        if not is_tag_exists:
+            selected_provider_list = providers
     # endif
 
     providers = selected_provider_list
