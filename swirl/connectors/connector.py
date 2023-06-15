@@ -346,6 +346,7 @@ class Connector:
         # end for
         self.processed_results = result_temp
         self.status = 'READY'
+        self.retrieved = len(self.processed_results) # adjust retrieved in case processing effected the size of the list.
 
         return
 

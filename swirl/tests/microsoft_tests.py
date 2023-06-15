@@ -364,6 +364,7 @@ class MicrosoftOutlookMessagesGroupConversations(MicrosoftAPITestCase):
         result_count = Result.objects.filter(search_id=search_id).count()
         assert result_count == 1
         rs = Result.objects.get(search_id=search_id)
+        assert rs.retrieved == 1
         jsr = rs.json_results
         assert jsr
         assert len(jsr) == 1
