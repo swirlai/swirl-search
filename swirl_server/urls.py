@@ -21,9 +21,9 @@ from django.urls import include, path, re_path
 from django.shortcuts import redirect
 
 urlpatterns = [
-    re_path('spyglass', serve, {
+    re_path('galaxy', serve, {
         'document_root': os.path.join(settings.BASE_DIR, 'static'),
-        'path': 'spyglass/index.html',
+        'path': 'galaxy/index.html',
     }),
     path('swirl/', include('swirl.urls')),
     path('api/swirl/', include('swirl.urls')),
