@@ -174,7 +174,7 @@ class HBSHollisDatasourceTest(GeneralRequestAPITestCase):
                     "MappingResultProcessor"
                     ],
                     "response_mappings": "FOUND=info.total,RESULTS=docs",
-                    "result_mappings": "date_published_display=pnx.display.creationdate[0],title=pnx.display.title[0],body=pnx.display.description[0],date_published=pnx.sort.creationdate[0],author=pnx.sort.author[0],url='https://hollis.harvard.edu/primo-explore/fulldisplay?docid={pnx.control.recordid[0]}&context=L&vid=HVD2',pnx.facets.creatorcontrib[*],pnx.display.publisher[*],pnx.display.edition[*],pnx.display.format[*],pnx.display.language[*],pnx.enrichment.classificationlcc[*],NO_PAYLOAD",
+                    "result_mappings": "date_published_display=pnx.display.creationdate[0],title=pnx.display.title[0],body=pnx.display.description[0],date_published=pnx.sort.creationdate[0],author=pnx.sort.author[0],url='https://hollis.place.edu/primo-explore/fulldisplay?docid={pnx.control.recordid[0]}&context=L&vid=HVD2',pnx.facets.creatorcontrib[*],pnx.display.publisher[*],pnx.display.edition[*],pnx.display.format[*],pnx.display.language[*],pnx.enrichment.classificationlcc[*],NO_PAYLOAD",
                     "results_per_query": 10,
                     "credentials": "",
                     "eval_credentials": "",
@@ -214,7 +214,7 @@ class HBSHollisDatasourceTest(GeneralRequestAPITestCase):
         hits = self._get_hits()
         assert jsr[0].get('title') == '<em>Facebook</em> :The Missing Manual'
         assert jsr[0].get('body') == "<em>Facebook</em> is the wildly popular, free social networking site that combines the best of blogs, online forums and groups, photosharing, clever applications, and interaction among friends. The one thing it doesn't have is a users guide to help you truly take advantage of it. Until now. <em>Facebook</em>: The Missing Manual gives you a very objective and entertaining look at everything this fascinating <em>Facebook</em> phenomenon has to offer. Teeming with high-quality color graphics, each page in this guide is uniquely designed to help you with specific <em>Facebook</em> tasks, such as signing up,"
-        assert jsr[0].get('url') == "https://hollis.harvard.edu/primo-explore/fulldisplay?docid=01HVD_ALMA512223495220003941&context=L&vid=HVD2"
+        assert jsr[0].get('url') == "https://hollis.place.edu/primo-explore/fulldisplay?docid=01HVD_ALMA512223495220003941&context=L&vid=HVD2"
         assert jsr[0].get('date_published_display') == '2008'
         assert jsr[1].get('date_published_display') == 'c2010'
         assert jsr[0].get('date_published') == '2008-01-01 00:00:00'

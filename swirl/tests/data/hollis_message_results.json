@@ -265,7 +265,7 @@
                         "eng"
                     ],
                     "collection": [
-                        "Harvard Core"
+                        "Place Core"
                     ],
                     "lfc06": [
                         "Facebook.com",
@@ -633,7 +633,7 @@
                         "displayLabel": "Acquired by the George Schunemann Jackson Fund",
                         "hyperlinkText": "Acquired by the George Schunemann Jackson Fund",
                         "inst4opac": "01HVD",
-                        "linkURL": "https://nrs.harvard.edu/urn-3:hul.EBKPLL:415_565336 ",
+                        "linkURL": "https://nrs.place.edu/urn-3:hul.EBKPLL:415_565336 ",
                         "linkType": "http://purl.org/pnx/linkType/lln02",
                         "@id": "_:1"
                     },
@@ -817,7 +817,7 @@
                         "Web sites"
                     ],
                     "lds03": [
-                        "<a aria-label=\"Permanent link to item\" href=\"https://id.lib.harvard.edu/alma/990125225290203941/catalog\">https://id.lib.harvard.edu/alma/990125225290203941/catalog</a>"
+                        "<a aria-label=\"Permanent link to item\" href=\"https://id.lib.place.edu/alma/990125225290203941/catalog\">https://id.lib.place.edu/alma/990125225290203941/catalog</a>"
                     ],
                     "lds14": [
                         "Olivier Levard, Delphine Soulas."
@@ -909,7 +909,7 @@
                         "fre"
                     ],
                     "collection": [
-                        "Harvard Core"
+                        "place Core"
                     ],
                     "prefilter": [
                         "books"
@@ -1041,7 +1041,7 @@
                         "$$Tgoogle_thumb"
                     ],
                     "lln02": [
-                        "$$Uhttps://nrs.harvard.edu/urn-3:hul.EBKPLL:415_565336 $$DAcquired by the George Schunemann Jackson Fund"
+                        "$$Uhttps://nrs.place.edu/urn-3:hul.EBKPLL:415_565336 $$DAcquired by the George Schunemann Jackson Fund"
                     ],
                     "linktouc": [
                         "$$Tworldcat_oclc$$Eworldcat"
