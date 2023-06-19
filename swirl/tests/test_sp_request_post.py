@@ -125,7 +125,7 @@ class PostSearchProviderTestCase(TestCase):
         surl = reverse('search')
         # Mock the POST request
         json_response = self._mock_small_result
-        url_pattern = re.compile(r'https://xx\.apis\.huit\.place\.edu/.*')
+        url_pattern = re.compile(r'https://xx\.apis\.it\.place\.edu/.*')
         responses.add(responses.POST, url_pattern, json=json_response, status=200)
         response = self._api_client.get(surl, {'qs': 'pinker', 'providers':1})
         assert response.status_code == 200, 'Expected HTTP status code 200'

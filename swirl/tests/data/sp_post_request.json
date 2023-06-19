@@ -3,7 +3,7 @@
     "active": true,
     "default": true,
     "connector": "RequestsPost",
-    "url": "https://xx.apis.huit.place.edu/ats/person/v3/search",
+    "url": "https://xx.apis.it.place.edu/ats/person/v3/search",
     "query_template": "{url}?Query={query_string}",
     "query_processor": "",
     "post_query_template": {
