@@ -63,7 +63,6 @@ def paginate(data, request):
 
 def select_providers(providers, start_tag, tags_in_query_list):
     selected_provider_list = []
-    is_tag_exists = False
 
     for provider in providers:
         if provider.default:
@@ -71,7 +70,6 @@ def select_providers(providers, start_tag, tags_in_query_list):
                 for tag in provider.tags:
                     if tag.lower() == start_tag.lower():
                         selected_provider_list.append(provider)
-                        is_tag_exists = True
                 # end for
             else:
                 selected_provider_list.append(provider)
@@ -83,7 +81,6 @@ def select_providers(providers, start_tag, tags_in_query_list):
                     if tag.lower() in [t.lower() for t in tags_in_query_list] or start_tag and start_tag.lower() == tag.lower():
                         if provider not in selected_provider_list:
                             selected_provider_list.append(provider)
-                            is_tag_exists = True
                         # end if
                     # end if
                 # end for
@@ -91,7 +88,7 @@ def select_providers(providers, start_tag, tags_in_query_list):
         # end if
     # end for
 
-    if not is_tag_exists:
+    if len(selected_provider_list) == 0:
         selected_provider_list = providers
 
     return selected_provider_list
