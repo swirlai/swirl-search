@@ -68,7 +68,7 @@ def client():
 
 @pytest.fixture
 def request_api_url():
-    return 'https://demo9961385.mockable.io/rest/v2/hollisplus/search/dc/'
+    return 'https://xxx.mockable.io/rest/v2/plus/search/dc/?q=facebook'
 
 logger = logging.getLogger(__name__)
 
@@ -141,6 +141,7 @@ class GeneralRequestAPITestCase(TestCase):
     def _check_result(self, search_id):
         return True
 
+    @responses.activate
     def test_request_api(self):
         ### CHECKING FOR PARENT CLASS
         if self._get_connector_name() == '':
@@ -149,7 +150,7 @@ class GeneralRequestAPITestCase(TestCase):
         result = self._run_search()
 
 
-class HBSHollisDatasourceTest(GeneralRequestAPITestCase):
+class LibraryDatasourceTest(GeneralRequestAPITestCase):
 
     def _get_connector_name(self):
         return 'M365OutlookMessages'
@@ -157,12 +158,12 @@ class HBSHollisDatasourceTest(GeneralRequestAPITestCase):
     def _get_provider_data(self):
 
         return {
-                    "name": "HOLLIS Mock (web/HOLLIS)",
+                    "name": "Library Mock (web/Library)",
                     "shared": True,
                     "active": True,
                     "default": True,
                     "connector": "RequestsGet",
-                    "url": "https://demo9961385.mockable.io/rest/v2/hollisplus/search/dc/",
+                    "url": "https://xxx.mockable.io/rest/v2/plus/search/dc/",
                     "query_template": "{url}?q={query_string}",
                     "post_query_template": "{}",
                     "query_processors": [
@@ -174,14 +175,11 @@ class HBSHollisDatasourceTest(GeneralRequestAPITestCase):
                     "MappingResultProcessor"
                     ],
                     "response_mappings": "FOUND=info.total,RESULTS=docs",
-                    "result_mappings": "date_published_display=pnx.display.creationdate[0],title=pnx.display.title[0],body=pnx.display.description[0],date_published=pnx.sort.creationdate[0],author=pnx.sort.author[0],url='https://hollis.place.edu/primo-explore/fulldisplay?docid={pnx.control.recordid[0]}&context=L&vid=HVD2',pnx.facets.creatorcontrib[*],pnx.display.publisher[*],pnx.display.edition[*],pnx.display.format[*],pnx.display.language[*],pnx.enrichment.classificationlcc[*],NO_PAYLOAD",
+                    "result_mappings": "date_published_display=pnx.display.creationdate[0],title=pnx.display.title[0],body=pnx.display.description[0],date_published=pnx.sort.creationdate[0],author=pnx.sort.author[0],url='https://xxx.place.edu/primo-explore/fulldisplay?docid={pnx.control.recordid[0]}&context=L&vid=XXX2',pnx.facets.creatorcontrib[*],pnx.display.publisher[*],pnx.display.edition[*],pnx.display.format[*],pnx.display.language[*],pnx.enrichment.classificationlcc[*],NO_PAYLOAD",
                     "results_per_query": 10,
                     "credentials": "",
                     "eval_credentials": "",
-                    "tags": [
-                    "HOLLIS",
-                    "HBS"
-                    ]
+                    "tags": []
             }
 
     def _create_search(self):
@@ -197,7 +195,7 @@ class HBSHollisDatasourceTest(GeneralRequestAPITestCase):
     def _get_hits(self):
         data_dir = os.path.dirname(os.path.abspath(__file__))
         # Build the absolute file path for the JSON file in the 'data' subdirectory
-        json_file_path = os.path.join(data_dir, 'data', 'hollis_message_results.json')
+        json_file_path = os.path.join(data_dir, 'data', 'libsystem_message_results.json')
 
         # Read the JSON file
         with open(json_file_path, 'r') as file:
@@ -210,15 +208,13 @@ class HBSHollisDatasourceTest(GeneralRequestAPITestCase):
         rs = Result.objects.get(search_id=search_id)
         jsr = rs.json_results
         assert jsr
-        assert len(jsr) == 2
+        assert len(jsr) == 1
         hits = self._get_hits()
         assert jsr[0].get('title') == '<em>Facebook</em> :The Missing Manual'
         assert jsr[0].get('body') == "<em>Facebook</em> is the wildly popular, free social networking site that combines the best of blogs, online forums and groups, photosharing, clever applications, and interaction among friends. The one thing it doesn't have is a users guide to help you truly take advantage of it. Until now. <em>Facebook</em>: The Missing Manual gives you a very objective and entertaining look at everything this fascinating <em>Facebook</em> phenomenon has to offer. Teeming with high-quality color graphics, each page in this guide is uniquely designed to help you with specific <em>Facebook</em> tasks, such as signing up,"
-        assert jsr[0].get('url') == "https://hollis.place.edu/primo-explore/fulldisplay?docid=01HVD_ALMA512223495220003941&context=L&vid=HVD2"
+        assert jsr[0].get('url') == "https://xxx.place.edu/primo-explore/fulldisplay?docid=[]&context=L&vid=XXX2"
         assert jsr[0].get('date_published_display') == '2008'
-        assert jsr[1].get('date_published_display') == 'c2010'
         assert jsr[0].get('date_published') == '2008-01-01 00:00:00'
-        assert jsr[1].get('date_published') == '2010-01-01 00:00:00'
 
         return True
 

@@ -1,0 +1,325 @@
+{
+    "docs": [
+        {
+            "enrichment": {
+                "virtualBrowseObject": {
+                    "callNumber": "",
+                    "isVirtualBrowseEnabled": false,
+                    "callNumberBrowseField": "browse_callnumber.V2"
+                }
+            },
+            "delivery": {
+                "availabilityLinks": [
+                    "directlink"
+                ],
+                "physicalItemTextCodes": "",
+                "displayLocation": false,
+                "availabilityLinksUrl": [
+                ],
+                "link": [],
+                "additionalLocations": false,
+                "displayedAvailability": "not_restricted",
+                "holding": [],
+                "deliveryCategory": [
+                    "Alma-E"
+                ],
+                "serviceMode": [
+                    "activate"
+                ],
+                "feDisplayOtherLocations": false,
+                "GetIt2": {
+                },
+                "GetIt1": [
+                    {
+                        "links": [],
+                        "category": "Alma-E"
+                    }
+                ]
+            },
+            "@rta_link": "",
+            "context": "L",
+            "adaptor": "Local Search Engine",
+            "pnx": {
+                "delivery": {
+                    "institution": [
+                        "01XXX"
+                    ],
+                    "delcategory": [
+                        "Alma-E"
+                    ]
+                },
+                "display": {
+                    "lds06": [
+                        "Facebook: The Missing Manual; Acknowledgments; The Missing Manual Series; Introduction; What You Can Do With Facebook; Professional Uses for Facebook; About This Book; About MissingManuals.com; Safari® Books Online; I. From Signing Up to Staying Connected; Creating Your Profile; Adding Basic Information; Adding Contact Information; Adding Personal Information; Adding Academic and Work-related Information; Adding Pictures of Yourself; Viewing Your Facebook Home Page; Changing Account Information; 2. Joining a Network; Viewing the Networks You&re Already On; Joining a Network"
+                    ],
+                    "lds17": [
+                        "Missing manual Facebook"
+                    ],
+                    "identifier": [
+                    ],
+                    "lds05": [
+                    ],
+                    "lds38": [
+                    ],
+                    "creator": [
+                    ],
+                    "creationdate": [
+                        "2008"
+                    ],
+                    "lds19": [
+                    ],
+                    "subject": [
+                    ],
+                    "format": [
+                        "1 online resource (361 p.)",
+                        "Digital: text file"
+                    ],
+                    "description": [
+                        "Facebook is the wildly popular, free social networking site that combines the best of blogs, online forums and groups, photosharing, clever applications, and interaction among friends. The one thing it doesn't have is a users guide to help you truly take advantage of it. Until now. Facebook: The Missing Manual gives you a very objective and entertaining look at everything this fascinating Facebook phenomenon has to offer. Teeming with high-quality color graphics, each page in this guide is uniquely designed to help you with specific Facebook tasks, such as signing up,"
+                    ],
+                    "edition": [
+                        "1st. ed."
+                    ],
+                    "language": [
+                        "eng"
+                    ],
+                    "source": [
+                        "01XXX_ZZZZ"
+                    ],
+                    "type": [
+                        "book"
+                    ],
+                    "title": [
+                        "Facebook :The Missing Manual"
+                    ],
+                    "version": [
+                        "2"
+                    ],
+                    "publisher": [
+                        "Sebastopol : O'Reilly Media, 2008."
+                    ],
+                    "lds11": [
+                        "Sebastopol : O'Reilly Media"
+                    ],
+                    "lds02": [
+                    ],
+                    "lds13": [
+                    ],
+                    "lds45": [
+                    ],
+                    "lds04": [
+                        "Missing manual"
+                    ]
+                },
+                "control": {
+                },
+                "sort": {
+                    "creationdate": [
+                        "2008"
+                    ],
+                    "author": [
+                        "Veer, E. A. Vander."
+                    ],
+                    "title": [
+                        "Facebook The Missing Manual"
+                    ]
+                },
+                "frbr": {},
+                "facets": {},
+                "enrichment": {
+                    "classificationlcc": [
+                    ]
+                },
+                "search": {
+                    "creationdate": [
+                        "2008"
+                    ],
+                    "subject": [
+                    ],
+                    "isbn": [
+                        "1-306-81577-0",
+                        "0-596-52017-4",
+                        "0-596-55376-5"
+                    ],
+                    "rsrctype": [
+                        "book"
+                    ],
+                    "toc": [
+                        "Facebook: The Missing Manual; Acknowledgments; The Missing Manual Series; Introduction; What You Can Do With Facebook; Professional Uses for Facebook; About This Book; About MissingManuals.com; Safari® Books Online; I. From Signing Up to Staying Connected; Creating Your Profile; Adding Basic Information; Adding Contact Information; Adding Personal Information; Adding Academic and Work-related Information; Adding Pictures of Yourself; Viewing Your Facebook Home Page; Changing Account Information; 2. Joining a Network; Viewing the Networks You&re Already On; Joining a Network"
+                    ],
+                    "description": [
+                    ],
+                    "startdate": [
+                        "20080101"
+                    ],
+                    "title": [
+                        "Facebook",
+                        "Facebook The Missing Manual"
+                    ],
+                    "lsr30": [
+                        "Parodies, imitations, etc."
+                    ],
+                    "general": [
+                    ],
+                    "lsr38": [
+                    ],
+                    "scope": [
+                        "01XXX_ZZZZ",
+                        "XXX_EJOURNAL",
+                        "01XXX"
+                    ],
+                    "lsr40": [
+                        "eng"
+                    ],
+                    "sourceid": [
+                        "01XXX_ZZZZ"
+                    ],
+                    "creatorcontrib": [
+                        "Veer, E. A. Vander."
+                    ],
+                    "lsr04": [
+                        "O'Reilly Media,"
+                    ],
+                    "lsr02": [
+                        "609841466"
+                    ],
+                    "lsr01": [
+                        "99153559034403941"
+                    ],
+                    "lsr42": [
+                        "|||"
+                    ],
+                    "addtitle": [
+
+                    ],
+                    "addsrcrecordid": [
+                        "99153559034403941"
+                    ],
+                    "recordid": [
+                        "01XXX_ZZZZ512223495220003941"
+                    ],
+                    "enddate": [
+                        "20081231"
+                    ],
+                    "alttitle": [
+                        "FACEBOOK",
+                        "Missing manual"
+                    ],
+                    "lsr05": [
+                        "Sebastopol :"
+                    ]
+                },
+                "ranking": {
+                    "booster2": [
+                        "1"
+                    ],
+                    "booster1": [
+                        "1"
+                    ]
+                },
+                "links": {
+                    "thumbnail": [
+                        "$$Tgoogle_thumb"
+                    ],
+                    "linktouc": [
+                        "$$Tworldcat_oclc$$Eworldcat"
+                    ]
+                },
+                "addata": {
+                    "date": [
+                        "2008"
+                    ],
+                    "aulast": [
+                        "Veer"
+                    ],
+                    "cop": [
+                        "Sebastopol"
+                    ],
+                    "isbn": [
+                        "1-306-81577-0",
+                        "0-596-52017-4",
+                        "0-596-55376-5"
+                    ],
+                    "format": [
+                        "book"
+                    ],
+                    "ristype": [
+                        "BOOK"
+                    ],
+                    "mis1": [
+                        "512223495220003941"
+                    ],
+                    "oclcid": [
+                        "609841466"
+                    ],
+                    "abstract": [
+                    ],
+                    "aufirst": [
+                        "E. A. Vander."
+                    ],
+                    "addtitle": [
+                        "Missing manual"
+                    ],
+                    "seriestitle": [
+                        "Missing manual",
+                        "Missing manual Facebook",
+                        "Missing Manual"
+                    ],
+                    "au": [
+                        "Veer, E. A. Vander"
+                    ],
+                    "stitle": [
+                        "FACEBOOK"
+                    ],
+                    "genre": [
+                        "book"
+                    ],
+                    "btitle": [
+                        "Facebook :The Missing Manual"
+                    ],
+                    "risdate": [
+                        "2008"
+                    ],
+                    "pub": [
+                        "O'Reilly Media"
+                    ]
+                },
+                "browse": {
+                    "institution": [
+                        "01XXX"
+                    ],
+                    "subject": [
+                    ],
+                    "author": [
+                        "$$DVeer, E. A. Vander$$EVeer, E. A. Vander"
+                    ],
+                    "title": [
+                    ]
+                }
+            },
+            "@id": ""
+        },
+        {
+        }
+    ],
+    "timelog": {
+        "CalculateRtaLinks1DeltaTime": 170,
+        "BriefSearchDeltaTime": 1417,
+        "DoSearchPrimoResultDeltaTime": 1245,
+        "StartBriefSearch": 1685721300408,
+        "retrieveHighLightsDeltaTime": 171,
+        "retrieveDidUMeanDeltaTime": 171,
+        "GetSearchStatusDeltaTime": 1245,
+        "StartTranslationTime": 1685721301653,
+        "AddSearchStatusDeltaTime": 0,
+        "FullEndDMDataDeltaTime": 170,
+        "retrieveFacetsDeltaTime": 171
+    },
+    "lang3": "eng",
+    "info": {
+        "total": 414298,
+        "last": "10",
+        "maxTotal": 0,
+        "first": "1"
+    }
+}
