@@ -60,3 +60,38 @@ def paginate(data, request):
         page_obj = paginator.get_page(page)
         return page_obj.object_list
     return data
+
+def select_providers(providers, start_tag, tags_in_query_list):
+    selected_provider_list = []
+    is_tag_exists = False
+
+    for provider in providers:
+        if provider.default:
+            if start_tag:
+                for tag in provider.tags:
+                    if tag.lower() == start_tag.lower():
+                        selected_provider_list.append(provider)
+                        is_tag_exists = True
+                # end for
+            else:
+                selected_provider_list.append(provider)
+            # end if
+        else:
+            ## not a default provider, check the tag match
+            if provider.tags:
+                for tag in provider.tags:
+                    if tag.lower() in [t.lower() for t in tags_in_query_list] or start_tag and start_tag.lower() == tag.lower():
+                        if provider not in selected_provider_list:
+                            selected_provider_list.append(provider)
+                            is_tag_exists = True
+                        # end if
+                    # end if
+                # end for
+            # end if
+        # end if
+    # end for
+
+    if not is_tag_exists:
+        selected_provider_list = providers
+
+    return selected_provider_list
