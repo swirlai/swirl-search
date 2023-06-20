@@ -68,10 +68,7 @@ def select_providers(providers, start_tag, tags_in_query_list):
     - Leading tag
         + Include active providers where the tag is included in their tag list
           regardless of whether the default is true
-    - Embedded Tags (no leading tag)
-        + Include active providers where the tag is included in their tag list
-          regardless of if the default is true
-    - Embedded Tags with a leading tag
+    - Embedded Tags (with or without leading tag)
         + Include active providers where the tag is included in their tag list
           regardless of if the default is true
     """
