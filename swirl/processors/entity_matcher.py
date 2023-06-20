@@ -58,11 +58,28 @@ class EntityMatcherPostResultProcessor(PostResultProcessor):
 
     def __init__(self, search_id):
 
-        self.entity_list_path = "lists/entity_list.txt"
+        self.entity_list_path = None
         self.entity_list = None
         return super().__init__(search_id)
     
     def process(self):
+
+        # locate the entity dictionary 
+        if self.search.tags:
+            for tag in self.search.tags:
+                if tag.lower().startswith('entitydictionary'):
+                    if ':' in tag:
+                        self.entity_list_path = tag.split(':')[1]
+                    else:
+                        self.warning(f"Can't extract filename from tag: {tag}")
+                        return 0
+                    
+        if not self.entity_list:
+            self.entity_list = read_entity_list(self.entity_list_path)      
+            self.warning(f'loaded {len(self.entity_list)} entities')  
+
+        if not self.entity_list:
+            return 0   
 
         removed = 0
         match_count = 0
@@ -71,10 +88,6 @@ class EntityMatcherPostResultProcessor(PostResultProcessor):
         for result in self.results:
 
             if result.json_results:
-
-                if not self.entity_list:
-                    self.entity_list = read_entity_list(self.entity_list_path)      
-                    self.warning(f'loaded {len(self.entity_list)} entities')     
 
                 for item in result.json_results:
                     matches = find_matches(self.entity_list, [item['title'],item['body']])
