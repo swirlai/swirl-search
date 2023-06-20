@@ -328,6 +328,72 @@ def test_select_providers_two_activ_with_misspelled_start_tag(test_suser_pw):
     assert len(pl) == 2
 
 @pytest.mark.django_db
+def test_select_providers_two_activ_with_embedded_tag(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, True, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, False, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="xxx", tags_in_query_list=['bar'])
+    assert len(pl) == 1
+
+@pytest.mark.django_db
+def test_select_providers_two_activ_with_embedded_tag_no_defaults(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, False, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, False, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="xxx", tags_in_query_list=['bar'])
+    assert len(pl) == 1
+
+@pytest.mark.django_db
+def test_select_providers_two_active_with_embedded_no_start_tag_with_defaults(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, True, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, False, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="", tags_in_query_list=['bar'])
+    assert len(pl) == 2
+
+@pytest.mark.django_db
 def test_dd_result_processor(ms_message_result_converation, test_suser_pw):
     ddrp_id = create_ddrp_provider(test_suser_pw)
     ddrp_provider = SearchProvider.objects.get(pk=ddrp_id)
