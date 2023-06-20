@@ -213,9 +213,13 @@ def ms_message_result_converation():
     return results
 
 @pytest.mark.django_db
-def test_select_providers_two_active_with_two_match_start_tag(test_suser_pw):
+def test_select_providers_all_empty(test_suser_pw):
     pl = select_providers(providers=[],start_tag="", tags_in_query_list=[])
     assert len(pl) == 0
+
+
+@pytest.mark.django_db
+def test_select_providers_two_active_with_two_match_start_tag(test_suser_pw):
 
     provider_list = []
     owner = get_ddrp_suser(test_suser_pw)
@@ -237,8 +241,6 @@ def test_select_providers_two_active_with_two_match_start_tag(test_suser_pw):
 
 @pytest.mark.django_db
 def test_select_providers_two_active_with_one_match_start_tag(test_suser_pw):
-    pl = select_providers(providers=[],start_tag="", tags_in_query_list=[])
-    assert len(pl) == 0
 
     provider_list = []
     owner = get_ddrp_suser(test_suser_pw)
@@ -261,8 +263,6 @@ def test_select_providers_two_active_with_one_match_start_tag(test_suser_pw):
 
 @pytest.mark.django_db
 def test_select_providers_one_active_one_default_with_one_match_start_tag(test_suser_pw):
-    pl = select_providers(providers=[],start_tag="", tags_in_query_list=[])
-    assert len(pl) == 0
 
     provider_list = []
     owner = get_ddrp_suser(test_suser_pw)
@@ -285,8 +285,6 @@ def test_select_providers_one_active_one_default_with_one_match_start_tag(test_s
 
 @pytest.mark.django_db
 def test_select_providers_one_active_one_default_with_no_tags(test_suser_pw):
-    pl = select_providers(providers=[],start_tag="", tags_in_query_list=[])
-    assert len(pl) == 0
 
     provider_list = []
     owner = get_ddrp_suser(test_suser_pw)
@@ -306,6 +304,28 @@ def test_select_providers_one_active_one_default_with_no_tags(test_suser_pw):
 
     pl = select_providers(providers=provider_list,start_tag="", tags_in_query_list=[])
     assert len(pl) == 1
+
+@pytest.mark.django_db
+def test_select_providers_two_activ_with_misspelled_start_tag(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, True, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, True, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="xxx", tags_in_query_list=[])
+    assert len(pl) == 2
 
 @pytest.mark.django_db
 def test_dd_result_processor(ms_message_result_converation, test_suser_pw):
