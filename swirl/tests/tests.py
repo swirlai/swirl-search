@@ -14,6 +14,7 @@ from swirl.processors.transform_query_processor import *
 from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list
 from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
 from swirl.processors.dedupe import DedupeByFieldResultProcessor
+from swirl.utils import select_providers
 
 logger = logging.getLogger(__name__)
 
@@ -169,6 +170,34 @@ def get_ddrp_provider_data():
         "eval_credentials": ""
     }
 
+def get_minimal_search_provider_data(name="test minimal search_provider", actve=True, default=True, tags=[]):
+    return {
+        "name": name,
+        "shared": True,
+        "active": actve,
+        "default": default,
+        "connector": "M365OutlookMessages",
+        "url": "",
+        "query_template": "{url}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true,NOT_CHAR=-",
+        "result_processor": "",
+        "result_grouping_field":"conversationId",
+        "result_processors": [
+            "MappingResultProcessor",
+            "DedupeByFieldResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.conversationId,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+         "tags": tags
+    }
+
 @pytest.fixture
 def ms_message_result_converation():
     data_dir = os.path.dirname(os.path.abspath(__file__))
@@ -182,6 +211,187 @@ def ms_message_result_converation():
     for i in results:
         i['conversationId'] = i['resource']['conversationId']
     return results
+
+@pytest.mark.django_db
+def test_select_providers_all_empty(test_suser_pw):
+    pl = select_providers(providers=[],start_tag="", tags_in_query_list=[])
+    assert len(pl) == 0
+
+
+@pytest.mark.django_db
+def test_select_providers_two_active_with_two_match_start_tag(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, True, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="foo", tags_in_query_list=[])
+    assert len(pl) == 2
+
+@pytest.mark.django_db
+def test_select_providers_two_active_with_one_match_start_tag(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, True, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, True, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="foo", tags_in_query_list=[])
+    assert len(pl) == 1
+
+@pytest.mark.django_db
+def test_select_providers_one_active_one_default_with_one_match_start_tag(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, False, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, True, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="foo", tags_in_query_list=[])
+    assert len(pl) == 1
+
+@pytest.mark.django_db
+def test_select_providers_one_active_one_default_with_no_tags(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, False, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, True, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="", tags_in_query_list=[])
+    assert len(pl) == 1
+
+@pytest.mark.django_db
+def test_select_providers_two_activ_with_misspelled_start_tag(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, True, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, True, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="xxx", tags_in_query_list=[])
+    assert len(pl) == 2
+
+@pytest.mark.django_db
+def test_select_providers_two_activ_with_embedded_tag(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, True, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, False, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="xxx", tags_in_query_list=['bar'])
+    assert len(pl) == 1
+
+@pytest.mark.django_db
+def test_select_providers_two_activ_with_embedded_tag_no_defaults(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, False, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, False, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="xxx", tags_in_query_list=['bar'])
+    assert len(pl) == 1
+
+@pytest.mark.django_db
+def test_select_providers_two_active_with_embedded_no_start_tag_with_defaults(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, True, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, False, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="", tags_in_query_list=['bar'])
+    assert len(pl) == 2
 
 @pytest.mark.django_db
 def test_dd_result_processor(ms_message_result_converation, test_suser_pw):

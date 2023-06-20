@@ -17,6 +17,7 @@ from swirl.models import QueryTransform, Search, SearchProvider, Result
 from swirl.tasks import federate_task
 from swirl.processors import *
 from swirl.processors.transform_query_processor_utils import get_pre_query_processor_or_transform
+from swirl.utils import select_providers
 
 SWIRL_OBJECT_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
 
@@ -116,34 +117,7 @@ def search(id, session=None):
         # end for
     else:
         # no provider list
-        is_tag_exists = False
-        for provider in providers:
-            # active status is determined later on
-            if provider.default:
-                if start_tag:
-                    for tag in provider.tags:
-                        if tag.lower() == start_tag.lower():
-                            selected_provider_list.append(provider)
-                            is_tag_exists = True
-                    # end for
-                else:
-                    selected_provider_list.append(provider)
-                # end if
-            else:
-                if provider.tags:
-                    for tag in provider.tags:
-                        if tag.lower() in [t.lower() for t in tags_in_query_list]:
-                            if not provider in selected_provider_list:
-                                selected_provider_list.append(provider)
-                            # end if
-                        # end if
-                    # end for
-                # end if
-            # end if
-        # end for
-        if not is_tag_exists:
-            selected_provider_list = providers
-    # endif
+        selected_provider_list = select_providers(providers=providers, start_tag=start_tag, tags_in_query_list=tags_in_query_list)
 
     providers = selected_provider_list
 
