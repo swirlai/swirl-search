@@ -71,12 +71,16 @@ class EntityMatcherPostResultProcessor(PostResultProcessor):
                     if ':' in tag:
                         self.entity_list_path = tag.split(':')[1]
                     else:
-                        self.warning(f"Can't extract filename from tag: {tag}")
+                        self.error(f"Can't extract filename from tag: {tag}")
                         return 0
+        
+        if not self.entity_list_path:
+            self.error("Tag EntityDictionary not found!")
+            return 0
                     
         if not self.entity_list:
             self.entity_list = read_entity_list(self.entity_list_path)      
-            self.warning(f'loaded {len(self.entity_list)} entities')  
+            # self.warning(f'loaded {len(self.entity_list)} entities')  
 
         if not self.entity_list:
             return 0   
@@ -92,7 +96,7 @@ class EntityMatcherPostResultProcessor(PostResultProcessor):
                 for item in result.json_results:
                     matches = find_matches(self.entity_list, [item['title'],item['body']])
                     if matches:
-                        self.warning(f"match: {matches}")
+                        # self.warning(f"match: {matches}")
                         item['explain']['matched_entity'] = list(matches)
                         matched.append(item)
                         match_count = match_count + 1
@@ -102,7 +106,7 @@ class EntityMatcherPostResultProcessor(PostResultProcessor):
                 # end for
 
                 if result.json_results != matched:
-                    self.warning(f"swapping: {len(result.json_results)} ?= {len(matched)}")
+                    # self.warning(f"swapping: {len(result.json_results)} ?= {len(matched)}")
                     result.json_results = matched
                     result.save()
 
