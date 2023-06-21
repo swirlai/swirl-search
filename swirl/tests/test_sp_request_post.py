@@ -131,3 +131,35 @@ class PostSearchProviderTestCase(TestCase):
         assert response.status_code == 200, 'Expected HTTP status code 200'
         resp_json = response.json()
         print(resp_json)
+
+    @responses.activate
+    def test_request_post_with_custom_headers(self):
+        # Call the viewset
+        surl = reverse('search')
+
+        # Mock the POST request
+        json_response = self._mock_small_result
+        url_pattern = re.compile(r'https://xx\.apis\.it\.place\.edu/.*')
+
+        # Define a callback function to capture the request headers
+        def request_callback(request):
+            headers = request.headers
+            # Perform assertions or checks on the headers
+            # Example: Assert the 'Content-Type' header is set to 'application/json'
+            assert headers['Content-Type'] == 'application/json'
+            assert headers['X-Api-Key'] == '<your-api-key>'
+            assert headers["custom-header-1"] ==  "customer-header-1-value"
+            assert headers["custom-header-2"] == "customer-header-2-value"
+            assert headers["custom-header-3"] == "customer-header-3-value"
+
+            return (200, {}, json.dumps(json_response))
+
+        # Add the callback to the responses library
+        responses.add_callback(responses.POST, url_pattern, callback=request_callback)
+        # responses.add(responses.POST, url_pattern, json=json_response, status=200)
+        # Make the GET request with request headers
+        response = self._api_client.get(surl, {'qs': 'pinker', 'providers':1})
+
+        assert response.status_code == 200, 'Expected HTTP status code 200'
+        resp_json = response.json()
+        print(resp_json)

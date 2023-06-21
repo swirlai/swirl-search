@@ -16,6 +16,11 @@
           "names.name": "*{query_string}*"
         }
     },
+    "http_request_headers": {
+        "custom-header-1": "customer-header-1-value",
+        "custom-header-2": "customer-header-2-value",
+        "custom-header-3": "customer-header-3-value"
+    },
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
