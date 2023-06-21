@@ -62,4 +62,4 @@ class RequestsPost(Requests):
             post_json = json.loads(post_json_str)
         else:
             post_json=query
-        return requests.post(url, params=params, json=post_json_str, **kwargs)
+        return requests.post(url, params=params, json=post_json, **kwargs)
