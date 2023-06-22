@@ -129,7 +129,7 @@ SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')
 
 import re
 
-WORD_CHAR_PAT = r'[A-Za-z0-9]+'
+WORD_CHAR_PAT = r"[A-Za-z0-9']+"
 
 def highlight_list(target_str, word_list):
     # Create canonical word list in lower case
