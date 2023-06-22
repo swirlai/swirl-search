@@ -282,7 +282,7 @@ class MappingResultProcessor(ResultProcessor):
             result_number = result_number + 1
             # stop if we have enough results
             if result_number > self.provider.results_per_query:
-                self.warning("Truncating extra results, found & retrieved may be incorrect")
+                # self.warning("Truncating extra results, found & retrieved may be incorrect")
                 break
             # unique list of terms from highligts
         # end for
