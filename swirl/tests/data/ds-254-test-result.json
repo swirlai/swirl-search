@@ -1,0 +1,107 @@
+{
+    "kind": "customsearch#search",
+    "url": {
+      "type": "application/json",
+      "template": "https://www.googleapis.com/customsearch/v1?q={searchTerms}&num={count?}&start={startIndex?}&lr={language?}&safe={safe?}&cx={cx?}&sort={sort?}&filter={filter?}&gl={gl?}&cr={cr?}&googlehost={googleHost?}&c2coff={disableCnTwTranslation?}&hq={hq?}&hl={hl?}&siteSearch={siteSearch?}&siteSearchFilter={siteSearchFilter?}&exactTerms={exactTerms?}&excludeTerms={excludeTerms?}&linkSite={linkSite?}&orTerms={orTerms?}&relatedSite={relatedSite?}&dateRestrict={dateRestrict?}&lowRange={lowRange?}&highRange={highRange?}&searchType={searchType}&fileType={fileType?}&rights={rights?}&imgSize={imgSize?}&imgType={imgType?}&imgColorType={imgColorType?}&imgDominantColor={imgDominantColor?}&alt=json"
+    },
+    "queries": {
+      "request": [
+        {
+          "title": "Google Custom Search - Microsoft blizzrd activision block",
+          "totalResults": "19",
+          "searchTerms": "Microsoft blizzrd activision block",
+          "count": 10,
+          "startIndex": 1,
+          "inputEncoding": "utf8",
+          "outputEncoding": "utf8",
+          "safe": "off",
+          "cx": "b384c4e79a5394479"
+        }
+      ],
+      "nextPage": [
+        {
+          "title": "Google Custom Search - Microsoft blizzrd activision block",
+          "totalResults": "19",
+          "searchTerms": "Microsoft blizzrd activision block",
+          "count": 10,
+          "startIndex": 11,
+          "inputEncoding": "utf8",
+          "outputEncoding": "utf8",
+          "safe": "off",
+          "cx": "b384c4e79a5394479"
+        }
+      ]
+    },
+    "context": {
+      "title": "Mergers & Acquisitions"
+    },
+    "searchInformation": {
+      "searchTime": 0.230966,
+      "formattedSearchTime": "0.23",
+      "totalResults": "19",
+      "formattedTotalResults": "19"
+    },
+    "spelling": {
+      "correctedQuery": "Microsoft blizzard activision block",
+      "htmlCorrectedQuery": "Microsoft \u003cb\u003e\u003ci\u003eblizzard\u003c/i\u003e\u003c/b\u003e activision block"
+    },
+    "items": [
+      {
+        "kind": "customsearch#result",
+        "title": "FTC Votes to File Suit to Block Microsoft's $69B Activision Deal",
+        "htmlTitle": "FTC Votes to File Suit to \u003cb\u003eBlock Microsoft&#39;s\u003c/b\u003e $69B \u003cb\u003eActivision\u003c/b\u003e Deal",
+        "link": "https://www.themiddlemarket.com/news-analysis/ftc-votes-to-file-suit-to-block-microsofts-69b-activision-deal",
+        "displayLink": "www.themiddlemarket.com",
+        "snippet": "Feb 15, 2019 ... What are 2019's big opportunities in technology? ... chief operations officer; and Mike Kohlsdorf, president, Francisco Partners Consulting",
+        "htmlSnippet": "Dec 9, 2022 \u003cb\u003e...\u003c/b\u003e The U.S. Federal Trade Commission is seeking to \u003cb\u003eblock Microsoft\u003c/b\u003e Corp.&#39;s $69 billion acquisition of \u003cb\u003eActivision Blizzard\u003c/b\u003e Inc.,&nbsp;...",
+        "formattedUrl": "https://www.themiddlemarket.com/.../ftc-votes-to-file-suit-to-block- microsofts-69b-activision-deal",
+        "htmlFormattedUrl": "https://www.themiddlemarket.com/.../ftc-votes-to-file-suit-to-\u003cb\u003eblock\u003c/b\u003e- \u003cb\u003emicrosoft\u003c/b\u003es-69b-\u003cb\u003eactivision\u003c/b\u003e-deal",
+        "pagemap": {
+          "cse_thumbnail": [
+            {
+              "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5DRIPc35A8MQlWFFtTEDTNSDSRrw0EXx3w7ef3soODgyecI0JiWEkc7j4",
+              "width": "275",
+              "height": "183"
+            }
+          ],
+          "metatags": [
+            {
+              "og:image": "https://www.themiddlemarket.com/wp-content/uploads/2022/12/394222092-1024x683.jpg",
+              "theme-color": "#ffffff",
+              "og:image:width": "1024",
+              "article:published_time": "2022-12-09T08:37:17-05:00",
+              "twitter:card": "summary_large_image",
+              "og:site_name": "Mergers & Acquisitions",
+              "og:image:type": "image/jpeg",
+              "og:description": "Regulators said Microsoft’s ownership of Activision could hurt other players in the $200 billion gaming market.",
+              "twitter:creator": "@TheMiddleMarket",
+              "article:publisher": "https://www.facebook.com/themiddlemarket/",
+              "og:image:secure_url": "https://www.themiddlemarket.com/wp-content/uploads/2022/12/394222092-1024x683.jpg",
+              "twitter:image": "https://www.themiddlemarket.com/wp-content/uploads/2022/12/394222092-1024x683.jpg",
+              "msapplication-tap-highlight": "no",
+              "twitter:site": "@TheMiddleMarket",
+              "article:modified_time": "2022-12-09T09:50:57-05:00",
+              "msapplication-tilecolor": "#da532c",
+              "og:type": "article",
+              "og:image:alt": "FTC Votes to File Suit to Block Microsoft’s $69B Activision Deal",
+              "twitter:title": "FTC Votes to File Suit to Block Microsoft’s $69B Activision Deal",
+              "og:title": "FTC Votes to File Suit to Block Microsoft’s $69B Activision Deal",
+              "og:image:height": "683",
+              "og:updated_time": "2022-12-09T09:50:57-05:00",
+              "article:tag": "Antitrust",
+              "viewport": "width=device-width, initial-scale=1.0",
+              "twitter:description": "Regulators said Microsoft’s ownership of Activision could hurt other players in the $200 billion gaming market.",
+              "og:locale": "en_US",
+              "og:url": "https://www.themiddlemarket.com/news-analysis/ftc-votes-to-file-suit-to-block-microsofts-69b-activision-deal",
+              "format-detection": "telephone=no"
+            }
+          ],
+          "cse_image": [
+            {
+              "src": "https://www.themiddlemarket.com/wp-content/uploads/2022/12/394222092-1024x683.jpg"
+            }
+          ]
+        }
+      }
+    ]
+  }

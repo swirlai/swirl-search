@@ -6,6 +6,9 @@
 #############################################
 #############################################
 
+from swirl.nltk import word_tokenize, is_punctuation
+from nltk.tag import tnt
+
 def create_result_dictionary():
     """
     Create an empty ressult dictionary, when entries are made this dictionary, the type must
@@ -129,26 +132,55 @@ SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')
 
 import re
 
-WORD_CHAR_PAT = r"[A-Za-z0-9']+"
-
 def highlight_list(target_str, word_list):
-    # Create canonical word list in lower case
-    source_words = [w.lower() for w in word_list]
+    """
+    Highlight the terms in the target_str with terms from the word_list
+    """
+
+
+    # Step 1 : Create canonical word list in lower case
+    hili_words =  []
+    for word in word_list:
+
+        # We wan '_' to break a word in this case.
+        word = word.replace('_', ' ')
+        # Use NLTK word tokenzer to split out punctuation.
+        wtk = word_tokenize(word)
+
+        # Now, for eaech tokenized term
+        for word_tk in wtk:
+
+            # Handle possesive cases by rejoining them.
+            if word_tk.lower() == "'s":
+                hili_words[-1] = hili_words[-1] + word_tk.lower()
+                continue
+            # Don't highlight lone punctionuation.
+            if not is_punctuation(word_tk):
+                hili_words.append(word_tk.lower())
 
     ret = target_str
 
     # create a unique list of words from the target, so that we only highlight each once.
     all_words = []
     seen_words = set()
-    for aw in re.findall(WORD_CHAR_PAT, target_str):
+
+    # Usae same rules as above for the target
+    target_str = target_str.replace('_', ' ')
+    find_all = word_tokenize(target_str)
+    for aw in find_all:
         aw_lower = aw.lower()
+        if aw_lower == "'s":
+            all_words[-1] = all_words[-1] + aw_lower
+            continue
         if aw_lower not in seen_words:
             seen_words.add(aw_lower)
             all_words.append(aw)
 
+    # Now for all terms in the target list, find them, case insensitive in the list of hi light
+    # words and then highlight them in the return tartget string.
     for word in all_words:
         # If the word matches any of the source words, add it to the list of highlighted words
-        if word.lower() in source_words:
+        if word.lower() in hili_words:
             ret = ret.replace(word,f'{SWIRL_HIGHLIGHT_START_CHAR}{word}{SWIRL_HIGHLIGHT_END_CHAR}')
 
     return ret
