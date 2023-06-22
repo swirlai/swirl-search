@@ -55,7 +55,7 @@ class RequestsPost(Requests):
         kwargs['headers'] = headers
 
         post_json_str = json.dumps(self.provider.post_query_template)
-        if post_json_str and post_json_str != '"{}"':
+        if post_json_str and post_json_str != '{}':
             post_json_str     = bind_query_mappings(post_json_str, self.provider.query_mappings, self.provider.url)
             if '{query_string}' in post_json_str:
                 post_json_str = post_json_str.replace('{query_string}', urllib.parse.quote_plus(self.query_string_to_provider))
