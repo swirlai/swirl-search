@@ -16,6 +16,7 @@ from swirl.serializers import ResultSerializer, SearchProviderSerializer
 import random
 import string
 import responses
+import re
 
 @pytest.fixture
 def test_suser_pw():
@@ -66,9 +67,6 @@ def app():
 def client():
     return Client()
 
-@pytest.fixture
-def request_api_url():
-    return 'https://xxx.mockable.io/rest/v2/plus/search/dc/?q=facebook'
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +74,7 @@ logger = logging.getLogger(__name__)
 class GeneralRequestAPITestCase(TestCase):
 
     @pytest.fixture(autouse=True)
-    def _init_fixtures(self, client, _request, _anonymous_request, test_suser, test_suser_pw, test_suser_anonymous, app, request_api_url):
+    def _init_fixtures(self, client, _request, _anonymous_request, test_suser, test_suser_pw, test_suser_anonymous, app):
         self._client = client
         self._request = _request
         self._anonymous_request = _anonymous_request
@@ -84,13 +82,16 @@ class GeneralRequestAPITestCase(TestCase):
         self._test_suser_pw = test_suser_pw
         self._test_suser_anonymous = test_suser_anonymous
         self._app = app
-        self._request_api_url = request_api_url
+        self._request_api_url = self._get_request_api_url()
 
     def setUp(self):
         settings.CELERY_TASK_ALWAYS_EAGER = True
 
     def tearDown(self):
         settings.CELERY_TASK_ALWAYS_EAGER = False
+
+    def _get_request_api_url(self):
+        return ''
 
     def _get_connector_name(self):
         return ''
@@ -182,6 +183,9 @@ class LibraryDatasourceTest(GeneralRequestAPITestCase):
                     "tags": []
             }
 
+    def _get_request_api_url(self):
+        return 'https://xxx.mockable.io/rest/v2/plus/search/dc/?q=facebook'
+
     def _create_search(self):
         provider_id = self._create_provider()
         try:
@@ -220,3 +224,80 @@ class LibraryDatasourceTest(GeneralRequestAPITestCase):
 
     def _mock_response(self):
         return self._get_hits()
+
+
+class DS403Test(GeneralRequestAPITestCase):
+
+    def _get_connector_name(self):
+        return 'M365OutlookMessages'
+
+    def _get_provider_data(self):
+
+        return     {
+            "name": "Mergers & Acquisitions (web/Google PSE)",
+            "active": True,
+            "default": True,
+            "connector": "RequestsGet",
+            "url": "https://www.googleapis.com/customsearch/v1",
+            "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+            "query_processors": [
+                "AdaptiveQueryProcessor"
+            ],
+            "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
+            "result_processors": [
+                "MappingResultProcessor"
+            ],
+            "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
+            "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['article:publisher'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['article:tag'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
+            "results_per_query": 10,
+            "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
+            "tags": [
+                "News",
+                "MergersAcquisitions"
+            ]
+        }
+
+    def _get_request_api_url(self):
+        return 'https://www.googleapis.com/customsearch/v1'
+
+    def _create_search(self):
+        provider_id = self._create_provider()
+        try:
+            new_search = Search.objects.create(query_string='MergersAcquisitions:Microsoft blizzrd activision',searchprovider_list=[provider_id],owner=self._test_suser)
+        except Error as err:
+            assert f'Search.create() failed: {err}'
+        new_search.status = 'NEW_SEARCH'
+        new_search.save()
+        return new_search.id
+
+    def _get_hits(self):
+        data_dir = os.path.dirname(os.path.abspath(__file__))
+        # Build the absolute file path for the JSON file in the 'data' subdirectory
+        json_file_path = os.path.join(data_dir, 'data', 'ds-403-test-result.json')
+
+        # Read the JSON file
+        with open(json_file_path, 'r') as file:
+            data = json.load(file)
+        return data
+
+    def _check_result(self, search_id):
+        result_count = Result.objects.filter(search_id=search_id).count()
+        assert result_count == 1
+        rs = Result.objects.get(search_id=search_id)
+        jsr = rs.json_results
+        assert jsr
+        assert len(jsr) == 1
+        assert jsr[0].get('body', None)
+        jsr[0]['body'].startswith("U.K. Blocks <em>Microsoft's</em> $69 Billion")
+        return True
+
+    def _mock_response(self):
+        return self._get_hits()
+
+    @responses.activate
+    def test_request_api(self):
+        if self._get_connector_name() == '':
+            return
+        url_pattern = re.compile(r'https://www\.googleapis\.com/customsearch/.*')
+        responses.add(responses.GET, url_pattern, body=json.dumps(self._mock_response()).encode('utf-8'), status=200)
+        result = self._run_search()

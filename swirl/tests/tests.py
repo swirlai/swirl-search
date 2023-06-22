@@ -87,7 +87,8 @@ def hll_test_cases():
             ['The quick brown fox jumps over the lazy dog',['quick', 'jumps', 'dog']],
             ['The weather is nice today',['rain', 'snow', 'sun']],
             ['ChatGPT is an AI language model', ['ChatGPT', 'AI', 'language', 'model']],
-            ['This is a case insensitive test',["this", "Test"]]
+            ['This is a case insensitive test',["this", "Test"]],
+            ["U.K. Blocks Microsoft's $69 Billion",["microsoft's"]]
         ]
 
 @pytest.fixture
@@ -100,7 +101,8 @@ def hll_test_expected():
         'The <em>quick</em> brown fox <em>jumps</em> over the lazy <em>dog</em>',
         'The weather is nice today',
         '<em>ChatGPT</em> is an <em>AI</em> <em>language</em> <em>model</em>',
-        '<em>This</em> is a case insensitive <em>test</em>'
+        '<em>This</em> is a case insensitive <em>test</em>',
+        "U.K. Blocks <em>Microsoft's</em> $69 Billion"
     ]
 
 def test_highlght_list(hll_test_cases, hll_test_expected):
