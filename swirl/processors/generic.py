@@ -93,7 +93,7 @@ class GenericResultProcessor(ResultProcessor):
             list_results.append(swirl_result)
             result_number = result_number + 1
             if result_number > self.provider.results_per_query:
-                self.warning("Truncating extra results, found & retrieved may be incorrect")
+                # self.warning("Truncating extra results, found & retrieved may be incorrect")
                 break
         # end for
 
