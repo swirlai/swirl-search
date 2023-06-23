@@ -80,16 +80,16 @@ def noop_query_string():
 @pytest.fixture
 def hll_test_cases():
     return [
-            ['The same same word twice',['same']],
-            ['Swirl_Pitch_1234412',['swirl']],
-            ['Swirl Pitch 1234412',['swirl']],
-            ['I love programming in Python',['programming', 'Python']],
-            ['The quick brown fox jumps over the lazy dog',['quick', 'jumps', 'dog']],
-            ['The weather is nice today',['rain', 'snow', 'sun']],
-            ['ChatGPT is an AI language model', ['ChatGPT', 'AI', 'language', 'model']],
-            ['This is a case insensitive test',["this", "Test"]],
-            ["U.K. Blocks Microsoft's $69 Billion",["microsoft's"]]
-        ]
+        ['The same same word twice',['same']],
+        ['Swirl_Pitch_1234412',['swirl']],
+        ['Swirl Pitch 1234412',['swirl']],
+        ['I love programming in Python',['programming', 'Python']],
+        ['The quick brown fox jumps over the lazy dog',['quick', 'jumps', 'dog']],
+        ['The weather is nice today',['rain', 'snow', 'sun']],
+        ['ChatGPT is an AI language model', ['ChatGPT', 'AI', 'language', 'model']],
+        ['This is a case insensitive test',["this", "Test"]],
+        ["U.K. Blocks Microsoft's $69 Billion",["microsoft's"]]
+    ]
 
 @pytest.fixture
 def hll_test_expected():
