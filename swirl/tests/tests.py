@@ -80,6 +80,8 @@ def noop_query_string():
 @pytest.fixture
 def hll_test_cases():
     return [
+        ['Activision Blizzard Inc. — Mergers & Acquisition',['Microsoft','Blizzard','Activision','Inc']],
+        ['Activision Blizzard Inc. — Mergers & Acquisition',['Microsoft','Blizzard','Activision','Inc.']],
         ['The same same word twice',['same']],
         ['Swirl_Pitch_1234412',['swirl']],
         ['Swirl Pitch 1234412',['swirl']],
@@ -94,6 +96,8 @@ def hll_test_cases():
 @pytest.fixture
 def hll_test_expected():
     return[
+        '<em>Activision</em> <em>Blizzard</em> <em>Inc</em>. — Mergers & Acquisition',
+        '<em>Activision</em> <em>Blizzard</em> <em>Inc</em>. — Mergers & Acquisition',
         'The <em>same</em> <em>same</em> word twice',
         '<em>Swirl</em>_Pitch_1234412',
         '<em>Swirl</em> Pitch 1234412',

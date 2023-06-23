@@ -149,13 +149,14 @@ def highlight_list(target_str, word_list):
 
         # Now, for eaech tokenized term
         for word_tk in wtk:
-
             # Handle possesive cases by rejoining them.
             if word_tk.lower() == "'s":
                 hili_words[-1] = hili_words[-1] + word_tk.lower()
                 continue
-            # Don't highlight lone punctionuation.
+            # Don't highlight lone punctuation.
             if not is_punctuation(word_tk):
+                if is_punctuation(word_tk[-1]):
+                    word_tk = word_tk[:-1] # strip trailing punctiation, we are not going to match on it
                 hili_words.append(word_tk.lower())
 
     ret = target_str
@@ -172,9 +173,15 @@ def highlight_list(target_str, word_list):
         if aw_lower == "'s":
             all_words[-1] = all_words[-1] + aw_lower
             continue
-        if aw_lower not in seen_words:
-            seen_words.add(aw_lower)
-            all_words.append(aw)
+
+        if not is_punctuation(aw_lower):
+            if is_punctuation(aw_lower[-1]):
+                # strip trailing punctiation, we are not going to match on it
+                aw_lower = aw_lower[:-1]
+                aw = aw[:-1]
+            if aw_lower not in seen_words:
+                seen_words.add(aw_lower)
+                all_words.append(aw)
 
     # Now for all terms in the target list, find them, case insensitive in the list of hi light
     # words and then highlight them in the return tartget string.
