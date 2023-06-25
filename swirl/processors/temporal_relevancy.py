@@ -13,8 +13,8 @@ from swirl.processors.processor import *
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
-import re
 from datetime import datetime, timedelta
+from swirl.processors.utils import get_tag
 
 class TemporalRelevancyPostResultProcessor(PostResultProcessor):
 
@@ -24,15 +24,7 @@ class TemporalRelevancyPostResultProcessor(PostResultProcessor):
 
         # identify the requested temporal distance 
         temporal_distance = temporal_units = temporal_distance_base = None
-        if self.search.tags:
-            for tag in self.search.tags:
-                if tag.lower().startswith('temporaldistance'):
-                    if ':' in tag:
-                        temporal_distance_base = tag.split(':')[1]
-                    else:
-                        self.warning(f"Can't extract temporal distance from tag: {tag}")
-                        return 0
-                    
+        temporal_distance_base = get_tag('temporaldistance', self.search.tags)                    
         if temporal_distance_base:
             # format d=10
             if '=' in temporal_distance_base:
@@ -47,16 +39,7 @@ class TemporalRelevancyPostResultProcessor(PostResultProcessor):
             return 0
                     
         # identify the requested minimum relevancy
-        minimum_relevancy_score = None
-        if self.search.tags:
-            for tag in self.search.tags:
-                if tag.lower().startswith('minimumrelevancy'):
-                    if ':' in tag:
-                        minimum_relevancy_score = tag.split(':')[1]
-                    else:
-                        self.warning(f"Can't extract minimum relevancy from tag: {tag}")
-                        return 0
-                    
+        minimum_relevancy_score = get_tag('minimumrelevancy', self.search.tags)
         if not minimum_relevancy_score:
             self.error("Minimum relevancy score not set!")
             return 0

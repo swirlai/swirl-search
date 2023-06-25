@@ -132,10 +132,7 @@ class Search(models.Model):
     status = models.CharField(max_length=50, default='NEW_SEARCH')
     time = models.FloatField(default=0.0)
     PRE_QUERY_PROCESSOR_CHOICES = [
-        ('ChatGPTQueryImproverProcessor', 'ChatGPTQueryImproverProcessor'),
-        ('ChatGPTQueryExpanderProcessor', 'ChatGPTQueryExpanderProcessor'),
-        ('ChatGPTQueryBooleanProcessor', 'ChatGPTQueryBooleanProcessor'),
-        ('ChatGPTQueryMakeQuestionProcessor', 'ChatGPTQueryMakeQuestionProcessor'),
+        ('ChatGPTQueryProcessor', 'ChatGPTQueryProcessor'),
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('TestQueryProcessor', 'TestQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor')
