@@ -290,5 +290,7 @@ class MappingResultProcessor(ResultProcessor):
         fb = self.get_opt_result_processor_feedback_json(provider_query_term_results)
         if fb:
             list_results.append(fb)
+
         self.processed_results = list_results
-        return self.processed_results
+        self.modified = len(self.processed_results)
+        return self.modified

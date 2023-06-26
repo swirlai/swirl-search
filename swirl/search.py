@@ -144,6 +144,7 @@ def search(id, session=None):
         processed_query = None
         query_temp = search.query_string
         for processor in processor_list:
+            logger.info(f"{module_name}: invoking processor: {processor}")
             try:
                 pre_query_processor = get_pre_query_processor_or_transform(processor, query_temp, SWIRL_OBJECT_DICT, search.tags, user)
                 if pre_query_processor.validate():

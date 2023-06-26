@@ -405,7 +405,8 @@ def test_dd_result_processor(ms_message_result_converation, test_suser_pw):
     ddrp_provider = SearchProvider.objects.get(pk=ddrp_id)
     ddrp = DedupeByFieldResultProcessor(ms_message_result_converation, ddrp_provider, "dune")
     r = ddrp.process()
-    assert len(r) == 1
+    assert r
+    assert len(ddrp.get_results()) == 1
     logger.info(f'dedupped results {r}')
 
 @pytest.mark.django_db

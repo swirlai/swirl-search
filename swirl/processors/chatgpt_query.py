@@ -6,6 +6,7 @@
 from django.conf import settings
 
 from swirl.processors.processor import *
+from swirl.processors.utils import get_tag
 
 import openai
 
@@ -38,23 +39,43 @@ class ChatGPTQueryProcessor(QueryProcessor):
         else:
             return self.query_string
 
+        self.warning(f"Tags: {self.tags}")
+        self.prompt = get_tag('prompt', self.tags)    
+        self.warning(f"prompt: {self.prompt}")
+        if not self.prompt:
+            return self.query_string
+        
+        if type(self.prompt) != str:
+            self.warning(f"Ignoring invalid prompt: {self.prompt}")
+            return self.query_string
+        
+        # to do: improve the below
+        if not self.prompt.endswith('{query_string}'):
+            if self.prompt.endswith(':'):
+                self.prompt = self.prompt + ' {query_string}'
+            else:
+                if not self.prompt.endswith('?'):
+                    self.prompt = self.prompt + ':  {query_string}'
+
+        self.warning(f"Prompt is: {self.prompt.format(query_string=self.query_string)}")
+
         completions = openai.Completion.create(
             engine="text-davinci-002",
             prompt=self.prompt.format(query_string=self.query_string),
-            max_tokens=1024,
+            max_tokens=(5 * len(self.query_string)),
             n=1,
             stop=None,
             temperature=0.5,
         )
 
         message = completions.choices[0].text
-        logger.info(f"{self}: {message}")
+        self.warning(f"ChatGPT Response: {message}")
 
         if message.strip().lower() == self.query_string.strip().lower():
             return self.query_string
 
         if len(message) > 5 * len(self.query_string):
-            self.warning(f"{self}: ChatGPT response too long, ignoring: {message}")
+            self.warning(f"{self}: ChatGPT response more than 5x query string length, ignoring: {message}")
             return self.query_string
 
         if message.endswith('?'):
@@ -92,54 +113,3 @@ class ChatGPTQueryProcessor(QueryProcessor):
 
         self.warning(f"{self}: ChatGPT response didn't parse clean: {message}")
         return self.query_string
-
-#############################################
-
-# TO DO: rewrite these using the setter
-
-class ChatGPTQueryImproverProcessor(ChatGPTQueryProcessor):
-
-    type = 'ChatGPTQueryImproverProcessor'
-
-    def process(self):
-        self.prompt = "Improve this search query max 5 words: {query_string}"
-        return super().process()
-
-#############################################
-
-class ChatGPTQueryMakeQuestionProcessor(ChatGPTQueryProcessor):
-
-    type = 'ChatGPTQueryMakeQuestionProcessor'
-
-    def process(self):
-
-        if self.query_string.endswith('?'):
-            self.warning("query_string is already in the form of a question")
-            return self.query_string
-
-        if len(self.query_string.split()) > 4:
-            self.warning("query_string too long for making into a question")
-            return self.query_string
-
-        self.prompt = "Rewrite this search query as a question: {query_string}"
-        return super().process()
-
-#############################################
-
-class ChatGPTQueryExpanderProcessor(ChatGPTQueryProcessor):
-
-    type = "ChatGPTQueryExpanderProcessor"
-
-    def process(self):
-        self.prompt = "What are the top 5 search terms related to: {query_string}"
-        return super().process()
-
-#############################################
-
-class ChatGPTQueryBooleanProcessor(ChatGPTQueryProcessor):
-
-    type = "ChatGPTQueryBooleanProcessor"
-
-    def process(self):
-        self.prompt = "Rewrite this as a boolean query: {query_string}"
-        return super().process()

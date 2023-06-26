@@ -32,7 +32,6 @@ class TestQueryProcessor(QueryProcessor):
 
 #############################################
 
-
 class GenericResultProcessor(ResultProcessor):
 
     type="GenericResultProcessor"
@@ -98,7 +97,8 @@ class GenericResultProcessor(ResultProcessor):
         # end for
 
         self.processed_results = list_results
-        return self.processed_results
+        self.modified = len(self.processed_results)
+        return self.modified
 
 #############################################
 
@@ -113,7 +113,8 @@ class TestResultProcessor(ResultProcessor):
             item['test'] = True
 
         self.processed_results = self.results
-        return self.processed_results
+        self.modified = len(self.processed_results)
+        return self.modified
 
 #############################################
 
@@ -137,4 +138,5 @@ class DuplicateHalfResultProcessor(ResultProcessor):
         # end for
 
         self.processed_results = self.results + results_hd
-        return self.processed_results
+        self.modified = len(self.processed_results)
+        return self.modified

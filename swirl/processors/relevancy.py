@@ -22,17 +22,17 @@ log = logging.getLogger()
 
 SWIRL_RELEVANCY_CONFIG = getattr(settings, 'SWIRL_RELEVANCY_CONFIG', {
     'title': {
-        'weight': 3.0
+        'weight': 1.5
     },
     'body': {
         'weight': 1.0
     },
     'author': {
-        'weight': 2.0
+        'weight': 1.0
     }
 })
 
-SWIRL_MIN_SIMILARITY = getattr(settings, 'SWIRL_MIN_SIMILARITY', 0.51)
+SWIRL_MIN_SIMILARITY = getattr(settings, 'SWIRL_MIN_SIMILARITY', 0.01)
 SWIRL_MAX_MATCHES = getattr(settings, 'SWIRL_MAX_MATCHES', 5)
 SWIRL_HIGHLIGHT_START_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_START_CHAR', '*')
 SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')

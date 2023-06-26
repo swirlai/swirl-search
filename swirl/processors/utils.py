@@ -540,3 +540,24 @@ def date_str_to_timestamp(s):
         logger.error(f'Unable to convert {s} to timestamp using any known type')
         return s
     return ret
+
+def get_tag(tag_target, tag_list):
+    """
+    Extract specific tag from a list of tag, return None if not found
+    """
+    if not tag_list:
+        return tag_list
+    
+    tag_value = None
+    for tag in tag_list:
+        if tag.lower().startswith(tag_target.lower()):
+            if ':' in tag:
+                right = tag.split(':', 1)
+                tag_value = right[1]
+            else:
+                tag_value = tag
+            return tag_value
+        
+    return None
+    
+    
