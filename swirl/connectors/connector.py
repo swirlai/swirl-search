@@ -31,6 +31,10 @@ from swirl.processors.transform_query_processor_utils import get_query_processor
 
 SWIRL_OBJECT_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
 
+# Look for this tag in tags and skip any results processor by name using this format
+# SW_RESULT_PROCESSOR_SKIP:<ResultProcessorName>
+SWIRL_RP_SKIP_TAG = 'SW_RESULT_PROCESSOR_SKIP'
+
 SWIRL_OBJECT_DICT = {}
 for t in SWIRL_OBJECT_LIST:
     SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
@@ -267,6 +271,26 @@ class Connector:
         return
 
     ########################################
+    def _get_skip_processors_from_tags(self):
+        """
+        Find all of the skip tag and collect the values and return them in a set
+        """
+
+        if not (self.search and self.search.tags):
+            return []
+
+        skip_set = set()
+        for tag in self.search.tags:
+            parts = tag.split(':')
+            if len(parts) != 2:
+                logger.warning(f"{tag} invalid format")
+                continue
+            tag_key, tag_value = parts
+            if tag_key == SWIRL_RP_SKIP_TAG:
+                skip_set.add(tag_value.strip())
+        return skip_set
+
+    ########################################
 
     def process_results(self):
 
@@ -294,8 +318,15 @@ class Connector:
             self.status = 'READY'
             return
 
+        processors_to_skip = self._get_skip_processors_from_tags()
+
+        processed_results = None
+        result_temp = self.results
         for processor in processor_list:
-            logger.info(f"{self}: invoking result processor: {processor}")
+            if processor in processors_to_skip:
+                logger.info(f"{self}: skipping processor: process results {processor} becasue it was in a skip tag of the search")
+                continue
+            logger.info(f"{self}: invoking processor: process results {processor}")
             last_results = copy.deepcopy(self.results)
             try:
                 proc = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.results, self.provider, self.query_string_to_provider)
@@ -321,6 +352,7 @@ class Connector:
         # end for
         self.processed_results = self.results
         self.status = 'READY'
+        self.retrieved = len(self.processed_results) # adjust retrieved in case processing effected the size of the list.
 
         return
 

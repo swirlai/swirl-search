@@ -3,12 +3,10 @@
     "connector": "Elastic",
     "url": "cloud_id='your-cloud-id-here'",
     "query_template": "index='{index_name}', query={'query_string': {'query': '{query_string}', 'default_field': '{default_field}'}}",
-    "query_processor": "",
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
     "query_mappings": "index_name=email,default_field=content,sort_by_date=date_published.keyword,NOT=true,NOT_CHAR=-",
-    "result_processor": "",
     "result_processors": [
         "MappingResultProcessor"
     ],

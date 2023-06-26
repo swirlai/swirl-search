@@ -60,6 +60,7 @@ class SearchProvider(models.Model):
     CONNECTOR_CHOICES = [
         ('ChatGPT', 'ChatGPT Query String'),
         ('RequestsGet', 'HTTP/GET returning JSON'),
+        ('RequestsPost', 'HTTP/POST returning JSON'),
         ('Elastic', 'Elasticsearch Query String'),
         ('OpenSearch', 'OpenSearch Query String'),
         # Uncomment the line below to enable PostgreSQL
@@ -75,6 +76,7 @@ class SearchProvider(models.Model):
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
     query_template = models.CharField(max_length=2048, default='{url}?q={query_string}', blank=True)
+    post_query_template = models.JSONField(default={}, blank=True)
     QUERY_PROCESSOR_CHOICES = [
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('TestQueryProcessor', 'TestQueryProcessor'),
@@ -89,14 +91,21 @@ class SearchProvider(models.Model):
         ('TestResultProcessor', 'TestResultProcessor'),
         ('MappingResultProcessor', 'MappingResultProcessor'),
         ('DateFinderResultProcessor','DateFinderResultProcessor')
+        ('DedupeByFieldResultProcessor', 'DedupeByFieldResultProcessor',)
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
+
+    ## if set, and the field exists in the results set, records w/ the same value will
+    ## be grouped together and only one result will be returned to the caller
+
+    result_grouping_field = models.CharField(max_length=1024, default=str, blank=True)
     result_processors = models.JSONField(default=getSearchProviderResultProcessorsDefault, blank=True)
     result_mappings = models.CharField(max_length=2048, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
     eval_credentials = models.CharField(max_length=100, default=str, blank=True)
     credentials = models.CharField(max_length=512, default=str, blank=True)
     tags = models.JSONField(default=list)
+    http_request_headers = models.JSONField(default={}, blank=True)
 
     class Meta:
         ordering = ['id']

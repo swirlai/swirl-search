@@ -11,7 +11,7 @@ import time
 
 import django
 
-from swirl.utils import swirl_setdir
+from swirl.utils import swirl_setdir, is_valid_json
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
@@ -54,6 +54,16 @@ class Requests(Connector):
         return dict()
 
     def construct_query(self):
+
+        """
+        Contstruct the query to provider is actually constructing a URL to the provider
+        As part of this it handles next page logic. This is approproaye for GET requests
+        but less necessary for a POST.
+
+        As such when the self.provider.query_template contains well formed JSON it is a
+        assumed that this IS the query string to provider and the and the url will be
+        the query to provider.
+        """
 
         logger.info(f"{self}: construct_query()")
 
@@ -104,6 +114,15 @@ class Requests(Connector):
         return super().validate_query()
 
     ########################################
+
+    def _put_configured_headers(self, headers = None):
+        """
+        Add any configured headers to any that exist in the input param
+        """
+        ret_headers = self.provider.http_request_headers
+        if headers is not None:
+            ret_headers.update(headers)
+        return ret_headers
 
     def execute_search(self, session=None):
 
@@ -159,24 +178,29 @@ class Requests(Connector):
                     if self.provider.credentials.startswith('HTTP'):
                         # handle HTTPBasicAuth('user', 'pass') etc
                         # response = requests.get(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth))
-                        response = self.send_request(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth), query=self.query_string_to_provider)
+                        response = self.send_request(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth),
+                                                     query=self.query_string_to_provider, headers=self._put_configured_headers())
                     else:
                         if self.provider.credentials.startswith('bearer='):
                             # populate with bearer token
                             headers = {
                                 "Authorization": f"Bearer {self.provider.credentials.split('bearer=')[1]}"
                             }
-                            # response = requests.get(page_query, headers=headers)
-                            response = self.send_request(page_query, headers=headers, query=self.query_string_to_provider)
+                            response = self.send_request(page_query, headers=self._put_configured_headers(headers), query=self.query_string_to_provider)
+                        elif self.provider.credentials.startswith('X-Api-Key='):
+                            headers = {
+                                "X-Api-Key": f"{self.provider.credentials.split('X-Api-Key=')[1]}"
+                            }
+                            logger.info(f"{self}: sending request with auth header X-Api-Key")
+                            response = self.send_request(page_query, headers=self._put_configured_headers(headers), query=self.query_string_to_provider)
                             # all others
                         else:
-                            # response = requests.get(page_query)
-                            response = self.send_request(page_query, query=self.query_string_to_provider)
+                            response = self.send_request(page_query, query=self.query_string_to_provider, headers=self._put_configured_headers())
                         # end if
                     # end if
                 else:
                     # response = requests.get(page_query)
-                    response = self.send_request(page_query, query=self.query_string_to_provider)
+                    response = self.send_request(page_query, query=self.query_string_to_provider, headers=self._put_configured_headers())
             except NewConnectionError as err:
                 self.error(f"requests.{self.get_method()} reports {err} from: {self.provider.connector} -> {page_query}", NewConnectionError)
                 return

@@ -5,12 +5,10 @@
     "connector": "ChatGPT",
     "url": "",
     "query_template": "",
-    "query_processor": "",
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
     "query_mappings": "PROMPT='Tell me about: {query_to_provider}'",
-    "result_processor": "",
     "result_processors": [
         "GenericResultProcessor"
     ],

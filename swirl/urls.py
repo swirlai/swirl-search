@@ -20,10 +20,10 @@ router.register(r'querytransforms', views.QueryTransformViewSet, basename='query
 router.register(r'search', views.SearchViewSet, basename='search')
 router.register(r'results', views.ResultViewSet, basename='results')
 
-router.register(r'sapi/search', views.SearchViewSet, basename='spyglass-search')
-router.register(r'sapi/results', views.ResultViewSet, basename='spyglass-results')
-router.register(r'sapi/authenticators', views.AuthenticatorViewSet, basename='spyglass-authenticators')
-router.register(r'sapi/searchproviders', views.SearchProviderViewSet, basename='spyglass-searchproviders'),
+router.register(r'sapi/search', views.SearchViewSet, basename='galaxy-search')
+router.register(r'sapi/results', views.ResultViewSet, basename='galaxy-results')
+router.register(r'sapi/authenticators', views.AuthenticatorViewSet, basename='galaxy-authenticators')
+router.register(r'sapi/searchproviders', views.SearchProviderViewSet, basename='galaxy-searchproviders'),
 
 urlpatterns = [
     path('openapi', get_schema_view(

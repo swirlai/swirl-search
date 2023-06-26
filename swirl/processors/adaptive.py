@@ -3,6 +3,9 @@
 @contact:    sid@swirl.today
 '''
 
+from celery.utils.log import get_task_logger
+from logging import DEBUG
+logger = get_task_logger(__name__)
 
 from swirl.processors.processor import *
 from swirl.processors.utils import clean_string, get_mappings_dict
@@ -68,7 +71,7 @@ class AdaptiveQueryProcessor(QueryProcessor):
             else:
                 self.query_string = ' '.join(query_wot_list)
             # end if
-        else: 
+        else:
             self.query_string = ' '.join(query_wot_list)
 
         query = clean_string(self.query_string).strip()

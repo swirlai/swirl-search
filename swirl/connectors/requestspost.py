@@ -8,9 +8,14 @@ from os import environ
 
 import django
 
+import json
+
+
+import urllib.parse
+
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 import requests
@@ -30,6 +35,15 @@ class RequestsPost(Requests):
 
     ########################################
 
+    def validate_query(self, session=None):
+        logger.info(f"{self}: https post request validate_query() returning true")
+        try:
+            json_object = json.loads(json.dumps(self.provider.post_query_template))
+        except ValueError as e:
+            logger.warning(f"{self}: https post request validate_query() failed JSON validation, passing anyways")
+            return True
+        return True
+
     def get_method(self):
         return 'post'
 
@@ -39,4 +53,16 @@ class RequestsPost(Requests):
         })
         headers.update(kwargs.get("headers", {}))
         kwargs['headers'] = headers
-        return requests.post(url, params=params, json=query, **kwargs)
+
+        post_json_str = json.dumps(self.provider.post_query_template)
+
+        if post_json_str and post_json_str != '{}' and post_json_str != '"{}"':
+            post_json_str     = bind_query_mappings(post_json_str, self.provider.query_mappings, self.provider.url)
+            if '{query_string}' in post_json_str:
+                post_json_str = post_json_str.replace('{query_string}', urllib.parse.quote_plus(self.query_string_to_provider))
+            post_json = json.loads(post_json_str)
+        else:
+            post_json=query
+
+        logger.info(f"DNDEBUG: post_json_str:{post_json_str} query:{query} post_json:{post_json}")
+        return requests.post(url, params=params, json=post_json, **kwargs)

@@ -1,14 +1,12 @@
 {
-    "name": "Sample HTTP Endpoint (web/Sample)",
+    "name": "Sample HTTP GET Endpoint (web/Sample)",
     "connector": "RequestsGet",
     "url": "http://hostname/site/endpoint",
     "query_template": "{url}&textQuery={query_string}",
-    "query_processor": "",
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
     "query_mappings": "PAGE=start=RESULT_INDEX,DATE_SORT=sort=date",
-    "result_processor": "",
     "result_processors": [
         "MappingResultProcessor"
     ],
