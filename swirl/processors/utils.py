@@ -125,21 +125,8 @@ def remove_numeric(string_or_list):
 
 #############################################
 
-from django.conf import settings
-
-SWIRL_HIGHLIGHT_START_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_START_CHAR', '*')
-SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')
-
-import re
-
-def highlight_list(target_str, word_list):
-    """
-    Highlight the terms in the target_str with terms from the word_list
-    """
-
-
-    # Step 1 : Create canonical word list in lower case
-    hili_words =  []
+def _tokenize_word_list(word_list):
+    ret_list = []
     for word in word_list:
 
         # We wan '_' to break a word in this case.
@@ -151,27 +138,24 @@ def highlight_list(target_str, word_list):
         for word_tk in wtk:
             # Handle possesive cases by rejoining them.
             if word_tk.lower() == "'s":
-                hili_words[-1] = hili_words[-1] + word_tk.lower()
+                ret_list[-1] = ret_list[-1] + word_tk.lower()
                 continue
             # Don't highlight lone punctuation.
             if not is_punctuation(word_tk):
                 if is_punctuation(word_tk[-1]):
                     word_tk = word_tk[:-1] # strip trailing punctiation, we are not going to match on it
-                hili_words.append(word_tk.lower())
+                ret_list.append(word_tk.lower())
+    return ret_list
 
-    ret = target_str
-
-    # create a unique list of words from the target, so that we only highlight each once.
-    all_words = []
+def _tokenize_word_text(text, do_dedup=True):
+    ret_words = []
     seen_words = set()
-
-    # Usae same rules as above for the target
-    target_str = target_str.replace('_', ' ')
+    target_str = text.replace('_', ' ')
     find_all = word_tokenize(target_str)
     for aw in find_all:
         aw_lower = aw.lower()
         if aw_lower == "'s":
-            all_words[-1] = all_words[-1] + aw_lower
+            ret_words[-1] = ret_words[-1] + aw_lower
             continue
 
         if not is_punctuation(aw_lower):
@@ -180,8 +164,28 @@ def highlight_list(target_str, word_list):
                 aw_lower = aw_lower[:-1]
                 aw = aw[:-1]
             if aw_lower not in seen_words:
-                seen_words.add(aw_lower)
-                all_words.append(aw)
+                if do_dedup:
+                    seen_words.add(aw_lower)
+                ret_words.append(aw)
+    return ret_words
+
+
+from django.conf import settings
+
+SWIRL_HIGHLIGHT_START_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_START_CHAR', '*')
+SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')
+
+import re
+
+def highlight_list(target_str, word_list):
+    """
+    Highlight the terms in the target_str with terms from the word_list
+    """
+    # Step 1 : Create canonical word list in lower case
+    hili_words =  _tokenize_word_list(word_list)
+    ret = target_str
+    # create a unique list of words from the target, so that we only highlight each once.
+    all_words = _tokenize_word_text(target_str)
 
     # Now for all terms in the target list, find them, case insensitive in the list of hi light
     # words and then highlight them in the return tartget string.
@@ -199,12 +203,15 @@ def position_dict(text, word_list):
         return []
     if word_list == []:
         return []
-    positions = {word: [] for word in word_list}
-    words = text.split()
+    tok_word_list = _tokenize_word_list(word_list)
+
+    positions = {word: [] for word in tok_word_list}
+    words = _tokenize_word_text(text,do_dedup=False)
     for i, word in enumerate(words):
         if word in word_list:
-            positions[word].append(i)
+            positions[word.lower()].append(i)
     return positions
+
 
 #############################################
 # fix for https://github.com/swirlai/swirl-search/issues/33
@@ -547,7 +554,7 @@ def get_tag(tag_target, tag_list):
     """
     if not tag_list:
         return tag_list
-    
+
     tag_value = None
     for tag in tag_list:
         if tag.lower().startswith(tag_target.lower()):
@@ -557,7 +564,5 @@ def get_tag(tag_target, tag_list):
             else:
                 tag_value = tag
             return tag_value
-        
+
     return None
-    
-    

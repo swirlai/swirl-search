@@ -423,7 +423,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
         ############################################
         # PASS 2
-        
+
         # score results by field, adjusting for field length
         for results in self.results:
             if not results.json_results:
