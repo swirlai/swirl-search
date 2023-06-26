@@ -1,0 +1,122 @@
+[
+    {
+        "name": "GitHub - Code (web/GitHub.com)",
+        "shared": true,
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://api.github.com/search/code",
+        "query_template": "{url}?q={query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {
+            "Accept": "application/vnd.github.text-match+json"
+        },
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=total_count,RESULTS=items",
+        "result_mappings": "title=name,body=text_matches[*].fragment,author=repository.owner.login,url=html_url,repository.full_name,path,repository.html_url,repository.description,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=<your-GitHub-PAT>",
+        "eval_credentials": "",
+        "tags": [
+            "GitHub",
+            "Code"
+        ]
+    },
+    {
+        "name": "GitHub - Issues (web/GitHub.com)",
+        "shared": true,
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://api.github.com/search/issues",
+        "query_template": "{url}?q={query_string}%2Bis%3Aissue",
+        "post_query_template": "{}",
+        "http_request_headers": {
+            "Accept": "application/vnd.github.text-match+json"
+        },
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=total_count,RESULTS=items",
+        "result_mappings": "title=title,body=text_matches[*].fragment,author=user.login,date_published=created_at,url=html_url,state,assignees[*].login,milestone.title,comments,updated_at,closed_at,labels[*].name,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=<your-GitHub-PAT>",
+        "eval_credentials": "",
+        "tags": [
+            "GitHub",
+            "Issues"
+        ]
+    },
+    {
+        "name": "GitHub - Pull Requests (web/GitHub.com)",
+        "shared": true,
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://api.github.com/search/issues",
+        "query_template": "{url}?q={query_string}%2Bis%3Apull-request",
+        "post_query_template": "{}",
+        "http_request_headers": {
+            "Accept": "application/vnd.github.text-match+json"
+        },
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=total_count,RESULTS=items",
+        "result_mappings": "title=title,body=text_matches[*].fragment,author=user.login,date_published=created_at,url=html_url,number,state,updated_at,pull_request.merged_at,closed_at,labels[*].name,pull_request.diff_url,body,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=<your-GitHub-PAT>",
+        "eval_credentials": "",
+        "tags": [
+            "GitHub",
+            "PullRequests"
+        ]
+    },
+    {
+        "name": "GitHub - Commits (web/GitHub.com)",
+        "shared": true,
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://api.github.com/search/commits",
+        "query_template": "{url}?q={query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {
+            "Accept": "application/vnd.github.text-match+json"
+        },
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=total_count,RESULTS=items",
+        "result_mappings": "title=commit.message,body=text_matches[*].fragment,author=commit.author.name,date_published=commit.author.date,url=html_url,commit.comment_count,committer.login,parents[*].html_url,repository.full_name,repository.html_url,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=<your-GitHub-PAT>",
+        "eval_credentials": "",
+        "tags": [
+            "GitHub",
+            "Commits"
+        ]
+    }
+]

@@ -5,11 +5,19 @@
 
 import os
 import logging as logger
+import json
 from pathlib import Path
 from django.core.paginator import Paginator
 
 ##################################################
 ##################################################
+
+def is_valid_json(j):
+    try:
+        json.loads(j)
+    except ValueError:
+        return False
+    return True
 
 def swirl_setdir():
     # Get the current path and append it to the path
@@ -19,7 +27,7 @@ def swirl_setdir():
     slash = '\\'
     if '/' in this_file:
         slash = '/'
-    this_path = this_file[:this_file.rfind(slash)] 
+    this_path = this_file[:this_file.rfind(slash)]
     this_folder = this_path[this_path.rfind(slash)+1:]
     append_path = ""
     if this_folder == "swirl":
@@ -43,7 +51,7 @@ def is_int(value):
         return False
     except ValueError:
         return False
-    
+
 def paginate(data, request):
     page = request.GET.get('page')
     items = request.GET.get('items')
@@ -52,3 +60,49 @@ def paginate(data, request):
         page_obj = paginator.get_page(page)
         return page_obj.object_list
     return data
+
+def select_providers(providers, start_tag, tags_in_query_list):
+    """
+    - No tags
+        + Include all active providers that have default set to true
+    - Leading tag
+        + Include active providers where the tag is included in their tag list
+          regardless of whether the default is true
+    - Embedded Tags (with or without leading tag)
+        + Include active providers where the tag is included in their tag list
+          regardless of if the default is true
+    """
+    selected_provider_list = []
+    default_provider_list = []
+
+    for provider in providers:
+        if provider.default:
+            default_provider_list.append(provider)
+            if start_tag:
+                for tag in provider.tags:
+                    if tag.lower() == start_tag.lower():
+                        selected_provider_list.append(provider)
+                # end for
+            else:
+                selected_provider_list.append(provider)
+            # end if
+        else:
+            ## not a default provider, check the tag match
+            if provider.tags:
+                for tag in provider.tags:
+                    if tag.lower() in [t.lower() for t in tags_in_query_list] or ( start_tag and start_tag.lower() == tag.lower() ) :
+                        if provider not in selected_provider_list:
+                            selected_provider_list.append(provider)
+                        # end if
+                    # end if
+                # end for
+            # end if
+        # end if
+    # end for
+
+    # For the case of mis-spelled or non-existant start tag, there can be no providers that match, in that
+    # case return all providers that have default == true
+    if len(selected_provider_list) == 0:
+        selected_provider_list = default_provider_list
+
+    return selected_provider_list

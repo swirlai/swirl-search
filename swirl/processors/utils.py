@@ -6,6 +6,9 @@
 #############################################
 #############################################
 
+from swirl.nltk import word_tokenize, is_punctuation
+from nltk.tag import tnt
+
 def create_result_dictionary():
     """
     Create an empty ressult dictionary, when entries are made this dictionary, the type must
@@ -22,6 +25,7 @@ def create_result_dictionary():
     dict_result['url'] = ""
     dict_result['body'] = ""
     dict_result['date_published'] = ""
+    dict_result['date_published_display'] = ""
     dict_result['date_retrieved'] = ""
     dict_result['author'] = ""
     dict_result['title_hit_highlights'] = []
@@ -128,26 +132,62 @@ SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')
 
 import re
 
-WORD_CHAR_PAT = r'[A-Za-z0-9]+'
-
 def highlight_list(target_str, word_list):
-    # Create canonical word list in lower case
-    source_words = [w.lower() for w in word_list]
+    """
+    Highlight the terms in the target_str with terms from the word_list
+    """
+
+
+    # Step 1 : Create canonical word list in lower case
+    hili_words =  []
+    for word in word_list:
+
+        # We wan '_' to break a word in this case.
+        word = word.replace('_', ' ')
+        # Use NLTK word tokenzer to split out punctuation.
+        wtk = word_tokenize(word)
+
+        # Now, for eaech tokenized term
+        for word_tk in wtk:
+            # Handle possesive cases by rejoining them.
+            if word_tk.lower() == "'s":
+                hili_words[-1] = hili_words[-1] + word_tk.lower()
+                continue
+            # Don't highlight lone punctuation.
+            if not is_punctuation(word_tk):
+                if is_punctuation(word_tk[-1]):
+                    word_tk = word_tk[:-1] # strip trailing punctiation, we are not going to match on it
+                hili_words.append(word_tk.lower())
 
     ret = target_str
 
     # create a unique list of words from the target, so that we only highlight each once.
     all_words = []
     seen_words = set()
-    for aw in re.findall(WORD_CHAR_PAT, target_str):
-        aw_lower = aw.lower()
-        if aw_lower not in seen_words:
-            seen_words.add(aw_lower)
-            all_words.append(aw)
 
+    # Usae same rules as above for the target
+    target_str = target_str.replace('_', ' ')
+    find_all = word_tokenize(target_str)
+    for aw in find_all:
+        aw_lower = aw.lower()
+        if aw_lower == "'s":
+            all_words[-1] = all_words[-1] + aw_lower
+            continue
+
+        if not is_punctuation(aw_lower):
+            if is_punctuation(aw_lower[-1]):
+                # strip trailing punctiation, we are not going to match on it
+                aw_lower = aw_lower[:-1]
+                aw = aw[:-1]
+            if aw_lower not in seen_words:
+                seen_words.add(aw_lower)
+                all_words.append(aw)
+
+    # Now for all terms in the target list, find them, case insensitive in the list of hi light
+    # words and then highlight them in the return tartget string.
     for word in all_words:
         # If the word matches any of the source words, add it to the list of highlighted words
-        if word.lower() in source_words:
+        if word.lower() in hili_words:
             ret = ret.replace(word,f'{SWIRL_HIGHLIGHT_START_CHAR}{word}{SWIRL_HIGHLIGHT_END_CHAR}')
 
     return ret
@@ -383,7 +423,7 @@ def str_replace_all_keys(s, d):
         return s
     ret = s
     for k in d.keys():
-        ret = ret.replace("{"+k+"}", d[k])
+        ret = ret.replace("{"+k+"}", str(d[k]))
     return ret
 
 
@@ -452,6 +492,13 @@ def str_safe_format(s, d):
     return ret
 
 from dateutil import parser
+from datetime import datetime
+
+def get_jan_1_year(year):
+    # Parse the year as a string with January 1st as the default date
+    date_string = f"Jan 1 {year}"
+    date = parser.parse(date_string, default=datetime(datetime.now().year, 1, 1))
+    return str(date)
 
 def _date_str_parse_to_timestamp(s):
     """
@@ -459,7 +506,12 @@ def _date_str_parse_to_timestamp(s):
     """
     ret = ""
     try:
-        ret = str(parser.parse(str(s)))
+        date_str = str(s)
+        # stabalize day of year for dates that consist only of a year.
+        if len(date_str) == 4:
+            ret = get_jan_1_year(date_str)
+        else:
+            ret = str(parser.parse(date_str))
     except Exception as x:
         logger.debug(f'{x} : unable to convert {s} as string to timestamp')
     return ret
@@ -486,6 +538,7 @@ def date_str_to_timestamp(s):
     if not ret: ret = _date_float_parse_to_timestamp(s)
     if not ret:
         logger.error(f'Unable to convert {s} to timestamp using any known type')
+        return s
     return ret
 
 def get_tag(tag_target, tag_list):

@@ -279,7 +279,7 @@ class SearchQueryTransformTestCase(TestCase):
         assert response.data.get('results', False)
         assert len(response.data['results']) == 7
         assert response.data['results'][0].get('body',False)
-        assert "<em>notebook</em>" in response.data['results'][0]['body']
+        assert "<em>Notebook</em>" in response.data['results'][0]['body']
 
 
 

@@ -1,0 +1,225 @@
+{
+    "value": [
+        {
+            "hitsContainers": [
+                {
+                    "hits": [
+                        {
+                            "hitId": "AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgBGAAAAAADmQua5hnVqQIFuZCz0jDGEBwD0WeAZiMmQSIOPJj74cwq0AAAAAAEJAAD0WeAZiMmQSIOPJj74cwq0AABLDGM4AAA=",
+                            "rank": 1,
+                            "summary": "...will be pleased, project <c0>Dune</c0> is his pet. From: Miriam Graham <MiriamG@1xf5y.onmicrosoft.com> Sent: Monday, May 29, 2023 10:32 AM To: Dave Nicodemus <dave@swirl.today> Subject: Re...",
+                            "resource": {
+                                "@odata.type": "#microsoft.graph.message",
+                                "createdDateTime": "2023-05-29T14:33:10Z",
+                                "lastModifiedDateTime": "2023-05-29T14:33:45Z",
+                                "receivedDateTime": "2023-05-29T14:33:44Z",
+                                "sentDateTime": "2023-05-29T14:33:43Z",
+                                "hasAttachments": false,
+                                "internetMessageId": "<DM5PR2201MB146630C7E467830EEA638EB2D64A9@DM5PR2201MB1466.namprd22.prod.outlook.com>",
+                                "subject": "Re: Project dune",
+                                "bodyPreview": "...will be pleased, project Dune is his pet. From: Miriam Graham <MiriamG@1xf5y.onmicrosoft.com> Sent: Monday, May 29, 2023 10:32 AM To: Dave Nicodemus <dave@swirl.today> Subject: Re...",
+                                "importance": "normal",
+                                "parentFolderId": "AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgAuAAAAAADmQua5hnVqQIFuZCz0jDGEAQD0WeAZiMmQSIOPJj74cwq0AAAAAAEJAAA=",
+                                "conversationId": "AAQkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgAQAFoIVt3Lhf9IrrvsPO2Wy9I=",
+                                "isRead": true,
+                                "isDraft": false,
+                                "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgBGAAAAAADmQua5hnVqQIFuZCz0jDGEBwD0WeAZiMmQSIOPJj74cwq0AAAAAAEJAAD0WeAZiMmQSIOPJj74cwq0AABLDGM4AAA%3D&exvsurl=1&viewmodel=ReadMessageItem",
+                                "inferenceClassification": "focused",
+                                "replyTo": [
+                                    {
+                                        "emailAddress": {
+                                            "name": "Miriam Graham"
+                                        }
+                                    }
+                                ],
+                                "sender": {
+                                    "emailAddress": {
+                                        "name": "Dave Nicodemus",
+                                        "address": "dave@swirl.today"
+                                    }
+                                },
+                                "from": {
+                                    "emailAddress": {
+                                        "name": "Dave Nicodemus",
+                                        "address": "dave@swirl.today"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "hitId": "AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgBGAAAAAADmQua5hnVqQIFuZCz0jDGEBwD0WeAZiMmQSIOPJj74cwq0AAAAAAEMAAD0WeAZiMmQSIOPJj74cwq0AABLDBq6AAA=",
+                            "rank": 2,
+                            "summary": "...I am on project <c0>Dune</c0> 100 percent now. From: Dave Nicodemus <dave@swirl.today> Sent: Monday, May 29, 2023 10:32 AM To: Miriam Graham <MiriamG@1xf5y.onmicrosoft.com> Subject: Re: ...",
+                            "resource": {
+                                "@odata.type": "#microsoft.graph.message",
+                                "createdDateTime": "2023-05-29T14:33:04Z",
+                                "lastModifiedDateTime": "2023-05-29T14:33:44Z",
+                                "receivedDateTime": "2023-05-29T14:33:05Z",
+                                "sentDateTime": "2023-05-29T14:32:55Z",
+                                "hasAttachments": false,
+                                "internetMessageId": "<SJ0P220MB04802845DDC4A36FA43BF93CF94A9@SJ0P220MB0480.NAMP220.PROD.OUTLOOK.COM>",
+                                "subject": "Re: Project dune",
+                                "bodyPreview": "...I am on project Dune 100 percent now. From: Dave Nicodemus <dave@swirl.today> Sent: Monday, May 29, 2023 10:32 AM To: Miriam Graham <MiriamG@1xf5y.onmicrosoft.com> Subject: Re: ...",
+                                "importance": "normal",
+                                "parentFolderId": "AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgAuAAAAAADmQua5hnVqQIFuZCz0jDGEAQD0WeAZiMmQSIOPJj74cwq0AAAAAAEMAAA=",
+                                "conversationId": "AAQkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgAQAFoIVt3Lhf9IrrvsPO2Wy9I=",
+                                "isRead": true,
+                                "isDraft": false,
+                                "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgBGAAAAAADmQua5hnVqQIFuZCz0jDGEBwD0WeAZiMmQSIOPJj74cwq0AAAAAAEMAAD0WeAZiMmQSIOPJj74cwq0AABLDBq6AAA%3D&exvsurl=1&viewmodel=ReadMessageItem",
+                                "inferenceClassification": "focused",
+                                "replyTo": [
+                                    {
+                                        "emailAddress": {
+                                            "name": "Dave Nicodemus"
+                                        }
+                                    }
+                                ],
+                                "sender": {
+                                    "emailAddress": {
+                                        "name": "Miriam Graham",
+                                        "address": "MiriamG@1xf5y.onmicrosoft.com"
+                                    }
+                                },
+                                "from": {
+                                    "emailAddress": {
+                                        "name": "Miriam Graham",
+                                        "address": "MiriamG@1xf5y.onmicrosoft.com"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "hitId": "AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgBGAAAAAADmQua5hnVqQIFuZCz0jDGEBwD0WeAZiMmQSIOPJj74cwq0AAAAAAEJAAD0WeAZiMmQSIOPJj74cwq0AABLDGM3AAA=",
+                            "rank": 3,
+                            "summary": "...today> Subject: Re: Project <c0>dune</c0> Going well, should have an estimate by end of week. From: Dave Nicodemus <dave@swirl.today> Sent: Monday, May 29, 2023 10:30 AM To: Miriam Graham <...",
+                            "resource": {
+                                "@odata.type": "#microsoft.graph.message",
+                                "createdDateTime": "2023-05-29T14:31:41Z",
+                                "lastModifiedDateTime": "2023-05-29T19:14:15Z",
+                                "receivedDateTime": "2023-05-29T14:32:13Z",
+                                "sentDateTime": "2023-05-29T14:32:12Z",
+                                "hasAttachments": false,
+                                "internetMessageId": "<DM5PR2201MB1466BD0E05E576A9096FDA93D64A9@DM5PR2201MB1466.namprd22.prod.outlook.com>",
+                                "subject": "Re: Project dune",
+                                "bodyPreview": "...today> Subject: Re: Project dune Going well, should have an estimate by end of week. From: Dave Nicodemus <dave@swirl.today> Sent: Monday, May 29, 2023 10:30 AM To: Miriam Graham <...",
+                                "importance": "normal",
+                                "parentFolderId": "AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgAuAAAAAADmQua5hnVqQIFuZCz0jDGEAQD0WeAZiMmQSIOPJj74cwq0AAAAAAEJAAA=",
+                                "conversationId": "AAQkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgAQAFoIVt3Lhf9IrrvsPO2Wy9I=",
+                                "isRead": true,
+                                "isDraft": false,
+                                "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgBGAAAAAADmQua5hnVqQIFuZCz0jDGEBwD0WeAZiMmQSIOPJj74cwq0AAAAAAEJAAD0WeAZiMmQSIOPJj74cwq0AABLDGM3AAA%3D&exvsurl=1&viewmodel=ReadMessageItem",
+                                "inferenceClassification": "focused",
+                                "replyTo": [
+                                    {
+                                        "emailAddress": {
+                                            "name": "Miriam Graham"
+                                        }
+                                    }
+                                ],
+                                "sender": {
+                                    "emailAddress": {
+                                        "name": "Dave Nicodemus",
+                                        "address": "dave@swirl.today"
+                                    }
+                                },
+                                "from": {
+                                    "emailAddress": {
+                                        "name": "Dave Nicodemus",
+                                        "address": "dave@swirl.today"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "hitId": "AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgBGAAAAAADmQua5hnVqQIFuZCz0jDGEBwD0WeAZiMmQSIOPJj74cwq0AAAAAAEMAAD0WeAZiMmQSIOPJj74cwq0AABLDBq5AAA=",
+                            "rank": 4,
+                            "summary": "...onmicrosoft.com> Subject: Project <c0>dune</c0> Mirriam, how is project <c0>dune</c0> going? David Nicodemus Head of Technology Swirl Metasearch 235 Bear Hill Rd, Suite 201 Waltham, MA 02451 m. 781-...",
+                            "resource": {
+                                "@odata.type": "#microsoft.graph.message",
+                                "createdDateTime": "2023-05-29T14:31:34Z",
+                                "lastModifiedDateTime": "2023-05-29T14:32:13Z",
+                                "receivedDateTime": "2023-05-29T14:31:34Z",
+                                "sentDateTime": "2023-05-29T14:31:26Z",
+                                "hasAttachments": false,
+                                "internetMessageId": "<SJ0P220MB0480A0052EC36F3B5BA9702EF94A9@SJ0P220MB0480.NAMP220.PROD.OUTLOOK.COM>",
+                                "subject": "Re: Project dune",
+                                "bodyPreview": "...onmicrosoft.com> Subject: Project dune Mirriam, how is project dune going? David Nicodemus Head of Technology Swirl Metasearch 235 Bear Hill Rd, Suite 201 Waltham, MA 02451 m. 781-...",
+                                "importance": "normal",
+                                "parentFolderId": "AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgAuAAAAAADmQua5hnVqQIFuZCz0jDGEAQD0WeAZiMmQSIOPJj74cwq0AAAAAAEMAAA=",
+                                "conversationId": "AAQkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgAQAFoIVt3Lhf9IrrvsPO2Wy9I=",
+                                "isRead": true,
+                                "isDraft": false,
+                                "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgBGAAAAAADmQua5hnVqQIFuZCz0jDGEBwD0WeAZiMmQSIOPJj74cwq0AAAAAAEMAAD0WeAZiMmQSIOPJj74cwq0AABLDBq5AAA%3D&exvsurl=1&viewmodel=ReadMessageItem",
+                                "inferenceClassification": "focused",
+                                "replyTo": [
+                                    {
+                                        "emailAddress": {
+                                            "name": "Dave Nicodemus"
+                                        }
+                                    }
+                                ],
+                                "sender": {
+                                    "emailAddress": {
+                                        "name": "Miriam Graham",
+                                        "address": "MiriamG@1xf5y.onmicrosoft.com"
+                                    }
+                                },
+                                "from": {
+                                    "emailAddress": {
+                                        "name": "Miriam Graham",
+                                        "address": "MiriamG@1xf5y.onmicrosoft.com"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "hitId": "AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgBGAAAAAADmQua5hnVqQIFuZCz0jDGEBwD0WeAZiMmQSIOPJj74cwq0AAAAAAEJAAD0WeAZiMmQSIOPJj74cwq0AABLDGM2AAA=",
+                            "rank": 5,
+                            "summary": "Mirriam, how is project <c0>dune</c0> going? David Nicodemus Head of Technology Swirl Metasearch 235 Bear Hill Rd, Suite 201 Waltham, MA 02451 m. 781-222-0951 www.swirl.today ...",
+                            "resource": {
+                                "@odata.type": "#microsoft.graph.message",
+                                "createdDateTime": "2023-05-29T14:29:32Z",
+                                "lastModifiedDateTime": "2023-05-29T14:30:41Z",
+                                "receivedDateTime": "2023-05-29T14:30:39Z",
+                                "sentDateTime": "2023-05-29T14:30:38Z",
+                                "hasAttachments": false,
+                                "internetMessageId": "<DM5PR2201MB14662DE8B6C0D381B7D91BDCD64A9@DM5PR2201MB1466.namprd22.prod.outlook.com>",
+                                "subject": "Project dune",
+                                "bodyPreview": "Mirriam, how is project dune going? David Nicodemus Head of Technology Swirl Metasearch 235 Bear Hill Rd, Suite 201 Waltham, MA 02451 m. 781-222-0951 www.swirl.today ...",
+                                "importance": "normal",
+                                "parentFolderId": "AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgAuAAAAAADmQua5hnVqQIFuZCz0jDGEAQD0WeAZiMmQSIOPJj74cwq0AAAAAAEJAAA=",
+                                "conversationId": "AAQkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgAQAFoIVt3Lhf9IrrvsPO2Wy9I=",
+                                "isRead": true,
+                                "isDraft": false,
+                                "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkAGE4MjEyYWFlLTcxOTYtNGJiOC05ZmIwLTUwNjEyMTdjNjZmMgBGAAAAAADmQua5hnVqQIFuZCz0jDGEBwD0WeAZiMmQSIOPJj74cwq0AAAAAAEJAAD0WeAZiMmQSIOPJj74cwq0AABLDGM2AAA%3D&exvsurl=1&viewmodel=ReadMessageItem",
+                                "inferenceClassification": "focused",
+                                "replyTo": [
+                                    {
+                                        "emailAddress": {
+                                            "name": "Miriam Graham"
+                                        }
+                                    }
+                                ],
+                                "sender": {
+                                    "emailAddress": {
+                                        "name": "Dave Nicodemus",
+                                        "address": "dave@swirl.today"
+                                    }
+                                },
+                                "from": {
+                                    "emailAddress": {
+                                        "name": "Dave Nicodemus",
+                                        "address": "dave@swirl.today"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "total": 19,
+                    "moreResultsAvailable": false
+                }
+            ]
+        }
+    ],
+    "@odata.context": "https://graph.microsoft.com/beta/$metadata#Collection(microsoft.graph.searchResponse)"
+}

@@ -1,0 +1,35 @@
+{
+    "name": "TEST HTTP POST Endpoint",
+    "active": true,
+    "default": true,
+    "connector": "RequestsPost",
+    "url": "https://xx.apis.it.h.edu/ats/person/v3/search",
+    "query_template": "{url}?Query={query_string}",
+    "query_processor": "",
+    "post_query_template": {
+        "fields": [
+          "names.personNameKey",
+          "names.firstName",
+          "names.lastName"
+        ],
+        "conditions": {
+          "names.name": "*{query_string}*"
+        }
+    },
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "NOT=true,NOT_CHAR=-",
+    "result_processor": "",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
+    "response_mappings": "FOUND=count,RESULTS=results",
+    "result_mappings": "titles=names[0].name,url=names[0].personNameKey,body='{names[0].name} ID#: {names[*].personNameKey}'",
+    "results_per_query": 10,
+    "credentials": "X-Api-Key=<your-api-key>",
+    "eval_credentials": "",
+    "tags": [
+        "People"
+    ]
+}

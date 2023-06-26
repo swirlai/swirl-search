@@ -43,14 +43,23 @@ set -e
 work_container=sw-spg-build_$$
 work_dir=/tmp/swirl_ui_install_work_dir_$$
 target_dir=./static
+ui_home=galaxy
+
+echo $PROG "remove install target : $target_dir/$ui_home"
+rm -rf $target_dir/$ui_home
 
 ## if Source dir is set, just copy from there.
 if [ -n "$source_dir" ]; then
     if ( test -d "$source_dir" ); then
 	echo $PROG "source_dir: $source_dir target_dir: $target_dir"
-	echo "cp -r $source_dir/ui/dist/spyglass/browser/* $target_dir/spyglass"
-	mkdir -p $target_dir/spyglass
-	cp -rv $source_dir/ui/dist/spyglass/browser/* $target_dir/spyglass
+	echo "cp -r $source_dir/ui/dist/spyglass/browser/* $target_dir/$ui_home"
+	mkdir -p $target_dir/$ui_home
+	cp -rv $source_dir/ui/dist/spyglass/browser/* $target_dir/$ui_home
+	jq '.default' $source_dir/ui/config-swirl-demo.db.json | sed -e "s/<msal-app-id>/$MSAL_APP_ID/" \
+								     -e "s/<msal-tenant-id>/$MSAL_TENANT_ID/" \
+								     -e "s/<msal-port>/$MSAL_CB_PORT/" \
+								     -e "s/<msal-host>/$MSAL_HOST/" \
+								     > $target_dir/api/config/default
 	exit 0
     else
 	echo $PROG "ERROR : source_dir:$source_dir does not exist or is not a directory"
@@ -88,9 +97,9 @@ docker create --name $work_container $image
 docker cp "$work_container:/usr/src/spyglass/ui/dist/spyglass/browser/." $work_dir
 docker cp "$work_container:/usr/src/spyglass/ui/config-swirl-demo.db.json" $work_dir
 docker rm -f $work_container
-rm -rf $target_dir/spyglass
-mkdir $target_dir/spyglass
-cp -r $work_dir/* $target_dir/spyglass
+rm -rf $target_dir/$ui_home
+mkdir $target_dir/$ui_home
+cp -r $work_dir/* $target_dir/$ui_home
 jq '.default' $work_dir/config-swirl-demo.db.json | sed -e "s/<msal-app-id>/$MSAL_APP_ID/" \
 -e "s/<msal-tenant-id>/$MSAL_TENANT_ID/" \
 -e "s/<msal-port>/$MSAL_CB_PORT/" \
