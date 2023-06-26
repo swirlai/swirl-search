@@ -377,3 +377,248 @@ class DS403Test(GeneralRequestAPITestCase):
         url_pattern = re.compile(r'https://www\.googleapis\.com/customsearch/.*')
         responses.add(responses.GET, url_pattern, body=json.dumps(self._mock_response()).encode('utf-8'), status=200)
         result = self._run_search()
+
+class DS254TestLocationBug1(GeneralRequestAPITestCase):
+
+    def _get_connector_name(self):
+        return 'M365OutlookMessages'
+
+    def _get_provider_data(self):
+
+        return     {
+            "name": "Mergers & Acquisitions (web/Google PSE)",
+            "active": True,
+            "default": True,
+            "connector": "RequestsGet",
+            "url": "https://www.googleapis.com/customsearch/v1",
+            "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+            "query_processors": [
+                "AdaptiveQueryProcessor"
+            ],
+            "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
+            "result_processors": [
+                "MappingResultProcessor"
+            ],
+            "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
+            "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['article:publisher'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['article:tag'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
+            "results_per_query": 10,
+            "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
+            "tags": [
+                "News",
+                "MergersAcquisitions"
+            ]
+        }
+
+    def _get_request_api_url(self):
+        return 'https://www.googleapis.com/customsearch/v1'
+
+    def _create_search(self):
+        provider_id = self._create_provider()
+        try:
+            new_search = Search.objects.create(query_string='Microsoft Blizzard Activision Inc',searchprovider_list=[provider_id],owner=self._test_suser)
+        except Error as err:
+            assert f'Search.create() failed: {err}'
+        new_search.status = 'NEW_SEARCH'
+        new_search.save()
+        return new_search.id
+
+    def _get_hits(self):
+        data_dir = os.path.dirname(os.path.abspath(__file__))
+        # Build the absolute file path for the JSON file in the 'data' subdirectory
+        json_file_path = os.path.join(data_dir, 'data', 'ds-254-test-result-location-bug-1.json')
+
+        # Read the JSON file
+        with open(json_file_path, 'r') as file:
+            data = json.load(file)
+        return data
+
+    def _check_result(self, search_id):
+        result_count = Result.objects.filter(search_id=search_id).count()
+        assert result_count == 1
+        rs = Result.objects.get(search_id=search_id)
+        jsr = rs.json_results
+        assert jsr
+        assert len(jsr) == 1
+        explain = jsr[0].get('explain', None)
+        assert explain
+        hits = explain.get('hits', None)
+        assert hits
+        title_hits = hits.get('title', None)
+        assert title_hits
+        assert title_hits.get('activision')[0] == 0
+        assert title_hits.get('blizzard')[0] == 1
+        assert title_hits.get('inc')[0] == 2
+        return True
+
+    def _mock_response(self):
+        return self._get_hits()
+
+    @responses.activate
+    def test_request_api(self):
+        if self._get_connector_name() == '':
+            return
+        url_pattern = re.compile(r'https://www\.googleapis\.com/customsearch/.*')
+        responses.add(responses.GET, url_pattern, body=json.dumps(self._mock_response()).encode('utf-8'), status=200)
+        result = self._run_search()
+
+
+class DS254TestLocationBug2(GeneralRequestAPITestCase):
+
+    def _get_connector_name(self):
+        return 'M365OutlookMessages'
+
+    def _get_provider_data(self):
+
+        return     {
+            "name": "Mergers & Acquisitions (web/Google PSE)",
+            "active": True,
+            "default": True,
+            "connector": "RequestsGet",
+            "url": "https://www.googleapis.com/customsearch/v1",
+            "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+            "query_processors": [
+                "AdaptiveQueryProcessor"
+            ],
+            "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
+            "result_processors": [
+                "MappingResultProcessor"
+            ],
+            "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
+            "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['article:publisher'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['article:tag'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
+            "results_per_query": 10,
+            "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
+            "tags": [
+                "News",
+                "MergersAcquisitions"
+            ]
+        }
+
+    def _get_request_api_url(self):
+        return 'https://www.googleapis.com/customsearch/v1'
+
+    def _create_search(self):
+        provider_id = self._create_provider()
+        try:
+            new_search = Search.objects.create(query_string='Microsoft Blizzard Activision executives',searchprovider_list=[provider_id],owner=self._test_suser)
+        except Error as err:
+            assert f'Search.create() failed: {err}'
+        new_search.status = 'NEW_SEARCH'
+        new_search.save()
+        return new_search.id
+
+    def _get_hits(self):
+        data_dir = os.path.dirname(os.path.abspath(__file__))
+        # Build the absolute file path for the JSON file in the 'data' subdirectory
+        json_file_path = os.path.join(data_dir, 'data', 'ds-254-test-result-location-bug-2.json')
+
+        # Read the JSON file
+        with open(json_file_path, 'r') as file:
+            data = json.load(file)
+        return data
+
+    def _check_result(self, search_id):
+        result_count = Result.objects.filter(search_id=search_id).count()
+        assert result_count == 1
+        rs = Result.objects.get(search_id=search_id)
+        jsr = rs.json_results
+        assert jsr
+        assert len(jsr) == 1
+        explain = jsr[0].get('explain', None)
+        assert explain
+        hits = explain.get('hits', None)
+        assert hits
+        body_hits = hits.get('body', None)
+        assert body_hits
+        assert body_hits.get('microsoft')[0] == 1
+        assert body_hits.get('microsoft')[1] == 12
+        assert body_hits.get('executives')[0] == 2
+
+        return True
+
+    def _mock_response(self):
+        return self._get_hits()
+
+    @responses.activate
+    def test_request_api(self):
+        if self._get_connector_name() == '':
+            return
+        url_pattern = re.compile(r'https://www\.googleapis\.com/customsearch/.*')
+        responses.add(responses.GET, url_pattern, body=json.dumps(self._mock_response()).encode('utf-8'), status=200)
+        result = self._run_search()
+
+
+class DS403Test(GeneralRequestAPITestCase):
+
+    def _get_connector_name(self):
+        return 'M365OutlookMessages'
+
+    def _get_provider_data(self):
+
+        return     {
+            "name": "Mergers & Acquisitions (web/Google PSE)",
+            "active": True,
+            "default": True,
+            "connector": "RequestsGet",
+            "url": "https://www.googleapis.com/customsearch/v1",
+            "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+            "query_processors": [
+                "AdaptiveQueryProcessor"
+            ],
+            "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
+            "result_processors": [
+                "MappingResultProcessor"
+            ],
+            "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
+            "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['article:publisher'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['article:tag'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
+            "results_per_query": 10,
+            "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
+            "tags": [
+                "News",
+                "MergersAcquisitions"
+            ]
+        }
+
+    def _get_request_api_url(self):
+        return 'https://www.googleapis.com/customsearch/v1'
+
+    def _create_search(self):
+        provider_id = self._create_provider()
+        try:
+            new_search = Search.objects.create(query_string='MergersAcquisitions:Microsoft blizzrd activision',searchprovider_list=[provider_id],owner=self._test_suser)
+        except Error as err:
+            assert f'Search.create() failed: {err}'
+        new_search.status = 'NEW_SEARCH'
+        new_search.save()
+        return new_search.id
+
+    def _get_hits(self):
+        data_dir = os.path.dirname(os.path.abspath(__file__))
+        # Build the absolute file path for the JSON file in the 'data' subdirectory
+        json_file_path = os.path.join(data_dir, 'data', 'ds-403-test-result.json')
+
+        # Read the JSON file
+        with open(json_file_path, 'r') as file:
+            data = json.load(file)
+        return data
+
+    def _check_result(self, search_id):
+        result_count = Result.objects.filter(search_id=search_id).count()
+        assert result_count == 1
+        rs = Result.objects.get(search_id=search_id)
+        jsr = rs.json_results
+        assert jsr
+        assert len(jsr) == 1
+        assert jsr[0].get('body', None)
+        jsr[0]['body'].startswith("U.K. Blocks <em>Microsoft's</em> $69 Billion")
+        return True
+
+    def _mock_response(self):
+        return self._get_hits()
+
+    @responses.activate
+    def test_request_api(self):
+        if self._get_connector_name() == '':
+            return
+        url_pattern = re.compile(r'https://www\.googleapis\.com/customsearch/.*')
+        responses.add(responses.GET, url_pattern, body=json.dumps(self._mock_response()).encode('utf-8'), status=200)
+        result = self._run_search()

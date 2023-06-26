@@ -399,7 +399,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         # highlight
                         item[field] = item[field].replace(SWIRL_HIGHLIGHT_START_CHAR,'')   # remove old
                         item[field] = item[field].replace(SWIRL_HIGHLIGHT_END_CHAR,'')   # remove old
-                        field_hits = position_dict(remove_tags(item[field]), extracted_highlights)
+                        field_hits = position_dict_2(remove_tags(item[field]), extracted_highlights)
                         item['hits'][field] = {}
                         item['hits'][field] = field_hits
                         # fix for https://github.com/swirlai/swirl-search/issues/33
@@ -423,7 +423,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
         ############################################
         # PASS 2
-        
+
         # score results by field, adjusting for field length
         for results in self.results:
             if not results.json_results:
