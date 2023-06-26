@@ -22,3 +22,4 @@ opensearch-py
 openai
 msal
 PyJWT
+pyahocorasick

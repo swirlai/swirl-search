@@ -61,7 +61,8 @@ class DedupeByFieldResultProcessor(ResultProcessor):
         dupes = 0
         dupes = dupes + _dedup_results(results, dedupe_key_dict, deduped_item_list, self.provider.result_grouping_field)
         logger.info(f'removed {dupes} using field {provider.result_grouping_field} from result with length : {len(results)}')
-        return deduped_item_list
+        self.processed_results = deduped_item_list
+        return dupes > 0
 
 class DedupeByFieldPostResultProcessor(PostResultProcessor):
 
