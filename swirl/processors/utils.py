@@ -203,18 +203,6 @@ def position_dict(text, word_list):
         return []
     if word_list == []:
         return []
-    positions = {word: [] for word in word_list}
-    words = text.split()
-    for i, word in enumerate(words):
-        if word in word_list:
-            positions[word].append(i)
-    return positions
-
-def position_dict_2(text, word_list):
-    if type(word_list) != list:
-        return []
-    if word_list == []:
-        return []
     tok_word_list = _tokenize_word_list(word_list)
 
     positions = {word: [] for word in tok_word_list}
