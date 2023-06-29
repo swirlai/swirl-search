@@ -294,11 +294,11 @@ def match_all(list_find, list_targets):
     if not list_find:
         return match_list
 
-    find = ' '.join(list_find)
+    find = ' '.join(list_find).lower()
 
     p = 0
     while p < len(list_targets):
-        if find.lower() in ' '.join(list_targets[p:p+len(list_find)]).lower():
+        if find in ' '.join(list_targets[p:p+len(list_find)]).lower():
             match_list.append(p)
         p = p + 1
 
