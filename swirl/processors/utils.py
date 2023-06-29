@@ -294,15 +294,28 @@ def match_all(list_find, list_targets):
     if not list_find:
         return match_list
 
-    find = ' '.join(list_find)
+    find = ' '.join(list_find).lower()
 
     p = 0
     while p < len(list_targets):
-        if find.lower() in ' '.join(list_targets[p:p+len(list_find)]).lower():
+        if find in ' '.join(list_targets[p:p+len(list_find)]).lower():
             match_list.append(p)
         p = p + 1
 
     return match_list
+
+# def match_all(list_find, list_targets):
+#     match_list = []
+#     if not list_find or not list_targets:
+#         return match_list
+
+#     find = ' '.join(list_find).lower()
+
+#     for p in range(len(list_targets) - len(list_find) + 1):
+#         if find in ' '.join(list_targets[p:p + len(list_find)]).lower():
+#             match_list.append(p)
+
+#     return match_list
 
 #############################################
 
