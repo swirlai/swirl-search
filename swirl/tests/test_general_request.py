@@ -622,3 +622,80 @@ class DS403Test(GeneralRequestAPITestCase):
         url_pattern = re.compile(r'https://www\.googleapis\.com/customsearch/.*')
         responses.add(responses.GET, url_pattern, body=json.dumps(self._mock_response()).encode('utf-8'), status=200)
         result = self._run_search()
+
+
+class YouTrackBig(GeneralRequestAPITestCase):
+
+    def _get_connector_name(self):
+        return 'RequestsGet'
+
+    def _get_provider_data(self):
+        return     {
+        "name": "Articles (web/YouTrack.cloud)",
+        "owner": "admin",
+        "shared": True,
+        "active": True,
+        "default": True,
+        "connector": "RequestsGet",
+        "url": "https://swirl.youtrack.cloud/api/articles?fields=idReadable,reporter(fullName),summary,content,attachments(name),project(name),parentArticle(summary),childArticles(summary),created,updatedBy(fullName),comments(text)",
+        "query_template": "{url}&query={query_string}",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=summary,body=content,date_published=created,author=reporter.fullName,url='https://swirl.youtrack.cloud/articles/{idReadable}',project.name,attachments[*].name,parentArticle.summary,childArticles[*].summary,updatedBy.fullName,comments[*].text,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=perm:c2Jz.NTQtMw==.kxnYWBWzpGV0KEOgpOeJtGTJvLMQpV",
+        "eval_credentials": "",
+        "tags": [
+            "Articles",
+            "Wiki",
+            "YouTrack"
+        ]
+    }
+
+    def _get_request_api_url(self):
+        return 'https://swirl.youtrack.cloud/api/articles'
+
+    def _create_search(self):
+        provider_id = self._create_provider()
+        try:
+            new_search = Search.objects.create(query_string='knowledge management',searchprovider_list=[provider_id],owner=self._test_suser)
+        except Error as err:
+            assert f'Search.create() failed: {err}'
+        new_search.status = 'NEW_SEARCH'
+        new_search.save()
+        return new_search.id
+
+    def _get_hits(self):
+        data_dir = os.path.dirname(os.path.abspath(__file__))
+        # Build the absolute file path for the JSON file in the 'data' subdirectory
+        json_file_path = os.path.join(data_dir, 'data', 'youtrack-big-result.json')
+
+        # Read the JSON file
+        with open(json_file_path, 'r') as file:
+            data = json.load(file)
+        return data
+
+    def _check_result(self, search_id):
+        result_count = Result.objects.filter(search_id=search_id).count()
+        assert result_count == 1
+        rs = Result.objects.get(search_id=search_id)
+        jsr = rs.json_results
+        assert jsr
+        return True
+
+    def _mock_response(self):
+        return self._get_hits()
+
+    @responses.activate
+    def test_request_api(self):
+        if self._get_connector_name() == '':
+            return
+        url_pattern = re.compile(r'https://swirl\.youtrack\.cloud/api/articles.*')
+        responses.add(responses.GET, url_pattern, body=json.dumps(self._mock_response()).encode('utf-8'), status=200)
+        result = self._run_search()

@@ -1,3 +1,4 @@
+import time
 import json
 import os
 from django.test import TestCase
@@ -204,26 +205,39 @@ def get_minimal_search_provider_data(name="test minimal search_provider", actve=
          "tags": tags
     }
 
+@pytest.fixture
+def match_all_test_cases_target():
+    return [
+        ['I', 'like', 'apple', 'banana', 'pie', 'with', 'banana'],
+        ['I', 'have', 'a', 'bird', 'dog', 'he', 'is', 'a','swell', 'bird','dog']
+    ]
+
+@pytest.fixture
+def match_all_test_cases_find():
+    return [
+        ['apple', 'banana'],
+        ['bird', 'dog']
+    ]
+
+
+@pytest.fixture
+def match_all_test_expected():
+    return [
+        [2],
+        [3,9]
+    ]
 
 @pytest.mark.django_db
-def test_match_all():
-    list_find = ['apple', 'banana']
-    list_targets = ['I', 'like', 'apple', 'banana', 'pie', 'with', 'banana']
+def test_match_all(match_all_test_cases_target, match_all_test_cases_find, match_all_test_expected):
 
-    result = match_all(list_find, list_targets)
-    expected_result = [2]
+    assert len(match_all_test_cases_target) == len(match_all_test_cases_find) == len(match_all_test_expected)
 
-    assert result == expected_result, f"Expected {expected_result}, but got {result}"
-
-    # Additional test case
-    list_find = ['bird', 'dog']
-    list_targets = ['I', 'have', 'a', 'bird', 'dog', 'he', 'is', 'a','swell', 'bird','dog']
-
-    result = match_all(list_find, list_targets)
-    expected_result = [3, 9]
-
-    assert result == expected_result, f"Expected {expected_result}, but got {result}"
-
+    for index, value in enumerate(match_all_test_cases_target):
+        start_time = time.time()
+        r = match_all(match_all_test_cases_find[index], (match_all_test_cases_target[index]))
+        elapsed_time = time.time() - start_time
+        assert r == match_all_test_expected[index]
+        print(f"Elapsed time for index {index}: {elapsed_time} seconds")
 
 
 @pytest.fixture
