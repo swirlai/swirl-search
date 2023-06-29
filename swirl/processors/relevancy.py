@@ -2,6 +2,7 @@
 @author:     Sid Probstein
 @contact:    sid@swirl.today
 '''
+import time
 
 from math import sqrt
 from statistics import mean, median
@@ -185,6 +186,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         # PASS 1
         # For each results set from all providers that returned one.
         # to do: refactor the names so it is clearer, e.g. json_result instead of result, result_set instead of results
+        st_pass_1 = time.time()
         for results in self.results:
 
             ############################################
@@ -414,6 +416,9 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
             # end for result in results.json_results:
         # end for results in self.results:
         ############################################
+        et_pass_1 = time.time() - st_pass_1
+        logger.info (f'{self}: elapsed time PASS 1 : {round(et_pass_1,2)}')
+
         # compute field means
         dict_len_median = {}
         for field in dict_result_lens:
