@@ -8,6 +8,8 @@ from datetime import datetime
 from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
+from django.conf import settings
+
 from swirl.processors.processor import *
 from swirl.processors.utils import clean_string, create_result_dictionary, get_mappings_dict
 
@@ -98,6 +100,30 @@ class GenericResultProcessor(ResultProcessor):
 
         self.processed_results = list_results
         self.modified = len(self.processed_results)
+        return self.modified
+
+#############################################
+
+SWIRL_MAX_FIELD_LEN = getattr(settings, 'SWIRL_MAX_FIELD_LEN', 256)
+FIELDS_TO_LIMIT = ['title', 'body']
+
+class LenLimitingResultProcessor(ResultProcessor):
+
+    type="LenLimitingResultProcessor"
+
+    def process(self):
+
+        modified = 0
+        for item in self.results:
+            for field in FIELDS_TO_LIMIT:
+                if field in item:
+                    if type(item[field]) == str:
+                        if len(item[field]) > SWIRL_MAX_FIELD_LEN:
+                            item[field] = item[field][:SWIRL_MAX_FIELD_LEN-3] + '...'
+                            modified = modified + 1
+
+        self.processed_results = self.results
+        self.modified = modified
         return self.modified
 
 #############################################
