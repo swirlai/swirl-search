@@ -34,7 +34,7 @@ SWIRL_RELEVANCY_CONFIG = getattr(settings, 'SWIRL_RELEVANCY_CONFIG', {
     }
 })
 
-SWIRL_MAX_SENT_CONSIDER = 15
+SWIRL_MAX_SENT_CONSIDER = 15 # max number of sentences to score, could probably be less than this.
 SWIRL_MIN_SIMILARITY = getattr(settings, 'SWIRL_MIN_SIMILARITY', 0.01)
 SWIRL_MAX_MATCHES = getattr(settings, 'SWIRL_MAX_MATCHES', 5)
 SWIRL_HIGHLIGHT_START_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_START_CHAR', '*')
