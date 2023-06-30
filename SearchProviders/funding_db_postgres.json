@@ -1,5 +1,5 @@
 {
-    "name": "Company Funding Records (local/PostgreSQL)",
+    "name": "Company Funding Records - PostgreSQL)",
     "default": false,
     "connector": "PostgreSQL",
     "url": "host:port:database:username:password",

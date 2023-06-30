@@ -1,5 +1,5 @@
 {
-    "name": "Company Funding Records (local/sqlite3)",
+    "name": "Company Funding Records - SQLite3",
     "default": false,
     "connector": "Sqlite3",
     "url": "db.sqlite3",

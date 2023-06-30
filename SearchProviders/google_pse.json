@@ -1,6 +1,6 @@
 [
     {
-        "name": "Enterprise Search (web/Google PSE)",
+        "name": "Enterprise Search Engines - Google PSE",
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
@@ -20,7 +20,7 @@
         ]
     },
     {
-        "name": "Strategy Consulting (web/Google PSE)",
+        "name": "Strategy Consulting - Google PSE",
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
@@ -40,7 +40,7 @@
         ]
     },
     {
-        "name": "Mergers & Acquisitions (web/Google PSE)",
+        "name": "Mergers & Acquisitions - Google PSE",
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",

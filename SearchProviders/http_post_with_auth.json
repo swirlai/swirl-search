@@ -1,5 +1,5 @@
 {
-    "name": "TEST HTTP POST Endpoint",
+    "name": "Sample HTTP POST Endpoint",
     "active": true,
     "default": true,
     "connector": "RequestsPost",

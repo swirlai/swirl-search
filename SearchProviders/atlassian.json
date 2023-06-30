@@ -1,6 +1,6 @@
 [
     {
-        "name": "Issues (web/Atlassian.com)",
+        "name": "Issues - Atlassian Jira Cloud",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -24,7 +24,7 @@
         ]
     },
     {
-        "name": "Wiki (web/Atlassian.com)",
+        "name": "Wiki - Atlassian Confluence Cloud",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -43,7 +43,6 @@
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
             "Confluence",
-            "Articles",
             "Wiki",
             "Atlassian"
         ]

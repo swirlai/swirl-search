@@ -1,6 +1,6 @@
 [
     {
-        "name": "GitHub - Code (web/GitHub.com)",
+        "name": "Code - GitHub.com",
         "shared": true,
         "active": false,
         "default": false,
@@ -30,7 +30,7 @@
         ]
     },
     {
-        "name": "GitHub - Issues (web/GitHub.com)",
+        "name": "Issues - GitHub.com",
         "shared": true,
         "active": false,
         "default": false,
@@ -60,7 +60,7 @@
         ]
     },
     {
-        "name": "GitHub - Pull Requests (web/GitHub.com)",
+        "name": "Pull Requests - GitHub.com",
         "shared": true,
         "active": false,
         "default": false,
@@ -90,7 +90,7 @@
         ]
     },
     {
-        "name": "GitHub - Commits (web/GitHub.com)",
+        "name": "Commits - GitHub.com",
         "shared": true,
         "active": false,
         "default": false,
