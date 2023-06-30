@@ -267,7 +267,9 @@
         ],
         "query_mappings": "",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+            "CleanTextResultProcessor",
+            "LenLimitingResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=summary,body=content,date_published=created,author=reporter.fullName,url='https://<your-domain>.youtrack.cloud/articles/{idReadable}',project.name,attachments[*].name,parentArticle.summary,childArticles[*].summary,updatedBy.fullName,comments[*].text,NO_PAYLOAD",
@@ -291,7 +293,9 @@
         ],
         "query_mappings": "",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+            "CleanTextResultProcessor",
+            "LenLimitingResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=summary,body=description,date_published=created,author=reporter.fullName,url='https://<your-domain>.youtrack.cloud/issue/{idReadable}',project.name,tags[*].name,votes,commentsCount,comments[*].text,updater.fullName,NO_PAYLOAD",
@@ -314,7 +318,8 @@
         ],
         "query_mappings": "",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+            "LenLimitingResultProcessor"
         ],
         "response_mappings": "FOUND=size,RESULTS=results",
         "result_mappings": "title=title,body=body[*].view[*].value,author=history[*].createdBy[*].publicName,date_published=history[*].createdDate,url='https://<your-domain>.atlassian.net/wiki{_links[*].webui}',space.name,metadata[*].labels[*].results[*].name,children[*].attachment[*].results[*].title,children[*].page[*].results[*].title,ancestors[*].title,NO_PAYLOAD",
@@ -334,7 +339,8 @@
         "url": "https://<your-domain>.atlassian.net/rest/api/3/search?fields=*all",
         "query_template": "{url}&jql=text~'{query_string}'",
         "query_processors": [
-            "AdaptiveQueryProcessor"
+            "AdaptiveQueryProcessor",
+            "LenLimitingResultProcessor"
         ],
         "query_mappings": "",
         "result_processors": [
