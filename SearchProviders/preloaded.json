@@ -1,6 +1,6 @@
 [
     {
-        "name": "Enterprise Search (web/Google PSE)",
+        "name": "Enterprise Search Engines - Google PSE",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
@@ -23,7 +23,7 @@
         ]
     },
     {
-        "name": "Strategy Consulting (web/Google PSE)",
+        "name": "Strategy Consulting - Google PSE",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
@@ -46,7 +46,7 @@
         ]
     },
     {
-        "name": "Mergers & Acquisitions (web/Google PSE)",
+        "name": "Mergers & Acquisitions - Google PSE",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
@@ -69,7 +69,7 @@
         ]
     },
     {
-        "name": "IT News (web/NLResearch.com)",
+        "name": "IT News - NLResearch.com",
         "active": false,
         "default": true,
         "connector": "RequestsGet",
@@ -93,7 +93,7 @@
         ]
     },
     {
-        "name": "ChatGPT (web/OpenAI)",
+        "name": "ChatGPT - OpenAI",
         "active": false,
         "default": true,
         "connector": "ChatGPT",
@@ -116,7 +116,7 @@
         ]
     },
     {
-        "name": "Boards (web/Miro.com)",
+        "name": "Boards - Miro.com",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -138,7 +138,7 @@
         ]
     },
     {
-        "name": "Company Funding Records (cloud/BigQuery)",
+        "name": "Company Funding Records - BigQuery",
         "active": false,
         "default": false,
         "connector": "BigQuery",
@@ -161,7 +161,7 @@
         ]
     },
     {
-        "name": "Company Funding Records (local/sqlite3)",
+        "name": "Company Funding Records - SQLite3",
         "active": false,
         "default": false,
         "connector": "Sqlite3",
@@ -184,7 +184,7 @@
         ]
     },
     {
-        "name": "techproducts (local/solr)",
+        "name": "techproducts - Apache Solr",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -208,7 +208,7 @@
         ]
     },
     {
-        "name": "ENRON Email (local/OpenSearch)",
+        "name": "ENRON Email - OpenSearch",
         "active": false,
         "default": false,
         "connector": "OpenSearch",
@@ -232,7 +232,7 @@
         ]
     },
     {
-        "name": "ENRON Email (local/elastic)",
+        "name": "ENRON Email - Elasticsearch",
         "active": false,
         "default": false,
         "connector": "Elastic",
@@ -256,7 +256,7 @@
         ]
     },
     {
-        "name": "Articles (web/YouTrack.cloud)",
+        "name": "Articles - JetBrains YouTrack",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -280,7 +280,7 @@
         ]
     },
     {
-        "name": "Issues (web/YouTrack.cloud)",
+        "name": "Issues - JetBrains YouTrack",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -303,7 +303,7 @@
         ]
     },
     {
-        "name": "Wiki (web/Atlassian.com)",
+        "name": "Wiki - Atlassian Confluence Cloud",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -322,13 +322,12 @@
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
             "Confluence",
-            "Articles",
             "Wiki",
             "Atlassian"
         ]
     },
     {
-        "name": "Issues (web/Atlassian.com)",
+        "name": "Issues - Atlassian Jira Cloud",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -352,7 +351,7 @@
         ]
     },
     {
-        "name": "M365 Email",
+        "name": "Outlook Messages - Microsoft 365",
         "active": false,
         "default": true,
         "connector": "M365OutlookMessages",
@@ -376,7 +375,7 @@
         ]
     },
     {
-        "name": "M365 OneDrive",
+        "name": "OneDrive Files - Microsoft 365",
         "active": false,
         "default": true,
         "connector": "M365OneDrive",
@@ -400,7 +399,7 @@
         ]
     },
     {
-        "name": "M365 SharePoint",
+        "name": "SharePoint Sites - Microsoft 365",
         "active": false,
         "default": true,
         "connector": "M365SharePointSites",
@@ -424,7 +423,7 @@
         ]
     },
     {
-        "name": "Microsoft Teams",
+        "name": "Teams Chat - Microsoft 365",
         "active": false,
         "default": true,
         "connector": "MicrosoftTeams",
@@ -448,7 +447,7 @@
         ]
     },
     {
-	"name": "M365 Calendar",
+	"name": "Calendar Events - Microsoft 365",
 	"shared": true,
 	"active": false,
 	"default": false,
@@ -476,7 +475,7 @@
 	]
     },
     {
-        "name": "GitHub - Code (web/GitHub.com)",
+        "name": "Code - GitHub.com",
         "shared": true,
         "active": false,
         "default": false,
@@ -506,7 +505,7 @@
         ]
     },
     {
-        "name": "GitHub - Issues (web/GitHub.com)",
+        "name": "Issues - GitHub.com",
         "shared": true,
         "active": false,
         "default": false,
@@ -536,7 +535,7 @@
         ]
     },
     {
-        "name": "GitHub - Pull Requests (web/GitHub.com)",
+        "name": "Pull Requests - GitHub.com",
         "shared": true,
         "active": false,
         "default": false,
@@ -566,7 +565,7 @@
         ]
     },
     {
-        "name": "GitHub - Commits (web/GitHub.com)",
+        "name": "Commits - GitHub.com",
         "shared": true,
         "active": false,
         "default": false,

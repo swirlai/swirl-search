@@ -1,5 +1,5 @@
 {
-    "name": "ENRON Email (local/elastic)",
+    "name": "ENRON Email - Elastic Cloud",
     "connector": "Elastic",
     "url": "cloud_id='your-cloud-id-here'",
     "query_template": "index='{index_name}', query={'query_string': {'query': '{query_string}', 'default_field': '{default_field}'}}",

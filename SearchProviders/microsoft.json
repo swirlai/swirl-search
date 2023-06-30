@@ -1,6 +1,6 @@
 [
     {
-        "name": "M365 Email",
+        "name": "Outlook Messages - Microsoft 365",
         "active": false,
         "default": true,
         "connector": "M365OutlookMessages",
@@ -24,7 +24,7 @@
         ]
     },
     {
-        "name": "M365 Calendar",
+        "name": "Calendar Events - Microsoft 365",
         "shared": true,
         "active": false,
         "default": true,
@@ -52,7 +52,7 @@
         ]
     },
     {
-        "name": "M365 OneDrive",
+        "name": "OneDrive Files - Microsoft 365",
         "active": false,
         "default": true,
         "connector": "M365OneDrive",
@@ -76,7 +76,7 @@
         ]
     },
     {
-        "name": "M365 SharePoint",
+        "name": "SharePoint Sites - Microsoft 365",
         "active": false,
         "default": true,
         "connector": "M365SharePointSites",
@@ -100,7 +100,7 @@
         ]
     },
     {
-        "name": "Microsoft Teams",
+        "name": "Teams Chat - Microsoft 365",
         "active": false,
         "default": true,
         "connector": "MicrosoftTeams",

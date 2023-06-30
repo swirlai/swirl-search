@@ -1,5 +1,5 @@
 {
-    "name": "Curated Documents (local/Sqlite3)",
+    "name": "Curated Documents - SQLite3",
     "default": false,
     "connector": "Sqlite3",
     "url": "db.sqlite3",

@@ -1,5 +1,5 @@
 {
-    "name": "techproducts (local/solr)",
+    "name": "techproducts - Apache Solr",
     "connector": "RequestsGet",
     "url": "http://localhost:8983/solr/{collection}/select?wt=json",
     "query_template": "{url}&q={query_string}",

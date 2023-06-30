@@ -1,5 +1,5 @@
 {
-    "name": "ChatGPT (web/OpenAI)",
+    "name": "ChatGPT - OpenAI",
     "active": true,
     "default": true,
     "connector": "ChatGPT",
