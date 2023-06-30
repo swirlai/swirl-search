@@ -11,7 +11,7 @@ from jsonpath_ng.exceptions import JsonPathParserError
 from django.conf import settings
 
 from swirl.processors.processor import *
-from swirl.processors.utils import clean_string, create_result_dictionary, get_mappings_dict
+from swirl.processors.utils import get_tag, clean_string, create_result_dictionary, get_mappings_dict
 
 #############################################
 #############################################
@@ -113,13 +113,26 @@ class LenLimitingResultProcessor(ResultProcessor):
 
     def process(self):
 
+        # identify the requested temporal distance 
+        
+        max_length = get_tag('max_length', self.tags)                    
+        if max_length:
+            if type(max_length) != int:
+                if type(max_length) == str:
+                    max_length=int(max_length)
+                else:
+                    self.error(f"Can't extract max_length from tag: {max_length}")
+                    return 0
+        else:
+            max_length = SWIRL_MAX_FIELD_LEN
+
         modified = 0
         for item in self.results:
             for field in FIELDS_TO_LIMIT:
                 if field in item:
                     if type(item[field]) == str:
-                        if len(item[field]) > SWIRL_MAX_FIELD_LEN:
-                            item[field] = item[field][:SWIRL_MAX_FIELD_LEN-3] + '...'
+                        if len(item[field]) > max_length:
+                            item[field] = item[field][:max_length-3] + '...'
                             modified = modified + 1
 
         self.processed_results = self.results
