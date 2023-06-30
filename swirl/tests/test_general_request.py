@@ -624,7 +624,7 @@ class DS403Test(GeneralRequestAPITestCase):
         result = self._run_search()
 
 
-class YouTrackBig(GeneralRequestAPITestCase):
+class LenLimitingResultProcessorTest(GeneralRequestAPITestCase):
 
     def _get_connector_name(self):
         return 'RequestsGet'
@@ -645,6 +645,7 @@ class YouTrackBig(GeneralRequestAPITestCase):
         "query_mappings": "",
         "result_processors": [
             "MappingResultProcessor"
+            ,"LenLimitingResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=summary,body=content,date_published=created,author=reporter.fullName,url='https://swirl.youtrack.cloud/articles/{idReadable}',project.name,attachments[*].name,parentArticle.summary,childArticles[*].summary,updatedBy.fullName,comments[*].text,NO_PAYLOAD",
@@ -687,6 +688,9 @@ class YouTrackBig(GeneralRequestAPITestCase):
         rs = Result.objects.get(search_id=search_id)
         jsr = rs.json_results
         assert jsr
+        assert len(jsr) == 10
+        for i,r in enumerate(jsr):
+            assert len(jsr[i]['body']) <= 256
         return True
 
     def _mock_response(self):

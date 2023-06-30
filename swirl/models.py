@@ -91,7 +91,8 @@ class SearchProvider(models.Model):
         ('TestResultProcessor', 'TestResultProcessor'),
         ('MappingResultProcessor', 'MappingResultProcessor'),
         ('DateFinderResultProcessor','DateFinderResultProcessor'),
-        ('DedupeByFieldResultProcessor', 'DedupeByFieldResultProcessor',)
+        ('DedupeByFieldResultProcessor', 'DedupeByFieldResultProcessor'),
+        ('LenLimitingResultProcessor', 'LenLimitingResultProcessor')
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
 
