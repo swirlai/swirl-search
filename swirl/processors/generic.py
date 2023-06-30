@@ -126,12 +126,15 @@ class LenLimitingResultProcessor(ResultProcessor):
         else:
             max_length = SWIRL_MAX_FIELD_LEN
 
+        self.warning(f"tags: {self.tags}, max_length: {max_length}")
+
         modified = 0
         for item in self.results:
             for field in FIELDS_TO_LIMIT:
                 if field in item:
                     if type(item[field]) == str:
                         if len(item[field]) > max_length:
+                            item['payload'][field+'_full'] = item[field]
                             item[field] = item[field][:max_length-3] + '...'
                             modified = modified + 1
 

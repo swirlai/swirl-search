@@ -329,7 +329,7 @@ class Connector:
             logger.info(f"{self}: invoking processor: process results {processor}")
             last_results = copy.deepcopy(self.results)
             try:
-                proc = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.results, self.provider, self.query_string_to_provider, self.search.tags)
+                proc = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.results, self.provider, self.query_string_to_provider, self.provider.tags)
                 modified = proc.process()
                 self.results = proc.get_results()
                 ## Check if this processor generated feed back and if so, remember it.
