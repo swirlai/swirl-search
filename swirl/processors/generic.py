@@ -112,8 +112,6 @@ class LenLimitingResultProcessor(ResultProcessor):
     type="LenLimitingResultProcessor"
 
     def process(self):
-
-        # identify the requested temporal distance 
         
         max_length = get_tag('max_length', self.tags)                    
         if max_length:
