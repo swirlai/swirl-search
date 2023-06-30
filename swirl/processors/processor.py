@@ -121,12 +121,12 @@ class ResultProcessor(Processor):
 
     ########################################
 
-    def __init__(self, results, provider, query_string, tags):
+    def __init__(self, results, provider, query_string):
 
         self.results = results
         self.provider = provider
         self.query_string = query_string
-        self.tags = tags
+        self.provider_tags = provider.tags
         self.modified = 0
         self.processed_results = None
 
@@ -164,7 +164,7 @@ class ResultProcessor(Processor):
 
     def get_results(self):
         return self.processed_results
-    
+
 ########################################
 ########################################
 

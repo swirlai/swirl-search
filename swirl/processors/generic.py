@@ -77,7 +77,7 @@ class GenericResultProcessor(ResultProcessor):
 
             # mark results from SearchProviders with result_mapping FILE_SYSTEM
             if file_system:
-                swirl_result['_relevancy_model'] = 'FILE_SYSTEM' 
+                swirl_result['_relevancy_model'] = 'FILE_SYSTEM'
 
             if result_block:
                 swirl_result['result_block'] = result_block
@@ -163,8 +163,8 @@ class LenLimitingResultProcessor(ResultProcessor):
     type="LenLimitingResultProcessor"
 
     def process(self):
-        
-        max_length = get_tag('max_length', self.tags)                    
+
+        max_length = get_tag('max_length', self.provider_tags)
         if max_length:
             if type(max_length) != int:
                 if type(max_length) == str:
