@@ -57,12 +57,14 @@ def decode_single_quote_json(json_string):
         return {}
 
 def stem_string(s):
-
+    st = time.time()
     nl=[]
     for s in s.strip().split():
         nl.append(ps.stem(s))
-
-    return ' '.join(nl)
+    ret  = ' '.join(nl)
+    et = time.time() - st
+    logger.info (f'stem_string: elapsed time : {round(et,2)}')
+    return ret
 
 #############################################
 
@@ -181,6 +183,7 @@ def highlight_list(target_str, word_list):
     """
     Highlight the terms in the target_str with terms from the word_list
     """
+    st = time.time()
     # Step 1 : Create canonical word list in lower case
     hili_words =  _tokenize_word_list(word_list)
     ret = target_str
@@ -193,12 +196,14 @@ def highlight_list(target_str, word_list):
         # If the word matches any of the source words, add it to the list of highlighted words
         if word.lower() in hili_words:
             ret = ret.replace(word,f'{SWIRL_HIGHLIGHT_START_CHAR}{word}{SWIRL_HIGHLIGHT_END_CHAR}')
-
+    et = time.time() - st
+    logger.info (f'highlight_list: elapsed time : {round(et,2)}')
     return ret
 
 #############################################
 
 def position_dict(text, word_list):
+    st = time.time()
     if type(word_list) != list:
         return []
     if word_list == []:
@@ -210,6 +215,8 @@ def position_dict(text, word_list):
     for i, word in enumerate(words):
         if word in word_list:
             positions[word.lower()].append(i)
+    et = time.time() - st
+    logger.info (f'position_dict: elapsed time : {round(et,2)}')
     return positions
 
 
@@ -246,6 +253,8 @@ def extract_text_from_tags(html,tag):
 def clean_string(s):
 
     # remove entities and tags
+    st = time.time()
+
     s1 = remove_tags(s)
 
     # parse s1 carefully
@@ -281,6 +290,8 @@ def clean_string(s):
     for t in string_clean.split():
         if t not in [ '-', '--']:
             string_cleaner.append(t)
+    et = time.time() - st
+    logger.info (f'clean_string: elapsed time : {round(et,2)}')
     return ' '.join(string_cleaner)
 
 #############################################
@@ -305,7 +316,7 @@ def match_all(list_find, list_targets):
         p = p + 1
 
     et_match_all = time.time() - st_match_all
-    logger.debug (f'match_all: elapsed time : {round(et_match_all,4)}')
+    logger.info (f'match_all: elapsed time : {round(et_match_all, 2)}')
 
     return match_list
 
@@ -313,10 +324,13 @@ def match_all(list_find, list_targets):
 
 def match_any(list_find, list_targets):
 
+    st_match_any = time.time()
     for item in list_find:
         for target in list_targets:
             if item.lower() in target.lower():
                 return True
+    et = time.time() - st_match_any
+    logger.info (f'match_any: elapsed time : {round(et, 2)}')
 
     return False
 
@@ -372,7 +386,7 @@ def capitalize_search(list_lower, list_unknown):
     """
 
     """
-
+    st = time.time()
     if type(list_lower) != list:
         return None
 
@@ -398,7 +412,8 @@ def capitalize_search(list_lower, list_unknown):
             continue
         list_capitalized.append(i)
     # end for
-
+    et = time.time() - st
+    logger.info (f'cap_search: elapsed time : {round(et,2)}')
     return list_capitalized
 
 
@@ -408,24 +423,31 @@ def json_to_flat_string(json_data, separator=' ', deadman=None):
     use deadman to limit recursion into JSON objects.
     Separator the character the individual data pieces will be joined on.
     """
-    if isinstance(json_data, str):
-        return json_data
+    st = time.time()
+    try:
+        if isinstance(json_data, str):
+            return json_data
 
-    if deadman:
-        deadman = deadman - 1
-        if deadman <= 0:
-            raise ValueError('recursion limit reached in JSON structure')
+        if deadman:
+            deadman = deadman - 1
+            if deadman <= 0:
+                raise ValueError('recursion limit reached in JSON structure')
 
-    if isinstance(json_data, dict):
-        return separator.join(json_to_flat_string(v, separator=separator, deadman=deadman) for v in json_data.values())
-    elif isinstance(json_data, list):
-        return separator.join(json_to_flat_string(v, separator=separator, deadman=deadman) for v in json_data)
-    elif isinstance(json_data, (int, float, bool)):
-        return str(json_data)
-    elif json_data is None:
-        return 'null'
-    else:
-        raise TypeError(f"Unsupported JSON data type: {type(json_data)}")
+        if isinstance(json_data, dict):
+            return separator.join(json_to_flat_string(v, separator=separator, deadman=deadman) for v in json_data.values())
+        elif isinstance(json_data, list):
+            return separator.join(json_to_flat_string(v, separator=separator, deadman=deadman) for v in json_data)
+        elif isinstance(json_data, (int, float, bool)):
+            return str(json_data)
+        elif json_data is None:
+            return 'null'
+        else:
+            raise TypeError(f"Unsupported JSON data type: {type(json_data)}")
+    finally:
+        et = time.time() - st
+        logger.info (f'json_to_flat_string: elapsed time : {round(et,2)}')
+
+
 
 def str_replace_all_keys(s, d):
     """

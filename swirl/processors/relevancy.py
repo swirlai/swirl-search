@@ -20,6 +20,7 @@ import logging
 from celery.utils.log import get_task_logger
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
+chunk_rel = True
 
 SWIRL_RELEVANCY_CONFIG = getattr(settings, 'SWIRL_RELEVANCY_CONFIG', {
     'title': {
@@ -187,6 +188,8 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         # For each results set from all providers that returned one.
         # to do: refactor the names so it is clearer, e.g. json_result instead of result, result_set instead of results
         st_pass_1 = time.time()
+        sum_rel_config = 0
+
         for results in self.results:
 
             ############################################
@@ -246,8 +249,10 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                 dict_score['stems'] = ' '.join(self.query_stemmed_list)
                 dict_len = {}
                 notted = ""
+                st_rel_config = time.time()
                 for field in RELEVANCY_CONFIG:
                     if field in item:
+                        st_field_in_item = time.time()
                         if type(item[field]) == list:
                             # to do: handle this better
                             item[field] = item[field][0]
@@ -256,6 +261,8 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         # code expects this and blows up otherwise.
                         item[field] = json_to_flat_string(item[field],deadman=100)
                         result_field = clean_string(item[field]).strip()
+                        et_field_in_item = time.time() - st_field_in_item
+                        logger.info (f'[{field}] field_in_item: elapsed time 1 : {round(et_field_in_item,2)}')
                         # check for zero-length result
                         if result_field:
                             if len(result_field) == 0:
@@ -265,10 +272,17 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                             # the field is a URL, split it on -
                             if '-' in result_field:
                                 result_field = result_field.replace('-', ' ')
-                        result_field_nlp = nlp(result_field)
+                        st_nlp = time.time()
+                        sent_tok_rs = sent_tokenize(result_field)
+                        if not chunk_rel:
+                            result_field_nlp = nlp(result_field)
+                        et_nlp = time.time() - st_nlp
+                        logger.info (f'[{field}] nlp: elapsed time : {round(et_nlp,2)}')
                         result_field_list = result_field.strip().split()
                         # fix for https://github.com/swirlai/swirl-search/issues/34
                         result_field_stemmed = stem_string(result_field)
+                        et_field_in_item = time.time() - st_field_in_item
+                        logger.info (f'[{field}] field_in_item: elapsed time 2 : {round(et_field_in_item,2)}')
                         result_field_stemmed_list = result_field_stemmed.strip().split()
                         if len(result_field_list) != len(result_field_stemmed_list):
                             self.error("len(result_field_list) != len(result_field_stemmed_list), highlighting errors may occur")
@@ -277,6 +291,9 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                             if t.lower() in (result_field.lower() for result_field in result_field_list):
                                 notted = {field: t}
                                 break
+                        et_field_in_item = time.time() - st_field_in_item
+                        logger.info (f'[{field}] field_in_item: elapsed time 3: {round(et_field_in_item,2)}')
+
                         # field length
                         if field in dict_len:
                             self.warning(f"duplicate field detected: {field}")
@@ -303,26 +320,44 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                 empty_query_vector = True
                             qvr = 0.0
                             label = '_*'
-                            if empty_query_vector or result_field_nlp.vector.all() == 0:
+                            if not chunk_rel and (empty_query_vector or result_field_nlp.vector.all() == 0):
                                 if len(result_field_list) == 0:
                                     qvr = 0.0
                                 else:
                                     qvr = 0.3 + 1/3
                                 # end if
                             else:
-                                if len(sent_tokenize(result_field)) > 1:
-                                    # by sentence, take highest
+                                st = time.time()
+                                if not chunk_rel:
+                                    if len(sent_tok_rs) > 1:
+                                        # by sentence, take highest
+                                        max_similarity = 0.0
+                                        for sent in sent_tok_rs:
+                                            result_sent_nlp = nlp(sent)
+                                            qvs = query_nlp.similarity(result_sent_nlp)
+                                            if qvs > max_similarity:
+                                                max_similarity = qvs
+                                        # end for
+                                        qvr = max_similarity
+                                        label = '_s*'
+                                    else:
+                                        qvr = query_nlp.similarity(result_field_nlp)
+                                else:
+                                    label = '_s*'
+                                    qvr = 0.3 + 1/3
                                     max_similarity = 0.0
-                                    for sent in sent_tokenize(result_field):
-                                        result_sent_nlp = nlp(sent)
-                                        qvs = query_nlp.similarity(result_sent_nlp)
+                                    for i,sent in enumerate(sent_tok_rs):
+                                        if i > 15:
+                                            break
+                                        r_sent_nlp = nlp(sent)
+                                        qvs = query_nlp.similarity(r_sent_nlp)
                                         if qvs > max_similarity:
                                             max_similarity = qvs
-                                    # end for
-                                    qvr = max_similarity
-                                    label = '_s*'
-                                else:
-                                    qvr = query_nlp.similarity(result_field_nlp)
+                                        qvr = qvs
+
+                                et = time.time() - st
+                                logger.info (f'[{field}] sent_tokenize: elapsed time : {round(et,2)}')
+
                             # end if
                             if qvr >= float(SWIRL_MIN_SIMILARITY):
                                 dict_score[field]['_'.join(self.query_list)+label] = qvr
@@ -330,6 +365,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                 logger.debug(f"{self}: item below SWIRL_MIN_SIMILARITY: {'_'.join(self.query_list)+label} ~?= {item}")
                         ############################################
                         # score each query target
+                        st = time.time()
                         for stemmed_query_target, query_target in zip(self.query_stemmed_target_list, self.query_target_list):
                             query_slice_stemmed_list = stemmed_query_target
                             query_slice_stemmed_len = len(query_slice_stemmed_list)
@@ -343,7 +379,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                             match_list = match_all(query_slice_stemmed_list, result_field_stemmed_list)
                             # truncate the match list, if longer than configured
                             if len(match_list) > SWIRL_MAX_MATCHES:
-                                self.warning(f"truncating matches for: {query_slice_stemmed_list}")
+                                # self.warning(f"truncating matches for: {query_slice_stemmed_list}")
                                 match_list = match_list[:SWIRL_MAX_MATCHES-1]
                             qw_list = query_target
                             if match_list:
@@ -395,6 +431,9 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                 # end for
                             # end if match_list
                         # end for
+                        et = time.time() - st
+                        logger.info (f'[{field}] score_q_target: elapsed time : {round(et,2)}')
+
                         if dict_score[field] == {}:
                             del dict_score[field]
                         ############################################
@@ -408,6 +447,10 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         item[field] = highlight_list(remove_tags(item[field]), extracted_highlights)
                     # end if
                 # end for field in RELEVANCY_CONFIG:
+                et_rel_config = time.time() - st_rel_config
+                sum_rel_config = sum_rel_config + et_rel_config
+                logger.info (f'[{self}]: elapsed time REL CONFIG : {round(et_rel_config,2)} {item["url"]}')
+
                 if notted:
                     item['NOT'] = notted
                 else:
@@ -417,7 +460,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         # end for results in self.results:
         ############################################
         et_pass_1 = time.time() - st_pass_1
-        logger.info (f'{self}: elapsed time PASS 1 : {round(et_pass_1,2)}')
+        logger.info (f'{self}: elapsed time PASS 1 : {round(et_pass_1,2)} sum rel config: {round(sum_rel_config,2)}')
 
         # compute field means
         dict_len_median = {}
