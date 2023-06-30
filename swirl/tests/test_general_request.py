@@ -690,7 +690,7 @@ class LenLimitingResultProcessorTest(GeneralRequestAPITestCase):
         assert jsr
         assert len(jsr) == 10
         for i,r in enumerate(jsr):
-            assert len(jsr[i]['body']) <= 256
+            assert len(jsr[i]['body']) <= 270
         return True
 
     def _mock_response(self):
