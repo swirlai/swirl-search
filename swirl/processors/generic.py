@@ -107,6 +107,57 @@ class GenericResultProcessor(ResultProcessor):
 SWIRL_MAX_FIELD_LEN = getattr(settings, 'SWIRL_MAX_FIELD_LEN', 256)
 FIELDS_TO_LIMIT = ['title', 'body']
 
+# class LenLimitingResultProcessor(ResultProcessor):
+
+#     type="LenLimitingResultProcessor"
+
+#     def process(self):
+        
+#         max_length = get_tag('max_length', self.tags)                    
+#         if max_length:
+#             if type(max_length) != int:
+#                 if type(max_length) == str:
+#                     max_length=int(max_length)
+#                 else:
+#                     self.error(f"Can't extract max_length from tag: {max_length}")
+#                     return 0
+#         else:
+#             max_length = SWIRL_MAX_FIELD_LEN
+
+#         modified = 0
+#         for item in self.results:
+#             for field in FIELDS_TO_LIMIT:
+#                 if field in item:
+#                     if type(item[field]) == str:
+#                         if len(item[field]) > max_length:
+#                             item['payload'][field+'_full'] = item[field]
+#                             item[field] = item[field][:max_length-3] + '...'
+#                             modified = modified + 1
+
+#         self.processed_results = self.results
+#         self.modified = modified
+#         return self.modified
+
+#############################################
+
+SWIRL_MAX_FIELD_LEN = getattr(settings, 'SWIRL_MAX_FIELD_LEN', 256)
+FIELDS_TO_LIMIT = ['title', 'body']
+
+import re
+
+def match_any(source_list, s_target):
+    target_cleaned = re.sub(r'[^\w\s]', '', s_target)  # Remove punctuation
+    target_words = target_cleaned.split()  # Split the cleaned target string into words
+
+    source_set = set(word.lower() for word in source_list)  # Create a set of lowercase source words
+
+    for i, word in enumerate(target_words):
+        cleaned_word = word.lower()
+        if cleaned_word in source_set:
+            start_index = s_target.lower().index(cleaned_word)
+            return start_index  # Return the position of the matched word's first character
+    return -1
+
 class LenLimitingResultProcessor(ResultProcessor):
 
     type="LenLimitingResultProcessor"
@@ -124,17 +175,28 @@ class LenLimitingResultProcessor(ResultProcessor):
         else:
             max_length = SWIRL_MAX_FIELD_LEN
 
-        self.warning(f"tags: {self.tags}, max_length: {max_length}")
-
         modified = 0
         for item in self.results:
             for field in FIELDS_TO_LIMIT:
                 if field in item:
                     if type(item[field]) == str:
                         if len(item[field]) > max_length:
+                            # copy to payload
                             item['payload'][field+'_full'] = item[field]
-                            item[field] = item[field][:max_length-3] + '...'
+                            first = match_any(self.query_string.split(), item[field])
+                            if first > -1:
+                                # found a match, start from here
+                                if first == 0: 
+                                    item[field] = item[field][:max_length]
+                                else:
+                                    item[field] = '...' + item[field][first:first+max_length-3] + '...'
+                            else:
+                                # no match, so just take first N
+                                item[field] = item[field][:max_length-3] + '...'
+                            # end if
                             modified = modified + 1
+                    else:
+                        self.warning(f"Field {field} is not str, found type: {type(item[field])}")
 
         self.processed_results = self.results
         self.modified = modified
@@ -142,6 +204,48 @@ class LenLimitingResultProcessor(ResultProcessor):
 
 #############################################
 
+FIELDS_TO_CLEAN = ['title', 'body']
+
+def remove_non_alphanumeric(text):
+    # Define the regular expression pattern
+    pattern = r"[^\w().?!'\",\s]|(\.{4,})|(\.{3})|(-{3,})|(-{2})"
+
+    # Define the replacement function
+    def replace(match):
+        if match.group(1):
+            return "..."
+        elif match.group(2):
+            return "..."
+        elif match.group(3):
+            return "--"
+        elif match.group(4):
+            return "--"
+        else:
+            return " "
+
+    # Apply the pattern and replacement function
+    return re.sub(pattern, replace, text)
+
+class CleanTextResultProcessor(ResultProcessor):
+
+    type="CleanTextResultProcessor"
+
+    def process(self):
+        
+        modified = 0
+        for item in self.results:
+            for field in FIELDS_TO_CLEAN:
+                if field in item:
+                    if type(item[field]) == str:
+                        modified = modified + 1
+                        item[field] = remove_non_alphanumeric(item[field])
+
+        self.processed_results = self.results
+        self.modified = modified
+        return self.modified
+    
+#############################################
+    
 class TestResultProcessor(ResultProcessor):
 
     type="TestResultProcessor"
