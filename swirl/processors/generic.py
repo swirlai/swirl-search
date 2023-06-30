@@ -8,8 +8,10 @@ from datetime import datetime
 from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
+from django.conf import settings
+
 from swirl.processors.processor import *
-from swirl.processors.utils import clean_string, create_result_dictionary, get_mappings_dict
+from swirl.processors.utils import get_tag, clean_string, create_result_dictionary, get_mappings_dict
 
 #############################################
 #############################################
@@ -75,7 +77,7 @@ class GenericResultProcessor(ResultProcessor):
 
             # mark results from SearchProviders with result_mapping FILE_SYSTEM
             if file_system:
-                swirl_result['_relevancy_model'] = 'FILE_SYSTEM' 
+                swirl_result['_relevancy_model'] = 'FILE_SYSTEM'
 
             if result_block:
                 swirl_result['result_block'] = result_block
@@ -98,6 +100,44 @@ class GenericResultProcessor(ResultProcessor):
 
         self.processed_results = list_results
         self.modified = len(self.processed_results)
+        return self.modified
+
+#############################################
+
+SWIRL_MAX_FIELD_LEN = getattr(settings, 'SWIRL_MAX_FIELD_LEN', 256)
+FIELDS_TO_LIMIT = ['title', 'body']
+
+class LenLimitingResultProcessor(ResultProcessor):
+
+    type="LenLimitingResultProcessor"
+
+    def process(self):
+
+        max_length = get_tag('max_length', self.provider_tags)
+        if max_length:
+            if type(max_length) != int:
+                if type(max_length) == str:
+                    max_length=int(max_length)
+                else:
+                    self.error(f"Can't extract max_length from tag: {max_length}")
+                    return 0
+        else:
+            max_length = SWIRL_MAX_FIELD_LEN
+
+        self.warning(f"tags: {self.provider_tags}, max_length: {max_length}")
+
+        modified = 0
+        for item in self.results:
+            for field in FIELDS_TO_LIMIT:
+                if field in item:
+                    if type(item[field]) == str:
+                        if len(item[field]) > max_length:
+                            item['payload'][field+'_full'] = item[field]
+                            item[field] = item[field][:max_length-3] + '...'
+                            modified = modified + 1
+
+        self.processed_results = self.results
+        self.modified = modified
         return self.modified
 
 #############################################
