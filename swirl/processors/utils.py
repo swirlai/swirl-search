@@ -5,7 +5,7 @@
 
 #############################################
 #############################################
-
+import time
 from swirl.nltk import word_tokenize, is_punctuation
 from nltk.tag import tnt
 
@@ -287,6 +287,8 @@ def clean_string(s):
 
 def match_all(list_find, list_targets):
 
+    st_match_all = time.time()
+
     match_list = []
     if not list_targets:
         return match_list
@@ -301,6 +303,9 @@ def match_all(list_find, list_targets):
         if find in ' '.join(list_targets[p:p+len(list_find)]).lower():
             match_list.append(p)
         p = p + 1
+
+    et_match_all = time.time() - st_match_all
+    logger.debug (f'match_all: elapsed time : {round(et_match_all,4)}')
 
     return match_list
 
