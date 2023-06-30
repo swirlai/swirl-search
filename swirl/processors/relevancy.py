@@ -34,6 +34,7 @@ SWIRL_RELEVANCY_CONFIG = getattr(settings, 'SWIRL_RELEVANCY_CONFIG', {
     }
 })
 
+SWIRL_MAX_SENT_CONSIDER = 15
 SWIRL_MIN_SIMILARITY = getattr(settings, 'SWIRL_MIN_SIMILARITY', 0.01)
 SWIRL_MAX_MATCHES = getattr(settings, 'SWIRL_MAX_MATCHES', 5)
 SWIRL_HIGHLIGHT_START_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_START_CHAR', '*')
@@ -347,7 +348,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                     qvr = 0.3 + 1/3
                                     max_similarity = 0.0
                                     for i,sent in enumerate(sent_tok_rs):
-                                        if i > 15:
+                                        if i > SWIRL_MAX_SENT_CONSIDER:
                                             break
                                         r_sent_nlp = nlp(sent)
                                         qvs = query_nlp.similarity(r_sent_nlp)
