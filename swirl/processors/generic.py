@@ -5,8 +5,7 @@
 
 from datetime import datetime
 
-from jsonpath_ng import parse
-from jsonpath_ng.exceptions import JsonPathParserError
+import re
 
 from django.conf import settings
 
@@ -107,45 +106,7 @@ class GenericResultProcessor(ResultProcessor):
 SWIRL_MAX_FIELD_LEN = getattr(settings, 'SWIRL_MAX_FIELD_LEN', 256)
 FIELDS_TO_LIMIT = ['title', 'body']
 
-# class LenLimitingResultProcessor(ResultProcessor):
-
-#     type="LenLimitingResultProcessor"
-
-#     def process(self):
-        
-#         max_length = get_tag('max_length', self.tags)                    
-#         if max_length:
-#             if type(max_length) != int:
-#                 if type(max_length) == str:
-#                     max_length=int(max_length)
-#                 else:
-#                     self.error(f"Can't extract max_length from tag: {max_length}")
-#                     return 0
-#         else:
-#             max_length = SWIRL_MAX_FIELD_LEN
-
-#         modified = 0
-#         for item in self.results:
-#             for field in FIELDS_TO_LIMIT:
-#                 if field in item:
-#                     if type(item[field]) == str:
-#                         if len(item[field]) > max_length:
-#                             item['payload'][field+'_full'] = item[field]
-#                             item[field] = item[field][:max_length-3] + '...'
-#                             modified = modified + 1
-
-#         self.processed_results = self.results
-#         self.modified = modified
-#         return self.modified
-
-#############################################
-
-SWIRL_MAX_FIELD_LEN = getattr(settings, 'SWIRL_MAX_FIELD_LEN', 256)
-FIELDS_TO_LIMIT = ['title', 'body']
-
-import re
-
-def match_any(source_list, s_target):
+def match_any(source_list, s_target, max_length):
     target_cleaned = re.sub(r'[^\w\s]', '', s_target)  # Remove punctuation
     target_words = target_cleaned.split()  # Split the cleaned target string into words
 
@@ -155,9 +116,19 @@ def match_any(source_list, s_target):
         cleaned_word = word.lower()
         if cleaned_word in source_set:
             start_index = s_target.lower().index(cleaned_word)
-            return start_index  # Return the position of the matched word's first character
-    return -1
-
+            substring = s_target[start_index:]
+            words = substring.split()
+            accumulated_length = 0
+            result = []
+            for w in words:
+                if accumulated_length + len(w) <= max_length:
+                    result.append(w)
+                    accumulated_length += len(w) + 1  # +1 for the space between words
+                else:
+                    break
+            return ' '.join(result)
+    return ''
+    
 class LenLimitingResultProcessor(ResultProcessor):
 
     type="LenLimitingResultProcessor"
@@ -183,13 +154,9 @@ class LenLimitingResultProcessor(ResultProcessor):
                         if len(item[field]) > max_length:
                             # copy to payload
                             item['payload'][field+'_full'] = item[field]
-                            first = match_any(self.query_string.split(), item[field])
-                            if first > -1:
-                                # found a match, start from here
-                                if first == 0: 
-                                    item[field] = item[field][:max_length]
-                                else:
-                                    item[field] = '...' + item[field][first:first+max_length-3] + '...'
+                            snippet = match_any(self.query_string.split(), item[field], max_length)
+                            if snippet:
+                                item[field] = '...' + snippet + '...'
                             else:
                                 # no match, so just take first N
                                 item[field] = item[field][:max_length-3] + '...'

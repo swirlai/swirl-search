@@ -218,17 +218,36 @@ def position_dict(text, word_list):
 
 from swirl.bs4 import bs
 
-# Function to remove tags
-def remove_tags(html):
+# # Function to remove tags
+# def remove_tags(html):
 
-    # parse html content
+#     # parse html content
+#     soup = bs(html, "html.parser")
+
+#     for data in soup(['style', 'script']):
+#         # Remove tags
+#         data.decompose()
+
+#     # return data by retrieving the tag content
+#     return ' '.join(soup.stripped_strings)
+
+def remove_tags(html):
+    # Parse html content
     soup = bs(html, "html.parser")
 
-    for data in soup(['style', 'script']):
-        # Remove tags
-        data.decompose()
+    # Find all tags that contain URLs
+    url_tags = soup.find_all(text=re.compile(r"<https?://[\w./?=#&-]+>"))
 
-    # return data by retrieving the tag content
+    # Remove unwanted tags
+    for tag in soup(['style', 'script']):
+        tag.decompose()
+
+    # Convert URL tags back to their original form
+    for tag in url_tags:
+        url = tag.strip()
+        tag.replace_with(url)
+
+    # Return the modified content
     return ' '.join(soup.stripped_strings)
 
 # Function to remove tags
