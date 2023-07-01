@@ -1,6 +1,6 @@
 [
     {
-        "name": "Issues (web/Atlassian.com)",
+        "name": "Issues - Atlassian Jira Cloud",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -11,7 +11,8 @@
         ],
         "query_mappings": "",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+            "LenLimitingResultProcessor"
         ],
         "response_mappings": "FOUND=total,RESULTS=issues",
         "result_mappings": "title=fields.summary,body=fields[description].content[*].content[*].text,date_published=fields[*].created,author=fields[reporter].displayName,url='https://<your-domain>.atlassian.net/browse/{key}',fields[project].name,key,fields[priority].name,fields[status].name,fields[assignee].displayName,fields[*].fixVersions[*].name,fields[votes].votes,fields.labels,fields[comment].comments[*].body[*].content[*].content[*].text,fields[*].subtasks[*].fields[*].summary,NO_PAYLOAD",
@@ -24,7 +25,7 @@
         ]
     },
     {
-        "name": "Wiki (web/Atlassian.com)",
+        "name": "Wiki - Atlassian Confluence Cloud",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -35,7 +36,8 @@
         ],
         "query_mappings": "",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+            "LenLimitingResultProcessor"
         ],
         "response_mappings": "FOUND=size,RESULTS=results",
         "result_mappings": "title=title,body=body[*].view[*].value,author=history[*].createdBy[*].publicName,date_published=history[*].createdDate,url='https://<your-domain>.atlassian.net/wiki{_links[*].webui}',space.name,metadata[*].labels[*].results[*].name,children[*].attachment[*].results[*].title,children[*].page[*].results[*].title,ancestors[*].title,NO_PAYLOAD",
@@ -43,7 +45,6 @@
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
             "Confluence",
-            "Articles",
             "Wiki",
             "Atlassian"
         ]

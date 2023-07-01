@@ -80,7 +80,7 @@ class Connector:
             return
 
         try:
-            self.search_user = User.objects.get(id=self.search_id)
+            self.search_user = User.objects.get(id=self.search.owner.id)
         except ObjectDoesNotExist as err:
             logger.warn("unable to find search user, no auth check")
 

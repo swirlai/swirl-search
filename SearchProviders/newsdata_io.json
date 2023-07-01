@@ -1,6 +1,6 @@
 [
     {
-        "name": "Latest News (web/newsdata.io)",
+        "name": "Breaking News - NewsData.io",
         "connector": "RequestsGet",
         "url": "https://newsdata.io/api/1/news?language=en&apikey={apikey}",
         "query_template": "{url}&q={query_string}",
@@ -19,7 +19,7 @@
         ]
     },
     {
-        "name": "News Archive (web/newsdata.io)",
+        "name": "Historical News - NewsData.io",
         "connector": "RequestsGet",
         "url": "https://newsdata.io/api/1/archive?language=en&apikey={apikey}",
         "query_template": "{url}&q={query_string}",

@@ -1,5 +1,5 @@
 {
-    "name": "ENRON Email (local/OpenSearch)",
+    "name": "ENRON Email - OpenSearch",
     "connector": "OpenSearch",
     "url": "http://localhost:9200/",
     "query_template": "{'query': {'query_string': {'query': '{query_string}', 'default_field': '{default_field}', 'default_operator': 'and'}}}",
