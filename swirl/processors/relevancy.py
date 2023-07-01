@@ -430,6 +430,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         # PASS 2
 
         # score results by field, adjusting for field length
+        st_pass_2 = time.time()
         for results in self.results:
             if not results.json_results:
                 continue
@@ -521,5 +522,8 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         ############################################
 
         self.results_updated = int(updated)
+
+        et_pass_2 = time.time() - st_pass_2
+        logger.info (f'{self}: elapsed time PASS 2 : {round(et_pass_2,2)}')
 
         return self.results_updated
