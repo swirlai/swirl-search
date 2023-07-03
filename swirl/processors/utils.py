@@ -125,8 +125,11 @@ def remove_numeric(string_or_list):
 
 #############################################
 
-def _tokenize_word_list(word_list):
+def tokenize_word_list(word_list):
     ret_list = []
+
+    logger.debug(f'twl in : {word_list}')
+
     for word in word_list:
 
         # We wan '_' to break a word in this case.
@@ -135,9 +138,9 @@ def _tokenize_word_list(word_list):
         wtk = word_tokenize(word)
 
         # Now, for eaech tokenized term
-        for word_tk in wtk:
+        for i,word_tk in enumerate(wtk):
             # Handle possesive cases by rejoining them.
-            if word_tk.lower() == "'s":
+            if word_tk.lower() == "'s" and i > 0:
                 ret_list[-1] = ret_list[-1] + word_tk.lower()
                 continue
             # Don't highlight lone punctuation.
@@ -182,7 +185,7 @@ def highlight_list(target_str, word_list):
     Highlight the terms in the target_str with terms from the word_list
     """
     # Step 1 : Create canonical word list in lower case
-    hili_words =  _tokenize_word_list(word_list)
+    hili_words =  tokenize_word_list(word_list)
     ret = target_str
     # create a unique list of words from the target, so that we only highlight each once.
     all_words = _tokenize_word_text(target_str)
@@ -203,7 +206,7 @@ def position_dict(text, word_list):
         return []
     if word_list == []:
         return []
-    tok_word_list = _tokenize_word_list(word_list)
+    tok_word_list = tokenize_word_list(word_list)
 
     positions = {word: [] for word in tok_word_list}
     words = _tokenize_word_text(text,do_dedup=False)

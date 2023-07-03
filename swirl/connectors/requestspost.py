@@ -64,5 +64,5 @@ class RequestsPost(Requests):
         else:
             post_json=query
 
-        logger.info(f"DNDEBUG: post_json_str:{post_json_str} query:{query} post_json:{post_json}")
+        logger.debug(f"post_json_str:{post_json_str} query:{query} post_json:{post_json}")
         return requests.post(url, params=params, json=post_json, **kwargs)

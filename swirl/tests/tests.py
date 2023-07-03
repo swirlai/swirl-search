@@ -12,7 +12,7 @@ from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 from swirl.processors.adaptive import *
 from swirl.processors.transform_query_processor import *
-from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list, match_all
+from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list, match_all, tokenize_word_list
 from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
 from swirl.processors.dedupe import DedupeByFieldResultProcessor
 from swirl.utils import select_providers
@@ -77,6 +77,11 @@ def noop_query_string():
 ######################################################################
 ## tests
 ######################################################################
+
+def test_tokenize_word_list():
+    twl = tokenize_word_list(["'s"])
+    assert len(twl) == 1
+    assert twl[0] == "'s"
 
 @pytest.fixture
 def hll_test_cases():
