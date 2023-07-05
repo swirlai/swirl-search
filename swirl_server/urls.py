@@ -27,6 +27,6 @@ urlpatterns = [
     }),
     path('swirl/', include('swirl.urls')),
     path('api/swirl/', include('swirl.urls')),
-    path('', lambda req: redirect('/swirl/')),
+    path('', lambda req: redirect('/galaxy/')),
     path('admin/', admin.site.urls)
 ]
