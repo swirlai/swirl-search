@@ -32,4 +32,3 @@ jobs:
       run: python swirl.py start
     - name: Run Integrated API tests
       run: docker run --net=host -t swirlai/swirl-search:latest-integrated-api sh -c "behave --tags=integrated_api"
-           

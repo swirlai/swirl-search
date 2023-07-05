@@ -14,7 +14,6 @@ environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from celery.utils.log import get_task_logger
-from logging import DEBUG
 logger = get_task_logger(__name__)
 
 ########################################
@@ -127,6 +126,8 @@ class ResultProcessor(Processor):
         self.results = results
         self.provider = provider
         self.query_string = query_string
+        self.provider_tags = provider.tags
+        self.modified = 0
         self.processed_results = None
 
     ########################################
@@ -154,10 +155,15 @@ class ResultProcessor(Processor):
 
         '''
         Executes the workflow for a result processor; TBD by derived classes
-        Returns: transformed self.results
+        Returns: # of results modified
         '''
 
-        return self.results
+        return self.modified
+
+    ########################################
+
+    def get_results(self):
+        return self.processed_results
 
 ########################################
 ########################################

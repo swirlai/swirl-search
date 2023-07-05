@@ -1,17 +1,15 @@
 [
     {
-        "name": "Enterprise Search (web/Google PSE)",
+        "name": "Enterprise Search Engines - Google PSE",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -25,18 +23,16 @@
         ]
     },
     {
-        "name": "Strategy Consulting (web/Google PSE)",
+        "name": "Strategy Consulting - Google PSE",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "cx=7d473806dcdde5bc6,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -50,18 +46,16 @@
         ]
     },
     {
-        "name": "Mergers & Acquisitions (web/Google PSE)",
+        "name": "Mergers & Acquisitions - Google PSE",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -75,18 +69,16 @@
         ]
     },
     {
-        "name": "IT News (web/NLResearch.com)",
+        "name": "IT News - NLResearch.com",
         "active": false,
         "default": true,
         "connector": "RequestsGet",
         "url": "https://nlresearch.com/results.php?datasource=BRECE&language=1&periodDate=-7&resultsPerPage=10&micpr=0&extended=1&output=json",
         "query_template": "{url}&login={login}&password={password}&textQuery={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "PAGE=startNumber=RESULT_INDEX,DATE_SORT=sort=2,RELEVANCY_SORT=sort=1,NOT=true,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -101,18 +93,16 @@
         ]
     },
     {
-        "name": "ChatGPT (web/OpenAI)",
+        "name": "ChatGPT - OpenAI",
         "active": false,
         "default": true,
         "connector": "ChatGPT",
         "url": "",
         "query_template": "",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "PROMPT='Tell me about: {query_to_provider}'",
-        "result_processor": "",
         "result_processors": [
             "GenericResultProcessor"
         ],
@@ -126,18 +116,16 @@
         ]
     },
     {
-        "name": "Boards (web/Miro.com)",
+        "name": "Boards - Miro.com",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
         "url": "https://api.miro.com/v2/boards",
         "query_template": "{url}?query={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -150,18 +138,16 @@
         ]
     },
     {
-        "name": "Company Funding Records (cloud/BigQuery)",
+        "name": "Company Funding Records - BigQuery",
         "active": false,
         "default": false,
         "connector": "BigQuery",
         "url": "",
         "query_template": "select {fields} from `{table}` where search({field1}, '{query_string}') or search({field2}, '{query_string}');",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "fields=*,sort_by_date=fundedDate,table=funding.funding,field1=company,field2=city",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -175,18 +161,16 @@
         ]
     },
     {
-        "name": "Company Funding Records (local/sqlite3)",
+        "name": "Company Funding Records - SQLite3",
         "active": false,
         "default": false,
         "connector": "Sqlite3",
         "url": "db.sqlite3",
         "query_template": "select {fields} from {table} where {field1} like '%%{query_string}%%' or {field2} like '%%{query_string}%%';",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "fields=*,sort_by_date=fundeddate,table=funding,field1=city,field2=company",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -200,18 +184,16 @@
         ]
     },
     {
-        "name": "techproducts (local/solr)",
+        "name": "techproducts - Apache Solr",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
         "url": "http://localhost:8983/solr/{collection}/select?wt=json",
         "query_template": "{url}&q={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "collection=techproducts,PAGE=start=RESULT_ZERO_INDEX,NOT=True,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -226,18 +208,16 @@
         ]
     },
     {
-        "name": "ENRON Email (local/OpenSearch)",
+        "name": "ENRON Email - OpenSearch",
         "active": false,
         "default": false,
         "connector": "OpenSearch",
         "url": "http://localhost:9200/",
         "query_template": "{'query': {'query_string': {'query': '{query_string}', 'default_field': '{default_field}', 'default_operator': 'and'}}}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "index_name=email,default_field=content,sort_by_date=date_published.keyword,NOT=true,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -252,18 +232,16 @@
         ]
     },
     {
-        "name": "ENRON Email (local/elastic)",
+        "name": "ENRON Email - Elasticsearch",
         "active": false,
         "default": false,
         "connector": "Elastic",
         "url": "hosts='http://localhost:9200/'",
         "query_template": "index='{index_name}', query={'query_string': {'query': '{query_string}', 'default_field': '{default_field}'}}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "index_name=email,default_field=content,sort_by_date=date_published.keyword,NOT=true,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -278,20 +256,20 @@
         ]
     },
     {
-        "name": "Articles (web/YouTrack.cloud)",
+        "name": "Articles - JetBrains YouTrack",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
         "url": "https://<your-domain>.youtrack.cloud/api/articles?fields=idReadable,reporter(fullName),summary,content,attachments(name),project(name),parentArticle(summary),childArticles(summary),created,updatedBy(fullName),comments(text)",
         "query_template": "{url}&query={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "",
-        "result_processor": "",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+            "CleanTextResultProcessor",
+            "LenLimitingResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=summary,body=content,date_published=created,author=reporter.fullName,url='https://<your-domain>.youtrack.cloud/articles/{idReadable}',project.name,attachments[*].name,parentArticle.summary,childArticles[*].summary,updatedBy.fullName,comments[*].text,NO_PAYLOAD",
@@ -304,20 +282,20 @@
         ]
     },
     {
-        "name": "Issues (web/YouTrack.cloud)",
+        "name": "Issues - JetBrains YouTrack",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
         "url": "https://<your-domain>.youtrack.cloud/api/issues?fields=project(name),idReadable,tags(name),summary,description,reporter(fullName),created,votes,commentsCount,comments(text),updater(fullName)",
         "query_template": "{url}&query={query_string}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "",
-        "result_processor": "",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+            "CleanTextResultProcessor",
+            "LenLimitingResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=summary,body=description,date_published=created,author=reporter.fullName,url='https://<your-domain>.youtrack.cloud/issue/{idReadable}',project.name,tags[*].name,votes,commentsCount,comments[*].text,updater.fullName,NO_PAYLOAD",
@@ -329,20 +307,19 @@
         ]
     },
     {
-        "name": "Wiki (web/Atlassian.com)",
+        "name": "Wiki - Atlassian Confluence Cloud",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
         "url": "https://<your-domain>.atlassian.net/wiki/rest/api/content/search?expand=history,space,metadata.labels.results,children.attachment,children.page,children.comment,ancestors,body.view",
         "query_template": "{url}&cql=text~'{query_string}'",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "",
-        "result_processor": "",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+            "LenLimitingResultProcessor"
         ],
         "response_mappings": "FOUND=size,RESULTS=results",
         "result_mappings": "title=title,body=body[*].view[*].value,author=history[*].createdBy[*].publicName,date_published=history[*].createdDate,url='https://<your-domain>.atlassian.net/wiki{_links[*].webui}',space.name,metadata[*].labels[*].results[*].name,children[*].attachment[*].results[*].title,children[*].page[*].results[*].title,ancestors[*].title,NO_PAYLOAD",
@@ -350,26 +327,24 @@
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
             "Confluence",
-            "Articles",
             "Wiki",
             "Atlassian"
         ]
     },
     {
-        "name": "Issues (web/Atlassian.com)",
+        "name": "Issues - Atlassian Jira Cloud",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
         "url": "https://<your-domain>.atlassian.net/rest/api/3/search?fields=*all",
         "query_template": "{url}&jql=text~'{query_string}'",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "",
-        "result_processor": "",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+            "LenLimitingResultProcessor"
         ],
         "response_mappings": "FOUND=total,RESULTS=issues",
         "result_mappings": "title=fields.summary,body=fields[description].content[*].content[*].text,date_published=fields[*].created,author=fields[reporter].displayName,url='https://<your-domain>.atlassian.net/browse/{key}',fields[project].name,key,fields[priority].name,fields[status].name,fields[assignee].displayName,fields[*].fixVersions[*].name,fields[votes].votes,fields.labels,fields[comment].comments[*].body[*].content[*].content[*].text,fields[*].subtasks[*].fields[*].summary,NO_PAYLOAD",
@@ -382,18 +357,16 @@
         ]
     },
     {
-        "name": "M365 Email",
+        "name": "Outlook Messages - Microsoft 365",
         "active": false,
         "default": true,
         "connector": "M365OutlookMessages",
         "url": "",
         "query_template": "{url}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "NOT=true,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -408,18 +381,16 @@
         ]
     },
     {
-        "name": "M365 OneDrive",
+        "name": "OneDrive Files - Microsoft 365",
         "active": false,
         "default": true,
         "connector": "M365OneDrive",
         "url": "",
         "query_template": "{url}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "NOT=true,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -434,18 +405,16 @@
         ]
     },
     {
-        "name": "M365 SharePoint",
+        "name": "SharePoint Sites - Microsoft 365",
         "active": false,
         "default": true,
         "connector": "M365SharePointSites",
         "url": "",
         "query_template": "{url}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "NOT=true,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -460,18 +429,16 @@
         ]
     },
     {
-        "name": "Microsoft Teams",
+        "name": "Teams Chat - Microsoft 365",
         "active": false,
         "default": true,
         "connector": "MicrosoftTeams",
         "url": "",
         "query_template": "{url}",
-        "query_processor": "",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "NOT=true,NOT_CHAR=-",
-        "result_processor": "",
         "result_processors": [
             "MappingResultProcessor"
         ],
@@ -483,6 +450,154 @@
         "tags": [
             "Microsoft",
             "Teams"
+        ]
+    },
+    {
+	"name": "Calendar Events - Microsoft 365",
+	"shared": true,
+	"active": false,
+	"default": false,
+	"connector": "M365OutlookCalendar",
+	"url": "",
+	"query_template": "{url}",
+	"post_query_template": "{}",
+	"query_processors": [
+	    "AdaptiveQueryProcessor"
+	],
+	"query_mappings": "NOT=true,NOT_CHAR=-",
+	"result_grouping_field": "title",
+	"result_processors": [
+	    "MappingResultProcessor",
+	    "DedupeByFieldResultProcessor"
+	],
+	"response_mappings": "",
+	"result_mappings": "title=resource.subject,body=summary,date_published=resource.start.dateTime,url='https://outlook.office.com/calendar/item/{sw_urlencode(hitId)}',resource.sensitivity,resource.type,resource.hasAttachments,NO_PAYLOAD",
+	"results_per_query": 10,
+	"credentials": "",
+	"eval_credentials": "",
+	"tags": [
+	    "Microsoft",
+	    "Calendar"
+	]
+    },
+    {
+        "name": "Code - GitHub.com",
+        "shared": true,
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://api.github.com/search/code",
+        "query_template": "{url}?q={query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {
+            "Accept": "application/vnd.github.text-match+json"
+        },
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=total_count,RESULTS=items",
+        "result_mappings": "title=name,body=text_matches[*].fragment,author=repository.owner.login,url=html_url,repository.full_name,path,repository.html_url,repository.description,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=<your-GitHub-PAT>",
+        "eval_credentials": "",
+        "tags": [
+            "GitHub",
+            "Code"
+        ]
+    },
+    {
+        "name": "Issues - GitHub.com",
+        "shared": true,
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://api.github.com/search/issues",
+        "query_template": "{url}?q={query_string}%2Bis%3Aissue",
+        "post_query_template": "{}",
+        "http_request_headers": {
+            "Accept": "application/vnd.github.text-match+json"
+        },
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=total_count,RESULTS=items",
+        "result_mappings": "title=title,body=text_matches[*].fragment,author=user.login,date_published=created_at,url=html_url,state,assignees[*].login,milestone.title,comments,updated_at,closed_at,labels[*].name,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=<your-GitHub-PAT>",
+        "eval_credentials": "",
+        "tags": [
+            "GitHub",
+            "Issues"
+        ]
+    },
+    {
+        "name": "Pull Requests - GitHub.com",
+        "shared": true,
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://api.github.com/search/issues",
+        "query_template": "{url}?q={query_string}%2Bis%3Apull-request",
+        "post_query_template": "{}",
+        "http_request_headers": {
+            "Accept": "application/vnd.github.text-match+json"
+        },
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=total_count,RESULTS=items",
+        "result_mappings": "title=title,body=text_matches[*].fragment,author=user.login,date_published=created_at,url=html_url,number,state,updated_at,pull_request.merged_at,closed_at,labels[*].name,pull_request.diff_url,body,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=<your-GitHub-PAT>",
+        "eval_credentials": "",
+        "tags": [
+            "GitHub",
+            "PullRequests"
+        ]
+    },
+    {
+        "name": "Commits - GitHub.com",
+        "shared": true,
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://api.github.com/search/commits",
+        "query_template": "{url}?q={query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {
+            "Accept": "application/vnd.github.text-match+json"
+        },
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=total_count,RESULTS=items",
+        "result_mappings": "title=commit.message,body=text_matches[*].fragment,author=commit.author.name,date_published=commit.author.date,url=html_url,commit.comment_count,committer.login,parents[*].html_url,repository.full_name,repository.html_url,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=<your-GitHub-PAT>",
+        "eval_credentials": "",
+        "tags": [
+            "GitHub",
+            "Commits"
         ]
     }
 ]

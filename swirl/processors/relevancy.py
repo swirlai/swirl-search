@@ -2,6 +2,7 @@
 @author:     Sid Probstein
 @contact:    sid@swirl.today
 '''
+import time
 
 from math import sqrt
 from statistics import mean, median
@@ -22,17 +23,17 @@ log = logging.getLogger()
 
 SWIRL_RELEVANCY_CONFIG = getattr(settings, 'SWIRL_RELEVANCY_CONFIG', {
     'title': {
-        'weight': 3.0
+        'weight': 1.5
     },
     'body': {
         'weight': 1.0
     },
     'author': {
-        'weight': 2.0
+        'weight': 1.0
     }
 })
 
-SWIRL_MIN_SIMILARITY = getattr(settings, 'SWIRL_MIN_SIMILARITY', 0.51)
+SWIRL_MIN_SIMILARITY = getattr(settings, 'SWIRL_MIN_SIMILARITY', 0.01)
 SWIRL_MAX_MATCHES = getattr(settings, 'SWIRL_MAX_MATCHES', 5)
 SWIRL_HIGHLIGHT_START_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_START_CHAR', '*')
 SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')
@@ -185,6 +186,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         # PASS 1
         # For each results set from all providers that returned one.
         # to do: refactor the names so it is clearer, e.g. json_result instead of result, result_set instead of results
+        st_pass_1 = time.time()
         for results in self.results:
 
             ############################################
@@ -414,6 +416,9 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
             # end for result in results.json_results:
         # end for results in self.results:
         ############################################
+        et_pass_1 = time.time() - st_pass_1
+        logger.info (f'{self}: elapsed time PASS 1 : {round(et_pass_1,2)}')
+
         # compute field means
         dict_len_median = {}
         for field in dict_result_lens:
@@ -423,8 +428,9 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
         ############################################
         # PASS 2
-        
+
         # score results by field, adjusting for field length
+        st_pass_2 = time.time()
         for results in self.results:
             if not results.json_results:
                 continue
@@ -516,5 +522,8 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         ############################################
 
         self.results_updated = int(updated)
+
+        et_pass_2 = time.time() - st_pass_2
+        logger.info (f'{self}: elapsed time PASS 2 : {round(et_pass_2,2)}')
 
         return self.results_updated

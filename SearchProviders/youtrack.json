@@ -1,0 +1,53 @@
+[
+    {
+        "name": "Issues - JetBrains YouTrack",
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://<your-domain>.youtrack.cloud/api/issues?fields=project(name),idReadable,tags(name),summary,description,reporter(fullName),created,votes,commentsCount,comments(text),subtasks(issues(idReadable)),customFields(name,value(name))",
+        "query_template": "{url}&query={query_string}",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CleanTextResultProcessor",
+            "LenLimitingResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=summary,body=description,date_published=created,author=reporter.fullName,url='https://<your-domain>.youtrack.cloud/issue/{idReadable}',project.name,customFields[3].value[*].name,customFields[0].value[*].name,customFields[2].value[*].name,customFields[6].value[*].name,votes,tags[*].name,commentsCount,comments[*].text,subtasks[*].issues[*].idReadable,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=your-youtrack-permanent-token",
+        "tags": [
+            "Issues",
+            "YouTrack"
+        ]
+    },
+    {
+        "name": "Articles - JetBrains YouTrack",
+        "active": false,
+        "default": false,
+        "connector": "RequestsGet",
+        "url": "https://<your-domain>.youtrack.cloud/api/articles?fields=idReadable,reporter(fullName),summary,content,attachments(name),project(name),parentArticle(summary),childArticles(summary),created,updatedBy(fullName),comments(text)",
+        "query_template": "{url}&query={query_string}",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CleanTextResultProcessor",
+            "LenLimitingResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=summary,body=content,date_published=created,author=reporter.fullName,url='https://<your-domain>.youtrack.cloud/articles/{idReadable}',project.name,attachments[*].name,parentArticle.summary,childArticles[*].summary,updatedBy.fullName,comments[*].text,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=your-youtrack-permanent-token",
+        "tags": [
+            "Articles",
+            "Wiki",
+            "YouTrack"
+        ]
+    }
+]

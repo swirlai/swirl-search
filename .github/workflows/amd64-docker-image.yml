@@ -8,7 +8,7 @@ on: # build at 05:05 UTC each day
 
 jobs:
 
-  build: 
+  build:
 
     runs-on: ubuntu-latest
 

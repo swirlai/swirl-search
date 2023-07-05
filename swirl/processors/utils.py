@@ -5,6 +5,9 @@
 
 #############################################
 #############################################
+import time
+from swirl.nltk import word_tokenize, is_punctuation
+from nltk.tag import tnt
 
 def create_result_dictionary():
     """
@@ -22,6 +25,7 @@ def create_result_dictionary():
     dict_result['url'] = ""
     dict_result['body'] = ""
     dict_result['date_published'] = ""
+    dict_result['date_published_display'] = ""
     dict_result['date_retrieved'] = ""
     dict_result['author'] = ""
     dict_result['title_hit_highlights'] = []
@@ -121,6 +125,54 @@ def remove_numeric(string_or_list):
 
 #############################################
 
+def tokenize_word_list(word_list):
+    ret_list = []
+
+    logger.debug(f'twl in : {word_list}')
+
+    for word in word_list:
+
+        # We wan '_' to break a word in this case.
+        word = word.replace('_', ' ')
+        # Use NLTK word tokenzer to split out punctuation.
+        wtk = word_tokenize(word)
+
+        # Now, for eaech tokenized term
+        for i,word_tk in enumerate(wtk):
+            # Handle possesive cases by rejoining them.
+            if word_tk.lower() == "'s" and i > 0:
+                ret_list[-1] = ret_list[-1] + word_tk.lower()
+                continue
+            # Don't highlight lone punctuation.
+            if not is_punctuation(word_tk):
+                if is_punctuation(word_tk[-1]):
+                    word_tk = word_tk[:-1] # strip trailing punctiation, we are not going to match on it
+                ret_list.append(word_tk.lower())
+    return ret_list
+
+def _tokenize_word_text(text, do_dedup=True):
+    ret_words = []
+    seen_words = set()
+    target_str = text.replace('_', ' ')
+    find_all = word_tokenize(target_str)
+    for aw in find_all:
+        aw_lower = aw.lower()
+        if aw_lower == "'s":
+            ret_words[-1] = ret_words[-1] + aw_lower
+            continue
+
+        if not is_punctuation(aw_lower):
+            if is_punctuation(aw_lower[-1]):
+                # strip trailing punctiation, we are not going to match on it
+                aw_lower = aw_lower[:-1]
+                aw = aw[:-1]
+            if aw_lower not in seen_words:
+                if do_dedup:
+                    seen_words.add(aw_lower)
+                ret_words.append(aw)
+    return ret_words
+
+
 from django.conf import settings
 
 SWIRL_HIGHLIGHT_START_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_START_CHAR', '*')
@@ -128,26 +180,21 @@ SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')
 
 import re
 
-WORD_CHAR_PAT = r'[A-Za-z0-9]+'
-
 def highlight_list(target_str, word_list):
-    # Create canonical word list in lower case
-    source_words = [w.lower() for w in word_list]
-
+    """
+    Highlight the terms in the target_str with terms from the word_list
+    """
+    # Step 1 : Create canonical word list in lower case
+    hili_words =  tokenize_word_list(word_list)
     ret = target_str
-
     # create a unique list of words from the target, so that we only highlight each once.
-    all_words = []
-    seen_words = set()
-    for aw in re.findall(WORD_CHAR_PAT, target_str):
-        aw_lower = aw.lower()
-        if aw_lower not in seen_words:
-            seen_words.add(aw_lower)
-            all_words.append(aw)
+    all_words = _tokenize_word_text(target_str)
 
+    # Now for all terms in the target list, find them, case insensitive in the list of hi light
+    # words and then highlight them in the return tartget string.
     for word in all_words:
         # If the word matches any of the source words, add it to the list of highlighted words
-        if word.lower() in source_words:
+        if word.lower() in hili_words:
             ret = ret.replace(word,f'{SWIRL_HIGHLIGHT_START_CHAR}{word}{SWIRL_HIGHLIGHT_END_CHAR}')
 
     return ret
@@ -159,29 +206,51 @@ def position_dict(text, word_list):
         return []
     if word_list == []:
         return []
-    positions = {word: [] for word in word_list}
-    words = text.split()
+    tok_word_list = tokenize_word_list(word_list)
+
+    positions = {word: [] for word in tok_word_list}
+    words = _tokenize_word_text(text,do_dedup=False)
     for i, word in enumerate(words):
         if word in word_list:
-            positions[word].append(i)
+            positions[word.lower()].append(i)
     return positions
+
 
 #############################################
 # fix for https://github.com/swirlai/swirl-search/issues/33
 
 from swirl.bs4 import bs
 
-# Function to remove tags
-def remove_tags(html):
+# # Function to remove tags
+# def remove_tags(html):
 
-    # parse html content
+#     # parse html content
+#     soup = bs(html, "html.parser")
+
+#     for data in soup(['style', 'script']):
+#         # Remove tags
+#         data.decompose()
+
+#     # return data by retrieving the tag content
+#     return ' '.join(soup.stripped_strings)
+
+def remove_tags(html):
+    # Parse html content
     soup = bs(html, "html.parser")
 
-    for data in soup(['style', 'script']):
-        # Remove tags
-        data.decompose()
+    # Find all tags that contain URLs
+    url_tags = soup.find_all(text=re.compile(r"<https?://[\w./?=#&-]+>"))
 
-    # return data by retrieving the tag content
+    # Remove unwanted tags
+    for tag in soup(['style', 'script']):
+        tag.decompose()
+
+    # Convert URL tags back to their original form
+    for tag in url_tags:
+        url = tag.strip()
+        tag.replace_with(url)
+
+    # Return the modified content
     return ' '.join(soup.stripped_strings)
 
 # Function to remove tags
@@ -240,6 +309,8 @@ def clean_string(s):
 
 def match_all(list_find, list_targets):
 
+    st_match_all = time.time()
+
     match_list = []
     if not list_targets:
         return match_list
@@ -247,13 +318,16 @@ def match_all(list_find, list_targets):
     if not list_find:
         return match_list
 
-    find = ' '.join(list_find)
+    find = ' '.join(list_find).lower()
 
     p = 0
     while p < len(list_targets):
-        if find.lower() in ' '.join(list_targets[p:p+len(list_find)]).lower():
+        if find in ' '.join(list_targets[p:p+len(list_find)]).lower():
             match_list.append(p)
         p = p + 1
+
+    et_match_all = time.time() - st_match_all
+    logger.debug (f'match_all: elapsed time : {round(et_match_all,4)}')
 
     return match_list
 
@@ -383,7 +457,7 @@ def str_replace_all_keys(s, d):
         return s
     ret = s
     for k in d.keys():
-        ret = ret.replace("{"+k+"}", d[k])
+        ret = ret.replace("{"+k+"}", str(d[k]))
     return ret
 
 
@@ -452,6 +526,13 @@ def str_safe_format(s, d):
     return ret
 
 from dateutil import parser
+from datetime import datetime
+
+def get_jan_1_year(year):
+    # Parse the year as a string with January 1st as the default date
+    date_string = f"Jan 1 {year}"
+    date = parser.parse(date_string, default=datetime(datetime.now().year, 1, 1))
+    return str(date)
 
 def _date_str_parse_to_timestamp(s):
     """
@@ -459,7 +540,12 @@ def _date_str_parse_to_timestamp(s):
     """
     ret = ""
     try:
-        ret = str(parser.parse(str(s)))
+        date_str = str(s)
+        # stabalize day of year for dates that consist only of a year.
+        if len(date_str) == 4:
+            ret = get_jan_1_year(date_str)
+        else:
+            ret = str(parser.parse(date_str))
     except Exception as x:
         logger.debug(f'{x} : unable to convert {s} as string to timestamp')
     return ret
@@ -486,4 +572,24 @@ def date_str_to_timestamp(s):
     if not ret: ret = _date_float_parse_to_timestamp(s)
     if not ret:
         logger.error(f'Unable to convert {s} to timestamp using any known type')
+        return s
     return ret
+
+def get_tag(tag_target, tag_list):
+    """
+    Extract specific tag from a list of tag, return None if not found
+    """
+    if not tag_list:
+        return tag_list
+
+    tag_value = None
+    for tag in tag_list:
+        if tag.lower().startswith(tag_target.lower()):
+            if ':' in tag:
+                right = tag.split(':', 1)
+                tag_value = right[1]
+            else:
+                tag_value = tag
+            return tag_value
+
+    return None

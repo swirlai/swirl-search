@@ -17,6 +17,7 @@ from swirl.models import QueryTransform, Search, SearchProvider, Result
 from swirl.tasks import federate_task
 from swirl.processors import *
 from swirl.processors.transform_query_processor_utils import get_pre_query_processor_or_transform
+from swirl.utils import select_providers
 
 SWIRL_OBJECT_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
 
@@ -44,7 +45,7 @@ def search(id, session=None):
         logger.error(f'{module_name}_{id}: ObjectDoesNotExist: {err}')
         return False
     if not search.status.upper() in ['NEW_SEARCH', 'UPDATE_SEARCH']:
-        logger.warning(f"{module_name}_{search.id}: unexpected status {search.status}")
+        logger.info(f"{module_name}_{search.id}: unexpected status {search.status}")
         return False
     if search.status.upper() == 'UPDATE_SEARCH':
         logger.info(f"{module_name}: {search.id}.status == UPDATE_SEARCH")
@@ -75,11 +76,10 @@ def search(id, session=None):
             tags_in_query_list.append(tag[:-1])
         else:
             tags_in_query_list.append(tag[:tag.find(':')])
-    logger.debug(f"{module_name}: tags_in_query_list: {tags_in_query_list}")
 
     user = User.objects.get(id=search.owner.id)
     if not user.has_perm('swirl.view_searchprovider'):
-        logger.warning(f"User {user} needs permission view_searchprovider")
+        logger.info(f"User {user} needs permission view_searchprovider")
         search.status = 'ERR_NEED_PERMISSION'
         search.save()
         return False
@@ -117,31 +117,10 @@ def search(id, session=None):
         # end for
     else:
         # no provider list
-        for provider in providers:
-            # active status is determined later on
-            if provider.default:
-                if start_tag:
-                    for tag in provider.tags:
-                        if tag.lower() == start_tag.lower():
-                            selected_provider_list.append(provider)
-                    # end for
-                else:
-                    selected_provider_list.append(provider)
-                # end if
-            else:
-                if provider.tags:
-                    for tag in provider.tags:
-                        if tag.lower() in [t.lower() for t in tags_in_query_list]:
-                            if not provider in selected_provider_list:
-                                selected_provider_list.append(provider)
-                            # end if
-                        # end if
-                    # end for
-            # end if
-        # end for
-    # endif
+        selected_provider_list = select_providers(providers=providers, start_tag=start_tag, tags_in_query_list=tags_in_query_list)
 
     providers = selected_provider_list
+
     if len(providers) == 0:
         logger.error(f"{module_name}_{search.id}: no SearchProviders configured")
         search.status = 'ERR_NO_SEARCHPROVIDERS'
@@ -165,6 +144,7 @@ def search(id, session=None):
         processed_query = None
         query_temp = search.query_string
         for processor in processor_list:
+            logger.info(f"{module_name}: invoking processor: {processor}")
             try:
                 pre_query_processor = get_pre_query_processor_or_transform(processor, query_temp, SWIRL_OBJECT_DICT, search.tags, user)
                 if pre_query_processor.validate():
@@ -201,7 +181,7 @@ def search(id, session=None):
         federation_result[provider.id] = federate_task.delay(search.id, provider.id, provider.connector, update, session)
     # end for
     if not at_least_one:
-        logger.warning(f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}")
+        logger.info(f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}")
         search.status = 'ERR_NO_ACTIVE_SEARCHPROVIDERS'
         search.save()
         return False
@@ -242,7 +222,7 @@ def search(id, session=None):
                 if not provider.name in responding_provider_names:
                     failed_providers.append(provider.name)
                     error_flag = True
-                    logger.warning(f"{module_name}_{search.id}: timeout waiting for: {failed_providers}")
+                    logger.info(f"{module_name}_{search.id}: timeout waiting for: {failed_providers}")
                     search.messages.append(f"[{datetime.now()}] Timeout waiting for: {failed_providers}")
                     search.save()
                 # end if
@@ -353,7 +333,7 @@ def rescore(id):
 
     last_status = search.status
     if not (search.status.endswith('_READY') or search.status == 'RESCORING'):
-        logger.warning(f"{module_name}_{search.id}: unexpected status {search.status}, rescore may not work")
+        logger.info(f"{module_name}_{search.id}: unexpected status {search.status}, rescore may not work")
         last_status = None
 
     if len(results) == 0:
@@ -392,5 +372,5 @@ def rescore(id):
         search.save()
         return True
     else:
-        logger.warning(f"{module_name}_{search.id}: No post_result_processor or post_result_processors defined")
+        logger.info(f"{module_name}_{search.id}: No post_result_processor or post_result_processors defined")
         return False

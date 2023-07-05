@@ -1,14 +1,12 @@
 {
-    "name": "Boards (web/Miro.com)",
+    "name": "Boards - Miro.com",
     "connector": "RequestsGet",
     "url": "https://api.miro.com/v2/boards",
     "query_template": "{url}?query={query_string}",
-    "query_processor": "",
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
     "query_mappings": "",
-    "result_processor": "",
     "result_processors": [
         "MappingResultProcessor"
     ],

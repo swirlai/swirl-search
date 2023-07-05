@@ -1,0 +1,1474 @@
+[
+    {
+        "created": 1686938078040,
+        "comments": [
+            {
+                "text": "Here are my unedited notes from that call, fwiw...\n\n\n\nChat with Ravi (16-June-2021)\n\n* How'd the demo go (in his words)?\n  * Was part of a larger preso to the Tech Archs group; he’s on federated search; need / want something better than aggregating lambdas, etc.\n  * Demo’d with Jira, HOLLIS, ChatGPT\n  * He thinks this is the right track\n* Questions that came out of it (from the audience, etc.)?\n  * He will organize questions for us … \n  * Relevancy Mixer … query re-ranking --\\> Sid: 3 mixers included (Relevancy is default); Stack (“top picks”); \n  * Is the number of results retrieved configurable / Paging support?  —\\> Sid: yes; adjust it in each SP config; we store all the returns in the DB\n  * M365 integration:  caught some interest … wants to work with their MS admins to get access; Sid explained our setup, and we’re happy to talk with their MS admins anytime\n  * Does Swirl send any data back to us ever?  —\\> Sid: NO, esp if you set it up behind their firewalls; no phone home; can swap BE DBs.\n  * What if, in a hosted environment, I want to make config changes: would the vendor (us) do that or would they (the customer)? —\\> System would be 100% open to them being admins and making changes; we’re not thinking about traditional managed hosting at all\n  * Facets from sources, can they be normalized, etc.? —\\> we create a source facet only; we’re not yet passing through all of them from each source (roadmap); our current thought it to offer a link to the “full experience” in the source engines, etc. … curious what their take is?  Ravi agrees, but he also thinks questions will come too\n    * We’re open to aggregating facets…e.g. you might need one to disambiguate\n    * Might solve the first-layer problem, then offer you the “full experience”\n    * Sid will talk to Lynn about it a bit…merging facets (when do-able)?  Aggregating them?  Leap into full experiences?\n  * Also, controlled vocabularies behind the facets, etc. … those might need to be normalized as well (for value)?  Query side?  Results?  Ravi will ask more…e.g. example, industries, geography, business topics\n  * SP priorities for next demo … ServiceNow, etc.; facets maybe fall below that on the list; GitHub!\n* Update on NDA?\n  * PM is working on it … Sid hasn’t gotten it yet\n  * Monday off next week for HBS, some folks off today; might be later next week\n* What is his next milestone and what features he needs from Swirl to achieve it?  Does hosting come into play (options, discussions, etc.)?\n  * Feedback on adding more SPs/Connectors — GitHub, M365, ServiceNow (working to get a test instance available), Confluence, AWS OpenSearch (but don’t request directly; HBS cert service in between to control access to the indexes … vpn needed, for example; will need to send some info in the Header); \n  * SSO identify provider?  Ravi will confirm and get back to us\n* And we could talk-up some of the forthcoming 2.1 improvements that have been driven directly by our work together so far... updated POST, improved date handling, etc.  And he can have a more detailed HOLLIS SP example that takes advantage of some of that (whenever he wants...it won't totally work on main)",
+                "$type": "ArticleComment"
+            }
+        ],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-90",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [],
+        "content": "\\*\\* Talk w/ Ravi from HBS\n\n  - Just a general question about how relevancy mixers (mixers?) work.\n\n  - Can we ask for configurable number of results per source?\n\n  - Paging through results\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ This is configurable\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ There are limits to how much a provider may be willing to allow a client to fetch\n\n  - Interested in MS connectors and is willing to have their MS Admins to register our app.\n\n  - Do you guys send data from the installs back to you?\n\n&nbsp;&nbsp;&nbsp;&nbsp;No. we don't do that\n\n  - Facets ?\n\n&nbsp;&nbsp;&nbsp;&nbsp;We don't handle source facets. But we should ask them what their use case is.\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ Normalize facets across sources?\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ Does the 'full experience' solve this problem instead?\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ What about aggregate and display the facets. click on facet and just show results from that source\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and then jump to 'full experience'\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ The facets are not as important\n\n  - Providers\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ Microsoft\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ Service Now\\*\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ Developer site?\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ Github\\*\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ Jira Cloud\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OAUTH?\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ Confluence Cloud\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OAUTH?\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ Opensearch?\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ Migrate them to Octa or Auth zero?\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ What headers?\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ How do they auth?\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ This is behind a gateway app?\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ We need to be able to get through this gateway, how can we do it?\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ Who is the HBS IDP?\n\n  - Send a link to documentation on query transform.\n\n  - Send him some mock ups\n\n  - He will go through and post his notes.\n\n  - What is the next step and how can we help?\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ More connectors\n\n  - Is it still important to label data? Or can we rely on LLMs and vector spaces?\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ Can Sid write down something about the answer he gave in the meeting?\n\n  - Notifications engines? Task for AI?\n\n  - Temporal relevancy analyzer\n\n&nbsp;&nbsp;&nbsp;&nbsp;+ Throw out data that is not w/in a configured time-range?\n\n\n",
+        "summary": "Discussion w Ravi at HBS 06/16/2023",
+        "reporter": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1686767047182,
+        "comments": [
+            {
+                "text": "Hi guys - Here's a short video clip depicting the Subscribe/Unsubscribe messaging animation. Note that the \"bell\" icon also changes when new notifications are present (see attached). Let me know how these look! :-) ",
+                "$type": "ArticleComment"
+            },
+            {
+                "text": "That's great, thanks so much @lynn !  We'll all take a look and comment (I might've already watched it more than once :D)",
+                "$type": "ArticleComment"
+            }
+        ],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-89",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Architecture",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "## Release Goal\n\nRelease 2.2 -- Themed release focusing on Subscribe + Search History Sidebar UI and functionality.\n\n## Notifications Icon + Flyout\n\n* Icon should visually indicate when new Subscribe results are available (it doens't have to display the number of them)\n* <span style=\"color:darkorange;\">We need a design for the flyout / full view  </span>@lynn<span style=\"color:darkorange;\"> </span>*(add link to the Figma when available)*\n* The flyout should contain the following details for each Subscribed search that has new results:\n  * Query terms\n  * Number of new results\n  * Link to the results that takes the user to a date-sorted results page with the new results visually highlighted (e.g. \"New\" flag)\n    * The user should see the New flag on a given result only this one time\n    * New result indicators will accumulate across multiple runs if the user doesn't view them\n    * All new items will be shown when the user clicks the link\n\n### Implementation Notes:\n\nFor efficiency, we should write an endpoint that does only the above. For further efficiancy, we can add a model object that decribes\n\na particular scheduled run of a Search. Something like:\n\n* SearchSubscriptionRun\n  * `run_search_id` - ID of the Search that was run\n  * `run_start_datetime` - Timestamp of the date started\n  * `run_end_datetime` - Timestamp of the date ended\n  * `run_status` - Running, Success, Failed, Partial, etc.\n  * `run_has_new` - Whether this run found new results\n  * `run_viewed` - Whether this run as been viewed by the Search owner\n* To know whether a result has been viewed, we look at the `run_viewed` flag of the top succseful run where:\n  * `run_has_new` is \"true\"\n  * `run_viewed` is \"false\"\n  * `run_status` is in (\"success\", \"partial\")\n* When the user clicks on the Link presented in the Notifications flyout / full view, we find the top successful run where...\n  * `run_has_new` is \"true\"\n  * `run_viewed` is \"false\"\n  * `run_status` is in (\"success\", \"partial\")\n* ...and set the `run_viewed` flag to \"true\".\n\n## Search History Sidebar\n\n* <span style=\"color:darkorange;\">Design needed </span>@lynn<span style=\"color:darkorange;\"> </span>\n  * Figma for the new Sidebar (WIP):  <https://www.figma.com/file/PhUlqs3HMo4tQQP6w3cKJ6/SWIRL-Design-Kit?type=design&node-id=54265-33403&mode=design&t=NF9UQe8CYJTRPRxE-0>\n* Clickable icon / visual element to open and close the sidebar\n* Sidebar contains the user's entire Search history\n  * Ability to and interact with the searches (*see button list below*)\n  * Ability to search through all query terms (to locate a specific Search quickly)\n* Sidebar has an option to view only the user's currently Subscribed searches\n* Each entry in the sidebar will display:\n  * Query terms\n  * Last time the search was run\n  * *Any related metadata?*\n* Options (buttons or other clickable icons) for a given Search:\n  * Run it again (wipe prior results and run the Search anew)\n    * Like a completely fresh run of the Search.\n  * Update a search via the existing `update` method (adds new results to the existing results and then run post-result processing)\n    * Like re-running a Subscription.\n  * Subscribe or Unsubscribe to the Search\n* WIP design (*link to this Figma is above*):\n  ![](image1.png){width=70%}\n\n## Use Case #1\n\nUser wants to subscribe to a search from a Results page\n\n* The user clicks the Subscribe button/toggle on the search results page\n* They receive a visual confirmation that the search has been subscribed to and that updates will be posted under the Notifications icon\n  <span style=\"color:darkorange;\">(@lynn ,</span><span style=\"color:darkorange;\"> *design needed*</span><span style=\"color:darkorange;\">)</span>\n  * *Nice to have*\\:  Also display when the next scheduled update will run\n  * *NOTE:  Subscribe schedules are set for the entire Swirl instance by a Swirl Admin*\n* After the Subscribe cycle runs, should there be new results:\n  * The Notifications icon should visually update to indicate that there are new results to one or more Subscribed searches\n  * When the user clicks on that icon, the Notifications flyout / full view appears, as detailed above.\n\n## Use Case #2\n\nUser wants to terminate a Subscription\n\nOption #1:  Notifications Icon\n\n* Click the Notifications icon to open the flyout / full view\n* Click a Notification link to that takes you to the Results page\n* Toggle off the Subscribe\n* There should be a visual indication that this search is no longer subscribed to\n  <span style=\"color:darkorange;\">(</span>@lynn<span style=\"color:darkorange;\">[\\: Lynn Cyr](https://swirl.youtrack.cloud/users/lynn)</span><span style=\"color:darkorange;\"> ,</span><span style=\"color:darkorange;\"> *design needed*</span><span style=\"color:darkorange;\">)</span>\n\nOption #2:  Search History Sidebar\n\n* Toggle open the Search History Sidebar\n* Navigate to the Subscribed search\n* Click the Unsubscribe button\n* There should be a visual indication that this search is not longer subscribed to\n  <span style=\"color:darkorange;\">(</span>@lynn<span style=\"color:darkorange;\">[\\: Lynn Cyr](https://swirl.youtrack.cloud/users/lynn)</span><span style=\"color:darkorange;\"> ,</span><span style=\"color:darkorange;\"> *design needed*</span><span style=\"color:darkorange;\">)</span>",
+        "summary": "Subscribe + Search History Spec",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [
+            {
+                "name": "image.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image1.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "SubscribeNotifications.mov",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "notification icons.png",
+                "$type": "ArticleAttachment"
+            }
+        ],
+        "$type": "Article"
+    },
+    {
+        "created": 1687542680083,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-95",
+        "updatedBy": {
+            "fullName": "Jason Temple",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Hosting",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "@Sid showed me what needs to be changed so that when a customer goes to their deployment such as https://pants.swirl.today that it is automatically routed to the spyglass UI -\\> https://pants.swirl.today/spyglass\n\n\n\nin swirl_server/urls.py\n\n```python\npath('', lambda req: redirect('/swirl/')),\n\n//changes to\n\npath('', lambda req: redirect('spyglass/')),\n```",
+        "summary": "how-to change default URL to point to /spyglass UI",
+        "reporter": {
+            "fullName": "Jason Temple",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1681853985716,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-64",
+        "updatedBy": {
+            "fullName": "Jason Temple",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [
+            {
+                "summary": "Hosting Options revised 4/2023",
+                "$type": "Article"
+            },
+            {
+                "summary": "Template for inviting user to Swirl demo server",
+                "$type": "Article"
+            },
+            {
+                "summary": "HowTo:  Upgrade Hosted Swirl",
+                "$type": "Article"
+            },
+            {
+                "summary": "Upgrading to Swirl 2.0.1 in Azure",
+                "$type": "Article"
+            },
+            {
+                "summary": "Configuring systemd to start/stop Swirl service on VMs",
+                "$type": "Article"
+            },
+            {
+                "summary": "Azure Marketplace: Requirements for Free-Trial Going to Paid",
+                "$type": "Article"
+            },
+            {
+                "summary": "how-to change default URL to point to /spyglass UI",
+                "$type": "Article"
+            }
+        ],
+        "content": null,
+        "summary": "Hosting",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1677271875187,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-17",
+        "updatedBy": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [],
+        "content": "**Wed 06/21/2023**\n\n### On 'one click'\n\nWe need technical infra-structure to help w/ the sales pipeline\n\nSales Use cases\n\n* Our tenant install (for new hosted Swirls) is almost done. The infrastucture is already set up\n* Generic tenant install\n  * Infrastructure setup phase (example tera-form)\n  * Software install\n    * Generic machine image used to create specific image\n  * NOTE: Can we move the info out of the env file and into the DB?\n* High level try it/buy it - access to a C-level who wants to try it:\n* Wants to install in their tenant and try for some amount of time.\n* Video tour (slick and pro)\n  * Need this no matter what\n  * For the user (or stake holder)\n  * For the admin\n* Do we need to support Ravi types more? Enable the champions?\n* Online demo\n  * Free instance that anyone can try w/ maybe demo office 365 users\n* Set up Swirl w/ OIDC and the user experiences this as 1-click\n* Azure market place IAAS sale\n  * Auto provisioning of resources in Azure\n* Auto-matic app registration?\n* Eval can be SaaS\n* Manual instructions on app-registration\n* Give people a full install into their tenant\n  * Need lic. server\n* 25 user 30 day trial (cost to cover expenses?)\n  * Dev DB PostgresSQL, shared\n  * They register our app in their tenant\n  * \n\nFirst step is to define what this means to us. That is, is this a 'one click' install or a 'one click' sign up? What does the 'one clicker' get?\nSome ideas:\n\n1. We could give them access to public version hosted someplace With some number of providers active. They would have to configure the providers themselves.\n   1. I would make this a single hosted instance. Auth could work a few different ways:\n      1. Hook up OIDC into google (other)\n      2. Have a front door and a couple of OIDC instance (google, others)\n      3. Have an option to create an account with us, using just an email and password, probably wouldn't even need a 'confirm' message, although we could do such a thing.\n2. One click installation\n   1. This seems like something we are 'almost there' on, but again what do we want the 'one clicker' to get?\n   2. \n3. \n\n**On selling a Docker Image:**\n\nOne assume this would be the private repo docker image. What are the configuration options for this image?\n\nTo sell a Docker image, you can follow these general steps:\n\n1. Build the Docker Image: Create a Docker image that contains the software or application you want to sell. This involves writing a Dockerfile that specifies the necessary instructions to build the image, including the base image, dependencies, and configurations.\n2. Package and Distribute: Once you have built the Docker image, you need to package it for distribution. This may involve creating a container registry account (such as Docker Hub, Amazon ECR, or Google Container Registry) to host and share your Docker image. You can upload the image to the registry or provide it as a downloadable file.\n3. Define Licensing and Terms: Determine the licensing model and terms for selling your Docker image. This includes specifying the usage rights, restrictions, and any applicable fees or subscription plans. You may choose to use an open-source license or a proprietary license depending on your requirements.\n4. Market and Sell: Promote and market your Docker image through various channels, such as your website, social media, developer communities, and relevant marketplaces. Clearly communicate the benefits, features, and pricing of your Docker image. You may also consider offering support, documentation, or additional services alongside the Docker image to attract customers.\n5. Secure and Protect: Take steps to protect your Docker image from unauthorized distribution or piracy. This may include implementing access controls, license key verification, or using digital rights management (DRM) techniques to prevent unauthorized copying or usage.\n6. Handle Payments and Delivery: Set up a mechanism to handle payments from customers and deliver the Docker image to them once the purchase is made. This can be done through online payment gateways, licensing systems, or automated delivery workflows.\n\nFriday 06/09/2023\n\n\n\n```\n** UI (public)\n   P1 -> 2.1, P2 -> 2.2 P3 -> 2.3\n*** 2.1 (mostly cosmetic and style changes)\n    The idea is that most new functionality is NOT part of this release and\n    most of it is cosemtic changes. NOTE: this does not mean they are easy\n    changes.\n**** AI Summary Just font and style changes - P1    \n**** Dark/light mode (toggle) P1\n**** OVER ALL STYLING and FONTS P1\n**** Change /spyglass -> /galaxy P1\n**** Book marking P1 \n**** Back button  P1\n**** Artifacts from Lynn (p1)\n**** Log no the login page\n**** Background image of the galaxy P1\n**** All styles and fonts? P1\n**** Boxes vs Lines for the login page P1\n**** Login text - P1 (ask Sid)\n**** Logo image (top left corner) Spinning ? P1? (as Sid)\n**** Text and font (general styling)  of source slection - P1\n**** Profile \n***** Dark/light mode?\n***** Continue w current paradigm of Authenticator? (how does that work?)\n***** Other profile info\n******* Photo? etc\n** 2.2\n*** Subscribe - P2\n**** Subscribe to current search from results\n***** NOTE: How will that work for MS Auth searches?  May depend on auto-refresh from token     \n**** Should set subsribe == true for that search\n**** Alert when a subscribed query has new results\n**** Manage subscribed searches\n**** Includes the 'alert' icon\n**** Includes flag indicator of what is new and what isn't in the search result.\n*** Inventory of UI features and prioroties    \n**** Login page\n***** Remember me - P3\n***** Forgort credentials - P3\n***** Don't have an account - P3\n**** Search page 1\n***** Advances search P3\n***** System Log P3\n****** Just show the info block P3 (needs design)\n***** Color coded results P3\n***** AI Summary \n****** Drop down to other AI comments? P3\n***** Paging option N results per page P3 (is this ok?)\n***** Change layout P3\n****** Table view\n****** List view (we have this already)\n***** Per-result options P3\n****** Save item\n****** Rate Item\n****** Set Min rel threshold\n****** Share item\n**** Search page 2\n***** Type ahead  P3\n***** Spell check P3\n***** Recent searchs P3\n***** Entities   P3\n****** Company\n****** Stock\n****** Industry\n```\n\n**Monday 05/22/2023**\n\n2\\.0 Release tasks\n\n**Get everything staged on deploy**\n\n* Merge all of the code from 1.11 + Spyglass features on to develop branch\n  * One big PR, should probably do a cursory review.\n* Review Spyglass installation instructions\n  * May need re-write to take into account how to add MS Auth\n* Review how Docker image is produced\n  * May need change for MS AUTH\n* Update the UI preview release to release from the new fork\n* Update the UI release artifacts on deploy to release from the preview\n* Deploy the UI to preview tag\n* Integration and sanity testing\n  * All the integrated tests we have must pass and/or have explanation\n  * Build and test docker image from here.\n    * Should test w/ and w/out MS auth component configured\n\n**Release to main**\n\n* Update the UI image release from fork\n* Merge all code from deploy to main, this will deploy the 2.0 docker and make the 2.0 code the default that people get when they clone.\n* Post release sanity testing\n\n**Tuesday 05/09/2023**\n\nTicket prototype:\n\n1. Clone this repo : <https://github.com/swirlai/swirl-internal>\n\n2. cd into `azure/marketplace/landing-page`\n\n3. Follow the README to install the requirements\n\n4. Set the following environment variables:\n   `CLIENT_ID=bfdd7e05-0bcf-44f2-b44c-ec44157432fd`\n\n   `CLIENT_SECRET='a_28Q~36.y0C6kBvb1zQGRFwosoH-zxktjyaAaIV'`\n\n5. Start the service\n   `flask run --host localhost  --port 5001`\n\n6. Test the service by logging in w/ your office 365 creds.\n\nThe above is to sanity check that we the basics working in this repo. The next steps are to modify the flask application so that it can be used for the back-end landing page for a Microsoft Azure Marketplace SaaS offering, See this for more general information(<https://learn.microsoft.com/en-us/partner-center/marketplace/plan-saas-offer> )\n\nThe landing actually occurs in a couple of stages, here is the first, this ticket is to support this:\n\n1. Use an OIDC / OAUTH2 as is being done in the sample code from the repo to authenticate the user and present the information extracted back to them.\n\n2. Here is an example from an Adobe application:\n   ![](image13.png){width=70%}\n\n   After click for edit:\n   ![](image14.png){width=70%}\n\nFor now, write the saved user information, along w/ the tenant ID returned from the ODIC protocol to a JSON file, this is not where it will ultimately live, but where we will keep it for now until the next phase of integration.\n\nExample of MSAL w/ permissions ask\n\n![](image12.png){width=70%}\n\nAdobe After get it now:\n\n\n\n![](image7.png){width=70%}\n\nEdit your details:\n![](image8.png){width=70%}\n\n\n\n![](image9.png){width=70%}\n\nGraceful option when the user is not Admin\n\n![](image11.png){width=70%}\n\nShould see something like this otherwise:\n\n\n\nStart up task options\n\n1. Help w/ bug fixes in 2.0 (new UI and first cut of MS Search providers)\n   1. Search like this `Fix Versions: 2.0 -Resolved order by: State`\n2. Review my fix for DS-371 (especially good if you're an Angular expert)\n   <https://bitbucket.org/swirl-spyglass/spyglass/pull-requests/3>\n3. Start on one of the tasks below, some of which are not well defined and require some research and a follow up discussion.\n\nThings to look into for MS/Azure marketplace project (Simple on boarding and use of the product through MS)\n\n1. Multi-tenant package for Django\n\n   1. Resource allocation?\n   2. Adding a new tenant process\n   3. Potential for automation of tenant addition\n\n2. Accepting free trial/subscriptions\n\n   1. Monitor and billing\n      1. Billing can be manual, but something needs to keep track of when a subscription has started and when it is due to convert to paid.\n      2. Also, user experience, i.e. notification, nag, etc....maybe this is all manual\n\n3. Landing page for Azure market place. Guidelines are here: <https://learn.microsoft.com/en-us/partner-center/marketplace/plan-saas-offer>. Roughly, the goal of the page is : validate   - update   - Order confirmation   - Collect more info   - Guide to next steps.\n\n   This will be one or two page flow and can be architected as either a new App in our existing Django server deployment or a new App in Flask or something else, open to discussion. Also, this page can have a separate App registered from the Search App.\n   Below is some detail of what the page has to do:\n\n   1. Authenticate through OIDC and Azure AD (code examples here: <https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Quickstart/appId/bfdd7e05-0bcf-44f2-b44c-ec44157432fd>) Talk w/ DaveN, he got the Python/ Flask one working\n   2. Confirm their creds\n   3. Allow manual update of information if necessary and add additional\n   4. Admin path\n      1. Confirm order\n      2. More info\n      3. Work flow to Grant users in their tenant permission to use the Permission that our Graph Search API requires, they are as follows:\n         ![](image6.png){width=70%}\n   5. Otherwise On board an individual user into an existing org\n   6. Otherwise, not eligible, but add to lead gen?\n\n**Tuesday 04/18/2023**\n\n**Monday 04/17/2023**\n\nLast week:\n\n* Release 1.10.1 including a last minute hot-fix\n* Various development tasks (bug fixes, move to git flow, etc)\n\nToday/This week:\n\n* 2\\.0 coordination (Dave)\n  * Prepare source code control\n    * Merge main into 1.11, just to see what we're in for\n  * Testing\n  * UI coordination w/ KMW\n    * Review latest KMW fixes and determine impact on Dmitriy's code\n    * Is it okay to create a PR back into their repo after 2.0 is released?\n    * Coordinate their current changes\n      * Do we want to release them before 2.0?\n      * There is risk of regression, we will have to take time to merge or perform equivalent fixes int he new code, or live w/ the regressions and fix in a 2.X point release.\n  * Check in w/ Dmitry on 1.11/2.0 back-end code status\n* How do we prioritize the following:\n  * Identity and Auth (Jason)\n  * Integrate some more test into our CICD pipeline (Ryan + Jason)\n  * Azure market place (Jason)\n    * Need a technical plan for what it takes to do the SaaS version of this.\n  * GitHub stats (Dave / Jason?)\n    * What do we need beyond what is here:  <https://github.com/swirlai/swirl-search/graphs/traffic>\n    * Per Sid:  what we need is to persist these over time: (\\~2 week window; can be retrieved via API)\n      * Clones\n      * Unique cloners\n      * Views\n      * Unique visitors\n    * Is there a service to handle this?  If not, a daily save of the JSON could work too\n  * Query Data pipeline\n    * Data pipe line Orbit MI / Search alerts (Sid)\n      * Write up the technical plan\n    * Longer term data pipeline project\n  * General Product Brain storming ideas\n    * Metasearch as a service\n      * We-rerank your results\n    * Delivery w/ other NLP and other pipeline stuff (lucele) (data labeling)\n      * Part of data pipeline?\n\n**Thursday 04/12/2023**\n\nPlan for release, also part of strategy to move us into 'git flow' development method:\n\n1. \n\nYesterday:\n\n* A good amount of time w/ Jason and Ryan\n* A good amount of time on test-plan (needs review after the Webinar) w/ Erik and Ryan\n* Dmitry code in spyglass is pushed into his fork and pulled local by me (on master)\n* Check in w Dmitry, he's working on the token management between the front and backend for the authenticators.\n* Received new Figma for 'next version' of UI, they include some new functionality that we should flesh out:\n  ![](image4.png){width=70%}\n  * What do the check marks next to results mean?\n  * Save/Rename/Hide/Other?\n    ![](image5.png){width=70%}\n* Recent searches and other suggestions\n\nToday:\n\n* 1\\.10.1 release tasks\n* Start looking at a git plan for the spy glass fork and concurrent work by KMW (oof)\n* Choose a new long/medium term task to focus on, need some feed back.\n\n**Wednesday 04/12/2023**\n\n<https://drive.google.com/file/d/1RniEOeXkC2NckvBNrdNXsMWa_5d6Ug0B/view?usp=sharing>\n\nFound and fixes bug in the Office365 refresh\n\n\n\n**Tuesday 04/11/2023**\n\n* Dmitry\n  * Ask about setting up local Search Provider w/ MS365 Dev Sandbox\n  * Status\n\n**Monday 04/10/2023**\n\n* PR DS-265\n* DS-279\n* Test plan and Testing of MS on 1.11/2.0\n* Weekly catch up meeting w/ Lee\n* Concern, we are trying to do a point release (1.10.1) this week and we have a Webinar planned, is this ok?\n\n  ```\n  Su Mo Tu We Th Fr Sa  \n                     1  \n   2  3  4  5  6  7  8  \n   9 10 11 12 13 14 15  \n  16 17 18 19 20 21 22  \n  23 24 25 26 27 28 29  \n  30      \n  ```\n\n**Friday 04/07/2023**\n\n**Thursday 04/06/2023**\n\n* Finished integration of the query transform into query processing and have at least some unit test for all pieces\n* Last todo is to fix the permission, will try to do that today\n* Need to work bugs\n* Need to get PRs working in spyglass w/ KMW\n* Fixes bugs in the new code for MS365 support\n* We need a test plan for Dmitry's change in the back end and the front end. I will start the test plan today, back-end I can do based on experience, front end may need help and use wireframes, can others help w/ this test plan?\n\nFrom the Daily\n\n* proposal for 2.0 make user register\n  * make sure email registration works\n* When is Jason coming back, next week, Monday or Tuesday\n  * He will be necessary for the work above.\n\n**Wednesday 04/05**\n\nNotes on query transforms:\n\\- I have modified the UI so that the pre-query-process can be passed in. This allows the caller to pass in the name and type of a query transform and have it apply to the query. But it kind of breaks the model of having a 'static list' of processors that map directly to classes in the code. I think this is ok, but need some feedback.\n\n\n\nDo I need to heads up KMW about an incoming PR?\n\nGoing forward new UIs:\nThere are two spyglass images and build pipelines:\n\n![](image1.png)\n\n\n\nThat populate corresponding images in docker hub:\n![](image2.png){width=70%}\n\nAnd the  idea is that when we are testing a new image, we build the preview, then we can, from a repo, use the install-us.sh script to install it locally:\n\n![](image3.png){width=70%}\n\n\n\nAnd test it, when we're happy with it. We run the docker-image-spg job (shown above) and this will populate the latest image, then, we run the docker-image job to rebuild our latest docker image and it will pick up the latest UI build.\n\n\n\nYesterday:\n\n* Fire drill w/ providers, we have some tickets to fix in short term and a longer term plan\n* Meetings\n* Deploy new UI, took longer than expected\n  * Config file format difference when running w/ Django Vs. Nginx\n  * My bug in deploy shell script\n  * Some confusion on docker caches\n\nToday:\n\n* Back to query transforms, into query processor\n\n**Tomorrow:**\n\n* Check point w/ Dmtitry\n  * See where he is w/ mods to the spyglass code.\n  * Did he make changes on a branch off of swirl?\n  * Are they ready to be merged back?\n  * How do we do this? PR?\n\n**Tuesday 04/04/2023**\n\nIssue in prod that needed immediate attention, the dist file being out of sync w/ the code.\nDS-283.\n\nCheckout the ticket above as well as DS-280\n\nfor details\n\nStatus :\n\n* Integration into the SWIRL work processor flow (In progress)\n  * Integrated into pre-query with test DONE\n  * Integrate into query-processing TODO\n* Oversee 1.11 work\n  * On going, answering questions and managing branches.\n* fix permissions, we need a set for the query transform configs : it's this now, which is wrong: 'swirl.view_searchprovider') TODO\n\n**Sunday 04/02/2023**\n\nStatus\n\n**Accomplishments:**\n\n* Release 1.10\n* Webinar demo\n* 1\\.11 planning\n* Future state UI planning\n* Integration of 1.11 code and tests for Office365 and Query transform features\n* Assist w/ acquiring MS test data\n\n**Plans for next week:**\n\n* Integration into the SWIRL work processor flow\n* Oversee 1.11 work\n* fix permissions, we need a set for the query transform configs : it's this now, which is wrong: 'swirl.view_searchprovider'):\n* Integration into the SWIRL work processor flow\n\n**Tuesday 03/28/2023**\n\n1\\.11 - Can Ryan start on API / Integration testing Early April?\n\nFor MS Office365, etc....\n\n* **Test that user can search - You do a pytest with mock search results**\n* Test that user gets results for all sources (e.g. Outlook Messages & OneDrive), for a known search\n* This should be an integration test, we ask Ryan to automate this in his environment.\n* Test that user does not get results for some sources, for another search\n* I am not sure what this case is, will need to follow up, so don’t do anything yet.\n* Test that user token is refreshed\n* **Question for you**, do we do automatic refresh in the code? Or does the user have to do something to refresh?\n* **Test that all fields (url, title, body) are populated - You do a pytest w/ mock results**\n\nLook at NLT Data - blocked on access and location of the data.\n\nTODO On qxf:\n\n* Few more unit tests\n  * ~~syn and rewrite functions~~\n  * ~~delete in the API~~\n  * ~~update in the API~~\n* ~~Make name and type a unique constraint~~\n* fix permissions, we need a set for the query transform configs : it's this now, which is wrong: 'swirl.view_searchprovider'):\n* ~~Parse config in factory~~\n* Integration into the SWIRL work processor flow\n  * Plan is that in the configuration you add a query transform using \\<xform-name\\>.\\<xform-type\\> where name is the name entered when the xform was created and type is one of :\n    * rewrite\n    * synonym\n    * bag\n  * Should query pre-processor be added to the search form?\n* Go over the output of the synonym replacement with Erik and Sid, this will not be helpful for all search providers, but for many it could be, including office 365, open search, elastic search, solr, and nlt, also maybe google.\n\nAspects of distinction for choosing App builder and component libraries (high level):\n\n1. **Project requirements**\\: Assess your project's specific needs and goals.\n2. **Features and functionality:** Review the features and functionality offered.\n3. **Compatibility**\\: Angular versions, node, js, etc\n4. **Documentation and community support**\n5. **Customization and flexibility:**\n6. **Performance**\\: Evaluate the performance implications.\n7. **Licensing and cost:** Open Source/Commercial; Review the licensing terms and any associated costs\n\n**Monday 03/27/2023**\n\n*Outline for demo*\n\n 1. Show running open search\n    1. ~~This will be pre-loaded w/ ENRON data, we don't want to sit through that~~\n 2. Show Docker file used.\n 3. Populate the Quergy rules show how what that looks like\n 4. Show and run a Quergy query\n 5. Switch to A fresh install of 1.10\n 6. Show creation of a new Open Search Search provider\n 7. ~~Show a Query that uses the synonym and returns low score results~~\n 8. Update the Query Template w/ the query from the above step\n    1. Note the addition of term highlighting and the Quergy section\n 9. Show the same query as above except now it has scores for the synonym and other stuff\n10. Questions?\n\n* 1\\.11 is currently unprotected, so can be committed to w/out a PR (should we change this?)\n* To run tests\n  * cd \\<swirl-home\\>\n  * pip install -r requirements-test.txt\n  * pytest\n* Tests are in \\<swirl-home\\>/swirl/tests/tests.py\n* Test config is in : \\<wirl-home\\>/pytest.ini\n\n**Friday 03/24/2023**\n\nMiro board in preparation for going over the UI vision later today:\n<https://miro.com/welcomeonboard/ZTdhUUlhV2FzSjM2dW1kWUZsUVpsZWQ2Wm5teWtIZndOMGZDaVFKbnoxMnFCQUxydGphM2VQdW51MW9zWGVtbXwzNDU4NzY0NTQ5ODEyNDQ1OTgxfDI=?share_link_id=904891411604>\n\nWent over tickets w/ Ryan and SId, we got three solid tickets out of it which Ryan is going to create:\n\n1. Hit high lighting logic and position logic are out of sync, needs to be looked at.\n2. Stemmed terms appear to be added twice.\n   1. michael chicago bull bull chicago michael\n3. Why is the score for the term Michael so low in Rayn's data?\n\n**Thursday 03/23/2023**\n\nPlan:\n\n* Get Dmitry status\n  * Run idea of Django UI by Dmitry, although it will be do difficult to make a judgement w/out a UI proposal.\n  * Impression of the Spyglass UI\n  * Compare and contrast to what is possible w/ Django\n  * Left to do\n    * Testing todo\n    * share point, one drive, outlook calendar (needs data blocked)\n    * \n  * Office 365 functionality is more important\n    * What are all of the new UI screens introduced by this?\n* Get status on UI from Lee (need to see what that is looking like)\n  * Mobile is NOT the first target audience and we may be using tech that will make it more work to support it.\n* What does Spyglass UI + Office 365 functionality look like? How do we mash these together?\n* What functionality will be covered by the non JSON UI for 1.11?\n  * Also, what other UI screens are coming in 1.11?\n  * Add Query transforms, at least, we can maybe leave the rest of it to the list view we've been using.\n\n**Wednesday 03/22/2023**\n\nDevelopment, UI research and this <https://kestra.io/docs/concepts/flows.html#task>\n\n\n\n**Monday, 03/20/2023**\n\n### Holmes\n\n*TL;DR;* We could implement a query transformation feature based on Holmes, but it would rely on access to a representative knowledge base from which to base expansion. One way to acquire this would be Query Based Sampling. I want to emphasize that this would be a very different type of project from the ones previous discussed based on Quergy, which is more 'surface' level set of transformations.\n\n#### Possible use for Query Expansion:\n\nIf we incorporate our old friend Query Based Sampling\n\n1. Define a corpus of documents that are a query based sample from a specific source.\n2. Load those documents into Holmes\n3. At query time, for  each source for which we have significant Set of representative documents, search for semanticly matching fragments and use these as 'OR' additions to the query.\n\n**About Holmes**, it’s not really a Synonym generating or recognition tool. It’s designed more to be a context aware search engine for document sets that are smaller than search engine size, but sill significant.It can incorporate Synonyms and complex ontological relationships into a powerful structural matching heuristic. It does this through ingesting OWL (Web Ontology Language). They recommend a tool called Protégé for maintaining these relationships. But IT doesn’t help maintain those relationships or define them.It could, possibly be used to assist  the current ranking code and or be a ‘search engine/information extraction’ tool over the federated results set. It basically uses a number of SpaCy features to do ‘search phrase’ matching. Uses two main mechanisms:\n\n1. Structural, where it parses and understands grammatical structures and incorporates the ontologies, of both input documents and the query and can match them based on that structure, this can also include relationships between Named Entities that SpaCy supports. Using this feature requires writing some specific types of rules for it to follow, but we could do those things.\n2. Topic matching, which is, maybe the same spirt of what you’re doing, breaks a search query into bigrams, uses proximity of bigrams, idf of the terms in the corpus, differentiates between exact matches and ontological matches, etc, etc, there is a lot there.\n\nFrom the query side, it could possibly be used to classify queries as being of certain types, like a question or even a question about a specific or general topic.There is a lot to think about here it will take a day or two of working through some hands on examples to get a better sense of how and whether it can help us.<https://explosion.ai/blog/introduction-to-holmes>\n\n\n\n#### \n\n**Friday, 03/17/2023**\n\nspent a good chunk of time thinking through and researching maintaining a Public and Private (Enterprise) version of the code base yesterday. Today I will go a level deeper on what a ‘plug in’ option looks like in Python. Also will work w/ Ryan on testing and Synonym ground work (how to intake CSVs of Synonyms, data model, etc)\n\n[8:48](https://swirlio.slack.com/archives/C04JXKP797H/p1679057327343499)\n\nI have to miss the 10am today\n\n[8:49](https://swirlio.slack.com/archives/C04JXKP797H/p1679057349112009)\n\nWill be on and off between 10am and 2:30pm\n\n\n\n**Wednesday, 03/15/2023**\n\n* Read this : <https://arxiv.org/pdf/2302.12480.pdf> Ideas in LLM updates\n\n**Tuesday, 03/14/2023**\n\n1. 1\\.10 release support\n\n   1. ~~Send info to Sid on how to conf Quergy.~~\n   2. **Document from YT but it needs to be made cust friendly, w/ Erik.**\n   3. **Add Spy glass to Docker (DaveN)**\n      1. In review\n   4. ~~Document how to install Spy Glass (Sid and DaveN?) (did Sid do this?)~~\n      1. ~~Get the doc from KMW first, then consult w/ Sid on version of Node~~\n   5. Describe new tests for Ryan.\n   6. Deploy open search ENRON data into VM environment so it's available for testing\n      1. Need help from Jason\n\n**Monday, 03/13/2023**\n\nList below vetted by the team at The Daily\n\n1. 1\\.10 release support\n\n   1. Send info to Sid on how to conf Quergy.\n   2. Document from YT but it needs to be made cust friendly, w/ Erik.\n   3. Document how to install Spy Glass (Sid and DaveN?)\n      1. Get the doc from KMW first, then consult w/ Sid on version of Node\n   4. Add Spy glass to Docker (DaveN)\n   5. Sid and Jason on testing self register (don't need DaveN for now, may need Dmitry)\n   6. Describe new tests Ryan.\n   7. Deploy open search ENRON data into VM environment so it's available for testing\n      1. Need help from Jason\n   8. Is there other work I can do to help w/ 1.10?\n\n2. Begin SWIRL synonym support (is this still a priority?) for 1.11\n\n   1. Short write up and plan\n   2. Do the work (which branch should this work be one)\n\n3. Write up and plan for Query pipeline as it pertains to (how can this relate to Prodigy)\n\n   1. model update\n   2. data tagging\n   3. alert notifications\n\n4. Write up of security, identity and ownership model, covering\n\n   1. Difference between community and enterprise in some details\n      1. How different are they and what is the impact on code maint?\n   2. Identity and role management of SWIRL users\n      1. Enterprise vs Community\n      2. Specific Django Plugins\n   3. Authentication of SWIRL users\n      1. Enterprise vs Community\n      2. Specific Django Plugins\n   4. Catalog of SWIRL objects\n   5. Ownership model of SWIRL objects\n   6. Authentication of SWIRL search providers\n      1. Supported Auth mechanisms\n         1. OAUHTH2\n            1. Touch points/Sequence diagram?\n         2. Mechanisms that can be simply configured with a permanent or semi-permanent artifacts in the search provider.\n      2. How does it interact w/ the ownership model?\n         1. Sharing search providers\n\n5. Sec vuln story (working w/ Jason)\n\n   1. We have to resolve Snyk Vs Docker Hub and find the proper place for\n      1. Scans of our code\n      2. Scans of our python dependencies\n      3. Scans of our Docker images\n         1. Re-eval the priority of this?\n\n6. Process notes from off site meeting\n\n**Friday, 03/10/2023**\n\n**Status**\n\n**This Week**\n\n1. Completed work on term based relevancy enhancements, documentation, testing and debugging.\n2. Worked w/ the team to establish automated smoke testing for main and release branches.\n3. Off site planning meeting\n4. Assist in design of development workflow and process.\n\n**Next Week**\n\n1. Deploy open search ENRON data into VM environment so it's available for testing\n\n2. Begin SWIRL synonym support\n\n3. Write up  of security, identity and ownership model\n\n4. Write up and plan for Query pipeline as it pertains to model update, data tagging and alert notifications\n\n5. ~~Fix Test failures~~\n\n6. ~~Doc for HHX~~\n\n7. Describe new tests Ryan.\n\n8. Process notes from off site meeting\n\n\\-------\n\n\n\n\n\n1. Write up interpretation of ID management, auth-z, auth-n, model\n\n   1. Enterprise vs Community\n      1. Enterprise would allow the use of external identity management.\n   2. Which parts of the model are configurable via Django plugins and what are they? even rough idea..\n   3. D'jango model\n      1. Min user, is Admin\n   4. External model\n   5. Object ownership (in SWIRL)\n   6. Data source authentication.\n      1. OAUTH authentication\n\n**Thursday, 03/09/2023**\n\n1. ~~Fix Test failures~~\n2. Describe new tests Ryan.\n3. Process notes from yesterday\n4. Write up interpretation of ID management, auth-z, auth-n, model\n   1. Enterprise vs Community\n      1. Enterprise would allow the use of external identity management.\n   2. Which parts of the model are configurable via Django plugins and what are they? even rough idea..\n   3. D'jango model\n      1. Min user, is Admin\n   4. External model\n   5. Object ownership (in SWIRL)\n   6. Data source authentication.\n      1. OAUTH authentication\n\n**Wednesday, 03/08/2023**\n\nOff site plus, build stuff, misc, plus fix PR, merged\n\nnotes from yesterday\n\n```\n**  QM\n   - FLOW\n   - alerts and nitication\n   - LLM update\n   - ML update\n   - data category, id tag, label\n     + Luciel\n     + Customizable document\n   - Handling refresh\n   - Query model gets us OUT of the search biz, which is a comedity now.\n   - APIa for adding Alert objects\n     + Thresholds of relevance score and temporal relevancy.\n   - Timely vs quality and how are they related?\n   - Configure a pipeline for your alert data\n   - Query\n   - A run of alerts, results, of the run\n   - japanese.io\n     + Tech stack?\n     + pipe lines?\n     + TBD\n   - Multi-lingual fedearatd\n     + Different language models\n     + Personalize - LTR style between the sources\n     + Lable training data...Generate labels from \n     + Entity xt (part of q pipeline)\n       + Spark NLP\n       + Hugging face?\n       + SpaCy?\n     + Reddit and search\n       \t \n\n** Our Kibana\n   SBIR Grants?\n\n** MS diff\n    - Identifing redudundent results across sources\n    - Entity identifcation and association w/ query termsb\n       \n\n   - Possible worker jobs for QPL\n     - Document fetch\n     - Personalization model updates\n     - Entity extraction\n       + Part of model uopdate\n     - Detection of changes over time in data sources\n     - Relationships between knowledge workers as a group.\n     - Chat GTP ????\n\n**        \n\n** Where does chatGPT fit into our plans?\n   - \n```\n\n\n\n**Tuesday, 03/07/2023**\n\n\\*\\*\\* Work with Ryan and Jason to integrate automated smoke test into CICD build pipeline.\n\n\\*\\*\\*\\* Yesterday : Research, decided on plan for first cut, wrote and tested SWIRL portion of the pipeline.\n\n\\*\\*\\*\\* TODO\n\n* Push the Test docker image up to docker hub, this is the one that runs behave.\n* Add the step to run  SWIRL to the smoke-tests yml\n* Add the step run the tagged docker image w/ the tests to the smoke-test yaml\n* Learn how to get the test results someplace we can use them.\n* Move QA Automation REPO into SWIRL organization\n  * This needs a ticket and can be done over the coming days...\n\n\\*\\*\\* Have the Hit highlight PR in a reviewable state (continues from yesterday)\n\n~~**** Remove one level of JSON from result_processor_feedback_json~~\n\n~~***** Actually no, this is how we ID it from he results processeror, there~~\n\n```text\n  ~~is a bigger question around whether this is too hokey.~~ \n```\n\n~~**** Review the processing of result_processor_feedback_json~~\n~~and see if it can be made more generalized.~~\\~\\~\n\n\\*\\*\\*\\* Post PR and wait for feed back\n\n\\*\\*\\*\\* Review the relevancy feedback from some examples w/ Sid Just see if it looks reasonable.\n\n\\*\\*\\*\\* Write up on how you expect people to use this in the field\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- That is, address how a dev would resolve a defect around synonyms\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on the server usinfg this feature\n\n\n\n\\*\\*\\*\\* Normalize Hit Highlighting? (optional)\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Look at whay we have and figure out how to make it more industry standard\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Come up w a mechanism to allow Search provider generated highlighting to\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;play w/ our own.\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\n> Sid : config hh char ot string \\<em\\> \\<em\\> ? SWIRL_HIGHLIGHT_START/END_STR=\"\\<em\\>\" at search object level.\n>\n> We at somepoint we call clean string, we may have to avoid doing this.\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Do this on 1.10\n\n**Monday, 03/06/2023**\n\n```\n**  TODO\n*** Merge this? https://github.com/swirlai/swirl-search/pull/134 (DONE)   \n*** Have the Hit highligt PR in a reviewable state\n**** Get some intial feed back at TD\n**** Remove one level of JSON from result_processor_feedback_json\n**** Review the relevancy feedback from some examples w/ Sid\n     - Just see if it looks reasonable.\n***** Actually no, this is how we ID it from he results processeror, there \n      is a bigger question around whether this is too hokey. \n**** Review the processing of result_processor_feedback_json \n     - and see if it can be made more generalized.\n**** Normalize Hit Hightlighting? (optional)\n     - Look at whay we have and figure out how to make it more industry standard\n     - Come up w a mechanism to allow Search provider generated highlighting to\n       play w/ our own.\n       \n       \n       Sid : config hh char ot string <em> <em> ? SWIRL_HIGHLIGHT_START/END_STR=\"<em>\" at search object level.\n       We at somepoint we call clean string, we may have to avoid doing this.\n       \n       Do this on 1.10\n       \n**** Write up on how you expect people to use this in the field\n     - That is, address how a dev would resolve a defect around synonyms\n       on the server usinfg this feature\n**** Post PR and wait for feed back\n------\n** Thoughts on HH integration\n*** SWIRL \n    - Does HH based on the terms from the query and content of the title body and\n    perahps auther.\n\n    - Generates marking in the display field content dirtectly in the form of\n    wrapping terms in a pari pair of '*' characters (e.g. *cat*).\n*** Others we know of, Elasticsearch, Opensearch and Solar \n    - Generate HH based on similar criteria, but they may be using a specialized\n    vocabulary of which SW is not aware. They can have access to the entire\n    content of the document. From observationts it appears that, in the Open\n    search case they always send back body that contains the snippets in which\n    hit highlights live, but it is possible this is not always the case.\n\n    - Generates a sepearte field which is a list of 'snippets' on a per-field\n    basis that contain the therm surrounded by a 'em' tags (e.g. <em>cat</em>)\n      \n*** General problems\n    - Because of their history w/ Lucene, the defacto contention is the one \n    created and reinforced by Elastic, Open and Solr.\n\n    It seems clear it would be wise to follow this standard\n\n    - For cases where an engine generates hits that are not present in the\n    original user query, it is necessary for SWIRL to have access to these\n    in order to do a good job of ranking the results in the context of all\n    search providers, the best way to access this information from the\n    most popular begine listed above is in the HH returned from them.\n\n    - For cases where the search provider does not provide this information\n    we do want to provide it in a standard form.\n\n*** Solutions?\n    - \n```\n\n\n\n\n\n\n\n\n\n\n\n\n\n**Friday, 03/03/2023**\n\nStatus\n\n**This Week**\n\n1. Stood up development environment to research Quergy integration with SWIRL\n2. Loaded ENRON data and fixed a field length limitation in loader\n3. [Conducted tests, using the above environment that demonstrated](https://swirl.youtrack.cloud/articles/DS-A-15/Quergy-experiment-02-28-2023)\n   1. Basic Quergy functionality works with SWIRL with no code changes\n   2. SWIRL term based relevancy need enhancement to be aware of search provider Query Expansion (DS-32)\n4. Decided, w/ development team, that full Integration with Quergy Synonym rules is not appropriate at this time, but decided instead to develop SWIRL Synonyms support independently.\n5. Began working on 3.2 (above)\n   1. Expect to have an internal presentation to development team early next week\n6. Miscellaneous development related tasks\n   1. [Wrote up development workflow specification](https://swirl.youtrack.cloud/articles/DevOps-A-28/Submitting-PRs-to-main-and-next-release)\n   2. Participated in test development planning\n\n**Next Week**\n\n1. Complete work on term based relevancy enhancements and testing\n2. Complete Work on SWIRL Synonym support (DS-178)\n3. Assist in automation of testing in github work flow\n4. Begin Redis support for SWIRL (DS-100)\n\nWorking on the highlight integration..\n\n* Te when there is no highlighting\n* Ass\n\n**03/02/2023**\n\nStawman\n\n* Highlight fields are special\n* They participate in relevancy ranking if they are present\n* They contribute to query terms\n  * For now, we will only support the format that is common in OS,ES and Solr, in future we can expand this.\n\n    This is each highlight field is a list of teasers, where the 'hit' is surrounded by \\<em\\>\\</em\\> tags\n* \n\nNeed to add explain logic to the terms from the HH, otherwise, it may be a mystery why these terms are used.\n\nWe have 3 post results processor :\n\n* CosineRelevancyPostResultProcessor\n* DedupeBySimilarityPostResultProcessor\n* DedupeByFieldPostResultProcessor\n\nOnly the first two use term based relevancy.\n\nHow does CosineRelevancyPostResultProcessor work?\n\n1. \n\nCouple of questions from yesterday's work:\n\n\n\nQ1:\nShould I pass the JSON chunk AS IS to the lower levels, or should we crack it open and try to map those fields to out fields and  then do the mapping and only pass the mappable ones?\n\nA: (DaveN) I believe this should be done in the relevancy code, since the current mapping coded doesn't do this and it would be a fairly significant and assumptive extension of that functionality, where as if we do it where it's needed, it is more contained and the entire system remains flexible\n\n* NO, this won't work, need to do the mapping in the mapping stage, otherwise, introduce a new data bleed from mapping into post results\n  processing, which I think would make things harder to follow and debug\n\nQ2:\n\nSomething to think about with this Hit Highlighting; A down side of this approach, I’m just realizing now, for terms that are not in the query, we don’t know their originating term or phrase.Example:**Synonyms**\\: notebook =\\> laptop, computer =\\> pc\n**Query**\\: notebook computer\n**Hit-highlights**\\: content [ “I love my new \\<em\\>laptop\\</em\\> it’s a great \\<em\\>pc\\</em\\>“]We don’t know that the server side rewrote the query or what terms were added due to what originating term.If, in relevancy, we only have the **Query** and **Hit-highlights**, how do we integrate the terms ‘laptop’ and ‘pc’ back into the original query? Or do we at all?The questions then are, at what point in the relevancy processing do we introduce these terms and in what relation to the original query, if any?\n\n\n\n**03/01/2023**\n\nNOTES and feedback (we agreed in TD on the following changes to this project):\n\n* Highlighting if it's there we use it, if it's not we don't. Helps more than Quergy.\n  * How do you describe (in configuration) where the highlighting lives in the result?\n  * Each source provider has a result mapping which is where the highlights live.\n* Announce Quergy (show example) make a Blog Post (assign to Sid)\n* Support Query transformations  (store in the model)\n  * A -\\> B (add or rewrite?) make it optional\n\nI suggest two phases, phase one is described below, phase two will be whatever priority 2-3s don't make phase 1 time frame along w/ CSV Synonym lists.\n\n**Goals of phase one**\n\n* Fix term relevancy for Quergy (at least some cases)\n  * No support for Template Synonyms\n  * No support for conditional rules (not sure they exist for synonym rules, but if they do, we don't)\n* Beach head Synonym as first class entity in the product.\n\n**Implementation plan phase one**\n\n* Define a Synonym list in the model (1)\n  * ~~Quergy being one type (1)~~\n  * CSV being another  (2)\n* Allow one or more lists to be associated w/ a number of existing objects (1)\n  * Post Results Processor - To fix the problem we see today w/our term based relevancy ranking when Synonyms are activated by a specific data source. @Sid  is this right level? (1)\n    * How can PostResults processor be configured? I think this needs to be added.\n  * Query processor - Synonym list expansion for a specific data source (2)\n  * Query pre-processor - Synonym list expansion for the query for all sources  (3)\n\n### Attributes and usage of Synonym lists in SWIRL\n\n* Synonym lists can be internal (stored in SWIRL) or external  (stored in some other repository, Quergy as an example)\n* Synonym list is a list of pairs of terms.\n* Synonym lists have attributes\n  * Bidirectional\n  * ... TBD ...\n* Synonym lists should be first class objects\n  * That is they should have model representation and be persisted in the DB\n* Synonym lists can be used in the following contexts:\n  * pre-query processing, before the Connectors see the query\n  * source query processing, in each individual data source, before the query is sent to  specific source, it may or may not be used in all search providers for a specific federated search.\n  * Relevancy to accurately score results from a data source, note in this use case it is assumed that the synonym expansion occurred on the server/index side and the results have been expanded. This causes incongruence between SWIRL relevancy processing and that of the data source. By taking the same list into account when ranking the federated results we resolve or reduce this incongruence.\n\n**02/28/2023**\n\nThe Configuration for a particular rewriter are stored in an internal index in opensearch (presume same in elastic, but this needs to be checked) here is an example of fetching the rules i've been experimenting with :\n\n```\ncurl -H 'Content-Type: application/json' -X GET \"https://localhost:9200/.opensearch-querqy/_doc/common_rules?pretty=true\" -ku admin:admin\n{\n  \"_index\" : \".opensearch-querqy\",\n  \"_id\" : \"common_rules\",\n  \"_version\" : 11,\n  \"_seq_no\" : 10,\n  \"_primary_term\" : 1,\n  \"found\" : true,\n  \"_source\" : {\n    \"type\" : \"rewriter\",\n    \"version\" : 3,\n    \"class\" : \"querqy.opensearch.rewriter.SimpleCommonRulesRewriterFactory\",\n    \"config_v_003\" : \"{\\\"rules\\\":\\\"notebook => \\\\nSYNONYM: laptop\\\\npersonal computer => \\\\nSYNONYM: pc\\\\n personal computers =>\\\\nSYNONYM: pc\\\\n pc =>\\\\nSYNONYM: personal computer\\\"}\"\n  }\n}\n```\n\n\n\nGiven the name of the configuration and some sanity checks for the the index being accessible and the document have both expected structure and content format we could use this for a number of things:\n\n1. Extract synonyms to use in Federated ranking heuristics from a source that uses them (see also conclusions in  DS-A-15)\n2. As a source of truth / repository for Synonym lists managed in SWIRL\n   1. NOTE Synonyms in Quergy and potentially other repositories can be more powerful than simple lists of pairs of terms. Directionality can be implied and there can regex expressions as an example.\n\n\\-----\n\nThe findings below are published to :DS-A-15\n\n**Hypothesis:**\n\nOur current  Opensearch connector should support Quergy re-write rules out of the box.\n\n**Procedure:**\n\n* Stand up an Opensearch instance locally w/ Quergy plugin installed\n* Load data from the Enron email data set\n* Configure some rules and store them:\n\n  ```\n  {\n      \"class\": \"querqy.opensearch.rewriter.SimpleCommonRulesRewriterFactory\",\n      \"config\": {\n          \"rules\" : \"notebook => \\nSYNONYM: laptop\\npersonal computer => \\nSYNONYM: pc\\n personal computers =>\\nSYNONYM: pc\\n pc =>\\nSYNONYM: personal computer\"\n      }\n  }\n  ```\n* Write a query that will use them and show that they are being used:\n\n  ```\n  {\n    \"highlight\": {\n      \"fields\": {\n        \"*\": {}\n      }\n    },\n    \"query\": {\n       \"querqy\": {\n           \"matching_query\": {\n               \"query\": \"{query_string}\"\n           },\n           \"query_fields\": [ \"subject^3.0\", \"to^2.0\", \"content\"],\n           \"rewriters\": [\"common_rules\"]\n       }\n    }\n  }\n  ```\n\n  NOTE: We use hight light to more easily identify where Synonyms are being used.\n* Do some test queries that will activate the synonym rules:\n  * <http://localhost:8000/swirl/search/?q=personal+computer>\n  * <http://localhost:8000/swirl/search/?q=notebook>\n  * [http://localhost:8000/swirl/search/?q=](http://localhost:8000/swirl/search/?q=notebook)pc\n\n  Observe results\n\n**Observations:**\n\n* notebook - when searching for this, we can see that the Synonyms are at work from the second result:\n\n  ![](image.png){width=70%}\n\n  We see that synonym laptop was used in the query and that it generated hits in both the subject and content fields of this document. The inclusion of the Open/Elastic search 'highlight' section makes this very clear. But we can also see a problem and that is that the swirl rank is  zero, and this is for the second document, which indicates that the rest of the documents in this result are also zero ranked.\n\n  This is due to the fact that SWIRL's ranking heuristics don't have a mechanism for taking into consideration query expansion by a data source. So, IT ranks the document as if there are no hits, because all hits are on the synonym which was generated by the data source.\n* Similar observations for the rest of the queries as above, this is just the most striking\n\n**Conclusions:**\n\n* Although it is mechanical possible to use Quergy today w/ SWIRL, it would be best in a ranking mixer that did not use term relevancy to score. So, either date or any variation on round robin.\n* To use a term base ranker, it would be necessary to do one of the following:\n  * Extract the hits from the results that come back from the Search Provider.\n    * This could be done if we had a pre-req of turning on highlighting as I've done, it would also require extending the heuristic to use the new terms, but this is purely mechanical and no change to the logic would be necessary\n    * Extract the rules from the Data source itself and do the same as described above. This could be done in different time frames, that is, could be done at query time, maybe in query pre-processing, or it could be done periodically either on a schedule or as part of some event detection and handling.\n\n  I think it is worth noting here, that we probably DO NOT want to do this query term expansion in SWIRL. It would cause a doubling of the terms applied for data sources that defined these rules.\n* Regardless of the results of this experiment, Quergy could still serve as a a Synonym repository or source of truth for Synonym list our users may want to apply to other data sources.\n\n\\-------\n\nnotes\n\n\n\nA better place to get help w/ Quergy <https://app.gitter.im/#/room/#querqy_users:gitter.im> <https://querqy.org/>\n\nHave at least a basic example working, but some things need investigating. term scores look a bit funny, probably because the scoring is happening w/out knowledge of the query expansion.\n\nThe quergy query extensions lend themselves to replacing the multi_match functionality in open/elastic search. SWIRL does not have multi-field capability. Do we want to extend it?\n\nDo we want to improve relevancy w/ Open/Elastic search by using the hits that come back?\n\n\n\n\n\n\\-------\n\n**Status**\n\nProblem below solved, mostly an operator issue, although doc assumes a lot of prior knowledge of ES/OS. Issues were:\n\n* Missing the plugin component of path\n* rewriter singular not plural in the path\n* I didn't see the true 2.3.0.0 version of the plugin when I downloaded it so had an older image.\n\nToday, try to design this in terms of both Quergy support in our OpenSearch and ElasticSearch connectors; and Synonym  list replacement functionality in general. I think this can be a combination of:\n\n1. Managing Synonym list as as separate entities\n2. The ability to associate a Synonym List when with any Query Preprocessor\n3. Various types of Lists\n   1. Ones that live in Quergy\n      1. Access the Quergy configuration, parse them, probably in a limited way at first, and create Synonym lists from those rules.\n   2. CSV mapping spread sheets\n4. **The ability to use Quergy Rerwriters in our existing E/O Search connectors**\n   1. **GOAL TODAY, try to get this working in SWIRL, then can show how it could be done in a general post, if code changes required, will make them**\n\n**02/27/2023**\n\nLoading data into local OpenSearch to do some experimenting and testing w/quergy.\n\nRan into a problem today, even though quergy shows up as correctly installed as a plugin, I am getting an error from the quergy configuration endpoint, posted a question <https://relevancy.slack.com/archives/C02C6EMG94K/p1677536660269749>\n\n\n\nHi All,\nI could use some help with enabling Quergy in OpenSearch. I have a Docker containing running OpenSearch 2.3.0 and I believe I’ve installed Quergy correctly, it does show up in a cat list of plugins, although the version information is a big odd:\n\n```\n98d1b8018187 opensearch-observability             2.3.0.0\n98d1b8018187 opensearch-performance-analyzer      2.3.0.0\n98d1b8018187 opensearch-querqy                    1.0.os2.3.0\n98d1b8018187 opensearch-reports-scheduler         2.3.0.0\n```\n\nBut when I try to run, the  configuration example from the doc, I get :\n\n```\n{\"error\":\"no handler found for uri [/_querqy/rewriter/common_rules] and method [PUT]\"}\n```\n\nAs if the it’s not installed. Does anyone have any advice on resolving this?Thanks,\nDave\n\n\n\n**02/23/2023**\n\nContents of a Dockerfile that install Quergy into an OpenSearch distribution. The version of the OpenSearch and the plugin must match.\n\n```\nFROM opensearchproject/opensearch:2.3.0\nRUN /usr/share/opensearch/bin/opensearch-plugin install \"https://repo1.maven.org/maven2/org/querqy/opensearch-querqy/1.0.os2.3.0/opensearch-querqy-1.0.os2.3.0.zip\"\n```\n\n\n\n\n",
+        "summary": "Blog Like Document (B.L.D)",
+        "reporter": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "attachments": [
+            {
+                "name": "image.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image1.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image2.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image3.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image4.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image5.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image6.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image7.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image8.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image9.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image10.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image11.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image12.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image1.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image13.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image14.png",
+                "$type": "ArticleAttachment"
+            }
+        ],
+        "$type": "Article"
+    },
+    {
+        "created": 1687228946567,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-94",
+        "updatedBy": {
+            "fullName": "Sid Probstein",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [],
+        "content": "The DateFinderResultProcessor looks for a date in any of the below forms in the body field of each item. Should it find one, AND the date_published for that item is 'unknown', it replaces date_published with the date extracted from the body, and notes this in the result.messages.\n\n06/01/23\n06/01/2023\n06-01-23\n06-01-2023\njun 1, 2023\njune 1, 2023",
+        "summary": "DateFinderResultProcessor",
+        "reporter": {
+            "fullName": "Sid Probstein",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1687226940338,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-91",
+        "updatedBy": {
+            "fullName": "Sid Probstein",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [],
+        "content": "The TemporalRelevancyPostResultProcessor removes items that (a) have a swirl_score below the configured MinimumRelevancy, and (b) have a date_published that older than the configured temporal distance from the moment at which the batch of items are processed. \n\nIt reports the number of results removed as a negative number. For example:\n\n```\n{\n    \"query_string\": \"news:joe biden\",\n    \"sort\": \"date\",\n    \"post_result_processors\": [\n        \"CosineRelevancyPostResultProcessor\",\n        \"TemporalRelevancyPostResultProcessor\",\n        \"EntityMatcherPostResultProcessor\",\n        \"WriteToFileSystemPostResultProcessor\"\n    ],\n    \"tags\": [\n        \"EntityDictionary:lists/entity_list.txt\",\n        \"TemporalDistance:days=30\",\n        \"MinimumRelevancy:50\"\n    ]\n}\n```\n\nTemporalDistance may also be specified as a number of hours, e.g. `hours=24`\n",
+        "summary": "TemporalRelevancyPostResultProcessor",
+        "reporter": {
+            "fullName": "Sid Probstein",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1687227166033,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-92",
+        "updatedBy": {
+            "fullName": "Sid Probstein",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [],
+        "content": "The EntityMatcherPostResultProcessor removes items that don't contain at least one entity from the specified list of entities. The list is a pathname of a text file that contains one entity per line, relative to the installation root directory. \nIt reports the number of results removed as a negative number. \n\nFor example:\n```\n{\n    \"query_string\": \"news:joe biden\",\n    \"sort\": \"date\",\n    \"post_result_processors\": [\n        \"CosineRelevancyPostResultProcessor\",\n        \"TemporalRelevancyPostResultProcessor\",\n        \"EntityMatcherPostResultProcessor\",\n        \"WriteToFileSystemPostResultProcessor\"\n    ],\n    \"tags\": [\n        \"EntityDictionary:lists/entity_list.txt\",\n        \"TemporalDistance:days=30\",\n        \"MinimumRelevancy:50\"\n    ]\n}\n```",
+        "summary": "EntityMatcherPostResultProcessor",
+        "reporter": {
+            "fullName": "Sid Probstein",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1687227483384,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-93",
+        "updatedBy": {
+            "fullName": "Sid Probstein",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [],
+        "content": "The WriteToFileSystemPostResultProcessor writes all items to a json file, and saves it in the `SWIRL_WRITE_PATH` environment variable.\n\nThe file is named for the search.query_string, with only alphanumerics and spaces replaced by underscores, and a date/time stamp, `.json`. \n\nThe file contains only the item content, not the full mixer results (such as messages). \n\nHere is an example of a query that invokes it:\n\n```\n{\n    \"query_string\": \"news:joe biden\",\n    \"sort\": \"date\",\n    \"post_result_processors\": [\n        \"CosineRelevancyPostResultProcessor\",\n        \"TemporalRelevancyPostResultProcessor\",\n        \"EntityMatcherPostResultProcessor\",\n        \"WriteToFileSystemPostResultProcessor\"\n    ],\n    \"tags\": [\n        \"EntityDictionary:lists/entity_list.txt\",\n        \"TemporalDistance:days=30\",\n        \"MinimumRelevancy:50\"\n    ]\n}\n```",
+        "summary": "WriteToFileSystemPostResultProcessor",
+        "reporter": {
+            "fullName": "Sid Probstein",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1685635472477,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-85",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "SearchProviders",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "Per a nice chat with Ravi M. over at HBS, they would like to put together a demo with the following sources available.  This would likely be run from Ravi's laptop initially, and M365 integration is NOT required (yet).\n\n\n\n1. HOLLIS / Primo API (Harvard's ILS):  <https://wiki.harvard.edu/confluence/pages/viewpage.action?pageId=240453785>\n2. Harvard's Course API:  <https://portal.apis.huit.harvard.edu/docs/ats-course-v2/1/overview>\n3. Harvard's People Search:  <https://portal.apis.huit.harvard.edu/docs/ats-person-v3/1/overview>\n   * Or any of these, really, but he mentioned the Course API in particular:  <https://portal.apis.huit.harvard.edu/apis>\n4. ServiceNow (KM API):  <https://docs.servicenow.com/bundle/tokyo-api-reference/page/integrate/inbound-rest/concept/knowledge-api.html>\n5. Jira + Confluence Cloud\n6. GitHub\n7. OpenSearch (hosted in AWS) ... but access is controlled by a security gateway that sits in front of the OpenSeaerch instances; we'll need more details (Ravi to provide some next week).\n\n\n\nWe'll be able to have another deeper SP / Connector dive with Ravi once we receive and execute the NDA.\n\n---\n\n\n\n## Project Notes\n\n(from a call with Ravi, 09-June-2023)\n\n* What’s his app do?\n  * Need to integrate / federate results from multiple sources; HOLLIS esp., plus others (some endpoints are even being dev’d); UI not yet finalized\n  * They also have some OpenSearch indexes setup too\n* What’s his timeline?\n  * Production is maybe end of year, possibly sooner (\\~3-6 months)\n  * DEMO:  Next Tuesday!\n* Encourage him to submit PRs\n  * Mentioned and he seemed receptive / interested\n* Others on his team and/or helping with this project?\n  * Small group…maybe 4-5\n  * From IT, Library, developers\n* Does he still need ServiceNow, and if so, roughly by when?\n  * No urgency on this one\n\n## \n\n## Questions\n\n**From before Ravi's demo...**\n\n* Could they present 3 sources of results in separate columns vs. merging them?\n  * We store the results, so probably so (e.g. how we display a single provider at a time)\n  * Or, could split returned JSON by source\n  * Or, do additional queries per source after (hits Results object, so really fast)\n* Scaling\n* How to set up a prod env? Cluster?\n* Latency? What if one source is slow?\n* Managing secrets\n* Sending any data back to your servers? Heartbeat, etc.?\n* Tuning the ML: watch latest YouTube preso?\n* How to handle aggregations that come back?\n* Controlled vocabs?\n* Metadata normalization?\n\n**Additional question from the demo audience...**\n\n* tbd....",
+        "summary": "HBS Project + SearchProviders",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1678722146924,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-8",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [
+            {
+                "summary": "Diagrams of current and proposed states for Office 365/Azure",
+                "$type": "Article"
+            },
+            {
+                "summary": "The Road to the Microsoft Marketplace",
+                "$type": "Article"
+            },
+            {
+                "summary": "High level steps for  Microsoft Marketplace Saas offer",
+                "$type": "Article"
+            },
+            {
+                "summary": "AZ Marketplace landing page description",
+                "$type": "Article"
+            },
+            {
+                "summary": "AZ Marketplace N click proposal",
+                "$type": "Article"
+            },
+            {
+                "summary": "Phase 2 AZ Marketplace back-end spec",
+                "$type": "Article"
+            },
+            {
+                "summary": "SaaS offer storage",
+                "$type": "Article"
+            },
+            {
+                "summary": "Swirl OIDC AZ/AD MT technical design",
+                "$type": "Article"
+            },
+            {
+                "summary": "Subscribe + Search History Spec",
+                "$type": "Article"
+            }
+        ],
+        "content": "Parent page for our Development KB items.",
+        "summary": "Architecture",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1682356972080,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-67",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [],
+        "content": "# <span style=\"color:red;\">**INTERNAL-ONLY**</span>\n\nA place to collect all those sneaky useful commands, handy tips, and other Swirl tricks that we've got running around.\n\n\n\n# Static Pages\n\nTo grab new Swirl static pages only:\n\n```\nrm -fr static/\npython manage.py collectstatic\npython swirl.py restart django\n```\n\n# Non-Admin User Permissions\n\nTo do a search you need:\n\n* Search Provider:  View search provider\n* Search:  Add, Change, and View seach\n* Results:  Add, Change, and View result\n* Query Transform:  Add, Change, and View query transform\n\nAdmins can either permission a User directly or create a Group and permission the group before adding Users to it.  Missing permissions should be logged.  Example from the logs when the User \"Tron\" is missing the Change Results permission:\n\n```\nUser Tron needs permissions add_search(True), change_search(True), add_result(True), change_result(False)\n```\n\n# Bad Rabbit\n\nOccassionally, `rabbitmq` gets into a twist.  Here is one set of commands that *might help* in such cases (no promises...YMMV):\n\n```\nrabbitmqctl stop_app\nrabbitmqctl reset\nrabbitmqctl start_app\nrabbitmqctl status\n```\n\n# Dave's Nify `reset-ui.sh` Script\n\n* Ask Dave nicely for a copy of `reset-ui.sh`\n* Save it to the top-level directory of your locally cloned repo\n* Run this command:  `chmod +x ./reset-ui.sh`\n* Note:  Restarting Swirl also restarts the local UI (Spyglass); sometimes that's enough to untangle things, so try that first.\n\n# DEBUG Mode\n\nTo start Swirl in DEBUG mode (loooots of logging):\n\n* Stop Swirl:  `python swirl.py stop`\n* Use the `-d` switch when restarting:  `python swirl.py -d start`\n* Don't for get to restart without `-d` this after you're done troubleshooting ;)\n\n# Cleansing a Local Swirl\n\nGood practice tips that may not be required in all situations.\n\n* `git pull` on the branch in question to get the latest updates\n* Delete (`rm`) or rename (`mv`) the `db.sqlite3` file in your local repo directory\n* Rerun install:  `./install.sh`\n* Delete migrations - from your `<swirl-home>` directory: `rm -rf /swirl/migrations`\n* (Optional) delete static pages too - from your `<swirl-home>` directory:  `rm -rf static/`\n* Rerun setup:  `python swirl.py setup`\n\n# Manage.py Options\n\nSwirl's `manage.py` does all kinds of nifty things, perhaps we can document them all here?  From the command help:\n\n```\nAvailable subcommands:\n\n[auth]\n    changepassword\n    createsuperuser\n\n[contenttypes]\n    remove_stale_contenttypes\n\n[django]\n    check\n    compilemessages\n    createcachetable\n    dbshell\n    diffsettings\n    dumpdata\n    flush\n    inspectdb\n    loaddata\n    makemessages\n    makemigrations\n    migrate\n    optimizemigration\n    sendtestemail\n    shell\n    showmigrations\n    sqlflush\n    sqlmigrate\n    sqlsequencereset\n    squashmigrations\n    startapp\n    startproject\n    test\n    testserver\n\n[rest_framework]\n    generateschema\n\n[runserver_nostatic]\n    runserver\n\n[sessions]\n    clearsessions\n\n[staticfiles]\n    collectstatic\n    findstatic\n```\n\n\n",
+        "summary": "Secret Swirl",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1686681228463,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-88",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Hosting",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "Swirl wants to offer free-trials to qualified M365 tenants, i.e. they must be a full tenant, not a consumer/outlook user\n\nThe trial should be 1-clickable in Azure marketplace\n\nThe default should be 30d trial\n\nSwirl should be able to designate a \"trial owner\" who is the business person responsible; this can be added after the trial starts and could be in hubspot\n\nWhen a trial starts (i.e. customer admin clicks \"Get it\") the admin and the trial owner are sent email confirming the trial start, end date, and anticipated billing parameters - P2 (unless required by MSFT)\n\nSwirl should be able to change the trial offer to longer periods (60d, 90d), and send custom offers to individual buyers - P2 (I think this is supported, per Bill Fletcher demo)\n\nSwirl should be able to extend an existing trial similarly (extend 30d to 60d)\n\nThere will be a minimum number of seats required for the trial; this should be configurable; it can be as low as 1, but by default should be more like 10 or 50 or 250\n\nThere will be a minimum per-seat price\n\nThe default will be a 3 year subscription, paid annually; we will want to offer quarterly payment, but probably not monthly, this is TBD\n\nWe do not accept credit cards\n\nThe customer should agree to legal terms when they accept the trial\n\nThe legal terms must support the above extension process, if any\n\nSwirl should be able to suspend a trial, or resume a trial once paused. When a trial is paused no user can login. The tenant admin should still be able to login to manage the Swirl app.\n\nSwirl should be able to cancel a trial; cancelled trials are suspending for some short period, then deleted forever\n\nIt's fine if the customer admin can cancel the trial; if this happens, we should be notified\n\nIf a trial period ends, and is not extended or cancelled, Swirl sends notification to the business team and the customer that their subscription is now \"active\" - P2 (unless required by MSFT)\n\nSwirl invoices the customer for the subscription 3 business days after the subscription moves to active; the ideal would be to generate a QBO/Bill.com order sent to the trial owner, but this can be done manually for up to 5 deals, could be fine just to put a deal close entry into Hubspot and then generate QBO from there... needs design\n\nTrials are only deleted if/when approved by business team - then they are deleted forever\n\nAnyone clicking \"Get it\" in Azure marketplace should have their information captured to Hubspot instantly, created as a new contact with associated deal. Deal status in Hubspot should be up-to-date based on trial status. This needs more design.\n\nSwirls needs any possible visibility into traffic to all our Azure marketplace pages",
+        "summary": "Azure Marketplace: Requirements for Free-Trial Going to Paid",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1686260344382,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-87",
+        "updatedBy": {
+            "fullName": "Jason Temple",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Hosting",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "Systemd is a linux service management framework.  This is used to start up daemons needed for a running server (sshd, networking, going multiuser, etc).  We need to ensure Swirl is launched when a system is rebooted and in the right order, after major components have started such as rabbitmq\n\n\n\n# Create shell scripts to control Swirl\n\nFirst we create a simple start shell script that will be invoked by systemd. This file is named: `/home/swirluser/start_swirl.sh`\n\n```bash\n#!/usr/bin/bash\nset -m\nrm /home/swirluser/swirl-search/.swirl 2> /dev/null\ncd /home/swirluser/swirl-search\npython swirl.py start core &\n```\n\n\n\nthen make it executable\n\n```bash\nsudo chmod +x /home/swirluser/start_swirl.sh\n```\n\n\n\nNext we create a simple stop shell script that will be invoked by systemd for stopping and restarting the service.  This file is named `/home/swirluser/stop_swirl.sh`\n\n```bash\n#!/usr/bin/bash\nset -m\ncd /home/swirluser/swirl-search\npython swirl.py stop core &\n```\n\n\n\nthen make it executable\n\n```bash\nsudo chmod +x /home/swirluser/stop_swirl.sh\n```\n\n\n\n\n\n# Create Systemd Service\n\nThen we create a Unit File to define the systemd service.  This file is named `/etc/systemd/system/swirl.service`\n\n```\n[Unit]\nDescription=Swirl systemd service.\nAfter=network.target syslog.target auditd.service\n\n[Service]\nType=forking\nWorkingDirectory=/home/swirluser\nRemainAfterExit=true\nExecStart=/usr/bin/bash /home/swirluser/start_swirl.sh\nExecStop=/usr/bin/bash /home/swirluser/stop_swirl.sh\n\n[Install]\nWantedBy=multi-user.target\n```\n\n\n\nthis file should live in /etc/systemd/system and give it the proper permissions\n\n```\nsudo cp swirl.service /etc/systemd/system/swirl.service\nsudo chmod 644 /etc/systemd/system/swirl.service\n```\n\n\n\nNow we need to enable the swirl service\n\n```bash\nsudo systemctl enable swirl\n```\n\n\n\nUse the following commands to start/stop/restart/status the swirl process\n\n```bash\nsudo systemctl start swirl\nsudo systemctl stop swirl\nsudo systemctl restart swirl\nsudo systemctl status swirl\n```\n\n\n",
+        "summary": "Configuring systemd to start/stop Swirl service on VMs",
+        "reporter": {
+            "fullName": "Jason Temple",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1685975116464,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-86",
+        "updatedBy": {
+            "fullName": "Jason Temple",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Hosting",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "We need to upgrade our VM-based deployments of Swirl for demo/internal testing.  This can be found at https://search.swirl.today.\n\nThese steps need to be carried out on all VMs running Swirl in a backend pool in Azure\n\n\n\npull the latest from swirl-search-internal develop branch\n\n1. ```\n   git clone https://github.com/swirlai/swirl-search-internal.git\n   ```\n2. ```\n   git checkout ## switch to the devlop branch\n   ```\n\n\n\nupdate .env settings to contain the appropriate OIDC and backend tenant configs (secrets and GUIDs for the tenant)\n\n1. ```\n   ./install.sh\n   ```\n2. ```\n   python swirl.py setup ## check for errors in logs/*\n   ```\n\n\n\ngrab docker and install on the VM (skip to the next step if already installed)\n\n1. ```\n   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg\n   ```\n2. ```\n   echo \"deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null\n   ```\n3. ```\n   sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release -y\n   ```\n4. ```\n   sudo apt update\n   ```\n5. ```\n   sudo apt install jq\n   ```\n6. ```\n   sudo apt-get install docker-ce docker-ce-cli containerd.io -y\n   ```\n7. ```\n   sudo usermod -aG docker $USER\n   ```\n\n\n\nreboot the VM if you just installed docker\n\ninstall the UI\n\n1. ```\n   ./install-ui.sh -p\n   ```\n2. ```\n   python swirl.py start core\n   ```\n\n\n\ntail the logs and look for errors - Swirl should start normally and automatically be added back into the backend pool",
+        "summary": "Upgrading to Swirl 2.0.1 in Azure",
+        "reporter": {
+            "fullName": "Jason Temple",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1681399451332,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-54",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Development Process / Git",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "Git Flow is a branching model and workflow for Git repositories that provides a structured and organized approach to managing software development and releases. It was introduced by Vincent Driessen and has since gained widespread adoption. Git Flow introduces specific branch types and rules for merging and deploying code, making it easier to maintain and release different versions of a project.\n\nThe main components of Git Flow are:\n\n1. **Master branch**\\: The main branch, which always contains the production-ready code. New releases are created from this branch.\n2. **Develop branch**\\: A branch for integrating new features and bug fixes. It acts as a staging area before merging the changes into the **`master`** branch.\n3. **Feature branches**\\: These branches are created for developing new features or addressing specific issues. They are typically branched off the **`develop`** branch and are merged back into it once the feature or issue is complete.\n4. **Release branches**\\: These branches are created when preparing for a new release. They are branched off the **`develop`** branch and are used to finalize the release by fixing any last-minute issues, updating documentation, and performing other release-related tasks. Once the release is ready, the release branch is merged into both the **`master`** and **`develop`** branches.\n5. **Hotfix branches**\\: These branches are created to address critical bugs or security issues in the production code. They are branched off the **`master`** branch and are merged back into both the **`master`** and **`develop`** branches once the issue is resolved.\n\nThe Git Flow process can be summarized as follows:\n\n1. New features are developed in dedicated **`feature`** branches, which are branched off the **`develop`** branch.\n2. When a feature is complete, the **`feature`** branch is merged into the **`develop`** branch.\n3. When the team is ready to prepare a release, a **`release`** branch is created from the **`develop`** branch.\n4. Any final changes or fixes are made in the **`release`** branch before it is merged into the **`master`** branch, marking the new production release.\n5. The **`release`** branch is also merged back into the **`develop`** branch to ensure the changes are included in future releases.\n6. If a critical issue is found in the production code, a **`hotfix`** branch is created from the **`master`** branch, and the fix is applied.\n7. Once the fix is complete, the **`hotfix`** branch is merged into both the **`master`** and **`develop`** branches.\n\n\n\n---\n\n\n\n## Patch Releases\n\nOur release procedure for patches is :\n\n* Create a branch off of main\n* Put changes on, test, etc.\n* Merge to main\n* Do release stuff\n* Back port features to develop\n\nPatches/hot fixes are the only case where changes flow main -\\> develop\n\n...and not the other way around",
+        "summary": "Git Flow development process",
+        "reporter": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1681853456872,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-59",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [
+            {
+                "summary": "M365 SearchProviders",
+                "$type": "Article"
+            },
+            {
+                "summary": "Slack SearchProviders",
+                "$type": "Article"
+            },
+            {
+                "summary": "HBS Project + SearchProviders",
+                "$type": "Article"
+            }
+        ],
+        "content": "All the things SP-related",
+        "summary": "SearchProviders",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1683837551204,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-78",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "User Interface / Spyglass",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "## About install-ui.sh\n\nTo install one of the Spyglass UI builds, use the `install-ui.sh` script (found in your `<swirl-home>` directory) with one of its various options. *NOTE:  You must have your local Docker app running for the scrip to work!*\n\n```\n./install-ui.sh --help\n# Usage:\n#   install-ui.sh [<options>]\n#\n# Install the UI into SWIRL static directory. The SWIRL install and setup must be run\n# before this command can be used.\n#\n# Options:\n#   -h, --help       Display this help message\n#   -p, --preview    Use Preview image\n#   -x, --x-fork     Use Experimental fork image\n#   -d, --directory  Directory on local machine\n```\n\nThe script is the same on both the `main` and `develop` branches.\n\n* The `preview` option takes the latest preview build (from [this GitHub Action](https://github.com/swirlai/swirl-search/actions/workflows/docker-image-spg-preview.yml))\n* The `directory` options just copies files out of a directory\n\nThe script also does a minor transformation on the `static/api/config/default` file:\n\n* Peals off one layer of JSON brackets using `jq`\n* Replaces the OATH configuration using environment variables:\n\n```\nexport MSAL_APP_ID=''\nexport MSAL_CB_PORT=8000\nexport MSAL_TENANT_ID=''\nexport MSAL_HOST=localhost\n```\n\n\n\n## Preview UI Build\n\nTo preview a new (unreleased) fix or feature, once [this GitHub Action](https://github.com/swirlai/swirl-search/actions/workflows/docker-image-spg-preview.yml) has completed successfully:\n\n1. Stop Swirl:  `python swirl.py stop`\n\n2. Checkout the `develop` branch from the backend repo:  `git checkout develop`\n\n3. Get updates:  `git pull`\n\n4. Run setup:  `python swirl.py setup`\n\n   * *OPTIONAL:  Remove your current `static/` directory **before** running this command:  `rm -rf static/`\n     Helpful if you're not seeing a particular update with a new build.*\n\n5. Run the following commands, in a Terminal window:\n\n   ```\n   export MSAL_APP_ID=16e91968-9b2c-4e30-b38c-38e2b6ac71c1\n   export MSAL_CB_PORT=8000\n   export MSAL_TENANT_ID=2c1f7fec-50db-4d19-99c2-073454d5e3c2\n   export MSAL_HOST=localhost\n   ```\n\n   * *NOTE:  These values are for Swirl, Inc.'s Azure tenant and should not be shared publicly!*\n\n6. Run the script with `-p` to install the Preview build locally:  `./install-ui.sh -p`\n\n   * *NOTE:  Make sure you have `jq` installed before running this script; for MacOS users: `brew install jq`*\n\n7. Start Swirl:  `python swirl.py start`\n\n8. In a browser, go to:  <http://localhost:8000/spyglass/>\n\n9. Login as `admin` with the default password\n\n## Current Release UI\n\nTo install the latest ***released*** version of things, follow the same procedure except...\n\n* In Step 2, checkout the `main` branch\n* In step 6, run the script with no specific options:  `./install-ui.sh`\n\n## Experimental UI Build\n\nTo install the latest ***experimental*** version of things, follow the same procedure except...\n\n* Make sure the latest changes have built successfully (from [this GitHub Action](https://github.com/swirlai/swirl-search/actions/workflows/docker-image-spg-experimental.yml))\n* In Step 2, checkout the `spyglass-features` branch\n* In step 6, run the script with `-x` to install the Experimental build locally:  `./install-ui.sh -x`\n\n## ProTip: Check Your Env Vars!\n\nRun this command to verify if you have the env vars set corretly, if needed:  `set | grep MSAL`\n\nIf all is well, it returns something like this:\n\n```\n% set | grep MSAL              \nMSAL_APP_ID=16e91968-9b2c-4e30-b38c-38e2b6ac71c1\nMSAL_CB_PORT=8000\nMSAL_HOST=localhost\nMSAL_TENANT_ID=2c1f7fec-50db-4d19-99c2-073454d5e3c2\n```",
+        "summary": "HowTo:  Use install-ui.sh",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1684251832557,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-82",
+        "updatedBy": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Architecture",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "## Background\n\nAfter an admin has used the SWIRL Application tenant template to create registered Metasearch App in their tenant, they need a way to pass some information to SWIRL in order to  complete the setup of their tenant in the Swirl OIDC AZ/AD MT deployment.  In this document we describe the process that occurs to exchange the information and some aspects of Swirl that will need to be refactored to support OIDC and Multi-Tenant.\n\n## Process\n\n1. User clicks 'get it now'\n   1. Swirl Admin receives an email notification (configure in offer? If not, we will have to have a small app that does this, it will be similar to the app that Timofei created from the MS sample)\n      1. We will, at minimum need an email here, otherwise, we cannot continue and whatever info we do have should go into lead generation. (need a queue?)\n   2. User lands on a page that contains\n      1. A template for the Swirl Metasearch application and instructions on how to load it\n      2. Instructions that an email will be sent shortly to complete the signup process (see the rest of the process below)\n   3. Using information from step 1, create a key vault for the customer that they will have complete access to.\n      1. Create the key vault, with three keys:\n         1. Application Id - Used to check authorize app for individual users\n         2. Application secrete - Used to check authorize app for individual users.\n         3. Application tenant ID - fill this in w the tenant ID from step 1 if available but, it's entirely possible that this will be a different tenant than the one the user was in when they clicked.\n      2. **Invite the Customer as a Guest User:** Invite the customer's user account to your Azure AD tenant as a guest user. You can do this in the Azure portal, under \"Azure Active Directory\" -\\> \"Users\" -\\> \"New guest user\".\n      3. **Assign the Guest User to a Role:** After the customer has accepted the invitation, you can assign them a role with the necessary permissions. You can do this in the Azure portal, under \"Subscriptions\" -\\> [your subscription] -\\> \"Access control (IAM)\" -\\> \"Add role assignment\". You could assign the \"Key Vault Contributor\" role to give the customer full management permissions for the Key Vault.\n      4. **Set Access Policy in Key Vault:** In the Key Vault, you still need to add an access policy for the customer's user account. This controls what the customer can do with the keys, secrets, and certificates in the Key Vault (for example, get, list, set, delete).\n      5. Set up notifications for whenever the key vault content is modified (Jason, Erik, Sid, Dave, etc)\n      6. Grant the VM that is hosting the app GET access on the vault, this is so SWIRL can fetch sensitive data directly from the Key Vault.\n   4. Send an email (step 2.2 above) the contents of which are:\n      1. How to access the new vault\n      2. Instructions on how to fill add the values for these keys:\n         1. Application-Id - Client ID of the application, from the application overview\n         2. Application secrete - Used to check authorize app for individual users from the Secretes and certs\n         3. Application tenant ID - Fill this in w the tenant ID from step 1 if available but, it's entirely possible that this will be a different tenant than the one the user was in when they clicked. From the application overview.\n   5. Await update of vault (see 3.5), when vault updates, we do the following:\n      1. Add a DB user into the OIDC AZ/AD MT deployment DB of swirl that IS the tenant Id from the vault, this will enable multi-tenant data isolation.\n\n## Swirl OIDC AZ/AD MT\n\nIn this section we describe components of the Swirl OIDC AZ/AD MT deployment how they will interact w/ the process and artifacts above. Some of what is below is work that has been done or at least POC'd and some that is yet to do :\n\n### Database\n\n1. A new column in all(?) Swirl business objects named tenantId to be used to enforce MT data protection\n2. Row Level Security (RLS) policies on all(?) tables (similar to the one below):\n   `CREATE POLICY <tbl-abbreviation>_rls_policy ON <table-name> FOR ALL TO PUBLIC USING (tenantId=current_user);`\n3. A new table that maps tenant ID to AZ Key Vault name (or identity, whatever it takes to access it)\n   1. NOTE: The sensitive info is contained in the Key Vault, not in our DB\n4. A simple process for creating new DB users from tenants of customers using the offer.\n\n### Django App Server and App\n\n1. Enable OIDC w/ AZ AD\n   1. pip install mozilla-django-oidc and set Enable and set the following environment:\n\n      1. | variable | value | Comment |  |\n         | --- | --- | --- | --- |\n         | OIDC_RP_CLIENT_ID | \\<Redacted\\> | ID of an App used only for user sign in, defined in our tenant. Roles openid, profile, email, user.read |  |\n         | OIDC_RP_CLIENT_SECRET | \\<Redacted\\> | Secrete value for the above |  |\n         | OIDC_OP_AUTHORIZATION_ENDPOINT | <https://login.microsoftonline.com/common/oauth2/v2.0/authorize> | Common tenant login entry point |  |\n         | OIDC_OP_TOKEN_ENDPOINT | <https://login.microsoftonline.com/common/oauth2/v2.0/token>' | Comment tenant token entry point |  |\n         | OIDC_OP_USER_ENDPOINT | <https://graph.microsoft.com/oidc/userinfo>' | AZ OIDC user info entry point |  |\n         | OIDC_RP_SIGN_ALGO | RS256 | Alg for encrypting JWT |  |\n         | OIDC_OP_JWKS_ENDPOINT | <https://login.microsoftonline.com/common/discovery/v2.0/keys> | Where to get public keys for common tenant |  |\n         | LOGIN_REDIRECT_URL | \\<URL of the spyglass search UI\\> | Where a user can begin searching from |  |\n         | LOGOUT_REDIRECT_URL | \\<Good bye URl\\> | Page to go to when logged out |  |\n         | OIDC_USERNAME_ALGO | swirl.backends.generate_username | Code to generate a username, most likely just email address, but could be more complex |  |\n         | OIDC_STORE_ACCESS_TOKEN | True | Store access token in session (Do we need this one too?) |  |\n         | OIDC_STORE_ID_TOKEN | True | Store ID token in header |  |\n\n      NOTE: Investigate token refresh.\n\n   2. Create a special group for users that are created by auto-provisioning\n\n   3. Auto create or update users after login via OIDC (part of the mozilla-django-oidc package, just requires some custom code, mostly done)\n\n   4. URL paths to include OIDC endpoints\n\n### DB Connections\n\n1. Need to write/install Django Middleware that will manage connections per tenant id and close them when completed. (Exception handling!)\n\n### Connector Authorization\n\nDo we need to maintain both paths? Current we have MS authorization for the connectors in both the front and back-end code. We make want to retire one or the other and consolidate. If not, then both should be modified.\n\nCurrently we acquire the information we need to authorize the app from the environment, this will change. Now we will do the following:\n\n1. Look up the name of the Key Vault using the tenant ID (which is stored in the session with the ID token)\n\n2. GET the authorization information from the Key Vault\n\n3. Initiate the OAUTH2 protocol using that information.\n\n   NOTE: we can make this behavior configurable, either w/ new options or the absence of the env variables.\n\n### Authorization Call Back view  (not the same as OIDC)\n\nNo change actually, just does what it does today after which is exchange the code for the token and then save it in the user session.\n\n### Single click authentication page/box\n\nWe need a page that users can land on to 'one click' into the service, it would call an end point defined Django to OIDC auth the user.\n\n### Author notes\n\nUsers are single signed on through POST [api/swirl/oidc/authenticate/](http://localhost:8000/api/swirl/oidc/authenticate/) This endpoint is implemented by Django package `mozilla-django-oidc` Users are authenticated using an app in our tenant with low privilege requirements. At login time, we have access to the Tenant ID (tid) through the ID token, stored in the session as : `oidc_id_token`\n\n\n\nNOTES from meeting :\n\n* We need to create Search providers in each tenant when they onboard.\n* This will ONLY live in the internal repo, this will have some cost in overhead background work, but I think we can live w/ it for the next 6mos - year...\n* \n\n\n\n### ",
+        "summary": "Swirl OIDC AZ/AD MT technical design",
+        "reporter": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1681501257263,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-55",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Release and Testing",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "Might be some value in collecting a generic set of step / tasks for geting a new version out the door plus the post-release testing we should consider.   I'll start this and we'll see...\n\n# Pre-Release\n\n## QA Testing\n\n* All testing must be completed and all relevant Issues moved to Done in YT.\n* Team should understand and agree to ship with any known issues in the release branch\n  * Document these in the \"Known Issues\" section of the Release Note (in most cases)\n\n## Issues List\n\n* YT query that returns every Issue slated for the release ... or a report from YT to the same effect\n* Note also any GitHub Issues that have been addressed in the release\n\n# Release Process\n\n## Git Branches\n\n<span style=\"color:red;\"> </span>@dave.nicodemus<span style=\"color:red;\"> , please update/correct this part ... maybe for how it will be post-2.0?</span>\n\n* Merge all feature branches into `develop` for testing and final approval\n* Create a `release` branch off develop; make any last-minute changes here\n* Merge the `release` branch into `main` (this \"releases\" the new code into production)\n* Merge the `release` branch back into `develop` to make sure any last-minute changes are part of future work\n\n## Non-Source Artifacts\n\n* Update `db.sqllite3.dist` : lastest correct list of SearchProviders; no Search objects; no Result objects\n* Update `preloaded.json` and individual JSON files in `SearchProviders/` directory, as needed\n* Update `env.dist`\\: are there any new environment variables?\n  * Check `swirl-server/settings.py`\\:  updates to env.dist likely result in updates here as well\n* Update install scripts (for Swirl and Spyglass), as needed\n\n## GitHub\n\n* Create a Release in our repo:  <https://github.com/swirlai/swirl-search/releases> -\\> “Draft a new release” -\\> “Choose a tag”\n* Generate a Release Note for the new release\n  * ProTip:  copy/paste a recent one, especially for point releases, as much of the text remains the same\n  * Update release number, blurb at the top, New Features, Resolved Issues, Known Issues, and Upgrading sections appropriately\n  * Add a Security Updates section to the Release Note when applicable; list the CVEs addressed (could even be links)\n\n## README.md\n\n* Check code blocks and screen grabs (JSON and UI) for version indicators and update as needed\n* For 2.0, replace the \"Download SWIRL\" section (which requires updating each release) with a generic link to \"the latest Release\" (or whatever we say)\n* Merging the updated README.md should trigger a new Docker build which will then update the README on our DockerHub page\n\n## Wiki\n\n* Check each Guide for code blocks and screen grabs (JSON and UI) with version indicators and update, as needed\n* Add documentation for new features, as needed\n* Update documentation for any functional changes, as needed\n\n# Manual Release Testing\n\nIdeally, we'd test a bit immediately pre-release (on the `develop` branch) and then again post-release (on `main`).\n\n## Local and Docker\n\nTesting should be repeated separately in a local Swirl and in our Docker.\n\n*Note:  Swirl should not be run locally and in Docker simultaneously!  To do this successfully, you have to configure different ports in one installation which is non-trivial.*\n\n### Installation and Setup\n\nFollow the Quick Start guide (wiki) steps for installing and setting up Swirl (local + Docker, separately)\n\n### Swirl Homepage (localhost:8000/swirl)\n\n*Not the new Spyglass-based UI!*\n\n* Full page should load correctly\n* Latest, correct logo displayed above the list of links\n* Title tag correct and updated (check the hover on the tab):  `Swirl Metasearch Engine <version> - Home`\n* Listed links all go to the correct places (at least hover over them to check the hrefs)\n* Correct and updated version number at the bottom of the page\n* Verion number links the front page of the repo\n* License and Notice links work correctly\n\n### Clean Database (db.sqlite3)\n\n* SearchProviders page\n  * Validate the list of pre-configured SPs for the release\n  * Check that the 3 Google PSEs are active, default, and have the correct Key\n  * First SP should have an ID of \"1\"\n* Search page should have 0 Search objects (first created will be an ID of \"1\")\n* Results page should have 0 Search objects (first created will an ID of \"1\")\n\n### Basic Search Functionality\n\n* Using the default PSE SearchProviders, validate that basic searching works:\n  * Single-term query\n  * Multi-term query\n  * NOT query\n  * Minus-sign query\n  * Query with the `qs=` parameter as well\n* For all queries:\n  * Ensure Swirl score is set\n  * Ensure hit highlighting is present and correct (minus known bugs)\n  * Result URLs work\n  * Explain vector (including Hits) is populated\n* Validate that both Search and Results objects are updating with each query\n* Check that Results page links work:\n  * Rerun\n  * Next / Previous page\n  * Rescore (even if you don't make a relevancy adjustment, this link should run the rescore)\n* Test other, non-default Result Mixers (see here:  <https://github.com/swirlai/swirl-search/wiki/2.-User-Guide#mixers>)\n* Logs: should be quiet overall\n  * No ERROR level messages\n  * No instances of a user's query in a log messages\n\n### SearchProviders\n\n* Enable additional another SearchProvider; set to Active (active:true); validate search functionality\n  * Search only the newly activated SP\n  * SearchProvider Tag queries (single and multi-term) that include the newly activated SP\n  * SearchProvider Tag NOT queries (single and multi-term) that include the newly activated SP\n  * SearchProvider Tags capitalized and lower-case (both should work)\n* Enable another SearchProvider; set to Active (active:true) and Default (default:true); validate search functionlity\n  * Search only the newly activated SP\n  * Search default SPs (the newly activated, default SP should be included automatically)\n  * SearchProvider Tag query that does *not* include the newly activated, default SP\n* Enable another SearchProvider that requires a key or token (e.g. ChatGPT, Atlassian, YouTrack, Miro, etc.)\n  * Validate that searches to this provider return results as expected (meaning the credentials are handled correctly)\n  * SearchProvider Tag queries that both include and exclude this SP\n\n### Subscribe\n\n* Enable Subscribe on a recent Search object (subscribe:true) and validate that the update process runs correctly a few times\n* ProTips:\n  * Adjust the `cron` to run every few minutes for testing purposes\n  * Remember to reset subscribe to false (and adjust the `crontab` back, if you want) after testing\n\n### Authenticator Functionality\n\n<span style=\"color:red;\">Auth functionality will change!  Work with Dave and Jason on testing the new hotness!</span>\n\n* *Configure the 3 Swirl environment variables needed to support Microsoft OAuth2; restart Swirl\n  `MICROSOFT_CLIENT_ID`\n  `MICROSOFT_CLIENT_SECRET`\n  `MICROSOFT_REDIRECT_URI='`<http://localhost:8000/swirl/microsoft-callback>`'`*\n* *Sign-in to Microsoft (same tenant as the above env vars)*\n  * *Search against one or more of the M365 SearchProviders; you should receive an error that you are not authenticated*\n  * *Authenticate to Microsoft from the Swirl homepage*\n  * *Repeat your search and you should now get results*\n* Search across multiple M365 SPs at once (e.g. using the `Microsoft` Tag)\n* Search across M365 and non-M365 sources at once (e.g. a default search)\n* Validate that the M365 results URLs work as expected\n* <span style=\"color:red;\">Check some things around auto-provisioned user privs too (tbd)</span>\n\n## Release Note\n\nValidate the content of the Release Note itself:\n\n* New features\n* Updated functionality\n* Bug / Issues resolved\n\n## User Interface\n\n* TBD, post-2.0 Release; for manual UI++ testing of the upcoming release, see here:  DS-A-46",
+        "summary": "HowTo:  Release Swirl [WIP]",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1684511079348,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-83",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Quergy / Query Transformations",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "### Behavior and configuration\n\nQuery transformation feature is a way to apply a set of transformation rules to a query. The rules can be applied for all sources (pre-query) or to individual sources (query). Rules for the transformations are expressed in terms of CSVs. There are three transformation types:\n\n1. Replace - Replace one string in the query w/ another or with nothing, essentially remove the term.\n\n2. Synonym - Replace a term w/ an OR of the original term and the synonyms\n\n3. Synonym Bag - Replace a term w/ an OR of all synonyms\n\nEach of the types CSVs have a specific format:\n\n1. Replace/Rewrite\n\n   Column 1 - A semi-colon separated list of patterns to replace. Limited use of wild cards is supported, non-leading star character. Note that for the use case of removing a term DO NOT add a comma after the first column and that there can be only 1 term for this usage.\n   Column 2 - String to replace the patterns with.\n\n   Config Example:\n\n   ```\n   # column1, colum2\n   mobiles; ombile; mo bile, mobile\n   computers, computer\n   cheap.* smartphones, cheap smartphone\n   on\n   ```\n\n   Result examples:\n\n   | query | transform |\n   | --- | --- |\n   | mobiles | mobile |\n   | ombile | mobile |\n   | mo bile | mobile |\n   | on computing | computing |\n   | cheaper smartphones | cheap smartphone |\n   | computers go figure | computer go figure |\n\n2. Synonym\n\n   Column 1 - Term\n   Column 2 - Synonym\n\n   Config Example:\n\n   ```\n   # column1, column2\n   notebook, laptop\n   laptop, personal computer\n   pc, personal computer\n   personal computer, pc\n   car, ride\n   \n   ```\n\n   Result examples:\n\n   | query | transform |\n   | --- | --- |\n   | notebook | (notebook OR laptop) |\n   | pc | (pc OR personal computer) |\n   | personal computer | (personal computer OR pc) |\n   | I love my notebook | I love my (notebook OR laptop) |\n   | This pc, it is better than a notebook | This (pc OR personal computer) , it is better than a (notebook OR laptop) |\n   | My favorite song is \"You got a fast car\" | My favorite song is \" You got a fast (car OR ride) \" |\n\n3. Synonym Bag\n\n   Column 1 - Term\n   Column 2..N - List of Synonyms\n\n   Config Example:\n\n   ```\n   # column1..columnN\n   notebook, personal computer, laptop, pc\n   car,automobile, ride\n   \n   ```\n\n   Result examples:\n\n   | query | transformation |\n   | --- | --- |\n   | car | (car OR automobile OR ride) |\n   | automobile | (automobile OR car OR ride) |\n   | ride | (ride OR car OR automobile) |\n   | pimp my ride | pimp my (ride OR car OR automobile) |\n   | automobile, yours is fast | (automobile OR car OR ride) , yours is fast |\n   | I love the movie The Notebook | I love the movie The Notebook |\n   | My new notebook is slow | My new (notebook OR personal computer OR laptop OR pc) is slow |\n\n### \n\nCreation and use\n\nGo to the admin page, login as admin then Click on 'Upload Query Transform CSV' :\n![](image.png){width=70%}\n\n\n\nChoose a name and type:\n![](image1.png){width=70%}\n\n\n\nChoose the file\n\n![](image2.png){width=70%}\n\n\n\nClick Upload:\n\n![](image3.png){width=70%}\n\n\n\nAfter this, you can now use the TestQueryTransform in pre-query or query processing by referencing it by `<name>.<type>`  So, for the one created above, the reference would look like : `TestQueryTransform.synonym`\n\n\n\n#### Pre-Query Processing\n\nAdding a Pre-query processor can be done in one of two was, either the query parameter `pre_query_processor` can be used when running the search through the REST API, or the Swirl Search Object's  `pre_query_processors` field can be updated to include the reference to your query transform.  See the User Guide for details on creating a search object with the API: <https://github.com/swirlai/swirl-search/wiki/2.-User-Guide#creating-a-search-object-with-the-api>\n\nTo use the query parameter on the search request, we would construct the following URL:\n\n`/api/swirl/search/search?q=notebook&pre_query_processor=TestQueryTransform.synonym`\n\n#### Query Processing\n\nFor Query processing we can update the Search Provider's `query_processors` field to include the reference, here is an example of that:\n\n```\n{\n    \"name\": \"TEST Enterprise Search (web/Google PSE) with qxr query_processor\",\n    \"active\": \"true\",\n    \"default\": \"true\",\n    \"connector\": \"RequestsGet\",\n    \"url\": \"https://www.googleapis.com/customsearch/v1\",\n    \"query_template\": \"{url}\",\n    \"query_processors\": [\n      \"AdaptiveQueryProcessor\",\n      \"TestQueryTransform.synonym\"\n    ],\n    \"query_mappings\": \"cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-\",\n    \"response_mappings\": \"FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items\",\n    \"result_processor\": \"\",\n    \"result_processors\": [\n      \"MappingResultProcessor\"\n    ],\n    \"result_mappings\": \"url=link,body=htmlSnippet,cacheId,NO_PAYLOAD\",\n    \"results_per_query\": 10,\n    \"credentials\": \"key=\",\n    \"tags\": [\n      \"News\",\n      \"EnterpriseSearch\"\n    ]\n  }\n```",
+        "summary": "[WIP] User Doc",
+        "reporter": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "attachments": [
+            {
+                "name": "image.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image1.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image2.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image3.png",
+                "$type": "ArticleAttachment"
+            }
+        ],
+        "$type": "Article"
+    },
+    {
+        "created": 1681853908202,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-63",
+        "updatedBy": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [
+            {
+                "summary": "Quergy experiment 02/28/2023",
+                "$type": "Article"
+            },
+            {
+                "summary": "How I set up and config Opensearch with ENRON data and Quergy Synonyms",
+                "$type": "Article"
+            },
+            {
+                "summary": "Query transformation management proposal",
+                "$type": "Article"
+            },
+            {
+                "summary": "[WIP] User Doc",
+                "$type": "Article"
+            }
+        ],
+        "content": null,
+        "summary": "Quergy / Query Transformations",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1683912300226,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-79",
+        "updatedBy": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Architecture",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "Decision (05/12/2023) : \n\n* Use PostgreSQL\n* Hosted in Azure\n\n\n\n### Where does the store fit in the architecture?\n\n![](Swirl SaaS offer architecture.drawio.png)\n\n\n\nUse cases\n\n1. New offer accepted insert a record with the following:\n\n    1. Start date\n    2. Term free duration in days\n    3. Term duration in days\n    4. Term agreement proof\n    5. Email Address\n    6. Tenant ID\n    7. First Name\n    8. Last Name\n    9. Job Title (optional)\n   10. Phone Number (optional?)\n   11. Subscription Status\n       1. Initial - Any new order that is not complete can be in this state, this allows for creation of orders that later fail some verification step, for example, the admin did NOT accept the terms.\n       2. Ready - Initial state, ready to be fulfilled\n       3. In Progress - Being fulfilled,  VM, Networking, etc....\n       4. Review - Everything is done, but it needs manual review\n       5. Verified - Review checks out, ready for customer\n       6. Notified - Email sent to customer\n       7. Fulfilled - Customer has logged in\n       8. Error - Offer is in an error state of some kind, something failed\n       9. Error Message - Goes along w/ Error\n\n2. Back office / Billing system import\n\n   This needs some fleshing out, but periodically new offers will be loaded into a back office billing system. From within this system, we can do more complex operations with the order that are no so directly related to the fulfillment. Examples : extend the free trial, cancel, suspend, bill, etc etc..\n\n3. Hub Spot Sync\n   This also needs some fleshing out, but the idea is similar to the back office, but hubspot servers a different purpose, more marketing and lead generation, etc..",
+        "summary": "SaaS offer storage",
+        "reporter": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "attachments": [
+            {
+                "name": "Swirl SaaS offer architecture.drawio.png",
+                "$type": "ArticleAttachment"
+            }
+        ],
+        "$type": "Article"
+    },
+    {
+        "created": 1681853186931,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-58",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [
+            {
+                "summary": "How to deploy new Spyglass UI build",
+                "$type": "Article"
+            },
+            {
+                "summary": "On Different UI Frameworks",
+                "$type": "Article"
+            },
+            {
+                "summary": "Raw notes from UI discussion 03/24/203",
+                "$type": "Article"
+            },
+            {
+                "summary": "Dev work flow for Spyglass Swirl",
+                "$type": "Article"
+            },
+            {
+                "summary": "Spyglass Fixes (April, 2023)",
+                "$type": "Article"
+            },
+            {
+                "summary": "HowTo:  Use install-ui.sh",
+                "$type": "Article"
+            }
+        ],
+        "content": "Articles on Spyglass or other UI-related topics",
+        "summary": "User Interface / Spyglass",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1683827615653,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-77",
+        "updatedBy": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Architecture",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "* Rename CLIENT_ID and  CLIENT_SECRET to :\n  * SWIRL_OFFER_CLIENT_ID  - Client ID of the offer app, this is a low privileges app\n  * SWIRL_OFFER_SECRET      - Secrete for the App\n* Create two new configuration params:\n  * SWIRL_METASEARCH_CLIENT_ID  - Client ID of the Swirl Search App, this has elevated privileges\n  * SWIRL_METASEARCH_SECRET      - Secret for the Swirl Search App\n* The Client offer App will be defined as follows:\n\n  ![](image.png){width=70%}\n\n  ![](image1.png){width=70%}\n\n  ![](image2.png){width=70%}\n\n  NOTE: Port can be whatever works for local testing\n  ![](image4.png){width=70%}\n\n  ![](image5.png){width=70%}\n* This is the app that will be used for the initial login flow and to allow the user to update their personal information. The should should extract\n  * Family Name\n  * Given Name\n  * Email Address\n* In a form, allow them to confirm, update and/or add the following:\n  * Email Address (From claim, DISPLAY ONLY, NOT UPDATABLE)\n  * Tenant ID (From claim, DISPLAY ONLY, NOT UPDATABLE)\n  * Family name (From claim, update-able)\n  * Given Name (From claim, update-able)\n  * Job Title      (new, user can add)\n  * Phone Number (new, user can add)\n* In the same form we will have a link: 'get it now for my organization'\n* When the user clicks on that link we do the following\n  * Store the information above in a file for now.\n  * `GET `<https://graph.microsoft.com/v1.0/oauth2PermissionGrants>\n\n    This will return a list of OAUTH2 permission grants, and you can look for a grant with the \"consentType\" property set to \"AllPrincipals\" store these in memory only\n  * Initiate a second OAUTH2 protocol with  the app in : SWIRL_METASEARCH_CLIENT_ID and SWIRL_METASEARCH_SECRET The app should have the following scopes: `\"User.Read\", \"Mail.Read\", \"Files.Read.All\", \"Calendars.Read\", \"Sites.Read.All\", \"Chat.Read\", \"Directory.Read.All\"` \n  * `GET `<https://graph.microsoft.com/v1.0/oauth2PermissionGrants>\n\n    This will return a list of OAUTH2 permission grants, and you can look for a grant with the \"consentType\" property set to \"AllPrincipals\" look for a new 'AllPrincipals' authorization with the scopes listed above (it may contain more, but should at least contain those)\n  * If the new AllPrinciples listing that qualifies is found, redirect to a page that reads:\n    \"You have successfully started the Swirl Free Trial, an email will be sent to 'Email Addess'\n  * Otherwise,\n\n    \"You have not started the trial, please try again and contact support if this perists\"\n\n    \n",
+        "summary": "Phase 2 AZ Marketplace back-end spec",
+        "reporter": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "attachments": [
+            {
+                "name": "image.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image1.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image2.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image3.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image4.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image5.png",
+                "$type": "ArticleAttachment"
+            }
+        ],
+        "$type": "Article"
+    },
+    {
+        "created": 1683819060607,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-76",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [],
+        "content": "Collection of wisdom for new devs around getting up and running with Swirl, getting a dev environment setup locally, conventions we try to follow while working on the product, etc.\n\n## Relevant Links\n\n* Main repo (public):  <https://github.com/swirlai/swirl-search>\n* Internal-only repo (private):  <https://github.com/swirlai/swirl-internal>\n* Spyglass UI repo (sort-of public?):  <https://bitbucket.org/kmwllc/spyglass/>\n* Product documentation wiki (public):  <https://github.com/swirlai/swirl-search/wiki>\n* YouTrack (ticket tracking and KB articles, internal-only):  <https://swirl.youtrack.cloud/>\n\n## Running Swirl in Docker\n\nIf you've never run Swirl before, our public repo's README explains how to get it going with Docker in only 2 commands: <https://github.com/swirlai/swirl-search#try-swirl-now>\n\n## Running Swirl Locally\n\nOur Quick Start Guide has instructions for getting Swirl going locally on MacOS, Linux, and Windows:  <https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start>\n\n<span style=\"color:darkorange;\"></span>*Note that Windows support is only provided for development and not production installs.*\n\n## Development Environment Considerations\n\n<span style=\"color:darkorange;\">...TBD </span>@dave.nicodemus<span style=\"color:darkorange;\"> ?</span>\n\n## Development Conventions\n\n1. **Please reference ticket numbers in your branch name, commit comment, or PR.**\n   Our ticketing system, YouTrack, is integrated with our public `swirl-search` repo and our internal-only `swirl-internal` repo, both hosted at GitHub.  This allows us to link commits and/or PRs in GitHub to specific YouTrack tickets, which is very helpful for tracking development (of both features and fixes).\n\n   * Example PR:  `DS-###: update code for Foo auth`\n   * Example branch:  `DS-###-fix-for-foo`\n\n2. We are moving to a GitFlow-base development process, please follow these conventions for branching, etc.:  DS-A-54\n\n   @dave.nicodemus<span style=\"color:darkorange;\"> , is this doc still releant and if so, should it also be linked here?</span>\n   DS-A-4\n\n3. <span style=\"color:darkorange;\">...more tbd by </span>@dave.nicodemus<span style=\"color:darkorange;\"> probably?</span>",
+        "summary": "Developer On-Boarding Guide",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1683663629659,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-74",
+        "updatedBy": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Architecture",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "**Assumptions**\n\n1. We assume that the there exists a Django package that allows the addition of tenants through a simple mechanism and that this can be used at the time that a user is authenticated through OIDC.\n2. The user (admin or not) has already been through ODIC authentication as they had to after they clicked on the get it now listing from the application search page or similar.\n\n**Landing Page Semantics**\n\n1. For an admin user\n\n   1. We execute OAUTH2 protocol for the ***Swirl Meta search application***. If they consent on behalf of the organization then we add their Tenant ID to the tenants of the ***Multi-tenant Swirl instance***. In order to determine if the admin has granted consent to the organization we will use :\n      `GET `[`https://graph.windows.net/{tenant_id}/oauth2PermissionGrants?api-version=1.6`](https://graph.windows.net/%7Btenant_id%7D/oauth2PermissionGrants?api-version=1.6)\n\n      This will return a list of OAuth2 permission grants, and you can look for a grant with the \"consentType\" property set to \"AllPrincipals\" for the Swirl metasearch application. NOTE: We need **Directory.Read.All** to make this call, so we should add this to the permission of the swirl_metasearch_offer_app which is acting as the gateway app.\n\n   2. If we find that the grant for all principles has occurred we will insert a new tenant record into the Django DB and auto provision an ~~admin~~ privileged? user for the admin that added it.\n\n   NOTE: for a non-admin this will all just fail and no harm done.\n\n2. For a non-admin user, we attempt to log them into the multi-tenant instance of Swirl.  The link they are sent to must do the following:\n\n   1. OIDC Authenticate the user to get user information back regarding tenant/organization etc. If they're already authenticated they won't have to re-type creds, this is controlled by the OAUTH2 flow that is delegated to the ID provider (AZ AD in this case)\n   2. If this fails, then we can fall back to the authentication method, this will handle people w/ accounts that were not authenticated by AZ AD. If both fail, then authentication fails. NOTE: We may need a concept of a 'default or internal tenant' for users that are not authenticated in the AZ AD.\n   3. Otherwise, if the AZ authentication succeeded, we use the tenant information we got back in the token as the tenant ID for use in all data access operations in the back-end. We do the following:\n      1. Check that the tenant has been created and is valid/active\n      2. We use the email and tenant to auto-provision a user in Django if one does not already exist\n      3. We add the user to the default auto-provision group",
+        "summary": "AZ Marketplace N click proposal",
+        "reporter": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1683662236907,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-73",
+        "updatedBy": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Architecture",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "To paraphrase the Microsoft documentation, consider this the as the \"lobby\" for the Swirl software as a service (SaaS) offer.\n\nThe landing actually occurs in a couple of stages:\n\n1. Right after the user has gone through an authentication and identifying process, they are presented w/ the information that was programmatically extracts and given an opportunity to change it, here is an example from an Adobe application:\n   ![](image.png){width=70%}\n\n   Click \"Edit Details\"\n   ![](image1.png){width=70%}\n\n2. After the 'Get it now' or similar button is clicked, the landing pager proper is displayed, again here is an example from Adobe, but ours will be significantly different in terms of what it does. \n   ![](image2.png){width=70%}\n\n3. Ok, how is it different? For us the two cases that need to be presented to the user are :\n\n   1. If you are an admin, click here to Consent for user in your organization to use this App. When they click on it, they will be taken to a Microsoft flow where they will be presented w/ a list of permissions to consent to.\n      1. Upon returning from this, they will be presented with information on how to on board user of their organization to the product. The details of this have yet to to be worked out.\n      2. In the interim we will have stored a record of their signup and stored their tenant GUID in our records and use as their tenant ID going forward. \n   2. If you are not an admin and your organization is already using swirl click here.\n      1. This will take them to the Swirl empty search page where they can begin using the service immediately.\n      2. The error cases are that we don't find their organization in our records, in which case we provide an error for them to contact their admin if they think this is an error of to request their admin consent to usage of Swirl.\n\n      \n",
+        "summary": "AZ Marketplace landing page description",
+        "reporter": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "attachments": [
+            {
+                "name": "image.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image1.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image2.png",
+                "$type": "ArticleAttachment"
+            }
+        ],
+        "$type": "Article"
+    },
+    {
+        "created": 1681834499658,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-57",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "SearchProviders",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "Place to capture questions, fixes, decisions, etc. around fleshing out the five M365 SearchProviders we plan to ship with Release 2.0.\n\n# General\n\n## SearchProvider `Name`\n\nSet the `name` field consistently for each SP:  M365 + name of the service in MS (*except for Teams*)\n\n* `M365 Calendar`\n* `M365 Email`\n* `M365 OneDrive`\n* `M365 SharePoint`\n* `Microsoft Teams`\n\n## SearchProvider `Tags`\n\nSet two `tags` for each SP:\n\n1. `Microsoft`\n2. Name of the service in MS:\n   * `Calendar`\n   * `Email`\n   * `OneDrive`\n   * `SharePoint`\n   * `Teams`\n\n## Default Settings\n\n* For SharePoint:  `active = false` and `default = true`\n* For the other four SPs:  `active = true` and `default = true`\n\n## Hardcoded Mappings\n\n* <span style=\"color:red;\">DS-340</span> (DS - 340)\n\n## Questions\n\n* <span style=\"color:darkorange;\">Swirl scores / relevancy for these SPs ... what to do?</span>\n  * <span style=\"color:darkorange;\"></span>DS-327 (DS - 327)\n  * DS-341 (DS - 341)\n\n# Calendar\n\n## Open Questions\n\n* <span style=\"color:darkorange;\">For recurring meetings, the response's </span><span style=\"color:darkorange;\">`summary`</span><span style=\"color:darkorange;\"> field only seems to be populated for the </span><span style=\"color:darkorange;\">`recurringmaster`</span><span style=\"color:darkorange;\"> and not the </span><span style=\"color:darkorange;\">`occurrence`</span><span style=\"color:darkorange;\"> types; we should be mindful of this when working a dedupe solution!</span>\n* <span style=\"color:darkorange;\"></span><span style=\"color:darkorange;\">Also, for matches in the event's </span><span style=\"color:darkorange;\">`resource.subject`</span><span style=\"color:darkorange;\"> only, it seems like the </span><span style=\"color:darkorange;\">`summary`</span><span style=\"color:darkorange;\"> field is not populated, even if there are other notes in the event.  This means we'll have a blank Swirl </span><span style=\"color:darkorange;\">`body`</span><span style=\"color:darkorange;\"> in these cases.</span>\n\n## Decsions / Answers\n\n* Can we concatenate a valid URL for an event?  <span style=\"color:darkgreen;\">YES!</span>\n  * Required new URL-encode feature by Dave Nic ([DS-317: Implement optional URL-encoding for portions of Swirl's URL field](issue/DS-317/Implement-optional-URL-encoding-for-portions-of-Swirls-URL-field))\n  * <span style=\"color:darkgreen;\">We will employ this in the Calendar </span><span style=\"color:darkgreen;\">`url`</span><span style=\"color:darkgreen;\"> field until we have compelling information to the contrary</span>\n* Can we return the event Organizer in the response to map to Swirl's `author` field?  <span style=\"color:red;\">No, separate API call</span>\n* Can we return event attachment filenames to display? --\\> <span style=\"color:red;\">No, separate API call</span>\n* Recurring events are problematic, what to do?  <span style=\"color:red;\">DEFERRED, post-2.0 release</span>\n  * They dominate the results list (without adding additional value; they feel like dupes)\n  * The hit count displayed in Swirl's info block reads oddly when recurring events are present.  How can we 'flatten' these (or only return the `recurringmaster` type for their matches)?  Example resutls count from Swirl:\n    `Retrieved 10 of 4 results from: M365 Calendar`\n  * Relevant notes from Slack about this:\n    * Dave Nic: \"filtering in the query for re-occuring meeting, the field ‘type’ doesn’t appear to be searchable in any of the various APIs for searching calendar events\"\n    * <span style=\"color:red;\">Dave Nic:  \"My suggestion is that we push this for now and try to resolve through ‘in line clustering’ or similar on the front end.\"</span>\n    * <span style=\"color:red;\">Sid agreed that we could (and should) attack this post-release 2.0.</span>\n    * <span style=\"color:red;\">[DS-319: Filter recurring meeting results (M365 Calendar)](issue/DS-319/Filter-recurring-meeting-results-M365-Calendar) (DS - 319) --\\> Potential future improvement (not for 2.0 though)</span>\n\n## Payload\n\n* `resource.sensitivity`\\: priority level set for the event by the Organizer (e.g. `normal`, `critical`, etc.)\n* `resource.type`\\: single or recurring event (`occurrence` or `recurringmaster` )\n* `resource.hasAttachments`\\: does the event contain an attachment (`yes` or `no`)\n\n## Notes\n\n* MS Graph does return hits on both Calendar attachment filename matches and attachment content matches (even though we can't really represent these hits in a Swirl result).\n* Known limitation, from the [documentation](http://You%20can%20access%20only%20the%20signed-in%20user%E2%80%99s%20own%20mailbox.%20Searching%20delegated%20mailboxes%20is%20not%20supported.)\\:\n  \"You can access only the signed-in user’s own mailbox. Searching delegated mailboxes is not supported.\"\n\n# Email\n\n## Open Questions\n\n* None yet\n\n## Decsions / Answers\n\n* Can we return email attachment filenames to display? --\\> <span style=\"color:red;\">No, separate API call</span>\n\n## Payload\n\n* `resource.isDraft` : is the message still in the Sender's \"Drafts\" folder (`yes` or `no`)\n* `resource.importance` : priority level set for the event by the Sender (e.g. `normal`, `critical`, etc.)\n* `resource.hasAttachments` : does the message contain an attachment (`yes` or `no`)\n* `resource.ccRecipients[*].emailAddress[*].name` : Display names (not addresses) of anyone CC'd on the message\n* `resource.replyTo[*].emailAddress[*].name` : Display names (not addresses) of anyone all Recipients of the message\n\n## Notes\n\n* MS Graph does return hits on both Email attachment filename matches and attachment content matches (even though we can't really represent these hits in a Swirl result).\n* Known limitation, from the [documentation](http://You%20can%20access%20only%20the%20signed-in%20user%E2%80%99s%20own%20mailbox.%20Searching%20delegated%20mailboxes%20is%20not%20supported.)\\:\n  \"You can access only the signed-in user’s own mailbox. Searching delegated mailboxes is not supported.\"\n\n# OneDrive\n\n## Open Questions\n\n* <span style=\"color:red;\"></span>\n\n## Decsions / Answers\n\n* Some URLs returned in these reponses will have space in the file path, like this:\n  `\"url\": \"`<https://v8lyv.sharepoint.com/sites/work/Shared>` Documents/Contoso-Financial-Calendar-Q1_68340_97779.pptx\",`\n  These will not appear to link properly in Swirl's JSON results; they work fine in proper HTML hrefs.\n  <span style=\"color:darkgreen;\">We will take these mappings for Swir'ls `url` field until we have compelling information to the contrary</span>\n* <span style=\"color:darkgreen;\">Made Swirl's `body` field the filename + summary, per our discussion.</span>\n\n## Payload\n\n* `resource.lastModifiedBy.user.displayName`\\:  Display name of the user to last modify the file\n* `resource.lastModifiedDateTime`\\:  Last modified timestamp\n\n## Notes\n\n* MS Graph does return hits on both filename and file content matches.  If MS can generate a \"summary\" for the filetype, Swirl will display the hit highlighting, etc. correctly.  If not, we can't really represent the hits well in a Swirl result.\n* There isn't a great deal of additional Payload information available for these matches.\n\n# SharePoint\n\n## Open Questions\n\n* <span style=\"color:darkorange;\">There isn't anything obvious in the response to map to Swirl's </span><span style=\"color:darkorange;\">`author`</span><span style=\"color:darkorange;\"> field for a </span><span style=\"color:darkorange;\">`site`</span><span style=\"color:darkorange;\"> search.  Is this a problem?</span>\n\n## Decsions / Answers\n\n* tbd\n\n## Payload\n\n* `resource.lastModifiedDateTime`\\:  Last modified timestamp\n\n## Notes\n\n* There isn't a great deal of additional Payload information available for these matches.\n\n# Teams\n\n## Open Questions\n\n* \n\n## Decsions / Answers\n\n* We are mapping the response `summary` field to both Swirl's `title` and `body` fields; it's likely a better solution for this would need to happen in the FE/UI code post-2.0.\n\n## Payload\n\n* `resource.importance`\\: priority level set for the message by the poster (e.g. `normal`, `critical`, etc.)\n* `resource.channelIdentity.channelId`\\: Unique ID of the channel where the post was made; could conceivably be used to construct a valid link to the channel.\n\n## Notes\n\n* The search API for Teams doesn't seem to query the Files attached in a channel, only the Posts (messages).  Given the API description (\"search Teams message\"), this is probably as designed.  It's likely those files would be searchable in either OneDrive or SharePoint searching though.\n* Known limitations, from the [documentation](https://learn.microsoft.com/en-us/graph/api/resources/chatmessage)\\:\n  * You can access only the signed-in user's Teams message or the message the user is included in.\n  * The search Teams API does not return all properties defined in [chatMessage](https://learn.microsoft.com/en-us/graph/api/resources/chatmessage). You can use the Teams API to retrieve more details about any single message.",
+        "summary": "M365 SearchProviders",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1683482429595,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-70",
+        "updatedBy": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Architecture",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "## High level steps\n\n![](image1.png){width=70%}\n\n![](image2.png){width=70%}\n\n* Microsoft partner account created (<https://partner.microsoft.com>.) and enroll in the Microsoft commercial marketplace program\n  Devops + Business + Legal\n\n![](image3.png){width=70%}\n\n* Achieve technical requirements and policies set down my MS to be made available in the Marketplace\n\n  We believe we have an answer to the Azure Active Directory requirement. NOTE the link above is out of data, see resources section of this document to create a punch list of technical milestones to achieve this (Development)\n  * Create a Dev/Test versions BEFORE production - <https://learn.microsoft.com/en-us/partner-center/marketplace/plan-saas-dev-test-offer>\n\n![](image4.png){width=70%}\n\n(Business + Development)\n\n<https://learn.microsoft.com/en-us/partner-center/marketplace/marketplace-criteria-content-validation>\n\n![](image5.png){width=70%}\n\n(Legal + Business + Development)\n\n![](image6.png){width=70%}\n\n(Marketing + Sales + Development)\n\n## Resources:\n\n<https://learn.microsoft.com/en-us/partner-center/marketplace/marketplace-criteria-content-validation>\n\n<https://learn.microsoft.com/en-us/partner-center/marketplace/plan-saas-dev-test-offer>\n\n<https://learn.microsoft.com/en-us/partner-center/marketplace/create-new-saas-offer>\n\n<https://learn.microsoft.com/en-us/partner-center/marketplace/create-new-saas-offer-plans>\n\n<https://docs.microsoft.com/en-us/azure/architecture/cloud-adoption/azure-solutions/saas>\n\n<https://www.google.com/search?q=azure+marketplace+technical-requirements-for-saas-offers-in-the-azure-marketplace&rlz=1C5CHFA_enUS986US986&oq=azure+marketplace+technical-requirements-for-saas-offers-in-the-azure-marketplace&aqs=chrome..69i57.11053j0j7&sourceid=chrome&ie=UTF-8#ip=1>\n\n\n",
+        "summary": "High level steps for  Microsoft Marketplace Saas offer",
+        "reporter": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "attachments": [
+            {
+                "name": "image.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image1.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image2.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image3.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image4.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image5.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image6.png",
+                "$type": "ArticleAttachment"
+            }
+        ],
+        "$type": "Article"
+    },
+    {
+        "created": 1683308898036,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-69",
+        "updatedBy": {
+            "fullName": "Jason Temple",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Architecture",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "We must ensure that the Swirl app appears in the Microsoft Marketplace so that we can quickly and easily integrate Swirl with potential customers through a legitimized one-click experience.  The current idea is for it be a free demo that would require a customer who is in the M365 environment.  This customer would need to work with their M365 global admin to enable their tenant to easily onboard/provision their users.\n\n\n\nThe customer experience would initiate from their M365 tenant's global administrator.  The administrator would goto the Microsoft Marketplace and search for the Swirl app.  The actual Swirl application is not deployed into Azure/MS Marketplace, but there the administrator would find a lightweight app that is properly registered by Microsoft through their Partner program.\n\n1. Admin would search for \"Swirl Metaseearch\" and select the \"try Swirl now\" button.\n2. This button tracks the logged in administrator's choice and redirects the admin to a landing page that Swirl hosts *(in JCloud, presumably?).*\n3. On this landing page, there are two paths to take:  *(this landing page needs to be created/researched)*\n   1. Administrator - the individual who can enable the permissions needed by Swirl on behalf of their tenant for their users.  Clicking this link would take the admin to their Azure account in behalf of Swirl's app and present the admin with a detailed list of access Swirl will need from that tenant's users.  An example would be \"Adobe Document Cloud\" app which requests the following from the admin:\n\n      ![](image.png)\n\n      The permissions that Swirl would need include (so far):\n\n      1. First, Last name, email address\n      2. access to read email and calendar events\n      3. read access to sharepoint\n      4. read access to onedrive\n\n      The admin would also need to specify who in their tenant should be permitted a Swirl seat.  Again using the adobe example from our research the admin would be presented with options similar to this:\n\n      ![](image1.png){width=70%}\n\n   2. The end user of Swirl -  will be able to one-click provision Swirl by selecting \"Login with Microsoft\" after Administrator has granted permission *(wording of button and flow of clicks is still being investigated)*.  Using Microsoft as the user's IdP (Identity Provider), this would then initiate and OIDC Single Sign On flow, asking the user to login to their M365 account (if they have not already).  If the user has not been created in the hosted Swirl server, OIDC will supply the appropriate information needed to provision (first_name, last_name, email - which will be their username/login) once the end user clicks \"accept\" to the permission request\n\nIssues still need answers for:\n\n1. Approved Microsoft Cloud Partner status.  This permits us to \"sell\" our app through their Marketplace.  Initial attempts are hung up on \"Legal Business Info\" that for reasons unknown are not able to verify SWIRL Corporation's existence or legitimacy.  This is P1 Critical!  Sid has applied for a Dun & Bradstreet number (D-U-N-S Number) for Swirl which will hopefully help with our Partner program application.\n2. The amount of work involved in creating the landing page from the Marketplace store.",
+        "summary": "The Road to the Microsoft Marketplace",
+        "reporter": {
+            "fullName": "Jason Temple",
+            "$type": "User"
+        },
+        "attachments": [
+            {
+                "name": "image.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image1.png",
+                "$type": "ArticleAttachment"
+            }
+        ],
+        "$type": "Article"
+    },
+    {
+        "created": 1682609379855,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-68",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Hosting",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "...details TBD as we do this a few times\n\n* Static files:  for upgrades, will have to remove and recollect to get any updates",
+        "summary": "HowTo:  Upgrade Hosted Swirl",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1680811919479,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-44",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Slack SearchProviders",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "# Rationale\n\nThe first iteration of Swril's Slack SearchProviders handles user authentication via a Slack [User token](https://api.slack.com/authentication/token-types#user).\n\n> User tokens represent workspace members. They are issued for the user who installed the app and for users who authenticate the app. ... You can use these tokens to take actions on behalf of users.\n>\n> * User token strings begin with `xoxp-`\n> * User tokens represent the same access a user has to a workspace -- the channels, conversations, users, reactions, etc. they can see\n\nUser tokens are created by \"Apps\" in Slack.  A Slack is...\n\n> ...just a container for your credentials and where to put all the vital information about what your app is or does. You can't get a token without one.\n\n# Swirl's Development App\n\nIn order to create a working Slack SearchProvider for Swirl, we first needed to create a Slack App to manage user permissions and generate unique User tokens.  This App must then be installed into a Slack Workspace by an Admin or Owner.  This has been done for our internal Swirl, Inc. Workspace so that we can develop and test the integration.  For now, the App is simply called:  `Swirl App - Dev`\n*Note:  this will change as we prepare the App for submissino to the Slack App Directory*.\n\n![](Swirl Slack app - 1.png){width=70%}\n\nThe App was created with the absolute minimum Scope that Slack's API requires for searching Workspace content (both messages and files):  `search:read`\n\n![](Swirl Slack app - 3.png){width=70%}\n\nThis Scope allows us to use the [three search-related Methods](https://api.slack.com/methods?query=search) for user content in the Slack API:\n\n* `search.all` -- searches both messages and files\n* `search.messages` -- searches only message content\n* `search.files` -- searches only files\n\n![](Swirl Slack app - 2.png){width=70%}\n\n# Obtaining a Slack User Token\n\nIn order to get your own User token from our development App, you must be added as a Contributor to the App.  This is fine for our internal development and demos but not for a production release.  To obtain your personal User token, for now, please do the following:\n\n* Contact Erik and let him know you need to get setup with a User token.\n* After you've been added as a Contributor to the App, go to this page:  <https://api.slack.com/apps>\n  You should see Swirl's App under \"Your Apps\" at the top\n\n  ![](Swirl Slack app -4.png){width=70%}\n* The name of the App is a link (`Swirl App - Dev`), click on that to be taken to the \"Basic Information\" page\n* Scroll down to the `OAuth & Permissions` link on the left and click that\n\n  ![](Swirl Slack app -5.png){width=70%}\n* On the \"OAuth & Permissions\" page, your personal User token should be available under the \"OAuth Tokens for Your Workspace\" section.\n  *NOTE:  User tokens begin with `xoxp-` ; if yours does not, contact Erik and we'll troubleshoot.*\n  ![](Swirl Slack app -6.png){width=70%}\n* Copy the \"User OAuth Token\" and store it somewhere safe.\n* Use this Token in the `credentials` field of the Slack SearchProviders (e.g. `bearer=xoxp-####`), which are currently checked in to the 1.11 branch in our repo.",
+        "summary": "Slack App & User Token",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [
+            {
+                "name": "Swirl Slack app - 1.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "Swirl Slack app - 3.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "Swirl Slack app - 2.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "Swirl Slack app -4.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "Swirl Slack app -5.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "Swirl Slack app -6.png",
+                "$type": "ArticleAttachment"
+            }
+        ],
+        "$type": "Article"
+    },
+    {
+        "created": 1682027052867,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-66",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "SearchProviders",
+            "$type": "Article"
+        },
+        "childArticles": [
+            {
+                "summary": "Slack App & User Token",
+                "$type": "Article"
+            }
+        ],
+        "content": "Place to capture questions, fixes, decisions, etc. around the Slack App and SearchProviders we hope to ship in a post-2.0 release.\n\n# General\n\n## SearchProvider `Name`\n\nSet the `name` field consistently for each SP:  Slack + the type of content searched by the SP\n\n* `Slack Messages`\n* `Slack Files`\n\n## SearchProvider `Tags`\n\nSet two `tags` for each SP:\n\n1. `Slack`\n2. Type of content searched:\n   * `Messages`\n   * `Files`\n\n## Default Settings\n\n* Do we ship these with `active` set to `true` or `false`?\n* Other default settings to adjust?\n\n## Questions\n\n* <span style=\"color:darkorange;\">Swirl scores / relevancy for these SPs ... what to do?</span>\n  * <span style=\"color:darkorange;\"></span>\n* <span style=\"color:darkorange;\">Why two SearchProviders for Slack instead of just one?</span>\n  * <span style=\"color:darkorange;\"></span>There is a [`search.all` method](https://api.slack.com/methods/search.all) we could use to search both Files and Messages simultaneously, however we couldn't get quite all the details from both together in a single SP configuration.  For example...\n    * Timestamp fields that we'd map to Swirl's `date_published` field are different (`ts` for Messages and `created` for Files)\n    * Total hit count returned for Messages and Files are at separate and at the same level in the JSON response; I don't think we could handle that scenario in Swirl's `response_mappings` field.\n\n# Slack Messages\n\n## API Method\n\n* `search.messages`\n* <https://api.slack.com/methods/search.messages>\n\n## Open Questions\n\n* <span style=\"color:darkorange;\">What do we map to Swirl's `title` and `body` fields for a Messages match?</span>\n  * <span style=\"color:darkorange;\"></span>Current `title` mapping:  `text`\n  * Current `body` mapping:  `'Sent to {channel.name} by {username}: {text}'`\n\n## Decsions / Answers\n\n* \n\n## Payload\n\n* `channel.name`\\: Name of the channel, DM (ID only), or group (ID only) the matching messages was posted to\n  * `channel.is_channel`\\: Returns `True` if the match is in a channel\n  * `channel.is_group`\\: Returns `True` if the match is in a group\n  * `channel.is_im`\\: Returns `True` if the match is in a direct message\n* `files[*].name`\\: List of any files (filenames only) included with the matching messages\n  * Note:  The filenames don't have to match the query in this case.\n\n## Notes\n\n* \n\n# Slack Files\n\n## API Method\n\n* `search.files`\n* <https://api.slack.com/methods/search.files>\n\n## Open Questions\n\n* <span style=\"color:darkorange;\">What do we map to Swirl's `title` and `body` fields for a Files match?</span>\n  * <span style=\"color:darkorange;\"></span>Current `title` mapping: \n  * Current `body` mapping: \n\n## Decsions / Answers\n\n* \n\n## Payload\n\n* \n\n## Notes\n\n* \n",
+        "summary": "Slack SearchProviders",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1681162092603,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-46",
+        "updatedBy": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Release and Testing",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "### Summary\n\nTest for the release currently scheduled for end Of April.\n\n### Office365 Search Providers (back-end)\n\nFor this section, we just want to make sure that the back-end functionality for connecting, authenticating and authorizing the various office365 search providers work, it's okay if it's ugly to set up, even if it requires small code changes to make work, but those should be considered bugs and be put into configuration if at all possible.\n\n* Authentication and Authorization\n  Pre-req :  Set up a Microsoft Dev sandbox. Set up an App in the sandbox tenant.\n  * Configure OAUTH2\n    Use the values from there to assign values to these configuration settings:\n    `MICROSOFT_CLIENT_ID`\n    `MICROSOFT_CLIENT_SECRET`\n    `MICROSOFT_REDIRECT_URI='`<http://localhost:8000/swirl/microsoft-callback>`'`\n  * AuthN/Z\n    * Use the Authenticator page from the Swirl Django Admin home page.\n    * Ensure that 'refreshing' the token works via the Authenticators button.\n      * DaveN and Erik done (04/11/2023)\n* Basic search and relevancy functionality in our new office 365 search providers\n  For each of the below, test basic functionality on all of the office 365 providers:\n  * One term\n  * Multi Term (2-3)\n  * Ensure Swirl score is set\n  * Ensure hit highlighting is present and correct  minus known bugs\n* OneDrive- m365_onedrive.json\n* Messenger - m365_outlook_messages.json\n* SharePoint - m365_sharepoint.json\n* Teams - m365_teams.json\n* Calendar - m365_outlook_calendar.json\n  * Some additional work to define the functionality is necessary here ( @espears )\n* Combined functionality\n  Combing different combinations of the office365 connectors w/ the PSE connectors just to sanity check that they work well together.\n\n### UI\n\n* Login\n\n  ![](image1.png)\n  * Login as admin, should go to the Django Admin page (same one we have today)\n  * Login as non-admin goes to empty search page.\n* Empty Search Page\n  ![](image2.png){width=70%}\n  * Basic user profile exists\n  * Logo is correct\n  * The 'All sources' drop down top the left of the search box allows\n\n    Sources to be selected for the search\n  * System log is empty\n  * Office365 OAUTH2 present when any of the office365 search providers are present (enabled?)\n    NOTE: We will only have Microsoft365 for 2.0\n    * Shows 'reconnect' when not authed\n    * Shows 'connected' when authed\n    * Switches to 'reconnect' when token is found to be expired.\n    * After authed, if use disconnects the access and refresh tokens are removed from the session state.\n    * If user logs out of MS, then our app should be logged out as well (quote from ms doc below):\n      *When you redirect the user to the end_session_endpoint, the Microsoft identity platform clears the user's session from the browser. However, the user may still be signed in to other applications that use Microsoft accounts for authentication. To enable those applications to sign the user out simultaneously, the Microsoft identity platform sends an HTTP GET request to the registered LogoutUrl of all the applications that the user is currently signed in to. Applications must respond to this request by clearing any session that identifies the user and returning a 200 response. If you wish to support single sign-out in your application, you must implement such a LogoutUrl in your application's code. You can set the LogoutUrl from the app registration portal.*\n  * Sources (should include any sources that are active) are correct and selectable\n    * Search all\n    * Search selected\n* First Search page\n\n  ![](image4.png){width=70%}\\\\\n\n![](image5.png){width=70%}\n\n* All of the same as the empty page:\n  * * Except System log should have the INFO output from the response.\n  * Plus\n    * Source clustering\n    * Published date shown when available.\n    * Source badge\n    * URL that can be clicked on to show the original result is shown next source badge\n    * Chat GPT (if applicable?)\n    * View By Relevancy/Date/Top Pick\n    * Source filters (right hand side)\n      * Source filters show each source and the count of documents\n      * Selecting a filters show only results from the selected filters\n      * Deselecting removes those results\n      * Clearing all filters shows all of the results again.\n    * results/page is available\n    * Next pages options are shown and can be 'jumped to'\n* Stretch features\n  * Dark mode\n  * Layout V2\n\n### Query Transform\n\nThis feature is not part of the new UI flow , it is configured through the Django admin UI, Add Query Transforms:\n\n![](image.png){width=70%}\n\n* CRUD\n  All CRUD should work through the API, adding is the only features that is part of a a UI.\n  * Create a transform (both API and form above)\n    * Rewrite rules\n    * Synonym list\n    * Synonym bags\n  * Update a transform (API only)\n  * Delete a transform (API only)\n* Functionality\n  * Rewrite (pre/query)\n    * Basic replacement\n    * Stop word\n    * Negative cases\n  * Synonym (pre/query)\n    * Basic synonym replacement\n    * Negative cases\n  * Synonym-bag (pre/query)\n    * Basic synonym replacement\n    * Negative cases",
+        "summary": "Test Plan 1.11",
+        "reporter": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "attachments": [
+            {
+                "name": "image.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image1.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image2.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image3.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image4.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image5.png",
+                "$type": "ArticleAttachment"
+            }
+        ],
+        "$type": "Article"
+    },
+    {
+        "created": 1681854023859,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-65",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [
+            {
+                "summary": "How to add more terms to highlighting",
+                "$type": "Article"
+            },
+            {
+                "summary": "How To : Use Hit Highlight Extraction to integrate Synonym hits into SWIRL relevancy",
+                "$type": "Article"
+            }
+        ],
+        "content": "A never-ending topic in search...",
+        "summary": "Hit Highlighting",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1677695638137,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-13",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Hit Highlighting",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "Highlighting occurs in the CosineRelevancyPostResultProcessor",
+        "summary": "How to add more terms to highlighting",
+        "reporter": {
+            "fullName": "Sid Probstein",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1681853529694,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-60",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": null,
+        "childArticles": [
+            {
+                "summary": "Submitting PR's for \"main\" and \"next-release\"",
+                "$type": "Article"
+            },
+            {
+                "summary": "Repo branch proposal Community and enterprise",
+                "$type": "Article"
+            },
+            {
+                "summary": "Two proposals for git flow of enterprise and community",
+                "$type": "Article"
+            },
+            {
+                "summary": "Pluggable Enterprise functionality",
+                "$type": "Article"
+            },
+            {
+                "summary": "Git Flow development process",
+                "$type": "Article"
+            }
+        ],
+        "content": "Articles on dev process, git, branching strategies, etc.",
+        "summary": "Development Process / Git",
+        "reporter": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1679069058192,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-28",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Development Process / Git",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "## Goals\n\nDescribe what a pluggable architecture for adding Enterprise functionality. The two most useful pieces of pluggable functionality appear to be\n\n* Search provider connectors\n* Search provider authentication\n* External dependencies:\n  * It is likely that the Plugins will require additional external dependencies. We can add this to the enterprise plugin install script (we will need this)\n\n## Non-Goals\n\n### SWIRL ID/Auth\n\nWe will not consider SWIRL Identity management, Authentication and Authorization in this document. It is assumed that for the most part, pluggable functionality will be defined by Django for this case.\n\n### Zero changes to Public Code base\n\nCurrently seems like to big of an ask to have no code or functional changes to the public code base required new Connector or Authenticators, it is desired only to not add key components to that code base, but instead to locate and initialize them at application start up and to leave community functionality unaffected  by the success or failure of these to load.\n\nExample, OAUTH2 requires call back URLs, we want to hold back this functionality from community edition, but it is permissible to add the callback URL to the community addition, although it would be preferable to add that ONLY when enterprise is present (DN: Not sure if his is possible now)\n\n### Settings and configuration\n\nBlank or default settings can be added to the community code base and can be set in the installation after the enterprise plugins are installed. Might be something else that can be done in an installation script.\n\n## Method\n\nChat GPT lists the attributes of a pluggable architecture as follows:\n\n1. **Define a plugin interface**\\: Define a set of functions, methods, or APIs that plugins must implement in order to be used by your application. This interface should define the minimum set of functionality that plugins must provide to be compatible with your application.\n2. **Define a plugin format:** Define a file format or structure that plugins must conform to in order to be loaded by your application. This could be a binary file format, a script file format, or a configuration file format, depending on the type of plugins you are using.\n3. **Implement a plugin loader**\\: Write a module or component that can load plugins at run time. This module should be able to locate, load, and initialize plugins based on the plugin format and interface.\n4. **Discover and load plugins:** Your application should be able to discover and load plugins at run time, either by searching specific directories or by querying a plugin registry.\n5. **Integrate plugins with your application:** Once a plugin has been loaded, it should be integrated with your application. This could involve calling specific functions or methods provided by the plugin interface, or registering event handlers or callbacks provided by the plugin.\n6. **Handle errors:** Your application should be able to handle errors that may occur during the loading or use of plugins. For example, if a plugin fails to load or initialize, your application should be able to gracefully handle the error and provide feedback to the user.\n\nIn this document we will address each of the above aspects and propose a high level description of how each could either be implemented or make case as to why we don't need it.\n\n## Attributes and Descriptions\n\n\n\n***Define a plugin interface: Define a set of functions, methods, or APIs that plugins must implement in order to be used by your application. This interface should define the minimum set of functionality that plugins must provide to be compatible with your application.***\n\n* Search provider authentication requires this minimal API be implemented:\n  * get_auth_app(request)\n  * login(request)\n  * callback(request)\n  * update_token(request)\n* Search provider connectors\n\n***Define a plugin format: Define a file format or structure that plugins must conform to in order to be loaded by your application. This could be a binary file format, a script file format, or a configuration file format, depending on the type of plugins you are using.***\n\n\n\n***Implement a plugin loader: Write a module or component that can load plugins at run time. This module should be able to locate, load, and initialize plugins based on the plugin format and interface.***\n\n\n\n***Discover and load plugins: Your application should be able to discover and load plugins at run time, either by searching specific directories or by querying a plugin registry.***\n\n\n\n***Integrate plugins with your application: Once a plugin has been loaded, it should be integrated with your application. This could involve calling specific functions or methods provided by the plugin interface, or registering event handlers or callbacks provided by the plugin.***\n\n\n\n***Handle errors: Your application should be able to handle errors that may occur during the loading or use of plugins. For example, if a plugin fails to load or initialize, your application should be able to gracefully handle the error and provide feedback to the user.***\n\n\n\n\n",
+        "summary": "Pluggable Enterprise functionality",
+        "reporter": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1678463443866,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-10",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Hit Highlighting",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "## Intended User\n\nThe anticipated reader is someone configuring SWIRL to work w/ one of of the following search providers:\n\n* Open Search\n* Elastic Search\n* Lucene\n* Solr\n\nAnd discovers that their data source is configured w/ Synonyms.\n\n## Description\n\nThis feature will surface any terms used by the Search Provider to match the documents in the search result returned by that provider.\n\n## Motivation\n\nData source synonym configuration can compromise the accuracy of SWIRL Metasearch relevancy scoring. This is because, unless this feature is used, SWIRL relevance processor isn't aware of terms used to retrieve documents that were not part of the original query.\n\n## Configuration\n\nConfigure the following in the  Search Provider.\n\nModify the query add hit highlighting to the fields that are mapped to the *Title* and *Body* SWIRL fields.\n\n1. This will depend a bit on which engine you're using and what your goals are but to enable highlighting on every field, you can use the following in your query,  in the query template field of your search provider:\n\n   ```\n    'highlight': { 'fields': { '*': {} } },\n   ```\n\n   ![](image.png){width=70%}\n\n   Consult documentation for your engine for more information ways this can be accomplished.\n\n2. In the *results_mapping* field, asssign the SWIRL fields *body_hit_highlights* and *title_hit_highlights* to the JSON reference in which the hit highlights for your source's results resides. For example, if I have the following results JSON:\n\n   ```\n          {\n           \"_source\" : {\n             \"url\" : \"blair-l/sent_items/605.\",\n             \"date_published\" : \"2001-08-02 16:08:06.000000\",\n             \"author\" : \"Blair, Lynn </O=ENRON/OU=NA/CN=RECIPIENTS/CN=LBLAIR>\",\n             \"to\" : \"Scott, Donna </O=ENRON/OU=NA/CN=RECIPIENTS/CN=Dscott1>\",\n             \"subject\" : \"Laptop computer\",\n             \"content\" : \"\\t\\tDonna, I need one laptop computer for Terry or John to use when they\\tare out of town.  Please put them on the list. Thanks. Lynn\"\n           },\n           \"highlight\" : {\n             \"subject\" : [\n               \"<em>Laptop</em> computer\"\n             ],\n             \"content\" : [\n               \"Donna, I need one <em>laptop</em> computer for Terry or John to use when they\\tare out of town.\"\n             ]\n           }\n         }\n   ```\n\n   Then I would assign *body_hit_highlights* and *title_hit_highlights* as follows in the results_mappoig:\n\n   ```\n   title_hit_highlights=highlight.subject, body_hit_highlights=highlight.content\n   ```\n\n   ![](image2.png){width=70%}\n\n## Results\n\nThe above configuration will be reflected in he info section  of the results for the configured Search Provider:\n![](image3.png){width=70%}\n\nin the example above, the query used was 'notebook'. You can see in the *results_processor_json_feedback* field a JSON structure, `results_processor_feedback.query.provider_query_terms ` and it contains a list of query terms, one is 'notebook' and the other is 'laptop' this is because this Search Provider is using laptop as a synonym for notebook. Hits for that term were returned in the hit highlighting and extracted by the SWIRL relevancy post result processor.\n\nAnother effect of this configuration is that the Complete content of the Search Providers hit highlighting is available for each result in the fields *body_hit_highlights* and *title_hit_highlights.*\n\n![](image4.png){width=70%}\n\n\n\nIt's not necessary for you you to do anything w/ this information, but it's available for whatever purpose your application may have for it.",
+        "summary": "How To : Use Hit Highlight Extraction to integrate Synonym hits into SWIRL relevancy",
+        "reporter": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "attachments": [
+            {
+                "name": "image.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image1.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image2.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image3.png",
+                "$type": "ArticleAttachment"
+            },
+            {
+                "name": "image4.png",
+                "$type": "ArticleAttachment"
+            }
+        ],
+        "$type": "Article"
+    },
+    {
+        "created": 1679513709013,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-34",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "User Interface / Spyglass",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "With regard to the UI questions, there isn’t a single right answer, but depends both on our goals, short and medium term along w/ our available expertise:\n\n* **Web x.y and PWA (Progressive Web Apps)** they are more concepts than implementation mediums. PWA is the concept of building a web app that behaves more like a native app. It relies standard web tech plus specialized extensions to do this.  Web 3.0 is the Semantic Web and 4.0, is even further out into the future, called the Symbiotic Web. Web 3.0 might be worth more research 4.0, IMO, too far into the future for us.\n* **If we’re talking short/medium term getting a UI together**, then it’s between Angular, React and Django, which we know. React and Angular are client centric and Javascript or Typescript based. Angular is more of a complete Model, View, Control frame work where as React is View focused. Django as you know is server centric, but is rich w/ tooling, plugins and frameworks and of course is python based.\n\nIf Mobile is very important to us I would move toward Angular or React w a slight preference to React Native, but Angular would be fine and if we have a head start on it, then yeah, that would tip things to Angular.If Mobile is less important and if we can’t count on expertise in Javascript, then Django looks better. I think that making a Django UI mobile friendly and responsive will require more work, but it is possible to do a reasonable job, and this is the context in which the concept of PWA may apply, but if that is where we have expertise, it may be a trade off we’re willing to make.",
+        "summary": "On Different UI Frameworks",
+        "reporter": {
+            "fullName": "Dave Nicodemus",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    },
+    {
+        "created": 1677528531393,
+        "comments": [],
+        "project": {
+            "name": "Development and Support",
+            "$type": "Project"
+        },
+        "idReadable": "DS-A-16",
+        "updatedBy": {
+            "fullName": "Erik Spears",
+            "$type": "User"
+        },
+        "parentArticle": {
+            "summary": "Hosting",
+            "$type": "Article"
+        },
+        "childArticles": [],
+        "content": "I have created an account for you at <https://demo.swirl.today:8000/swirl/>\n\nUsername: \nPassword:\n\nSWIRL is API-only for now... to run a search add the qs parameter to the search endpoint:\n<https://demo.swirl.today:8000/swirl/search/?qs=knowledge+management>\n\n \n\nQueries take 5-7 seconds, but this is frequently because one provider (ChatGPT) is slow. Also configured are three (3) Google PSEs (trained on M&A, Strategic Consulting and Enterprise Search), NLResearch (for-pay news), and a set of company funding records served by Google BigQuery. \n\n \n\nView the list here: <https://demo.swirl.today:8000/swirl/searchproviders/>\n\n \n\nTo target the funding records, use the company: tag in a query – like:\n\n<https://demo.swirl.today:8000/swirl/search/?qs=electric+vehicle+company:tesla>\n\n \n\nIf you receive a message \"RESULTS NOT READY\" after running a search, please wait a second or two and then reload the page or URL; results should appear. \n\n \n\nTo see all the searches you've run, go to: <https://demo.swirl.today:8000/swirl/search/>  ... the 'result_url' field contains the URL to access re-ranked results for any search that has a status ending in \"_READY\". \n\n \n\nTo see the second page of results, add &page=2 to the result URL, etc. You can also filter to any single source using the URLs in the \"info\" block part of the results.\n\n \n\nDocumentation is here: <https://github.com/swirlai/swirl-search/wiki>\n\n \n\nPlease feel free to email [support@swirl.today](mailto:support@swirl.today \"mailto:support@swirl.today\") if you have any issues – and please join the Swirl Metasearch Slack here: \n<https://join.slack.com/t/swirlsearch/shared_invite/zt-1n7xophls-F4SzYecGniOFB95xI6WlAw>\n\n \n\nFinally: please star our repo! <https://github.com/swirlai/swirl-search> :-)\n\n \n\nI’ll circle back to schedule a deeper dive anytime convenient… thanks so much for the interest in Swirl!!",
+        "summary": "Template for inviting user to Swirl demo server",
+        "reporter": {
+            "fullName": "Sid Probstein",
+            "$type": "User"
+        },
+        "attachments": [],
+        "$type": "Article"
+    }
+]

@@ -1,5 +1,9 @@
+import time
 import json
+import os
 from django.test import TestCase
+from swirl.models import SearchProvider
+from swirl.serializers import SearchProviderSerializer
 import swirl_server.settings as settings
 import pytest
 import logging
@@ -8,8 +12,10 @@ from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 from swirl.processors.adaptive import *
 from swirl.processors.transform_query_processor import *
-from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list
+from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list, match_all, tokenize_word_list
 from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
+from swirl.processors.dedupe import DedupeByFieldResultProcessor
+from swirl.utils import select_providers
 
 logger = logging.getLogger(__name__)
 
@@ -72,22 +78,32 @@ def noop_query_string():
 ## tests
 ######################################################################
 
+def test_tokenize_word_list():
+    twl = tokenize_word_list(["'s"])
+    assert len(twl) == 1
+    assert twl[0] == "'s"
+
 @pytest.fixture
 def hll_test_cases():
     return [
-            ['The same same word twice',['same']],
-            ['Swirl_Pitch_1234412',['swirl']],
-            ['Swirl Pitch 1234412',['swirl']],
-            ['I love programming in Python',['programming', 'Python']],
-            ['The quick brown fox jumps over the lazy dog',['quick', 'jumps', 'dog']],
-            ['The weather is nice today',['rain', 'snow', 'sun']],
-            ['ChatGPT is an AI language model', ['ChatGPT', 'AI', 'language', 'model']],
-            ['This is a case insensitive test',["this", "Test"]]
-        ]
+        ['Activision Blizzard Inc. — Mergers & Acquisition',['Microsoft','Blizzard','Activision','Inc']],
+        ['Activision Blizzard Inc. — Mergers & Acquisition',['Microsoft','Blizzard','Activision','Inc.']],
+        ['The same same word twice',['same']],
+        ['Swirl_Pitch_1234412',['swirl']],
+        ['Swirl Pitch 1234412',['swirl']],
+        ['I love programming in Python',['programming', 'Python']],
+        ['The quick brown fox jumps over the lazy dog',['quick', 'jumps', 'dog']],
+        ['The weather is nice today',['rain', 'snow', 'sun']],
+        ['ChatGPT is an AI language model', ['ChatGPT', 'AI', 'language', 'model']],
+        ['This is a case insensitive test',["this", "Test"]],
+        ["U.K. Blocks Microsoft's $69 Billion",["microsoft's"]]
+    ]
 
 @pytest.fixture
 def hll_test_expected():
     return[
+        '<em>Activision</em> <em>Blizzard</em> <em>Inc</em>. — Mergers & Acquisition',
+        '<em>Activision</em> <em>Blizzard</em> <em>Inc</em>. — Mergers & Acquisition',
         'The <em>same</em> <em>same</em> word twice',
         '<em>Swirl</em>_Pitch_1234412',
         '<em>Swirl</em> Pitch 1234412',
@@ -95,7 +111,8 @@ def hll_test_expected():
         'The <em>quick</em> brown fox <em>jumps</em> over the lazy <em>dog</em>',
         'The weather is nice today',
         '<em>ChatGPT</em> is an <em>AI</em> <em>language</em> <em>model</em>',
-        '<em>This</em> is a case insensitive <em>test</em>'
+        '<em>This</em> is a case insensitive <em>test</em>',
+        "U.K. Blocks <em>Microsoft's</em> $69 Billion"
     ]
 
 def test_highlght_list(hll_test_cases, hll_test_expected):
@@ -117,6 +134,321 @@ def aqp_test_expected():
            'elon -twitter',
            'elon -twitter'
         ]
+
+@pytest.fixture
+def test_suser_pw():
+    return 'password'
+
+def get_ddrp_suser(pw):
+    return User.objects.create_user(
+        username=''.join('test_ddrp_user'),
+        password=pw,
+        is_staff=True,  # Set to True if your view requires a staff user
+        is_superuser=True,  # Set to True if your view requires a superuser
+    )
+
+def create_ddrp_provider(password):
+    provider = get_ddrp_provider_data()
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=get_ddrp_suser(password))
+    provider_id = serializer.data['id']
+    return provider_id
+
+def get_ddrp_provider_data():
+    return {
+        "name": "test DDRP",
+        "shared": True,
+        "active": True,
+        "default": True,
+        "connector": "M365OutlookMessages",
+        "url": "",
+        "query_template": "{url}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true,NOT_CHAR=-",
+        "result_processor": "",
+        "result_grouping_field":"conversationId",
+        "result_processors": [
+            "MappingResultProcessor",
+            "DedupeByFieldResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.conversationId,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": ""
+    }
+
+def get_minimal_search_provider_data(name="test minimal search_provider", actve=True, default=True, tags=[]):
+    return {
+        "name": name,
+        "shared": True,
+        "active": actve,
+        "default": default,
+        "connector": "M365OutlookMessages",
+        "url": "",
+        "query_template": "{url}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true,NOT_CHAR=-",
+        "result_processor": "",
+        "result_grouping_field":"conversationId",
+        "result_processors": [
+            "MappingResultProcessor",
+            "DedupeByFieldResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.conversationId,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+         "tags": tags
+    }
+
+@pytest.fixture
+def match_all_test_cases_target():
+    return [
+        ['I', 'like', 'apple', 'banana', 'pie', 'with', 'banana'],
+        ['I', 'have', 'a', 'bird', 'dog', 'he', 'is', 'a','swell', 'bird','dog']
+    ]
+
+@pytest.fixture
+def match_all_test_cases_find():
+    return [
+        ['apple', 'banana'],
+        ['bird', 'dog']
+    ]
+
+
+@pytest.fixture
+def match_all_test_expected():
+    return [
+        [2],
+        [3,9]
+    ]
+
+@pytest.mark.django_db
+def test_match_all(match_all_test_cases_target, match_all_test_cases_find, match_all_test_expected):
+
+    assert len(match_all_test_cases_target) == len(match_all_test_cases_find) == len(match_all_test_expected)
+
+    for index, value in enumerate(match_all_test_cases_target):
+        start_time = time.time()
+        r = match_all(match_all_test_cases_find[index], (match_all_test_cases_target[index]))
+        elapsed_time = time.time() - start_time
+        assert r == match_all_test_expected[index]
+        print(f"Elapsed time for index {index}: {elapsed_time} seconds")
+
+
+@pytest.fixture
+def ms_message_result_converation():
+    data_dir = os.path.dirname(os.path.abspath(__file__))
+    # Build the absolute file path for the JSON file in the 'data' subdirectory
+    json_file_path = os.path.join(data_dir, 'data', 'outlook_message_results.json')
+
+    # Read the JSON file
+    with open(json_file_path, 'r') as file:
+        data = json.load(file)
+    results = data.get('value')[0].get('hitsContainers')[0].get('hits')
+    for i in results:
+        i['conversationId'] = i['resource']['conversationId']
+    return results
+
+@pytest.mark.django_db
+def test_select_providers_all_empty(test_suser_pw):
+    pl = select_providers(providers=[],start_tag="", tags_in_query_list=[])
+    assert len(pl) == 0
+
+
+@pytest.mark.django_db
+def test_select_providers_two_active_with_two_match_start_tag(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, True, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="foo", tags_in_query_list=[])
+    assert len(pl) == 2
+
+@pytest.mark.django_db
+def test_select_providers_two_active_with_one_match_start_tag(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, True, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, True, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="foo", tags_in_query_list=[])
+    assert len(pl) == 1
+
+@pytest.mark.django_db
+def test_select_providers_one_active_one_default_with_one_match_start_tag(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, False, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, True, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="foo", tags_in_query_list=[])
+    assert len(pl) == 1
+
+@pytest.mark.django_db
+def test_select_providers_one_active_one_default_with_no_tags(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, False, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, True, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="", tags_in_query_list=[])
+    assert len(pl) == 1
+
+@pytest.mark.django_db
+def test_select_providers_two_activ_with_misspelled_start_tag(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, True, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, True, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="xxx", tags_in_query_list=[])
+    assert len(pl) == 2
+
+@pytest.mark.django_db
+def test_select_providers_two_activ_with_embedded_tag(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, True, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, False, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="xxx", tags_in_query_list=['bar'])
+    assert len(pl) == 1
+
+@pytest.mark.django_db
+def test_select_providers_two_activ_with_embedded_tag_no_defaults(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, False, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, False, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="xxx", tags_in_query_list=['bar'])
+    assert len(pl) == 1
+
+@pytest.mark.django_db
+def test_select_providers_two_active_with_embedded_no_start_tag_with_defaults(test_suser_pw):
+
+    provider_list = []
+    owner = get_ddrp_suser(test_suser_pw)
+    provider = get_minimal_search_provider_data('active_default', True, True, ['foo'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    provider = get_minimal_search_provider_data('active_default', True, False, ['bar'])
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=owner)
+    provider_id = serializer.data['id']
+    provider_list.append(SearchProvider.objects.get(pk=provider_id))
+
+    pl = select_providers(providers=provider_list,start_tag="", tags_in_query_list=['bar'])
+    assert len(pl) == 2
+
+@pytest.mark.django_db
+def test_dd_result_processor(ms_message_result_converation, test_suser_pw):
+    ddrp_id = create_ddrp_provider(test_suser_pw)
+    ddrp_provider = SearchProvider.objects.get(pk=ddrp_id)
+    ddrp = DedupeByFieldResultProcessor(ms_message_result_converation, ddrp_provider, "dune")
+    r = ddrp.process()
+    assert r
+    assert len(ddrp.get_results()) == 1
+    logger.info(f'dedupped results {r}')
 
 @pytest.mark.django_db
 def test_aqp(aqp_test_cases, aqp_test_expected):
@@ -175,9 +507,6 @@ def test_rm_url_encoder(rm_url_encoder_test_cases, rm_url_encoder_test_expected)
     assert v == 'foo'
 
 
-
-
-
 @pytest.fixture
 def prefix_toks_test_cases():
     return [
@@ -206,11 +535,11 @@ def test_utils_prefix_toks(prefix_toks_test_cases, prefix_toks_test_expected):
 
 @pytest.fixture
 def utils_date_str_to_timestamp_cases():
-    return ['1681393728.832229','1681393728','Jan 17, 1975']
+    return ['2008','1681393728.832229','1681393728','Jan 17, 1975']
 
 @pytest.fixture
 def utils_date_str_to_timestamp_expected():
-    return['2023-04-13 09:48:48.832229','2023-04-13 09:48:48','1975-01-17 00:00:00']
+    return['2008-01-01 00:00:00','2023-04-13 09:48:48.832229','2023-04-13 09:48:48','1975-01-17 00:00:00']
 
 @pytest.mark.django_db
 def test_utils_date_str_to_timestamp(utils_date_str_to_timestamp_cases, utils_date_str_to_timestamp_expected):

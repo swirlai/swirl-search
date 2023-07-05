@@ -10,7 +10,7 @@ def getSearchProviderQueryProcessorsDefault():
     return ["AdaptiveQueryProcessor"]
 
 def getSearchProviderResultProcessorsDefault():
-    return ["MappingResultProcessor"]
+    return ["MappingResultProcessor","DateFinderResultProcessor"]
 
 class FlexibleChoiceField(models.CharField):
     """
@@ -76,11 +76,12 @@ class SearchProvider(models.Model):
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
     query_template = models.CharField(max_length=2048, default='{url}?q={query_string}', blank=True)
+    post_query_template = models.JSONField(default={}, blank=True)
     QUERY_PROCESSOR_CHOICES = [
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('TestQueryProcessor', 'TestQueryProcessor'),
         ('AdaptiveQueryProcessor', 'AdaptiveQueryProcessor'),
-        ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
+        ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor')
     ]
     query_processors = models.JSONField(default=getSearchProviderQueryProcessorsDefault, blank=True)
     query_mappings = models.CharField(max_length=2048, default=str, blank=True)
@@ -88,15 +89,25 @@ class SearchProvider(models.Model):
         ('GenericResultProcessor', 'GenericResultProcessor'),
         ('DuplicateHalfResultProcessor', 'DuplicateHalfResultProcessor'),
         ('TestResultProcessor', 'TestResultProcessor'),
-        ('MappingResultProcessor', 'MappingResultProcessor')
+        ('MappingResultProcessor', 'MappingResultProcessor'),
+        ('DateFinderResultProcessor','DateFinderResultProcessor'),
+        ('DedupeByFieldResultProcessor', 'DedupeByFieldResultProcessor'),
+        ('LenLimitingResultProcessor', 'LenLimitingResultProcessor'),
+        ('CleanTextResultProcessor','CleanTextResultProcessor')
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
+
+    ## if set, and the field exists in the results set, records w/ the same value will
+    ## be grouped together and only one result will be returned to the caller
+
+    result_grouping_field = models.CharField(max_length=1024, default=str, blank=True)
     result_processors = models.JSONField(default=getSearchProviderResultProcessorsDefault, blank=True)
     result_mappings = models.CharField(max_length=2048, default=str, blank=True)
     results_per_query = models.IntegerField(default=10)
     eval_credentials = models.CharField(max_length=100, default=str, blank=True)
     credentials = models.CharField(max_length=512, default=str, blank=True)
     tags = models.JSONField(default=list)
+    http_request_headers = models.JSONField(default={}, blank=True)
 
     class Meta:
         ordering = ['id']
@@ -132,19 +143,19 @@ class Search(models.Model):
     status = models.CharField(max_length=50, default='NEW_SEARCH')
     time = models.FloatField(default=0.0)
     PRE_QUERY_PROCESSOR_CHOICES = [
-        ('ChatGPTQueryImproverProcessor', 'ChatGPTQueryImproverProcessor'),
-        ('ChatGPTQueryExpanderProcessor', 'ChatGPTQueryExpanderProcessor'),
-        ('ChatGPTQueryBooleanProcessor', 'ChatGPTQueryBooleanProcessor'),
-        ('ChatGPTQueryMakeQuestionProcessor', 'ChatGPTQueryMakeQuestionProcessor'),
+        ('ChatGPTQueryProcessor', 'ChatGPTQueryProcessor'),
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('TestQueryProcessor', 'TestQueryProcessor'),
-        ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor (TextBlob)')
+        ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor')
     ]
     pre_query_processors = models.JSONField(default=getSearchPreQueryProcessorsDefault, blank=True)
     POST_RESULT_PROCESSOR_CHOICES = [
-        ('CosineRelevancyPostResultProcessor', 'CosineRelevancyPostResultProcessor (w/spaCy)'),
+        ('CosineRelevancyPostResultProcessor', 'CosineRelevancyPostResultProcessor'),
         ('DedupeByFieldPostResultProcessor', 'DedupeByFieldPostResultProcessor'),
-        ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor')
+        ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor'),
+        ('WriteToFileSystemPostResultProcessor', 'WriteToFileSystemPostResultProcessor'),
+        ('TemporalRelevancyPostResultProcessor', 'TemporalRelevancyPostResultProcessor'),
+        ('EntityMatcherPostResultProcessor', 'EntityMatcherPostResultProcessor')
     ]
     post_result_processors = models.JSONField(default=getSearchPostResultProcessorsDefault, blank=True)
     result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)

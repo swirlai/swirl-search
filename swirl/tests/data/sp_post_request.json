@@ -3,9 +3,24 @@
     "active": true,
     "default": true,
     "connector": "RequestsPost",
-    "url": "https://go.apis.huit.harvard.edu/ats/person/v3/search",
-    "query_template": "{\"body\":{ \"fields\": [\"names.personNameKey\", \"names.firstName\", \"names.lastName\"], \"conditions\": { \"names.name\": \"*{query_string}*\" } }}",
+    "url": "https://xx.apis.it.place.edu/ats/person/v3/search",
+    "query_template": "{url}?Query={query_string}",
     "query_processor": "",
+    "post_query_template": {
+        "fields": [
+          "names.personNameKey",
+          "names.firstName",
+          "names.lastName"
+        ],
+        "conditions": {
+          "names.name": "*{query_string}*"
+        }
+    },
+    "http_request_headers": {
+        "custom-header-1": "customer-header-1-value",
+        "custom-header-2": "customer-header-2-value",
+        "custom-header-3": "customer-header-3-value"
+    },
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
@@ -14,8 +29,8 @@
     "result_processors": [
         "MappingResultProcessor"
     ],
-    "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
-    "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
+    "response_mappings": "FOUND=count,RESULTS=results",
+    "result_mappings": "titles=names[0].name,url=names[0].personNameKey,body='{names[0].name} ID#: {names[*].personNameKey}'",
     "results_per_query": 10,
     "credentials": "X-Api-Key=<your-api-key>",
     "eval_credentials": "",

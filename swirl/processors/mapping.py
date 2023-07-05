@@ -173,7 +173,7 @@ class MappingResultProcessor(ResultProcessor):
                                         # end if
                                         if type(swirl_result[swirl_key]) == type(result_dict[source_key]):
                                             # same type, copy it
-                                            if 'date' in swirl_key.lower():
+                                            if 'date' in swirl_key.lower() and not 'display' in swirl_key.lower():
                                                 if swirl_result[swirl_key] == "":
                                                     swirl_result[swirl_key] = date_str_to_timestamp(result_dict[source_key])
                                                 else:
@@ -190,7 +190,7 @@ class MappingResultProcessor(ResultProcessor):
                                                 # end if
                                         else:
                                             # not same type, convert it
-                                            if 'date' in swirl_key.lower():
+                                            if 'date' in swirl_key.lower() and not 'display' in swirl_key.lower():
                                                 if swirl_result[swirl_key] == "":
                                                     if type(result_dict[source_key]) == int:
                                                         # check for int vs long fix for DS-320
@@ -282,7 +282,7 @@ class MappingResultProcessor(ResultProcessor):
             result_number = result_number + 1
             # stop if we have enough results
             if result_number > self.provider.results_per_query:
-                self.warning("Truncating extra results, found & retrieved may be incorrect")
+                # self.warning("Truncating extra results, found & retrieved may be incorrect")
                 break
             # unique list of terms from highligts
         # end for
@@ -290,5 +290,7 @@ class MappingResultProcessor(ResultProcessor):
         fb = self.get_opt_result_processor_feedback_json(provider_query_term_results)
         if fb:
             list_results.append(fb)
+
         self.processed_results = list_results
-        return self.processed_results
+        self.modified = len(self.processed_results)
+        return self.modified
