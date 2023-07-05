@@ -1,7 +1,7 @@
 {
     "name": "Sample HTTP POST Endpoint",
-    "active": true,
-    "default": true,
+    "active": false,
+    "default": false,
     "connector": "RequestsPost",
     "url": "https://xx.apis.it.h.edu/ats/person/v3/search",
     "query_template": "{url}?Query={query_string}",
