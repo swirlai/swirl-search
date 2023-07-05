@@ -3,7 +3,7 @@ name: Ingegration API Tests
 on:
   push:
     # only trigger on branches, not on tags
-    branches: 'release_2_1'
+    branches: 'develop'
 
 jobs:
 
@@ -32,4 +32,3 @@ jobs:
       run: python swirl.py start
     - name: Run Integrated API tests
       run: docker run --net=host -t swirlai/swirl-search:latest-integrated-api sh -c "behave --tags=integrated_api"
-           
