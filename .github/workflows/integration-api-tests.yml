@@ -3,7 +3,7 @@ name: Ingegration API Tests
 on:
   push:
     # only trigger on branches, not on tags
-    branches: 'develop'
+    branches: 'release_2_1'
 
 jobs:
 
