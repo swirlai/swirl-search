@@ -1,5 +1,7 @@
 {
     "name": "Company Funding Records - BigQuery",
+    "active": false,
+    "default": false,
     "connector": "BigQuery",
     "query_template": "select {fields} from `{table}` where search({field1}, '{query_string}') or search({field2}, '{query_string}');",
     "query_processors": [
