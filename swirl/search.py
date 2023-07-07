@@ -270,8 +270,9 @@ def search(id, session=None):
         for processor in processor_list:
             logger.info(f"{module_name}: invoking processor: {processor}")
             try:
-                # DS-612
-                post_result_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_PROCESSOR_DISPATCH)(search.id)
+                # DS-612 DONE
+                # post_result_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_PROCESSOR_DISPATCH)(search.id)
+                post_result_processor = alloc_processor(processor=processor)(search.id)
                 if post_result_processor.validate():
                     results_modified = post_result_processor.process()
                 else:
@@ -350,8 +351,9 @@ def rescore(id):
         for processor in processor_list:
             try:
                 logger.info(f"{module_name}: invoking processor: rescoring: {processor}")
-                # DS-612
-                post_result_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_PROCESSOR_DISPATCH)(search.id)
+                # DS-612 DONE
+                # post_result_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_PROCESSOR_DISPATCH)(search.id)
+                post_result_processor = alloc_processor(processor)
                 if post_result_processor.validate():
                     results_modified = post_result_processor.process()
                 else:

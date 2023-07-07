@@ -24,5 +24,10 @@ SWIRL_PROCESSOR_DISPATCH = {}
 for t in SWIRL_PROCESSOR_LIST:
     SWIRL_PROCESSOR_DISPATCH[t[0]] = globals()[t[0]]
 
+def alloc_processor(processor):
+    if not processor:
+        logger.error("blank processor")
+        return None
+    return globals()[processor]
 
 # Add new processors here!
