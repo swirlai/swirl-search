@@ -22,6 +22,7 @@ from swirl.utils import select_providers
 SWIRL_OBJECT_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
 
 SWIRL_OBJECT_DICT = {}
+# DS-612
 for t in SWIRL_OBJECT_LIST:
     SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
 
@@ -270,6 +271,7 @@ def search(id, session=None):
         for processor in processor_list:
             logger.info(f"{module_name}: invoking processor: {processor}")
             try:
+                # DS-612
                 post_result_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id)
                 if post_result_processor.validate():
                     results_modified = post_result_processor.process()
@@ -349,6 +351,7 @@ def rescore(id):
         for processor in processor_list:
             try:
                 logger.info(f"{module_name}: invoking processor: rescoring: {processor}")
+                # DS-612
                 post_result_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id)
                 if post_result_processor.validate():
                     results_modified = post_result_processor.process()

@@ -505,7 +505,8 @@ def main(argv):
             # end for
         # run the command
         command = args.command[0]
-        # limit eval for security purposes
+        # limit eval for security purposesa
+        # DS-612
         result = eval(command + '(service_list)', {"command": command, "service_list": service_list, "__builtins__": None}, COMMAND_DIR)
     # end if
 

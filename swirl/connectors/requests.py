@@ -173,11 +173,12 @@ class Requests(Connector):
                 if self.provider.credentials:
                     if session and self.provider.eval_credentials and '{credentials}' in self.provider.credentials:
                         dict_credentials = {'session': session}
+                        # DS-612
                         credentials = eval(self.provider.eval_credentials , {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_credentials)
                         self.provider.credentials = self.provider.credentials.replace('{credentials}', credentials)
                     if self.provider.credentials.startswith('HTTP'):
                         # handle HTTPBasicAuth('user', 'pass') etc
-                        # response = requests.get(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth))
+                        # DS-612
                         response = self.send_request(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth),
                                                      query=self.query_string_to_provider, headers=self._put_configured_headers())
                     else:

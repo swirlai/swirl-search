@@ -26,6 +26,7 @@ from swirl.models import SearchProvider
 SWIRL_OBJECT_LIST = SearchProvider.CONNECTOR_CHOICES
 
 SWIRL_OBJECT_DICT = {}
+# DS-612
 for t in SWIRL_OBJECT_LIST:
     SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
 
@@ -36,6 +37,7 @@ for t in SWIRL_OBJECT_LIST:
 def federate_task(search_id, provider_id, provider_connector, update, session):
     logger.info(f"{module_name}: federate_task: {search_id}_{provider_id}_{provider_connector} update: {update}")
     try:
+        # DS-612
         connector = eval(provider_connector, {"provider_connector": provider_connector, "__builtins__": None}, SWIRL_OBJECT_DICT)(provider_id, search_id, update)
         connector.federate(session)
     except NameError as err:

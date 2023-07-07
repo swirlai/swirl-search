@@ -36,6 +36,7 @@ SWIRL_OBJECT_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESU
 SWIRL_RP_SKIP_TAG = 'SW_RESULT_PROCESSOR_SKIP'
 
 SWIRL_OBJECT_DICT = {}
+# DS-612
 for t in SWIRL_OBJECT_LIST:
     SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
 
@@ -329,6 +330,7 @@ class Connector:
             logger.info(f"{self}: invoking processor: process results {processor}")
             last_results = copy.deepcopy(self.results)
             try:
+                # DS-612
                 proc = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.results, self.provider, self.query_string_to_provider)
                 modified = proc.process()
                 self.results = proc.get_results()

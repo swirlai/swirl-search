@@ -8,6 +8,7 @@ import logging as logger
 
 SWIRL_AUTHENTICATORS_LIST = SearchProvider.AUTHENTICATOR_CHOICES
 SWIRL_AUTHENTICATORS_DICT = {}
+# DS-612 I would like to get rid of this, but it's less important as it doesn't read input from the outside world.
 for t in SWIRL_AUTHENTICATORS_LIST:
     SWIRL_AUTHENTICATORS_DICT[t[0]]=eval(t[0])
 

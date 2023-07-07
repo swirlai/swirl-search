@@ -52,10 +52,12 @@ SWIRL_OBJECT_LIST = Search.MIXER_CHOICES
 SWIRL_AUTHENTICATORS_LIST = SearchProvider.AUTHENTICATOR_CHOICES
 
 SWIRL_OBJECT_DICT = {}
+# DS-612
 for t in SWIRL_OBJECT_LIST:
     SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
 
 SWIRL_AUTHENTICATORS_DICT = {}
+# DS-612
 for t in SWIRL_AUTHENTICATORS_LIST:
     SWIRL_AUTHENTICATORS_DICT[t[0]]=eval(t[0])
 SWIRL_EXPLAIN = getattr(settings, 'SWIRL_EXPLAIN', True)
@@ -246,6 +248,7 @@ def search(request):
         if search.status.endswith('_READY') or search.status == 'RESCORING':
             try:
                 # to do: support mixer spec above
+                # DS-612
                 results = eval(search.result_mixer, {f"{search.result_mixer}": search.result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain).mix()
                 results = results['results']
             except (NameError, TypeError) as err:
@@ -527,9 +530,11 @@ class SearchViewSet(viewsets.ModelViewSet):
                 try:
                     if otf_result_mixer:
                         # call the specifixed mixer on the fly otf
+                        # DS-612
                         results = eval(otf_result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, 1, explain, provider).mix()
                     else:
                         # call the mixer for this search provider
+                        # DS-612
                         results = eval(search.result_mixer, {f"{search.result_mixer}": search.result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, 1, explain, provider).mix()
                 except NameError as err:
                     message = f'Error: NameError: {err}'
@@ -795,9 +800,11 @@ class ResultViewSet(viewsets.ModelViewSet):
                 try:
                     if otf_result_mixer:
                         # call the specifixed mixer on the fly otf
+                        # DS-612
                         results = eval(otf_result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain, provider, mark_all_read).mix()
                     else:
                         # call the mixer for this search provider
+                        # DS-612
                         results = eval(search.result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain, provider, mark_all_read).mix()
                 except NameError as err:
                     message = f'Error: NameError: {err}'

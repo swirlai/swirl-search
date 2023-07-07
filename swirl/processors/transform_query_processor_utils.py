@@ -43,6 +43,7 @@ def get_pre_query_processor_or_transform(processor, query_temp, swirl_object_dic
     Get the pre-query processed based on an entry from from the pre_query_processor(s) fields
     """
     try:
+        # DS-612
         pre_query_processor = eval(processor, {"processor": processor, "__builtins__": None}, swirl_object_dict)(query_temp, None, tags)
     except (Exception) as err:
         # catch all exceptions here, because anything can come back from eval
@@ -55,6 +56,7 @@ def get_query_processor_or_transform(processor, query_temp, swirl_object_dict, m
     Get the query processed based on an entry from from the query_processor(s) fields
     """
     try:
+        # DS-612
         query_processor = eval(processor, {"processor": processor, "__builtins__": None}, swirl_object_dict)(query_temp, mappings, tags)
     except (Exception) as err:
         query_processor = __fall_back_to_query_transform(processor, query_temp, err, user)
