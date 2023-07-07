@@ -25,7 +25,7 @@ from swirl.models import SearchProvider
 
 # SWIRL_OBJECT_LIST = SearchProvider.CONNECTOR_CHOICES
 # SWIRL_OBJECT_DICT = {}
-# # DS-612
+# # DS-612 DONE
 # for t in SWIRL_OBJECT_LIST:
 #     SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
 
