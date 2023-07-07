@@ -509,7 +509,7 @@ def main(argv):
         # run the command
         command = args.command[0]
         # limit eval for security purposesa
-        # DS-612
+        # DS-612 DONE
         # result = eval(command + '(service_list)', {"command": command, "service_list": service_list, "__builtins__": None}, COMMAND_DIR)
         result = COMMAND_DISPATCH.get(command)(service_list=service_list)
     # end if
