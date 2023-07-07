@@ -20,6 +20,7 @@ logger = get_task_logger(__name__)
 
 from swirl.connectors.utils import bind_query_mappings
 from swirl.connectors.connector import Connector
+import json
 
 from opensearchpy import OpenSearch as opensearch
 from opensearchpy.exceptions import AuthenticationException, AuthorizationException, ConnectionError, NotFoundError, RequestError, SSLError, TransportError
@@ -43,8 +44,9 @@ class OpenSearch(Connector):
         if '{query_string}' in self.provider.query_template:
             base_query = base_query.replace('{query_string}', self.query_string_to_provider)
 
-        # DS-612
-        query_to_provider = eval(base_query, {}, {})
+        # DS-612 DONE
+        # query_to_provider = eval(base_query, {}, {})
+        query_to_provider = json.loads(base_query)
         if type(query_to_provider) != dict:
             self.error(f"error converting to dict: {base_query}")
             # to do stop?
