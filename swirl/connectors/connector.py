@@ -29,7 +29,7 @@ from swirl.connectors.utils import get_mappings_dict
 from swirl.processors import *
 from swirl.processors.transform_query_processor_utils import get_query_processor_or_transform
 
-SWIRL_OBJECT_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
+SWIRL_PROCESSOR_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
 
 # Look for this tag in tags and skip any results processor by name using this format
 # SW_RESULT_PROCESSOR_SKIP:<ResultProcessorName>
@@ -37,7 +37,7 @@ SWIRL_RP_SKIP_TAG = 'SW_RESULT_PROCESSOR_SKIP'
 
 SWIRL_OBJECT_DICT = {}
 # DS-612
-for t in SWIRL_OBJECT_LIST:
+for t in SWIRL_PROCESSOR_LIST:
     SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
 
 ########################################

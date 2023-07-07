@@ -14,6 +14,15 @@ from swirl.processors.transform_query_processor import *
 from swirl.processors.write_to_filesystem import *
 from swirl.processors.temporal_relevancy import *
 from swirl.processors.date_finder import *
-from swirl.processors.entity_matcher import * 
+from swirl.processors.entity_matcher import *
+from swirl.models import Search, SearchProvider
+
+SWIRL_PROCESSOR_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
+
+SWIRL_PROCESSOR_DISPATCH = {}
+# DS-612
+for t in SWIRL_PROCESSOR_LIST:
+    SWIRL_PROCESSOR_DISPATCH[t[0]] = globals()[t[0]]
+
 
 # Add new processors here!
