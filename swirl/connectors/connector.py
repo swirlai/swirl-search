@@ -29,17 +29,8 @@ from swirl.connectors.utils import get_mappings_dict
 from swirl.processors import *
 from swirl.processors.transform_query_processor_utils import get_query_processor_or_transform
 
-SWIRL_PROCESSOR_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
 SWIRL_RP_SKIP_TAG = 'SW_RESULT_PROCESSOR_SKIP'
 
-# Look for this tag in tags and skip any results processor by name using this format
-# SW_RESULT_PROCESSOR_SKIP:<ResultProcessorName>
-# SWIRL_OBJECT_DICT = {}
-# # DS-612 DONE
-# for t in SWIRL_PROCESSOR_LIST:
-#     SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
-
-########################################
 ########################################
 
 class Connector:
@@ -182,7 +173,7 @@ class Connector:
         for processor in processor_list:
             logger.info(f"{self}: invoking query processor: {processor}")
             try:
-                processed_query = get_query_processor_or_transform(processor, query_temp, SWIRL_PROCESSOR_DISPATCH, self.provider.query_mappings, self.provider.tags, self.search_user).process()
+                processed_query = get_query_processor_or_transform(processor, query_temp, self.provider.query_mappings, self.provider.tags, self.search_user).process()
             except (NameError, TypeError, ValueError) as err:
                 self.error(f'{processor}: {err.args}, {err}')
                 return
@@ -329,8 +320,6 @@ class Connector:
             logger.info(f"{self}: invoking processor: process results {processor}")
             last_results = copy.deepcopy(self.results)
             try:
-                # DS-612 DONE
-                # proc = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_OBJECT_DICT)(self.results, self.provider, self.query_string_to_provider)
                 proc = alloc_processor(processor=processor)(self.results, self.provider, self.query_string_to_provider)
                 modified = proc.process()
                 self.results = proc.get_results()
