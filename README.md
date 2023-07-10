@@ -1,4 +1,4 @@
-<h1>&nbsp; Swirl Metasearch 2.0<img alt='Swirl Metasearch Logo' src='https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl-logo-only-blue.png' width=38 align=left /></h1>
+<h1>&nbsp; Swirl Metasearch 2.1<img alt='Swirl Metasearch Logo' src='https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl-logo-only-blue.png' width=38 align=left /></h1>
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=blue&logoColor=blue&style=flat)](https://opensource.org/license/apache-2-0/)
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat&label=Release)](https://github.com/swirlai/swirl-search/releases)
@@ -39,7 +39,7 @@ After a few minutes the following or similar should appear:
 
 ```
 ssdtest-app-1  | Command successful!
-ssdtest-app-1  | __S_W_I_R_L__2_._0_._3________________________________________________________
+ssdtest-app-1  | __S_W_I_R_L__2_._1____________________________________________________________
 ssdtest-app-1  |
 ssdtest-app-1  | Warning: logs directory does not exist, creating it
 ssdtest-app-1  | Start: rabbitmq -> rabbitmq-server ... Ok, pid: 53
@@ -53,31 +53,29 @@ ssdtest-app-1  |   577 ?        00:00:11 celery
 ssdtest-app-1  |   609 ?        00:00:06 celery
 ssdtest-app-1  |
 ssdtest-app-1  | Command successful!
-ssdtest-app-1  | 2023-06-07 13:16:11,070 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
-ssdtest-app-1  | 2023-06-07 13:16:11,074 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
-ssdtest-app-1  | 2023-06-07 13:16:11,075 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
-ssdtest-app-1  | 2023-06-07 13:16:11,079 INFO     Listening on TCP address 0.0.0.0:8000
+ssdtest-app-1  | 2023-07-06 13:16:11,070 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
+ssdtest-app-1  | 2023-07-06 13:16:11,074 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+ssdtest-app-1  | 2023-07-06 13:16:11,075 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
+ssdtest-app-1  | 2023-07-06 13:16:11,079 INFO     Listening on TCP address 0.0.0.0:8000
 ```
 
-* Open this URL with a browser: http://localhost:8000/spyglass/
+* Open this URL with a browser: http://localhost:8000/galaxy/
 
 The search page will appear. Click `Log Out` at top, right. The Swirl login page will appear:
 
-![Swirl Login](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_login.png)
+![Swirl Login](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_login-galaxy_dark.png)
 
 Enter username `admin` and password `password`. Then click Login.
 
 * Enter a search in the search box and press the search button. Ranked results will appear in just a few seconds!
 
-![Swirl Metasearch 2.0 Results](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_metasearch_results.png)
+![Swirl Results](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_results-galaxy_dark.png)
 
 :warning: The Docker version of Swirl does *not* retain results or configuration when shut down!
 
 :key: Swirl includes three (3) Google Programmable Search Engines (PSEs), complete with shared credentials, to get you up and running with right away. These credentials are shared with the Swirl Community.
 
 :key: Using Swirl with Microsoft 365 requires installation and approval by an authorized company administrator. For more information please review the [M365 Guide](https://github.com/swirlai/swirl-search/wiki/4.-M365-Guide) or [contact us](mailto:hello@swirl.today) for more information.
-
-<br/>
 
 ### Learn more: [Quick Start](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start)
 
@@ -93,7 +91,7 @@ Enter username `admin` and password `password`. Then click Login.
 
 | Version                     | Date                        | Notes |
 | --------------------------- | --------------------------- | ----- |
-| [Swirl Metasearch 2.0](https://github.com/swirlai/swirl-search/releases/tag/v2.0) | 05-22-2023 | [Release 2.0](https://github.com/swirlai/swirl-search/releases) |
+| [Swirl Metasearch 2.1](https://github.com/swirlai/swirl-search/releases/tag/v2.1.0) | 07-06-2023 | [Release 2.1](https://github.com/swirlai/swirl-search/releases) |
 
 <br/>
 
