@@ -3,7 +3,7 @@ name: Tests
 on:
   push:
     # only trigger on branches, not on tags
-    branches: 'DS-612-evl'
+    branches: 'develop'
 
 jobs:
 
