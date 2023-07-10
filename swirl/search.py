@@ -19,12 +19,6 @@ from swirl.processors import *
 from swirl.processors.transform_query_processor_utils import get_pre_query_processor_or_transform
 from swirl.utils import select_providers
 
-# SWIRL_PROCESSOR_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
-# SWIRL_OBJECT_DICT = {}
-# # DS-612 DONE
-# for t in SWIRL_PROCESSOR_LIST:
-#     SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
-
 ##################################################
 ##################################################
 
@@ -146,7 +140,7 @@ def search(id, session=None):
         for processor in processor_list:
             logger.info(f"{module_name}: invoking processor: {processor}")
             try:
-                pre_query_processor = get_pre_query_processor_or_transform(processor, query_temp, SWIRL_PROCESSOR_DISPATCH, search.tags, user)
+                pre_query_processor = get_pre_query_processor_or_transform(processor, query_temp, search.tags, user)
                 if pre_query_processor.validate():
                     processed_query = pre_query_processor.process()
                 else:
@@ -270,8 +264,6 @@ def search(id, session=None):
         for processor in processor_list:
             logger.info(f"{module_name}: invoking processor: {processor}")
             try:
-                # DS-612 DONE
-                # post_result_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_PROCESSOR_DISPATCH)(search.id)
                 post_result_processor = alloc_processor(processor=processor)(search.id)
                 if post_result_processor.validate():
                     results_modified = post_result_processor.process()
@@ -351,8 +343,6 @@ def rescore(id):
         for processor in processor_list:
             try:
                 logger.info(f"{module_name}: invoking processor: rescoring: {processor}")
-                # DS-612 DONE
-                # post_result_processor = eval(processor, {"processor": processor, "__builtins__": None}, SWIRL_PROCESSOR_DISPATCH)(search.id)
                 post_result_processor = alloc_processor(processor)
                 if post_result_processor.validate():
                     results_modified = post_result_processor.process()

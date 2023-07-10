@@ -17,12 +17,6 @@ from swirl.processors.date_finder import *
 from swirl.processors.entity_matcher import *
 from swirl.models import Search, SearchProvider
 
-SWIRL_PROCESSOR_LIST = SearchProvider.QUERY_PROCESSOR_CHOICES + SearchProvider.RESULT_PROCESSOR_CHOICES + Search.PRE_QUERY_PROCESSOR_CHOICES + Search.POST_RESULT_PROCESSOR_CHOICES
-
-SWIRL_PROCESSOR_DISPATCH = {}
-# DS-612 DONE
-for t in SWIRL_PROCESSOR_LIST:
-    SWIRL_PROCESSOR_DISPATCH[t[0]] = globals()[t[0]]
 
 def alloc_processor(processor):
     if not processor:

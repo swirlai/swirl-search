@@ -75,9 +75,6 @@ class Elastic(Connector):
             return
 
         try:
-            # security review 1.7 - OK - limited to Elasticsearch
-            # DS-612 DONE
-            # es = eval(f'Elasticsearch({self.provider.credentials}, {self.provider.url})')
             es = Elasticsearch(self.provider.credentials, self.provider.url)
         except NameError as err:
             self.error(f'NameError: {err}')
@@ -86,9 +83,6 @@ class Elastic(Connector):
 
         response = None
         try:
-            # security review 1.7 - OK - limited to Elasticsearch
-            # DS-612 DONE
-            # response = eval(self.query_to_provider)
             response = es.search(self.query_to_provider)
         except ConnectionError as err:
             self.error(f"es.search reports: {err}")

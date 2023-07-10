@@ -213,7 +213,7 @@
         "default": false,
         "connector": "OpenSearch",
         "url": "http://localhost:9200/",
-        "query_template": "{'query': {'query_string': {'query': '{query_string}', 'default_field': '{default_field}', 'default_operator': 'and'}}}",
+        "query_template": {"query": {"query_string": {"query": "{query_string}", "default_field": "{default_field}", "default_operator": "and"}}},
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],

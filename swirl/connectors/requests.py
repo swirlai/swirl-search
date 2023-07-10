@@ -172,19 +172,14 @@ class Requests(Connector):
             try:
                 if self.provider.credentials:
                     if session and self.provider.eval_credentials and '{credentials}' in self.provider.credentials:
-                        dict_credentials = {'session': session}
-                        # DS-612 DONE
-                        # credentials = eval(self.provider.eval_credentials , {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_credentials)
                         credentials = session[self.provider.eval_credentials]
                         self.provider.credentials = self.provider.credentials.replace('{credentials}', credentials)
                     if self.provider.credentials.startswith('HTTP'):
                         # handle HTTPBasicAuth('user', 'pass') etc
-                        # DS-612 DONE
                         http_auth = http_auth_parse(self.provider.credentials)
 
                         response = self.send_request(page_query, auth=http_auth_dispatch.get(http_auth[0])(*http_auth[1]),query=self.query_string_to_provider,
                                                      headers=self._put_configured_headers())
-                        # response = self.send_request(page_query, auth=self.provider.credentials, query=self.query_string_to_provider, headers=self._put_configured_headers())
                     else:
                         if self.provider.credentials.startswith('bearer='):
                             # populate with bearer token

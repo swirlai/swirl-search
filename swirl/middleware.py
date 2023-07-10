@@ -6,12 +6,6 @@ import jwt
 import logging as logger
 
 
-# SWIRL_AUTHENTICATORS_LIST = SearchProvider.AUTHENTICATOR_CHOICES
-# SWIRL_AUTHENTICATORS_DICT = {}
-# DS-612 DONE
-# for t in SWIRL_AUTHENTICATORS_LIST:
-#     SWIRL_AUTHENTICATORS_DICT[t[0]]=eval(t[0])
-
 class TokenMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
