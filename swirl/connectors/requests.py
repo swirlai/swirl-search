@@ -173,8 +173,9 @@ class Requests(Connector):
                 if self.provider.credentials:
                     if session and self.provider.eval_credentials and '{credentials}' in self.provider.credentials:
                         dict_credentials = {'session': session}
-                        # DS-612
-                        credentials = eval(self.provider.eval_credentials , {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_credentials)
+                        # DS-612 DONE
+                        # credentials = eval(self.provider.eval_credentials , {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_credentials)
+                        credentials = session[self.provider.eval_credentials]
                         self.provider.credentials = self.provider.credentials.replace('{credentials}', credentials)
                     if self.provider.credentials.startswith('HTTP'):
                         # handle HTTPBasicAuth('user', 'pass') etc
