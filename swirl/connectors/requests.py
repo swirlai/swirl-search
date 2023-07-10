@@ -11,7 +11,7 @@ import time
 
 import django
 
-from swirl.utils import swirl_setdir, is_valid_json
+from swirl.utils import swirl_setdir, http_auth_parse
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
@@ -180,7 +180,9 @@ class Requests(Connector):
                     if self.provider.credentials.startswith('HTTP'):
                         # handle HTTPBasicAuth('user', 'pass') etc
                         # DS-612 DONE
-                        response = self.send_request(page_query, auth=http_auth_dispatch.get(self.provider.credentials),query=self.query_string_to_provider,
+                        http_auth = http_auth_parse(self.provider.credentials)
+
+                        response = self.send_request(page_query, auth=http_auth_dispatch.get(http_auth[0])(*http_auth[1]),query=self.query_string_to_provider,
                                                      headers=self._put_configured_headers())
                         # response = self.send_request(page_query, auth=self.provider.credentials, query=self.query_string_to_provider, headers=self._put_configured_headers())
                     else:
