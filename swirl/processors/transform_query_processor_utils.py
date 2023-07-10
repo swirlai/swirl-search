@@ -6,6 +6,7 @@ logger = get_task_logger(__name__)
 from django.core.exceptions import ObjectDoesNotExist
 from swirl.models import QueryTransform
 from swirl.processors.transform_query_processor import TransformQueryProcessorFactory
+from swirl.processors import alloc_processor
 
 module_name = 'transform_query_processor_utils'
 def __find_query_transform(name, type, user=None):
@@ -38,24 +39,24 @@ def __fall_back_to_query_transform(processor, query, err, user=None):
         return TransformQueryProcessorFactory.alloc_query_transform(query, name, qrx_type,
                                                                                  qxr.config_content)
 
-def get_pre_query_processor_or_transform(processor, query_temp, swirl_object_dict, tags, user=None ):
+def get_pre_query_processor_or_transform(processor, query_temp, tags, user=None ):
     """
     Get the pre-query processed based on an entry from from the pre_query_processor(s) fields
     """
     try:
-        pre_query_processor = eval(processor, {"processor": processor, "__builtins__": None}, swirl_object_dict)(query_temp, None, tags)
+        pre_query_processor = alloc_processor(processor=processor)(query_temp, None, tags)
     except (Exception) as err:
         # catch all exceptions here, because anything can come back from eval
         pre_query_processor = __fall_back_to_query_transform(processor, query_temp, err, user)
 
     return pre_query_processor
 
-def get_query_processor_or_transform(processor, query_temp, swirl_object_dict, mappings, tags, user=None):
+def get_query_processor_or_transform(processor, query_temp, mappings, tags, user=None):
     """
     Get the query processed based on an entry from from the query_processor(s) fields
     """
     try:
-        query_processor = eval(processor, {"processor": processor, "__builtins__": None}, swirl_object_dict)(query_temp, mappings, tags)
+        query_processor = alloc_processor(processor=processor)(query_temp, mappings, tags)
     except (Exception) as err:
         query_processor = __fall_back_to_query_transform(processor, query_temp, err, user)
 

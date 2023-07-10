@@ -41,6 +41,19 @@ def test_suser(test_suser_pw):
     )
 
 @pytest.fixture
+def search_provider_post_basic_auth_data():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Build the absolute file path for the JSON file in the 'data' subdirectory
+    json_file_path = os.path.join(script_dir, 'data', 'sp_post_request_basic_auth.json')
+
+    # Read the JSON file
+    with open(json_file_path, 'r') as file:
+        data = json.load(file)
+    return data
+
+
+@pytest.fixture
 def search_provider_pre_query_data():
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -93,11 +106,12 @@ def mock_small_result():
 
 class PostSearchProviderTestCase(TestCase):
     @pytest.fixture(autouse=True)
-    def _init_fixtures(self, api_client,test_suser, test_suser_pw, search_provider_pre_query_data, mock_small_result,):
+    def _init_fixtures(self, api_client,test_suser, test_suser_pw, search_provider_pre_query_data, search_provider_post_basic_auth_data, mock_small_result,):
         self._api_client = api_client
         self._test_suser = test_suser
         self._test_suser_pw = test_suser_pw
         self._search_provider_pre_query = search_provider_pre_query_data
+        self._search_provider_basic_auth = search_provider_post_basic_auth_data
         self._mock_small_result = mock_small_result
 
 
@@ -111,6 +125,10 @@ class PostSearchProviderTestCase(TestCase):
         # Create a search provider
         #1
         serializer = SearchProviderSerializer(data=self._search_provider_pre_query)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(owner=self._test_suser)
+        #2
+        serializer = SearchProviderSerializer(data=self._search_provider_basic_auth)
         serializer.is_valid(raise_exception=True)
         serializer.save(owner=self._test_suser)
 
@@ -131,6 +149,20 @@ class PostSearchProviderTestCase(TestCase):
         assert response.status_code == 200, 'Expected HTTP status code 200'
         resp_json = response.json()
         print(resp_json)
+
+    @responses.activate
+    def test_request_post_basic_auth(self):
+        # Call the viewset
+        surl = reverse('search')
+        # Mock the POST request
+        json_response = self._mock_small_result
+        url_pattern = re.compile(r'https://xx\.apis\.it\.place\.edu/.*')
+        responses.add(responses.POST, url_pattern, json=json_response, status=200)
+        response = self._api_client.get(surl, {'qs': 'pinker', 'providers':2})
+        assert response.status_code == 200, 'Expected HTTP status code 200'
+        resp_json = response.json()
+        print(resp_json)
+
 
     @responses.activate
     def test_request_post_with_custom_headers(self):

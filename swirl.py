@@ -34,8 +34,6 @@ SWIRL_CORE_SERVICES = ['django', 'celery-worker']
 
 COMMAND_LIST = [ 'help', 'start', 'debug', 'start_sleep', 'stop', 'restart', 'migrate', 'setup', 'status', 'watch', 'logs' ]
 
-##################################################
-
 def check_rabbit():
     proc = subprocess.run(['ps','-ef'], capture_output=True)
     result = proc.stdout.decode('UTF-8')
@@ -458,6 +456,7 @@ COMMAND_DIR = {}
 for command in COMMAND_LIST:
     COMMAND_DIR[command] = eval(command)
 
+
 def main(argv):
     global SERVICES
     global SERVICES_DICT
@@ -505,8 +504,7 @@ def main(argv):
             # end for
         # run the command
         command = args.command[0]
-        # limit eval for security purposes
-        result = eval(command + '(service_list)', {"command": command, "service_list": service_list, "__builtins__": None}, COMMAND_DIR)
+        result = COMMAND_DISPATCH.get(command)(service_list=service_list)
     # end if
 
     if result == False:
@@ -523,6 +521,20 @@ def main(argv):
         else:
             return 0
     # end if
+
+COMMAND_DISPATCH = {
+     'help': help,
+     'start': start,
+     'debug': debug,
+     'start_sleep': start_sleep,
+     'stop' : stop,
+     'restart': restart,
+     'migrate': migrate,
+      'setup' : setup,
+      'status': status,
+      'watch':watch,
+      'logs': logs
+}
 
 #############################################
 

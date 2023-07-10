@@ -4,6 +4,7 @@
 '''
 
 import os
+import re
 import logging as logger
 import json
 from pathlib import Path
@@ -11,6 +12,28 @@ from django.core.paginator import Paginator
 
 ##################################################
 ##################################################
+
+
+CLAZZ_INSTANTIATE_PAT = r'^([A-Z][a-zA-Z0-9_]*)\((.*)\)'
+http_auth_clazz_strings = ['HTTPBasicAuth', 'HTTPDigestAuth', 'HTTProxyAuth']
+def http_auth_parse(str):
+    """
+    returns a tule of : 'HTTPBasicAuth'|'HTTPDigestAuth'|'HTTProxyAuth', [<list-of-arguments>]
+    """
+    if not str:
+        return '',[]
+    matched = re.match(CLAZZ_INSTANTIATE_PAT, str)
+    if matched:
+        c = matched.group(1)
+        p = matched.group(2)
+        if not (p and c in http_auth_clazz_strings) :
+            logger.warning(f'unknown http auth class string {c} or missing parameters')
+            return '',[]
+        return c, [item.strip().strip("'") for item in p.split(',')]
+    else:
+        return '',[]
+
+
 
 def is_valid_json(j):
     try:

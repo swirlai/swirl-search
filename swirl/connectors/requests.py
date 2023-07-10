@@ -11,7 +11,7 @@ import time
 
 import django
 
-from swirl.utils import swirl_setdir, is_valid_json
+from swirl.utils import swirl_setdir, http_auth_parse
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
@@ -165,21 +165,21 @@ class Requests(Connector):
                 return
 
             # dictionary of authentication types permitted in the upcoming eval
-            dict_auth = {'HTTPBasicAuth': HTTPBasicAuth, 'HTTPDigestAuth': HTTPDigestAuth, 'HTTProxyAuth': HTTPProxyAuth}
+            http_auth_dispatch = {'HTTPBasicAuth': HTTPBasicAuth, 'HTTPDigestAuth': HTTPDigestAuth, 'HTTProxyAuth': HTTPProxyAuth}
 
             response = None
             # issue the query
             try:
                 if self.provider.credentials:
                     if session and self.provider.eval_credentials and '{credentials}' in self.provider.credentials:
-                        dict_credentials = {'session': session}
-                        credentials = eval(self.provider.eval_credentials , {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_credentials)
+                        credentials = session[self.provider.eval_credentials]
                         self.provider.credentials = self.provider.credentials.replace('{credentials}', credentials)
                     if self.provider.credentials.startswith('HTTP'):
                         # handle HTTPBasicAuth('user', 'pass') etc
-                        # response = requests.get(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth))
-                        response = self.send_request(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth),
-                                                     query=self.query_string_to_provider, headers=self._put_configured_headers())
+                        http_auth = http_auth_parse(self.provider.credentials)
+
+                        response = self.send_request(page_query, auth=http_auth_dispatch.get(http_auth[0])(*http_auth[1]),query=self.query_string_to_provider,
+                                                     headers=self._put_configured_headers())
                     else:
                         if self.provider.credentials.startswith('bearer='):
                             # populate with bearer token

@@ -21,3 +21,8 @@ from swirl.connectors.microsoft_graph import MicrosoftTeams
 # from swirl.connectors.postgresql import PostgreSQL
 
 # Add new connectors here!
+
+def alloc_connector(connector):
+    if not connector:
+        return None
+    return globals()[connector]

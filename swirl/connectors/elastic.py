@@ -52,10 +52,10 @@ class Elastic(Connector):
         if self.search.sort.lower() == 'date':
             if sort_field:
                 # to do: support ascending??? p2
-                elastic_query = 'es.search(' + query_to_provider + f", sort=[{{f'{sort_field}': 'desc'}}], size=" + str(self.provider.results_per_query) + ')'
+                elastic_query = query_to_provider + f", sort=[{{f'{sort_field}': 'desc'}}], size=" + str(self.provider.results_per_query)
             # endif
         else:
-            elastic_query = 'es.search(' + query_to_provider + ', size=' + str(self.provider.results_per_query) + ')'
+            elastic_query = query_to_provider + ', size=' + str(self.provider.results_per_query)
         # end if
 
         if elastic_query == "":
@@ -75,8 +75,7 @@ class Elastic(Connector):
             return
 
         try:
-            # security review 1.7 - OK - limited to Elasticsearch
-            es = eval(f'Elasticsearch({self.provider.credentials}, {self.provider.url})')
+            es = Elasticsearch(self.provider.credentials, self.provider.url)
         except NameError as err:
             self.error(f'NameError: {err}')
         except TypeError as err:
@@ -84,8 +83,7 @@ class Elastic(Connector):
 
         response = None
         try:
-            # security review 1.7 - OK - limited to Elasticsearch
-            response = eval(self.query_to_provider)
+            response = es.search(self.query_to_provider)
         except ConnectionError as err:
             self.error(f"es.search reports: {err}")
         except NotFoundError:

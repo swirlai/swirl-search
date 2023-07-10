@@ -48,16 +48,6 @@ module_name = 'views.py'
 from swirl.tasks import search_task, rescore_task
 from swirl.search import search as run_search
 
-SWIRL_OBJECT_LIST = Search.MIXER_CHOICES
-SWIRL_AUTHENTICATORS_LIST = SearchProvider.AUTHENTICATOR_CHOICES
-
-SWIRL_OBJECT_DICT = {}
-for t in SWIRL_OBJECT_LIST:
-    SWIRL_OBJECT_DICT[t[0]]=eval(t[0])
-
-SWIRL_AUTHENTICATORS_DICT = {}
-for t in SWIRL_AUTHENTICATORS_LIST:
-    SWIRL_AUTHENTICATORS_DICT[t[0]]=eval(t[0])
 SWIRL_EXPLAIN = getattr(settings, 'SWIRL_EXPLAIN', True)
 SWIRL_RERUN_WAIT = getattr(settings, 'SWIRL_RERUN_WAIT', 8)
 SWIRL_RESCORE_WAIT = getattr(settings, 'SWIRL_RESCORE_WAIT', 5)
@@ -246,7 +236,7 @@ def search(request):
         if search.status.endswith('_READY') or search.status == 'RESCORING':
             try:
                 # to do: support mixer spec above
-                results = eval(search.result_mixer, {f"{search.result_mixer}": search.result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain).mix()
+                results = alloc_mixer(search.result_mixer)(search.id, search.results_requested, page, explain).mix()
                 results = results['results']
             except (NameError, TypeError) as err:
                 message = f'Error: {type(err).__name__}: {err}'
@@ -527,10 +517,10 @@ class SearchViewSet(viewsets.ModelViewSet):
                 try:
                     if otf_result_mixer:
                         # call the specifixed mixer on the fly otf
-                        results = eval(otf_result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, 1, explain, provider).mix()
+                        results = alloc_mixer(otf_result_mixer)(search.id, search.results_requested, 1, explain, provider).mix()
                     else:
                         # call the mixer for this search provider
-                        results = eval(search.result_mixer, {f"{search.result_mixer}": search.result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, 1, explain, provider).mix()
+                        results = alloc_mixer(search.result_mixer)(search.id, search.results_requested, 1, explain, provider).mix()
                 except NameError as err:
                     message = f'Error: NameError: {err}'
                     logger.error(f'{module_name}: {message}')
@@ -795,10 +785,10 @@ class ResultViewSet(viewsets.ModelViewSet):
                 try:
                     if otf_result_mixer:
                         # call the specifixed mixer on the fly otf
-                        results = eval(otf_result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain, provider, mark_all_read).mix()
+                        results = alloc_mixer(otf_result_mixer)(search.id, search.results_requested, page, explain, provider, mark_all_read).mix()
                     else:
                         # call the mixer for this search provider
-                        results = eval(search.result_mixer, {"otf_result_mixer": otf_result_mixer, "__builtins__": None}, SWIRL_OBJECT_DICT)(search.id, search.results_requested, page, explain, provider, mark_all_read).mix()
+                        results = alloc_mixer(search.result_mixer)(search.id, search.results_requested, page, explain, provider, mark_all_read).mix()
                 except NameError as err:
                     message = f'Error: NameError: {err}'
                     logger.error(f'{module_name}: {message}')
