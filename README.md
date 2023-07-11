@@ -69,7 +69,7 @@ Enter username `admin` and password `password`. Then click Login.
 
 * Enter a search in the search box and press the search button. Ranked results will appear in just a few seconds!
 
-![Swirl Results](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_results-galaxy_dark.png)
+![Swirl Results](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_results_no_m365-galaxy_dark.png)
 
 :warning: The Docker version of Swirl does *not* retain results or configuration when shut down!
 
@@ -142,8 +142,6 @@ Enter username `admin` and password `password`. Then click Login.
 # Support
 
 * [Join the Swirl Metasearch Community on Slack!](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
-
-* [Create a GitHub Issue](https://github.com/swirlai/swirl-search/issues) if something doesn't work, isn't clear, or should be documented
 
 * Email: [support@swirl.today](mailto:support@swirl.today) with issues, requests, questions, etc - we'd love to hear from you!
 
