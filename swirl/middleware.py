@@ -39,14 +39,14 @@ class SpyglassAuthenticatorsMiddleware:
         logger.debug(f'SpyglassAuthenticatorsMiddleware: {request.path}')
         if request.path == '/swirl/sapi/search/' or request.path == '/api/swirl/sapi/search/':
             logger.debug(f'SpyglassAuthenticatorsMiddleware - in the sapi path')
-            for authenticator in SWIRL_AUTHENTICATORS_DISPATCH.values():
+            for authenticator in SWIRL_AUTHENTICATORS_DISPATCH.keys():
                 logger.debug(f'SpyglassAuthenticatorsMiddleware - {authenticator}')
                 if f'{authenticator}-Authorization' in request.headers:
                     logger.debug(f'SpyglassAuthenticatorsMiddleware - one we care about')
                     token = request.headers[f'{authenticator}-Authorization']
                     expires_in = int(jwt.decode(token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
                     ## Do we need refresh token ?
-                    authenticator().set_session_data(request, token, '', expires_in)
+                    SWIRL_AUTHENTICATORS_DISPATCH.get(authenticator)().set_session_data(request, token, '', expires_in)
                 else:
                     logger.debug(f'SpyglassAuthenticatorsMiddleware - call set session data NULL TOKEN')
                     authenticator().set_session_data(request, '', '', 0)
