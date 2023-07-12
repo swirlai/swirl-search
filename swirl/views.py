@@ -267,7 +267,8 @@ class AuthenticatorViewSet(viewsets.ModelViewSet):
 def authenticators(request):
     if request.method == 'POST':
         authenticator = request.POST.get('authenticator_name')
-        res = SWIRL_AUTHENTICATORS_DICT[authenticator]().update_token(request)
+
+        res = SWIRL_AUTHENTICATORS_DISPATCH.get(authenticator)().update_token(request)
         if res == True:
             return return_authenticators(request)
         return res
