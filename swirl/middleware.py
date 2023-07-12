@@ -49,7 +49,7 @@ class SpyglassAuthenticatorsMiddleware:
                     SWIRL_AUTHENTICATORS_DISPATCH.get(authenticator)().set_session_data(request, token, '', expires_in)
                 else:
                     logger.debug(f'SpyglassAuthenticatorsMiddleware - call set session data NULL TOKEN')
-                    authenticator().set_session_data(request, '', '', 0)
+                    SWIRL_AUTHENTICATORS_DISPATCH.get(authenticator)().set_session_data(request, '', '', 0)
         else:
             logger.debug(f'SpyglassAuthenticatorsMiddleware - No action')
         return self.get_response(request)
