@@ -76,8 +76,6 @@ class Requests(Connector):
         # this should leave one item, {query_string}
         if '{query_string}' in query_to_provider:
             query_to_provider = query_to_provider.replace('{query_string}', urllib.parse.quote_plus(self.query_string_to_provider))
-        else:
-            self.warning(f'{{query_string}} missing from query_to_provider: {query_to_provider}')
 
         if self.search.sort.lower() == 'date':
             # insert before the last parameter, which is expected to be the user query
@@ -92,9 +90,6 @@ class Requests(Connector):
             if 'RELEVANCY_SORT' in self.query_mappings:
                 sort_query = sort_query + '&' + self.query_mappings['RELEVANCY_SORT'] + query_to_provider[query_to_provider.rfind('&'):]
                 query_to_provider = sort_query
-            else:
-                # self.warning(f'RELEVANCY_SORT missing from self.query_mappings: {self.query_mappings}')
-                pass
 
         self.query_to_provider = query_to_provider
 
