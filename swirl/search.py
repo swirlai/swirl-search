@@ -18,6 +18,7 @@ from swirl.tasks import federate_task
 from swirl.processors import *
 from swirl.processors.transform_query_processor_utils import get_pre_query_processor_or_transform
 from swirl.utils import select_providers
+from swirl.perfomance_analyzer import *
 
 ##################################################
 ##################################################
@@ -32,6 +33,7 @@ def search(id, session=None):
 
     update = False
     start_time = time.time()
+    sw_qrx = SwirlQueryRequest()
 
     try:
         search = Search.objects.get(id=id)
