@@ -215,24 +215,13 @@ def position_dict(text, word_list):
             positions[word.lower()].append(i)
     return positions
 
-
 #############################################
 # fix for https://github.com/swirlai/swirl-search/issues/33
 
-from swirl.bs4 import bs
+from swirl.bs4 import bs, MarkupResemblesLocatorWarning
 
-# # Function to remove tags
-# def remove_tags(html):
-
-#     # parse html content
-#     soup = bs(html, "html.parser")
-
-#     for data in soup(['style', 'script']):
-#         # Remove tags
-#         data.decompose()
-
-#     # return data by retrieving the tag content
-#     return ' '.join(soup.stripped_strings)
+import warnings
+warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
 def remove_tags(html):
     # Parse html content
