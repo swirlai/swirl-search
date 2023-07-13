@@ -462,7 +462,7 @@ def test_dd_result_processor(ms_message_result_converation, test_suser_pw):
     r = ddrp.process()
     assert r
     assert len(ddrp.get_results()) == 1
-    logger.info(f'dedupped results {r}')
+    logger.debug(f'dedupped results {r}')
 
 @pytest.mark.django_db
 def test_aqp(aqp_test_cases, aqp_test_expected):

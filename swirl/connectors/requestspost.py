@@ -36,7 +36,7 @@ class RequestsPost(Requests):
     ########################################
 
     def validate_query(self, session=None):
-        logger.info(f"{self}: https post request validate_query() returning true")
+        logger.debug(f"{self}: https post request validate_query() returning true")
         try:
             json_object = json.loads(json.dumps(self.provider.post_query_template))
         except ValueError as e:

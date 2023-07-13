@@ -416,7 +416,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         # end for results in self.results:
         ############################################
         et_pass_1 = time.time() - st_pass_1
-        logger.info (f'{self}: elapsed time PASS 1 : {round(et_pass_1,2)}')
+        logger.debug (f'{self}: elapsed time PASS 1 : {round(et_pass_1,2)}')
 
         # compute field means
         dict_len_median = {}
@@ -523,6 +523,6 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         self.results_updated = int(updated)
 
         et_pass_2 = time.time() - st_pass_2
-        logger.info (f'{self}: elapsed time PASS 2 : {round(et_pass_2,2)}')
+        logger.debug (f'{self}: elapsed time PASS 2 : {round(et_pass_2,2)}')
 
         return self.results_updated

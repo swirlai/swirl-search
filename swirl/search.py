@@ -39,15 +39,15 @@ def search(id, session=None):
         logger.error(f'{module_name}_{id}: ObjectDoesNotExist: {err}')
         return False
     if not search.status.upper() in ['NEW_SEARCH', 'UPDATE_SEARCH']:
-        logger.info(f"{module_name}_{search.id}: unexpected status {search.status}")
+        logger.debug(f"{module_name}_{search.id}: unexpected status {search.status}")
         return False
     if search.status.upper() == 'UPDATE_SEARCH':
-        logger.info(f"{module_name}: {search.id}.status == UPDATE_SEARCH")
+        logger.debug(f"{module_name}: {search.id}.status == UPDATE_SEARCH")
         update = True
         search.sort = 'date'
 
     search.status = 'PRE_PROCESSING'
-    logger.info(f"{module_name}: {search.status}")
+    logger.debug(f"{module_name}: {search.status}")
     search.save()
     # check for provider specification
 
@@ -73,7 +73,7 @@ def search(id, session=None):
 
     user = User.objects.get(id=search.owner.id)
     if not user.has_perm('swirl.view_searchprovider'):
-        logger.info(f"User {user} needs permission view_searchprovider")
+        logger.warning(f"User {user} needs permission view_searchprovider")
         search.status = 'ERR_NEED_PERMISSION'
         search.save()
         return False
@@ -125,7 +125,7 @@ def search(id, session=None):
     # pre-query processing, which updates query_string_processed
 
     search.status = 'PRE_QUERY_PROCESSING'
-    logger.info(f"{module_name}: {search.status}")
+    logger.debug(f"{module_name}: {search.status}")
     search.save()
 
     processor_list = []
@@ -138,7 +138,7 @@ def search(id, session=None):
         processed_query = None
         query_temp = search.query_string
         for processor in processor_list:
-            logger.info(f"{module_name}: invoking processor: {processor}")
+            logger.debug(f"{module_name}: invoking processor: {processor}")
             try:
                 pre_query_processor = get_pre_query_processor_or_transform(processor, query_temp, search.tags, user)
                 if pre_query_processor.validate():
@@ -164,7 +164,7 @@ def search(id, session=None):
 
     ########################################
     search.status = 'FEDERATING'
-    logger.info(f"{module_name}: {search.status}")
+    logger.debug(f"{module_name}: {search.status}")
     search.save()
     federation_result = {}
     federation_status = {}
@@ -175,7 +175,7 @@ def search(id, session=None):
         federation_result[provider.id] = federate_task.delay(search.id, provider.id, provider.connector, update, session)
     # end for
     if not at_least_one:
-        logger.info(f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}")
+        logger.debug(f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}")
         search.status = 'ERR_NO_ACTIVE_SEARCHPROVIDERS'
         search.save()
         return False
@@ -201,13 +201,13 @@ def search(id, session=None):
                 at_least_one = True
         if len(results) == len(providers):
             # every provider has written a result object - exit
-            logger.info(f"{module_name}_{search.id}: all results received!")
+            logger.debug(f"{module_name}_{search.id}: all results received!")
             break
         search.status = f'FEDERATING_WAIT_{ticks}'
-        logger.info(f"{module_name}: {search.status}")
+        logger.debug(f"{module_name}: {search.status}")
         SWIRL_TIMEOUT = getattr(settings, 'SWIRL_TIMEOUT', 10)
         if ticks > int(SWIRL_TIMEOUT):
-            logger.info(f"{module_name}_{search.id}: timeout!")
+            logger.debug(f"{module_name}_{search.id}: timeout!")
             failed_providers = []
             responding_provider_names = []
             for result in results:
@@ -216,7 +216,7 @@ def search(id, session=None):
                 if not provider.name in responding_provider_names:
                     failed_providers.append(provider.name)
                     error_flag = True
-                    logger.info(f"{module_name}_{search.id}: timeout waiting for: {failed_providers}")
+                    logger.debug(f"{module_name}_{search.id}: timeout waiting for: {failed_providers}")
                     search.messages.append(f"[{datetime.now()}] Timeout waiting for: {failed_providers}")
                     search.save()
                 # end if
@@ -234,7 +234,7 @@ def search(id, session=None):
         # end if
     else:
         search.status = 'FULL_RESULTS'
-    logger.info(f"{module_name}: {search.status}")
+    logger.debug(f"{module_name}: {search.status}")
     ########################################
     # fix the result url
     # to do: figure out a better solution P1
@@ -256,13 +256,13 @@ def search(id, session=None):
     if search.post_result_processors:
         last_status = search.status
         search.status = 'POST_RESULT_PROCESSING'
-        logger.info(f"{module_name}: {search.status}")
+        logger.debug(f"{module_name}: {search.status}")
         search.save()
 
         processor_list = search.post_result_processors
 
         for processor in processor_list:
-            logger.info(f"{module_name}: invoking processor: {processor}")
+            logger.debug(f"{module_name}: invoking processor: {processor}")
             try:
                 post_result_processor = alloc_processor(processor=processor)(search.id)
                 if post_result_processor.validate():
@@ -301,11 +301,18 @@ def search(id, session=None):
             search.status = 'FULL_UPDATE_READY'
         else:
             search.status = 'FULL_RESULTS_READY'
-    logger.info(f"{module_name}: {search.status}")
+    logger.debug(f"{module_name}: {search.status}")
     end_time = time.time()
     search.time = f"{(end_time - start_time):.1f}"
-    logger.info(f"{module_name}: search time: {search.time}")
+    logger.debug(f"{module_name}: search time: {search.time}")
     search.save()
+
+    retrieved = 0
+    results = Result.objects.filter(search_id=search.id)
+    for result_set in results:
+        retrieved = retrieved + result_set.retrieved
+
+    logger.info(f"{user} search {search.id} {search.status} {retrieved} {search.time}")
 
     return True
 
@@ -327,7 +334,7 @@ def rescore(id):
 
     last_status = search.status
     if not (search.status.endswith('_READY') or search.status == 'RESCORING'):
-        logger.info(f"{module_name}_{search.id}: unexpected status {search.status}, rescore may not work")
+        logger.debug(f"{module_name}_{search.id}: unexpected status {search.status}, rescore may not work")
         last_status = None
 
     if len(results) == 0:
@@ -342,7 +349,7 @@ def rescore(id):
         # end if
         for processor in processor_list:
             try:
-                logger.info(f"{module_name}: invoking processor: rescoring: {processor}")
+                logger.debug(f"{module_name}: invoking processor: rescoring: {processor}")
                 post_result_processor = alloc_processor(processor)
                 if post_result_processor.validate():
                     results_modified = post_result_processor.process()
@@ -362,9 +369,15 @@ def rescore(id):
         else:
             # to do: document this
             search.status = "RESCORED_RESULTS_READY"
-        logger.info(f"{module_name}: {search.status}")
+        logger.debug(f"{module_name}: {search.status}")
         search.save()
+        user = User.objects.get(id=search.owner.id)
+        retrieved = 0
+        results = Result.objects.filter(search_id=search.id)
+        for result_set in results:
+            retrieved = retrieved + result_set.retrieved
+        logger.info(f"{user} search {search.id} {search.status} {retrieved} {search.time}")
         return True
     else:
-        logger.info(f"{module_name}_{search.id}: No post_result_processor or post_result_processors defined")
+        logger.debug(f"{module_name}_{search.id}: No post_result_processor or post_result_processors defined")
         return False

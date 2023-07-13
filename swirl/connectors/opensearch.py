@@ -36,7 +36,7 @@ class OpenSearch(Connector):
 
     def construct_query(self):
 
-        logger.info(f"{self}: construct_query()")
+        logger.debug(f"{self}: construct_query()")
 
         base_query = bind_query_mappings(self.provider.query_template, self.provider.query_mappings)
         logger.debug(f"base_query: {base_query}")
@@ -71,7 +71,7 @@ class OpenSearch(Connector):
 
     def execute_search(self, session=None):
 
-        logger.info(f"{self}: execute_search()")
+        logger.debug(f"{self}: execute_search()")
 
         parsed_url = urlparse(self.provider.url)
         host = parsed_url.hostname
@@ -173,7 +173,7 @@ class OpenSearch(Connector):
 
     def normalize_response(self):
 
-        logger.info(f"{self}: normalize_response()")
+        logger.debug(f"{self}: normalize_response()")
 
         if len(self.response) == 0:
             self.error("search succeeded, but found no json data in response")

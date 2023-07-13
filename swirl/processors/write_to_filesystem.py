@@ -47,7 +47,7 @@ class WriteToFileSystemPostResultProcessor(PostResultProcessor):
         with open(target_filename, 'w') as file:
             json.dump(result_item_list, file)
 
-        logger.info(f"{self.type}: wrote {len(result_item_list)} records to {target_filename}")
+        logger.debug(f"{self.type}: wrote {len(result_item_list)} records to {target_filename}")
         
         # this processor does not modify anything
         return 0
