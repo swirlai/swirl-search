@@ -1,5 +1,6 @@
 {
     "name": "Company Funding Records - SQLite3",
+    "active": false,
     "default": false,
     "connector": "Sqlite3",
     "url": "db.sqlite3",
