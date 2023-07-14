@@ -49,7 +49,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
     ############################################
 
-    def __init__(self, search_id):
+    def __init__(self, search_id, request_id = ''):
 
         self.query_stemmed_list = None
         self.not_list = None
@@ -59,7 +59,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         self.query_has_numeric = None
         self.provider_query_terms = []
 
-        return super().__init__(search_id)
+        return super().__init__(search_id, request_id=request_id)
 
     ############################################
 
@@ -183,7 +183,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         updated = 0
         dict_result_lens = {}
         list_query_lens = []
-        swrel_logger = SwirlRelevancyLogger()
+        swrel_logger = SwirlRelevancyLogger(self.request_id)
 
         ############################################
         # PASS 1

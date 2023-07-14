@@ -6,9 +6,9 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 class SwirlQueryRequestLogger:
-    def __init__(self, providers, start_time=time.time(), request_id=uuid):
-        self.request_id = request_id
-        self.start_time = start_time
+    def __init__(self, providers, start_time=None, request_id=None):
+        self.request_id = request_id if request_id is not None else str(uuid.uuid4())
+        self.start_time = start_time if start_time is not None else time.time()
         self.providers = providers
 
     def put_providers(self, providers):
@@ -16,14 +16,14 @@ class SwirlQueryRequestLogger:
 
     def complete_execution(self):
         elapsed_time = time.time() - self.start_time
-        logger.info(f'PAZ_QXC|{self.id}|{elapsed_time}|{self.providers}')
+        logger.info(f'PAZ_QXC|{self.request_id}|{elapsed_time}|{self.providers}')
 
     def timeout_execution(self):
-        logger.info(f'PAZ_QXT|{self.id}|{getattr(settings, "SWIRL_TIMEOUT", 10)}|{self.providers}')
+        logger.info(f'PAZ_QXT|{self.request_id}|{getattr(settings, "SWIRL_TIMEOUT", 10)}|{self.providers}')
 
     def error_execution(self, msg):
         elapsed_time = time.time() - self.start_time
-        logger.info(f'PAZ_QXE|{self.id}|{elapsed_time}|{self.providers}|{msg}')
+        logger.info(f'PAZ_QXE|{self.request_id}|{elapsed_time}|{self.providers}|{msg}')
 
 class ProviderQueryRequestLogger:
     def __init__(self, name, id):
@@ -42,7 +42,7 @@ class SwirlRelevancyLogger:
         self.request_id = request_id
 
     def _log_elapsed(self, t, p):
-        logger.info(f'PAZ_RP{p}|{self.reques}|{t}')
+        logger.info(f'PAZ_RP{p}|{self.request_id}|{t}')
 
     def start_pass_1(self):
         self.pass_1_start_time = time.time()

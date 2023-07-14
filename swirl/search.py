@@ -271,7 +271,7 @@ def search(id, session=None):
         for processor in processor_list:
             logger.info(f"{module_name}: invoking processor: {processor}")
             try:
-                post_result_processor = alloc_processor(processor=processor)(search.id)
+                post_result_processor = alloc_processor(processor=processor)(search_id=search.id, request_id=swqrx_logger.request_id)
                 if post_result_processor.validate():
                     results_modified = post_result_processor.process()
                 else:
