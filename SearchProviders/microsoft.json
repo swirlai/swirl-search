@@ -25,7 +25,6 @@
     },
     {
         "name": "Calendar Events - Microsoft 365",
-        "shared": true,
         "active": false,
         "default": true,
         "connector": "M365OutlookCalendar",

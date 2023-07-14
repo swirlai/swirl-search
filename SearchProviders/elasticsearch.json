@@ -1,5 +1,7 @@
 {
     "name": "ENRON Email - Elasticsearch",
+    "active": false,
+    "default": false,
     "connector": "Elastic",
     "url": "hosts='http://localhost:9200/'",
     "query_template": "index='{index_name}', query={'query_string': {'query': '{query_string}', 'default_field': '{default_field}'}}",
