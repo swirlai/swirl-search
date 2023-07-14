@@ -22,16 +22,18 @@ module_name = 'tasks.py'
 
 from swirl.connectors import *
 from swirl.models import SearchProvider
+from swirl.perfomance_logger import *
 
 ##################################################
 ##################################################
 
 @shared_task(name='federate', ignore_result=True)
-def federate_task(search_id, provider_id, provider_connector, update, session):
-    logger.info(f"{module_name}: federate_task: {search_id}_{provider_id}_{provider_connector} update: {update}")
+def federate_task(search_id, provider_id, provider_connector, update, session, request_id):
+    logger.info(f"{module_name}: federate_task: {search_id}_{provider_id}_{provider_connector} update: {update} request_id {request_id}")
     try:
-        connector = alloc_connector(connector=provider_connector)(provider_id, search_id, update)
-        connector.federate(session)
+        with ProviderQueryRequestLogger(provider_connector.provider.name, request_id):
+            connector = alloc_connector(connector=provider_connector)(provider_id, search_id, update)
+            connector.federate(session)
     except NameError as err:
         message = f'Error: NameError: {err}'
         logger.error(f'{module_name}: {message}')
