@@ -343,7 +343,6 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                             match_list = match_all(query_slice_stemmed_list, result_field_stemmed_list)
                             # truncate the match list, if longer than configured
                             if len(match_list) > SWIRL_MAX_MATCHES:
-                                self.warning(f"truncating matches for: {query_slice_stemmed_list}")
                                 match_list = match_list[:SWIRL_MAX_MATCHES-1]
                             qw_list = query_target
                             if match_list:
