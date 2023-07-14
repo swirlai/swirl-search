@@ -138,7 +138,11 @@ class Requests(Connector):
 
         # issue the query
         start = 1
+        mapped_responses = []
+
         for page in range(0, pages):
+
+            self.warning(f"Page: {page}")
 
             if 'PAGE' in self.query_mappings:
                 page_query = self.query_to_provider[:self.query_to_provider.rfind('&')]
@@ -269,8 +273,10 @@ class Requests(Connector):
                 self.status = 'READY'
                 return
             # process the results
+
             if 'RESULTS' in mapped_response:
                 if not mapped_response['RESULTS']:
+                    self.warning("1")
                     mapped_response['RESULTS'] = json_data
                 if not type(mapped_response['RESULTS']) == list:
                     # nlresearch single result
@@ -287,13 +293,13 @@ class Requests(Connector):
                 if type(json_data) == list:
                     if len(json_data) > 0:
                         if type(json_data[0]) == dict:
+                            self.warning("2")
                             mapped_response['RESULTS'] = json_data
                 else:
                     self.error(f'{self}: RESULTS missing from mapped_response')
                     return
                 # end if
             # end if
-            response = []
             if 'RESULT' in self.response_mappings:
                 for result in mapped_response['RESULTS']:
                     try:
@@ -310,7 +316,7 @@ class Requests(Connector):
                     if matches:
                         if len(matches) == 1:
                             for match in matches:
-                                response.append(match)
+                                mapped_responses.append(match)
                         else:
                             self.error(f'control mapping RESULT matched {len(matches)}, expected {self.provider.results_per_query}')
                             return
@@ -319,11 +325,13 @@ class Requests(Connector):
                         pass
             else:
                 # no RESULT key specified
-                response = mapped_response['RESULTS']
+                for res in mapped_response['RESULTS']:
+                    mapped_responses.append(res)
             # check retrieved
-            if response:
-                if retrieved > -1 and retrieved != len(response):
-                    self.warning(f"retrieved != length of response {len(response)}")
+            if mapped_responses:
+                # to do: review
+                if retrieved > -1 and retrieved != len(mapped_responses):
+                    self.warning(f"retrieved != length of response {len(mapped_responses)}")
             else:
                 # to do: review
                 self.error(f"no results extracted from response! found:{found}")
@@ -332,11 +340,11 @@ class Requests(Connector):
                 # end if
             if retrieved == -1:
                 # to do: this is probably wrong
-                retrieved = len(response)
+                retrieved = len(mapped_responses)
                 self.retrieved = retrieved
             if found == -1:
                 # for now, assume the source delivered what it found
-                found = len(response)
+                found = len(mapped_responses)
                 self.found = found
             # check for 0 delivered results (different from above)
             if found == 0 or retrieved == 0:
@@ -356,8 +364,10 @@ class Requests(Connector):
 
         # end for
 
+        self.warning(f"Response len = {len(mapped_responses)}")
+
         self.found = found
         self.retrieved = retrieved
-        self.response = response
+        self.response = mapped_responses
 
         return
