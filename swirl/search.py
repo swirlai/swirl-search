@@ -204,7 +204,6 @@ def search(id, session=None):
         if len(results) == len(providers):
             # every provider has written a result object - exit
             logger.info(f"{module_name}_{search.id}: all results received!")
-            swqrx_logger.complete_execution()
             break
         search.status = f'FEDERATING_WAIT_{ticks}'
         logger.info(f"{module_name}: {search.status}")
@@ -254,6 +253,7 @@ def search(id, session=None):
     search.save()
     # no results ready?
     if search.status == 'NO_RESULTS_READY':
+        swqrx_logger.error_execution('NO_RESULTS_READY')
         return True
     ########################################
     # post_result_processing
@@ -272,11 +272,11 @@ def search(id, session=None):
                 if post_result_processor.validate():
                     results_modified = post_result_processor.process()
                 else:
-                    logger.error(f"{module_name}_{search.id}: {processor}.validate() failed")
+                    error_return(f"{module_name}_{search.id}: {processor}.validate() failed", swqrx_logger)
                     return False
                 # end if
             except (NameError, TypeError, ValueError) as err:
-                logger.error(f'{module_name}_{search.id}: {processor}: {err.args}, {err}')
+                error_return(f'{module_name}_{search.id}: {processor}: {err.args}, {err}', swqrx_logger)
                 return False
             if not results_modified == 0:
                 if results_modified < 0:
@@ -309,6 +309,7 @@ def search(id, session=None):
     end_time = time.time()
     search.time = f"{(end_time - start_time):.1f}"
     logger.info(f"{module_name}: search time: {search.time}")
+    swqrx_logger.complete_execution()
     search.save()
 
     return True
