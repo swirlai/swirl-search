@@ -36,7 +36,7 @@ class M365(RequestsGet):
         is_valid_token = self.authenticator.is_authenticated(session)
         if is_valid_token:
             return super().validate_query(session)
-        self.error("M365 access token is not valid or missing")
+        logger.error("M365 access token is not valid or missing")
         return False
 
     def execute_search(self, session):
@@ -59,7 +59,7 @@ class M365Post(RequestsPost):
         is_valid_token = self.authenticator.is_authenticated(session)
         if is_valid_token:
             return super().validate_query(session)
-        self.error("M365 access token is not valid or missing")
+        logger.error("M365 access token is not valid or missing")
         return False
 
     def execute_search(self, session):

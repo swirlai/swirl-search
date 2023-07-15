@@ -170,22 +170,18 @@ def search(id, session=None):
     search.status = 'FEDERATING'
     logger.info(f"{module_name}: {search.status}")
     search.save()
-    federation_result = {}
-    federation_status = {}
-    at_least_one = False
-    for provider in providers:
-        at_least_one = True
-        federation_status[provider.id] = None
-        federation_result[provider.id] = federate_task.delay(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id)
-    # end for
-    if not at_least_one:
+
+    if not providers:
         msg = f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}"
         logger.info(msg)
         search.status = 'ERR_NO_ACTIVE_SEARCHPROVIDERS'
         search.save()
         error_return(msg, swqrx_logger)
         return False
-    # end if
+    else:
+        for provider in providers:
+            federate_task.delay(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id)
+
     ########################################
     # asynchronously collect results
     ticks = 0
@@ -229,6 +225,7 @@ def search(id, session=None):
                 # end if
             # end for
             # exit the loop
+            swqrx_logger.timeout_execution()
             break
     # end while
     ########################################
