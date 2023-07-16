@@ -1,0 +1,96 @@
+{
+    "name": "Deals - HubSpot.com",
+    "active": false,
+    "default": false,
+    "connector": "RequestsPost",
+    "url": "https://api.hubapi.com/crm/v3/objects/deals/search",
+    "query_template": "{url}",
+    "post_query_template": {
+        "query": "{query_string}",
+        "limit": "100"
+    },
+    "http_request_headers": {
+        "Content-Type": "application/json"
+    },
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "NOT=true",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
+    "response_mappings": "FOUND=total,RESULTS=results",
+    "result_mappings": "title=properties.dealname,body='Amount: {properties.amount} - Stage: {properties.dealstage}',date_published=createdAt,url='https://app.hubspot.com/contacts/<your-org-id>/record/0-3/{id}',id,properties.pipeline,updatedAt,properties.closedate,archived,links[*],NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "bearer=your-HubSpot-PAT",
+    "eval_credentials": "",
+    "tags": [
+        "HubSpot",
+        "Deal"
+    ]
+},
+{
+    "name": "Companies - HubSpot.com",
+    "active": false,
+    "default": false,
+    "connector": "RequestsPost",
+    "url": "https://api.hubapi.com/crm/v3/objects/companies/search",
+    "query_template": "{url}",
+    "post_query_template": {
+        "query": "{query_string}",
+        "limit": "100"
+    },
+    "http_request_headers": {
+        "Content-Type": "application/json"
+    },
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "NOT=true",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
+    "response_mappings": "FOUND=total,RESULTS=results",
+    "result_mappings": "title=properties.name,body='{properties.name}: {properties.domain}',date_published=createdAt,url='https://app.hubspot.com/contacts/<your-org-id>/record/0-2/{id}',id,updatedAt,archived,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "bearer=your-HubSpot-PAT",
+    "eval_credentials": "",
+    "tags": [
+        "HubSpot",
+        "Company"
+    ]
+},
+{
+    "name": "Contacts - HubSpot.com",
+    "active": false,
+    "default": false,
+    "connector": "RequestsPost",
+    "url": "https://api.hubapi.com/crm/v3/objects/contacts/search",
+    "query_template": "{url}",
+    "post_query_template": {
+        "query": "{query_string}",
+        "limit": "100"
+    },
+    "http_request_headers": {
+        "Content-Type": "application/json"
+    },
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "NOT=true",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
+    "response_mappings": "FOUND=total,RESULTS=results",
+    "result_mappings": "title='{properties.firstname} {properties.lastname}',body='{properties.firstname} {properties.lastname}:  {properties.email}',date_published=createdAt,author=properties.email,url='https://app.hubspot.com/contacts/<your-org-id>/record/0-1/{id}',id,updatedAt,archived,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "bearer=your-HubSpot-PAT",
+    "eval_credentials": "",
+    "tags": [
+        "HubSpot",
+        "Contact"
+    ]
+}

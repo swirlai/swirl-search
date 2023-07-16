@@ -1,5 +1,7 @@
 {
     "name": "Boards - Miro.com",
+    "active": false,
+    "default": false,
     "connector": "RequestsGet",
     "url": "https://api.miro.com/v2/boards",
     "query_template": "{url}?query={query_string}",

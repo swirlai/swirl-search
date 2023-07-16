@@ -1,7 +1,6 @@
 [
     {
         "name": "Code - GitHub.com",
-        "shared": true,
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -22,7 +21,7 @@
         "response_mappings": "FOUND=total_count,RESULTS=items",
         "result_mappings": "title=name,body=text_matches[*].fragment,author=repository.owner.login,url=html_url,repository.full_name,path,repository.html_url,repository.description,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "bearer=<your-GitHub-PAT>",
+        "credentials": "bearer=your-GitHub-PAT",
         "eval_credentials": "",
         "tags": [
             "GitHub",
@@ -31,7 +30,6 @@
     },
     {
         "name": "Issues - GitHub.com",
-        "shared": true,
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -52,7 +50,7 @@
         "response_mappings": "FOUND=total_count,RESULTS=items",
         "result_mappings": "title=title,body=text_matches[*].fragment,author=user.login,date_published=created_at,url=html_url,state,assignees[*].login,milestone.title,comments,updated_at,closed_at,labels[*].name,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "bearer=<your-GitHub-PAT>",
+        "credentials": "bearer=your-GitHub-PAT",
         "eval_credentials": "",
         "tags": [
             "GitHub",
@@ -61,7 +59,6 @@
     },
     {
         "name": "Pull Requests - GitHub.com",
-        "shared": true,
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -82,7 +79,7 @@
         "response_mappings": "FOUND=total_count,RESULTS=items",
         "result_mappings": "title=title,body=text_matches[*].fragment,author=user.login,date_published=created_at,url=html_url,number,state,updated_at,pull_request.merged_at,closed_at,labels[*].name,pull_request.diff_url,body,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "bearer=<your-GitHub-PAT>",
+        "credentials": "bearer=your-GitHub-PAT",
         "eval_credentials": "",
         "tags": [
             "GitHub",
@@ -91,7 +88,6 @@
     },
     {
         "name": "Commits - GitHub.com",
-        "shared": true,
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -112,7 +108,7 @@
         "response_mappings": "FOUND=total_count,RESULTS=items",
         "result_mappings": "title=commit.message,body=text_matches[*].fragment,author=commit.author.name,date_published=commit.author.date,url=html_url,commit.comment_count,committer.login,parents[*].html_url,repository.full_name,repository.html_url,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "bearer=<your-GitHub-PAT>",
+        "credentials": "bearer=your-GitHub-PAT",
         "eval_credentials": "",
         "tags": [
             "GitHub",

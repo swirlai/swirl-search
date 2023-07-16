@@ -11,7 +11,8 @@
         ],
         "query_mappings": "cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+            "DateFinderResultProcessor"
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
@@ -34,7 +35,8 @@
         ],
         "query_mappings": "cx=7d473806dcdde5bc6,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+            "DateFinderResultProcessor"
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['authors-name'],cacheId,pagemap.metatags[*].['articletype'],pagemap.metatags[*].['practice-name'],pagemap.metatags[*].['searchresults-tags'],pagemap.metatags[*].['site_name'],pagemap.metatags[*].['twitter:description'],NO_PAYLOAD",
@@ -57,7 +59,8 @@
         ],
         "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+            "DateFinderResultProcessor"
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['article:publisher'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['article:tag'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
@@ -381,6 +384,33 @@
         ]
     },
     {
+        "name": "Calendar Events - Microsoft 365",
+        "active": false,
+        "default": true,
+        "connector": "M365OutlookCalendar",
+        "url": "",
+        "query_template": "{url}",
+        "post_query_template": "{}",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true,NOT_CHAR=-",
+        "result_grouping_field": "title",
+        "result_processors": [
+            "MappingResultProcessor",
+            "DedupeByFieldResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=resource.subject,body=summary,date_published=resource.start.dateTime,url='https://outlook.office.com/calendar/item/{sw_urlencode(hitId)}',resource.sensitivity,resource.type,resource.hasAttachments,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Microsoft",
+            "Calendar"
+        ]
+    },
+    {
         "name": "OneDrive Files - Microsoft 365",
         "active": false,
         "default": true,
@@ -453,36 +483,7 @@
         ]
     },
     {
-	"name": "Calendar Events - Microsoft 365",
-	"shared": true,
-	"active": false,
-	"default": false,
-	"connector": "M365OutlookCalendar",
-	"url": "",
-	"query_template": "{url}",
-	"post_query_template": "{}",
-	"query_processors": [
-	    "AdaptiveQueryProcessor"
-	],
-	"query_mappings": "NOT=true,NOT_CHAR=-",
-	"result_grouping_field": "title",
-	"result_processors": [
-	    "MappingResultProcessor",
-	    "DedupeByFieldResultProcessor"
-	],
-	"response_mappings": "",
-	"result_mappings": "title=resource.subject,body=summary,date_published=resource.start.dateTime,url='https://outlook.office.com/calendar/item/{sw_urlencode(hitId)}',resource.sensitivity,resource.type,resource.hasAttachments,NO_PAYLOAD",
-	"results_per_query": 10,
-	"credentials": "",
-	"eval_credentials": "",
-	"tags": [
-	    "Microsoft",
-	    "Calendar"
-	]
-    },
-    {
         "name": "Code - GitHub.com",
-        "shared": true,
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -503,7 +504,7 @@
         "response_mappings": "FOUND=total_count,RESULTS=items",
         "result_mappings": "title=name,body=text_matches[*].fragment,author=repository.owner.login,url=html_url,repository.full_name,path,repository.html_url,repository.description,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "bearer=<your-GitHub-PAT>",
+        "credentials": "bearer=your-GitHub-PAT",
         "eval_credentials": "",
         "tags": [
             "GitHub",
@@ -512,7 +513,6 @@
     },
     {
         "name": "Issues - GitHub.com",
-        "shared": true,
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -533,7 +533,7 @@
         "response_mappings": "FOUND=total_count,RESULTS=items",
         "result_mappings": "title=title,body=text_matches[*].fragment,author=user.login,date_published=created_at,url=html_url,state,assignees[*].login,milestone.title,comments,updated_at,closed_at,labels[*].name,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "bearer=<your-GitHub-PAT>",
+        "credentials": "bearer=your-GitHub-PAT",
         "eval_credentials": "",
         "tags": [
             "GitHub",
@@ -542,7 +542,6 @@
     },
     {
         "name": "Pull Requests - GitHub.com",
-        "shared": true,
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -563,7 +562,7 @@
         "response_mappings": "FOUND=total_count,RESULTS=items",
         "result_mappings": "title=title,body=text_matches[*].fragment,author=user.login,date_published=created_at,url=html_url,number,state,updated_at,pull_request.merged_at,closed_at,labels[*].name,pull_request.diff_url,body,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "bearer=<your-GitHub-PAT>",
+        "credentials": "bearer=your-GitHub-PAT",
         "eval_credentials": "",
         "tags": [
             "GitHub",
@@ -572,7 +571,6 @@
     },
     {
         "name": "Commits - GitHub.com",
-        "shared": true,
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -593,11 +591,107 @@
         "response_mappings": "FOUND=total_count,RESULTS=items",
         "result_mappings": "title=commit.message,body=text_matches[*].fragment,author=commit.author.name,date_published=commit.author.date,url=html_url,commit.comment_count,committer.login,parents[*].html_url,repository.full_name,repository.html_url,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "bearer=<your-GitHub-PAT>",
+        "credentials": "bearer=your-GitHub-PAT",
         "eval_credentials": "",
         "tags": [
             "GitHub",
             "Commits"
         ]
-    }
+    },
+    {
+        "name": "Deals - HubSpot.com",
+        "active": false,
+        "default": false,
+        "connector": "RequestsPost",
+        "url": "https://api.hubapi.com/crm/v3/objects/deals/search",
+        "query_template": "{url}",
+        "post_query_template": {
+            "query": "{query_string}",
+            "limit": "100"
+        },
+        "http_request_headers": {
+            "Content-Type": "application/json"
+        },
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=total,RESULTS=results",
+        "result_mappings": "title=properties.dealname,body='Amount: {properties.amount} - Stage: {properties.dealstage}',date_published=createdAt,url='https://app.hubspot.com/contacts/<your-org-id>/record/0-3/{id}',id,properties.pipeline,updatedAt,properties.closedate,archived,links[*],NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=your-HubSpot-PAT",
+        "eval_credentials": "",
+        "tags": [
+            "HubSpot",
+            "Deal"
+        ]
+    },
+    {
+        "name": "Companies - HubSpot.com",
+        "active": false,
+        "default": false,
+        "connector": "RequestsPost",
+        "url": "https://api.hubapi.com/crm/v3/objects/companies/search",
+        "query_template": "{url}",
+        "post_query_template": {
+            "query": "{query_string}",
+            "limit": "100"
+        },
+        "http_request_headers": {
+            "Content-Type": "application/json"
+        },
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=total,RESULTS=results",
+        "result_mappings": "title=properties.name,body='{properties.name}: {properties.domain}',date_published=createdAt,url='https://app.hubspot.com/contacts/<your-org-id>/record/0-2/{id}',id,updatedAt,archived,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=your-HubSpot-PAT",
+        "eval_credentials": "",
+        "tags": [
+            "HubSpot",
+            "Company"
+        ]
+    },
+    {
+        "name": "Contacts - HubSpot.com",
+        "active": false,
+        "default": false,
+        "connector": "RequestsPost",
+        "url": "https://api.hubapi.com/crm/v3/objects/contacts/search",
+        "query_template": "{url}",
+        "post_query_template": {
+            "query": "{query_string}",
+            "limit": "100"
+        },
+        "http_request_headers": {
+            "Content-Type": "application/json"
+        },
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor"
+        ],
+        "response_mappings": "FOUND=total,RESULTS=results",
+        "result_mappings": "title='{properties.firstname} {properties.lastname}',body='{properties.firstname} {properties.lastname}:  {properties.email}',date_published=createdAt,author=properties.email,url='https://app.hubspot.com/contacts/<your-org-id>/record/0-1/{id}',id,updatedAt,archived,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=your-HubSpot-PAT",
+        "eval_credentials": "",
+        "tags": [
+            "HubSpot",
+            "Contact"
+        ]
+    }    
 ]
