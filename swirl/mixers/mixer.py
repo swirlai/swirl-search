@@ -11,6 +11,7 @@ from datetime import datetime
 import django
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
+from django.contrib.auth.models import User
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
@@ -264,3 +265,6 @@ class Mixer:
                 self.mix_wrapper['messages'].append(f"[{datetime.now()}] Results ordered by: {self.result_mixer}")
             else:
                 self.mix_wrapper['messages'].append(f"[{datetime.now()}] Results ordered by: {self.type}")
+
+        user = User.objects.get(id=self.search.owner.id)
+        logger.info(f"{user} results {self.search_id} {self.type} {self.mix_wrapper['info']['results']['retrieved_total']}")
