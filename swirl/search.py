@@ -126,7 +126,7 @@ def search(id, session=None):
     ########################################
     # pre-query processing, which updates query_string_processed
 
-    swqrx_logger = SwirlQueryRequestLogger(providers, start_time)
+    swqrx_logger = SwirlQueryRequestLogger(search.query_string, providers, start_time)
 
     search.status = 'PRE_QUERY_PROCESSING'
     logger.info(f"{module_name}: {search.status}")
