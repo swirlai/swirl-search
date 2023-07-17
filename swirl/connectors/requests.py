@@ -139,8 +139,6 @@ class Requests(Connector):
 
         for page in range(0, pages):
 
-            self.warning(f"Page: {page}")
-
             if 'PAGE' in self.query_mappings:
                 page_query = self.query_to_provider[:self.query_to_provider.rfind('&')]
                 page_spec = None
@@ -273,7 +271,6 @@ class Requests(Connector):
 
             if 'RESULTS' in mapped_response:
                 if not mapped_response['RESULTS']:
-                    self.warning("1")
                     mapped_response['RESULTS'] = json_data
                 if not type(mapped_response['RESULTS']) == list:
                     # nlresearch single result
@@ -290,7 +287,6 @@ class Requests(Connector):
                 if type(json_data) == list:
                     if len(json_data) > 0:
                         if type(json_data[0]) == dict:
-                            self.warning("2")
                             mapped_response['RESULTS'] = json_data
                 else:
                     self.error(f'{self}: RESULTS missing from mapped_response')
@@ -325,18 +321,12 @@ class Requests(Connector):
                 for res in mapped_response['RESULTS']:
                     mapped_responses.append(res)
             # check retrieved
-            if mapped_responses:
-                # to do: review
-                if retrieved > -1 and retrieved != len(mapped_responses):
-                    self.warning(f"retrieved != length of response {len(mapped_responses)}")
-            else:
-                # to do: review
+            if not mapped_responses:
                 self.error(f"no results extracted from response! found:{found}")
                 if found != 0:
                     found = retrieved = 0
                 # end if
             if retrieved == -1:
-                # to do: this is probably wrong
                 retrieved = len(mapped_responses)
                 self.retrieved = retrieved
             if found == -1:
@@ -360,8 +350,6 @@ class Requests(Connector):
             time.sleep(1)
 
         # end for
-
-        self.warning(f"Response len = {len(mapped_responses)}")
 
         self.found = found
         self.retrieved = retrieved
