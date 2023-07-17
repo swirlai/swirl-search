@@ -50,130 +50,9 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
     ############################################
 
     def __init__(self, search_id, request_id = ''):
-
-        self.query_stemmed_list = None
-        self.not_list = None
-        self.query_list = None
-        self.query_stemmed_target_list = None
-        self.query_target_list = None
-        self.query_has_numeric = None
-        self.provider_query_terms = []
-
         return super().__init__(search_id, request_id=request_id)
 
     ############################################
-
-    def prepare_query(self, q_string, results_processor_feedback):
-
-        self.query_stemmed_list = []
-        self.not_list = []
-        self.query_list = []
-        self.query_stemmed_target_list = []
-        self.query_target_list = []
-        self.query_has_numeric = False
-        self.provider_query_terms = []
-
-        if results_processor_feedback:
-            self.provider_query_terms = results_processor_feedback.get(
-                'result_processor_feedback', []).get('query', []).get(
-                'provider_query_terms', [])
-
-        # remove quotes
-        query = clean_string(q_string).strip().replace('\"','')
-        query_list = word_tokenize(query)
-        ## I think the loop is okay since it's a very small list.
-        for term in self.provider_query_terms:
-            if not term in query_list:
-                query_list.append(term)
-
-        # remove AND, OR and parens
-        query_list = [s for s in query_list if s not in ["AND","OR"] and not is_punctuation(s)]
-
-        # check for numeric
-        query_has_numeric = has_numeric(query_list)
-        # not list
-        not_list = []
-        not_parsed_query = []
-        if 'NOT' in query_list:
-            not_parsed_query = query_list[:query_list.index('NOT')]
-            not_list = query_list[query_list.index('NOT')+1:]
-        else:
-            for q in query_list:
-                if q.startswith('-'):
-                    not_list.append(q[1:])
-                else:
-                    not_parsed_query.append(q)
-                # end if
-            # end for
-        # end if
-        if not_parsed_query:
-            query = ' '.join(not_parsed_query).strip()
-            query_list = query.split()
-        # end if
-
-        # check for stopword query
-        query_without_stopwords = []
-        for extract in query_list:
-            if not extract in stopwords:
-                query_without_stopwords.append(extract)
-        if len(query_without_stopwords) == 0:
-            self.error(f"query_string_processed is all stopwords!")
-            # to do: handle more gracefully P1
-            return self.results
-
-        # stem the query - fix for https://github.com/swirlai/swirl-search/issues/34
-        query_stemmed_list = stem_string(clean_string(query)).strip().split()
-        query_stemmed_list_len = len(query_stemmed_list)
-
-        # check for non query?
-        if query_stemmed_list_len == 0:
-            self.warning("Query stemmed list is empty!")
-            return self.results
-
-        # prepare query targets
-        query_stemmed_target_list = []
-        query_target_list = []
-        # 1 gram
-        if query_stemmed_list_len == 1:
-            query_stemmed_target_list.append(query_stemmed_list)
-            query_target_list.append(query_list)
-        # 2 gram
-        if query_stemmed_list_len == 2:
-            query_stemmed_target_list.append(query_stemmed_list)
-            query_target_list.append(query_list)
-            query_stemmed_target_list.append([query_stemmed_list[0]])
-            query_target_list.append([query_list[0]])
-            query_stemmed_target_list.append([query_stemmed_list[1]])
-            query_target_list.append([query_list[1]])
-        # more grams
-        if query_stemmed_list_len >= 3:
-            query_stemmed_target_list.append(query_stemmed_list)
-            query_target_list.append(query_list)
-            for bigram in bigrams(query_stemmed_list):
-                query_stemmed_target_list.append(bigram)
-            for bigram in bigrams(query_list):
-                query_target_list.append(bigram)
-            for gram in query_stemmed_list:
-                # ignore stopword 1-grams
-                if gram in stopwords:
-                    continue
-                query_stemmed_target_list.append([gram])
-            for gram in query_list:
-                # ignore stopword 1-grams
-                if gram in stopwords:
-                    continue
-                query_target_list.append([gram])
-        if len(query_stemmed_target_list) != len(query_target_list):
-            # to do: handle more elegantly?!?
-            self.error("len(query_stemmed_target_list) != len(query_target_list), highlighting errors may occur")
-
-        self.query_stemmed_list = query_stemmed_list
-        self.not_list = not_list
-        self.query_list = query_list
-        self.query_stemmed_target_list = query_stemmed_target_list
-        self.query_target_list = query_target_list
-        self.query_has_numeric = query_has_numeric
-
     ############################################
 
     def process(self):
@@ -200,9 +79,13 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
             if not results.json_results:
                 continue
             # prepare the query for this result set, it can be different for each provider
-            self.prepare_query(results.query_string_to_provider, results.result_processor_json_feedback)
+            parsed_query = parse_query(results.query_string_to_provider, results.result_processor_json_feedback)
+            if len(parsed_query.query_stemmed_target_list) != len(parsed_query.query_target_list):
+                # to do: handle more elegantly?!?
+                self.error("len(query_stemmed_target_list) != len(query_target_list), highlighting errors may occur")
+
             # capture query len
-            list_query_lens.append(len(self.query_list))
+            list_query_lens.append(len(parsed_query.query_list))
             # iterate through the items in the result set
             for item in results.json_results:
                 if 'explain' in item:
@@ -248,7 +131,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                 ############################################
                 # result item
                 dict_score = {}
-                dict_score['stems'] = ' '.join(self.query_stemmed_list)
+                dict_score['stems'] = ' '.join(parsed_query.query_stemmed_list)
                 dict_len = {}
                 notted = ""
                 for field in RELEVANCY_CONFIG:
@@ -278,7 +161,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         if len(result_field_list) != len(result_field_stemmed_list):
                             self.error("len(result_field_list) != len(result_field_stemmed_list), highlighting errors may occur")
                         # NOT test
-                        for t in self.not_list:
+                        for t in parsed_query.not_list:
                             if t.lower() in (result_field.lower() for result_field in result_field_list):
                                 notted = {field: t}
                                 break
@@ -298,9 +181,9 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         match_stems = []
                         ###########################################
                         # query vs result_field
-                        if match_any(self.query_stemmed_list, result_field_stemmed_list):
+                        if match_any(parsed_query.query_stemmed_list, result_field_stemmed_list):
                             # capitalize search terms that are capitalied in the result field
-                            query = ' '.join(capitalize_search(self.query_list, result_field_list))
+                            query = ' '.join(capitalize_search(parsed_query.query_list, result_field_list))
                             query_nlp = nlp(query)
                             # check for zero vector
                             empty_query_vector = False
@@ -330,12 +213,12 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                     qvr = query_nlp.similarity(result_field_nlp)
                             # end if
                             if qvr >= float(SWIRL_MIN_SIMILARITY):
-                                dict_score[field]['_'.join(self.query_list)+label] = qvr
+                                dict_score[field]['_'.join(parsed_query.query_list)+label] = qvr
                             else:
-                                logger.debug(f"{self}: item below SWIRL_MIN_SIMILARITY: {'_'.join(self.query_list)+label} ~?= {item}")
+                                logger.debug(f"{self}: item below SWIRL_MIN_SIMILARITY: {'_'.join(parsed_query.query_list)+label} ~?= {item}")
                         ############################################
                         # score each query target
-                        for stemmed_query_target, query_target in zip(self.query_stemmed_target_list, self.query_target_list):
+                        for stemmed_query_target, query_target in zip(parsed_query.query_stemmed_target_list, parsed_query.query_target_list):
                             query_slice_stemmed_list = stemmed_query_target
                             query_slice_stemmed_len = len(query_slice_stemmed_list)
                             if '_'.join(query_target) in dict_score[field]:
@@ -366,7 +249,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                                     else:
                                         rw_list = result_field_list[match-(2*query_slice_stemmed_len)-1:match+(2*query_slice_stemmed_len)+1]
                                     # end if
-                                    if not self.query_has_numeric and has_numeric(rw_list):
+                                    if not parsed_query.query_has_numeric and has_numeric(rw_list):
                                         rw_list = remove_numeric(rw_list)
                                         if not rw_list:
                                             rw_list = result_field_list[match:match+(3*query_slice_stemmed_len)+1]
