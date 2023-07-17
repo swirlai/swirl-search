@@ -121,13 +121,11 @@ class Connector:
                     self.execute_search(session)
                     if self.status not in ['FEDERATING', 'READY']:
                         self.error(f"execute_search() failed, status {self.status}")
-                        self.save_results()
                         return False
                     if self.status == 'FEDERATING':
                         self.normalize_response()
                     if self.status not in ['FEDERATING', 'READY']:
                         self.error(f"normalize_response() failed, status {self.status}")
-                        self.save_results()
                         return False
                     else:
                         self.process_results()

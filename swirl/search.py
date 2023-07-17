@@ -1,3 +1,4 @@
+
 '''
 @author:     Sid Probstein
 @contact:    sid@swirl.today
@@ -18,6 +19,7 @@ from swirl.tasks import federate_task
 from swirl.processors import *
 from swirl.processors.transform_query_processor_utils import get_pre_query_processor_or_transform
 from swirl.utils import select_providers
+from swirl.perfomance_logger import SwirlQueryRequestLogger
 
 ##################################################
 ##################################################
@@ -124,6 +126,8 @@ def search(id, session=None):
     ########################################
     # pre-query processing, which updates query_string_processed
 
+    swqrx_logger = SwirlQueryRequestLogger(search.query_string, providers, start_time)
+
     search.status = 'PRE_QUERY_PROCESSING'
     logger.info(f"{module_name}: {search.status}")
     search.save()
@@ -144,11 +148,11 @@ def search(id, session=None):
                 if pre_query_processor.validate():
                     processed_query = pre_query_processor.process()
                 else:
-                    logger.error(f'{module_name}_{search.id}: {processor}.validate() failed')
+                    error_return(f'{module_name}_{search.id}: {processor}.validate() failed', swqrx_logger)
                     return False
                 # end if
             except (NameError, TypeError, ValueError) as err:
-                logger.error(f'{module_name}_{search.id}: {processor}: {err.args}, {err}')
+                error_return(f'{module_name}_{search.id}: {processor}: {err.args}, {err}', swqrx_logger)
                 return False
             if processed_query:
                 if processed_query != query_temp:
@@ -156,7 +160,7 @@ def search(id, session=None):
                     search.save()
                     query_temp = processed_query
             else:
-                logger.error(f'{module_name}_{search.id}: {processor} returned an empty query, ignoring!')
+                error_return(f'{module_name}_{search.id}: {processor} returned an empty query, ignoring!', swqrx_logger)
             # end if
         # end for
         search.query_string_processed = query_temp
@@ -166,20 +170,18 @@ def search(id, session=None):
     search.status = 'FEDERATING'
     logger.info(f"{module_name}: {search.status}")
     search.save()
-    federation_result = {}
-    federation_status = {}
-    at_least_one = False
-    for provider in providers:
-        at_least_one = True
-        federation_status[provider.id] = None
-        federation_result[provider.id] = federate_task.delay(search.id, provider.id, provider.connector, update, session)
-    # end for
-    if not at_least_one:
-        logger.info(f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}")
+
+    if not providers:
+        msg = f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}"
+        logger.info(msg)
         search.status = 'ERR_NO_ACTIVE_SEARCHPROVIDERS'
         search.save()
+        error_return(msg, swqrx_logger)
         return False
-    # end if
+    else:
+        for provider in providers:
+            federate_task.delay(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id)
+
     ########################################
     # asynchronously collect results
     ticks = 0
@@ -222,6 +224,7 @@ def search(id, session=None):
                 # end if
             # end for
             # exit the loop
+            swqrx_logger.timeout_execution()
             break
     # end while
     ########################################
@@ -250,6 +253,7 @@ def search(id, session=None):
     search.save()
     # no results ready?
     if search.status == 'NO_RESULTS_READY':
+        swqrx_logger.error_execution('NO_RESULTS_READY')
         return True
     ########################################
     # post_result_processing
@@ -264,15 +268,15 @@ def search(id, session=None):
         for processor in processor_list:
             logger.info(f"{module_name}: invoking processor: {processor}")
             try:
-                post_result_processor = alloc_processor(processor=processor)(search.id)
+                post_result_processor = alloc_processor(processor=processor)(search_id=search.id, request_id=swqrx_logger.request_id)
                 if post_result_processor.validate():
                     results_modified = post_result_processor.process()
                 else:
-                    logger.error(f"{module_name}_{search.id}: {processor}.validate() failed")
+                    error_return(f"{module_name}_{search.id}: {processor}.validate() failed", swqrx_logger)
                     return False
                 # end if
             except (NameError, TypeError, ValueError) as err:
-                logger.error(f'{module_name}_{search.id}: {processor}: {err.args}, {err}')
+                error_return(f'{module_name}_{search.id}: {processor}: {err.args}, {err}', swqrx_logger)
                 return False
             if not results_modified == 0:
                 if results_modified < 0:
@@ -305,6 +309,7 @@ def search(id, session=None):
     end_time = time.time()
     search.time = f"{(end_time - start_time):.1f}"
     logger.info(f"{module_name}: search time: {search.time}")
+    swqrx_logger.complete_execution()
     search.save()
 
     return True
@@ -368,3 +373,7 @@ def rescore(id):
     else:
         logger.info(f"{module_name}_{search.id}: No post_result_processor or post_result_processors defined")
         return False
+
+def error_return(msg, swqrx_logger):
+    logger.error(msg)
+    swqrx_logger.error_execution(msg)

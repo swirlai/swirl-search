@@ -16,6 +16,8 @@ from swirl.spacy import nlp
 
 from swirl.processors.processor import PostResultProcessor
 
+from swirl.perfomance_logger import SwirlRelevancyLogger
+
 import logging
 from celery.utils.log import get_task_logger
 logging.basicConfig(level=logging.INFO)
@@ -47,7 +49,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
     ############################################
 
-    def __init__(self, search_id):
+    def __init__(self, search_id, request_id = ''):
 
         self.query_stemmed_list = None
         self.not_list = None
@@ -57,7 +59,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         self.query_has_numeric = None
         self.provider_query_terms = []
 
-        return super().__init__(search_id)
+        return super().__init__(search_id, request_id=request_id)
 
     ############################################
 
@@ -181,12 +183,15 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         updated = 0
         dict_result_lens = {}
         list_query_lens = []
+        swrel_logger = SwirlRelevancyLogger(self.request_id)
 
         ############################################
         # PASS 1
         # For each results set from all providers that returned one.
         # to do: refactor the names so it is clearer, e.g. json_result instead of result, result_set instead of results
         st_pass_1 = time.time()
+        swrel_logger.start_pass_1()
+
         for results in self.results:
 
             ############################################
@@ -415,8 +420,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
             # end for result in results.json_results:
         # end for results in self.results:
         ############################################
-        et_pass_1 = time.time() - st_pass_1
-        logger.info (f'{self}: elapsed time PASS 1 : {round(et_pass_1,2)}')
+        swrel_logger.complete_pass_1()
 
         # compute field means
         dict_len_median = {}
@@ -429,7 +433,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         # PASS 2
 
         # score results by field, adjusting for field length
-        st_pass_2 = time.time()
+        swrel_logger.start_pass_2()
         for results in self.results:
             if not results.json_results:
                 continue
@@ -521,8 +525,6 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         ############################################
 
         self.results_updated = int(updated)
-
-        et_pass_2 = time.time() - st_pass_2
-        logger.info (f'{self}: elapsed time PASS 2 : {round(et_pass_2,2)}')
+        swrel_logger.complete_pass_2()
 
         return self.results_updated
