@@ -318,7 +318,8 @@ class Connector:
             logger.info(f"{self}: invoking processor: process results {processor}")
             last_results = copy.deepcopy(self.results)
             try:
-                proc = alloc_processor(processor=processor)(self.results, self.provider, self.query_string_to_provider)
+                proc = alloc_processor(processor=processor)(self.results, self.provider, self.query_string_to_provider,
+                                                            result_processor_json_feedback=self.result_processor_json_feedback)
                 modified = proc.process()
                 self.results = proc.get_results()
                 ## Check if this processor generated feed back and if so, remember it.

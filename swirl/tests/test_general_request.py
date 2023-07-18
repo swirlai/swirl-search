@@ -173,7 +173,8 @@ class LibraryDatasourceTest(GeneralRequestAPITestCase):
                     "query_mappings": "",
                     "result_grouping_field": "",
                     "result_processors": [
-                    "MappingResultProcessor"
+                        "MappingResultProcessor",
+                        "CosineRelevancyResultProcessor"
                     ],
                     "response_mappings": "FOUND=info.total,RESULTS=docs",
                     "result_mappings": "date_published_display=pnx.display.creationdate[0],title=pnx.display.title[0],body=pnx.display.description[0],date_published=pnx.sort.creationdate[0],author=pnx.sort.author[0],url='https://xxx.place.edu/primo-explore/fulldisplay?docid={pnx.control.recordid[0]}&context=L&vid=XXX2',pnx.facets.creatorcontrib[*],pnx.display.publisher[*],pnx.display.edition[*],pnx.display.format[*],pnx.display.language[*],pnx.enrichment.classificationlcc[*],NO_PAYLOAD",
