@@ -39,7 +39,7 @@ class ProviderQueryRequestLogger:
         logger.info(f'PLG_PXC|{self.request_id}|{round(elapsed_time,4)}|{self.name}')
 
 class SwirlRelevancyLogger:
-    def __init__(self,  request_id, name):
+    def __init__(self,  request_id, name="anonymous"):
         self.request_id = request_id
         self.name = name
 
