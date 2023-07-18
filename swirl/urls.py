@@ -49,7 +49,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('index.html', views.index, name='index'),
     path('error.html', views.error, name='error'),
-    path('search.html', views.search, name='search_form'),
     path('authenticators.html', views.authenticators, name='authenticators'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('microsoft-callback', Microsoft().callback, name='microsoft_callback'),
