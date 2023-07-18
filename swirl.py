@@ -452,11 +452,6 @@ def setup(service_list):
 ##################################################
 ##################################################
 
-COMMAND_DIR = {}
-for command in COMMAND_LIST:
-    COMMAND_DIR[command] = eval(command)
-
-
 def main(argv):
     global SERVICES
     global SERVICES_DICT
