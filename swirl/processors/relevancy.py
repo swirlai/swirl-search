@@ -200,7 +200,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                         if qvr >= float(SWIRL_MIN_SIMILARITY):
                             dict_score[field]['_'.join(parsed_query.query_list)+label] = qvr
                         else:
-                            logger.debug(f"{self}: item below SWIRL_MIN_SIMILARITY: {'_'.join(parsed_query.query_list)+label} ~?= {item}"
+                            logger.debug(f"{self}: item below SWIRL_MIN_SIMILARITY: {'_'.join(parsed_query.query_list)+label} ~?= {item}")
                     ############################################
                     # score each query target
                     for stemmed_query_target, query_target in zip(parsed_query.query_stemmed_target_list, parsed_query.query_target_list):
@@ -286,12 +286,10 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                 item['dict_score'] = dict_score
                 item['dict_len'] = dict_len
         # end for result in results.json_results:
-    # end for results in self.results:
-    ############################################
-    self.processed_results = self.results
-    self.modified = len(self.results)
-    swrel_logger.complete_pass_1()
-    return self.modified
+        self.processed_results = self.results
+        self.modified = len(self.results)
+        swrel_logger.complete_pass_1()
+        return self.modified
 
 class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
