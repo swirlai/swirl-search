@@ -27,7 +27,7 @@ from swirl.perfomance_logger import *
 ##################################################
 ##################################################
 
-@shared_task(name='federate', ignore_result=True)
+@shared_task(name='federate', ignore_result=False)
 def federate_task(search_id, provider_id, provider_connector, update, session, request_id):
     logger.info(f"{module_name}: federate_task: {search_id}_{provider_id}_{provider_connector} update: {update} request_id {request_id}")
     try:
@@ -45,7 +45,7 @@ def federate_task(search_id, provider_id, provider_connector, update, session, r
 ##################################################
 
 
-@shared_task(name='search', ignore_result=True)
+@shared_task(name='search', ignore_result=False)
 def search_task(search_id, session):
     from swirl.search import search
 
@@ -55,7 +55,7 @@ def search_task(search_id, session):
 ##################################################
 
 
-@shared_task(name='rescore', ignore_result=True)
+@shared_task(name='rescore', ignore_result=False)
 def rescore_task(search_id):
     from swirl.search import rescore
 

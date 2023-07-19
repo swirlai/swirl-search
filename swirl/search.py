@@ -6,6 +6,9 @@
 
 from datetime import datetime
 import time
+from celery import group, chord
+
+from swirl_server.celery import process_federate_results
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
@@ -170,62 +173,66 @@ def search(id, session=None):
     search.status = 'FEDERATING'
     logger.info(f"{module_name}: {search.status}")
     search.save()
+    chord()()
+    # if not providers:
+    #     msg = f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}"
+    #     logger.info(msg)
+    #     search.status = 'ERR_NO_ACTIVE_SEARCHPROVIDERS'
+    #     search.save()
+    #     error_return(msg, swqrx_logger)
+    #     return False
+    # else:
+    #     tasks_list = [federate_task.s(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id) for provider in providers]
+    #     print('tasks_list', tasks_list)
+    #     result = chord(group(tasks_list))(process_federate_results.s())
+    #     print('result', result)
+    #     # for provider in providers:
+    #     #     federate_task.delay(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id)
 
-    if not providers:
-        msg = f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}"
-        logger.info(msg)
-        search.status = 'ERR_NO_ACTIVE_SEARCHPROVIDERS'
-        search.save()
-        error_return(msg, swqrx_logger)
-        return False
-    else:
-        for provider in providers:
-            federate_task.delay(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id)
-
-    ########################################
-    # asynchronously collect results
-    ticks = 0
-    error_flag = False
-    at_least_one = False
-    while 1:
-        time.sleep(1)
-        ticks = ticks + 1
-        # get the list of result objects
-        # security review for 1.7 - OK - filtered by search object
-        results = Result.objects.filter(search_id=search.id)
-        updated = 0
-        for result in results:
-            if result.status == 'UPDATED':
-                updated = updated + 1
-            if result.status == 'ERROR':
-                error_flag = True
-            if result.status == 'READY':
-                at_least_one = True
-        if len(results) == len(providers):
-            # every provider has written a result object - exit
-            logger.info(f"{module_name}_{search.id}: all results received!")
-            break
-        search.status = f'FEDERATING_WAIT_{ticks}'
-        logger.info(f"{module_name}: {search.status}")
-        SWIRL_TIMEOUT = getattr(settings, 'SWIRL_TIMEOUT', 10)
-        if ticks > int(SWIRL_TIMEOUT):
-            logger.info(f"{module_name}_{search.id}: timeout!")
-            failed_providers = []
-            responding_provider_names = []
-            for result in results:
-                responding_provider_names.append(result.searchprovider)
-            for provider in providers:
-                if not provider.name in responding_provider_names:
-                    failed_providers.append(provider.name)
-                    error_flag = True
-                    logger.info(f"{module_name}_{search.id}: timeout waiting for: {failed_providers}")
-                    search.messages.append(f"[{datetime.now()}] Timeout waiting for: {failed_providers}")
-                    search.save()
-                # end if
-            # end for
-            # exit the loop
-            swqrx_logger.timeout_execution()
-            break
+    # ########################################
+    # # asynchronously collect results
+    # ticks = 0
+    # error_flag = False
+    # at_least_one = False
+    # while 1:
+    #     time.sleep(1)
+    #     ticks = ticks + 1
+    #     # get the list of result objects
+    #     # security review for 1.7 - OK - filtered by search object
+    #     results = Result.objects.filter(search_id=search.id)
+    #     updated = 0
+    #     for result in results:
+    #         if result.status == 'UPDATED':
+    #             updated = updated + 1
+    #         if result.status == 'ERROR':
+    #             error_flag = True
+    #         if result.status == 'READY':
+    #             at_least_one = True
+    #     if len(results) == len(providers):
+    #         # every provider has written a result object - exit
+    #         logger.info(f"{module_name}_{search.id}: all results received!")
+    #         break
+    #     search.status = f'FEDERATING_WAIT_{ticks}'
+    #     logger.info(f"{module_name}: {search.status}")
+    #     SWIRL_TIMEOUT = getattr(settings, 'SWIRL_TIMEOUT', 10)
+    #     if ticks > int(SWIRL_TIMEOUT):
+    #         logger.info(f"{module_name}_{search.id}: timeout!")
+    #         failed_providers = []
+    #         responding_provider_names = []
+    #         for result in results:
+    #             responding_provider_names.append(result.searchprovider)
+    #         for provider in providers:
+    #             if not provider.name in responding_provider_names:
+    #                 failed_providers.append(provider.name)
+    #                 error_flag = True
+    #                 logger.info(f"{module_name}_{search.id}: timeout waiting for: {failed_providers}")
+    #                 search.messages.append(f"[{datetime.now()}] Timeout waiting for: {failed_providers}")
+    #                 search.save()
+    #             # end if
+    #         # end for
+    #         # exit the loop
+    #         swqrx_logger.timeout_execution()
+    #         break
     # end while
     ########################################
     # update query status

@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO)
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 
-app = Celery('swirl_server', backend='rpc://', ampq='amqp://guest:guest@localhost:5672//')
+app = Celery('swirl_server', backend='redis://localhost:6379/0', ampq='amqp://guest:guest@localhost:5672//')
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.
@@ -33,3 +33,10 @@ def debug_task(self):
 def setup_loggers(logger, *args, **kwargs):
     print('Setting logger level to INFO')
     logger.setLevel(logging.INFO)
+
+@app.task(name='process_federate_results')
+def process_federate_results(results):
+    # Process the results here (e.g., aggregate data, perform further actions)
+    print("Processing federate results:", results)
+    # ... Your additional processing logic ...
+    return "Result processing completed"

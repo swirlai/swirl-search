@@ -508,6 +508,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             new_search.status = 'NEW_SEARCH'
             new_search.save()
             res = run_search(new_search.id, Authenticator().get_session_data(request))
+            print('res', res)
             if not res:
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             if not Search.objects.filter(id=new_search.id).exists():
