@@ -187,6 +187,7 @@ def get_ddrp_provider_data():
         "result_grouping_field":"conversationId",
         "result_processors": [
             "MappingResultProcessor",
+            "CosineRelevancyResultProcessor",
             "DedupeByFieldResultProcessor"
         ],
         "response_mappings": "",

@@ -156,7 +156,8 @@ class MicrosoftAPITestCase(TestCase):
             "query_mappings": "NOT=true,NOT_CHAR=-",
             "result_processor": "",
             "result_processors": [
-                "MappingResultProcessor"
+                "MappingResultProcessor",
+                "CosineRelevancyResultProcessor"
             ],
             "response_mappings": "",
             "result_mappings": "",
@@ -338,7 +339,8 @@ class MicrosoftOutlookMessagesGroupConversations(MicrosoftAPITestCase):
             "result_grouping_field":"resource.conversationId",
             "result_processors": [
                 "MappingResultProcessor",
-                "DedupeByFieldResultProcessor"
+                "CosineRelevancyResultProcessor",
+                "DedupeByFieldResultProcessor",
             ],
             "response_mappings": "",
             "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.conversationId,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
@@ -394,6 +396,7 @@ class MicrosoftOutlookMessagesGroupConversationsSkip(MicrosoftAPITestCase):
             "result_grouping_field":"resource.conversationId",
             "result_processors": [
                 "MappingResultProcessor",
+                "CosineRelevancyResultProcessor",
                 "DedupeByFieldResultProcessor"
             ],
             "response_mappings": "",
