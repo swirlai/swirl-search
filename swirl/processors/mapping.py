@@ -28,6 +28,9 @@ class MappingResultProcessor(ResultProcessor):
 
     type="MappingResultProcessor"
 
+    def __init__(self, results, provider, query_string, request_id='', **kwargs):
+        super().__init__(results, provider, query_string, request_id=request_id, **kwargs)
+
     def put_query_terms_from_provider(self, swirl_key, text, lBuf):
         """ remember query terms from the hihglight field of each result"""
         if not ( swirl_key and text ):

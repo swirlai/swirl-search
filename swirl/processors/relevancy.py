@@ -45,6 +45,9 @@ SWIRL_HIGHLIGHT_END_CHAR = getattr(settings, 'SWIRL_HIGHLIGHT_END_CHAR', '*')
 
 class CosineRelevancyResultProcessor(ResultProcessor):
 
+    def __init__(self, results, provider, query_string, request_id='', **kwargs):
+        super().__init__(results, provider, query_string, request_id=request_id, **kwargs)
+
     def process(self):
         RELEVANCY_CONFIG = SWIRL_RELEVANCY_CONFIG
         dict_result_lens = {}
