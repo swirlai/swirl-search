@@ -37,6 +37,7 @@
         "query_mappings": "",
         "result_processors": [
             "MappingResultProcessor",
+	    "CosineRelevancyResultProcessor",
             "LenLimitingResultProcessor"
         ],
         "response_mappings": "FOUND=size,RESULTS=results",

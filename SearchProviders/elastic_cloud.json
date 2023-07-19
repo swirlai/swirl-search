@@ -8,7 +8,8 @@
     ],
     "query_mappings": "index_name=email,default_field=content,sort_by_date=date_published.keyword,NOT=true,NOT_CHAR=-",
     "result_processors": [
-        "MappingResultProcessor"
+        "MappingResultProcessor",
+        "CosineRelevancyResultProcessor",
     ],
     "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
     "credentials": "http_auth=(\"elastic\", \"elastic-password\")",
