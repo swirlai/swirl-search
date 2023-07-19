@@ -14,7 +14,7 @@
             "MappingResultProcessor",
             "CleanTextResultProcessor",
             "LenLimitingResultProcessor",
-	    "CosineRelevancyResultProcesso"
+	        "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=summary,body=description,date_published=created,author=reporter.fullName,url='https://<your-domain>.youtrack.cloud/issue/{idReadable}',project.name,customFields[3].value[*].name,customFields[0].value[*].name,customFields[2].value[*].name,customFields[6].value[*].name,votes,tags[*].name,commentsCount,comments[*].text,subtasks[*].issues[*].idReadable,NO_PAYLOAD",
@@ -40,7 +40,7 @@
             "MappingResultProcessor",
             "CleanTextResultProcessor",
             "LenLimitingResultProcessor",
-	    "CosineRelevancyResultProcessor"
+	        "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=summary,body=content,date_published=created,author=reporter.fullName,url='https://<your-domain>.youtrack.cloud/articles/{idReadable}',project.name,attachments[*].name,parentArticle.summary,childArticles[*].summary,updatedBy.fullName,comments[*].text,NO_PAYLOAD",

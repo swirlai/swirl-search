@@ -10,8 +10,8 @@
         "query_mappings": "cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
         "result_processors": [
             "MappingResultProcessor",
-	    "CosineRelevancyResultProcessor"
-            "DateFinderResultProcessor"
+            "DateFinderResultProcessor",
+            "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
@@ -32,8 +32,8 @@
         "query_mappings": "cx=7d473806dcdde5bc6,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
         "result_processors": [
             "MappingResultProcessor",
-	    "CosineRelevancyResultProcessor"
-            "DateFinderResultProcessor"
+            "DateFinderResultProcessor",
+            "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['authors-name'],cacheId,pagemap.metatags[*].['articletype'],pagemap.metatags[*].['practice-name'],pagemap.metatags[*].['searchresults-tags'],pagemap.metatags[*].['site_name'],pagemap.metatags[*].['twitter:description'],NO_PAYLOAD",
@@ -54,8 +54,8 @@
         "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
         "result_processors": [
             "MappingResultProcessor",
-	    "CosineRelevancyResultProcessor"
-            "DateFinderResultProcessor"
+            "DateFinderResultProcessor",
+            "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['article:publisher'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['article:tag'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",

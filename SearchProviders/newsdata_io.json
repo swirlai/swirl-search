@@ -10,7 +10,7 @@
         "query_mappings": "NOT_CHAR=-",
         "result_processors": [
             "MappingResultProcessor",
-	    "CosineRelevancyResultProcessor"
+	        "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "FOUND=totalResults,RESULTS=results",
         "result_mappings": "body=content|description,url=link,date_published=pubDate,author=creator[0],source_id,category,keywords,country,NO_PAYLOAD",
@@ -29,7 +29,8 @@
         ],
         "query_mappings": "NOT_CHAR=-",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+            "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "FOUND=totalResults,RESULTS=results",
         "result_mappings": "body=content|description,url=link,date_published=pubDate,author=creator[0],source_id,category,keywords,country,NO_PAYLOAD",
