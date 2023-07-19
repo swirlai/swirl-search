@@ -47,7 +47,6 @@ class CosineRelevancyResultProcessor(ResultProcessor):
 
     def process(self):
         RELEVANCY_CONFIG = SWIRL_RELEVANCY_CONFIG
-        updated = 0
         dict_result_lens = {}
         list_query_lens = []
         swrel_logger = SwirlRelevancyLogger(self.request_id, self.provider.name +'_'+ str(self.provider.id))
