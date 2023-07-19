@@ -5,12 +5,12 @@
 import time
 
 from math import sqrt
-from statistics import mean, median
+from statistics import median
 
 from django.conf import settings
 
 # to do: detect language and load all stopwords? P1
-from swirl.nltk import stopwords, sent_tokenize, word_tokenize, is_punctuation
+from swirl.nltk import sent_tokenize
 from swirl.processors.utils import *
 from swirl.spacy import nlp
 
@@ -52,7 +52,6 @@ class CosineRelevancyResultProcessor(ResultProcessor):
         list_query_lens = []
         swrel_logger = SwirlRelevancyLogger(self.request_id, self.provider.name +'_'+ str(self.provider.id))
         swrel_logger.start_pass_1()
-        highlighted_json_results = []
 
 
         if not self.results:
@@ -283,6 +282,12 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                 item['dict_score'] = dict_score
                 item['dict_len'] = dict_len
         # end for result in results.json_results:
+
+        # Add list_query_lens to result processor feedback
+        rpf_rec = result_processor_feedback_empty_record()
+        rpf_rec["result_processor_feedback"]["query"]["dict_result_lens"] = dict_result_lens
+        rpf_rec["result_processor_feedback"]["query"]["list_query_lens"] = list_query_lens
+        self.results.append(rpf_rec)
         self.processed_results = self.results
         self.modified = len(self.results)
         swrel_logger.complete_pass_1()
@@ -298,6 +303,13 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
     def __init__(self, search_id, request_id = ''):
         self.include_pass_1 = False
         return super().__init__(search_id, request_id=request_id)
+
+
+    def _pass_2_extract_result_len_stats(self):
+        m_rec = result_processor_feedback_empty_record()
+        for results in self.results:
+            m_rec = result_processor_feedback_merge_records(m_rec, results.result_processor_json_feedback)
+        return m_rec.get("result_processor_feedback",{}).get("query",{}).get("dict_result_lens",{}),m_rec.get("result_processor_feedback",{}).get("query",{}).get("list_query_lens",[])
 
     ############################################
     ############################################
@@ -549,8 +561,10 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
             swrel_logger.complete_pass_1()
 
         # compute field means
-        # DNDEBUG at this point, we need dict_result_lens and
         dict_len_median = {}
+        if not self.include_pass_1:
+            (dict_result_lens, list_query_lens) = self._pass_2_extract_result_len_stats()
+
         for field in dict_result_lens:
             dict_len_median[field] = median(dict_result_lens[field])
         # compute query length adjustmnet
@@ -560,6 +574,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         # PASS 2
 
         # score results by field, adjusting for field length
+        highlighted_json_results = []
         swrel_logger.start_pass_2()
         for results in self.results:
             if not results.json_results:

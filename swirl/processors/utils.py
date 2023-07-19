@@ -20,6 +20,69 @@ class ParsedQuery:
         self.query_target_list = query_target_list
         self.query_has_numeric = query_has_numeric
 
+def result_processor_feedback_empty_record():
+    return {
+            'result_processor_feedback': {
+            'query': {
+                'provider_query_terms': [],
+                'list_query_lens':[],
+                'dict_result_lens':{}
+            }
+        }
+    }
+
+
+def result_processor_feedback_merge_records(record1, record2):
+    # Initialize a new record
+    merged_record = result_processor_feedback_empty_record()
+
+    # Merge dict_result_lens
+    dict_result_lens_keys = set()
+    if "result_processor_feedback" in record1 and "query" in record1["result_processor_feedback"] and "dict_result_lens" in record1["result_processor_feedback"]["query"]:
+        dict_result_lens_keys.update(record1["result_processor_feedback"]["query"]["dict_result_lens"].keys())
+    if "result_processor_feedback" in record2 and "query" in record2["result_processor_feedback"] and "dict_result_lens" in record2["result_processor_feedback"]["query"]:
+        dict_result_lens_keys.update(record2["result_processor_feedback"]["query"]["dict_result_lens"].keys())
+
+    for key in dict_result_lens_keys:
+        merged_record["result_processor_feedback"]["query"]["dict_result_lens"][key] = list(
+            set(
+                record1.get("result_processor_feedback", {}).get("query", {}).get("dict_result_lens", {}).get(key, []) +
+                record2.get("result_processor_feedback", {}).get("query", {}).get("dict_result_lens", {}).get(key, [])
+            )
+        )
+
+    # Merge provider_query_terms
+    provider_query_terms = []
+    if "result_processor_feedback" in record1 and "query" in record1["result_processor_feedback"] and "provider_query_terms" in record1["result_processor_feedback"]["query"]:
+        provider_query_terms.extend(record1["result_processor_feedback"]["query"]["provider_query_terms"])
+    if "result_processor_feedback" in record2 and "query" in record2["result_processor_feedback"] and "provider_query_terms" in record2["result_processor_feedback"]["query"]:
+        provider_query_terms.extend(record2["result_processor_feedback"]["query"]["provider_query_terms"])
+
+    merged_record["result_processor_feedback"]["query"]["provider_query_terms"] = sorted(list(set(provider_query_terms)))
+
+    # Merge list_query_lens
+    list_query_lens = []
+    if "result_processor_feedback" in record1 and "query" in record1["result_processor_feedback"] and "list_query_lens" in record1["result_processor_feedback"]["query"]:
+        list_query_lens.extend(record1["result_processor_feedback"]["query"]["list_query_lens"])
+    if "result_processor_feedback" in record2 and "query" in record2["result_processor_feedback"] and "list_query_lens" in record2["result_processor_feedback"]["query"]:
+        list_query_lens.extend(record2["result_processor_feedback"]["query"]["list_query_lens"])
+
+    merged_record["result_processor_feedback"]["query"]["list_query_lens"] = list_query_lens
+
+    return merged_record
+
+
+
+def result_processor_feedback_provider_query_terms(qt_buf):
+    """
+    Create a JSON object from the list of query terms:
+    """
+    if not qt_buf or len(qt_buf) <= 0:
+        return None
+    ret = result_processor_feedback_empty_record()
+    ret['result_processor_feedback']['query']['provider_query_terms'] = sorted(list(set(qt_buf)))
+    return ret
+
 
 def parse_query(q_string, results_processor_feedback):
 
