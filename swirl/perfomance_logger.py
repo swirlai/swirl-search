@@ -39,9 +39,10 @@ class ProviderQueryRequestLogger:
         logger.info(f'PLG_PXC|{self.request_id}|{round(elapsed_time,4)}|{self.name}')
 
 class SwirlRelevancyLogger:
-    def __init__(self,  request_id, name="anonymous"):
+    def __init__(self,  request_id, name="anonymous",log_sim=False):
         self.request_id = request_id
         self.name = name
+        self.log_sim = log_sim
 
     def _log_elapsed(self, t, p):
         logger.info(f'PLG_RP{p}|{self.request_id}|{t}|{self.name}')
@@ -66,11 +67,13 @@ class SwirlRelevancyLogger:
 
     def end_nlp(self):
         elapsed_time = time.time() - self.nlp_start_time
-        logger.info(f'PLG_NLP|{self.request_id}|{elapsed_time}|{self.nlp_field_len}')
+        if self.log_sim:
+            logger.info(f'PLG_NLP|{self.request_id}|{round(elapsed_time,4)}|{self.nlp_field_len}')
 
     def start_sim(self):
         self.sim_start_time = time.time()
 
     def end_sim(self):
         elapsed_time = time.time() - self.sim_start_time
-        logger.info(f'PLG_SIM|{self.request_id}|{elapsed_time}|')
+        if self.log_sim:
+            logger.info(f'PLG_SIM|{self.request_id}|{round(elapsed_time,4)}|')
