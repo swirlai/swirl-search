@@ -14,19 +14,23 @@ module_name = 'services.py'
 SWIRL_SERVICES = [
     {
         'name': 'rabbitmq',
-        'path': 'rabbitmq-server'
+        'path': 'rabbitmq-server',
+        'default': True
     },
     {
         'name': 'django',
-        'path': 'daphne -b 0.0.0.0 -p 8000 swirl_server.asgi:application'
+        'path': 'daphne -b 0.0.0.0 -p 8000 swirl_server.asgi:application',
+        'default': True
     },
     {
         'name': 'celery-worker',
-        'path': 'celery -A swirl_server worker --loglevel INFO'
+        'path': 'celery -A swirl_server worker --loglevel INFO',
+        'default': True
     },
     {
         'name': 'celery-beats',
-        'path': 'celery -A swirl_server beat --scheduler django_celery_beat.schedulers:DatabaseScheduler'
+        'path': 'celery -A swirl_server beat --scheduler django_celery_beat.schedulers:DatabaseScheduler',
+        'default': False
     }
 ]
 
@@ -41,19 +45,24 @@ SERVICES_DICT = SWIRL_SERVICES_DICT
 SWIRL_SERVICES_DEBUG = [
     {
         'name': 'rabbitmq',
-        'path': 'rabbitmq-server'
+        'path': 'rabbitmq-server',
+        'default': True
+
     },
     {
         'name': 'django',
-        'path': 'python manage.py runserver'
+        'path': 'python manage.py runserver',
+        'default': True
     },
     {
         'name': 'celery-worker',
-        'path': 'celery -A swirl_server worker --loglevel DEBUG'
+        'path': 'celery -A swirl_server worker --loglevel DEBUG',
+        'default': True
     },
     {
         'name': 'celery-beats',
-        'path': 'celery -A swirl_server beat --scheduler django_celery_beat.schedulers:DatabaseScheduler'
+        'path': 'celery -A swirl_server beat --scheduler django_celery_beat.schedulers:DatabaseScheduler',
+        'default': False
     }
 ]
 

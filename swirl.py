@@ -483,7 +483,10 @@ def main(argv):
         if service_list == [] or service_list[0].lower() == 'all':
             service_list = []
             for service in SERVICES:
-                service_list.append(service['name'])
+                # only add default services, since none was specified
+                if 'default' in service:
+                    if service['default']:
+                        service_list.append(service['name'])
         elif service_list[0].lower() == 'core':
             service_list = SWIRL_CORE_SERVICES
         else:
