@@ -651,8 +651,8 @@ class LenLimitingResultProcessorTest(GeneralRequestAPITestCase):
         "query_mappings": "",
         "result_processors": [
             "MappingResultProcessor",
+            "LenLimitingResultProcessor",
             "CosineRelevancyResultProcessor",
-            "LenLimitingResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=summary,body=content,date_published=created,author=reporter.fullName,url='https://swirl.youtrack.cloud/articles/{idReadable}',project.name,attachments[*].name,parentArticle.summary,childArticles[*].summary,updatedBy.fullName,comments[*].text,NO_PAYLOAD",
