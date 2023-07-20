@@ -173,21 +173,22 @@ def search(id, session=None):
     search.status = 'FEDERATING'
     logger.info(f"{module_name}: {search.status}")
     search.save()
-    chord()()
-    # if not providers:
-    #     msg = f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}"
-    #     logger.info(msg)
-    #     search.status = 'ERR_NO_ACTIVE_SEARCHPROVIDERS'
-    #     search.save()
-    #     error_return(msg, swqrx_logger)
-    #     return False
-    # else:
-    #     tasks_list = [federate_task.s(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id) for provider in providers]
-    #     print('tasks_list', tasks_list)
-    #     result = chord(group(tasks_list))(process_federate_results.s())
-    #     print('result', result)
-    #     # for provider in providers:
-    #     #     federate_task.delay(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id)
+    # chord()()
+    if not providers:
+        msg = f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}"
+        logger.info(msg)
+        search.status = 'ERR_NO_ACTIVE_SEARCHPROVIDERS'
+        search.save()
+        error_return(msg, swqrx_logger)
+        return False
+    else:
+        tasks_list = [federate_task.s(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id) for provider in providers]
+        print('tasks_list', tasks_list)
+        # result = chord(group(tasks_list))(process_federate_results.s()).apply_async()
+        group(*tasks_list).apply_async()
+        # print('result', result.get())  # Optional: You can get the result if needed
+        # for provider in providers:
+        #     federate_task.delay(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id)
 
     # ########################################
     # # asynchronously collect results
@@ -236,14 +237,17 @@ def search(id, session=None):
     # end while
     ########################################
     # update query status
-    if error_flag:
-        if at_least_one:
-            search.status = 'PARTIAL_RESULTS'
-        else:
-            search.status = 'NO_RESULTS_READY'
-        # end if
-    else:
-        search.status = 'FULL_RESULTS'
+    # if error_flag:
+    #     if at_least_one:
+    #         search.status = 'PARTIAL_RESULTS'
+    #     else:
+    #         search.status = 'NO_RESULTS_READY'
+    #     # end if
+    # else:
+    #     search.status = 'FULL_RESULTS'
+
+    search.status = 'FULL_RESULTS'
+
     logger.info(f"{module_name}: {search.status}")
     ########################################
     # fix the result url

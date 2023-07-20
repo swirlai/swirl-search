@@ -33,7 +33,7 @@ def federate_task(search_id, provider_id, provider_connector, update, session, r
     try:
         with ProviderQueryRequestLogger(provider_connector+'_'+str(provider_id), request_id):
             connector = alloc_connector(connector=provider_connector)(provider_id, search_id, update)
-            connector.federate(session)
+            return connector.federate(session)
     except NameError as err:
         message = f'Error: NameError: {err}'
         logger.error(f'{module_name}: {message}')
