@@ -515,6 +515,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 return Response('Search object creation failed!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             # security review for 1.7 - OK, search id created
             search = Search.objects.get(id=new_search.id)
+            tries = 0
             if search.status.endswith('_READY') or search.status == 'RESCORING':
                 try:
                     if otf_result_mixer:
