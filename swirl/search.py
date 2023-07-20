@@ -184,9 +184,9 @@ def search(id, session=None):
     else:
         tasks_list = [federate_task.s(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id) for provider in providers]
         print('tasks_list', tasks_list)
-        # result = chord(group(tasks_list))(process_federate_results.s()).apply_async()
-        group(*tasks_list).apply_async()
-        # logger.info('result', result)  # Optional: You can get the result if needed
+        res = group(*tasks_list).apply_async()
+        # print('RESULT', res)
+        logger.info(res)  # Optional: You can get the result if needed
         # for provider in providers:
         #     federate_task.delay(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id)
 
