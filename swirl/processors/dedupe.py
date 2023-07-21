@@ -47,6 +47,9 @@ class DedupeByFieldResultProcessor(ResultProcessor):
 
     type="DedupeByFieldResultProcessor"
 
+    def __init__(self, results, provider, query_string, request_id='', **kwargs):
+        super().__init__(results, provider, query_string, request_id=request_id, **kwargs)
+
     def process(self):
         ## nothing to do
         if not self.provider.result_grouping_field:

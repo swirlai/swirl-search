@@ -45,6 +45,10 @@ class Requests(Connector):
 
     type = "Requests"
 
+    def __init__(self, provider_id, search_id, update, request_id=''):
+        super().__init__(provider_id, search_id, update, request_id)
+
+
     ########################################
 
     def get_method(self):

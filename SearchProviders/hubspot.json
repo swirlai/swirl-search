@@ -18,7 +18,8 @@
     "query_mappings": "NOT=true",
     "result_grouping_field": "",
     "result_processors": [
-        "MappingResultProcessor"
+        "MappingResultProcessor",
+	    "CosineRelevancyResultProcessor"
     ],
     "response_mappings": "FOUND=total,RESULTS=results",
     "result_mappings": "title=properties.dealname,body='Amount: {properties.amount} - Stage: {properties.dealstage}',date_published=createdAt,url='https://app.hubspot.com/contacts/<your-org-id>/record/0-3/{id}',id,properties.pipeline,updatedAt,properties.closedate,archived,links[*],NO_PAYLOAD",
@@ -50,7 +51,8 @@
     "query_mappings": "NOT=true",
     "result_grouping_field": "",
     "result_processors": [
-        "MappingResultProcessor"
+        "MappingResultProcessor",
+	    "CosineRelevancyResultProcessor"
     ],
     "response_mappings": "FOUND=total,RESULTS=results",
     "result_mappings": "title=properties.name,body='{properties.name}: {properties.domain}',date_published=createdAt,url='https://app.hubspot.com/contacts/<your-org-id>/record/0-2/{id}',id,updatedAt,archived,NO_PAYLOAD",
@@ -82,7 +84,8 @@
     "query_mappings": "NOT=true",
     "result_grouping_field": "",
     "result_processors": [
-        "MappingResultProcessor"
+        "MappingResultProcessor",
+	    "CosineRelevancyResultProcessor"
     ],
     "response_mappings": "FOUND=total,RESULTS=results",
     "result_mappings": "title='{properties.firstname} {properties.lastname}',body='{properties.firstname} {properties.lastname}:  {properties.email}',date_published=createdAt,author=properties.email,url='https://app.hubspot.com/contacts/<your-org-id>/record/0-1/{id}',id,updatedAt,archived,NO_PAYLOAD",

@@ -27,6 +27,7 @@ logger = get_task_logger(__name__)
 from swirl.models import Search, Result, SearchProvider
 from swirl.connectors.utils import get_mappings_dict
 from swirl.processors import *
+from swirl.processors.utils import result_processor_feedback_merge_records
 from swirl.processors.transform_query_processor_utils import get_query_processor_or_transform
 
 SWIRL_RP_SKIP_TAG = 'SW_RESULT_PROCESSOR_SKIP'
@@ -39,7 +40,7 @@ class Connector:
 
     ########################################
 
-    def __init__(self, provider_id, search_id, update):
+    def __init__(self, provider_id, search_id, update, request_id=''):
 
         self.provider_id = provider_id
         self.search_id = search_id
@@ -61,6 +62,7 @@ class Connector:
         self.messages = []
         self.start_time = None
         self.search_user = None
+        self.request_id = request_id
 
         # get the provider and query
         try:
@@ -309,8 +311,6 @@ class Connector:
 
         processors_to_skip = self._get_skip_processors_from_tags()
 
-        processed_results = None
-        result_temp = self.results
         for processor in processor_list:
             if processor in processors_to_skip:
                 logger.info(f"{self}: skipping processor: process results {processor} becasue it was in a skip tag of the search")
@@ -318,12 +318,11 @@ class Connector:
             logger.info(f"{self}: invoking processor: process results {processor}")
             last_results = copy.deepcopy(self.results)
             try:
-                proc = alloc_processor(processor=processor)(self.results, self.provider, self.query_string_to_provider)
+                proc = alloc_processor(processor=processor)(self.results, self.provider, self.query_string_to_provider, request_id=self.request_id,
+                                                            result_processor_json_feedback=self.result_processor_json_feedback)
                 modified = proc.process()
                 self.results = proc.get_results()
-                ## Check if this processor generated feed back and if so, remember it.
-                ## TODO: make this additive for multiple processor. For now the mapping processor
-                ## is the only one that generates this.
+                ## Check if this processor generated feed back and if so, remember it and merge it in to the exsiting
                 if self.results and 'result_processor_feedback' in self.results[-1]:
                     self.result_processor_json_feedback =  self.results.pop(-1)
             except (NameError, TypeError, ValueError) as err:

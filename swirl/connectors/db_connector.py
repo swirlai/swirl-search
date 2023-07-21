@@ -11,7 +11,7 @@ import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from celery.utils.log import get_task_logger
@@ -30,11 +30,11 @@ class DBConnector(Connector):
 
     ########################################
 
-    def __init__(self, provider_id, search_id, update):
+    def __init__(self, provider_id, search_id, update, request_id=''):
 
         self.count_query = ""
         self.column_names = []
-        return super().__init__(provider_id, search_id, update)
+        return super().__init__(provider_id, search_id, update, request_id)
 
     def construct_query(self):
 
@@ -53,13 +53,13 @@ class DBConnector(Connector):
             self.error(f"{{fields}} not found in bound query_template")
             return
         count_query = bind_query_mappings(count_query_template, self.provider.query_mappings)
-    
+
         if '{query_string}' in count_query:
             count_query = count_query.replace('{query_string}', self.query_string_to_provider)
         else:
             self.error(f"{{query_string}} not found in bound query_template {count_query}")
             return
-            
+
         self.count_query = count_query
 
         # main query
@@ -96,7 +96,7 @@ class DBConnector(Connector):
         # results per query
         query_to_provider = query_to_provider.replace(';', ' limit ' + str(self.provider.results_per_query) + ';')
         self.query_to_provider = query_to_provider
-        
+
         return
 
     ########################################
@@ -120,4 +120,3 @@ class DBConnector(Connector):
             return False
 
         return True
-

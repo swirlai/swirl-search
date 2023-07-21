@@ -39,11 +39,13 @@ class ProviderQueryRequestLogger:
         logger.info(f'PLG_PXC|{self.request_id}|{round(elapsed_time,4)}|{self.name}')
 
 class SwirlRelevancyLogger:
-    def __init__(self,  request_id):
+    def __init__(self,  request_id, name="anonymous",log_sim=False):
         self.request_id = request_id
+        self.name = name
+        self.log_sim = log_sim
 
     def _log_elapsed(self, t, p):
-        logger.info(f'PLG_RP{p}|{self.request_id}|{t}')
+        logger.info(f'PLG_RP{p}|{self.request_id}|{t}|{self.name}')
 
     def start_pass_1(self):
         self.pass_1_start_time = time.time()
@@ -58,3 +60,20 @@ class SwirlRelevancyLogger:
     def complete_pass_2(self):
         elapsed_time = time.time() - self.pass_2_start_time
         self._log_elapsed(round(elapsed_time,4),2)
+
+    def start_nlp(self, flen):
+        self.nlp_start_time = time.time()
+        self.nlp_field_len = flen
+
+    def end_nlp(self):
+        elapsed_time = time.time() - self.nlp_start_time
+        if self.log_sim:
+            logger.info(f'PLG_NLP|{self.request_id}|{round(elapsed_time,4)}|{self.nlp_field_len}')
+
+    def start_sim(self):
+        self.sim_start_time = time.time()
+
+    def end_sim(self):
+        elapsed_time = time.time() - self.sim_start_time
+        if self.log_sim:
+            logger.info(f'PLG_SIM|{self.request_id}|{round(elapsed_time,4)}|')

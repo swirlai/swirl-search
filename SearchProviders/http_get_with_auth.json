@@ -8,7 +8,8 @@
     ],
     "query_mappings": "PAGE=start=RESULT_INDEX,DATE_SORT=sort=date",
     "result_processors": [
-        "MappingResultProcessor"
+        "MappingResultProcessor",
+	    "CosineRelevancyResultProcessor"
     ],
     "response_mappings": "FOUND=count,RESULTS=results",
     "result_mappings": "body=content,date_published=date,author=creator",
