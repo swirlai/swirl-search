@@ -30,10 +30,19 @@ echo $PROG "Checking for ${lang_model_name}"
 found_model=`pip list 2>/dev/null | grep ${lang_model_name} | awk '{print $1}'`
 if [[ "x$found_model" == "x$lang_model_name" ]]
 then
-   echo $PROG "Found $lang_model_name , skipping download"
+    echo $PROG "Found $lang_model_name , checking freshness...."
+    pip list -o 2>/dev/null | grep ${lang_model_name};
+    grep_exit_status=$?
+    if [[ $grep_exit_status -eq 0 ]]
+    then
+        echo $PROG "${lang_model_name} is outdated. Downloading spacy ${lang_model_name}..."
+	python -m spacy download en_core_web_lg
+    else
+        echo $PROG "${lang_model_name} is up to date, skipping download"
+    fi
 else
-   echo $PROG "Downloading spacy en_core_web_lg..."
-   python -m spacy download en_core_web_lg
+    echo $PROG "Downloading spacy ${lang_model_name}..."
+    python -m spacy download en_core_web_lg
 fi
 
 echo $PROG "Downloading NLTK modules..."
