@@ -9,7 +9,8 @@
     ],
     "query_mappings": "fields=*,sort_by_date=fundedDate,table=funding.funding,field1=company,field2=city",
     "result_processors": [
-        "MappingResultProcessor"
+        "MappingResultProcessor",	
+        "CosineRelevancyResultProcessor"
     ],
     "result_mappings": "title='{company}',body='{company} raised ${raisedamt} series {round} on {fundeddate}. The company is located in {city} {state} and has {numemps} employees.',url=permalink,date_published=fundeddate,NO_PAYLOAD",
     "credentials": "/path/to/bigquery/token.json",

@@ -10,7 +10,7 @@ import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from django.conf import settings
@@ -33,10 +33,14 @@ class ChatGPT(Connector):
 
     type = "ChatGPT"
 
+    def __init__(self, provider_id, search_id, update, request_id=''):
+        super().__init__(provider_id, search_id, update, request_id)
+
+
     def execute_search(self, session=None):
 
         logger.info(f"{self}: execute_search()")
-        
+
         if self.provider.credentials:
             openai.api_key = self.provider.credentials
         else:
@@ -44,7 +48,7 @@ class ChatGPT(Connector):
                 openai.api_key = settings.OPENAI_API_KEY
             else:
                 self.status = "ERR_NO_CREDENTIALS"
-                return 
+                return
 
         prompted_query = ""
         if self.query_to_provider.endswith('?'):
@@ -61,7 +65,7 @@ class ChatGPT(Connector):
             self.retrieved = 0
             self.response = []
             self.status = "ERR_PROMPT_FAILED"
-            return 
+            return
 
         self.query_to_provider = prompted_query
 
@@ -85,7 +89,7 @@ class ChatGPT(Connector):
     ########################################
 
     def normalize_response(self):
-        
+
         logger.info(f"{self}: normalize_response()")
 
         self.results = [
@@ -98,4 +102,3 @@ class ChatGPT(Connector):
         ]
 
         return
-

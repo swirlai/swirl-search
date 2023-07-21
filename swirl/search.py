@@ -201,8 +201,11 @@ def search(id, session=None):
                 error_flag = True
             if result.status == 'READY':
                 at_least_one = True
-        if len(results) == len(providers):
+        if len(results) >= len(providers):
             # every provider has written a result object - exit
+            # D.A.N. The >= is to account for bugs we have in double result saving, which is
+            # confusing this code. We will be removing this soon and I believe the above is
+            # a better approach for now.
             logger.info(f"{module_name}_{search.id}: all results received!")
             break
         search.status = f'FEDERATING_WAIT_{ticks}'

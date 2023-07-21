@@ -13,7 +13,7 @@ from jsonpath_ng.exceptions import JsonPathParserError
 
 from swirl.processors.processor import *
 from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
-from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format, date_str_to_timestamp
+from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format, date_str_to_timestamp, result_processor_feedback_provider_query_terms
 from swirl.swirl_common import RESULT_MAPPING_COMMANDS
 
 #############################################
@@ -28,6 +28,9 @@ class MappingResultProcessor(ResultProcessor):
 
     type="MappingResultProcessor"
 
+    def __init__(self, results, provider, query_string, request_id='', **kwargs):
+        super().__init__(results, provider, query_string, request_id=request_id, **kwargs)
+
     def put_query_terms_from_provider(self, swirl_key, text, lBuf):
         """ remember query terms from the hihglight field of each result"""
         if not ( swirl_key and text ):
@@ -39,21 +42,6 @@ class MappingResultProcessor(ResultProcessor):
             for hit in hits:
                 lBuf.append(str(hit).lower())
 
-    def get_opt_result_processor_feedback_json(self, lBuf):
-        """
-        Create a JSON object from the list of query terms:
-        """
-        if not lBuf or len(lBuf)<=0:
-            return None
-
-        ret = {
-                'result_processor_feedback': {
-                'query': {
-	                'provider_query_terms': sorted(list(set(lBuf)))
-                }
-            }
-        }
-        return ret
 
     def process(self):
 
@@ -287,7 +275,7 @@ class MappingResultProcessor(ResultProcessor):
             # unique list of terms from highligts
         # end for
 
-        fb = self.get_opt_result_processor_feedback_json(provider_query_term_results)
+        fb = result_processor_feedback_provider_query_terms(provider_query_term_results)
         if fb:
             list_results.append(fb)
 

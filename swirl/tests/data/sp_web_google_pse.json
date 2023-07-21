@@ -13,7 +13,8 @@
     "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
     "result_processor": "",
     "result_processors": [
-      "MappingResultProcessor"
+      "MappingResultProcessor",
+      "CosineRelevancyResultProcessor"
     ],
     "result_mappings": "url=link,body=htmlSnippet,cacheId,NO_PAYLOAD",
     "results_per_query": 10,

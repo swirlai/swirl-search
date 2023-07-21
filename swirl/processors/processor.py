@@ -122,7 +122,7 @@ class ResultProcessor(Processor):
 
     ########################################
 
-    def __init__(self, results, provider, query_string, request_id=''):
+    def __init__(self, results, provider, query_string, request_id='', **kwargs):
 
         self.results = results
         self.provider = provider
@@ -131,6 +131,9 @@ class ResultProcessor(Processor):
         self.modified = 0
         self.processed_results = None
         self.request_id = request_id
+        # process additional keyword arguments
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     ########################################
 

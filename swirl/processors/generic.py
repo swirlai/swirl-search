@@ -37,6 +37,9 @@ class GenericResultProcessor(ResultProcessor):
 
     type="GenericResultProcessor"
 
+    def __init__(self, results, provider, query_string, request_id='', **kwargs):
+        super().__init__(results, provider, query_string, request_id=request_id, **kwargs)
+
     def process(self):
 
         use_payload = True
@@ -128,10 +131,13 @@ def match_any(source_list, s_target, max_length):
                     break
             return ' '.join(result)
     return ''
-    
+
 class LenLimitingResultProcessor(ResultProcessor):
 
     type="LenLimitingResultProcessor"
+
+    def __init__(self, results, provider, query_string, request_id='', **kwargs):
+        super().__init__(results, provider, query_string, request_id=request_id, **kwargs)
 
     def process(self):
 
@@ -197,8 +203,11 @@ class CleanTextResultProcessor(ResultProcessor):
 
     type="CleanTextResultProcessor"
 
+    def __init__(self, results, provider, query_string, request_id='', **kwargs):
+        super().__init__(results, provider, query_string, request_id=request_id, **kwargs)
+
     def process(self):
-        
+
         modified = 0
         for item in self.results:
             for field in FIELDS_TO_CLEAN:
@@ -210,12 +219,15 @@ class CleanTextResultProcessor(ResultProcessor):
         self.processed_results = self.results
         self.modified = modified
         return self.modified
-    
+
 #############################################
-    
+
 class TestResultProcessor(ResultProcessor):
 
     type="TestResultProcessor"
+
+    def __init__(self, results, provider, query_string, request_id='', **kwargs):
+        super().__init__(results, provider, query_string, request_id=request_id, **kwargs)
 
     def process(self):
 
@@ -232,6 +244,9 @@ class TestResultProcessor(ResultProcessor):
 class DuplicateHalfResultProcessor(ResultProcessor):
 
     type="DuplicateHalfResultProcessor"
+
+    def __init__(self, results, provider, query_string, request_id='', **kwargs):
+        super().__init__(results, provider, query_string, request_id=request_id, **kwargs)
 
     def process(self):
 
