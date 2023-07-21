@@ -50,8 +50,8 @@ class DedupeByFieldResultProcessor(ResultProcessor):
     def process(self):
         ## nothing to do
         if not self.provider.result_grouping_field:
-            self.processed_results = results
-            return results
+            self.processed_results = self.results
+            return False
 
         results = self.results
         provider = self.provider
