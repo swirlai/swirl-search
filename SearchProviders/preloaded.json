@@ -224,7 +224,7 @@
         "default": false,
         "connector": "OpenSearch",
         "url": "http://localhost:9200/",
-        "query_template": "{'query': {'query_string': {'query': '{query_string}', 'default_field': '{default_field}', 'default_operator': 'and'}}}",
+        "query_template": "{\"query\":{\"query_string\":{\"query\":\"{query_string}\",\"default_field\":\"{default_field}\",\"default_operator\":\"and\"}}}",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -385,8 +385,10 @@
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "NOT=true,NOT_CHAR=-",
+        "result_grouping_field": "conversationId",
         "result_processors": [
             "MappingResultProcessor",
+            "DedupeByFieldResultProcessor",
 	        "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
