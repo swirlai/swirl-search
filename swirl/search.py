@@ -6,7 +6,7 @@
 
 from datetime import datetime
 import time
-from celery import group, chord
+from celery import group
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
@@ -171,7 +171,6 @@ def search(id, session=None):
     search.status = 'FEDERATING'
     logger.info(f"{module_name}: {search.status}")
     search.save()
-    # chord()()
     if not providers:
         msg = f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}"
         logger.info(msg)

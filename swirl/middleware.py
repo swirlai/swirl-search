@@ -45,10 +45,8 @@ class SpyglassAuthenticatorsMiddleware:
                     logger.debug(f'SpyglassAuthenticatorsMiddleware - one we care about')
                     token = request.headers[f'{authenticator}-Authorization']
                     expires_in = int(jwt.decode(token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
-                    print('EXPIRES', expires_in)
                     ## Do we need refresh token ?
                     SWIRL_AUTHENTICATORS_DISPATCH.get(authenticator)().set_session_data(request, token, '', expires_in)
-                    print('SESSION_DATA', SWIRL_AUTHENTICATORS_DISPATCH.get(authenticator)().get_session_data(request))
                 else:
                     logger.debug(f'SpyglassAuthenticatorsMiddleware - call set session data NULL TOKEN')
                     SWIRL_AUTHENTICATORS_DISPATCH.get(authenticator)().set_session_data(request, '', '', 0)
