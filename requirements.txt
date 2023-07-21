@@ -23,4 +23,3 @@ openai
 msal
 PyJWT
 pyahocorasick
-redis
