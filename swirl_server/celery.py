@@ -15,10 +15,10 @@ logging.basicConfig(level=logging.INFO)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 
 ### REDIS CONFIGURATION
-# app = Celery('swirl_server', broker='redis://localhost:6379/0', backend='redis://localhost:6379/0')
+app = Celery('swirl_server', broker='redis://localhost:6379/0', backend='redis://localhost:6379/0')
 
 ### RABBITMQ CONFIGURATION
-app = Celery('swirl_server', backend='rpc://', ampq='amqp://guest:guest@localhost:5672//')
+# app = Celery('swirl_server', backend='rpc://', ampq='amqp://guest:guest@localhost:5672//')
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.

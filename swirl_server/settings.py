@@ -176,20 +176,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 from celery.schedules import crontab
 
 ### REDIS CONFIGURATION
-# CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
 ### RABBITMQ CONFIGURATION
-CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+# CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 
 ### REDIS CONFIGURATION
-# CELERY_RESULT_BACKEND='redis://localhost:6379/0'
+CELERY_RESULT_BACKEND='redis://localhost:6379/0'
 
 ### RABBITMQ CONFIGURATION
-CELERY_RESULT_BACKEND='rpc://'
+# CELERY_RESULT_BACKEND='rpc://'
 
 CELERY_TASK_ALWAYS_EAGER = False
 
