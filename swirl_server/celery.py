@@ -37,10 +37,3 @@ def debug_task(self):
 def setup_loggers(logger, *args, **kwargs):
     print('Setting logger level to INFO')
     logger.setLevel(logging.INFO)
-
-@app.task(name='process_federate_results')
-def process_federate_results(results):
-    # Process the results here (e.g., aggregate data, perform further actions)
-    print("Processing federate results:", results)
-    # ... Your additional processing logic ...
-    return "Result processing completed"

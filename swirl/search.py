@@ -8,8 +8,6 @@ from datetime import datetime
 import time
 from celery import group, chord
 
-from swirl_server.celery import process_federate_results
-
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
 from django.conf import settings
