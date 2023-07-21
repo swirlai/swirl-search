@@ -112,8 +112,6 @@ class Elastic(Connector):
         except TypeError as err:
             self.error(f'TypeError: {err}')
 
-        self.warning(f"X: {self.query_to_provider}")
-
         # extract index (str)
         index_name_pattern = r"index='([^']+)'"
         match = re.search(index_name_pattern, self.query_to_provider)
@@ -134,7 +132,6 @@ class Elastic(Connector):
             return
 
         response = None
-        self.warning(f"X: {index}, {query}")
         try:
             response = es.search(index=index, query=query)
         except ConnectionError as err:
