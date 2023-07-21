@@ -183,15 +183,9 @@ def search(id, session=None):
         return False
     else:
         tasks_list = [federate_task.s(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id) for provider in providers]
-        print('tasks_list', tasks_list)
-        res = group(*tasks_list).apply_async()
-        # print('RESULT', res)
-        logger.info(res)  # Optional: You can get the result if needed
-        # for provider in providers:
-        #     federate_task.delay(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id)
-
+        group(*tasks_list).apply_async().get()
     # ########################################
-    # # asynchronously collect results
+    # asynchronously collect results
     # ticks = 0
     # error_flag = False
     # at_least_one = False
@@ -235,7 +229,7 @@ def search(id, session=None):
     #         swqrx_logger.timeout_execution()
     #         break
     # end while
-    ########################################
+    #######################################
     # update query status
     # if error_flag:
     #     if at_least_one:
@@ -247,6 +241,7 @@ def search(id, session=None):
     #     search.status = 'FULL_RESULTS'
 
     search.status = 'FULL_RESULTS'
+
 
     logger.info(f"{module_name}: {search.status}")
     ########################################
@@ -316,13 +311,13 @@ def search(id, session=None):
             search.status = 'FULL_UPDATE_READY'
         else:
             search.status = 'FULL_RESULTS_READY'
+
     logger.info(f"{module_name}: {search.status}")
     end_time = time.time()
     search.time = f"{(end_time - start_time):.1f}"
     logger.info(f"{module_name}: search time: {search.time}")
     swqrx_logger.complete_execution()
     search.save()
-
     return True
 
 ##################################################

@@ -40,7 +40,6 @@ def federate_task(search_id, provider_id, provider_connector, update, session, r
     except TypeError as err:
         message = f'Error: TypeError: {err}'
         logger.error(f'{module_name}: {message}')
-    return
 
 ##################################################
 
