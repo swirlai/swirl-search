@@ -10,7 +10,7 @@ def getSearchProviderQueryProcessorsDefault():
     return ["AdaptiveQueryProcessor"]
 
 def getSearchProviderResultProcessorsDefault():
-    return ["MappingResultProcessor","DateFinderResultProcessor"]
+    return ["MappingResultProcessor","DateFinderResultProcessor","CosineRelevancyResultProcessor"]
 
 class FlexibleChoiceField(models.CharField):
     """
@@ -93,7 +93,8 @@ class SearchProvider(models.Model):
         ('DateFinderResultProcessor','DateFinderResultProcessor'),
         ('DedupeByFieldResultProcessor', 'DedupeByFieldResultProcessor'),
         ('LenLimitingResultProcessor', 'LenLimitingResultProcessor'),
-        ('CleanTextResultProcessor','CleanTextResultProcessor')
+        ('CleanTextResultProcessor','CleanTextResultProcessor'),
+        ('CosineRelevancyResultProcessor','CosineRelevancyResultProcessor')
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
 
@@ -123,7 +124,7 @@ def getSearchPreQueryProcessorsDefault():
     return []
 
 def getSearchPostResultProcessorsDefault():
-    return ["DedupeByFieldPostResultProcessor","CosineRelevancyPostResultProcessor"]
+    return ["DedupeByFieldPostResultProcessor"]
 
 class Search(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -153,9 +154,6 @@ class Search(models.Model):
         ('CosineRelevancyPostResultProcessor', 'CosineRelevancyPostResultProcessor'),
         ('DedupeByFieldPostResultProcessor', 'DedupeByFieldPostResultProcessor'),
         ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor'),
-        ('WriteToFileSystemPostResultProcessor', 'WriteToFileSystemPostResultProcessor'),
-        ('TemporalRelevancyPostResultProcessor', 'TemporalRelevancyPostResultProcessor'),
-        ('EntityMatcherPostResultProcessor', 'EntityMatcherPostResultProcessor')
     ]
     post_result_processors = models.JSONField(default=getSearchPostResultProcessorsDefault, blank=True)
     result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)
