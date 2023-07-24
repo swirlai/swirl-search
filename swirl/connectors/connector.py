@@ -161,7 +161,7 @@ class Connector:
         Invoke the specified query_processor for this provider on search.query_string_processed, store the result in self.query_string_to_provider
         '''
 
-        logger.info(f"{self}: process_query()")
+        logger.debug(f"{self}: process_query()")
         processor_list = []
         processor_list = self.provider.query_processors
 
@@ -171,7 +171,7 @@ class Connector:
 
         query_temp = self.search.query_string_processed
         for processor in processor_list:
-            logger.info(f"{self}: invoking query processor: {processor}")
+            logger.debug(f"{self}: invoking query processor: {processor}")
             try:
                 processed_query = get_query_processor_or_transform(processor, query_temp, self.provider.query_mappings, self.provider.tags, self.search_user).process()
             except (NameError, TypeError, ValueError) as err:
@@ -197,7 +197,7 @@ class Connector:
         Copy query_string_processed to query_to_provider
         '''
 
-        logger.info(f"{self}: construct_query()")
+        logger.debug(f"{self}: construct_query()")
         self.query_to_provider = self.query_string_to_provider
         return
 
@@ -209,7 +209,7 @@ class Connector:
         Validate the query_to_provider, and return True or False
         '''
 
-        logger.info(f"{self}: validate_query()")
+        logger.debug(f"{self}: validate_query()")
         if self.query_to_provider == "":
             self.error("query_to_provider is blank or missing")
             return False
@@ -223,7 +223,7 @@ class Connector:
         Connect to, query and save the response from this provider
         '''
 
-        logger.info(f"{self}: execute_search()")
+        logger.debug(f"{self}: execute_search()")
         self.found = 1
         self.retrieved = 1
         self.response = [
@@ -244,7 +244,7 @@ class Connector:
         Transform the response from the provider into a json (list) and store as self.results
         '''
 
-        logger.info(f"{self}: normalize_response()")
+        logger.debug(f"{self}: normalize_response()")
         if self.response:
             if len(self.response) == 0:
                 # no results, not an error
@@ -290,7 +290,7 @@ class Connector:
         Each processor is expected to MODIFY self.results and RETURN the number of records modified
         '''
 
-        logger.info(f"{self}: process_results()")
+        logger.debug(f"{self}: process_results()")
 
         if self.found == 0:
             return
@@ -313,9 +313,9 @@ class Connector:
 
         for processor in processor_list:
             if processor in processors_to_skip:
-                logger.info(f"{self}: skipping processor: process results {processor} becasue it was in a skip tag of the search")
+                logger.debug(f"{self}: skipping processor: process results {processor} becasue it was in a skip tag of the search")
                 continue
-            logger.info(f"{self}: invoking processor: process results {processor}")
+            logger.debug(f"{self}: invoking processor: process results {processor}")
             last_results = copy.deepcopy(self.results)
             try:
                 proc = alloc_processor(processor=processor)(self.results, self.provider, self.query_string_to_provider, request_id=self.request_id,
@@ -352,7 +352,7 @@ class Connector:
         Store the transformed results as a Result object in the database, linked to the search_id
         '''
 
-        logger.info(f"{self}: save_results()")
+        logger.debug(f"{self}: save_results()")
         # timing
         end_time = time.time()
 
@@ -388,18 +388,18 @@ class Connector:
                 result.query_processors = query_processors
                 result.result_processors = result_processors
                 result.status = 'UPDATED'
-                logger.info(f"{self}: Result.save()")
+                logger.debug(f"{self}: Result.save()")
                 result.save()
             except Error as err:
                 self.error(f'save_results() update failed: {err.args}, {err}', save_results=False)
                 return False
-            logger.info(f"{self}: Update: added {len(self.processed_results)} new items to result {result.id}")
+            logger.debug(f"{self}: Update: added {len(self.processed_results)} new items to result {result.id}")
             self.message(f"Retrieved {len(self.processed_results)} new results from: {result.searchprovider}")
             return True
         # end if
 
         try:
-            logger.info(f"{self}: Result.create()")
+            logger.debug(f"{self}: Result.create()")
             new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id,
                                                query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider,
                                                query_processors=query_processors, result_processors=result_processors, messages=self.messages,

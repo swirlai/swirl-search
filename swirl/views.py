@@ -41,19 +41,15 @@ from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
 
-
-
 module_name = 'views.py'
 
-from swirl.tasks import search_task, rescore_task
+from swirl.tasks import search_task
 from swirl.search import search as run_search
 
 SWIRL_EXPLAIN = getattr(settings, 'SWIRL_EXPLAIN', True)
 SWIRL_RERUN_WAIT = getattr(settings, 'SWIRL_RERUN_WAIT', 8)
-SWIRL_RESCORE_WAIT = getattr(settings, 'SWIRL_RESCORE_WAIT', 5)
 SWIRL_SUBSCRIBE_WAIT = getattr(settings, 'SWIRL_SUBSCRIBE_WAIT', 20)
 SWIRL_Q_WAIT = getattr(settings, 'SWIRL_Q_WAIT', 7)
-
 
 def remove_duplicates(my_list):
     new_list = []
@@ -126,7 +122,7 @@ def registration(request):
             # Construct the confirmation URL with the signed token
             confirmation_url = reverse('registration_confirmation', args=[token, signature])
             confirmation_url = request.build_absolute_uri(confirmation_url)
-            logger.info(f"{module_name}: User registered: {confirmation_url}")
+            logger.debug(f"{module_name}: User registered: {confirmation_url}")
             send_mail(
                 'Register to try Swirl Metasearch Hosted!',
                 f'Hello! You have been invited to try Swirl Metasearch! Please click the following link to complete your registration: {confirmation_url}',
@@ -161,7 +157,7 @@ def registration_confirmation(request, token, signature):
     group = Group.objects.get(name='everyone')
     group.user_set.add(user)
     group.save()
-    logger.info(f"{module_name}: User confirmed: {user.id} {user.username}")
+    logger.debug(f"{module_name}: User confirmed: {user.id} {user.username}")
     login(request, user)
     return redirect('index')
 
@@ -332,7 +328,6 @@ class SearchViewSet(viewsets.ModelViewSet):
     Add ?qs=<query_string> to the URL to run a Search and get results directly
     Add &providers=<provider1_id>,<provider2_tag> etc to specify SearchProvider(s)
     Add ?rerun=<query_id> to fully re-execute a query, discarding previous results
-    Add ?rescore=<query_id> to re-run post-result processing, updating relevancy scores
     Add ?update=<query_id> to update the Search with new results from all sources
     Add ?search_tags=<list-of-tags> to add tags to this search
     """
@@ -374,13 +369,15 @@ class SearchViewSet(viewsets.ModelViewSet):
                 logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
                 return Response(status=status.HTTP_403_FORBIDDEN)
             # run search
-            logger.info(f"{module_name}: Search.create() from ?q")
+            logger.debug(f"{module_name}: Search.create() from ?q")
             try:
                 new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user, tags=tags)
             except Error as err:
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
             new_search.save()
+            # log info
+            logger.info(f"{request.user} search_q {new_search.id}")
             search_task.delay(new_search.id, Authenticator().get_session_data(request))
             time.sleep(SWIRL_Q_WAIT)
             return redirect(f'/swirl/results?search_id={new_search.id}')
@@ -412,7 +409,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
                 return Response(status=status.HTTP_403_FORBIDDEN)
             # run search
-            logger.info(f"{module_name}: Search.create() from ?qs")
+            logger.debug(f"{module_name}: Search.create() from ?qs")
             try:
                 # security review for 1.7 - OK, created with owner
                 new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user,
@@ -421,6 +418,8 @@ class SearchViewSet(viewsets.ModelViewSet):
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
             new_search.save()
+            # log info
+            logger.info(f"{request.user} search_qs {new_search.id}")
             res = run_search(new_search.id, Authenticator().get_session_data(request))
             if not res:
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -468,7 +467,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             if not Search.objects.filter(id=rerun_id, owner=self.request.user).exists():
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
             # security review for 1.7 - OK, filtered by search
-            logger.info(f"{module_name}: ?rerun!")
+            logger.debug(f"{module_name}: ?rerun!")
             rerun_search = Search.objects.get(id=rerun_id)
             old_results = Result.objects.filter(search_id=rerun_search.id)
             logger.warning(f"{module_name}: deleting Result objects associated with search {rerun_id}")
@@ -480,29 +479,12 @@ class SearchViewSet(viewsets.ModelViewSet):
             rerun_search.messages = []
             rerun_search.messages.append(message)
             rerun_search.save()
+            # log info
+            logger.info(f"{request.user} rerun {rerun_id}")
             search_task.delay(rerun_search.id, Authenticator().get_session_data(request))
             time.sleep(SWIRL_RERUN_WAIT)
             return redirect(f'/swirl/results?search_id={rerun_search.id}')
         # end if
-
-        ########################################
-
-        rescore_id = 0
-        if 'rescore' in request.GET.keys():
-            rescore_id = request.GET['rescore']
-
-        if rescore_id:
-            # check permissions
-            if not (request.user.has_perm('swirl.change_search') and request.user.has_perm('swirl.change_result')):
-                logger.warning(f"User {self.request.user} needs permissions change_search({request.user.has_perm('swirl.change_search')}), change_result({request.user.has_perm('swirl.change_result')})")
-                return Response(status=status.HTTP_403_FORBIDDEN)
-            # security check
-            if not Search.objects.filter(id=rescore_id, owner=self.request.user).exists():
-                return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
-            logger.info(f"{module_name}: ?rescore!")
-            rescore_task.delay(rescore_id)
-            time.sleep(SWIRL_RESCORE_WAIT)
-            return redirect(f'/swirl/results?search_id={rescore_id}')
 
         ########################################
 
@@ -518,16 +500,18 @@ class SearchViewSet(viewsets.ModelViewSet):
             # security check
             if not Search.objects.filter(id=update_id, owner=self.request.user).exists():
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
-            logger.info(f"{module_name}: ?update!")
+            logger.debug(f"{module_name}: ?update!")
             search.status = 'UPDATE_SEARCH'
             search.save()
+            # log info
+            logger.info(f"{request.user} update {update_id}")
             search_task.delay(update_id, Authenticator().get_session_data(request))
             time.sleep(SWIRL_SUBSCRIBE_WAIT)
             return redirect(f'/swirl/results?search_id={update_id}')
 
         ########################################
 
-        logger.info(f"{module_name}: Search.list()!")
+        logger.debug(f"{module_name}: Search.list()!")
 
         # security review for 1.7 - OK, filtered by owner
         self.queryset = Search.objects.filter(owner=self.request.user)
@@ -543,7 +527,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        logger.info(f"{module_name}: Search.create() from POST")
+        logger.debug(f"{module_name}: Search.create() from POST")
 
         serializer = SearchSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -557,6 +541,8 @@ class SearchViewSet(viewsets.ModelViewSet):
                 search.status = 'ERR_NO_SEARCHPROVIDERS'
                 search.save
         else:
+            # log info
+            logger.info(f"{request.user} search_post {search.id}")
             search_task.delay(serializer.data['id'], Authenticator().get_session_data(request))
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -591,7 +577,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         if not Search.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
-        logger.info(f"{module_name}: Search.update()!")
+        logger.debug(f"{module_name}: Search.update()!")
 
         search = Search.objects.get(pk=pk)
         search.date_updated = datetime.now()
@@ -605,6 +591,8 @@ class SearchViewSet(viewsets.ModelViewSet):
             if not (request.user.has_perm('swirl.add_search') and request.user.has_perm('swirl.change_search') and request.user.has_perm('swirl.add_result') and request.user.has_perm('swirl.change_result')):
                 logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
                 return Response(status=status.HTTP_403_FORBIDDEN)
+            # log info
+            logger.info(f"{request.user} search_put {search.id}")
             search_task.delay(search.id, Authenticator().get_session_data(request))
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -620,7 +608,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         if not Search.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
-        logger.info(f"{module_name}: Search.destroy()!")
+        logger.debug(f"{module_name}: Search.destroy()!")
 
         search = Search.objects.get(pk=pk)
         search.delete()
@@ -694,7 +682,7 @@ class ResultViewSet(viewsets.ModelViewSet):
             if not Search.objects.filter(id=search_id, owner=self.request.user).exists():
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
             # security review for 1.7 - OK, filtered by owner
-            logger.info(f"{module_name}: Calling mixer from ?search_id")
+            logger.debug(f"{module_name}: Calling mixer from ?search_id")
             search = Search.objects.get(id=search_id)
             if search.status.endswith('_READY') or search.status == 'RESCORING':
                 try:
@@ -751,7 +739,7 @@ class ResultViewSet(viewsets.ModelViewSet):
         if not Result.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
-        logger.info(f"{module_name}: Result.update()!")
+        logger.debug(f"{module_name}: Result.update()!")
 
         result = Result.objects.get(pk=pk)
         result.date_updated = datetime.now()
@@ -773,7 +761,7 @@ class ResultViewSet(viewsets.ModelViewSet):
         if not Result.objects.filter(pk=pk, owner=self.request.user).exists():
             return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
 
-        logger.info(f"{module_name}: Result.destroy()!")
+        logger.debug(f"{module_name}: Result.destroy()!")
 
         result = Result.objects.get(pk=pk)
         result.delete()
