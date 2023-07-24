@@ -69,7 +69,7 @@ class Requests(Connector):
         the query to provider.
         """
 
-        logger.info(f"{self}: construct_query()")
+        logger.debug(f"{self}: construct_query()")
 
         # to do: migrate this to Connector base class?
         query_to_provider = ""
@@ -103,7 +103,7 @@ class Requests(Connector):
 
     def validate_query(self, session=None):
 
-        logger.info(f"{self}: validate_query()")
+        logger.debug(f"{self}: validate_query()")
 
         query_to_provider = self.query_to_provider
         if '{' in query_to_provider or '}' in query_to_provider:
@@ -125,7 +125,7 @@ class Requests(Connector):
 
     def execute_search(self, session=None):
 
-        logger.info(f"{self}: execute_search()")
+        logger.debug(f"{self}: execute_search()")
 
         # determine if paging is required
         pages = 1
@@ -192,7 +192,7 @@ class Requests(Connector):
                             headers = {
                                 "X-Api-Key": f"{self.provider.credentials.split('X-Api-Key=')[1]}"
                             }
-                            logger.info(f"{self}: sending request with auth header X-Api-Key")
+                            logger.debug(f"{self}: sending request with auth header X-Api-Key")
                             response = self.send_request(page_query, headers=self._put_configured_headers(headers), query=self.query_string_to_provider)
                             # all others
                         else:

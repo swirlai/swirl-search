@@ -29,7 +29,7 @@ from swirl.perfomance_logger import *
 
 @shared_task(name='federate', ignore_result=True)
 def federate_task(search_id, provider_id, provider_connector, update, session, request_id):
-    logger.info(f"{module_name}: federate_task: {search_id}_{provider_id}_{provider_connector} update: {update} request_id {request_id}")
+    logger.debug(f"{module_name}: federate_task: {search_id}_{provider_id}_{provider_connector} update: {update} request_id {request_id}")
     try:
         with ProviderQueryRequestLogger(provider_connector+'_'+str(provider_id), request_id):
             connector = alloc_connector(connector=provider_connector)(provider_id, search_id, update, request_id=request_id)
@@ -49,7 +49,7 @@ def federate_task(search_id, provider_id, provider_connector, update, session, r
 def search_task(search_id, session):
     from swirl.search import search
 
-    logger.info(f"{module_name}: search_task: {search_id}")
+    logger.debug(f"{module_name}: search_task: {search_id}")
     return search(search_id, session)
 
 ##################################################
@@ -59,7 +59,7 @@ def search_task(search_id, session):
 def rescore_task(search_id):
     from swirl.search import rescore
 
-    logger.info(f"{module_name}: rescore_task: {search_id}")
+    logger.debug(f"{module_name}: rescore_task: {search_id}")
     return rescore(search_id)
 
 ##################################################
@@ -69,7 +69,7 @@ def rescore_task(search_id):
 def expirer_task():
     from swirl.expirer import expirer
 
-    logger.info(f"{module_name}: expirer()")
+    logger.debug(f"{module_name}: expirer()")
     return expirer()
 
 ##################################################
@@ -79,5 +79,5 @@ def expirer_task():
 def subscriber_task():
     from swirl.subscriber import subscriber
 
-    logger.info(f"{module_name}: subscriber()")
+    logger.debug(f"{module_name}: subscriber()")
     return subscriber()

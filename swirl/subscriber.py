@@ -44,7 +44,7 @@ def subscriber():
     
     searches = Search.objects.filter(subscribe=True)
     for search in searches:
-        logger.info(f"{module_name}: subscriber: {search.id}")
+        logger.debug(f"{module_name}: subscriber: {search.id}")
         owner = search.owner # User(search.owner)
         # check permissions
         if not (owner.has_perm('swirl.change_search') and owner.has_perm('swirl.change_result')):
@@ -61,7 +61,7 @@ def subscriber():
         # to do: better than below and renaming upon import
         success = run_search(search.id)
         if success:
-            logger.info(f"{module_name}: subscriber: updated {search.id}")
+            logger.debug(f"{module_name}: subscriber: updated {search.id}")
         else:
             logger.error(f"{module_name}: subscriber: error {search.status} updating {search.id}")
             if search.subscribe:
