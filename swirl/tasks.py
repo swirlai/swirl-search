@@ -44,7 +44,6 @@ def federate_task(search_id, provider_id, provider_connector, update, session, r
 
 ##################################################
 
-
 @shared_task(name='search', ignore_result=True)
 def search_task(search_id, session):
     from swirl.search import search
@@ -53,17 +52,6 @@ def search_task(search_id, session):
     return search(search_id, session)
 
 ##################################################
-
-
-@shared_task(name='rescore', ignore_result=True)
-def rescore_task(search_id):
-    from swirl.search import rescore
-
-    logger.debug(f"{module_name}: rescore_task: {search_id}")
-    return rescore(search_id)
-
-##################################################
-
 
 @shared_task(name='expirer')
 def expirer_task():
