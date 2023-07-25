@@ -224,7 +224,7 @@
         "default": false,
         "connector": "OpenSearch",
         "url": "http://localhost:9200/",
-        "query_template": "{'query': {'query_string': {'query': '{query_string}', 'default_field': '{default_field}', 'default_operator': 'and'}}}",
+        "query_template": "{\"query\":{\"query_string\":{\"query\":\"{query_string}\",\"default_field\":\"{default_field}\",\"default_operator\":\"and\"}}}",
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -239,7 +239,6 @@
         "credentials": "'admin','password'",
         "tags": [
             "Enron",
-            "Email",
             "OpenSearch"
         ]
     },
@@ -248,7 +247,7 @@
         "active": false,
         "default": false,
         "connector": "Elastic",
-        "url": "hosts='http://localhost:9200/'",
+        "url": "http://localhost:9200/",
         "query_template": "index='{index_name}', query={'query_string': {'query': '{query_string}', 'default_field': '{default_field}'}}",
         "query_processors": [
             "AdaptiveQueryProcessor"
@@ -261,10 +260,9 @@
         "response_mappings": "",
         "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "http_auth=(\"elastic\", \"elastic-password\")",
+        "credentials": "(\"elastic\", \"elastic-password\")",
         "tags": [
             "Enron",
-            "Email",
             "Elastic"
         ]
     },
@@ -385,8 +383,10 @@
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "NOT=true,NOT_CHAR=-",
+        "result_grouping_field": "conversationId",
         "result_processors": [
             "MappingResultProcessor",
+            "DedupeByFieldResultProcessor",
 	        "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",

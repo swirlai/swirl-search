@@ -1,7 +1,7 @@
 {
     "name": "ENRON Email - Elastic Cloud",
     "connector": "Elastic",
-    "url": "cloud_id='your-cloud-id-here'",
+    "url": "your-cloud-id-here",
     "query_template": "index='{index_name}', query={'query_string': {'query': '{query_string}', 'default_field': '{default_field}'}}",
     "query_processors": [
         "AdaptiveQueryProcessor"
@@ -12,7 +12,7 @@
         "CosineRelevancyResultProcessor"
     ],
     "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
-    "credentials": "http_auth=(\"elastic\", \"elastic-password\")",
+    "credentials": "(\"elastic\", \"elastic-password\")",
     "tags": [
         "Enron",
         "Elastic"

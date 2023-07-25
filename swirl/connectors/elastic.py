@@ -23,6 +23,9 @@ from swirl.connectors.connector import Connector
 from elasticsearch import Elasticsearch
 from elasticsearch import *
 
+import re
+import ast
+
 ########################################
 ########################################
 
@@ -39,7 +42,7 @@ class Elastic(Connector):
 
     def construct_query(self):
 
-        logger.info(f"{self}: construct_query()")
+        logger.debug(f"{self}: construct_query()")
 
         query_to_provider = bind_query_mappings(self.provider.query_template, self.provider.query_mappings)
 
@@ -73,22 +76,64 @@ class Elastic(Connector):
 
     def execute_search(self, session=None):
 
-        logger.info(f"{self}: execute_search()")
+        logger.debug(f"{self}: execute_search()")
 
-        if not self.provider.credentials:
+        auth = None
+        if self.provider.credentials:
+            if self.provider.credentials.startswith('http_auth='):
+                auth = self.provider.credentials.split("http_auth=")[1]
+            else:
+                auth = self.provider.credentials
+        else:
             self.status = "ERR_NO_CREDENTIALS"
             return
 
+        if not auth:
+            self.status = "ERR_BAD_CREDENTIALS"
+            return
+
+        url = None
+        if self.provider.url:
+            if self.provider.url.startswith('hosts='):
+                url = self.provider.url.split('hosts=')[1][:]
+                if url.startswith("'"):
+                    url = url[1:-1]
+            else:
+                url = self.provider.url
+
+        if not url:
+            self.status = "ERR_NO_URL"
+            return
+        
         try:
-            es = Elasticsearch(self.provider.credentials, self.provider.url)
+            es = Elasticsearch(basic_auth=tuple(auth), hosts=url)
         except NameError as err:
             self.error(f'NameError: {err}')
         except TypeError as err:
             self.error(f'TypeError: {err}')
 
+        # extract index (str)
+        index_name_pattern = r"index='([^']+)'"
+        match = re.search(index_name_pattern, self.query_to_provider)
+        if match:
+            index = match.group(1)
+        else:
+            self.status = "ERR_NO_INDEX_SPECIFIED"
+            return
+        
+        # extract query (dict)
+        query_pattern = r"query=({.*})"
+        match = re.search(query_pattern, self.query_to_provider)
+        if match:
+            query_s = match.group(1)
+            query = ast.literal_eval(query_s)
+        else:
+            self.status = "ERR_NO_QUERY_SPECIFIED"
+            return
+
         response = None
         try:
-            response = es.search(self.query_to_provider)
+            response = es.search(index=index, query=query)
         except ConnectionError as err:
             self.error(f"es.search reports: {err}")
         except NotFoundError:
@@ -111,7 +156,7 @@ class Elastic(Connector):
 
     def normalize_response(self):
 
-        logger.info(f"{self}: normalize_response()")
+        logger.debug(f"{self}: normalize_response()")
 
         if len(self.response) == 0:
             self.error("search succeeded, but found no json data in response")

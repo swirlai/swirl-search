@@ -42,15 +42,15 @@ def search(id, session=None):
         logger.error(f'{module_name}_{id}: ObjectDoesNotExist: {err}')
         return False
     if not search.status.upper() in ['NEW_SEARCH', 'UPDATE_SEARCH']:
-        logger.info(f"{module_name}_{search.id}: unexpected status {search.status}")
+        logger.debug(f"{module_name}_{search.id}: unexpected status {search.status}")
         return False
     if search.status.upper() == 'UPDATE_SEARCH':
-        logger.info(f"{module_name}: {search.id}.status == UPDATE_SEARCH")
+        logger.debug(f"{module_name}: {search.id}.status == UPDATE_SEARCH")
         update = True
         search.sort = 'date'
 
     search.status = 'PRE_PROCESSING'
-    logger.info(f"{module_name}: {search.status}")
+    logger.debug(f"{module_name}: {search.status}")
     search.save()
     # check for provider specification
 
@@ -76,7 +76,7 @@ def search(id, session=None):
 
     user = User.objects.get(id=search.owner.id)
     if not user.has_perm('swirl.view_searchprovider'):
-        logger.info(f"User {user} needs permission view_searchprovider")
+        logger.debug(f"User {user} needs permission view_searchprovider")
         search.status = 'ERR_NEED_PERMISSION'
         search.save()
         return False
@@ -130,7 +130,7 @@ def search(id, session=None):
     swqrx_logger = SwirlQueryRequestLogger(search.query_string, providers, start_time)
 
     search.status = 'PRE_QUERY_PROCESSING'
-    logger.info(f"{module_name}: {search.status}")
+    logger.debug(f"{module_name}: {search.status}")
     search.save()
 
     processor_list = []
@@ -143,7 +143,7 @@ def search(id, session=None):
         processed_query = None
         query_temp = search.query_string
         for processor in processor_list:
-            logger.info(f"{module_name}: invoking processor: {processor}")
+            logger.debug(f"{module_name}: invoking processor: {processor}")
             try:
                 pre_query_processor = get_pre_query_processor_or_transform(processor, query_temp, search.tags, user)
                 if pre_query_processor.validate():
@@ -169,11 +169,11 @@ def search(id, session=None):
 
     ########################################
     search.status = 'FEDERATING'
-    logger.info(f"{module_name}: {search.status}")
+    logger.debug(f"{module_name}: {search.status}")
     search.save()
     if not providers:
         msg = f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}"
-        logger.info(msg)
+        logger.debug(msg)
         search.status = 'ERR_NO_ACTIVE_SEARCHPROVIDERS'
         search.save()
         error_return(msg, swqrx_logger)
@@ -264,13 +264,13 @@ def search(id, session=None):
     if search.post_result_processors:
         last_status = search.status
         search.status = 'POST_RESULT_PROCESSING'
-        logger.info(f"{module_name}: {search.status}")
+        logger.debug(f"{module_name}: {search.status}")
         search.save()
 
         processor_list = search.post_result_processors
 
         for processor in processor_list:
-            logger.info(f"{module_name}: invoking processor: {processor}")
+            logger.debug(f"{module_name}: invoking processor: {processor}")
             try:
                 post_result_processor = alloc_processor(processor=processor)(search_id=search.id, request_id=swqrx_logger.request_id)
                 if post_result_processor.validate():
@@ -309,74 +309,20 @@ def search(id, session=None):
             search.status = 'FULL_UPDATE_READY'
         else:
             search.status = 'FULL_RESULTS_READY'
-
-    logger.info(f"{module_name}: {search.status}")
+    logger.debug(f"{module_name}: {search.status}")
     end_time = time.time()
     search.time = f"{(end_time - start_time):.1f}"
-    logger.info(f"{module_name}: search time: {search.time}")
+    logger.debug(f"{module_name}: search time: {search.time}")
     swqrx_logger.complete_execution()
     search.save()
+
+    # log info
+    retrieved = 0
+    for result_set in results:
+        retrieved = retrieved + result_set.retrieved
+    logger.info(f"{user} search {search.id} {search.status} {retrieved} {search.time}")
+
     return True
-
-##################################################
-
-def rescore(id):
-
-    '''
-    Execute the rescore task workflow
-    '''
-
-    try:
-        search = Search.objects.get(id=id)
-        # security review for 1.7 - OK - filtered by search object
-        results = Result.objects.filter(search_id=search.id)
-    except ObjectDoesNotExist as err:
-        logger.error(f'{module_name}_{search.id}: ObjectDoesNotExist: {err}')
-        return False
-
-    last_status = search.status
-    if not (search.status.endswith('_READY') or search.status == 'RESCORING'):
-        logger.info(f"{module_name}_{search.id}: unexpected status {search.status}, rescore may not work")
-        last_status = None
-
-    if len(results) == 0:
-        logger.error(f"{module_name}_{search.id}: No results to rescore!")
-        return False
-
-    if search.post_result_processors:
-        search.status = 'RESCORING'
-        search.save()
-        # setup processor pipeline
-        processor_list = search.post_result_processors
-        # end if
-        for processor in processor_list:
-            try:
-                logger.info(f"{module_name}: invoking processor: rescoring: {processor}")
-                post_result_processor = alloc_processor(processor)
-                if post_result_processor.validate():
-                    results_modified = post_result_processor.process()
-                else:
-                    logger.error(f"{module_name}_{search.id}: {processor}.validate() failed")
-                    return False
-                # end if
-            except (NameError, TypeError, ValueError) as err:
-                logger.error(f'{module_name}_{search.id}: {processor}: {err.args}, {err}')
-                return False
-            # to do: determine if we need to check for message duplication as above
-            if results_modified > 0:
-                search.messages.append(f"[{datetime.now()}] {processor} updated {results_modified} results")
-        # end for
-        if last_status:
-            search.status = last_status
-        else:
-            # to do: document this
-            search.status = "RESCORED_RESULTS_READY"
-        logger.info(f"{module_name}: {search.status}")
-        search.save()
-        return True
-    else:
-        logger.info(f"{module_name}_{search.id}: No post_result_processor or post_result_processors defined")
-        return False
 
 def error_return(msg, swqrx_logger):
     logger.error(msg)

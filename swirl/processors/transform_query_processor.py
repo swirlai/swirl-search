@@ -100,7 +100,7 @@ class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
     def parse_config(self):
         if self._config_parsed:
             return
-        logger.info(f'parse config {self.type}')
+        logger.debug(f'parse config {self.type}')
         conf_lines = self._config_start()
         if not conf_lines:
             return
@@ -172,7 +172,7 @@ class RewriteQueryProcessor(AbstractTransformQueryProcessor):
         ret = clean_string(self.query_string).strip()
         if not ret:
             return ret
-        logger.info(f'{self.type} {self._name} processing query')
+        logger.debug(f'{self.type} {self._name} processing query')
         for rp in self.replace_patterns:
             ret = re.sub(rp.pattern, rp.replace[0], ret)
         return ret
