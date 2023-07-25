@@ -116,7 +116,6 @@ class Mixer:
             self.mix_wrapper['info']['search']['searchprovider_list'] = self.search.searchprovider_list
         self.mix_wrapper['info']['search']['query_string'] = self.search.query_string
         self.mix_wrapper['info']['search']['query_string_processed'] = self.search.query_string_processed
-        self.mix_wrapper['info']['search']['rescore_url'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/search/?rescore={self.search.id}'
         self.mix_wrapper['info']['search']['rerun_url'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/search/?rerun={self.search.id}'
 
         # join json_results
