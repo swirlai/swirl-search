@@ -32,6 +32,10 @@ class OpenSearch(Connector):
 
     type = "OpenSearch"
 
+    def __init__(self, provider_id, search_id, update, request_id=''):
+        super().__init__(provider_id, search_id, update, request_id)
+
+
     ########################################
 
     def construct_query(self):

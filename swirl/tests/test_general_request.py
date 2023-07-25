@@ -173,7 +173,8 @@ class LibraryDatasourceTest(GeneralRequestAPITestCase):
                     "query_mappings": "",
                     "result_grouping_field": "",
                     "result_processors": [
-                    "MappingResultProcessor"
+                        "MappingResultProcessor",
+                        "CosineRelevancyResultProcessor"
                     ],
                     "response_mappings": "FOUND=info.total,RESULTS=docs",
                     "result_mappings": "date_published_display=pnx.display.creationdate[0],title=pnx.display.title[0],body=pnx.display.description[0],date_published=pnx.sort.creationdate[0],author=pnx.sort.author[0],url='https://xxx.place.edu/primo-explore/fulldisplay?docid={pnx.control.recordid[0]}&context=L&vid=XXX2',pnx.facets.creatorcontrib[*],pnx.display.publisher[*],pnx.display.edition[*],pnx.display.format[*],pnx.display.language[*],pnx.enrichment.classificationlcc[*],NO_PAYLOAD",
@@ -245,7 +246,8 @@ class DS254Test(GeneralRequestAPITestCase):
             ],
             "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
             "result_processors": [
-                "MappingResultProcessor"
+                "MappingResultProcessor",
+                "CosineRelevancyResultProcessor"
             ],
             "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
             "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['article:publisher'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['article:tag'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
@@ -321,7 +323,8 @@ class DS403Test(GeneralRequestAPITestCase):
             ],
             "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
             "result_processors": [
-                "MappingResultProcessor"
+                "MappingResultProcessor",
+                "CosineRelevancyResultProcessor"
             ],
             "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
             "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['article:publisher'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['article:tag'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
@@ -397,7 +400,8 @@ class DS254TestLocationBug1(GeneralRequestAPITestCase):
             ],
             "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
             "result_processors": [
-                "MappingResultProcessor"
+                "MappingResultProcessor",
+                "CosineRelevancyResultProcessor"
             ],
             "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
             "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['article:publisher'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['article:tag'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
@@ -481,7 +485,8 @@ class DS254TestLocationBug2(GeneralRequestAPITestCase):
             ],
             "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
             "result_processors": [
-                "MappingResultProcessor"
+                "MappingResultProcessor",
+                "CosineRelevancyResultProcessor"
             ],
             "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
             "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['article:publisher'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['article:tag'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
@@ -566,7 +571,8 @@ class DS403Test(GeneralRequestAPITestCase):
             ],
             "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
             "result_processors": [
-                "MappingResultProcessor"
+                "MappingResultProcessor",
+                "CosineRelevancyResultProcessor"
             ],
             "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
             "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['article:publisher'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['article:tag'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
@@ -644,8 +650,9 @@ class LenLimitingResultProcessorTest(GeneralRequestAPITestCase):
         ],
         "query_mappings": "",
         "result_processors": [
-            "MappingResultProcessor"
-            ,"LenLimitingResultProcessor"
+            "MappingResultProcessor",
+            "LenLimitingResultProcessor",
+            "CosineRelevancyResultProcessor",
         ],
         "response_mappings": "",
         "result_mappings": "title=summary,body=content,date_published=created,author=reporter.fullName,url='https://swirl.youtrack.cloud/articles/{idReadable}',project.name,attachments[*].name,parentArticle.summary,childArticles[*].summary,updatedBy.fullName,comments[*].text,NO_PAYLOAD",

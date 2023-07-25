@@ -33,6 +33,9 @@ class RequestsPost(Requests):
 
     type = "RequestsPost"
 
+    def __init__(self, provider_id, search_id, update, request_id=''):
+        super().__init__(provider_id, search_id, update, request_id)
+
     ########################################
 
     def validate_query(self, session=None):

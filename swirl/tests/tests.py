@@ -187,7 +187,8 @@ def get_ddrp_provider_data():
         "result_grouping_field":"conversationId",
         "result_processors": [
             "MappingResultProcessor",
-            "DedupeByFieldResultProcessor"
+            "DedupeByFieldResultProcessor",
+            "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.conversationId,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",

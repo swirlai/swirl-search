@@ -181,8 +181,6 @@ def search(id, session=None):
     else:
         tasks_list = [federate_task.s(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id) for provider in providers]
         group(*tasks_list).apply_async().get()
-    # ########################################
-    # asynchronously collect results
     # ticks = 0
     # error_flag = False
     # at_least_one = False
@@ -200,8 +198,11 @@ def search(id, session=None):
     #             error_flag = True
     #         if result.status == 'READY':
     #             at_least_one = True
-    #     if len(results) == len(providers):
+    #     if len(results) >= len(providers):
     #         # every provider has written a result object - exit
+    #         # D.A.N. The >= is to account for bugs we have in double result saving, which is
+    #         # confusing this code. We will be removing this soon and I believe the above is
+    #         # a better approach for now.
     #         logger.info(f"{module_name}_{search.id}: all results received!")
     #         break
     #     search.status = f'FEDERATING_WAIT_{ticks}'

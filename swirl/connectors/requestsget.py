@@ -10,7 +10,7 @@ import django
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 import requests
@@ -27,6 +27,9 @@ from swirl.connectors.requests import Requests
 class RequestsGet(Requests):
 
     type = "RequestsGet"
+
+    def __init__(self, provider_id, search_id, update, request_id=''):
+        super().__init__(provider_id, search_id, update, request_id)
 
     ########################################
 

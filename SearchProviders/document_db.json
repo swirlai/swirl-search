@@ -9,7 +9,8 @@
     ],
     "query_mappings": "fields=*,table=documents,field1=title,field2=body",
     "result_processors": [
-        "MappingResultProcessor"
+        "MappingResultProcessor",
+	    "CosineRelevancyResultProcessor"
     ],
     "result_mappings": "date=date_published,NO_PAYLOAD",
     "tags": [
