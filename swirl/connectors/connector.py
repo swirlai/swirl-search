@@ -329,12 +329,12 @@ class Connector:
                 self.error(f'{processor}: {err.args}, {err}')
                 return
             if modified < 0:
-                if len(last_results) + modified != len(self.results):
-                    self.warning(f"{processor} reported {modified} modified results, but returned {len(self.results)}!!")
+                # if len(last_results) + modified != len(self.results):
+                #     self.warning(f"{processor} reported {modified} modified results, but returned {len(self.results)}!!")
                 self.message(f"{processor} deleted {-1*modified} results from: {self.provider.name}")
             else:
-                if len(self.results) != len(last_results):
-                    self.warning(f"{processor} updated {modified} results but returned {len(self.results)}!!")
+                # if len(self.results) != len(last_results):
+                #     self.warning(f"{processor} updated {modified} results but returned {len(self.results)}!!")
                 self.message(f"{processor} updated {modified} results from: {self.provider.name}")
             del last_results
         # end for

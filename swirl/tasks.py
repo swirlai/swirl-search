@@ -53,17 +53,6 @@ def search_task(search_id, session):
 
 ##################################################
 
-
-@shared_task(name='rescore', ignore_result=False)
-def rescore_task(search_id):
-    from swirl.search import rescore
-
-    logger.debug(f"{module_name}: rescore_task: {search_id}")
-    return rescore(search_id)
-
-##################################################
-
-
 @shared_task(name='expirer')
 def expirer_task():
     from swirl.expirer import expirer
