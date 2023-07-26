@@ -201,7 +201,8 @@ CELERY_BEAT_SCHEDULE = {
          'schedule': crontab(minute=0,hour='*/4'),   # minute='*/10'
         },
 }
-
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 # EMAIL
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
