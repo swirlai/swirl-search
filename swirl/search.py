@@ -180,7 +180,7 @@ def search(id, session=None):
         return False
     else:
         tasks_list = [federate_task.s(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id) for provider in providers]
-        group(*tasks_list).apply_async().get()
+        results = group(*tasks_list).apply_async().get()
     # ticks = 0
     # error_flag = False
     # at_least_one = False
@@ -191,13 +191,13 @@ def search(id, session=None):
     #     # security review for 1.7 - OK - filtered by search object
     #     results = Result.objects.filter(search_id=search.id)
     #     updated = 0
-    #     for result in results:
-    #         if result.status == 'UPDATED':
-    #             updated = updated + 1
-    #         if result.status == 'ERROR':
-    #             error_flag = True
-    #         if result.status == 'READY':
-    #             at_least_one = True
+    # for result in results:
+    #     if result.status == 'UPDATED':
+    #         updated = updated + 1
+    #     if result.status == 'ERROR':
+    #         error_flag = True
+    #     if result.status == 'READY':
+    #         at_least_one = True
     #     if len(results) >= len(providers):
     #         # every provider has written a result object - exit
     #         # D.A.N. The >= is to account for bugs we have in double result saving, which is
@@ -318,8 +318,9 @@ def search(id, session=None):
 
     # log info
     retrieved = 0
-    for result_set in results:
-        retrieved = retrieved + result_set.retrieved
+    for current_retrieved in results:
+        if isinstance(current_retrieved, int) and current_retrieved > 0:
+            retrieved = retrieved + current_retrieved
     logger.info(f"{user} search {search.id} {search.status} {retrieved} {search.time}")
 
     return True

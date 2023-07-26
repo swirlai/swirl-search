@@ -134,7 +134,7 @@ class Connector:
                     if self.status == 'READY':
                         res = self.save_results()
                         if res:
-                            return True
+                            return res
                         else:
                             return False
                     else:
@@ -395,7 +395,7 @@ class Connector:
                 return False
             logger.debug(f"{self}: Update: added {len(self.processed_results)} new items to result {result.id}")
             self.message(f"Retrieved {len(self.processed_results)} new results from: {result.searchprovider}")
-            return True
+            return result
         # end if
 
         try:
@@ -408,4 +408,4 @@ class Connector:
             new_result.save()
         except Error as err:
             self.error(f'save_results() failed: {err.args}, {err}', save_results=False)
-        return True
+        return self.retrieved
