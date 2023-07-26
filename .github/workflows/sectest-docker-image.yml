@@ -18,6 +18,8 @@ jobs:
     - uses: actions/checkout@v3
     - name: login to docker hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+    - name: pull preview UI image
+      run: docker pull swirlai/spyglass:preview
     - name: builder bootstrap
       run: docker buildx create --name devBuilder --use --bootstrap
     - name: Build the Docker image
