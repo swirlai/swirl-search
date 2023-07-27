@@ -95,7 +95,7 @@ def launch(name, path):
 
     # create the log file
     try:
-        f = open(f'./logs/{name}.log', 'wb')
+        f = open(f'./logs/{name}.log', 'ab')
     except OSError as err:
         print(f"Error: {err} creating: ./logs/{name}.log")
         return -1
