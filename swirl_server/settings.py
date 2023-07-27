@@ -202,7 +202,11 @@ CELERY_BEAT_SCHEDULE = {
         },
 }
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
+# CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+# CELERY_RESULT_BACKEND='rpc://'
+
 # EMAIL
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
