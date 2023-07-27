@@ -10,7 +10,7 @@ from datetime import datetime
 
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User, Group
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.conf import settings
 from django.db import Error
 from django.views.decorators.csrf import csrf_exempt
@@ -213,6 +213,32 @@ class LogoutView(APIView):
         if token:
             token.delete()
         return Response({'status': 'OK'})
+    
+class OidcAuthView(APIView):
+
+    def post(self, request):
+        if 'OIDC-Token' in request.headers:
+            header = request.headers['OIDC-Token']
+            token = header.split(' ')[1]
+            if token:
+                data = Microsoft().get_user(token)
+                if data['mail']:
+                    user = None
+                    try:
+                        user = User.objects.get(email=data['mail'])
+                    except User.DoesNotExist:
+                        user = User.objects.create_user(
+                            username=data['mail'],
+                            password='WQasdmwq2319dqwmk',
+                            email=data['mail'],
+                            is_superuser=True,
+                            is_staff=True
+                        )
+                    token, created = Token.objects.get_or_create(user=user)
+                    return Response({ 'user': user.username, 'token': token.key })
+                return HttpResponseForbidden()
+            return HttpResponseForbidden()
+        return HttpResponseForbidden()
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """
