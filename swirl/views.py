@@ -22,12 +22,11 @@ from swirl.utils import paginate
 from django.conf import settings
 from .forms import RegistrationForm, QueryTransformForm
 
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework import viewsets, status
-from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 import csv
 import base64
@@ -205,17 +204,17 @@ class LoginView(APIView):
             return Response({'error': 'Invalid credentials'})
 
 class LogoutView(APIView):
-
     @csrf_exempt
     def post(self, request):
-        print('LOGOUT VIEW')
-        token = Token.objects.get(user=request.user)
+        auth_header = request.headers['Authorization']
+        token = auth_header.split(' ')[1]
+        token_obj = Token.objects.get(key=token)
+        token = Token.objects.get(user=token_obj.user)
         if token:
             token.delete()
         return Response({'status': 'OK'})
     
 class OidcAuthView(APIView):
-
     def post(self, request):
         if 'OIDC-Token' in request.headers:
             header = request.headers['OIDC-Token']
