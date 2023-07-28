@@ -10,7 +10,7 @@ from datetime import datetime
 
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User, Group
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.conf import settings
 from django.db import Error
 from django.views.decorators.csrf import csrf_exempt
@@ -22,12 +22,11 @@ from swirl.utils import paginate
 from django.conf import settings
 from .forms import RegistrationForm, QueryTransformForm
 
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework import viewsets, status
-from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 import csv
 import base64
@@ -205,13 +204,40 @@ class LoginView(APIView):
             return Response({'error': 'Invalid credentials'})
 
 class LogoutView(APIView):
-
     @csrf_exempt
     def post(self, request):
-        token = Token.objects.get(user=request.user)
+        auth_header = request.headers['Authorization']
+        token = auth_header.split(' ')[1]
+        token_obj = Token.objects.get(key=token)
+        token = Token.objects.get(user=token_obj.user)
         if token:
             token.delete()
         return Response({'status': 'OK'})
+    
+class OidcAuthView(APIView):
+    def post(self, request):
+        if 'OIDC-Token' in request.headers:
+            header = request.headers['OIDC-Token']
+            token = header.split(' ')[1]
+            if token:
+                data = Microsoft().get_user(token)
+                if data['mail']:
+                    user = None
+                    try:
+                        user = User.objects.get(email=data['mail'])
+                    except User.DoesNotExist:
+                        user = User.objects.create_user(
+                            username=data['mail'],
+                            password='WQasdmwq2319dqwmk',
+                            email=data['mail'],
+                            is_superuser=True,
+                            is_staff=True
+                        )
+                    token, created = Token.objects.get_or_create(user=user)
+                    return Response({ 'user': user.username, 'token': token.key })
+                return HttpResponseForbidden()
+            return HttpResponseForbidden()
+        return HttpResponseForbidden()
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """
