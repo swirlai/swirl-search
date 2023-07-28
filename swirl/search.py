@@ -289,19 +289,18 @@ def search(id, session=None):
             except (NameError, TypeError, ValueError) as err:
                 error_return(f'{module_name}_{search.id}: {processor}: {err.args}, {err}', swqrx_logger)
                 return False
-            if not results_modified == 0:
-                if results_modified < 0:
-                    message = f"[{datetime.now()}] {processor} deleted {-1*results_modified} results"
-                else:
-                    message = f"[{datetime.now()}] {processor} updated {results_modified} results"
-                # don't repeat the same message - to do: test
-                last_message = search.messages[-1:]
-                if last_message:
-                    if last_message[0].lower().strip() != message.lower().strip():
-                        search.messages.append(message)
-                    # end if
-                else:
+            if results_modified < 0:
+                message = f"[{datetime.now()}] {processor} deleted {-1*results_modified} results"
+            else:
+                message = f"[{datetime.now()}] {processor} updated {results_modified} results"
+            # don't repeat the same message - to do: test
+            last_message = search.messages[-1:]
+            if last_message:
+                if last_message[0].lower().strip() != message.lower().strip():
                     search.messages.append(message)
+                # end if
+            else:
+                search.messages.append(message)
                 # end if
             # end if
         # end for
