@@ -1,4 +1,4 @@
-FROM python:3.11.2-slim-bullseye
+FROM python:3.11.4-slim-bullseye
 # try to upgrade to a more recent vesion of openssl
 
 RUN apt-get update
