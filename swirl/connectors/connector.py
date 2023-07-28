@@ -100,6 +100,7 @@ class Connector:
         if save_results:
             self.save_results()
 
+
     def warning(self, message):
         logger.warning(f'{self}: {message}')
 
@@ -395,7 +396,7 @@ class Connector:
                 return False
             logger.debug(f"{self}: Update: added {len(self.processed_results)} new items to result {result.id}")
             self.message(f"Retrieved {len(self.processed_results)} new results from: {result.searchprovider}")
-            return result
+            return result.retrieved
         # end if
 
         try:

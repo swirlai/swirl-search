@@ -6,13 +6,14 @@
 
 from datetime import datetime
 import time
-from celery import group
+from celery import group, current_task
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
 from django.conf import settings
 
 from celery.utils.log import get_task_logger
+from celery.result import allow_join_result
 logger = get_task_logger(__name__)
 
 from swirl.models import Search, SearchProvider, Result
@@ -180,7 +181,13 @@ def search(id, session=None):
         return False
     else:
         tasks_list = [federate_task.s(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id) for provider in providers]
-        results = group(*tasks_list).apply_async().get()
+        results = group(*tasks_list).delay()
+        if current_task:
+            with allow_join_result():
+                results = results.get()
+        else:
+            results = results.get()
+        
     # ticks = 0
     # error_flag = False
     # at_least_one = False
