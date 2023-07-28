@@ -92,7 +92,7 @@ class Mixer:
             self.mix_wrapper['info'][result.searchprovider]['retrieved'] = result.retrieved
             self.mix_wrapper['info'][result.searchprovider]['filter_url'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search.id}&provider={result.provider_id}'
             self.mix_wrapper['info'][result.searchprovider]['query_string_to_provider'] = result.query_string_to_provider
-            self.mix_wrapper['info'][result.searchprovider]['result_processor_json_feedback'] = result.result_processor_json_feedback
+            # self.mix_wrapper['info'][result.searchprovider]['result_processor_json_feedback'] = result.result_processor_json_feedback
             self.mix_wrapper['info'][result.searchprovider]['query_to_provider'] = result.query_to_provider
             self.mix_wrapper['info'][result.searchprovider]['query_processors'] = result.query_processors
             self.mix_wrapper['info'][result.searchprovider]['result_processors'] = result.result_processors                
