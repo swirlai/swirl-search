@@ -184,9 +184,9 @@ def search(id, session=None):
         results = group(*tasks_list).delay()
         if current_task:
             with allow_join_result():
-                results = results.get()
+                results = results.get(interval=0.05)
         else:
-            results = results.get()
+            results = results.get(interval=0.05)
         
     # ticks = 0
     # error_flag = False
