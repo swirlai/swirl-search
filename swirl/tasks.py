@@ -27,24 +27,24 @@ from swirl.perfomance_logger import *
 ##################################################
 ##################################################
 
-@shared_task(name='federate', ignore_result=True)
+@shared_task(name='federate', ignore_result=False)
 def federate_task(search_id, provider_id, provider_connector, update, session, request_id):
     logger.debug(f"{module_name}: federate_task: {search_id}_{provider_id}_{provider_connector} update: {update} request_id {request_id}")
     try:
         with ProviderQueryRequestLogger(provider_connector+'_'+str(provider_id), request_id):
             connector = alloc_connector(connector=provider_connector)(provider_id, search_id, update, request_id=request_id)
-            connector.federate(session)
+            return connector.federate(session)
     except NameError as err:
         message = f'Error: NameError: {err}'
         logger.error(f'{module_name}: {message}')
     except TypeError as err:
         message = f'Error: TypeError: {err}'
         logger.error(f'{module_name}: {message}')
-    return
 
 ##################################################
 
-@shared_task(name='search', ignore_result=True)
+
+@shared_task(name='search', ignore_result=False)
 def search_task(search_id, session):
     from swirl.search import search
 

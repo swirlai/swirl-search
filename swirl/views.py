@@ -401,10 +401,10 @@ class SearchViewSet(viewsets.ModelViewSet):
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
             new_search.save()
-            # log info
             logger.info(f"{request.user} search_q {new_search.id}")
-            search_task.delay(new_search.id, Authenticator().get_session_data(request))
-            time.sleep(SWIRL_Q_WAIT)
+            # search_task.delay(new_search.id, Authenticator().get_session_data(request))
+            # time.sleep(SWIRL_Q_WAIT)
+            run_search(new_search.id, Authenticator().get_session_data(request))
             return redirect(f'/swirl/results?search_id={new_search.id}')
 
         ########################################
@@ -447,11 +447,14 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.info(f"{request.user} search_qs {new_search.id}")
             res = run_search(new_search.id, Authenticator().get_session_data(request))
             if not res:
+                print(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             if not Search.objects.filter(id=new_search.id).exists():
+                print('Search object creation failed!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 return Response('Search object creation failed!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             # security review for 1.7 - OK, search id created
             search = Search.objects.get(id=new_search.id)
+            tries = 0
             if search.status.endswith('_READY') or search.status == 'RESCORING':
                 try:
                     if otf_result_mixer:
@@ -504,10 +507,10 @@ class SearchViewSet(viewsets.ModelViewSet):
             rerun_search.messages = []
             rerun_search.messages.append(message)
             rerun_search.save()
-            # log info
             logger.info(f"{request.user} rerun {rerun_id}")
-            search_task.delay(rerun_search.id, Authenticator().get_session_data(request))
-            time.sleep(SWIRL_RERUN_WAIT)
+            # search_task.delay(rerun_search.id, Authenticator().get_session_data(request))
+            # time.sleep(SWIRL_RERUN_WAIT)
+            run_search(rerun_search.id, Authenticator().get_session_data(request))
             return redirect(f'/swirl/results?search_id={rerun_search.id}')
         # end if
 
@@ -528,10 +531,10 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.debug(f"{module_name}: ?update!")
             search.status = 'UPDATE_SEARCH'
             search.save()
-            # log info
             logger.info(f"{request.user} update {update_id}")
-            search_task.delay(update_id, Authenticator().get_session_data(request))
-            time.sleep(SWIRL_SUBSCRIBE_WAIT)
+            # search_task.delay(update_id, Authenticator().get_session_data(request))
+            # time.sleep(SWIRL_SUBSCRIBE_WAIT)
+            run_search(update_id, Authenticator().get_session_data(request))
             return redirect(f'/swirl/results?search_id={update_id}')
 
         ########################################
@@ -566,9 +569,9 @@ class SearchViewSet(viewsets.ModelViewSet):
                 search.status = 'ERR_NO_SEARCHPROVIDERS'
                 search.save
         else:
-            # log info
+            # search_task.delay(serializer.data['id'], Authenticator().get_session_data(request))
             logger.info(f"{request.user} search_post {search.id}")
-            search_task.delay(serializer.data['id'], Authenticator().get_session_data(request))
+            run_search(serializer.data['id'], Authenticator().get_session_data(request))
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -616,9 +619,9 @@ class SearchViewSet(viewsets.ModelViewSet):
             if not (request.user.has_perm('swirl.add_search') and request.user.has_perm('swirl.change_search') and request.user.has_perm('swirl.add_result') and request.user.has_perm('swirl.change_result')):
                 logger.warning(f"User {self.request.user} needs permissions add_search({request.user.has_perm('swirl.add_search')}), change_search({request.user.has_perm('swirl.change_search')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
                 return Response(status=status.HTTP_403_FORBIDDEN)
-            # log info
+            # search_task.delay(search.id, Authenticator().get_session_data(request))
             logger.info(f"{request.user} search_put {search.id}")
-            search_task.delay(search.id, Authenticator().get_session_data(request))
+            run_search(search.id, Authenticator().get_session_data(request))
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     ########################################

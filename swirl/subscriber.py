@@ -69,7 +69,7 @@ def subscriber():
                 search.subscribe = False
             search.save()
         # end if
-        time.sleep(SWIRL_SUBSCRIBE_WAIT)
+        # time.sleep(SWIRL_SUBSCRIBE_WAIT)
     # end for
 
     return True

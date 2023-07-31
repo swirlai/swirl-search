@@ -6,12 +6,14 @@
 
 from datetime import datetime
 import time
+from celery import group, current_task
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
 from django.conf import settings
 
 from celery.utils.log import get_task_logger
+from celery.result import allow_join_result
 logger = get_task_logger(__name__)
 
 from swirl.models import Search, SearchProvider, Result
@@ -170,7 +172,6 @@ def search(id, session=None):
     search.status = 'FEDERATING'
     logger.debug(f"{module_name}: {search.status}")
     search.save()
-
     if not providers:
         msg = f"{module_name}_{search.id}: no active searchprovider specified: {search.searchprovider_list}"
         logger.debug(msg)
@@ -179,68 +180,75 @@ def search(id, session=None):
         error_return(msg, swqrx_logger)
         return False
     else:
-        for provider in providers:
-            federate_task.delay(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id)
-
-    ########################################
-    # asynchronously collect results
-    ticks = 0
-    error_flag = False
-    at_least_one = False
-    while 1:
-        time.sleep(1)
-        ticks = ticks + 1
-        # get the list of result objects
-        # security review for 1.7 - OK - filtered by search object
-        results = Result.objects.filter(search_id=search.id)
-        updated = 0
-        for result in results:
-            if result.status == 'UPDATED':
-                updated = updated + 1
-            if result.status == 'ERROR':
-                error_flag = True
-            if result.status == 'READY':
-                at_least_one = True
-        if len(results) >= len(providers):
-            # every provider has written a result object - exit
-            # D.A.N. The >= is to account for bugs we have in double result saving, which is
-            # confusing this code. We will be removing this soon and I believe the above is
-            # a better approach for now.
-            logger.debug(f"{module_name}_{search.id}: all results received!")
-            break
-        search.status = f'FEDERATING_WAIT_{ticks}'
-        logger.debug(f"{module_name}: {search.status}")
-        SWIRL_TIMEOUT = getattr(settings, 'SWIRL_TIMEOUT', 10)
-        if ticks > int(SWIRL_TIMEOUT):
-            logger.debug(f"{module_name}_{search.id}: timeout!")
-            failed_providers = []
-            responding_provider_names = []
-            for result in results:
-                responding_provider_names.append(result.searchprovider)
-            for provider in providers:
-                if not provider.name in responding_provider_names:
-                    failed_providers.append(provider.name)
-                    error_flag = True
-                    logger.debug(f"{module_name}_{search.id}: timeout waiting for: {failed_providers}")
-                    search.messages.append(f"[{datetime.now()}] Timeout waiting for: {failed_providers}")
-                    search.save()
-                # end if
-            # end for
-            # exit the loop
-            swqrx_logger.timeout_execution()
-            break
-    # end while
-    ########################################
-    # update query status
-    if error_flag:
-        if at_least_one:
-            search.status = 'PARTIAL_RESULTS'
+        tasks_list = [federate_task.s(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id) for provider in providers]
+        results = group(*tasks_list).delay()
+        if current_task:
+            with allow_join_result():
+                results = results.get(interval=0.05)
         else:
-            search.status = 'NO_RESULTS_READY'
-        # end if
-    else:
-        search.status = 'FULL_RESULTS'
-    logger.debug(f"{module_name}: {search.status}")
+            results = results.get(interval=0.05)
+        
+    # ticks = 0
+    # error_flag = False
+    # at_least_one = False
+    # while 1:
+    #     time.sleep(1)
+    #     ticks = ticks + 1
+    #     # get the list of result objects
+    #     # security review for 1.7 - OK - filtered by search object
+    #     results = Result.objects.filter(search_id=search.id)
+    #     updated = 0
+    # for result in results:
+    #     if result.status == 'UPDATED':
+    #         updated = updated + 1
+    #     if result.status == 'ERROR':
+    #         error_flag = True
+    #     if result.status == 'READY':
+    #         at_least_one = True
+    #     if len(results) >= len(providers):
+    #         # every provider has written a result object - exit
+    #         # D.A.N. The >= is to account for bugs we have in double result saving, which is
+    #         # confusing this code. We will be removing this soon and I believe the above is
+    #         # a better approach for now.
+    #         logger.info(f"{module_name}_{search.id}: all results received!")
+    #         break
+    #     search.status = f'FEDERATING_WAIT_{ticks}'
+    #     logger.info(f"{module_name}: {search.status}")
+    #     SWIRL_TIMEOUT = getattr(settings, 'SWIRL_TIMEOUT', 10)
+    #     if ticks > int(SWIRL_TIMEOUT):
+    #         logger.info(f"{module_name}_{search.id}: timeout!")
+    #         failed_providers = []
+    #         responding_provider_names = []
+    #         for result in results:
+    #             responding_provider_names.append(result.searchprovider)
+    #         for provider in providers:
+    #             if not provider.name in responding_provider_names:
+    #                 failed_providers.append(provider.name)
+    #                 error_flag = True
+    #                 logger.info(f"{module_name}_{search.id}: timeout waiting for: {failed_providers}")
+    #                 search.messages.append(f"[{datetime.now()}] Timeout waiting for: {failed_providers}")
+    #                 search.save()
+    #             # end if
+    #         # end for
+    #         # exit the loop
+    #         swqrx_logger.timeout_execution()
+    #         break
+    # end while
+    #######################################
+    # update query status
+    # if error_flag:
+    #     if at_least_one:
+    #         search.status = 'PARTIAL_RESULTS'
+    #     else:
+    #         search.status = 'NO_RESULTS_READY'
+    #     # end if
+    # else:
+    #     search.status = 'FULL_RESULTS'
+
+    search.status = 'FULL_RESULTS'
+
+
+    logger.info(f"{module_name}: {search.status}")
     ########################################
     # fix the result url
     # to do: figure out a better solution P1
@@ -281,19 +289,18 @@ def search(id, session=None):
             except (NameError, TypeError, ValueError) as err:
                 error_return(f'{module_name}_{search.id}: {processor}: {err.args}, {err}', swqrx_logger)
                 return False
-            if not results_modified == 0:
-                if results_modified < 0:
-                    message = f"[{datetime.now()}] {processor} deleted {-1*results_modified} results"
-                else:
-                    message = f"[{datetime.now()}] {processor} updated {results_modified} results"
-                # don't repeat the same message - to do: test
-                last_message = search.messages[-1:]
-                if last_message:
-                    if last_message[0].lower().strip() != message.lower().strip():
-                        search.messages.append(message)
-                    # end if
-                else:
+            if results_modified < 0:
+                message = f"[{datetime.now()}] {processor} deleted {-1*results_modified} results"
+            else:
+                message = f"[{datetime.now()}] {processor} updated {results_modified} results"
+            # don't repeat the same message - to do: test
+            last_message = search.messages[-1:]
+            if last_message:
+                if last_message[0].lower().strip() != message.lower().strip():
                     search.messages.append(message)
+                # end if
+            else:
+                search.messages.append(message)
                 # end if
             # end if
         # end for
@@ -317,8 +324,9 @@ def search(id, session=None):
 
     # log info
     retrieved = 0
-    for result_set in results:
-        retrieved = retrieved + result_set.retrieved
+    for current_retrieved in results:
+        if isinstance(current_retrieved, int) and current_retrieved > 0:
+            retrieved = retrieved + current_retrieved
     logger.info(f"{user} search {search.id} {search.status} {retrieved} {search.time}")
 
     return True

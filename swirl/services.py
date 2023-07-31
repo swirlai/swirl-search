@@ -12,9 +12,14 @@ module_name = 'services.py'
 # NOTE: FIRST IN LIST IS LAST STOPPED
 
 SWIRL_SERVICES = [
+    # {
+    #     'name': 'rabbitmq',
+    #     'path': 'rabbitmq-server',
+    #     'default': True
+    # },
     {
-        'name': 'rabbitmq',
-        'path': 'rabbitmq-server',
+        'name': 'redis',
+        'path': 'redis-server',
         'default': True
     },
     {
@@ -43,11 +48,16 @@ for swirl_service in SWIRL_SERVICES:
 SERVICES_DICT = SWIRL_SERVICES_DICT
 
 SWIRL_SERVICES_DEBUG = [
-    {
-        'name': 'rabbitmq',
-        'path': 'rabbitmq-server',
-        'default': True
+    # {
+    #     'name': 'rabbitmq',
+    #     'path': 'rabbitmq-server',
+    #     'default': True
 
+    # },
+    {
+        'name': 'redis',
+        'path': 'redis-server',
+        'default': True
     },
     {
         'name': 'django',
