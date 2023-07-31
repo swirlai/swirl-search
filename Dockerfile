@@ -23,7 +23,6 @@ RUN pip install -r requirements.txt
 
 # Install RabbitMQ
 RUN apt-get install -y erlang
-# RUN apt-get install -y rabbitmq-server
 RUN apt-get install -y redis-server
 
 # install requirements
