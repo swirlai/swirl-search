@@ -64,6 +64,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
 
         list_query_lens.append(len(parsed_query.query_list))
         for item in self.results:
+            dict_score = {}
             if 'explain' in item:
                 dict_score = item['explain']
                 item['dict_score'] = dict_score
@@ -106,7 +107,6 @@ class CosineRelevancyResultProcessor(ResultProcessor):
 
             ############################################
             # result item
-            dict_score = {}
             dict_score['stems'] = ' '.join(parsed_query.query_stemmed_list)
             dict_len = {}
             notted = ""
