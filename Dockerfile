@@ -1,13 +1,10 @@
 FROM python:3.11.4-slim-bullseye
-# try to upgrade to a more recent vesion of openssl
-
-RUN apt-get update
-RUN apt-get -y upgrade openssl
 
 # try to upgrade to a more recent vesion of openssl
 RUN apt-get update
 RUN apt-get -y upgrade openssl
 
+# install jq
 RUN apt-get -y install jq
 
 # RUN sudo echo 'nameserver 8.8.8.8'>/etc/resolv.conf
@@ -21,9 +18,8 @@ RUN pip install --upgrade grpcio
 ADD requirements.txt .
 RUN pip install -r requirements.txt
 
-# Install RabbitMQ
-RUN apt-get install -y erlang
-RUN apt-get install -y redis-server
+# install redis
+RUN apt-get install -y redis
 
 # install requirements
 RUN python -m spacy download en_core_web_lg
@@ -37,8 +33,8 @@ COPY ./.env.docker /app/.env
 COPY ./install-ui.sh /app/install-ui.sh
 ADD ./swirl /app/swirl
 
-# Install spy glass UI
-RUN mkdir /app/swirl/static/spyglass
+# Install Galaxy UI
+RUN mkdir /app/swirl/static/galaxy
 COPY --from=swirlai/spyglass:preview /usr/src/spyglass/ui/dist/spyglass/browser/. /app/swirl/static/galaxy
 COPY --from=swirlai/spyglass:preview /usr/src/spyglass/ui/config-swirl-demo.db.json /app/
 
