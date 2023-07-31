@@ -64,7 +64,7 @@ class Mixer:
                     # security review for 1.7 - OK, filtered by search ID
                     self.results = Result.objects.filter(search_id=search_id,provider_id=self.provider)
                 if type(self.provider) == list:
-                    self.results = Result.objects.filter(search_id=search_id,provider_id__in=self.provider) 
+                    self.results = Result.objects.filter(search_id=search_id,provider_id__in=self.provider)
                 if type(self.provider) not in [str, int, list]:
                     self.warning(f"Unknown provider specification: {self.provider}")
                 # end if
@@ -92,10 +92,10 @@ class Mixer:
             self.mix_wrapper['info'][result.searchprovider]['retrieved'] = result.retrieved
             self.mix_wrapper['info'][result.searchprovider]['filter_url'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search.id}&provider={result.provider_id}'
             self.mix_wrapper['info'][result.searchprovider]['query_string_to_provider'] = result.query_string_to_provider
-            # self.mix_wrapper['info'][result.searchprovider]['result_processor_json_feedback'] = result.result_processor_json_feedback
+            # TODO: Make optional include self.mix_wrapper['info'][result.searchprovider]['result_processor_json_feedback'] = result.result_processor_json_feedback
             self.mix_wrapper['info'][result.searchprovider]['query_to_provider'] = result.query_to_provider
             self.mix_wrapper['info'][result.searchprovider]['query_processors'] = result.query_processors
-            self.mix_wrapper['info'][result.searchprovider]['result_processors'] = result.result_processors                
+            self.mix_wrapper['info'][result.searchprovider]['result_processors'] = result.result_processors
             if result.json_results:
                 if 'result_block' in result.json_results[0]:
                     self.mix_wrapper['info'][result.searchprovider]['result_block'] = result.json_results[0]['result_block']
@@ -218,7 +218,7 @@ class Mixer:
                 mixed_result_number = mixed_result_number + 1
             # end if
         # end for
-        
+
         # block results
         self.mix_wrapper['info']['results']['result_blocks'] = []
 
@@ -238,7 +238,7 @@ class Mixer:
             self.mix_wrapper['info']['results']['retrieved_total'] = self.found - moved_to_block
             if self.mix_wrapper['info']['results']['retrieved_total'] < 0:
                 self.warning("Block count exceeds result count")
-                
+
         # extract the page of mixed results
         self.mixed_results = mixed_results
         self.mix_wrapper['results'] = self.mixed_results[(int(self.page)-1)*int(self.results_requested):int(self.results_needed)]
