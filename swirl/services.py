@@ -19,7 +19,7 @@ SWIRL_SERVICES = [
     # },
     {
         'name': 'redis',
-        'path': 'redis-server',
+        'path': 'redis-server ./redis.conf',
         'default': True
     },
     {
@@ -56,7 +56,7 @@ SWIRL_SERVICES_DEBUG = [
     # },
     {
         'name': 'redis',
-        'path': 'redis-server',
+        'path': 'redis-server ./redis.conf',
         'default': True
     },
     {
