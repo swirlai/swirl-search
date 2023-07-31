@@ -19,7 +19,7 @@ ADD requirements.txt .
 RUN pip install -r requirements.txt
 
 # install redis
-RUN apt-get install -y redis
+RUN apt-get install -y redis-server
 
 # install requirements
 RUN python -m spacy download en_core_web_lg
