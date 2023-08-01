@@ -278,11 +278,18 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                     item[field] = highlight_list(remove_tags(item[field]), extracted_highlights)
                 # end if
             # end for field in RELEVANCY_CONFIG:
+            if not dict_score:
+                self.warning("No dict_score!")
+
             if notted:
                 item['NOT'] = notted
             else:
-                item['dict_score'] = dict_score
-                item['dict_len'] = dict_len
+                if not 'dict_score' in item:
+                    item['dict_score'] = dict_score
+                    item['dict_len'] = dict_len
+                if not 'dict_len' in item:
+                    self.warning("Missing dict_len")
+
         # end for result in results.json_results:
 
         # Add list_query_lens to result processor feedback
@@ -347,6 +354,9 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
             if not results.json_results:
                 continue
             for item in results.json_results:
+                if 'swirl_score' in item:
+                    self.warning("already scored!")
+                    # to do: maybe continue?
                 item['swirl_score'] = 0.0
                 # check for not
                 if 'NOT' in item:
@@ -359,12 +369,21 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     dict_score = item['dict_score']
                     del item['dict_score']
                 else:
-                    continue
+                    self.warning("Missing dict_score!")
                 if 'dict_len' in item:
                     dict_len = item['dict_len']
                     del item['dict_len']
                 else:
-                    continue
+                    self.warning("Missing dict_len!")
+                if 'explain' in item:
+                    self.warning("Found explain")
+                    dict_score = item['explain']
+                    del item['explain']
+                # end if
+                if 'dict_len' in item:
+                    self.warning("Found dict_len")
+                    dict_len = item['dict_len']
+                    del item['dict_len']
                 relevancy_model = ""
                 # check for _relevancy_model
                 if '_relevancy_model' in item:
@@ -416,6 +435,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                         dict_score[f]['query_length_adjust'] = qlen_adjust
                 ####### explain
                 item['explain'] = dict_score
+                item['dict_len'] = dict_len
                 possible_hits = item.get('hits', None)
                 if possible_hits:
                     item['explain']['hits'] = item['hits']
