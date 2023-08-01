@@ -66,6 +66,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
         for item in self.results:
             dict_score = {}
             if 'explain' in item:
+                self.warning("XXXXXX Copying explain!!!!")
                 dict_score = item['explain']
                 item['dict_score'] = dict_score
                 dict_len = {}
@@ -102,11 +103,20 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                 # end for
                 item['dict_len'] = dict_len
                 continue
-            if not 'hits' in item:
-                item['hits'] = {}
 
             ############################################
             # result item
+
+            if not 'hits' in item:
+                item['hits'] = {}
+
+            if 'explain' in item:
+                self.warning("Skipping item with explain already")
+                continue
+
+            if 'title' in dict_score:
+                self.warning("Found title in dict_score!")
+
             dict_score['stems'] = ' '.join(parsed_query.query_stemmed_list)
             dict_len = {}
             notted = ""
@@ -278,6 +288,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                     item[field] = highlight_list(remove_tags(item[field]), extracted_highlights)
                 # end if
             # end for field in RELEVANCY_CONFIG:
+
             if not dict_score:
                 self.warning("No dict_score!")
 
@@ -287,8 +298,10 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                 if not 'dict_score' in item:
                     item['dict_score'] = dict_score
                     item['dict_len'] = dict_len
+                else:
+                    self.warning("No dict_score in item!!!")
                 if not 'dict_len' in item:
-                    self.warning("Missing dict_len")
+                    self.warning("Missing dict_len!!")
 
         # end for result in results.json_results:
 
@@ -371,6 +384,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                 else:
                     self.warning("Missing dict_score!")
                 if 'dict_len' in item:
+                    self.warning("Found dict_len")
                     dict_len = item['dict_len']
                     del item['dict_len']
                 else:
@@ -379,11 +393,6 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     self.warning("Found explain")
                     dict_score = item['explain']
                     del item['explain']
-                # end if
-                if 'dict_len' in item:
-                    self.warning("Found dict_len")
-                    dict_len = item['dict_len']
-                    del item['dict_len']
                 relevancy_model = ""
                 # check for _relevancy_model
                 if '_relevancy_model' in item:
