@@ -383,7 +383,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                 else:
                     self.warning("Missing dict_score!")
                 if 'dict_len' in item:
-                    self.warning("Found dict_len")
+                    logger.debug("Found dict_len")
                     dict_len = item['dict_len']
                     del item['dict_len']
                 else:
