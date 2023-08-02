@@ -213,7 +213,7 @@ class LogoutView(APIView):
         if token:
             token.delete()
         return Response({'status': 'OK'})
-    
+
 class OidcAuthView(APIView):
     def post(self, request):
         if 'OIDC-Token' in request.headers:
@@ -404,7 +404,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.info(f"{request.user} search_q {new_search.id}")
             # search_task.delay(new_search.id, Authenticator().get_session_data(request))
             # time.sleep(SWIRL_Q_WAIT)
-            run_search(new_search.id, Authenticator().get_session_data(request))
+            run_search(new_search.id, Authenticator().get_session_data(request),request=request)
             return redirect(f'/swirl/results?search_id={new_search.id}')
 
         ########################################
@@ -445,7 +445,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             new_search.save()
             # log info
             logger.info(f"{request.user} search_qs {new_search.id}")
-            res = run_search(new_search.id, Authenticator().get_session_data(request))
+            res = run_search(new_search.id, Authenticator().get_session_data(request), request=request)
             if not res:
                 print(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -459,10 +459,10 @@ class SearchViewSet(viewsets.ModelViewSet):
                 try:
                     if otf_result_mixer:
                         # call the specifixed mixer on the fly otf
-                        results = alloc_mixer(otf_result_mixer)(search.id, search.results_requested, 1, explain, provider).mix()
+                        results = alloc_mixer(otf_result_mixer)(search.id, search.results_requested, 1, explain, provider,request=request).mix()
                     else:
                         # call the mixer for this search provider
-                        results = alloc_mixer(search.result_mixer)(search.id, search.results_requested, 1, explain, provider).mix()
+                        results = alloc_mixer(search.result_mixer)(search.id, search.results_requested, 1, explain, provider,request=request).mix()
                 except NameError as err:
                     message = f'Error: NameError: {err}'
                     logger.error(f'{module_name}: {message}')
@@ -510,7 +510,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.info(f"{request.user} rerun {rerun_id}")
             # search_task.delay(rerun_search.id, Authenticator().get_session_data(request))
             # time.sleep(SWIRL_RERUN_WAIT)
-            run_search(rerun_search.id, Authenticator().get_session_data(request))
+            run_search(rerun_search.id, Authenticator().get_session_data(request), request=request)
             return redirect(f'/swirl/results?search_id={rerun_search.id}')
         # end if
 
@@ -534,7 +534,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.info(f"{request.user} update {update_id}")
             # search_task.delay(update_id, Authenticator().get_session_data(request))
             # time.sleep(SWIRL_SUBSCRIBE_WAIT)
-            run_search(update_id, Authenticator().get_session_data(request))
+            run_search(update_id, Authenticator().get_session_data(request), request=request)
             return redirect(f'/swirl/results?search_id={update_id}')
 
         ########################################
@@ -571,7 +571,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         else:
             # search_task.delay(serializer.data['id'], Authenticator().get_session_data(request))
             logger.info(f"{request.user} search_post {search.id}")
-            run_search(serializer.data['id'], Authenticator().get_session_data(request))
+            run_search(serializer.data['id'], Authenticator().get_session_data(request), request=request)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -621,7 +621,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 return Response(status=status.HTTP_403_FORBIDDEN)
             # search_task.delay(search.id, Authenticator().get_session_data(request))
             logger.info(f"{request.user} search_put {search.id}")
-            run_search(search.id, Authenticator().get_session_data(request))
+            run_search(search.id, Authenticator().get_session_data(request), request=request)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     ########################################
@@ -716,10 +716,10 @@ class ResultViewSet(viewsets.ModelViewSet):
                 try:
                     if otf_result_mixer:
                         # call the specifixed mixer on the fly otf
-                        results = alloc_mixer(otf_result_mixer)(search.id, search.results_requested, page, explain, provider, mark_all_read).mix()
+                        results = alloc_mixer(otf_result_mixer)(search.id, search.results_requested, page, explain, provider, mark_all_read,request=request).mix()
                     else:
                         # call the mixer for this search provider
-                        results = alloc_mixer(search.result_mixer)(search.id, search.results_requested, page, explain, provider, mark_all_read).mix()
+                        results = alloc_mixer(search.result_mixer)(search.id, search.results_requested, page, explain, provider, mark_all_read, request=request).mix()
                 except NameError as err:
                     message = f'Error: NameError: {err}'
                     logger.error(f'{module_name}: {message}')
