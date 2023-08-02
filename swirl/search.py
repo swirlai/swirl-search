@@ -4,6 +4,8 @@
 @contact:    sid@swirl.today
 '''
 
+from urllib.parse import urlparse
+
 from datetime import datetime
 import time
 from celery import group, current_task
@@ -20,7 +22,7 @@ from swirl.models import Search, SearchProvider, Result
 from swirl.tasks import federate_task
 from swirl.processors import *
 from swirl.processors.transform_query_processor_utils import get_pre_query_processor_or_transform
-from swirl.utils import select_providers
+from swirl.utils import select_providers,get_url_details
 from swirl.perfomance_logger import SwirlQueryRequestLogger
 
 ##################################################
@@ -28,7 +30,7 @@ from swirl.perfomance_logger import SwirlQueryRequestLogger
 
 module_name = 'search.py'
 
-def search(id, session=None):
+def search(id, session=None, request=None):
 
     '''
     Execute the search task workflow
@@ -187,7 +189,7 @@ def search(id, session=None):
                 results = results.get(interval=0.05)
         else:
             results = results.get(interval=0.05)
-        
+
     # ticks = 0
     # error_flag = False
     # at_least_one = False
@@ -252,11 +254,14 @@ def search(id, session=None):
     ########################################
     # fix the result url
     # to do: figure out a better solution P1
-    search.result_url = f"{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results?search_id={search.id}&result_mixer={search.result_mixer}"
+
+    scheme, hostname, port = get_url_details(request)
+
+    search.result_url = f"{scheme}://{hostname}:{port}/swirl/results?search_id={search.id}&result_mixer={search.result_mixer}"
     if {search.result_mixer} == 'DateMixer':
-        search.new_result_url = f"{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results?search_id={search.id}&result_mixer=DateNewItemsMixer"
+        search.new_result_url = f"{scheme}://{hostname}:{port}/swirl/results?search_id={search.id}&result_mixer=DateNewItemsMixer"
     else:
-        search.new_result_url = f"{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results?search_id={search.id}&result_mixer=RelevancyNewItemsMixer"
+        search.new_result_url = f"{scheme}://{hostname}:{port}/swirl/results?search_id={search.id}&result_mixer=RelevancyNewItemsMixer"
     # note the sort
     if search.sort.lower() == 'date':
         if not update:

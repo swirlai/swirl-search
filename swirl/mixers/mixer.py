@@ -3,6 +3,7 @@
 @contact:    sid@swirl.today
 @version:    SWIRL 1.3
 '''
+from urllib.parse import urlparse
 
 from sys import path
 from os import environ
@@ -13,7 +14,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from django.contrib.auth.models import User
 
-from swirl.utils import swirl_setdir
+from swirl.utils import get_url_details, swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
@@ -37,7 +38,7 @@ class Mixer:
 
     ########################################
 
-    def __init__(self, search_id, results_requested, page, explain=False, provider=None, mark_all_read=False):
+    def __init__(self, search_id, results_requested, page, explain=False, provider=None, mark_all_read=False, request=None):
 
         self.search_id = search_id
         self.results_requested = results_requested
@@ -55,6 +56,7 @@ class Mixer:
         self.result_mixer = None
         self.mark_all_read = mark_all_read
         self.status = "INIT"
+        self.request = request
 
         try:
             if self.provider:
@@ -83,6 +85,7 @@ class Mixer:
         self.mix_wrapper['info'] = {}
         self.mix_wrapper['results'] = None
 
+        scheme, hostname, port = get_url_details(self.request)
         messages = []
         for result in self.results:
             for message in result.messages:
@@ -90,7 +93,7 @@ class Mixer:
             self.mix_wrapper['info'][result.searchprovider] = {}
             self.mix_wrapper['info'][result.searchprovider]['found'] = result.found
             self.mix_wrapper['info'][result.searchprovider]['retrieved'] = result.retrieved
-            self.mix_wrapper['info'][result.searchprovider]['filter_url'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search.id}&provider={result.provider_id}'
+            self.mix_wrapper['info'][result.searchprovider]['filter_url'] = f'{scheme}://{hostname}:{port}/swirl/results/?search_id={self.search.id}&provider={result.provider_id}'
             self.mix_wrapper['info'][result.searchprovider]['query_string_to_provider'] = result.query_string_to_provider
             # TODO: Make optional include self.mix_wrapper['info'][result.searchprovider]['result_processor_json_feedback'] = result.result_processor_json_feedback
             self.mix_wrapper['info'][result.searchprovider]['query_to_provider'] = result.query_to_provider
@@ -116,7 +119,7 @@ class Mixer:
             self.mix_wrapper['info']['search']['searchprovider_list'] = self.search.searchprovider_list
         self.mix_wrapper['info']['search']['query_string'] = self.search.query_string
         self.mix_wrapper['info']['search']['query_string_processed'] = self.search.query_string_processed
-        self.mix_wrapper['info']['search']['rerun_url'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/search/?rerun={self.search.id}'
+        self.mix_wrapper['info']['search']['rerun_url'] = f'{scheme}://{hostname}:{port}/swirl/search/?rerun={self.search.id}'
 
         # join json_results
         for result in self.results:
@@ -244,18 +247,20 @@ class Mixer:
         self.mix_wrapper['results'] = self.mixed_results[(int(self.page)-1)*int(self.results_requested):int(self.results_needed)]
         self.mix_wrapper['info']['results']['retrieved'] = len(self.mix_wrapper['results'])
 
+        scheme, hostname, port = get_url_details(self.request)
+
         # next page
         if self.found > int(self.results_needed):
             if self.result_mixer == self.search.result_mixer:
-                self.mix_wrapper['info']['results']['next_page'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&page={int(self.page)+1}'
+                self.mix_wrapper['info']['results']['next_page'] = f'{scheme}://{hostname}:{port}/swirl/results/?search_id={self.search_id}&page={int(self.page)+1}'
             else:
-                self.mix_wrapper['info']['results']['next_page'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&result_mixer={self.result_mixer}&page={int(self.page)+1}'
+                self.mix_wrapper['info']['results']['next_page'] = f'{scheme}://{hostname}:{port}/swirl/results/?search_id={self.search_id}&result_mixer={self.result_mixer}&page={int(self.page)+1}'
             # end if
         if int(self.page) > 1:
             if self.result_mixer == self.search.result_mixer:
-                self.mix_wrapper['info']['results']['prev_page'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&page={int(self.page)-1}'
+                self.mix_wrapper['info']['results']['prev_page'] = f'{scheme}://{hostname}:{port}/swirl/results/?search_id={self.search_id}&page={int(self.page)-1}'
             else:
-                self.mix_wrapper['info']['results']['prev_page'] = f'{settings.PROTOCOL}://{settings.HOSTNAME}:8000/swirl/results/?search_id={self.search_id}&result_mixer={self.result_mixer}&page={int(self.page)-1}'
+                self.mix_wrapper['info']['results']['prev_page'] = f'{scheme}://{hostname}:{port}/swirl/results/?search_id={self.search_id}&result_mixer={self.result_mixer}&page={int(self.page)-1}'
             # end if
 
         # last message
