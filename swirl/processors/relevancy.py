@@ -368,8 +368,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                 continue
             for item in results.json_results:
                 if 'swirl_score' in item:
-                    self.warning("already scored!")
-                    # to do: maybe continue?
+                    logger.debug(f"already scored - {item['url']}")
                 item['swirl_score'] = 0.0
                 # check for not
                 if 'NOT' in item:
@@ -424,17 +423,20 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     len_adjust = float(dict_len_median[f] / dict_len[f])
                     dict_len_adjust[f] = len_adjust
                     qlen_adjust = float(median(list_query_lens) / len(results.query_string_to_provider.strip().split()))
+                    logger.debug(f"score loop driver - {f} - {dict_score[f]} - {item['url']}")
                     for k in dict_score[f]:
-                        if k.startswith('_'):
+                        if k.startswith('_') or k in ('result_length_adjust', 'query_length_adjust'):
                             continue
                         if not dict_score[f][k]:
                             continue
                         if dict_score[f][k] >= float(SWIRL_MIN_SIMILARITY):
                             rank_adjust = 1.0 + (1.0 / sqrt(item['searchprovider_rank']))
+                            logger.debug(f"calc swirl_score BEFORE - {item['swirl_score']} - {item['url']}")
                             if k.endswith('_*') or k.endswith('_s*'):
                                 item['swirl_score'] = item['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k))
                             else:
                                 item['swirl_score'] = item['swirl_score'] + (weight * dict_score[f][k]) * (len(k) * len(k)) * len_adjust * qlen_adjust * rank_adjust
+                            logger.debug(f"calc swirl_score AFTER - {item['swirl_score']} - {item['url']}")
                         # end if
                     # end for
                 # end for
