@@ -9,19 +9,27 @@
 [![Newsletter](https://img.shields.io/badge/Newsletter-gray?logo=revue&logoColor=black&style=flat)](https://groups.google.com/g/swirl-announce)
 [![Twitter](https://img.shields.io/twitter/follow/SWIRL_SEARCH?label=Follow%20%40SWIRL_SEARCH&color=gray&logoColor=black&style=flat)](https://twitter.com/SWIRL_SEARCH)
 
-Swirl Metasearch adapts and distributes queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services etc - and uses AI ([Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/)) to re-rank the unified results *without* extracting and indexing *anything*. It supports OAUTH2 integration with enterprise services including Microsoft 365, Atlassian, JetBrains YouTrack and more coming soon.
+Swirl Metasearch adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, etc. - and uses AI ([Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/)) to re-rank the unified results *without* extracting or indexing *anything*. It includes OAuth2 support for Microsoft 365 alongside integration with enterprise services such as Atlassian Jira and Confluence, JetBrains YouTrack, HubSpot and more.
 
-Using the updated Spyglass UI, knowledge workers can systematically review the best results from additional configured services including Apache [Solr](https://solr.apache.org/), [ChatGPT](https://openai.com/blog/chatgpt/), [Elastic](https://www.elastic.co/cn/downloads/elasticsearch), [OpenSearch](https://opensearch.org/downloads.html) | [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery) plus generic HTTP/GET/JSON with configurations for premium services like [Google's Programmable Search Engine](https://programmablesearchengine.google.com/about/), [Miro](https://miro.com/app/) and [Northern Light Research](https://northernlight.com/).
+Using the Galaxy UI, knowledge workers can systematically review the best results from all configured services including Apache [Solr](https://solr.apache.org/), [ChatGPT](https://openai.com/blog/chatgpt/), [Elastic](https://www.elastic.co/cn/downloads/elasticsearch), [OpenSearch](https://opensearch.org/downloads.html), [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery), plus generic HTTP/GET/POST with configurations for premium services like [Google's Programmable Search Engine](https://programmablesearchengine.google.com/about/), [Miro](https://miro.com/app/) and [Northern Light Research](https://northernlight.com/).
 
 ![Metasearch diagram](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_arch_diagram.jpg)
 
-Built on the Python/Django stack, Swirl is intended for use by search managers, developers, data scientists and engineers who want to solve multi-silo search problems - including notification services - without moving, re-indexing or re-permissioning sensitive information.
-
-### Learn more: [Documentation Wiki](https://github.com/swirlai/swirl-search/wiki)
+Built on the Python/Django stack, Swirl is intended for use by anyone who wants to solve multi-silo search problems without moving, re-indexing or re-permissioning sensitive information.
 
 <br/>
 
-# Try Swirl Now
+# Try Swirl Now In Docker
+
+## Prerequisites
+
+* To run Swirl in Docker, you must have the latest [Docker app](https://docs.docker.com/get-docker/) for MacOS, Linux, or Windows installed and running locally.
+
+* Windows users must also install and configure either the WSL 2 or the Hyper-V backend, as outlined in the  [System Requirements for installing Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/#system-requirements).
+
+## Start Swirl in Docker
+
+:warning: Make sure the Docker app is running before proceeding!
 
 * Download [https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml](https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml)
 
@@ -29,10 +37,16 @@ Built on the Python/Django stack, Swirl is intended for use by search managers, 
 curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
 ```
 
-* From the console:
+* In MacOS or Linux, run the following command from the Console:
 
 ```
 docker-compose pull && docker-compose up
+```
+
+* In Windows, run the following command from PowerShell:
+
+```
+docker compose up
 ```
 
 After a few minutes the following or similar should appear:
@@ -59,25 +73,32 @@ ssdtest-app-1  | 2023-08-03 13:16:11,075 INFO     Configuring endpoint tcp:port=
 ssdtest-app-1  | 2023-08-03 13:16:11,079 INFO     Listening on TCP address 0.0.0.0:8000
 ```
 
-* Open this URL with a browser: http://localhost:8000 (or http://localhost:8000/galaxy/)
+* Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy>)
 
- If the search page appears. Click `Log Out` at top, right. The Swirl login page will appear:
+If the search page appears, click `Log Out` at the top, right. The Swirl login page will appear:
 
 ![Swirl Login](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_login-galaxy_dark.png)
 
-Enter username `admin` and password `password`. Then click Login.
+* Enter the username `admin` and password `password`, then click `Login`.
 
-* Enter a search in the search box and press the search button. Ranked results will appear in just a few seconds!
+* Enter a search in the search box and press the `Search` button. Ranked results appear in just a few seconds:
 
-![Swirl Results](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_results_no_m365-galaxy_dark.png)
+![Swirl Results No M365](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_results_no_m365-galaxy_dark.png)
 
-:warning: The Docker version of Swirl does *not* retain results or configuration when shut down!
+* To view the raw JSON, open <http://localhost:8000/swirl/search/>
+
+The most recent Search object will be displayed at the top. Click on the `result_url` link to view the full JSON Response.
+
+## Notes
+
+:warning: The Docker version of Swirl does *not* retain any data or configuration when shut down!
 
 :key: Swirl includes three (3) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
 
-:key: Using Swirl with Microsoft 365 requires installation and approval by an authorized company administrator. For more information please review the [M365 Guide](https://github.com/swirlai/swirl-search/wiki/4.-M365-Guide) or [contact us](mailto:hello@swirl.today) for more information.
+:key: Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](4.-M365-Guide) or [contact us](mailto:hello@swirl.today).
 
-#### Want to install Swirl locally?  Want to run it in Docker on a Windows laptop? Check out the [Quick Start Guide](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start)!
+
+### Want to install Swirl locally? Check out our [Quick Start Guide](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start) for details!
 
 <br/>
 
