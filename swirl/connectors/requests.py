@@ -81,6 +81,15 @@ class Requests(Connector):
         if '{query_string}' in query_to_provider:
             query_to_provider = query_to_provider.replace('{query_string}', urllib.parse.quote_plus(self.query_string_to_provider))
 
+        # Restating this because IT IS confusing. It is assumped that if the query template is valid
+        # jSON that it is being used as a POST body and in that case, all next page logic would be
+        # self contained in that body (although THAT is NOT handled here and should be handled in the POST
+        # implementation)
+        if is_valid_json(self.provider.query_template):
+            self.query_string_to_provider = query_to_provider
+            self.query_to_provider = self.provider.url
+            return
+
         if self.search.sort.lower() == 'date':
             # insert before the last parameter, which is expected to be the user query
             sort_query = query_to_provider[:query_to_provider.rfind('&')]
