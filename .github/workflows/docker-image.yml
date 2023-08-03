@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
   push:
     # only trigger on branches, not on tags
-    branches: 'release_2_5'
+    branches: 'main'
 
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
     - name: builder bootstrap
       run: docker buildx create --name devBuilder --use --bootstrap
     - name: Build the Docker image
-      run: docker buildx build -t swirlai/swirl-search:release_2_5 --platform linux/amd64,linux/arm64 --push .
+      run: docker buildx build -t swirlai/swirl-search:latest --platform linux/amd64,linux/arm64 --push .
     - name: Update repo description
       uses: peter-evans/dockerhub-description@v3.3.0
       with:
