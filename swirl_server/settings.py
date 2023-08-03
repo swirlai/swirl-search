@@ -175,11 +175,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CELERY
 from celery.schedules import crontab
 
-CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
-CELERY_RESULT_BACKEND='rpc://'
+
+
 CELERY_TASK_ALWAYS_EAGER = False
 
 CELERY_WORKER_CANCEL_LONG_RUNNING_TASKS_ON_CONNECTION_LOSS = False
@@ -201,6 +201,11 @@ CELERY_BEAT_SCHEDULE = {
          'schedule': crontab(minute=0,hour='*/4'),   # minute='*/10'
         },
 }
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+# CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+# CELERY_RESULT_BACKEND='rpc://'
 
 # EMAIL
 
@@ -219,7 +224,6 @@ SWIRL_DEFAULT_QUERY_LANGUAGE = 'english'
 SWIRL_TIMEOUT = 10
 SWIRL_Q_WAIT = 7
 SWIRL_RERUN_WAIT = 8
-SWIRL_RESCORE_WAIT = 5
 SWIRL_SUBSCRIBE_WAIT = 20
 SWIRL_DEDUPE_FIELD = 'url'
 SWIRL_DEDUPE_SIMILARITY_MINIMUM = 0.95

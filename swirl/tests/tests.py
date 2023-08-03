@@ -15,7 +15,7 @@ from swirl.processors.transform_query_processor import *
 from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list, match_all, tokenize_word_list
 from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
 from swirl.processors.dedupe import DedupeByFieldResultProcessor
-from swirl.utils import select_providers
+from swirl.utils import select_providers, http_auth_parse
 
 logger = logging.getLogger(__name__)
 
@@ -77,6 +77,20 @@ def noop_query_string():
 ######################################################################
 ## tests
 ######################################################################
+
+def test_http_auth_parse():
+    a = http_auth_parse("HTTPBasicAuth('leto@arakis.planet','gomjabar')")
+    assert len(a) == 2
+    assert a[0] == 'HTTPBasicAuth'
+    assert len(a[1]) == 2
+    assert a[1][0] == "leto@arakis.planet"
+    assert a[1][1] == "gomjabar"
+
+    a = http_auth_parse("HTTProxyAuth('param1')")
+    assert len(a) == 2
+    assert a[0] == 'HTTProxyAuth'
+    assert len(a[1]) == 1
+    assert a[1][0] == "param1"
 
 def test_tokenize_word_list():
     twl = tokenize_word_list(["'s"])
@@ -173,7 +187,8 @@ def get_ddrp_provider_data():
         "result_grouping_field":"conversationId",
         "result_processors": [
             "MappingResultProcessor",
-            "DedupeByFieldResultProcessor"
+            "DedupeByFieldResultProcessor",
+            "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.conversationId,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
@@ -448,7 +463,7 @@ def test_dd_result_processor(ms_message_result_converation, test_suser_pw):
     r = ddrp.process()
     assert r
     assert len(ddrp.get_results()) == 1
-    logger.info(f'dedupped results {r}')
+    logger.debug(f'dedupped results {r}')
 
 @pytest.mark.django_db
 def test_aqp(aqp_test_cases, aqp_test_expected):

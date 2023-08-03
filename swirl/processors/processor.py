@@ -24,9 +24,10 @@ class Processor:
 
     ########################################
 
-    def __init__(self):
+    def __init__(self, request_id=''):
 
         self.status = "INIT"
+        self.request_id = request_id
 
     ########################################
 
@@ -121,7 +122,7 @@ class ResultProcessor(Processor):
 
     ########################################
 
-    def __init__(self, results, provider, query_string):
+    def __init__(self, results, provider, query_string, request_id='', **kwargs):
 
         self.results = results
         self.provider = provider
@@ -129,6 +130,10 @@ class ResultProcessor(Processor):
         self.provider_tags = provider.tags
         self.modified = 0
         self.processed_results = None
+        self.request_id = request_id
+        # process additional keyword arguments
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     ########################################
 
@@ -176,11 +181,12 @@ class PostResultProcessor(Processor):
 
     ########################################
 
-    def __init__(self, search_id):
+    def __init__(self, search_id, request_id=''):
 
         self.search_id = search_id
         self.search = None
         self.results_updated = -1
+        self.request_id = request_id
 
         # security review for 1.7 - OK, filtered by search ID
         if not Search.objects.filter(id=search_id).exists():

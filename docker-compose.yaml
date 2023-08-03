@@ -11,6 +11,6 @@ services:
                  -e "s/<msal-tenant-id>/$MSAL_TENANT_ID/" \
                  -e "s/<msal-port>/$MSAL_CB_PORT/" \
                  -e "s/<msal-host>/$MSAL_HOST/" > static/api/config/default &&
-             python swirl.py start rabbitmq celery-worker celery-beats &&
+             python swirl.py start redis celery-worker celery-beats &&
              daphne -b 0.0.0.0 -p 8000 swirl_server.asgi:application'
              

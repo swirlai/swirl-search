@@ -11,7 +11,7 @@ import time
 
 import django
 
-from swirl.utils import swirl_setdir, is_valid_json
+from swirl.utils import swirl_setdir, http_auth_parse, is_valid_json
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
@@ -45,6 +45,10 @@ class Requests(Connector):
 
     type = "Requests"
 
+    def __init__(self, provider_id, search_id, update, request_id=''):
+        super().__init__(provider_id, search_id, update, request_id)
+
+
     ########################################
 
     def get_method(self):
@@ -65,7 +69,7 @@ class Requests(Connector):
         the query to provider.
         """
 
-        logger.info(f"{self}: construct_query()")
+        logger.debug(f"{self}: construct_query()")
 
         # to do: migrate this to Connector base class?
         query_to_provider = ""
@@ -76,8 +80,6 @@ class Requests(Connector):
         # this should leave one item, {query_string}
         if '{query_string}' in query_to_provider:
             query_to_provider = query_to_provider.replace('{query_string}', urllib.parse.quote_plus(self.query_string_to_provider))
-        else:
-            self.warning(f'{{query_string}} missing from query_to_provider: {query_to_provider}')
 
         # Restating this because IT IS confusing. It is assumped that if the query template is valid
         # jSON that it is being used as a POST body and in that case, all next page logic would be
@@ -101,9 +103,6 @@ class Requests(Connector):
             if 'RELEVANCY_SORT' in self.query_mappings:
                 sort_query = sort_query + '&' + self.query_mappings['RELEVANCY_SORT'] + query_to_provider[query_to_provider.rfind('&'):]
                 query_to_provider = sort_query
-            else:
-                # self.warning(f'RELEVANCY_SORT missing from self.query_mappings: {self.query_mappings}')
-                pass
 
         self.query_to_provider = query_to_provider
 
@@ -113,7 +112,7 @@ class Requests(Connector):
 
     def validate_query(self, session=None):
 
-        logger.info(f"{self}: validate_query()")
+        logger.debug(f"{self}: validate_query()")
 
         query_to_provider = self.query_to_provider
         if '{' in query_to_provider or '}' in query_to_provider:
@@ -135,7 +134,7 @@ class Requests(Connector):
 
     def execute_search(self, session=None):
 
-        logger.info(f"{self}: execute_search()")
+        logger.debug(f"{self}: execute_search()")
 
         # determine if paging is required
         pages = 1
@@ -149,6 +148,8 @@ class Requests(Connector):
 
         # issue the query
         start = 1
+        mapped_responses = []
+
         for page in range(0, pages):
 
             if 'PAGE' in self.query_mappings:
@@ -174,21 +175,21 @@ class Requests(Connector):
                 return
 
             # dictionary of authentication types permitted in the upcoming eval
-            dict_auth = {'HTTPBasicAuth': HTTPBasicAuth, 'HTTPDigestAuth': HTTPDigestAuth, 'HTTProxyAuth': HTTPProxyAuth}
+            http_auth_dispatch = {'HTTPBasicAuth': HTTPBasicAuth, 'HTTPDigestAuth': HTTPDigestAuth, 'HTTProxyAuth': HTTPProxyAuth}
 
             response = None
             # issue the query
             try:
                 if self.provider.credentials:
                     if session and self.provider.eval_credentials and '{credentials}' in self.provider.credentials:
-                        dict_credentials = {'session': session}
-                        credentials = eval(self.provider.eval_credentials , {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_credentials)
+                        credentials = session[self.provider.eval_credentials]
                         self.provider.credentials = self.provider.credentials.replace('{credentials}', credentials)
                     if self.provider.credentials.startswith('HTTP'):
                         # handle HTTPBasicAuth('user', 'pass') etc
-                        # response = requests.get(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth))
-                        response = self.send_request(page_query, auth=eval(self.provider.credentials, {"self.provider.credentials": self.provider.credentials, "__builtins__": None}, dict_auth),
-                                                     query=self.query_string_to_provider, headers=self._put_configured_headers())
+                        http_auth = http_auth_parse(self.provider.credentials)
+
+                        response = self.send_request(page_query, auth=http_auth_dispatch.get(http_auth[0])(*http_auth[1]),query=self.query_string_to_provider,
+                                                     headers=self._put_configured_headers())
                     else:
                         if self.provider.credentials.startswith('bearer='):
                             # populate with bearer token
@@ -200,7 +201,7 @@ class Requests(Connector):
                             headers = {
                                 "X-Api-Key": f"{self.provider.credentials.split('X-Api-Key=')[1]}"
                             }
-                            logger.info(f"{self}: sending request with auth header X-Api-Key")
+                            logger.debug(f"{self}: sending request with auth header X-Api-Key")
                             response = self.send_request(page_query, headers=self._put_configured_headers(headers), query=self.query_string_to_provider)
                             # all others
                         else:
@@ -280,6 +281,7 @@ class Requests(Connector):
                 self.status = 'READY'
                 return
             # process the results
+
             if 'RESULTS' in mapped_response:
                 if not mapped_response['RESULTS']:
                     mapped_response['RESULTS'] = json_data
@@ -304,7 +306,6 @@ class Requests(Connector):
                     return
                 # end if
             # end if
-            response = []
             if 'RESULT' in self.response_mappings:
                 for result in mapped_response['RESULTS']:
                     try:
@@ -321,7 +322,7 @@ class Requests(Connector):
                     if matches:
                         if len(matches) == 1:
                             for match in matches:
-                                response.append(match)
+                                mapped_responses.append(match)
                         else:
                             self.error(f'control mapping RESULT matched {len(matches)}, expected {self.provider.results_per_query}')
                             return
@@ -330,24 +331,20 @@ class Requests(Connector):
                         pass
             else:
                 # no RESULT key specified
-                response = mapped_response['RESULTS']
+                for res in mapped_response['RESULTS']:
+                    mapped_responses.append(res)
             # check retrieved
-            if response:
-                if retrieved > -1 and retrieved != len(response):
-                    self.warning(f"retrieved != length of response {len(response)}")
-            else:
-                # to do: review
+            if not mapped_responses:
                 self.error(f"no results extracted from response! found:{found}")
                 if found != 0:
                     found = retrieved = 0
                 # end if
             if retrieved == -1:
-                # to do: this is probably wrong
-                retrieved = len(response)
+                retrieved = len(mapped_responses)
                 self.retrieved = retrieved
             if found == -1:
                 # for now, assume the source delivered what it found
-                found = len(response)
+                found = len(mapped_responses)
                 self.found = found
             # check for 0 delivered results (different from above)
             if found == 0 or retrieved == 0:
@@ -369,6 +366,6 @@ class Requests(Connector):
 
         self.found = found
         self.retrieved = retrieved
-        self.response = response
+        self.response = mapped_responses
 
         return
