@@ -11,7 +11,7 @@ import time
 
 import django
 
-from swirl.utils import swirl_setdir, http_auth_parse
+from swirl.utils import swirl_setdir, http_auth_parse, is_valid_json
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
