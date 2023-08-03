@@ -376,6 +376,7 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     del item['NOT']
                     break
                 # retrieve the scores and lens from pass 1
+                dict_score = None
                 if 'dict_score' in item:
                     dict_score = item['dict_score']
                     del item['dict_score']
@@ -391,6 +392,12 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     logger.debug("Found explain")
                     dict_score = item['explain']
                     del item['explain']
+
+                # Check if dict_score is still not defined
+                if dict_score is None:
+                    self.warning("dict_score is still missing after all attempts to define it!")
+                    continue  # Skip to the next iteration
+
                 relevancy_model = ""
                 # check for _relevancy_model
                 if '_relevancy_model' in item:
