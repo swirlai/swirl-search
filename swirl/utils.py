@@ -4,13 +4,52 @@
 '''
 
 import os
+import re
 import logging as logger
 import json
 from pathlib import Path
 from django.core.paginator import Paginator
 
+from urllib.parse import urlparse
+from django.conf import settings
+
 ##################################################
 ##################################################
+
+def get_url_details(request):
+    if request:
+        parsed_url = urlparse(request.build_absolute_uri())
+        scheme = parsed_url.scheme
+        hostname = parsed_url.hostname
+        port = parsed_url.port if parsed_url.port else ""
+    else:
+        scheme = settings.PROTOCOL
+        hostname = settings.HOSTNAME
+        port = 8000
+
+    return scheme, hostname, port
+
+
+CLAZZ_INSTANTIATE_PAT = r'^([A-Z][a-zA-Z0-9_]*)\((.*)\)'
+http_auth_clazz_strings = ['HTTPBasicAuth', 'HTTPDigestAuth', 'HTTProxyAuth']
+def http_auth_parse(str):
+    """
+    returns a tule of : 'HTTPBasicAuth'|'HTTPDigestAuth'|'HTTProxyAuth', [<list-of-arguments>]
+    """
+    if not str:
+        return '',[]
+    matched = re.match(CLAZZ_INSTANTIATE_PAT, str)
+    if matched:
+        c = matched.group(1)
+        p = matched.group(2)
+        if not (p and c in http_auth_clazz_strings) :
+            logger.warning(f'unknown http auth class string {c} or missing parameters')
+            return '',[]
+        return c, [item.strip().strip("'") for item in p.split(',')]
+    else:
+        return '',[]
+
+
 
 def is_valid_json(j):
     try:

@@ -3,7 +3,7 @@ name: Ingegration API Tests
 on:
   push:
     # only trigger on branches, not on tags
-    branches: 'main'
+    branches: 'release_2_5'
 
 jobs:
 
@@ -22,10 +22,8 @@ jobs:
       run: ./install.sh
     - name: Update apt
       run: sudo apt -o Acquire::Retries=3 update
-    - name: Run Install erlang
-      run: sudo apt -o Acquire::Retries=3 install -y erlang
-    - name: Run Install rabbitmq-server
-      run: sudo apt install -y rabbitmq-server
+    - name: Run Install redist-server
+      run: sudo apt install -y redis-server
     - name: Set up SWIRL
       run: python swirl.py setup
     - name: Start up SWIRL

@@ -37,7 +37,7 @@ class BigQuery(DBConnector):
 
     def execute_search(self, session=None):
 
-        logger.info(f"{self}: execute_search()")
+        logger.debug(f"{self}: execute_search()")
 
         if self.provider.credentials:
             environ["GOOGLE_APPLICATION_CREDENTIALS"] = self.provider.credentials
@@ -83,7 +83,7 @@ class BigQuery(DBConnector):
 
     def normalize_response(self):
 
-        logger.info(f"{self}: normalize_response()")
+        logger.debug(f"{self}: normalize_response()")
 
         rows = self.response
         found = self.found

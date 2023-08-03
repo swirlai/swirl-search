@@ -20,6 +20,7 @@ logger = get_task_logger(__name__)
 
 from swirl.connectors.utils import bind_query_mappings
 from swirl.connectors.connector import Connector
+import json
 
 from opensearchpy import OpenSearch as opensearch
 from opensearchpy.exceptions import AuthenticationException, AuthorizationException, ConnectionError, NotFoundError, RequestError, SSLError, TransportError
@@ -31,11 +32,15 @@ class OpenSearch(Connector):
 
     type = "OpenSearch"
 
+    def __init__(self, provider_id, search_id, update, request_id=''):
+        super().__init__(provider_id, search_id, update, request_id)
+
+
     ########################################
 
     def construct_query(self):
 
-        logger.info(f"{self}: construct_query()")
+        logger.debug(f"{self}: construct_query()")
 
         base_query = bind_query_mappings(self.provider.query_template, self.provider.query_mappings)
         logger.debug(f"base_query: {base_query}")
@@ -43,7 +48,7 @@ class OpenSearch(Connector):
         if '{query_string}' in self.provider.query_template:
             base_query = base_query.replace('{query_string}', self.query_string_to_provider)
 
-        query_to_provider = eval(base_query, {}, {})
+        query_to_provider = json.loads(base_query)
         if type(query_to_provider) != dict:
             self.error(f"error converting to dict: {base_query}")
             # to do stop?
@@ -70,7 +75,7 @@ class OpenSearch(Connector):
 
     def execute_search(self, session=None):
 
-        logger.info(f"{self}: execute_search()")
+        logger.debug(f"{self}: execute_search()")
 
         parsed_url = urlparse(self.provider.url)
         host = parsed_url.hostname
@@ -172,7 +177,7 @@ class OpenSearch(Connector):
 
     def normalize_response(self):
 
-        logger.info(f"{self}: normalize_response()")
+        logger.debug(f"{self}: normalize_response()")
 
         if len(self.response) == 0:
             self.error("search succeeded, but found no json data in response")

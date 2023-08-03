@@ -11,9 +11,14 @@ from swirl.processors.relevancy import *
 from swirl.processors.spellcheck_query import *
 from swirl.processors.chatgpt_query import *
 from swirl.processors.transform_query_processor import *
-from swirl.processors.write_to_filesystem import *
-from swirl.processors.temporal_relevancy import *
 from swirl.processors.date_finder import *
-from swirl.processors.entity_matcher import * 
+from swirl.models import Search, SearchProvider
+
+
+def alloc_processor(processor):
+    if not processor:
+        logger.error("blank processor")
+        return None
+    return globals()[processor]
 
 # Add new processors here!

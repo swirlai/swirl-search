@@ -6,8 +6,185 @@
 #############################################
 #############################################
 import time
-from swirl.nltk import word_tokenize, is_punctuation
+from swirl.nltk import stopwords, word_tokenize, is_punctuation
 from nltk.tag import tnt
+
+class ParsedQuery:
+    def __init__(self, query_stemmed_list, not_list, query_list,
+            query_stemmed_target_list, query_target_list,
+            query_has_numeric):
+        self.query_stemmed_list = query_stemmed_list
+        self.not_list = not_list
+        self.query_list = query_list
+        self.query_stemmed_target_list = query_stemmed_target_list
+        self.query_target_list = query_target_list
+        self.query_has_numeric = query_has_numeric
+
+def result_processor_feedback_empty_record():
+    return {
+            'result_processor_feedback': {
+            'query': {
+                'provider_query_terms': [],
+                'list_query_lens':[],
+                'dict_result_lens':{}
+            }
+        }
+    }
+
+
+def result_processor_feedback_merge_records(record1, record2):
+    # Initialize a new record
+    merged_record = result_processor_feedback_empty_record()
+
+    # Merge dict_result_lens
+    dict_result_lens_keys = set()
+    if "result_processor_feedback" in record1 and "query" in record1["result_processor_feedback"] and "dict_result_lens" in record1["result_processor_feedback"]["query"]:
+        dict_result_lens_keys.update(record1["result_processor_feedback"]["query"]["dict_result_lens"].keys())
+    if "result_processor_feedback" in record2 and "query" in record2["result_processor_feedback"] and "dict_result_lens" in record2["result_processor_feedback"]["query"]:
+        dict_result_lens_keys.update(record2["result_processor_feedback"]["query"]["dict_result_lens"].keys())
+
+    for key in dict_result_lens_keys:
+        merged_record["result_processor_feedback"]["query"]["dict_result_lens"][key] = list(
+            set(
+                record1.get("result_processor_feedback", {}).get("query", {}).get("dict_result_lens", {}).get(key, []) +
+                record2.get("result_processor_feedback", {}).get("query", {}).get("dict_result_lens", {}).get(key, [])
+            )
+        )
+
+    # Merge provider_query_terms
+    provider_query_terms = []
+    if "result_processor_feedback" in record1 and "query" in record1["result_processor_feedback"] and "provider_query_terms" in record1["result_processor_feedback"]["query"]:
+        provider_query_terms.extend(record1["result_processor_feedback"]["query"]["provider_query_terms"])
+    if "result_processor_feedback" in record2 and "query" in record2["result_processor_feedback"] and "provider_query_terms" in record2["result_processor_feedback"]["query"]:
+        provider_query_terms.extend(record2["result_processor_feedback"]["query"]["provider_query_terms"])
+
+    merged_record["result_processor_feedback"]["query"]["provider_query_terms"] = sorted(list(set(provider_query_terms)))
+
+    # Merge list_query_lens
+    list_query_lens = []
+    if "result_processor_feedback" in record1 and "query" in record1["result_processor_feedback"] and "list_query_lens" in record1["result_processor_feedback"]["query"]:
+        list_query_lens.extend(record1["result_processor_feedback"]["query"]["list_query_lens"])
+    if "result_processor_feedback" in record2 and "query" in record2["result_processor_feedback"] and "list_query_lens" in record2["result_processor_feedback"]["query"]:
+        list_query_lens.extend(record2["result_processor_feedback"]["query"]["list_query_lens"])
+
+    merged_record["result_processor_feedback"]["query"]["list_query_lens"] = list_query_lens
+
+    return merged_record
+
+
+
+def result_processor_feedback_provider_query_terms(qt_buf):
+    """
+    Create a JSON object from the list of query terms:
+    """
+    if not qt_buf or len(qt_buf) <= 0:
+        return None
+    ret = result_processor_feedback_empty_record()
+    ret['result_processor_feedback']['query']['provider_query_terms'] = sorted(list(set(qt_buf)))
+    return ret
+
+
+def parse_query(q_string, results_processor_feedback):
+
+    query_stemmed_list = []
+    not_list = []
+    query_list = []
+    query_stemmed_target_list = []
+    query_target_list = []
+    query_has_numeric = False
+    provider_query_terms = []
+
+    if results_processor_feedback:
+        provider_query_terms = results_processor_feedback.get(
+            'result_processor_feedback', []).get('query', []).get(
+            'provider_query_terms', [])
+
+    # remove quotes
+    query = clean_string(q_string).strip().replace('\"','')
+    query_list = word_tokenize(query)
+    ## I think the loop is okay since it's a very small list.
+    for term in provider_query_terms:
+        if not term in query_list:
+            query_list.append(term)
+
+    # remove AND, OR and parens
+    query_list = [s for s in query_list if s not in ["AND","OR"] and not is_punctuation(s)]
+
+    # check for numeric
+    query_has_numeric = has_numeric(query_list)
+    # not list
+    not_list = []
+    not_parsed_query = []
+    if 'NOT' in query_list:
+        not_parsed_query = query_list[:query_list.index('NOT')]
+        not_list = query_list[query_list.index('NOT')+1:]
+    else:
+        for q in query_list:
+            if q.startswith('-'):
+                not_list.append(q[1:])
+            else:
+                not_parsed_query.append(q)
+            # end if
+        # end for
+    # end if
+    if not_parsed_query:
+        query = ' '.join(not_parsed_query).strip()
+        query_list = query.split()
+    # end if
+
+    # check for stopword query
+    query_without_stopwords = []
+    for extract in query_list:
+        if not extract in stopwords:
+            query_without_stopwords.append(extract)
+    if len(query_without_stopwords) == 0:
+        raise Exception("query_string_processed is all stopwords!")
+
+    # stem the query - fix for https://github.com/swirlai/swirl-search/issues/34
+    query_stemmed_list = stem_string(clean_string(query)).strip().split()
+    query_stemmed_list_len = len(query_stemmed_list)
+
+    # check for non query?
+    if query_stemmed_list_len == 0:
+        raise Exception("Query stemmed list is empty!")
+
+    # prepare query targets
+    query_stemmed_target_list = []
+    query_target_list = []
+    # 1 gram
+    if query_stemmed_list_len == 1:
+        query_stemmed_target_list.append(query_stemmed_list)
+        query_target_list.append(query_list)
+    # 2 gram
+    if query_stemmed_list_len == 2:
+        query_stemmed_target_list.append(query_stemmed_list)
+        query_target_list.append(query_list)
+        query_stemmed_target_list.append([query_stemmed_list[0]])
+        query_target_list.append([query_list[0]])
+        query_stemmed_target_list.append([query_stemmed_list[1]])
+        query_target_list.append([query_list[1]])
+    # more grams
+    if query_stemmed_list_len >= 3:
+        query_stemmed_target_list.append(query_stemmed_list)
+        query_target_list.append(query_list)
+        for bigram in bigrams(query_stemmed_list):
+            query_stemmed_target_list.append(bigram)
+        for bigram in bigrams(query_list):
+            query_target_list.append(bigram)
+        for gram in query_stemmed_list:
+            # ignore stopword 1-grams
+            if gram in stopwords:
+                continue
+            query_stemmed_target_list.append([gram])
+        for gram in query_list:
+            # ignore stopword 1-grams
+            if gram in stopwords:
+                continue
+            query_target_list.append([gram])
+
+    return ParsedQuery(query_stemmed_list, not_list, query_list, query_stemmed_target_list,
+                        query_target_list,  query_has_numeric)
+
 
 def create_result_dictionary():
     """
@@ -215,24 +392,13 @@ def position_dict(text, word_list):
             positions[word.lower()].append(i)
     return positions
 
-
 #############################################
 # fix for https://github.com/swirlai/swirl-search/issues/33
 
-from swirl.bs4 import bs
+from swirl.bs4 import bs, MarkupResemblesLocatorWarning
 
-# # Function to remove tags
-# def remove_tags(html):
-
-#     # parse html content
-#     soup = bs(html, "html.parser")
-
-#     for data in soup(['style', 'script']):
-#         # Remove tags
-#         data.decompose()
-
-#     # return data by retrieving the tag content
-#     return ' '.join(soup.stripped_strings)
+import warnings
+warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
 def remove_tags(html):
     # Parse html content

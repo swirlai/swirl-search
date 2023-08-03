@@ -1,8 +1,8 @@
-# &nbsp; DOCKER BUILD for SWIRL <img alt='Swirl Metasearch Logo' src='https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl-logo-only-blue.png' width=38 align=left />
+# &nbsp; DOCKER BUILD for Swirl Metasearch <img alt='Swirl Metasearch Logo' src='https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl-logo-only-blue.png' width=38 align=left />
 
-:warning: Warning: when using docker the SWIRL database is instantly and irrevocably deleted upon container shutdown!
+:warning: Warning: when using Docker the Swirl database is instantly and irrevocably deleted upon container shutdown!
 
-Please [contact support](#support) for a docker image suitable for production deployment. 
+Please [contact support](#support) for a Docker image suitable for production deployment. 
 
 <br/>
 
@@ -10,16 +10,18 @@ Please [contact support](#support) for a docker image suitable for production de
 
 [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)
 
+<br/>
+
 ## Clone the Repo Branch
 
 ```
 git clone https://github.com/swirlai/swirl-search
 ```
 
-Feel free to specify the name of a new folder, instead of using the default (swirl-search):
+Feel free to specify the name of a new directory, instead of using the default (`swirl-search`):
 
 ```
-git clone https://github.com/swirlai/swirl-search my-folder
+git clone https://github.com/swirlai/swirl-search my-directory
 ```
 
 <br/>
@@ -31,7 +33,7 @@ cd swirl-search
 docker build . -t swirlai/swirl-search:latest
 ```
 
-If you cloned to a directory other than swirl-search, replace it above.
+If you cloned to a directory other than `swirl-search`, replace it above.
 
 This command should produce a long response starting with:
 
@@ -61,11 +63,11 @@ Attaching to swirl-search-app-1
 
 ### Note down the container ID attached, as it will be needed later!
 
-The container ID in this example is swirl-c-app-1. It will be different if you cloned the repo to a different folder.
+The Container ID in this example is `swirl-c-app-1`. It will be different if you cloned the repo to a different folder.
 
-Moments later, Docker desktop will reflect the running container:
+Moments later, Docker desktop will reflect the running Container:
 
-![SWIRL running in Docker](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_docker.png)
+![Swirl running in Docker](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_docker.png)
 
 <br/>
 
@@ -75,11 +77,11 @@ Moments later, Docker desktop will reflect the running container:
 docker exec -it swirl-search-app-1 python manage.py createsuperuser --email admin@example.com --username admin
 ```
 
-Again, replace swirl-search-app-1 with your container ID if different. 
+Again, replace `swirl-search-app-1` with your Container ID if different. 
 
 Enter a new password, twice. If django complains that the password is too simple, type "Y" to use it anyway. 
 
-### Note down the super user password as it will be needed later!
+### Note down the Super User password as it will be needed later!
 
 <br/>
 
@@ -89,15 +91,11 @@ Enter a new password, twice. If django complains that the password is too simple
 docker exec -it swirl-search-app-1 python swirl_load.py SearchProviders/google_pse.json -u admin -p super-user-password
 ```
 
-Replace super-user-password with the password you created in the previous step. 
-Also, replace swirl-search-app-1 with your container ID if different. 
+Replace `super-user-password` with the password you created in the previous step. Also, replace `swirl-search-app-1` with your container ID if different. 
 
-This should produce the following:
+The script will load all SearchProvider configurations in the specified file at once and confirm.
 
-```
-##S#W#I#R#L##1#.#6##############################################################
-swirl_load.py: fed 3 into SWIRL, 0 errors
-```
+<br/>
 
 ## View SearchProviders
 
@@ -105,29 +103,32 @@ swirl_load.py: fed 3 into SWIRL, 0 errors
 
 This should bring up the following, or similar:
 
-![SWIRL Search Provider List, Google PSE](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/pse/swirl_spl_list.png)
-
-## Run a Query!
-
-### [http://localhost:8000/swirl/search/?q=search+engine](http://localhost:8000/swirl/search/?q=search+engine)
-
-After 5-7 seconds, this should bring up a unified, relevancy ranked result list:
-
-![SWIRL Search Results, Google PSE](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/pse/swirl_results_mixed_1.png)
-
-### Congratulations, SWIRL docker is installed!
-
-## Notes
-
-:warning: Warning: when using docker the SWIRL database is instantly and irrevocably deleted upon container shutdown!
-
-Please [contact support](#support) for a docker image suitable for production deployment. 
+![Swirl SearchProviders, Google PSE - 1](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_sp_pse-1.png)
+![Swirl SearchProviders, Google PSE - 2](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_sp_pse-2.png)
 
 <br/>
 
-**Important: SWIRL in Docker cannot use localhost to connect to local endpoints!**
+## Run a Query!
 
-For example: if you have solr running on localhost:8983, SWIRL will be unable to contact it from inside the docker container using that URL.
+### [http://localhost:8000/swirl/search/?q=knowledge+management](http://localhost:8000/swirl/search/?q=knowledge+management)
+
+After 5-7 seconds, this should bring up a unified, relevancy ranked result list:
+
+![Swirl Search Results, Google PSE](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_results_mixed_1.png)
+
+### Congratulations, Swirl Docker is installed!
+
+<br/>
+
+## Notes
+
+:warning: Warning: when using Docker the Swirl database is instantly and irrevocably deleted upon container shutdown!
+
+Please [contact support](#support) for a Docker image suitable for production deployment. 
+
+**Important: Swirl in Docker cannot use localhost to connect to local endpoints!**
+
+For example: if you have solr running on localhost:8983, Swirl will be unable to contact it from inside the Docker container using that URL.
 
 To configure such a source, get the hostname. On OS/X:
 
@@ -136,7 +137,7 @@ To configure such a source, get the hostname. On OS/X:
 AgentCooper.local
 ```
 
-In the SearchProvider, replace localhost with the hostname:
+In the SearchProvider configuration, replace localhost with the hostname:
 
 ```
 "url": "http://AgentCooper.local:8983/solr/{collection}/select?wt=json",
@@ -146,12 +147,17 @@ In the SearchProvider, replace localhost with the hostname:
 
 ## Documentation
 
+* [Quick Start Guide](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start)
 * [User Guide](https://github.com/swirlai/swirl-search/wiki/2.-User-Guide)
+* [Admin Guide](https://github.com/swirlai/swirl-search/wiki/3.-Admin-Guide)
+* [M365 Guide](https://github.com/swirlai/swirl-search/wiki/4.-M365-Guide)
+* [Developer Guide](https://github.com/swirlai/swirl-search/wiki/5.-Developer-Guide)
+* [Developer Reference](https://github.com/swirlai/swirl-search/wiki/6.-Developer-Reference)
 
 <br/>
 
 # Support
 
-:small_blue_diamond: [Create an Issue](https://github.com/swirlai/swirl-search/issues) if something doesn't work, isn't clear, or should be documented - we'd love to hear from you!
+:small_blue_diamond: [Join Swirl SEARCH #support on Slack!](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 
-:small_blue_diamond: Paid support and consulting are available... [contact SWIRL](mailto:support@swirl.today) for more information.
+:small_blue_diamond: Email: [support@swirl.today](mailto:support@swirl.today) with issues, requests, questions, etc - we'd love to hear from you!

@@ -10,8 +10,11 @@
             "AdaptiveQueryProcessor"
         ],
         "query_mappings": "NOT=true,NOT_CHAR=-",
+        "result_grouping_field": "conversationId",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+            "DedupeByFieldResultProcessor",
+	        "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
@@ -25,7 +28,6 @@
     },
     {
         "name": "Calendar Events - Microsoft 365",
-        "shared": true,
         "active": false,
         "default": true,
         "connector": "M365OutlookCalendar",
@@ -39,7 +41,8 @@
         "result_grouping_field": "title",
         "result_processors": [
             "MappingResultProcessor",
-            "DedupeByFieldResultProcessor"
+            "DedupeByFieldResultProcessor",
+	        "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=resource.subject,body=summary,date_published=resource.start.dateTime,url='https://outlook.office.com/calendar/item/{sw_urlencode(hitId)}',resource.sensitivity,resource.type,resource.hasAttachments,NO_PAYLOAD",
@@ -63,7 +66,8 @@
         ],
         "query_mappings": "NOT=true,NOT_CHAR=-",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+	        "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=resource.name,body='{resource.name} - {summary}',date_published=resource.createdDateTime,url=resource.webUrl,author=resource.createdBy.user.displayName,resource.lastModifiedBy.user.displayName,resource.lastModifiedDateTime,FILE_SYSTEM,NO_PAYLOAD",
@@ -87,7 +91,8 @@
         ],
         "query_mappings": "NOT=true,NOT_CHAR=-",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+	        "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=resource.displayName,body=summary,date_published=resource.createdDateTime,url=resource.webUrl,resource.lastModifiedDateTime,NO_PAYLOAD",
@@ -111,7 +116,8 @@
         ],
         "query_mappings": "NOT=true,NOT_CHAR=-",
         "result_processors": [
-            "MappingResultProcessor"
+            "MappingResultProcessor",
+	        "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
         "result_mappings": "title=summary,body=summary,date_published=resource.createdDateTime,author=resource.from.emailAddress.name,url=resource.webLink,resource.importance,resource.channelIdentity.channelId,NO_PAYLOAD",

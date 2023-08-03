@@ -21,4 +21,4 @@ jobs:
     - name: builder bootstrap
       run: docker buildx create --name devBuilder --use --bootstrap
     - name: Build the Docker image
-      run: docker buildx build -t swirlai/swirl-search:security-testing --platform linux/amd64,linux/arm64 --push .
+      run: docker buildx build -t swirlai/swirl-search:release_2_5-security-testing --platform linux/amd64,linux/arm64 --push .

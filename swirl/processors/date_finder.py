@@ -7,8 +7,8 @@ from django.conf import settings
 
 from swirl.processors.processor import *
 
-#############################################    
-#############################################    
+#############################################
+#############################################
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -21,14 +21,17 @@ class DateFinderResultProcessor(ResultProcessor):
 
     type="DateFinderResultProcessor"
 
+    def __init__(self, results, provider, query_string, request_id='', **kwargs):
+        super().__init__(results, provider, query_string, request_id=request_id, **kwargs)
+
     def process(self):
-                       
+
         date_regex = r'\b(?:\d{1,2}[./-]\d{1,2}[./-]\d{2,4}|\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s\d{1,2},\s\d{4}|\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s\d{1,2},\s\d{4})\b'
 
         updated = 0
         for item in self.results:
             if 'date_published' in item:
-                if item['date_published'] == 'unknown':            
+                if item['date_published'] == 'unknown':
                     matches = re.findall(date_regex, item['body'])
                     if matches:
                         for match in matches:

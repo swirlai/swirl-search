@@ -6,19 +6,12 @@ import jwt
 import logging as logger
 
 
-SWIRL_AUTHENTICATORS_LIST = SearchProvider.AUTHENTICATOR_CHOICES
-SWIRL_AUTHENTICATORS_DICT = {}
-for t in SWIRL_AUTHENTICATORS_LIST:
-    SWIRL_AUTHENTICATORS_DICT[t[0]]=eval(t[0])
-
 class TokenMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        print(request.path)
-        if (request.path == '/swirl/login/' or '/sapi/' not in request.path) and request.path != '/swirl/logout/':
-            print('return')
+        if (request.path == '/swirl/login/' or request.path == '/swirl/oidc_authenticate/' or '/sapi/' not in request.path) and request.path != '/swirl/logout/':
             return self.get_response(request)
         if 'Authorization' not in request.headers:
             print('Authorization not in request.headers')
@@ -28,7 +21,6 @@ class TokenMiddleware:
         token = auth_header.split(' ')[1]
         try:
             token_obj = Token.objects.get(key=token)
-            print(request.user)
             request.user = token_obj.user
         except Token.DoesNotExist:
             print('Token.DoesNotExist')
@@ -44,17 +36,17 @@ class SpyglassAuthenticatorsMiddleware:
         logger.debug(f'SpyglassAuthenticatorsMiddleware: {request.path}')
         if request.path == '/swirl/sapi/search/' or request.path == '/api/swirl/sapi/search/':
             logger.debug(f'SpyglassAuthenticatorsMiddleware - in the sapi path')
-            for authenticator in SWIRL_AUTHENTICATORS_DICT:
+            for authenticator in SWIRL_AUTHENTICATORS_DISPATCH.keys():
                 logger.debug(f'SpyglassAuthenticatorsMiddleware - {authenticator}')
                 if f'{authenticator}-Authorization' in request.headers:
                     logger.debug(f'SpyglassAuthenticatorsMiddleware - one we care about')
                     token = request.headers[f'{authenticator}-Authorization']
                     expires_in = int(jwt.decode(token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
                     ## Do we need refresh token ?
-                    SWIRL_AUTHENTICATORS_DICT[authenticator]().set_session_data(request, token, '', expires_in)
+                    SWIRL_AUTHENTICATORS_DISPATCH.get(authenticator)().set_session_data(request, token, '', expires_in)
                 else:
                     logger.debug(f'SpyglassAuthenticatorsMiddleware - call set session data NULL TOKEN')
-                    SWIRL_AUTHENTICATORS_DICT[authenticator]().set_session_data(request, '', '', 0)
+                    SWIRL_AUTHENTICATORS_DISPATCH.get(authenticator)().set_session_data(request, '', '', 0)
         else:
             logger.debug(f'SpyglassAuthenticatorsMiddleware - No action')
         return self.get_response(request)

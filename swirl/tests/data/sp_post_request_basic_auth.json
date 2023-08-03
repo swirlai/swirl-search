@@ -1,9 +1,9 @@
 {
-    "name": "Sample HTTP POST Endpoint",
-    "active": false,
-    "default": false,
+    "name": "TEST HTTP POST Endpoint",
+    "active": true,
+    "default": true,
     "connector": "RequestsPost",
-    "url": "https://xx.apis.it.h.edu/ats/person/v3/search",
+    "url": "https://xx.apis.it.place.edu/ats/person/v3/search",
     "query_template": "{url}?Query={query_string}",
     "query_processor": "",
     "post_query_template": {
@@ -16,6 +16,11 @@
           "names.name": "*{query_string}*"
         }
     },
+    "http_request_headers": {
+        "custom-header-1": "customer-header-1-value",
+        "custom-header-2": "customer-header-2-value",
+        "custom-header-3": "customer-header-3-value"
+    },
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
@@ -23,14 +28,15 @@
     "result_processor": "",
     "result_processors": [
         "MappingResultProcessor",
-	    "CosineRelevancyResultProcessor"
+        "CosineRelevancyResultProcessor"
     ],
     "response_mappings": "FOUND=count,RESULTS=results",
     "result_mappings": "titles=names[0].name,url=names[0].personNameKey,body='{names[0].name} ID#: {names[*].personNameKey}'",
     "results_per_query": 10,
-    "credentials": "X-Api-Key=<your-api-key>",
+    "credentials": "HTTPBasicAuth('leto@arakis.planet','gomjabar')",
     "eval_credentials": "",
     "tags": [
-        "People"
+        "Microsoft",
+        "Email"
     ]
 }
