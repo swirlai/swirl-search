@@ -66,7 +66,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
         for item in self.results:
             dict_score = {}
             if 'explain' in item:
-                self.warning("XXXXXX Copying explain!!!!")
+                logger.debug("Copying explain!!!!")
                 dict_score = item['explain']
                 item['dict_score'] = dict_score
                 dict_len = {}
@@ -111,11 +111,11 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                 item['hits'] = {}
 
             if 'explain' in item:
-                self.warning("Skipping item with explain already")
+                logger.debug("Skipping item with explain already")
                 continue
 
             if 'title' in dict_score:
-                self.warning("Found title in dict_score!")
+                logger.debug("Found title in dict_score!")
 
             dict_score['stems'] = ' '.join(parsed_query.query_stemmed_list)
             dict_len = {}
@@ -258,7 +258,6 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                                 if dict_score[field][key] == 0.0:
                                     qw_nlp_sim = qw_nlp.similarity(rw_nlp)
                                     if qw_nlp_sim:
-                                        # self.warning(f"compare: {qw_nlp} sim? {rw_nlp} = {qw_nlp_sim}")
                                         if qw_nlp_sim >= float(SWIRL_MIN_SIMILARITY):
                                             dict_score[field][key] = qw_nlp_sim
                                         else:
@@ -290,7 +289,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
             # end for field in RELEVANCY_CONFIG:
 
             if not dict_score:
-                self.warning("No dict_score!")
+                logger.debug("No dict_score!")
 
             if notted:
                 item['NOT'] = notted
@@ -299,9 +298,9 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                     item['dict_score'] = dict_score
                     item['dict_len'] = dict_len
                 else:
-                    self.warning("No dict_score in item!!!")
+                    logger.debug("No dict_score in item!!!")
                 if not 'dict_len' in item:
-                    self.warning("Missing dict_len!!")
+                    logger.debug("Missing dict_len!!")
 
         # end for result in results.json_results:
 
@@ -381,15 +380,15 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     dict_score = item['dict_score']
                     del item['dict_score']
                 else:
-                    self.warning("Missing dict_score!")
+                    logger.debug("Missing dict_score!")
                 if 'dict_len' in item:
                     logger.debug("Found dict_len")
                     dict_len = item['dict_len']
                     del item['dict_len']
                 else:
-                    self.warning("Missing dict_len!")
+                    logger.debug("Missing dict_len!")
                 if 'explain' in item:
-                    self.warning("Found explain")
+                    logger.debug("Found explain")
                     dict_score = item['explain']
                     del item['explain']
                 relevancy_model = ""
