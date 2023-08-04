@@ -59,6 +59,7 @@ urlpatterns = [
     path('login/', views.LoginView.as_view()),
     path('logout/', views.LogoutView.as_view()),
     path('oidc_authenticate/', views.OidcAuthView.as_view()),
+    path('microsoft/update_token', views.UpdateMicrosoftToken.as_view()),
 
 
     path('', include(router.urls)),
