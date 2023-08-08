@@ -447,10 +447,10 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.info(f"{request.user} search_qs {new_search.id}")
             res = run_search(new_search.id, Authenticator().get_session_data(request), request=request)
             if not res:
-                print(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                logger.info(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             if not Search.objects.filter(id=new_search.id).exists():
-                print('Search object creation failed!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                logger.info('Search object creation failed!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 return Response('Search object creation failed!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             # security review for 1.7 - OK, search id created
             search = Search.objects.get(id=new_search.id)
