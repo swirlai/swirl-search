@@ -37,6 +37,11 @@ class FlexibleChoiceField(models.CharField):
 
 class Authenticator(models.Model):
     name = models.CharField(max_length=100)
+
+class MicrosoftToken(models.Model):
+    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE, primary_key=True)
+    token = models.CharField(max_length=2048)
+
 class SearchProvider(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=200)
