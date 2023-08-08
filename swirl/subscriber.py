@@ -18,7 +18,7 @@ path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
 django.setup()
 
-from swirl.models import Search
+from swirl.models import Search, MicrosoftToken
 from swirl.search import search as run_search
 from datetime import datetime
 
@@ -56,10 +56,16 @@ def subscriber():
             search.save()
             continue
         # security check
+        session_data = dict()
+        try:
+            microsoft_token_obj = MicrosoftToken.objects.get(owner=owner)
+            session_data['microsoft_access_token'] = microsoft_token_obj.token
+        except MicrosoftToken.DoesNotExist:
+            session_data = dict()
         search.status = 'UPDATE_SEARCH'
         search.save()
         # to do: better than below and renaming upon import
-        success = run_search(search.id)
+        success = run_search(search.id, session_data)
         if success:
             logger.debug(f"{module_name}: subscriber: updated {search.id}")
         else:

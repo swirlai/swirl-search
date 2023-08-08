@@ -31,6 +31,7 @@ class Microsoft(Authenticator):
                 '$select': 'displayName,mail,userPrincipalName'
             })
         return user.json()
+        
 
     def store_user(self, request, user, result):
         try:

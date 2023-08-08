@@ -35,7 +35,7 @@ import hmac
 
 from swirl.models import *
 from swirl.serializers import *
-from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel
+from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, MicrosoftToken
 from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTrasnformNoCredentialsSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
@@ -237,6 +237,24 @@ class OidcAuthView(APIView):
                     return Response({ 'user': user.username, 'token': token.key })
                 return HttpResponseForbidden()
             return HttpResponseForbidden()
+        return HttpResponseForbidden()
+    
+class UpdateMicrosoftToken(APIView):
+    def post(self, request):
+        auth_header = request.headers['Authorization']
+        auth_token = auth_header.split(' ')[1]
+        token_obj = Token.objects.get(key=auth_token)
+        request.user = token_obj.user
+        token = request.headers['Microsoft-Authorization']
+        if token:
+            try:
+                microsoft_token_object, created = MicrosoftToken.objects.get_or_create(owner=request.user, defaults={'token': token})
+                if not created:
+                    microsoft_token_object.token = token
+                    microsoft_token_object.save()
+                return Response({ 'user': request.user.username, 'token': token })
+            except User.DoesNotExist:
+                return HttpResponseForbidden()
         return HttpResponseForbidden()
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
