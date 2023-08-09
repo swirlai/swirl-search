@@ -10,7 +10,8 @@
     ],
     "query_mappings": "PROMPT='Tell me about: {query_to_provider}'",
     "result_processors": [
-        "GenericResultProcessor"
+        "GenericResultProcessor",
+        "CosineRelevancyResultProcessor"
     ],
     "response_mappings": "",
     "result_mappings": "BLOCK=ai_summary",
