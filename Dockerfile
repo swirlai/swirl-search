@@ -14,11 +14,11 @@ RUN apt-file update
 RUN apt-get install -y python3-dev build-essential
 RUN apt-get install -y procps
 
-RUN pip install --upgrade pip
-RUN pip install --upgrade grpcio
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir --upgrade grpcio
 
 ADD requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # install redis
 RUN apt-get install -y redis-server
