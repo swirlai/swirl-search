@@ -76,18 +76,20 @@ def subscriber_task():
 
 @shared_task(name='update_microsoft_token')
 def update_microsoft_token_task(headers):
-    auth_header = headers['Authorization']
-    auth_token = auth_header.split(' ')[1]
-    token_obj = Token.objects.get(key=auth_token)
-    token = headers['Microsoft-Authorization']
-    if token:
-        try:
-            logger.debug(f"{module_name}: update_microsoft_token_task: User - {token_obj.user.username}")
-            microsoft_token_object, created = MicrosoftToken.objects.get_or_create(owner=token_obj.user, defaults={'token': token})
-            if not created:
-                microsoft_token_object.token = token
-                microsoft_token_object.save()
-            return { 'user': token_obj.user.username, 'status': 'success' }
-        except User.DoesNotExist:
-            return {}
+    if headers['Authorization']:
+        auth_header = headers['Authorization']
+        auth_token = auth_header.split(' ')[1]
+        token_obj = Token.objects.get(key=auth_token)
+        token = headers['Microsoft-Authorization']
+        if token:
+            try:
+                logger.debug(f"{module_name}: update_microsoft_token_task: User - {token_obj.user.username}")
+                microsoft_token_object, created = MicrosoftToken.objects.get_or_create(owner=token_obj.user, defaults={'token': token})
+                if not created:
+                    microsoft_token_object.token = token
+                    microsoft_token_object.save()
+                return { 'user': token_obj.user.username, 'status': 'success' }
+            except User.DoesNotExist:
+                return {}
+        return {}
     return {}
