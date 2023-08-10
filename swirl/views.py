@@ -42,7 +42,7 @@ from swirl.authenticators import *
 
 module_name = 'views.py'
 
-from swirl.tasks import search_task
+from swirl.tasks import update_microsoft_token_task
 from swirl.search import search as run_search
 
 SWIRL_EXPLAIN = getattr(settings, 'SWIRL_EXPLAIN', True)
@@ -239,23 +239,21 @@ class OidcAuthView(APIView):
             return HttpResponseForbidden()
         return HttpResponseForbidden()
     
+
+    
 class UpdateMicrosoftToken(APIView):
     def post(self, request):
-        auth_header = request.headers['Authorization']
-        auth_token = auth_header.split(' ')[1]
-        token_obj = Token.objects.get(key=auth_token)
-        request.user = token_obj.user
-        token = request.headers['Microsoft-Authorization']
-        if token:
-            try:
-                microsoft_token_object, created = MicrosoftToken.objects.get_or_create(owner=request.user, defaults={'token': token})
-                if not created:
-                    microsoft_token_object.token = token
-                    microsoft_token_object.save()
-                return Response({ 'user': request.user.username, 'token': token })
-            except User.DoesNotExist:
-                return HttpResponseForbidden()
-        return HttpResponseForbidden()
+        try:
+            headers = {
+                'Authorization': request.headers['Authorization'],
+                'Microsoft-Authorization': request.headers['Microsoft-Authorization']
+            }
+            result = update_microsoft_token_task.delay(headers).get()
+            if 'status' in result and result['status'] == 'success':
+                return Response(result)
+            return HttpResponseForbidden()
+        except:
+            return HttpResponseForbidden()
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """
@@ -463,6 +461,11 @@ class SearchViewSet(viewsets.ModelViewSet):
             new_search.save()
             # log info
             logger.info(f"{request.user} search_qs {new_search.id}")
+            headers = {
+                'Authorization': request.headers['Authorization'],
+                'Microsoft-Authorization': request.headers['Microsoft-Authorization']
+            }
+            update_microsoft_token_task.delay(headers)
             res = run_search(new_search.id, Authenticator().get_session_data(request), request=request)
             if not res:
                 logger.info(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)

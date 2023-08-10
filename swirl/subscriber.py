@@ -8,6 +8,7 @@ from os import environ
 import logging as logger
 logger.basicConfig(level=logger.INFO)
 import time
+import jwt
 
 import django
 from django.utils import timezone
@@ -60,6 +61,7 @@ def subscriber():
         try:
             microsoft_token_obj = MicrosoftToken.objects.get(owner=owner)
             session_data['microsoft_access_token'] = microsoft_token_obj.token
+            session_data['microsoft_access_token_expiration_time'] = int(jwt.decode(microsoft_token_obj.token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
         except MicrosoftToken.DoesNotExist:
             session_data = dict()
         search.status = 'UPDATE_SEARCH'
