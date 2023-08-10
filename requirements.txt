@@ -23,5 +23,4 @@ openai
 msal
 PyJWT
 pyahocorasick
-Redis
 redis
