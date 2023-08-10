@@ -18,6 +18,8 @@
     "results_per_query": 10,
     "credentials": "bearer=your-miro-api-token",
     "tags": [
-        "Drawings"
+        "Drawings",
+        "Miro",
+        "Internal"
     ]
 }

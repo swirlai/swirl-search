@@ -23,7 +23,8 @@
         "eval_credentials": "",
         "tags": [
             "Microsoft",
-            "Email"
+            "Email",
+            "Internal"
         ]
     },
     {
@@ -51,7 +52,8 @@
         "eval_credentials": "",
         "tags": [
             "Microsoft",
-            "Calendar"
+            "Calendar",
+            "Internal"
         ]
     },
     {
@@ -76,7 +78,8 @@
         "eval_credentials": "",
         "tags": [
             "Microsoft",
-            "OneDrive"
+            "OneDrive",
+            "Internal"
         ]
     },
     {
@@ -101,7 +104,8 @@
         "eval_credentials": "",
         "tags": [
             "Microsoft",
-            "SharePoint"
+            "SharePoint",
+            "Internal"
         ]
     },
     {
@@ -126,7 +130,8 @@
         "eval_credentials": "",
         "tags": [
             "Microsoft",
-            "Teams"
+            "Teams",
+            "Internal"
         ]
     }    
 ]
