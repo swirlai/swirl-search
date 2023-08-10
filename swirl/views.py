@@ -463,7 +463,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.info(f"{request.user} search_qs {new_search.id}")
             headers = {
                 'Authorization': request.headers['Authorization'],
-                'Microsoft-Authorization': request.headers['Microsoft-Authorization']
+                'Microsoft-Authorization': request.headers.get('Microsoft-Authorization', '')
             }
             update_microsoft_token_task.delay(headers)
             res = run_search(new_search.id, Authenticator().get_session_data(request), request=request)
