@@ -17,6 +17,7 @@
     "credentials": "'admin','password'",
     "tags": [
         "Enron",
-        "OpenSearch"
+        "OpenSearch",
+        "Internal"
     ]
 }

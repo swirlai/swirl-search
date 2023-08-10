@@ -21,8 +21,8 @@
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
             "Jira",
-            "Issues",
-            "Atlassian"
+            "Atlassian",
+            "Internal"
         ]
     },
     {
@@ -47,8 +47,8 @@
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
             "Confluence",
-            "Wiki",
-            "Atlassian"
+            "Atlassian",
+            "Internal"
         ]
     }
 ]

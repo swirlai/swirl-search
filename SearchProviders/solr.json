@@ -17,7 +17,8 @@
     "result_mappings": "title=name,body=features,response",
     "credentials": "",
     "tags": [
-        "Products",
-        "Solr"
+        "TechProducts",
+        "Solr",
+        "Internal"
     ]
 }

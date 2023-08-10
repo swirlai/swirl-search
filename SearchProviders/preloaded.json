@@ -142,7 +142,9 @@
         "results_per_query": 10,
         "credentials": "bearer=your-Miro-api-token",
         "tags": [
-            "Drawings"
+            "Drawings",
+            "Miro",
+            "Internal"
         ]
     },
     {
@@ -166,7 +168,8 @@
         "credentials": "/path/to/bigquery/token.json",
         "tags": [
             "Company",
-            "BigQuery"
+            "BigQuery",
+            "Internal"
         ]
     },
     {
@@ -190,7 +193,8 @@
         "credentials": "",
         "tags": [
             "Company",
-            "Sqlite3"
+            "SQLite3",
+            "Internal"
         ]
     },
     {
@@ -213,9 +217,9 @@
         "results_per_query": 10,
         "credentials": "HTTPBasicAuth('solr-username','solr-password')",
         "tags": [
-            "Products",
             "Solr",
-            "TechProducts"
+            "TechProducts",
+            "Internal"
         ]
     },
     {
@@ -239,7 +243,8 @@
         "credentials": "'admin','password'",
         "tags": [
             "Enron",
-            "OpenSearch"
+            "OpenSearch",
+            "Internal"
         ]
     },
     {
@@ -263,7 +268,8 @@
         "credentials": "(\"elastic\", \"elastic-password\")",
         "tags": [
             "Enron",
-            "Elastic"
+            "Elastic",
+            "Internal"
         ]
     },
     {
@@ -290,8 +296,8 @@
         "credentials": "bearer=your-youtrack-permanent-token",
         "tags": [
             "Articles",
-            "Wiki",
-            "YouTrack"
+            "YouTrack",
+            "Internal"
         ]
     },
     {
@@ -317,7 +323,8 @@
         "credentials": "bearer=your-youtrack-permanent-token",
         "tags": [
             "Issues",
-            "YouTrack"
+            "YouTrack",
+            "Internal"
         ]
     },
     {
@@ -342,8 +349,8 @@
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
             "Confluence",
-            "Wiki",
-            "Atlassian"
+            "Atlassian",
+            "Internal"
         ]
     },
     {
@@ -368,8 +375,8 @@
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
             "Jira",
-            "Issues",
-            "Atlassian"
+            "Atlassian",
+            "Internal"
         ]
     },
     {
@@ -396,7 +403,8 @@
         "eval_credentials": "",
         "tags": [
             "Microsoft",
-            "Email"
+            "Email",
+            "Internal"
         ]
     },
     {
@@ -424,7 +432,8 @@
         "eval_credentials": "",
         "tags": [
             "Microsoft",
-            "Calendar"
+            "Calendar",
+            "Internal"
         ]
     },
     {
@@ -449,7 +458,8 @@
         "eval_credentials": "",
         "tags": [
             "Microsoft",
-            "OneDrive"
+            "OneDrive",
+            "Internal"
         ]
     },
     {
@@ -474,7 +484,8 @@
         "eval_credentials": "",
         "tags": [
             "Microsoft",
-            "SharePoint"
+            "SharePoint",
+            "Internal"
         ]
     },
     {
@@ -499,7 +510,8 @@
         "eval_credentials": "",
         "tags": [
             "Microsoft",
-            "Teams"
+            "Teams",
+            "Internal"
         ]
     },
     {
@@ -529,7 +541,8 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
-            "Code"
+            "Code",
+            "Internal"
         ]
     },
     {
@@ -559,7 +572,8 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
-            "Issues"
+            "Issues",
+            "Internal"
         ]
     },
     {
@@ -589,7 +603,8 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
-            "PullRequests"
+            "PullRequests",
+            "Internal"
         ]
     },
     {
@@ -619,7 +634,8 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
-            "Commits"
+            "Commits",
+            "Internal"
         ]
     },
     {
@@ -652,7 +668,8 @@
         "eval_credentials": "",
         "tags": [
             "HubSpot",
-            "Deal"
+            "Deal",
+            "Internal"
         ]
     },
     {
@@ -685,7 +702,8 @@
         "eval_credentials": "",
         "tags": [
             "HubSpot",
-            "Company"
+            "Company",
+            "Internal"
         ]
     },
     {
@@ -718,7 +736,8 @@
         "eval_credentials": "",
         "tags": [
             "HubSpot",
-            "Contact"
+            "Contact",
+            "Internal"
         ]
     },
     {
@@ -746,7 +765,8 @@
         "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "eval_credentials": "",
         "tags": [
-            "LinkedIn"
+            "LinkedIn",
+            "People"
         ]
     }
 ]

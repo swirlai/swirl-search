@@ -22,7 +22,8 @@
         "credentials": "bearer=your-youtrack-permanent-token",
         "tags": [
             "Issues",
-            "YouTrack"
+            "YouTrack",
+            "Internal"
         ]
     },
     {
@@ -48,8 +49,8 @@
         "credentials": "bearer=your-youtrack-permanent-token",
         "tags": [
             "Articles",
-            "Wiki",
-            "YouTrack"
+            "YouTrack",
+            "Internal"
         ]
     }
 ]

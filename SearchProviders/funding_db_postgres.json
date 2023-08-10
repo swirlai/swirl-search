@@ -14,6 +14,8 @@
     ],
     "result_mappings": "title='{company} series {round}',body='{city} {fundeddate}: {company} raised usd ${raisedamt}\nThe company is headquartered in {city} and employs {numemps}',date_published=fundeddate,NO_PAYLOAD",
     "tags": [
-        "Company"
+        "Company",
+        "PostgreSQL",
+        "Internal"
     ]
 }

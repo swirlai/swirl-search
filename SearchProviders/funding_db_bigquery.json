@@ -16,6 +16,7 @@
     "credentials": "/path/to/bigquery/token.json",
     "tags": [
         "Company",
-        "BigQuery"
+        "BigQuery",
+        "Internal"
     ]
 }

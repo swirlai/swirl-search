@@ -15,7 +15,8 @@
     "result_mappings": "title=name,body=features,response",
     "credentials": "HTTPBasicAuth('solr-username','solr-password')",
     "tags": [
-        "Products",
-        "Solr"
+        "Solr",
+        "TechProducts",
+        "Internal"
     ]
 }

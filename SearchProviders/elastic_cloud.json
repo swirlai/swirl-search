@@ -15,6 +15,7 @@
     "credentials": "(\"elastic\", \"elastic-password\")",
     "tags": [
         "Enron",
-        "Elastic"
+        "Elastic",
+        "Internal"
     ]
 }
