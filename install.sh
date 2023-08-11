@@ -43,20 +43,32 @@ if [ "x$found_model" = "x$lang_model_name_dash" ]; then
     split(min, arrMin, ".");
     split(max, arrMax, ".");
     # Compare major versions
+    # model_sw_version:>=3.5.0,<3.6.0 spacy_sw_version:3.6.1 min_version:3.5.0 max_version:3.6.0
     if (int(arrVer[1]) < int(arrMin[1]) || int(arrVer[1]) > int(arrMax[1])) {
 	print "false_M";
 	exit;
     }
     # If major version is equal to min major version, but minor version is out of range
     if (int(arrVer[1]) == int(arrMin[1]) && int(arrVer[2]) < int(arrMin[2])) {
-	print "false_N";
+	print "false_Ni";
 	exit;
     }
     # If minor version is equal to min minor version, but patch version is out of range
     if (int(arrVer[2]) == int(arrMin[2]) && int(arrVer[3]) < int(arrMin[3])) {
-	print "false_P ";
+	print "false_Pi";
 	exit;
-    }    
+    }
+    # If major version is equal to max major version, but minor version is out of range
+    if (int(arrVer[1]) == int(arrMax[1]) && int(arrVer[2]) > int(arrMax[2])) {
+	print "false_Nx;
+	exit;
+    }
+    # If minor version is equal to max minor version, but patch version is out of range
+    if (int(arrVer[2]) == int(arrMax[2]) && int(arrVer[3]) > int(arrMax[3])) {
+	print "false_Px";
+	exit;
+    }
+
     # If everything is okay
     print "true";
 }')
