@@ -116,6 +116,17 @@ class Microsoft(Authenticator):
         if not created:
             oauth_token_object.token = token
             oauth_token_object.refresh_token = refresh_token
+            oauth_token_object.save()
+
+    def update_access_from_refresh_token(self,user, refresh_token):
+        logger.info(f'DNDEBUG acquire_token_by_refresh')
+        app = self._get_auth_app()
+        result = app.acquire_token_by_refresh_token(refresh_token=refresh_token, scopes=scopes)
+        if 'access_token' in result:
+            logger.info(f'DNDEBUG in result : access_token {result["access_token"]} refresh_token : {result["refresh_token"]}')
+            self.update_oauth_token_in_db(user, result['access_token'], result['refresh_token'])
+        else:
+            logger.info(f'DNDEBUG access token not present in result {result}')
 
     def update_token(self, request):
         logger.info('DNDEBUG update_token')

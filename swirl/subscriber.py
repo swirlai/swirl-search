@@ -20,6 +20,7 @@ environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from swirl.models import Search, OauthToken
+from swirl.authenticators.microsoft import Microsoft
 from swirl.search import search as run_search
 from datetime import datetime
 
@@ -62,7 +63,17 @@ def subscriber():
             microsoft_token_obj = OauthToken.objects.get(owner=owner, idp='microsoft')
             session_data['microsoft_access_token'] = microsoft_token_obj.token
             session_data['microsoft_access_token_expiration_time'] = int(jwt.decode(microsoft_token_obj.token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
+            ms_auth = Microsoft()
             logger.info(f'DNDEBUG : MS token microsoft_access_token_expiration_time : {session_data["microsoft_access_token_expiration_time"]}')
+            if not ms_auth.is_authenticated(session_data=session_data):
+                logger.info(f'DNDEBUG : MS token expired, refreshing')
+                ms_auth.update_access_from_refresh_token(search.owner,microsoft_token_obj.refresh_token)
+                microsoft_token_obj = OauthToken.objects.get(owner=owner, idp='microsoft')
+                microsoft_token_obj = OauthToken.objects.get(owner=owner, idp='microsoft')
+                session_data['microsoft_access_token'] = microsoft_token_obj.token
+                session_data['microsoft_access_token_expiration_time'] = int(jwt.decode(microsoft_token_obj.token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
+            else:
+                logger.info(f'DNDEBUG : MS token current')
         except OauthToken.DoesNotExist:
             logger.info(f'DNDEBUG : MS token not found owner : {owner}')
             session_data = dict()
