@@ -16,10 +16,10 @@ from django.conf import settings
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
-from swirl.models import Search, MicrosoftToken
+from swirl.models import Search, OauthToken
 from swirl.search import search as run_search
 from datetime import datetime
 
@@ -42,7 +42,7 @@ def subscriber():
     Re-run searches that have subscribe = True, setting date:sort
     Mark new results unretrieved
     '''
-    
+
     searches = Search.objects.filter(subscribe=True)
     for search in searches:
         logger.debug(f"{module_name}: subscriber: {search.id}")
@@ -59,10 +59,12 @@ def subscriber():
         # security check
         session_data = dict()
         try:
-            microsoft_token_obj = MicrosoftToken.objects.get(owner=owner)
+            microsoft_token_obj = OauthToken.objects.get(owner=owner, idp='microsoft')
             session_data['microsoft_access_token'] = microsoft_token_obj.token
             session_data['microsoft_access_token_expiration_time'] = int(jwt.decode(microsoft_token_obj.token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
-        except MicrosoftToken.DoesNotExist:
+            logger.info(f'DNDEBUG : MS token microsoft_access_token_expiration_time : {session_data["microsoft_access_token_expiration_time"]}')
+        except OauthToken.DoesNotExist:
+            logger.info(f'DNDEBUG : MS token not found owner : {owner}')
             session_data = dict()
         search.status = 'UPDATE_SEARCH'
         search.save()

@@ -6,6 +6,8 @@ from swirl.authenticators.authenticator import Authenticator
 from django.conf import settings
 from django.shortcuts import redirect
 from celery.utils.log import get_task_logger
+
+from swirl.models import OauthToken
 logger = get_task_logger(__name__)
 
 
@@ -31,7 +33,7 @@ class Microsoft(Authenticator):
                 '$select': 'displayName,mail,userPrincipalName'
             })
         return user.json()
-        
+
 
     def store_user(self, request, user, result):
         try:
@@ -63,11 +65,13 @@ class Microsoft(Authenticator):
 
     def save_cache(self, request, cache):
         # If cache has changed, persist back to session
+        logger.info('DNDEBUG save_cache')
         if cache.has_state_changed:
             request.session['token_cache'] = cache.serialize()
             request.session.save()
 
     def get_token_from_code(self, request):
+        logger.info('DNDEBUG get_toke_from_code')
         cache = self.load_cache(request)
         auth_app = self.get_auth_app(request)
 
@@ -79,6 +83,7 @@ class Microsoft(Authenticator):
         return result
 
     def login(self, request):
+        logger.info(f'DNDEBUG in login')
         if not request.user.is_authenticated:
             return redirect('/swirl/api-auth/login?next=/swirl/authenticators.html')
         app = self._get_auth_app()
@@ -94,6 +99,7 @@ class Microsoft(Authenticator):
             return HttpResponseRedirect(result['auth_uri'])
 
     def callback(self, request):
+        logger.info('DNDEBUG callback')
         result = self.get_token_from_code(request)
         tok = result.get('access_token', None)
         if not tok:
@@ -102,17 +108,27 @@ class Microsoft(Authenticator):
 
         user = self.get_user(tok)
         self.store_user(request, user, result)
+        self.update_oauth_token_in_db(user, result['access_token'], result['refresh_token'])
         return HttpResponseRedirect('/swirl/')
 
+    def update_oauth_token_in_db(self, owner, token, refresh_token):
+        oauth_token_object, created = OauthToken.objects.get_or_create(owner=owner, defaults={'token': token, 'refresh_token': refresh_token})
+        if not created:
+            oauth_token_object.token = token
+            oauth_token_object.refresh_token = refresh_token
 
     def update_token(self, request):
+        logger.info('DNDEBUG update_token')
         app = self.get_auth_app(request)
         session_data = self.get_session_data(request)
         if session_data:
+            logger.info(f'DNDEBUG session_data:{session_data}')
             result = app.acquire_token_by_refresh_token(session_data[self.refresh_token_field], scopes=scopes)
             if 'access_token' in result:
+                logger.info(f'DNDEBUG in result : access_token {result["access_token"]} refresh_token : {result["refresh_token"]}')
                 now = datetime.now()
                 self.set_session_data(request, result['access_token'], result['refresh_token'], int(now.timestamp()) + result['expires_in'])
                 request.session.save()
+                self.update_oauth_token_in_db(request.user, result['access_token'], result['refresh_token'])
                 return True
         return self.login(request)

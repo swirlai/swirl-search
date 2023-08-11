@@ -35,7 +35,7 @@ import hmac
 
 from swirl.models import *
 from swirl.serializers import *
-from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, MicrosoftToken
+from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, OauthToken
 from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTrasnformNoCredentialsSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
@@ -174,6 +174,7 @@ class AuthenticatorViewSet(viewsets.ModelViewSet):
         return return_authenticators_list(request)
 
 def authenticators(request):
+    logger.info('DNDEBUG : authenticators...')
     if request.method == 'POST':
         authenticator = request.POST.get('authenticator_name')
 

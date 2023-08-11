@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SearchProvider, Search, Result, QueryTransform, MicrosoftToken
+from .models import SearchProvider, Search, Result, QueryTransform, OauthToken
 
 admin.site.site_header = 'Swirl Metasearch' # title
 admin.site.index_title = 'Administration Console' # subtitle
@@ -10,4 +10,4 @@ admin.site.register(SearchProvider)
 admin.site.register(Search)
 admin.site.register(Result)
 admin.site.register(QueryTransform)
-admin.site.register(MicrosoftToken)
+admin.site.register(OauthToken)
