@@ -36,7 +36,7 @@ if [ "x$found_model" = "x$lang_model_name_dash" ]; then
     spacy_sw_version=$(pip show spacy | grep '^Version' | awk '{print $2}')
     min_version=$(echo $model_sw_version | awk -F '[<,>,=]' '{print $3}')
     max_version=$(echo $model_sw_version | awk -F '[<,>]' '{print $4}')
-    echo $PROG : DNDEBUG model_sw_version:$model_sw_version spacy_sw_version:$spacy_sw_version min_version:$min_version max_version:$max_version
+    echo $PROG : model_sw_version:$model_sw_version spacy_sw_version:$spacy_sw_version min_version:$min_version max_version:$max_version
 
     is_in_range=$(awk -v ver="$spacy_sw_version" -v min="$min_version" -v max="$max_version" 'BEGIN {
     split(ver, arrVer, ".");
@@ -85,7 +85,7 @@ if [ "x$found_model" = "x$lang_model_name_dash" ]; then
 	do_download=0
     fi
 
-    echo $PROG : DNDEBUG is_in_range:$is_in_range pip_out_of_sync:$pip_out_of_sync do_download:$do_download
+    echo $PROG : is_in_range:$is_in_range pip_out_of_sync:$pip_out_of_sync do_download:$do_download
     
     if [ $do_download -eq 0 ]; then
         echo "$PROG ${lang_model_name} is outdated. Downloading spacy ${lang_model_name}..."
