@@ -238,9 +238,9 @@ class OidcAuthView(APIView):
                 return HttpResponseForbidden()
             return HttpResponseForbidden()
         return HttpResponseForbidden()
-    
 
-    
+
+
 class UpdateMicrosoftToken(APIView):
     def post(self, request):
         try:
@@ -248,10 +248,10 @@ class UpdateMicrosoftToken(APIView):
                 'Authorization': request.headers['Authorization'],
                 'Microsoft-Authorization': request.headers['Microsoft-Authorization']
             }
-            result = update_microsoft_token_task.delay(headers).get()
-            if 'status' in result and result['status'] == 'success':
-                return Response(result)
-            return HttpResponseForbidden()
+            # just return succcess,don't call the task
+            # result = update_microsoft_token_task.delay(headers).get()
+            result = { 'user': request.user.username, 'status': 'success' }
+            return Response(result)
         except:
             return HttpResponseForbidden()
 
