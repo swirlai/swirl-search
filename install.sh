@@ -60,7 +60,7 @@ if [ "x$found_model" = "x$lang_model_name_dash" ]; then
     }
     # If major version is equal to max major version, but minor version is out of range
     if (int(arrVer[1]) == int(arrMax[1]) && int(arrVer[2]) > int(arrMax[2])) {
-	print "false_Nx;
+	print "false_Nx";
 	exit;
     }
     # If minor version is equal to max minor version, but patch version is out of range
