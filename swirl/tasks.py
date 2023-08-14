@@ -71,7 +71,6 @@ def expirer_task():
 def subscriber_task():
     from swirl.subscriber import subscriber
 
-    logger.debug(f"{module_name}: subscriber()")
     return subscriber()
 
 @shared_task(name='update_microsoft_token')

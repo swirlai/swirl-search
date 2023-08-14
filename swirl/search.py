@@ -30,39 +30,14 @@ from swirl.perfomance_logger import SwirlQueryRequestLogger
 
 module_name = 'search.py'
 
-def search(id, session=None, request=None):
-
-    '''
-    Execute the search task workflow
-    '''
-
-    update = False
-    start_time = time.time()
-
-    try:
-        search = Search.objects.get(id=id)
-    except ObjectDoesNotExist as err:
-        logger.error(f'{module_name}_{id}: ObjectDoesNotExist: {err}')
-        return False
-    if not search.status.upper() in ['NEW_SEARCH', 'UPDATE_SEARCH']:
-        logger.debug(f"{module_name}_{search.id}: unexpected status {search.status}")
-        return False
-    if search.status.upper() == 'UPDATE_SEARCH':
-        logger.debug(f"{module_name}: {search.id}.status == UPDATE_SEARCH")
-        update = True
-        search.sort = 'date'
-
-    search.status = 'PRE_PROCESSING'
-    logger.debug(f"{module_name}: {search.status}")
-    search.save()
-    # check for provider specification
-
-    # check for blank query
-    if not search.query_string:
-        search.status = 'ERR_NO_QUERY_STRING'
-        search.save()
-        return False
-
+def get_query_selectd_provder_list(search):
+    """
+    Get the list of providers from the query, taking
+    into account
+    - Whether one was specified w/ the query
+    - What sources are currently active
+    - Tags on the query and the provider
+    """
     # check for starting tag
     start_tag = None
     if ':' in search.query_string.strip().split()[0]:
@@ -76,13 +51,6 @@ def search(id, session=None, request=None):
             tags_in_query_list.append(tag[:-1])
         else:
             tags_in_query_list.append(tag[:tag.find(':')])
-
-    user = User.objects.get(id=search.owner.id)
-    if not user.has_perm('swirl.view_searchprovider'):
-        logger.debug(f"User {user} needs permission view_searchprovider")
-        search.status = 'ERR_NEED_PERMISSION'
-        search.save()
-        return False
 
     providers = SearchProvider.objects.filter(active=True, owner=search.owner) | SearchProvider.objects.filter(active=True, shared=True)
     selected_provider_list = []
@@ -118,6 +86,52 @@ def search(id, session=None, request=None):
     else:
         # no provider list
         selected_provider_list = select_providers(providers=providers, start_tag=start_tag, tags_in_query_list=tags_in_query_list)
+
+    return selected_provider_list
+
+
+def search(id, session=None, request=None):
+
+    '''
+    Execute the search task workflow
+    '''
+
+    update = False
+    start_time = time.time()
+
+    try:
+        search = Search.objects.get(id=id)
+    except ObjectDoesNotExist as err:
+        logger.error(f'{module_name}_{id}: ObjectDoesNotExist: {err}')
+        return False
+    if not search.status.upper() in ['NEW_SEARCH', 'UPDATE_SEARCH']:
+        logger.debug(f"{module_name}_{search.id}: unexpected status {search.status}")
+        return False
+    if search.status.upper() == 'UPDATE_SEARCH':
+        logger.debug(f"{module_name}: {search.id}.status == UPDATE_SEARCH")
+        update = True
+        search.sort = 'date'
+
+    search.status = 'PRE_PROCESSING'
+    logger.debug(f"{module_name}: {search.status}")
+    search.save()
+    # check for provider specification
+
+    # check for blank query
+    if not search.query_string:
+        search.status = 'ERR_NO_QUERY_STRING'
+        search.save()
+        return False
+
+    # check for starting tag
+    selected_provider_list = get_query_selectd_provder_list(search)
+
+    user = User.objects.get(id=search.owner.id)
+    if not user.has_perm('swirl.view_searchprovider'):
+        logger.debug(f"User {user} needs permission view_searchprovider")
+        search.status = 'ERR_NEED_PERMISSION'
+        search.save()
+        return False
 
     providers = selected_provider_list
 

@@ -20,9 +20,10 @@ environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from swirl.models import Search, OauthToken
-from swirl.authenticators.microsoft import Microsoft
-from swirl.search import search as run_search
+from swirl.authenticators import *
+from swirl.search import search as run_search, get_query_selectd_provder_list
 from datetime import datetime
+
 
 module_name = 'subscriber.py'
 
@@ -36,15 +37,76 @@ SWIRL_SUBSCRIBE_WAIT = getattr(settings, 'SWIRL_SUBSCRIBE_WAIT', 20)
 
 ##################################################
 
-def subscriber():
+def _get_oauth_idp_for_providers(search):
+    """
+    Return a list of the IDPs for the providers in the search
+    """
+    logger.debug(f"{module_name}: _get_oauth_idp_for_providers(search): {search.id}")
+    ret = list()
 
+    if not search:
+        logger.debug(f"{module_name}: _get_oauth_idp_for_providers(search): no search")
+        return ret
+    selected_provider_list = get_query_selectd_provder_list(search=search)
+    for provider in selected_provider_list:
+        if provider.authenticator:
+            ret.append(provider.authenticator)
+        else:
+            logger.debug(f"{module_name}: _get_oauth_idp_for_providers(search): provider : {provider.name} no authenticatr")
+
+    return list(set(ret)) # dedup the list before return
+
+def _get_session_for_oauth_providers(search, owner, session_data):
+    """
+    update session headers with current token
+    """
+    logger.debug(f"{module_name}: _get_session_for_oauth_providers {search.id}")
+    idps = _get_oauth_idp_for_providers(search)
+    logger.debug(f"{module_name}: idps {idps}")
+
+    # Code below loops through all idps, but see error above for information
+    for idp in idps:
+        try:
+            oauth_obj = SWIRL_AUTHENTICATORS_DISPATCH.get(idp)()
+            oauth_token_obj = OauthToken.objects.get(owner=owner, idp=idp)
+            session_data[oauth_obj.get_access_token_session_field()] = oauth_token_obj.token
+            session_data[oauth_obj.get_access_token_expiration_time_session_field()] = int(jwt.decode(oauth_token_obj.token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
+            if not oauth_obj.is_authenticated(session_data=session_data):
+                logger.debug(f'{idp} token expired, refreshing')
+                oauth_obj.update_access_from_refresh_token(search.owner,oauth_token_obj.refresh_token)
+                oauth_token_obj = OauthToken.objects.get(owner=owner, idp=idp)
+                session_data[oauth_obj.get_access_token_session_field()] = oauth_token_obj.token
+                session_data[oauth_obj.get_access_token_expiration_time_session_field()] = int(jwt.decode(oauth_token_obj.token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
+                logger.debug(f'{idp} token refreshed')
+                search.messages.append(f'{idp} token refreshed: {owner}')
+            else:
+                logger.debug(f'{idp} token current : {owner}')
+                search.messages.append(f'{idp} token current : {owner}')
+            logger.debug(f'token microsoft_access_token_expiration_time : {session_data[oauth_obj.get_access_token_expiration_time_session_field()]}')
+        except OauthToken.DoesNotExist:
+            logger.error(f'{idp} token not found owner : {owner}')
+            search.messages.append(f'{idp} token not found for owner : {owner}')
+        except KeyError as e:
+            logger.error(f"KeyError encountered: {e}")
+            search.messages.append(f"KeyError encountered: {e}")
+        except jwt.DecodeError:
+            logger.error(f"Failed to decode JWT token for {idp} and owner: {owner}")
+            search.messages.append(f"Failed to decode JWT token for {idp} and owner: {owner}")
+        except AttributeError:
+            logger.error(f"Unexpected attribute error for {idp} and owner: {owner}")
+            search.messages.append(f"Unexpected attribute error for {idp} and owner: {owner}")
+        except Exception as e:
+            logger.error(f"Unexpected error for {idp} and owner {owner}: {str(e)}")
+            search.messages.append(f"Unexpected error for {idp} and owner {owner}: {str(e)}")
+
+def subscriber():
     '''
     This is fired whenever a Celery Beat event arrives
     Re-run searches that have subscribe = True, setting date:sort
     Mark new results unretrieved
     '''
-
     searches = Search.objects.filter(subscribe=True)
+    logger.debug(f"START {module_name}")
     for search in searches:
         logger.debug(f"{module_name}: subscriber: {search.id}")
         owner = search.owner # User(search.owner)
@@ -57,26 +119,10 @@ def subscriber():
                 search.subscribe = False
             search.save()
             continue
-        # security check
+        # Update oauth tokens if necessary
         session_data = dict()
-        try:
-            microsoft_token_obj = OauthToken.objects.get(owner=owner, idp='microsoft')
-            session_data['microsoft_access_token'] = microsoft_token_obj.token
-            session_data['microsoft_access_token_expiration_time'] = int(jwt.decode(microsoft_token_obj.token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
-            ms_auth = Microsoft()
-            logger.info(f'DNDEBUG : MS token microsoft_access_token_expiration_time : {session_data["microsoft_access_token_expiration_time"]}')
-            if not ms_auth.is_authenticated(session_data=session_data):
-                logger.info(f'DNDEBUG : MS token expired, refreshing')
-                ms_auth.update_access_from_refresh_token(search.owner,microsoft_token_obj.refresh_token)
-                microsoft_token_obj = OauthToken.objects.get(owner=owner, idp='microsoft')
-                microsoft_token_obj = OauthToken.objects.get(owner=owner, idp='microsoft')
-                session_data['microsoft_access_token'] = microsoft_token_obj.token
-                session_data['microsoft_access_token_expiration_time'] = int(jwt.decode(microsoft_token_obj.token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
-            else:
-                logger.info(f'DNDEBUG : MS token current')
-        except OauthToken.DoesNotExist:
-            logger.info(f'DNDEBUG : MS token not found owner : {owner}')
-            session_data = dict()
+        logger.debug(f"{module_name}: update session: {search.id}")
+        _get_session_for_oauth_providers(search=search,owner=owner, session_data=session_data)
         search.status = 'UPDATE_SEARCH'
         search.save()
         # to do: better than below and renaming upon import
@@ -92,5 +138,5 @@ def subscriber():
         # end if
         # time.sleep(SWIRL_SUBSCRIBE_WAIT)
     # end for
-
+    logger.debug(f"END {module_name}")
     return True

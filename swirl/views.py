@@ -174,7 +174,6 @@ class AuthenticatorViewSet(viewsets.ModelViewSet):
         return return_authenticators_list(request)
 
 def authenticators(request):
-    logger.info('DNDEBUG : authenticators...')
     if request.method == 'POST':
         authenticator = request.POST.get('authenticator_name')
 
