@@ -91,34 +91,17 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 ## Notes
 
-:warning: The Docker version of Swirl does *not* retain any data or configuration when shut down!
+:warning: The Docker version of Swirl *does not* retain any data or configuration when shut down!
 
-:key: Swirl includes three (3) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
+:key: Swirl includes three (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
 
 :key: Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](4.-M365-Guide) or [contact us](mailto:hello@swirl.today).
 
+## Next Steps
 
-### Want to install Swirl locally? Check out our [Quick Start Guide](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start) for details!
+* Check out the details of our [latest release](https://github.com/swirlai/swirl-search/releases)!
 
-<br/>
-
-# Try Swirl Cloud
-
-### For information about Swirl as a managed service, please [contact us](mailto:hello@swirl.today)!
-
-<br/>
-
-# Download Swirl
-
-| Version                     | Date                        | Notes |
-| --------------------------- | --------------------------- | ----- |
-| [Swirl Metasearch 2.5.1](https://github.com/swirlai/swirl-search/releases/tag/v2.5.1) | 08-29-2023 | [Release 2.5.1](https://github.com/swirlai/swirl-search/releases) |
-
-<br/>
-
-# Documentation Wiki
-
-### [Home](https://github.com/swirlai/swirl-search/wiki) | [Quick Start](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start) | [User Guide](https://github.com/swirlai/swirl-search/wiki/2.-User-Guide) | [Admin Guide](https://github.com/swirlai/swirl-search/wiki/3.-Admin-Guide) | [M365 Guide](https://github.com/swirlai/swirl-search/wiki/4.-M365-Guide) | [Developer Guide](https://github.com/swirlai/swirl-search/wiki/5.-Developer-Guide) | [Developer Reference](https://github.com/swirlai/swirl-search/wiki/6.-Developer-Reference)
+* Head over to the [Quick Start Guide](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start) and install Swirl locally!
 
 <br/>
 
@@ -157,6 +140,29 @@ The most recent Search object will be displayed at the top. Click on the `result
 * [Optional search/result expiration service](https://github.com/swirlai/swirl-search/wiki/3.-Admin-Guide#search-expiration-service) to limit storage use
 
 * Easily extensible [Connector](https://github.com/swirlai/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/swirlai/swirl-search/tree/main/swirl/mixers) objects
+
+<br/>
+
+# Contributing to Swirl
+
+Have an idea for a new feature, bug fix, or enhancement to Swirl?  Great, we'd love to see it!  To ensure a proper code review, all contributions to the project must go through a GitHub pull request.
+
+We follow a rough approximation of the [Gitflow branching model](https://nvie.com/posts/a-successful-git-branching-model/). Changes for the next release go on the `develop` branch. When submitting PRs to Swirl, please create a branch off of `develop` with a name that describes the change you're working on. 
+
+For more general information about contributing to projects on Github, visit the [GitHub documentation](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) on this very subject.
+
+Thanks for your help!
+<br/>
+
+# Try Swirl Cloud
+
+For information about Swirl as a managed service, please [contact us](mailto:hello@swirl.today)!
+
+<br/>
+
+# Documentation
+
+[Home](https://github.com/swirlai/swirl-search/wiki) | [Quick Start](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start) | [User Guide](https://github.com/swirlai/swirl-search/wiki/2.-User-Guide) | [Admin Guide](https://github.com/swirlai/swirl-search/wiki/3.-Admin-Guide) | [M365 Guide](https://github.com/swirlai/swirl-search/wiki/4.-M365-Guide) | [Developer Guide](https://github.com/swirlai/swirl-search/wiki/5.-Developer-Guide) | [Developer Reference](https://github.com/swirlai/swirl-search/wiki/6.-Developer-Reference)
 
 <br/>
 
