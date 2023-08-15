@@ -53,8 +53,8 @@ class AdaptiveQueryProcessor(QueryProcessor):
                     else:
                         if not tag.lower() in dict_tags:
                             dict_tags[tag.lower()] = []
-                            dict_tags[tag.lower()].append(val)
-                            query_wot_list.append(val)
+                        dict_tags[tag.lower()].append(val)
+                        query_wot_list.append(val)
                 # end if
             # end if
 
