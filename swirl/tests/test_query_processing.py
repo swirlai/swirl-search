@@ -140,7 +140,7 @@ class SearchQueryProcessingTestCase(TestCase):
         return response.json()
 
     @mock.patch('swirl.connectors.requestsget.RequestsGet.send_request')
-    def test_pre_query_transform_processor(self, mock_send_request):
+    def test_tag_query_adaptive_queryprocessor(self, mock_send_request):
         # Call the viewset
         surl = reverse('search')
         response = self._api_client.get(surl, {'qs': 'notag:noship', 'providers':1})
