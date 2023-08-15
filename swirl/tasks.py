@@ -11,7 +11,7 @@ from celery import shared_task
 from celery.schedules import crontab
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
-from swirl.models import MicrosoftToken
+from swirl.models import OauthToken
 
 
 import django
@@ -71,7 +71,6 @@ def expirer_task():
 def subscriber_task():
     from swirl.subscriber import subscriber
 
-    logger.debug(f"{module_name}: subscriber()")
     return subscriber()
 
 @shared_task(name='update_microsoft_token')
@@ -84,7 +83,7 @@ def update_microsoft_token_task(headers):
         if token:
             try:
                 logger.debug(f"{module_name}: update_microsoft_token_task: User - {token_obj.user.username}")
-                microsoft_token_object, created = MicrosoftToken.objects.get_or_create(owner=token_obj.user, defaults={'token': token})
+                microsoft_token_object, created = OauthToken.objects.get_or_create(owner=token_obj.user, defaults={'token': token})
                 if not created:
                     microsoft_token_object.token = token
                     microsoft_token_object.save()
