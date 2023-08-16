@@ -22,7 +22,11 @@ jobs:
     - name: Update apt
       run: sudo apt -o Acquire::Retries=3 update
     - name: upgrade Ubuntu to latest patches
-      run: sudo apt upgrade -y      
+      run: sudo apt upgrade -y
+    - name: stop update-notifier which restarts datetime
+      run: sudo systemctl stop update-notifier-download.timer    
+    - name: disable update-notifier which restarts datetime
+      run: sudo systemctl disable update-notifier-download.timer
     - name: Run Install redist-server
       run: sudo apt install -y redis-server
     - name: stop system redis
