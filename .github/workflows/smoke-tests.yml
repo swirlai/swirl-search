@@ -22,6 +22,8 @@ jobs:
       run: ./install.sh
     - name: Update apt
       run: sudo apt -o Acquire::Retries=3 update
+    - name: stop update-notifier
+      run: sudo systemctl stop update-notifier-download.timer
     - name: disable update-notifier which restarts datetime
       run: sudo systemctl disable update-notifier-download.timer
     - name: Run Install redis-server
