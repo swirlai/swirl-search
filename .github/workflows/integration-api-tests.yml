@@ -4,7 +4,7 @@ on:
   push:
     # only trigger on branches, not on tags
     branches: 'develop'
-    workflow_dispatch:
+  workflow_dispatch:
 jobs:
 
   build:
