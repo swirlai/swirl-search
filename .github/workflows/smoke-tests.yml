@@ -36,6 +36,9 @@ jobs:
       run: free
     - name: Run Smoke tests
       run: docker run --net=host -t swirlai/swirl-search:test-smoke sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
+    - name: memtest-after-fail
+      if: always()
+      run: free
     - name: Upload log files
       if: always()
       uses: actions/upload-artifact@v2
