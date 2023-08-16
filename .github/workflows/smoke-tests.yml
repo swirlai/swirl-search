@@ -31,6 +31,7 @@ jobs:
     - name: Run Smoke tests
       run: docker run --net=host -t swirlai/swirl-search:test-smoke sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
     - name: Upload log files
+      if: always()
       uses: actions/upload-artifact@v2
       with:
         name: log-files
