@@ -46,12 +46,15 @@ class AdaptiveQueryProcessor(QueryProcessor):
                     continue
                 # end if
             # end if
-            if tag and tag.lower() in cannonical_provider_tag_set:
+            if tag:
                 if val:
-                    if not tag.lower() in dict_tags:
-                        dict_tags[tag.lower()] = []
-                    dict_tags[tag.lower()].append(val)
-                    query_wot_list.append(val)
+                    if tag.lower() not in cannonical_provider_tag_set:
+                        query_wot_list.append(term)
+                    else:
+                        if not tag.lower() in dict_tags:
+                            dict_tags[tag.lower()] = []
+                        dict_tags[tag.lower()].append(val)
+                        query_wot_list.append(val)
                 # end if
             # end if
 
