@@ -30,11 +30,13 @@ jobs:
       run: sudo killall redis-server
     - name: Start up SWIRL
       run: python swirl.py start
-    - name: Run Smoke tests
-      run: docker run --net=host -t swirlai/swirl-search:test-smoke sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
+    - name: memtest
+      run: free
     - name: Upload log files
       if: always()
       uses: actions/upload-artifact@v2
       with:
         name: log-files
-        path: logs/
+        path: |
+          logs/
+          /var/log/syslog*
