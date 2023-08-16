@@ -24,10 +24,6 @@ jobs:
       run: sudo apt -o Acquire::Retries=3 update
     - name: upgrade Ubuntu to latest patches
       run: sudo apt upgrade -y
-    - name: stop update-notifier
-      run: sudo systemctl stop update-notifier-download.timer
-    - name: disable update-notifier which restarts datetime
-      run: sudo systemctl disable update-notifier-download.timer
     - name: Run Install redis-server
       run: sudo apt install -y redis-server
     - name: stop system redis
@@ -38,13 +34,8 @@ jobs:
       run: sudo chown -R redis.redis /home/runner/work/swirl-search/swirl-search/redis.conf
     - name: Start up SWIRL
       run: python swirl.py start
-    - name: memtest
-      run: free
     - name: Run Smoke tests
-      run: docker run --net=host -t swirlai/swirl-search:test-smoke sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
-    - name: memtest-after-fail
-      if: always()
-      run: free
+      run: docker run --net=host -t swirlai/swirl-search:latest-smoke-test sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
     - name: Upload log files
       if: always()
       uses: actions/upload-artifact@v2
