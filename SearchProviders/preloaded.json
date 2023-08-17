@@ -795,14 +795,14 @@
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "FOUND=hitCount,RESULTS=resultList.result",
-        "result_mappings": "title=title,body=abstractText,author=authorString,date_published=journalInfo.printPublicationDate,date_published_display=journalInfo.dateOfPublication,url='https://europepmc.org/articles/{pmcid}',pmid,pmcid,citedByCount,journalInfo.journal.title,authorList.author[*].fullName,meshHeadingList.meshHeading[*].descriptorName,keywordList.keyword[*],chemicalList.chemical[*].name,NO_PAYLOAD",
+        "result_mappings": "title=title,body=abstractText,author=authorString,date_published=journalInfo.printPublicationDate,date_published_display=journalInfo.dateOfPublication,url='https://europepmc.org/article/{source}/{id}',pmid,pmcid,citedByCount,journalInfo.journal.title,authorList.author[*].fullName,meshHeadingList.meshHeading[*].descriptorName,keywordList.keyword[*],chemicalList.chemical[*].name,NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "",
         "eval_credentials": "",
         "tags": [
             "EuropePMC",
             "EPMC",
-            "PubMed"
+            "Health"
         ]
     }
 ]
