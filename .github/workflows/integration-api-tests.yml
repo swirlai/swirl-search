@@ -1,10 +1,9 @@
 name: Ingegration API Tests
 
-on:
-  push:
-    # only trigger on branches, not on tags
+on: # build at 05:05 UTC each day
+ schedule:
+ - cron: '05 05 * * *'
     branches: 'develop'
-  workflow_dispatch:
 
 jobs:
   build:
