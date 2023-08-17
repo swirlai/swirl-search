@@ -224,7 +224,6 @@ class Requests(Connector):
 
             # normalize the response
             content_type = response.headers['Content-Type']
-            self.warning(f"Content-type: {content_type}")
             json_data = None
             if 'application/json' in content_type:
                 json_data = response.json()
