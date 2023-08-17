@@ -225,11 +225,13 @@ class Requests(Connector):
             # normalize the response
             content_type = response.headers['Content-Type']
             json_data = None
-            if 'application/json' in content_type:
-                json_data = response.json()
             if 'text/xml' in content_type or 'application/xml' in content_type or 'application/atom+xml' in content_type:
                 json_data = xmltodict.parse(response.text)
-            
+            else:
+                json_data = response.json()
+                if not 'application/json' in content_type:
+                    logger.debug(f"content header not xml or explitily json, assuming json")
+
             mapped_response = {}
             if not json_data:
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")

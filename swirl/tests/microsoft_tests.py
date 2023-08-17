@@ -506,6 +506,7 @@ class MicrosoftOutlookMessagesDatesort(MicrosoftAPITestCase):
         mock_response = mock.Mock()
         mock_response.status_code = 200
         mock_response.json.return_value = mock_result
+        mock_response.headers = {'Content-Type': 'application/json'}
         mock_send_request.return_value = mock_response
         result = self._run_search()
         mock_send_request.assert_called_with('https://graph.microsoft.com/beta/search/query', params=None,
@@ -576,6 +577,7 @@ class MicrosoftOutlookMessagesDatesortWithQueryMapping(MicrosoftAPITestCase):
         mock_result = self._get_hits()
         mock_response = mock.Mock()
         mock_response.status_code = 200
+        mock_response.headers = {'Content-Type': 'application/json'}
         mock_response.json.return_value = mock_result
         mock_send_request.return_value = mock_response
         result = self._run_search()
