@@ -1,8 +1,9 @@
 name: Smoke Test
 
+
 on: # build at 05:05 UTC each day
- schedule:
- - cron: '05 05 * * *'
+  schedule:
+    - cron: '05 05 * * *'
     branches: 'develop'
 
 jobs:
