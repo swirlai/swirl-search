@@ -83,12 +83,16 @@ class Requests(Connector):
 
         if self.search.sort.lower() == 'date':
             # insert before the last parameter, which is expected to be the user query
-            sort_query = query_to_provider[:query_to_provider.rfind('&')]
-            if 'DATE_SORT' in self.query_mappings:
-                sort_query = sort_query + '&' + self.query_mappings['DATE_SORT'] + query_to_provider[query_to_provider.rfind('&'):]
-                query_to_provider = sort_query
+            amp_index = query_to_provider.rfind('&')
+            if amp_index >= 0:
+                sort_query = query_to_provider[:amp_index]
+                if 'DATE_SORT' in self.query_mappings:
+                    sort_query = sort_query + '&' + self.query_mappings['DATE_SORT'] + query_to_provider[query_to_provider.rfind('&'):]
+                    query_to_provider = sort_query
+                else:
+                    self.warning(f'DATE_SORT missing from self.query_mappings: {self.query_mappings}')
             else:
-                self.warning(f'DATE_SORT missing from self.query_mappings: {self.query_mappings}')
+                    self.warning(f'request sort processing URL does not contain & character : {self.query_to_provider}')
         else:
             sort_query = query_to_provider[:query_to_provider.rfind('&')]
             if 'RELEVANCY_SORT' in self.query_mappings:

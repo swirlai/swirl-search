@@ -8,16 +8,21 @@ from os import environ
 
 import django
 
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned, ValidationError
+from django.db import DatabaseError, OperationalError, IntegrityError
+
+
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
-from swirl.models import Result
+from swirl.models import Result, Search
 from swirl.connectors.mappings import *
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
+module_name='utils.py'
 
 #############################################
 #############################################
@@ -35,6 +40,29 @@ def save_result(search, provider, query_to_provider="", messages=[], found=0, re
     return new_result
 
 #############################################
+
+def get_search_obj(id):
+    try:
+        return Search.objects.get(id=id)
+    except ObjectDoesNotExist as err:
+        logger.error(f'{module_name}_{id}: ObjectDoesNotExist: {err}')
+        return None
+    except MultipleObjectsReturned as err:
+        logger.error(f'{module_name}_{id}: MultipleObjectsReturned: {err}')
+        return None
+    except ValidationError as err:
+        logger.error(f'{module_name}_{id}: ValidationError: {err}')
+        return None
+    except IntegrityError as err:
+        logger.error(f'{module_name}_{id}: IntegrityError: {err}')
+        return None
+    except OperationalError as err:
+        logger.error(f'{module_name}_{id}: OperationalError: {err}')
+        return None
+    except DatabaseError as err:
+        logger.error(f'{module_name}_{id}: DatabaseError: {err}')
+        return None
+
 
 def bind_query_mappings(query_template, query_mappings, url=None, credentials=None):
 
@@ -118,5 +146,3 @@ def get_mappings_dict(mappings):
     # end if
 
     return dict_mappings
-
-
