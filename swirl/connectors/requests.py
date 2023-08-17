@@ -38,6 +38,8 @@ from swirl.connectors.utils import bind_query_mappings
 
 from swirl.connectors.connector import Connector
 
+import xmltodict
+
 ########################################
 ########################################
 
@@ -221,8 +223,15 @@ class Requests(Connector):
             # end if
 
             # normalize the response
+            content_type = response.headers['Content-Type']
+            self.warning(f"Content-type: {content_type}")
+            json_data = None
+            if 'application/json' in content_type:
+                json_data = response.json()
+            if 'text/xml' in content_type or 'application/xml' in content_type or 'application/atom+xml' in content_type:
+                json_data = xmltodict.parse(response.text)
+            
             mapped_response = {}
-            json_data = response.json()
             if not json_data:
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.retrieved = 0
@@ -239,7 +248,7 @@ class Requests(Connector):
                     try:
                         jxp = parse(jxp_key)
                         matches = [match.value for match in jxp.find(json_data)]
-                    except JsonPathParserError:
+                    except JsonPathParserError as err:
                         self.error(f'JsonPathParser: {err} in provider.self.response_mappings: {self.provider.response_mappings}')
                         return
                     except (NameError, TypeError, ValueError) as err:
