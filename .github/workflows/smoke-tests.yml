@@ -1,10 +1,9 @@
-name: Tests
+name: Smoke Test
 
-on:
-  push:
-    branches:
-      - develop
-  workflow_dispatch:
+on: # build at 05:05 UTC each day
+ schedule:
+ - cron: '05 05 * * *'
+    branches: 'develop'
 
 jobs:
 
