@@ -1,9 +1,6 @@
 name: Ingegration API Tests
 
 on:
-  push:
-    branches:
-      - 'develop'
   schedule:
   - cron: '05 05 * * *'
 
