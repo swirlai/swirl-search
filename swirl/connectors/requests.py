@@ -92,7 +92,7 @@ class Requests(Connector):
                 else:
                     self.warning(f'DATE_SORT missing from self.query_mappings: {self.query_mappings}')
             else:
-                    self.warning(f'request sort processing URL does not contain & character : {self.query_to_provider}')
+                    self.debug(f'request sort processing URL does not contain & character : {self.query_to_provider}')
         else:
             sort_query = query_to_provider[:query_to_provider.rfind('&')]
             if 'RELEVANCY_SORT' in self.query_mappings:

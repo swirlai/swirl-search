@@ -78,26 +78,26 @@ def _get_session_for_oauth_providers(search, owner, session_data):
                 session_data[oauth_obj.get_access_token_session_field()] = oauth_token_obj.token
                 session_data[oauth_obj.get_access_token_expiration_time_session_field()] = int(jwt.decode(oauth_token_obj.token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
                 logger.debug(f'{idp} token refreshed')
-                search.messages.append(f'{idp} token refreshed: {owner}')
+                search.messages.append(f'[{datetime.now()}] {idp} token refreshed: {owner}')
             else:
                 logger.debug(f'{idp} token current : {owner}')
-                search.messages.append(f'{idp} token current : {owner}')
+                search.messages.append(f'[{datetime.now()}] {idp} token current : {owner}')
             logger.debug(f'token microsoft_access_token_expiration_time : {session_data[oauth_obj.get_access_token_expiration_time_session_field()]}')
         except OauthToken.DoesNotExist:
             logger.error(f'{idp} token not found owner : {owner}')
-            search.messages.append(f'{idp} token not found for owner : {owner}')
+            search.messages.append(f'[{datetime.now()}] {idp} token not found for owner : {owner}')
         except KeyError as e:
             logger.error(f"KeyError encountered: {e}")
-            search.messages.append(f"KeyError encountered: {e}")
+            search.messages.append(f"[{datetime.now()}] KeyError encountered: {e}")
         except jwt.DecodeError:
             logger.error(f"Failed to decode JWT token for {idp} and owner: {owner}")
-            search.messages.append(f"Failed to decode JWT token for {idp} and owner: {owner}")
+            search.messages.append(f"[{datetime.now()}] Failed to decode JWT token for {idp} and owner: {owner}")
         except AttributeError:
             logger.error(f"Unexpected attribute error for {idp} and owner: {owner}")
-            search.messages.append(f"Unexpected attribute error for {idp} and owner: {owner}")
+            search.messages.append(f"[{datetime.now()}] Unexpected attribute error for {idp} and owner: {owner}")
         except Exception as e:
             logger.error(f"Unexpected error for {idp} and owner {owner}: {str(e)}")
-            search.messages.append(f"Unexpected error for {idp} and owner {owner}: {str(e)}")
+            search.messages.append(f"[{datetime.now()}] Unexpected error for {idp} and owner {owner}: {str(e)}")
 
 def subscriber():
     '''
