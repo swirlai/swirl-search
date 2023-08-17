@@ -105,7 +105,7 @@ class Microsoft(Authenticator):
 
         user = self.get_user(tok)
         self.store_user(request, user, result)
-        self.update_oauth_token_in_db(user, result['access_token'], result['refresh_token'])
+        self.update_oauth_token_in_db(request.user, result['access_token'], result['refresh_token'])
         return HttpResponseRedirect('/swirl/')
 
     def update_oauth_token_in_db(self, owner, token, refresh_token):
