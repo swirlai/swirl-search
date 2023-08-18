@@ -3,6 +3,7 @@
 @contact:    sid@swirl.today
 @version:    SWIRL 1.3
 '''
+import json
 from urllib.parse import urlparse
 
 from sys import path
@@ -212,7 +213,8 @@ class Mixer:
                     result['swirl_rank'] = block_count
                     block_dict[block_name] = [result]
                 # end if
-                if self.mix_wrapper['info'][result['searchprovider']]:
+                peek_search_provider = result.get('searchprovider', None)
+                if peek_search_provider and self.mix_wrapper['info'].get(peek_search_provider, None):
                     del self.mix_wrapper['info'][result['searchprovider']]
                 # end if
             else:
