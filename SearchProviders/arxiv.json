@@ -1,0 +1,30 @@
+{
+    "name": "arXiv - ArXiv.org",
+    "shared": true,
+    "active": false,
+    "default": false,
+    "authenticator": "",
+    "connector": "RequestsGet",
+    "url": "http://export.arxiv.org/api/query",
+    "query_template": "{url}?search_query=all:{query_string}",
+    "post_query_template": "{}",
+    "http_request_headers": {},
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "FOUND=$.feed['opensearch:totalResults']['#text'],RESULTS=feed.entry",
+    "result_mappings": "title=title,body=summary,author=author.name,date_published=published,url=id,updated,author[*].name,['arxiv:comment'][*].['#text'],['arxiv:journal_ref'][*].['#text'],category[*].['@term'],NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "",
+    "eval_credentials": "",
+    "tags": [
+        "arXiv",
+        "Development"
+    ]
+}
