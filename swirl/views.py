@@ -465,7 +465,6 @@ class SearchViewSet(viewsets.ModelViewSet):
                 'Authorization': request.headers.get('Authorization', ''),
                 'Microsoft-Authorization': request.headers.get('Microsoft-Authorization', '')
             }
-            update_microsoft_token_task.delay(headers)
             res = run_search(new_search.id, Authenticator().get_session_data(request), request=request)
             if not res:
                 logger.info(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
