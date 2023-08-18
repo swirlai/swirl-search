@@ -20,3 +20,11 @@ jobs:
       run: docker build -t swirlai/swirl-search:latest-amd64 .
     - name: Publish the image to DockerHub
       run: docker push swirlai/swirl-search:latest-amd64
+    - name: Upload log files
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: log-files
+        path: |
+          logs/
+          /var/log/syslog*
