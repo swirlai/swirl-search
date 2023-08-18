@@ -30,3 +30,11 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME_X }}
         password: ${{ secrets.DOCKER_PASSWORD_X }}
         repository: swirlai/swirl-search
+    - name: Upload log files
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: log-files
+        path: |
+          logs/
+          /var/log/syslog*
