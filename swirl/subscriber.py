@@ -72,17 +72,17 @@ def _get_session_for_oauth_providers(search, owner, session_data):
             session_data[oauth_obj.get_access_token_session_field()] = oauth_token_obj.token
             session_data[oauth_obj.get_access_token_expiration_time_session_field()] = int(jwt.decode(oauth_token_obj.token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
             if not oauth_obj.is_authenticated(session_data=session_data):
-                logger.debug(f'{idp} token expired, refreshing')
+                logger.info(f'{idp} token expired, refreshing')
                 oauth_obj.update_access_from_refresh_token(search.owner,oauth_token_obj.refresh_token)
                 oauth_token_obj = OauthToken.objects.get(owner=owner, idp=idp)
                 session_data[oauth_obj.get_access_token_session_field()] = oauth_token_obj.token
                 session_data[oauth_obj.get_access_token_expiration_time_session_field()] = int(jwt.decode(oauth_token_obj.token, options={"verify_signature": False}, algorithms=["RS256"])['exp'])
-                logger.debug(f'{idp} token refreshed')
+                logger.info(f'{idp} token refreshed')
                 search.messages.append(f'[{datetime.now()}] {idp} token refreshed: {owner}')
             else:
-                logger.debug(f'{idp} token current : {owner}')
+                logger.info(f'{idp} token current : {owner}')
                 search.messages.append(f'[{datetime.now()}] {idp} token current : {owner}')
-            logger.debug(f'token microsoft_access_token_expiration_time : {session_data[oauth_obj.get_access_token_expiration_time_session_field()]}')
+            logger.info(f'token microsoft_access_token_expiration_time : {session_data[oauth_obj.get_access_token_expiration_time_session_field()]}')
         except OauthToken.DoesNotExist:
             logger.error(f'{idp} token not found owner : {owner}')
             search.messages.append(f'[{datetime.now()}] {idp} token not found for owner : {owner}')
