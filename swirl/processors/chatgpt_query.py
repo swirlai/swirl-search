@@ -92,6 +92,8 @@ class ChatGPTQueryProcessor(QueryProcessor):
         logger.info(f"model response : {message}")
 
         self.warning(f"ChatGPT Response: {message}")
+        if use_4_model:
+            return clean_reply(message=message)
 
         if message.strip().lower() == self.query_string.strip().lower():
             return self.query_string
@@ -100,9 +102,9 @@ class ChatGPTQueryProcessor(QueryProcessor):
             self.warning(f"{self}: ChatGPT response more than 5x query string length, ignoring: {message}")
             return self.query_string
 
-        # if message.endswith('?'):
-        #     # question rewriting
-        #     return clean_reply(message)
+        if message.endswith('?'):
+            # question rewriting
+            return clean_reply(message)
 
         if len(message) <= 4 * len(self.query_string):
             # short response
