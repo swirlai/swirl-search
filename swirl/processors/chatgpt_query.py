@@ -22,7 +22,7 @@ MODEL = "gpt-4"
 
 def clean_reply(message):
     # to do: leave the quotes
-    return message.replace('\n\n', '') #.replace('\"','')
+    return message.replace('\n\n', '').replace('\"','')
 
 class ChatGPTQueryProcessor(QueryProcessor):
 
