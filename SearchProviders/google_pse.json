@@ -91,7 +91,7 @@
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
-        "result_mappings": "title= htmlTitle,url=link,body=pagemap.metatags[*].['og:description'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].locale,pagemap.metatags[*].['og:image'],NO_PAYLOAD",
+        "result_mappings": "title= htmlTitle,url=link,body=snippet,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].locale,pagemap.metatags[*].['og:image'],NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "eval_credentials": "",
