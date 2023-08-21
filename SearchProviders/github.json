@@ -27,7 +27,8 @@
         "tags": [
             "GitHub",
             "Code",
-            "Internal"
+            "Internal",
+            "Development"
         ]
     },
     {
@@ -58,7 +59,8 @@
         "tags": [
             "GitHub",
             "Issues",
-            "Internal"
+            "Internal",
+            "Development"
         ]
     },
     {
@@ -89,7 +91,8 @@
         "tags": [
             "GitHub",
             "PullRequests",
-            "Internal"
+            "Internal",
+            "Development"
         ]
     },
     {
@@ -120,7 +123,8 @@
         "tags": [
             "GitHub",
             "Commits",
-            "Internal"
+            "Internal",
+            "Development"
         ]
     }
 ]
