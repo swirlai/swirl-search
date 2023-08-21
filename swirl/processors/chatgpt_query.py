@@ -3,12 +3,19 @@
 @contact:    sid@swirl.today
 '''
 
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
+
 from django.conf import settings
 
 from swirl.processors.processor import *
 from swirl.processors.utils import get_tag
 
 import openai
+
+use_4_model = True
+MODEL = "gpt-4"
 
 #############################################
 #############################################
@@ -40,15 +47,15 @@ class ChatGPTQueryProcessor(QueryProcessor):
             return self.query_string
 
         self.warning(f"Tags: {self.tags}")
-        self.prompt = get_tag('prompt', self.tags)    
+        self.prompt = get_tag('prompt', self.tags)
         self.warning(f"prompt: {self.prompt}")
         if not self.prompt:
             return self.query_string
-        
+
         if type(self.prompt) != str:
             self.warning(f"Ignoring invalid prompt: {self.prompt}")
             return self.query_string
-        
+
         # to do: improve the below
         if not self.prompt.endswith('{query_string}'):
             if self.prompt.endswith(':'):
@@ -59,16 +66,31 @@ class ChatGPTQueryProcessor(QueryProcessor):
 
         self.warning(f"Prompt is: {self.prompt.format(query_string=self.query_string)}")
 
-        completions = openai.Completion.create(
+        if use_4_model:
+            logger.info("using model 4")
+            response = openai.ChatCompletion.create(
+                model=MODEL,
+                messages=[
+                    {"role": "system", "content": "You are a helping a user formualte a better generic query."},
+                    {"role": "user", "content": self.prompt.format(query_string=self.query_string)    },
+                ],
+                temperature=0,
+            )
+            message = response['choices'][0]['message']['content'] # FROM API Doc
+        else:
+            logger.info("using legacy model and API")
+            completions = openai.Completion.create(
             engine="text-davinci-002",
             prompt=self.prompt.format(query_string=self.query_string),
             max_tokens=(5 * len(self.query_string)),
             n=1,
             stop=None,
             temperature=0.5,
-        )
+            )
+            message = completions.choices[0].text
 
-        message = completions.choices[0].text
+        logger.info(f"model response : {message}")
+
         self.warning(f"ChatGPT Response: {message}")
 
         if message.strip().lower() == self.query_string.strip().lower():
@@ -78,11 +100,11 @@ class ChatGPTQueryProcessor(QueryProcessor):
             self.warning(f"{self}: ChatGPT response more than 5x query string length, ignoring: {message}")
             return self.query_string
 
-        if message.endswith('?'):
-            # question rewriting
-            return clean_reply(message)
+        # if message.endswith('?'):
+        #     # question rewriting
+        #     return clean_reply(message)
 
-        if len(message) <= 1.25 * len(self.query_string):
+        if len(message) <= 4 * len(self.query_string):
             # short response
             return clean_reply(message)
 
