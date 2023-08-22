@@ -6,11 +6,13 @@ from swirl.models import SearchProvider
 from swirl.serializers import SearchProviderSerializer
 import swirl_server.settings as settings
 import pytest
+from unittest import mock
 import logging
 from django.urls import reverse
 from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 from swirl.processors.adaptive import *
+from swirl.processors.chatgpt_query import *
 from swirl.processors.transform_query_processor import *
 from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list, match_all, tokenize_word_list
 from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
@@ -476,6 +478,243 @@ def test_aqp(aqp_test_cases, aqp_test_expected):
         actual = aqp.process()
         assert actual == aqp_test_expected[i]
         i = i + 1
+
+@pytest.mark.django_db
+def test_cgptqp_1():
+    tc = 'gig economy'
+    expected = 'gig economy'
+
+    settings.OPENAI_API_KEY = "aFakeKey"
+    with mock.patch('openai.ChatCompletion.create') as mock_create:
+        mock_create.return_value = {
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {
+                    "role": "assistant",
+                    "content": "Gig economy large scale economics"
+                    },
+                    "finish_reason": "stop"
+                }
+            ],
+        }
+        cgptqp = ChatGPTQueryProcessor(tc,
+            '',
+            ["PROMPT:Write a more precise query of similar length to this : {query_string}",]
+        )
+        actual = cgptqp.process()
+        assert actual == expected
+        mock_create.assert_called_once_with(model=MODEL, messages=[
+                {"role": "system", "content": "You are helping a users formulate better queries"},
+                {"role": "user", "content":   "Write a more precise query of similar length to this : gig economy"}
+            ],
+            temperature=0)
+
+@pytest.mark.django_db
+def test_cgptqp_2():
+    tc = 'gig economy'
+    expected = 'gig economy'
+
+    settings.OPENAI_API_KEY = "aFakeKey"
+    with mock.patch('openai.ChatCompletion.create') as mock_create:
+        mock_create.return_value = {
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {
+                    "role": "assistant",
+                    "content": "Gig economy large scale economics"
+                    },
+                    "finish_reason": "stop"
+                }
+            ],
+        }
+        cgptqp = ChatGPTQueryProcessor(tc,
+            '',
+            ["PROMPT:Write a more precise query of similar length to this : {query_string}",
+             "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator"]
+        )
+        actual = cgptqp.process()
+        assert actual == expected
+        mock_create.assert_called_once_with(model=MODEL, messages=[
+                {"role": "system", "content": "You are a malevolent dictator"},
+                {"role": "user", "content":   "Write a more precise query of similar length to this : gig economy"}
+            ],
+            temperature=0)
+
+@pytest.mark.django_db
+def test_cgptqp_3():
+    tc = 'gig economy'
+    expected = 'gig economy'
+
+    settings.OPENAI_API_KEY = "aFakeKey"
+    with mock.patch('openai.ChatCompletion.create') as mock_create:
+        mock_create.return_value = {
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {
+                    "role": "assistant",
+                    "content": "Gig economy large scale economics"
+                    },
+                    "finish_reason": "stop"
+                }
+            ],
+        }
+        cgptqp = ChatGPTQueryProcessor(tc,
+            '',
+            ["CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
+             "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator"]
+        )
+        actual = cgptqp.process()
+        assert actual == expected
+        mock_create.assert_called_once_with(model=MODEL, messages=[
+                {"role": "system", "content": "You are a malevolent dictator"},
+                {"role": "user", "content":   "Write a more precise query of similar length to this : gig economy"}
+            ],
+            temperature=0)
+
+@pytest.mark.django_db
+def test_cgptqp_4():
+    tc = 'gig economy'
+    expected = 'gig economy'
+
+    settings.OPENAI_API_KEY = "aFakeKey"
+    with mock.patch('openai.ChatCompletion.create') as mock_create:
+        mock_create.return_value = {
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {
+                    "role": "assistant",
+                    "content": "Gig economy large scale economics"
+                    },
+                    "finish_reason": "stop"
+                }
+            ],
+        }
+        cgptqp = ChatGPTQueryProcessor(tc,
+            '',
+            ["PROMPT:This should be used: {query_string}",
+             "CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
+             "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator"]
+        )
+        actual = cgptqp.process()
+        assert actual == expected
+        mock_create.assert_called_once_with(model=MODEL, messages=[
+                {"role": "system", "content": "You are a malevolent dictator"},
+                {"role": "user", "content":   "This should be used: gig economy"}
+            ],
+            temperature=0)
+
+
+@pytest.mark.django_db
+def test_cgptqp_5():
+    tc = 'gig economy'
+    expected = 'Gig economy large scale economics'
+
+    settings.OPENAI_API_KEY = "aFakeKey"
+    with mock.patch('openai.ChatCompletion.create') as mock_create:
+        mock_create.return_value = {
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {
+                    "role": "assistant",
+                    "content": "Gig economy large scale economics"
+                    },
+                    "finish_reason": "stop"
+                }
+            ],
+        }
+        cgptqp = ChatGPTQueryProcessor(tc,
+            '',
+            ["PROMPT:This should be used: {query_string}",
+             "CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
+             "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator",
+             "CHAT_QUERY_DO_FILTER:False"]
+        )
+        actual = cgptqp.process()
+        assert actual == expected
+        assert not cgptqp.do_filter
+        mock_create.assert_called_once_with(model=MODEL, messages=[
+                {"role": "system", "content": "You are a malevolent dictator"},
+                {"role": "user", "content":   "This should be used: gig economy"}
+            ],
+            temperature=0)
+
+
+@pytest.mark.django_db
+def test_cgptqp_6():
+    tc = 'gig economy'
+    expected = 'gig economy'
+
+    settings.OPENAI_API_KEY = "aFakeKey"
+    with mock.patch('openai.ChatCompletion.create') as mock_create:
+        mock_create.return_value = {
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {
+                    "role": "assistant",
+                    "content": "Gig economy large scale economics"
+                    },
+                    "finish_reason": "stop"
+                }
+            ],
+        }
+        cgptqp = ChatGPTQueryProcessor(tc,
+            '',
+            ["PROMPT:This should be used: {query_string}",
+             "CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
+             "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator",
+             "CHAT_QUERY_DO_FILTER:True"]
+        )
+        actual = cgptqp.process()
+        assert actual == expected
+        assert cgptqp.do_filter
+        mock_create.assert_called_once_with(model=MODEL, messages=[
+                {"role": "system", "content": "You are a malevolent dictator"},
+                {"role": "user", "content":   "This should be used: gig economy"}
+            ],
+            temperature=0)
+
+
+@pytest.mark.django_db
+def test_cgptqp_7():
+    tc = 'gig economy'
+    expected = 'gig economy'
+
+    settings.OPENAI_API_KEY = "aFakeKey"
+    with mock.patch('openai.ChatCompletion.create') as mock_create:
+        mock_create.return_value = {
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {
+                    "role": "assistant",
+                    "content": "Gig economy large scale economics"
+                    },
+                    "finish_reason": "stop"
+                }
+            ],
+        }
+        cgptqp = ChatGPTQueryProcessor(tc,
+            '',
+            ["PROMPT:This should be used: {query_string}",
+             "CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
+             "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator",
+             "CHAT_QUERY_DO_FILTER:xxx"]
+        )
+        actual = cgptqp.process()
+        assert actual == expected
+        assert cgptqp.do_filter == MODEL_DEFAULT_DO_FILTER
+        mock_create.assert_called_once_with(model=MODEL, messages=[
+                {"role": "system", "content": "You are a malevolent dictator"},
+                {"role": "user", "content":   "This should be used: gig economy"}
+            ],
+            temperature=0)
+
 
 @pytest.fixture
 def rm_url_encoder_test_cases():

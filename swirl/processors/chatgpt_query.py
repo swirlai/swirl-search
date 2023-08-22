@@ -37,10 +37,6 @@ class ChatGPTQueryProcessor(QueryProcessor):
     type = 'ChatGPTQueryProcessor'
 
     def __init__(self, query_string, query_mappings, tags):
-        self.set_guide_from_tags()
-        self.set_prompt_from_tags()
-        self.set_do_filter_from_tags()
-        logger.info(f"{self.type} model {MODEL} system guide {self.system_guide} prompt {self.prompt} Do Filter {self.do_filter}")
         return super().__init__(query_string, query_mappings, tags)
 
     def set_prompt(self, prompt):
@@ -74,16 +70,28 @@ class ChatGPTQueryProcessor(QueryProcessor):
 
     def set_do_filter_from_tags(self):
         filter_tag_value = get_tag(TAG_DO_FILTER, self.tags)
-        if len(filter_tag_value) <= 0:
+
+        if filter_tag_value == None or len(filter_tag_value) <= 0:
             self.do_filter = MODEL_DEFAULT_DO_FILTER
         try:
-            self.do_filter = bool(filter_tag_value)
+            if filter_tag_value.lower() == 'true':
+                self.do_filter = True
+            elif filter_tag_value.lower() == 'false':
+                self.do_filter = False
+            else:
+                logger.error(f"Error parsing filter tag {filter_tag_value} using default: {MODEL_DEFAULT_DO_FILTER}")
+                self.do_filter = MODEL_DEFAULT_DO_FILTER
         except Exception as x:
-            logger.error(f"Error parsing filter tage {filter_tag_value} using default: {MODEL_DEFAULT_DO_FILTER}")
+            logger.error(f"Exception parsing filter tag {filter_tag_value} using default: {MODEL_DEFAULT_DO_FILTER}")
             self.do_filter = MODEL_DEFAULT_DO_FILTER
 
     def process(self):
         try:
+            self.set_guide_from_tags()
+            self.set_prompt_from_tags()
+            self.set_do_filter_from_tags()
+            logger.info(f"{self.type} model {MODEL} system guide {self.system_guide} prompt {self.prompt} Do Filter {self.do_filter}")
+
             if getattr(settings, 'OPENAI_API_KEY', None):
                 openai.api_key = settings.OPENAI_API_KEY
             else:
