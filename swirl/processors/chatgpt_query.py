@@ -14,7 +14,6 @@ from swirl.processors.utils import get_tag
 
 import openai
 
-use_4_model = True
 MODEL = "gpt-4"
 
 #############################################
@@ -66,7 +65,7 @@ class ChatGPTQueryProcessor(QueryProcessor):
 
         self.warning(f"Prompt is: {self.prompt.format(query_string=self.query_string)}")
 
-        if use_4_model:
+        if MODEL == "gpt-4":
             logger.info("using model 4")
             response = openai.ChatCompletion.create(
                 model=MODEL,
@@ -92,7 +91,7 @@ class ChatGPTQueryProcessor(QueryProcessor):
         logger.info(f"model response : {message}")
 
         self.warning(f"ChatGPT Response: {message}")
-        if use_4_model:
+        if MODEL == "gpt-4":
             return clean_reply(message=message)
 
         if message.strip().lower() == self.query_string.strip().lower():
