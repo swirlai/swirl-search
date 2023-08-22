@@ -19,7 +19,7 @@ TAG_LEGACY_PROMPT = "prompt"
 TAG_PROMPT = "CHAT_QUERY_REWRITE_PROMPT"
 TAG_SYSTEM_GUIDE= "CHAT_QUERY_REWRITE_GUIDE"
 TAG_DO_FILTER= "CHAT_QUERY_DO_FILTER"
-MODEL_DEFAULT_SYSTEM_GUIDE = "You are helping a users formulate better queries"
+MODEL_DEFAULT_SYSTEM_GUIDE = "You are helping a user formulate better queries"
 MODEL_DEFAULT_PROMPT = "Write a more precise query of similar length to this one {query_string}"
 MODEL_DEFAULT_DO_FILTER = True
 
