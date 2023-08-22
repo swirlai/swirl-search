@@ -16,6 +16,8 @@ import openai
 
 MODEL = "gpt-4"
 
+MODEL_4_DEFAULT_PROMPT = "You are helping a user formulate a better, more concise query."
+
 #############################################
 #############################################
 
@@ -30,6 +32,7 @@ class ChatGPTQueryProcessor(QueryProcessor):
     def __init__(self, query_string, query_mappings, tags):
 
         self.prompt = ""
+        self.system_prompt = ""
         return super().__init__(query_string, query_mappings, tags)
 
     def set_prompt(self, prompt):
@@ -70,7 +73,7 @@ class ChatGPTQueryProcessor(QueryProcessor):
             response = openai.ChatCompletion.create(
                 model=MODEL,
                 messages=[
-                    {"role": "system", "content": "You are a helping a user formualte a better generic query."},
+                    {"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": self.prompt.format(query_string=self.query_string)    },
                 ],
                 temperature=0,
