@@ -180,7 +180,6 @@ class AuthViewSet(viewsets.ModelViewSet):
     def list(self, request):
         res = Microsoft().login(request)
         if res == True:
-            OauthToken.objects.g
             return Response({ 'status': True })
         if 'access_token' in res:
             OauthToken.objects.get_or_create(owner=request.user, defaults={'token': res['access_token'], 'refresh_token': res['refresh_token']})
