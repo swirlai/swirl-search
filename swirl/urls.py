@@ -60,6 +60,7 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view()),
     path('oidc_authenticate/', views.OidcAuthView.as_view()),
     path('microsoft/token_status', views.MicrosoftTokenStatus.as_view()),
+    path('microsoft/change_token_status', views.MicrosoftChangeTokenStatus.as_view()),
     path('microsoft/auth', views.AuthViewSet.as_view({ 'get': 'list' })),
 
 
