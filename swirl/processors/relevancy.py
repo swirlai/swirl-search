@@ -304,13 +304,15 @@ class CosineRelevancyResultProcessor(ResultProcessor):
 
         # end for result in results.json_results:
 
+        # Note the length here beforewe had the feedback below
+        self.modified = len(self.results)
+
         # Add list_query_lens to result processor feedback
         rpf_rec = result_processor_feedback_empty_record()
         rpf_rec["result_processor_feedback"]["query"]["dict_result_lens"] = dict_result_lens
         rpf_rec["result_processor_feedback"]["query"]["list_query_lens"] = list_query_lens
         self.results.append(rpf_rec)
         self.processed_results = self.results
-        self.modified = len(self.results)
         swrel_logger.complete_pass_1()
         return self.modified
 

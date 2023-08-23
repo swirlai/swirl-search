@@ -1,10 +1,10 @@
 name: Ingegration API Tests
 
 on:
+  schedule:
+  - cron: '05 05 * * *'
   push:
-    # only trigger on branches, not on tags
     branches: 'develop'
-  workflow_dispatch:
 
 jobs:
   build:

@@ -11,6 +11,7 @@ django.setup()
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
+from swirl.connectors.utils import get_search_obj
 from swirl.connectors.mappings import *
 from swirl.connectors.utils import get_mappings_dict
 from swirl.connectors.requestsget import RequestsGet
@@ -19,6 +20,7 @@ from swirl.authenticators.microsoft import Microsoft
 
 ########################################
 ########################################
+DEFAULT_DATESORT_X = "createdDateTime desc"
 
 class M365(RequestsGet):
 
@@ -77,8 +79,10 @@ class M365SearchQuery(M365Post):
         super().__init__(provider_id, search_id, update, request_id)
         self.provider.response_mappings = self.provider.response_mappings or 'FOUND=value[0].hitsContainers[0].total,RESULTS=value[0].hitsContainers[0].hits'
         self.response_mappings = get_mappings_dict(self.provider.response_mappings)
+        self.query_mappings_mappings = get_mappings_dict(self.provider.query_mappings)
         self.provider.url = 'https://graph.microsoft.com/beta/search/query'
         self.entity_type = ""
+        self.search = get_search_obj(id=search_id) # get the seach object so we can decorate the search request if needed
 
     def send_request(self, url, params=None, query=None, **kwargs):
         json = dict({
@@ -93,6 +97,10 @@ class M365SearchQuery(M365Post):
                 }
             ]
         })
+        # handle date sort express
+        if self.search and self.search.sort == 'date':
+            json["requests"][0]["orderby"] = self.query_mappings.get("DATE_SORT",
+                                                                     DEFAULT_DATESORT_X)
         return super().send_request(url, params=params, query=json, **kwargs)
 
 class M365OutlookMessages(M365SearchQuery):

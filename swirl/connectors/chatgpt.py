@@ -26,14 +26,20 @@ from datetime import datetime
 
 import openai
 
+MODEL_4 = "gpt-4"
+MODEL = MODEL_4
+
 ########################################
 ########################################
+
+MODEL_DEFAULT_SYSTEM_GUIDE = "You are a helpful assistant, keeping your response brief and to the point."
 
 class ChatGPT(Connector):
 
     type = "ChatGPT"
 
     def __init__(self, provider_id, search_id, update, request_id=''):
+        self.system_guide = MODEL_DEFAULT_SYSTEM_GUIDE
         super().__init__(provider_id, search_id, update, request_id)
 
 
@@ -60,6 +66,9 @@ class ChatGPT(Connector):
                 prompted_query = self.query_to_provider
                 self.warning(f'PROMPT not found in query_mappings!')
 
+        if 'CHAT_QUERY_REWRITE_GUIDE' in self.query_mappings:
+            self.system_guide = self.query_mappings['CHAT_QUERY_REWRITE_GUIDE'].format(query_to_provider=self.query_to_provider)
+
         if not prompted_query:
             self.found = 0
             self.retrieved = 0
@@ -68,17 +77,15 @@ class ChatGPT(Connector):
             return
 
         self.query_to_provider = prompted_query
-
-        completions = openai.Completion.create(
-            engine="text-davinci-002",
-            prompt=self.query_to_provider,
-            max_tokens=1024,
-            n=1,
-            stop=None,
-            temperature=0.5,
+        completions = openai.ChatCompletion.create(
+            model=MODEL,
+            messages=[
+                {"role": "system", "content": self.system_guide},
+                {"role": "user", "content": self.query_to_provider},
+            ],
+            temperature=0,
         )
-
-        message = completions.choices[0].text
+        message = completions['choices'][0]['message']['content'] # FROM API Doc
 
         self.found = 1
         self.retrieved = 1
