@@ -43,6 +43,7 @@ class OauthToken(models.Model):
     idp = models.CharField(max_length=32, default='Microsoft')
     token = models.CharField(max_length=2048)
     refresh_token = models.CharField(max_length=2048, blank=True, null=True)
+    is_user_authenticated = models.BooleanField(default=False)
     class Meta:
         unique_together = [['owner', 'idp']]
 

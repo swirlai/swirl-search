@@ -173,6 +173,22 @@ class AuthenticatorViewSet(viewsets.ModelViewSet):
     def list(self, request):
         return return_authenticators_list(request)
 
+
+class AuthViewSet(viewsets.ModelViewSet):
+    serializer_class = AuthenticatorSerializer
+
+    def list(self, request):
+        res = Microsoft().login(request)
+        if res == True:
+            OauthToken.objects.g
+            return Response({ 'status': True })
+        if 'access_token' in res:
+            OauthToken.objects.get_or_create(owner=request.user, defaults={'token': res['access_token'], 'refresh_token': res['refresh_token']})
+            return Response({ 'status': True })
+        return HttpResponseForbidden()
+
+
+    
 def authenticators(request):
     if request.method == 'POST':
         authenticator = request.POST.get('authenticator_name')
@@ -241,17 +257,21 @@ class OidcAuthView(APIView):
 
 
 
-class UpdateMicrosoftToken(APIView):
+class MicrosoftTokenStatus(APIView):
     def post(self, request):
         try:
-            headers = {
-                'Authorization': request.headers['Authorization'],
-                'Microsoft-Authorization': request.headers['Microsoft-Authorization']
-            }
-            # just return succcess,don't call the task
-            # result = update_microsoft_token_task.delay(headers).get()
-            result = { 'user': request.user.username, 'status': 'success' }
-            return Response(result)
+            oauth_token_obj = OauthToken.objects.get(owner=request.user, idp='microsoft')
+            return Response({ 'status': oauth_token_obj.is_user_authenticated })
+        except:
+            return HttpResponseForbidden()
+        
+class MicrosoftChangeTokenStatus(APIView):
+    def post(self, request):
+        try:
+            oauth_token_obj = OauthToken.objects.get(owner=request.user, idp='microsoft')
+            oauth_token_obj.is_user_authenticated = request['status']
+            oauth_token_obj.save()
+            return Response({ 'status': request['status'] })
         except:
             return HttpResponseForbidden()
 

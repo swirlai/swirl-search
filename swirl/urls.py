@@ -59,7 +59,8 @@ urlpatterns = [
     path('login/', views.LoginView.as_view()),
     path('logout/', views.LogoutView.as_view()),
     path('oidc_authenticate/', views.OidcAuthView.as_view()),
-    path('microsoft/update_token', views.UpdateMicrosoftToken.as_view()),
+    path('microsoft/token_status', views.MicrosoftTokenStatus.as_view()),
+    path('microsoft/auth', views.AuthViewSet.as_view({ 'get': 'list' })),
 
 
     path('', include(router.urls)),
