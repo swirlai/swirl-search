@@ -26,8 +26,10 @@ from datetime import datetime
 
 import openai
 
+MODEL_3 = "gpt-3.5-turbo"
 MODEL_4 = "gpt-4"
-MODEL = MODEL_4
+
+MODEL = MODEL_3
 
 ########################################
 ########################################
