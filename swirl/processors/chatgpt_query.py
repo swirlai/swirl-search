@@ -13,8 +13,8 @@ from swirl.processors.processor import *
 from swirl.processors.utils import get_tag
 
 import openai
-MODEL_4 = "gpt-4"
 MODEL_3 = "gpt-3.5-turbo"
+MODEL_4 = "gpt-4"
 
 MODEL = MODEL_3
 
