@@ -505,7 +505,7 @@ def test_cgptqp_1():
         actual = cgptqp.process()
         assert actual == expected
         mock_create.assert_called_once_with(model=MODEL, messages=[
-                {"role": "system", "content": "You are helping a users formulate better queries"},
+                {"role": "system", "content": "You are helping a user formulate better queries"},
                 {"role": "user", "content":   "Write a more precise query of similar length to this : gig economy"}
             ],
             temperature=0)
