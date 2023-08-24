@@ -65,7 +65,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'swirl.middleware.TokenMiddleware',
-    'swirl.middleware.SpyglassAuthenticatorsMiddleware',
+    # 'swirl.middleware.SpyglassAuthenticatorsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]

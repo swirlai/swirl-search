@@ -1,6 +1,7 @@
 from django.http import HttpResponseRedirect
 from datetime import datetime
 import logging as logger
+from swirl.authenticators import *
 
 class Authenticator:
 
@@ -10,13 +11,19 @@ class Authenticator:
         self.access_token_field = ''
         self.refresh_token_field = ''
         self.expires_in_field = ''
+        self.idp = ''
 
     ########################################
 
     def get_session_data(self, request):
-        if 'user' in request.session:
-            return request.session['user']
-        return False
+        # if 'user' in request.session:
+        #     return request.session['user']
+        # return False
+        data = dict()
+        authenticators = SWIRL_AUTHENTICATORS_DISPATCH.keys()
+        for authenticator in authenticators:
+            SWIRL_AUTHENTICATORS_DISPATCH.get(authenticator)().get_session_data
+
 
     def get_access_token_session_field(self):
         return self.access_token_field
