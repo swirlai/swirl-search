@@ -52,6 +52,7 @@ urlpatterns = [
     path('authenticators.html', views.authenticators, name='authenticators'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('microsoft-callback', Microsoft().callback, name='microsoft_callback'),
+    path('microsoft-ui-callback', Microsoft().ui_callback, name='microsoft_ui_callback'),
     path('register/', views.registration, name='register'),
     path('register/confirm/<str:token>/<str:signature>/', views.registration_confirmation, name='registration_confirmation'),
     path('register/confirm_sent/', views.registration_confirmation_sent, name='registration_confirmation_sent'),
@@ -61,7 +62,7 @@ urlpatterns = [
     path('oidc_authenticate/', views.OidcAuthView.as_view()),
     path('microsoft/token_status', views.MicrosoftTokenStatus.as_view()),
     path('microsoft/change_token_status', views.MicrosoftChangeTokenStatus.as_view()),
-    path('microsoft/auth', views.AuthViewSet.as_view({ 'get': 'list' })),
+    path('microsoft/auth/<str:token>', views.AuthViewSet.as_view()),
 
 
     path('', include(router.urls)),

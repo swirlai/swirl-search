@@ -6,6 +6,7 @@ from swirl.authenticators.authenticator import Authenticator
 from django.conf import settings
 from django.shortcuts import redirect
 from celery.utils.log import get_task_logger
+from django.contrib.auth.models import User
 
 from swirl.models import OauthToken
 logger = get_task_logger(__name__)
@@ -26,6 +27,7 @@ class Microsoft(Authenticator):
         self.access_token_field = 'microsoft_access_token'
         self.refresh_token_field = 'microsoft_refresh_token'
         self.expires_in_field = 'microsoft_access_token_expiration_time'
+        self.idp = 'Microsoft'
 
     def get_user(self, token):
         user = requests.get('{0}/me'.format(graph_url),
@@ -80,6 +82,22 @@ class Microsoft(Authenticator):
         self.save_cache(request, cache)
 
         return result
+    
+    def ui_login(self, request):
+        # if not request.user.is_authenticated:
+        #     return redirect('/swirl/api-auth/login?next=/swirl/authenticators.html')
+        app = self._get_auth_app()
+        result = app.initiate_auth_code_flow(
+            scopes=scopes,
+            redirect_uri='http://localhost:8000/swirl/microsoft-ui-callback'
+        )
+        if result and result['auth_uri']:
+            try:
+                request.session['auth_flow'] = result
+            except Exception as e:
+                print(e)
+            # print(result)
+            return HttpResponseRedirect(result['auth_uri'])
 
     def login(self, request):
         if not request.user.is_authenticated:
@@ -107,9 +125,21 @@ class Microsoft(Authenticator):
         self.store_user(request, user, result)
         self.update_oauth_token_in_db(request.user, result['access_token'], result['refresh_token'])
         return HttpResponseRedirect('/swirl/')
+    
+    def ui_callback(self, request):
+        result = self.get_token_from_code(request)
+        tok = result.get('access_token', None)
+        if not tok:
+            logger.error(f'acccess token not present in call back result {result}')
+            raise ValueError(result)
+        user = self.get_user(tok)
+        request.user = User.objects.get(email=request.session['current_user'])
+        self.store_user(request, user, result)
+        self.update_oauth_token_in_db(request.user, result['access_token'], result['refresh_token'])
+        return HttpResponseRedirect('http://localhost:4200/galaxy/')
 
     def update_oauth_token_in_db(self, owner, token, refresh_token):
-        oauth_token_object, created = OauthToken.objects.get_or_create(owner=owner, defaults={'token': token, 'refresh_token': refresh_token})
+        oauth_token_object, created = OauthToken.objects.get_or_create(owner=owner, defaults={'token': token, 'refresh_token': refresh_token, 'is_user_authenticated': True})
         if not created:
             oauth_token_object.token = token
             oauth_token_object.refresh_token = refresh_token

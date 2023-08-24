@@ -7,6 +7,7 @@ from swirl.mixers import *
 import time
 import logging as logger
 from datetime import datetime
+import json
 
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User, Group
@@ -27,6 +28,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import AllowAny
 
 import csv
 import base64
@@ -174,16 +176,18 @@ class AuthenticatorViewSet(viewsets.ModelViewSet):
         return return_authenticators_list(request)
 
 
-class AuthViewSet(viewsets.ModelViewSet):
-    serializer_class = AuthenticatorSerializer
-
-    def list(self, request):
-        res = Microsoft().login(request)
-        if res == True:
-            return Response({ 'status': True })
-        if 'access_token' in res:
-            OauthToken.objects.get_or_create(owner=request.user, defaults={'token': res['access_token'], 'refresh_token': res['refresh_token']})
-            return Response({ 'status': True })
+class AuthViewSet(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+    def get(self, request, token):
+        if token:
+            token_obj = Token.objects.get(key=token)
+            request.session['current_user'] = token_obj.user.email
+            request.session.save()
+            res = Microsoft().ui_login(request)
+            if res == True:
+                return Response({ 'status': True })
+            return res
         return HttpResponseForbidden()
 
 
@@ -214,7 +218,7 @@ class LoginView(APIView):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key, 'user': user.username})
+            return Response({'token': token .key, 'user': user.username})
         else:
             return Response({'error': 'Invalid credentials'})
 
@@ -257,9 +261,14 @@ class OidcAuthView(APIView):
 
 
 class MicrosoftTokenStatus(APIView):
-    def post(self, request):
+    def get(self, request):
         try:
-            oauth_token_obj = OauthToken.objects.get(owner=request.user, idp='microsoft')
+            auth_header = request.headers['Authorization']
+            token = auth_header.split(' ')[1]
+            token_obj = Token.objects.get(key=token)
+            request.user = token_obj.user
+            oauth_token_obj = OauthToken.objects.get(owner=request.user, idp='Microsoft')
+            print(oauth_token_obj.is_user_authenticated)
             return Response({ 'status': oauth_token_obj.is_user_authenticated })
         except:
             return HttpResponseForbidden()
@@ -267,12 +276,19 @@ class MicrosoftTokenStatus(APIView):
 class MicrosoftChangeTokenStatus(APIView):
     def post(self, request):
         try:
-            oauth_token_obj = OauthToken.objects.get(owner=request.user, idp='microsoft')
-            oauth_token_obj.is_user_authenticated = request['status']
+            auth_header = request.headers['Authorization']
+            token = auth_header.split(' ')[1]
+            token_obj = Token.objects.get(key=token)
+            request.user = token_obj.user
+            data = json.loads(request.body.decode('utf-8'))  # Parse JSON data from the request body
+            status = data.get('status')
+            oauth_token_obj = OauthToken.objects.get(owner=request.user, idp='Microsoft')
+            print(oauth_token_obj)
+            oauth_token_obj.is_user_authenticated = status
             oauth_token_obj.save()
-            return Response({ 'status': request['status'] })
+            return Response({ 'status': status })
         except:
-            return HttpResponseForbidden()
+            return Response({ 'error': True })
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """
