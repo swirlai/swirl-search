@@ -13,8 +13,11 @@ from swirl.processors.processor import *
 from swirl.processors.utils import get_tag
 
 import openai
+MODEL_4 = "gpt-4"
+MODEL_3 = "gpt-3.5-turbo"
 
-MODEL = "gpt-4"
+MODEL = MODEL_3
+
 TAG_LEGACY_PROMPT = "prompt"
 TAG_PROMPT = "CHAT_QUERY_REWRITE_PROMPT"
 TAG_SYSTEM_GUIDE= "CHAT_QUERY_REWRITE_GUIDE"
