@@ -3,15 +3,11 @@ name: Docker Build
 # Build a multi-arch docker image for SWIRL
 # comment to start build
 
-# on:  # disabling 05:05 daily build and leaving this syntax for posterity
-#  schedule:
-#  - cron: '05 05 * * *'
-
 on:
   workflow_dispatch:
   push:
     # only trigger on branches, not on tags
-    branches: 'main'
+    branches: 'develop'
 
 
 jobs:
@@ -25,14 +21,22 @@ jobs:
     - name: login to docker hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
     - name: pull latest UI image
-      run: docker pull swirlai/spyglass:latest
+      run: docker pull swirlai/spyglass:preview
     - name: builder bootstrap
       run: docker buildx create --name devBuilder --use --bootstrap
     - name: Build the Docker image
-      run: docker buildx build -t swirlai/swirl-search:latest --platform linux/amd64,linux/arm64 --push .
+      run: docker buildx build -t swirlai/swirl-search:develop --platform linux/amd64,linux/arm64 --push .
     - name: Update repo description
       uses: peter-evans/dockerhub-description@v3.3.0
       with:
         username: ${{ secrets.DOCKER_USERNAME_X }}
         password: ${{ secrets.DOCKER_PASSWORD_X }}
         repository: swirlai/swirl-search
+    - name: Upload log files
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: log-files
+        path: |
+          logs/
+          /var/log/syslog*

@@ -6,6 +6,8 @@ from swirl.authenticators.authenticator import Authenticator
 from django.conf import settings
 from django.shortcuts import redirect
 from celery.utils.log import get_task_logger
+
+from swirl.models import OauthToken
 logger = get_task_logger(__name__)
 
 
@@ -20,6 +22,7 @@ class Microsoft(Authenticator):
     ########################################
 
     def __init__(self):
+        super().__init__()
         self.access_token_field = 'microsoft_access_token'
         self.refresh_token_field = 'microsoft_refresh_token'
         self.expires_in_field = 'microsoft_access_token_expiration_time'
@@ -31,6 +34,7 @@ class Microsoft(Authenticator):
                 '$select': 'displayName,mail,userPrincipalName'
             })
         return user.json()
+
 
     def store_user(self, request, user, result):
         try:
@@ -101,17 +105,38 @@ class Microsoft(Authenticator):
 
         user = self.get_user(tok)
         self.store_user(request, user, result)
+        self.update_oauth_token_in_db(request.user, result['access_token'], result['refresh_token'])
         return HttpResponseRedirect('/swirl/')
 
+    def update_oauth_token_in_db(self, owner, token, refresh_token):
+        oauth_token_object, created = OauthToken.objects.get_or_create(owner=owner, defaults={'token': token, 'refresh_token': refresh_token})
+        if not created:
+            oauth_token_object.token = token
+            oauth_token_object.refresh_token = refresh_token
+            oauth_token_object.save()
+
+    def update_access_from_refresh_token(self,user, refresh_token):
+        logger.debug(f'acquire_token_by_refresh')
+        app = self._get_auth_app()
+        result = app.acquire_token_by_refresh_token(refresh_token=refresh_token, scopes=scopes)
+        if 'access_token' in result:
+            logger.debug(f'in result : access_token {result["access_token"]} refresh_token : {result["refresh_token"]}')
+            self.update_oauth_token_in_db(user, result['access_token'], result['refresh_token'])
+        else:
+            logger.debug(f'access token not present in result {result}')
 
     def update_token(self, request):
+        logger.debug('update_token')
         app = self.get_auth_app(request)
         session_data = self.get_session_data(request)
         if session_data:
+            logger.debug(f'session_data:{session_data}')
             result = app.acquire_token_by_refresh_token(session_data[self.refresh_token_field], scopes=scopes)
             if 'access_token' in result:
+                logger.debug(f'in result : access_token {result["access_token"]} refresh_token : {result["refresh_token"]}')
                 now = datetime.now()
                 self.set_session_data(request, result['access_token'], result['refresh_token'], int(now.timestamp()) + result['expires_in'])
                 request.session.save()
+                self.update_oauth_token_in_db(request.user, result['access_token'], result['refresh_token'])
                 return True
         return self.login(request)

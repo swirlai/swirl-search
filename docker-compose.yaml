@@ -2,7 +2,7 @@ version: '3'
  
 services:
   app:
-    image: swirlai/swirl-search:latest
+    image: swirlai/swirl-search:develop
     ports:
       - "8000:8000"
     command: >

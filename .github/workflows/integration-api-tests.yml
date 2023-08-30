@@ -4,7 +4,7 @@ on:
   schedule:
   - cron: '05 05 * * *'
   push:
-    branches: 'main'
+    branches: 'develop'
 
 jobs:
   build:

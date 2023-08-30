@@ -4,7 +4,7 @@
     "default": "true",
     "connector": "RequestsGet",
     "url": "https://www.googleapis.com/customsearch/v1",
-    "query_template": "{url}",
+    "query_template": "{url}?&q={query_string}",
     "query_processor": "",
     "query_processors": [
       "AdaptiveQueryProcessor"

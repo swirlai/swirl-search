@@ -9,13 +9,14 @@
     "query_mappings": "collection=techproducts,PAGE=start=RESULT_ZERO_INDEX,NOT=True,NOT_CHAR=-",
     "result_processors": [
         "MappingResultProcessor",
-	    "CosineRelevancyResultProcessor"
+        "CosineRelevancyResultProcessor"
     ],
     "response_mappings": "FOUND=numFound,RESULTS=response.docs",
     "result_mappings": "title=name,body=features,response",
     "credentials": "HTTPBasicAuth('solr-username','solr-password')",
     "tags": [
-        "Products",
-        "Solr"
+        "Solr",
+        "TechProducts",
+        "Internal"
     ]
 }

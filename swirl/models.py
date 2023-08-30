@@ -37,6 +37,15 @@ class FlexibleChoiceField(models.CharField):
 
 class Authenticator(models.Model):
     name = models.CharField(max_length=100)
+
+class OauthToken(models.Model):
+    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    idp = models.CharField(max_length=32, default='Microsoft')
+    token = models.CharField(max_length=2048)
+    refresh_token = models.CharField(max_length=2048, blank=True, null=True)
+    class Meta:
+        unique_together = [['owner', 'idp']]
+
 class SearchProvider(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=200)
@@ -49,7 +58,7 @@ class SearchProvider(models.Model):
     AUTHENTICATOR_CHOICES = [
         ('Microsoft', 'Microsoft Authentication')
     ]
-    authenticator = models.CharField(max_length=200, default='', choices=AUTHENTICATOR_CHOICES)
+    authenticator = models.CharField(max_length=200, default='', blank=True, choices=AUTHENTICATOR_CHOICES)
     CONNECTORS_AUTHENTICATORS = dict({
         'M365OutlookMessages': 'Microsoft',
         'M365OneDrive': 'Microsoft',

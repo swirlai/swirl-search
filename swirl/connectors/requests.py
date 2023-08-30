@@ -11,7 +11,7 @@ import time
 
 import django
 
-from swirl.utils import swirl_setdir, http_auth_parse, is_valid_json
+from swirl.utils import swirl_setdir, http_auth_parse
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
@@ -37,6 +37,8 @@ from swirl.connectors.mappings import *
 from swirl.connectors.utils import bind_query_mappings
 
 from swirl.connectors.connector import Connector
+
+import xmltodict
 
 ########################################
 ########################################
@@ -81,23 +83,18 @@ class Requests(Connector):
         if '{query_string}' in query_to_provider:
             query_to_provider = query_to_provider.replace('{query_string}', urllib.parse.quote_plus(self.query_string_to_provider))
 
-        # Restating this because IT IS confusing. It is assumped that if the query template is valid
-        # jSON that it is being used as a POST body and in that case, all next page logic would be
-        # self contained in that body (although THAT is NOT handled here and should be handled in the POST
-        # implementation)
-        if is_valid_json(self.provider.query_template):
-            self.query_string_to_provider = query_to_provider
-            self.query_to_provider = self.provider.url
-            return
-
         if self.search.sort.lower() == 'date':
             # insert before the last parameter, which is expected to be the user query
-            sort_query = query_to_provider[:query_to_provider.rfind('&')]
-            if 'DATE_SORT' in self.query_mappings:
-                sort_query = sort_query + '&' + self.query_mappings['DATE_SORT'] + query_to_provider[query_to_provider.rfind('&'):]
-                query_to_provider = sort_query
+            amp_index = query_to_provider.rfind('&')
+            if amp_index >= 0:
+                sort_query = query_to_provider[:amp_index]
+                if 'DATE_SORT' in self.query_mappings:
+                    sort_query = sort_query + '&' + self.query_mappings['DATE_SORT'] + query_to_provider[query_to_provider.rfind('&'):]
+                    query_to_provider = sort_query
+                else:
+                    self.warning(f'DATE_SORT missing from self.query_mappings: {self.query_mappings}')
             else:
-                self.warning(f'DATE_SORT missing from self.query_mappings: {self.query_mappings}')
+                    logger.debug(f'request sort processing URL does not contain & character : {self.query_to_provider}')
         else:
             sort_query = query_to_provider[:query_to_provider.rfind('&')]
             if 'RELEVANCY_SORT' in self.query_mappings:
@@ -226,8 +223,16 @@ class Requests(Connector):
             # end if
 
             # normalize the response
+            content_type = response.headers['Content-Type']
+            json_data = None
+            if 'text/xml' in content_type or 'application/xml' in content_type or 'application/atom+xml' in content_type:
+                json_data = xmltodict.parse(response.text)
+            else:
+                json_data = response.json()
+                if not 'application/json' in content_type:
+                    logger.debug(f"content header not xml or explitily json, assuming json")
+
             mapped_response = {}
-            json_data = response.json()
             if not json_data:
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.retrieved = 0
@@ -244,7 +249,7 @@ class Requests(Connector):
                     try:
                         jxp = parse(jxp_key)
                         matches = [match.value for match in jxp.find(json_data)]
-                    except JsonPathParserError:
+                    except JsonPathParserError as err:
                         self.error(f'JsonPathParser: {err} in provider.self.response_mappings: {self.provider.response_mappings}')
                         return
                     except (NameError, TypeError, ValueError) as err:
