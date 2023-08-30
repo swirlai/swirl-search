@@ -8,7 +8,7 @@ on: # build at 05:05 UTC each day
 
 jobs:
 
-  build: 
+  build:
 
     runs-on: ubuntu-latest
 
@@ -17,6 +17,14 @@ jobs:
     - name: login to docker hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
     - name: Build the Docker image
-      run: docker build -t swirlai/swirl-search:develop-amd64 .
+      run: docker build -t swirlai/swirl-search:latest-amd64 .
     - name: Publish the image to DockerHub
-      run: docker push swirlai/swirl-search:develop-amd64
+      run: docker push swirlai/swirl-search:latest-amd64
+    - name: Upload log files
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: log-files
+        path: |
+          logs/
+          /var/log/syslog*
