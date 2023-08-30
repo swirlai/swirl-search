@@ -3,7 +3,7 @@ name: Unit Tests
 on:
   push:
     # only trigger on branches, not on tags
-    branches: 'develop'
+    branches: 'main'
 
 jobs:
 
@@ -24,11 +24,3 @@ jobs:
       run: ./install-test.sh
     - name: Run pytest unit tests
       run: pytest
-    - name: Upload log files
-      if: always()
-      uses: actions/upload-artifact@v2
-      with:
-        name: log-files
-        path: |
-          logs/
-          /var/log/syslog*
