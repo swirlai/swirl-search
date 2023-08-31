@@ -93,7 +93,7 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 :warning: The Docker version of Swirl *does not* retain any data or configuration when shut down!
 
-:key: Swirl includes three (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
+:key: Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
 
 :key: Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](4.-M365-Guide) or [contact us](mailto:hello@swirl.today).
 
