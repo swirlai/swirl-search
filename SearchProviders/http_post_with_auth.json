@@ -23,7 +23,7 @@
     "result_processor": "",
     "result_processors": [
         "MappingResultProcessor",
-	    "CosineRelevancyResultProcessor"
+        "CosineRelevancyResultProcessor"
     ],
     "response_mappings": "FOUND=count,RESULTS=results",
     "result_mappings": "titles=names[0].name,url=names[0].personNameKey,body='{names[0].name} ID#: {names[*].personNameKey}'",

@@ -35,14 +35,14 @@ import hmac
 
 from swirl.models import *
 from swirl.serializers import *
-from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel
+from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, OauthToken
 from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTrasnformNoCredentialsSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
 
 module_name = 'views.py'
 
-from swirl.tasks import search_task
+from swirl.tasks import update_microsoft_token_task
 from swirl.search import search as run_search
 
 SWIRL_EXPLAIN = getattr(settings, 'SWIRL_EXPLAIN', True)
@@ -238,6 +238,22 @@ class OidcAuthView(APIView):
                 return HttpResponseForbidden()
             return HttpResponseForbidden()
         return HttpResponseForbidden()
+
+
+
+class UpdateMicrosoftToken(APIView):
+    def post(self, request):
+        try:
+            headers = {
+                'Authorization': request.headers['Authorization'],
+                'Microsoft-Authorization': request.headers['Microsoft-Authorization']
+            }
+            # just return succcess,don't call the task
+            # result = update_microsoft_token_task.delay(headers).get()
+            result = { 'user': request.user.username, 'status': 'success' }
+            return Response(result)
+        except:
+            return HttpResponseForbidden()
 
 class SearchProviderViewSet(viewsets.ModelViewSet):
     """
@@ -445,12 +461,16 @@ class SearchViewSet(viewsets.ModelViewSet):
             new_search.save()
             # log info
             logger.info(f"{request.user} search_qs {new_search.id}")
+            headers = {
+                'Authorization': request.headers.get('Authorization', ''),
+                'Microsoft-Authorization': request.headers.get('Microsoft-Authorization', '')
+            }
             res = run_search(new_search.id, Authenticator().get_session_data(request), request=request)
             if not res:
-                print(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                logger.info(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 return Response(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             if not Search.objects.filter(id=new_search.id).exists():
-                print('Search object creation failed!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                logger.info('Search object creation failed!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 return Response('Search object creation failed!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             # security review for 1.7 - OK, search id created
             search = Search.objects.get(id=new_search.id)

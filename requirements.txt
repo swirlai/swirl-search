@@ -23,5 +23,8 @@ openai
 msal
 PyJWT
 pyahocorasick
-Redis
 redis
+Redis
+xmltodict
+
+

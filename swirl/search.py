@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 from datetime import datetime
 import time
 from celery import group, current_task
+from celery.exceptions import TimeoutError as CeleryTimeoutError
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
@@ -30,39 +31,14 @@ from swirl.perfomance_logger import SwirlQueryRequestLogger
 
 module_name = 'search.py'
 
-def search(id, session=None, request=None):
-
-    '''
-    Execute the search task workflow
-    '''
-
-    update = False
-    start_time = time.time()
-
-    try:
-        search = Search.objects.get(id=id)
-    except ObjectDoesNotExist as err:
-        logger.error(f'{module_name}_{id}: ObjectDoesNotExist: {err}')
-        return False
-    if not search.status.upper() in ['NEW_SEARCH', 'UPDATE_SEARCH']:
-        logger.debug(f"{module_name}_{search.id}: unexpected status {search.status}")
-        return False
-    if search.status.upper() == 'UPDATE_SEARCH':
-        logger.debug(f"{module_name}: {search.id}.status == UPDATE_SEARCH")
-        update = True
-        search.sort = 'date'
-
-    search.status = 'PRE_PROCESSING'
-    logger.debug(f"{module_name}: {search.status}")
-    search.save()
-    # check for provider specification
-
-    # check for blank query
-    if not search.query_string:
-        search.status = 'ERR_NO_QUERY_STRING'
-        search.save()
-        return False
-
+def get_query_selectd_provder_list(search):
+    """
+    Get the list of providers from the query, taking
+    into account
+    - Whether one was specified w/ the query
+    - What sources are currently active
+    - Tags on the query and the provider
+    """
     # check for starting tag
     start_tag = None
     if ':' in search.query_string.strip().split()[0]:
@@ -76,13 +52,6 @@ def search(id, session=None, request=None):
             tags_in_query_list.append(tag[:-1])
         else:
             tags_in_query_list.append(tag[:tag.find(':')])
-
-    user = User.objects.get(id=search.owner.id)
-    if not user.has_perm('swirl.view_searchprovider'):
-        logger.debug(f"User {user} needs permission view_searchprovider")
-        search.status = 'ERR_NEED_PERMISSION'
-        search.save()
-        return False
 
     providers = SearchProvider.objects.filter(active=True, owner=search.owner) | SearchProvider.objects.filter(active=True, shared=True)
     selected_provider_list = []
@@ -118,6 +87,52 @@ def search(id, session=None, request=None):
     else:
         # no provider list
         selected_provider_list = select_providers(providers=providers, start_tag=start_tag, tags_in_query_list=tags_in_query_list)
+
+    return selected_provider_list
+
+
+def search(id, session=None, request=None):
+
+    '''
+    Execute the search task workflow
+    '''
+
+    update = False
+    start_time = time.time()
+
+    try:
+        search = Search.objects.get(id=id)
+    except ObjectDoesNotExist as err:
+        logger.error(f'{module_name}_{id}: ObjectDoesNotExist: {err}')
+        return False
+    if not search.status.upper() in ['NEW_SEARCH', 'UPDATE_SEARCH']:
+        logger.debug(f"{module_name}_{search.id}: unexpected status {search.status}")
+        return False
+    if search.status.upper() == 'UPDATE_SEARCH':
+        logger.debug(f"{module_name}: {search.id}.status == UPDATE_SEARCH")
+        update = True
+        search.sort = 'date'
+
+    search.status = 'PRE_PROCESSING'
+    logger.debug(f"{module_name}: {search.status}")
+    search.save()
+    # check for provider specification
+
+    # check for blank query
+    if not search.query_string:
+        search.status = 'ERR_NO_QUERY_STRING'
+        search.save()
+        return False
+
+    # check for starting tag
+    selected_provider_list = get_query_selectd_provder_list(search)
+
+    user = User.objects.get(id=search.owner.id)
+    if not user.has_perm('swirl.view_searchprovider'):
+        logger.debug(f"User {user} needs permission view_searchprovider")
+        search.status = 'ERR_NEED_PERMISSION'
+        search.save()
+        return False
 
     providers = selected_provider_list
 
@@ -182,70 +197,30 @@ def search(id, session=None, request=None):
         error_return(msg, swqrx_logger)
         return False
     else:
+        from celery import group, current_task
         tasks_list = [federate_task.s(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id) for provider in providers]
         results = group(*tasks_list).delay()
         if current_task:
+            logger.debug(f'in current_task about to get {search.id}')
             with allow_join_result():
-                results = results.get(interval=0.05)
+                logger.debug(f'allow_join about to get {search.id}')
+                try:
+                    results = results.get(interval=0.05, timeout=settings.SWIRL_TIMEOUT)
+                except CeleryTimeoutError as err:
+                    logger.warning(f"Timeout:{err} in allow_join context, query results may still be returned")
+                except Exception as err:
+                    logger.error(f"Unexpected:{err}")
+                logger.debug(f'in current_task got my results {search.id}')
         else:
-            results = results.get(interval=0.05)
+            logger.debug(f'NOT in the current task about to get {search.id}')
+            try:
+                results = results.get(interval=0.05, timeout=settings.SWIRL_TIMEOUT)
+            except CeleryTimeoutError as err:
+                logger.warning(f"Timeout:{err} query results may still be returned")
+            except Exception as err:
+                logger.error(f"Unexpected:{err}")
+            logger.debug(f'NOT in the current task got my result {search.id}')
 
-    # ticks = 0
-    # error_flag = False
-    # at_least_one = False
-    # while 1:
-    #     time.sleep(1)
-    #     ticks = ticks + 1
-    #     # get the list of result objects
-    #     # security review for 1.7 - OK - filtered by search object
-    #     results = Result.objects.filter(search_id=search.id)
-    #     updated = 0
-    # for result in results:
-    #     if result.status == 'UPDATED':
-    #         updated = updated + 1
-    #     if result.status == 'ERROR':
-    #         error_flag = True
-    #     if result.status == 'READY':
-    #         at_least_one = True
-    #     if len(results) >= len(providers):
-    #         # every provider has written a result object - exit
-    #         # D.A.N. The >= is to account for bugs we have in double result saving, which is
-    #         # confusing this code. We will be removing this soon and I believe the above is
-    #         # a better approach for now.
-    #         logger.info(f"{module_name}_{search.id}: all results received!")
-    #         break
-    #     search.status = f'FEDERATING_WAIT_{ticks}'
-    #     logger.info(f"{module_name}: {search.status}")
-    #     SWIRL_TIMEOUT = getattr(settings, 'SWIRL_TIMEOUT', 10)
-    #     if ticks > int(SWIRL_TIMEOUT):
-    #         logger.info(f"{module_name}_{search.id}: timeout!")
-    #         failed_providers = []
-    #         responding_provider_names = []
-    #         for result in results:
-    #             responding_provider_names.append(result.searchprovider)
-    #         for provider in providers:
-    #             if not provider.name in responding_provider_names:
-    #                 failed_providers.append(provider.name)
-    #                 error_flag = True
-    #                 logger.info(f"{module_name}_{search.id}: timeout waiting for: {failed_providers}")
-    #                 search.messages.append(f"[{datetime.now()}] Timeout waiting for: {failed_providers}")
-    #                 search.save()
-    #             # end if
-    #         # end for
-    #         # exit the loop
-    #         swqrx_logger.timeout_execution()
-    #         break
-    # end while
-    #######################################
-    # update query status
-    # if error_flag:
-    #     if at_least_one:
-    #         search.status = 'PARTIAL_RESULTS'
-    #     else:
-    #         search.status = 'NO_RESULTS_READY'
-    #     # end if
-    # else:
-    #     search.status = 'FULL_RESULTS'
 
     search.status = 'FULL_RESULTS'
 

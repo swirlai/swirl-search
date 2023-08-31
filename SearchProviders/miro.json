@@ -11,13 +11,15 @@
     "query_mappings": "",
     "result_processors": [
         "MappingResultProcessor",
-	    "CosineRelevancyResultProcessor"
+        "CosineRelevancyResultProcessor"
     ],
     "response_mappings": "FOUND=total,RESULTS=data",
     "result_mappings": "title=name,body=description,url=viewLink,date_published=modifiedAt,owner.name,picture.imageURL,NO_PAYLOAD",
     "results_per_query": 10,
     "credentials": "bearer=your-miro-api-token",
     "tags": [
-        "Drawings"
+        "Drawings",
+        "Miro",
+        "Internal"
     ]
 }

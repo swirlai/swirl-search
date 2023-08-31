@@ -10,10 +10,12 @@
     "query_mappings": "fields=*,sort_by_date=fundedDate,table=funding,field1=city,field2=company",
     "result_processors": [
         "MappingResultProcessor",
-	    "CosineRelevancyResultProcessor"
+        "CosineRelevancyResultProcessor"
     ],
     "result_mappings": "title='{company} series {round}',body='{city} {fundeddate}: {company} raised usd ${raisedamt}\nThe company is headquartered in {city} and employs {numemps}',date_published=fundeddate,NO_PAYLOAD",
     "tags": [
-        "Company"
+        "Company",
+        "PostgreSQL",
+        "Internal"
     ]
 }

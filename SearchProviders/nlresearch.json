@@ -11,12 +11,13 @@
     "query_mappings": "PAGE=startNumber=RESULT_INDEX,DATE_SORT=sort=2,RELEVANCY_SORT=sort=1,NOT=true,NOT_CHAR=-",
     "result_processors": [
         "MappingResultProcessor",
-	    "CosineRelevancyResultProcessor"
+        "CosineRelevancyResultProcessor"
     ],
     "response_mappings": "FOUND=header.@attributes.total_documents,RESULTS=result_list.result,RESULT=document",
     "result_mappings": "body=summary,date_published=date,author=publisher,type,source,country,language,NO_PAYLOAD",
     "credentials": "login=your-username,password=your-password",
     "tags": [
-        "News"
+        "News",
+        "NorthernLight"
     ]
 }

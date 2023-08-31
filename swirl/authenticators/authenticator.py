@@ -1,16 +1,31 @@
 from django.http import HttpResponseRedirect
 from datetime import datetime
+import logging as logger
 
 class Authenticator:
 
     type = "SWIRL Authenticator"
-    
-    ########################################        
+
+    def __init__(self):
+        self.access_token_field = ''
+        self.refresh_token_field = ''
+        self.expires_in_field = ''
+
+    ########################################
 
     def get_session_data(self, request):
         if 'user' in request.session:
             return request.session['user']
         return False
+
+    def get_access_token_session_field(self):
+        return self.access_token_field
+
+    def get_refresh_token_session_field(self):
+        return self.refresh_token_field
+
+    def get_access_token_expiration_time_session_field(self):
+        return self.expires_in_field
 
     def set_session_data(self, request, access_token, refresh_token, expiration_time):
         if 'user' not in request.session:
@@ -44,6 +59,6 @@ class Authenticator:
 
     def callback(self, request):
         return HttpResponseRedirect('/swirl/')
-    
+
     def update_token(self, request):
         return {}
