@@ -1,4 +1,4 @@
-<h1>&nbsp; Swirl Metasearch 2.5.1<img alt='Swirl Metasearch Logo' src='https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl-logo-only-blue.png' width=38 align=left /></h1>
+<h1>&nbsp; Swirl Metasearch 2.5.2<img alt='Swirl Metasearch Logo' src='https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl-logo-only-blue.png' width=38 align=left /></h1>
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=blue&logoColor=blue&style=flat)](https://opensource.org/license/apache-2-0/)
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat&label=Release)](https://github.com/swirlai/swirl-search/releases)
@@ -53,7 +53,7 @@ After a few minutes the following or similar should appear:
 
 ```
 ssdtest-app-1  | Command successful!
-ssdtest-app-1  | __S_W_I_R_L__2_._5_._1________________________________________________________
+ssdtest-app-1  | __S_W_I_R_L__2_._5_._2________________________________________________________
 ssdtest-app-1  |
 ssdtest-app-1  | Warning: logs directory does not exist, creating it
 ssdtest-app-1  | Start: redis -> redis-server ./redis.conf ... Ok, pid: 28
@@ -67,10 +67,10 @@ ssdtest-app-1  |    34 ?        00:00:02 celery
 ssdtest-app-1  |    45 ?        00:00:02 celery
 ssdtest-app-1  |
 ssdtest-app-1  | Command successful!
-ssdtest-app-1  | 2023-08-29 13:16:11,070 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
-ssdtest-app-1  | 2023-08-29 13:16:11,074 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
-ssdtest-app-1  | 2023-08-29 13:16:11,075 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
-ssdtest-app-1  | 2023-08-29 13:16:11,079 INFO     Listening on TCP address 0.0.0.0:8000
+ssdtest-app-1  | 2023-09-27 13:16:11,070 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
+ssdtest-app-1  | 2023-09-27 13:16:11,074 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+ssdtest-app-1  | 2023-09-27 13:16:11,075 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
+ssdtest-app-1  | 2023-09-27 13:16:11,079 INFO     Listening on TCP address 0.0.0.0:8000
 ```
 
 * Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy>)
@@ -93,7 +93,7 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 :warning: The Docker version of Swirl *does not* retain any data or configuration when shut down!
 
-:key: Swirl includes three (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
+:key: Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
 
 :key: Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](4.-M365-Guide) or [contact us](mailto:hello@swirl.today).
 
