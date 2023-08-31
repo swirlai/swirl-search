@@ -24,7 +24,6 @@ msal
 PyJWT
 pyahocorasick
 redis
-Redis
 xmltodict
 
 
