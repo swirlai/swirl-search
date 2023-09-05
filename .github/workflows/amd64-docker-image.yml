@@ -5,6 +5,8 @@ name: Docker Build for amd64
 on: # build at 05:05 UTC each day
  schedule:
  - cron: '05 05 * * *'
+ push:
+   branches: 'main'
 
 jobs:
 
