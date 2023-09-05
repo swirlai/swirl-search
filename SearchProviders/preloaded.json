@@ -106,8 +106,7 @@
         "url": "",
         "query_template": "",
         "query_processors": [
-            "AdaptiveQueryProcessor",
-            "ChatGPTQueryProcessor"
+            "AdaptiveQueryProcessor"
         ],
         "query_mappings": "PROMPT='Tell me about: {query_to_provider}'",
         "result_processors": [
