@@ -84,7 +84,7 @@ After a few minutes the following or similar should appear:
 
 ```
 ssdtest-app-1  | Command successful!
-ssdtest-app-1  | __S_W_I_R_L__2_._5_._1________________________________________________________
+ssdtest-app-1  | __S_W_I_R_L__2_._5_._2________________________________________________________
 ssdtest-app-1  |
 ssdtest-app-1  | Warning: logs directory does not exist, creating it
 ssdtest-app-1  | Start: redis -> redis-server ./redis.conf ... Ok, pid: 28
