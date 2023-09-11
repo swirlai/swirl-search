@@ -11,8 +11,9 @@
 [![Docker Build](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg?style=flat-square&branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml)
 [![Tests](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml)
 
-[![Slack](https://custom-icon-badges.demolab.com/badge/Join%20Our%20Slack-blue?style=flat&logo=slack&color=AED2FF&logoColor=27005D)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
+
 [![Built with spaCy](https://img.shields.io/badge/Built%20with-spaCy-09a3d5.svg?color=blue)](https://spacy.io)
+[![Slack](https://custom-icon-badges.demolab.com/badge/Join%20Our%20Slack-black?style=flat&logo=slack&color=38E54D&logoColor=27005D)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 
 </div>
 
