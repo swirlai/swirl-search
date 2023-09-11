@@ -1,6 +1,6 @@
 [![Swirl Metasearch](assets/readme-header.png)](https://www.swirl.today)
 
-<h1 align="center">Swirl Metasearch </h1>
+<h1 align="center">Swirl</h1>
 
 <div align="center">
 
@@ -17,9 +17,9 @@
 
 </div>
 
-Swirl Search 🌌 is an open source search platform to seamless connect across data databases, warehouses, search providers, and data siloes. Dive deep, unveil hidden insights, and navigate your data effortlessly. Whether you're a startup or a large enterprise, Swirl is tailored for you. 
+Swirl 🌌 is an open source search platform to seamlessly connect databases, warehouses, search providers, and data siloes. Dive deep, unveil hidden insights, and navigate your data effortlessly. Whether you're a startup or a large enterprise, Swirl is tailored for you. 
 
-Use Swirl to search within your data 🔍. It connects with Large Language Models like GPT to provide insights and answers from your own data source. Enabling you to perform Retrieval Augmented Generation (RAG) on your own data. 
+Use Swirl to search within your data 🔍. Swirl connects with Large Language Models GPT to provide insights and answers from your own data source. Enabling you to perform Retrieval Augmented Generation (RAG) on your own data. 
 
 Swirl is built in Python along with Django. Swirl is intended for use by anyone who wants to solve multi-silo search problems without moving, re-indexing or re-permissioning sensitive information.
 
@@ -40,7 +40,7 @@ Swirl is built in Python along with Django. Swirl is intended for use by anyone 
 
 # How Swirl Works
 
-Swirl Metasearch adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, etc. - and uses AI ([Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/)) to re-rank the unified results *without* extracting or indexing *anything*. It includes OAuth2 support for Microsoft 365 alongside integration with enterprise services such as Atlassian Jira and Confluence, JetBrains YouTrack, HubSpot and more.
+Swirl adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, etc. - and uses AI ([Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/)) to re-rank the unified results *without* extracting or indexing *anything*. It includes OAuth2 support for Microsoft 365 alongside integration with enterprise services such as Atlassian Jira and Confluence, JetBrains YouTrack, HubSpot and more.
 
 Using the Galaxy UI, knowledge workers can systematically review the best results from all configured services including Apache [Solr](https://solr.apache.org/), [ChatGPT](https://openai.com/blog/chatgpt/), [Elastic](https://www.elastic.co/cn/downloads/elasticsearch), [OpenSearch](https://opensearch.org/downloads.html), [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery), plus generic HTTP/GET/POST with configurations for premium services like [Google's Programmable Search Engine](https://programmablesearchengine.google.com/about/), [Miro](https://miro.com/app/) and [Northern Light Research](https://northernlight.com/).
 
