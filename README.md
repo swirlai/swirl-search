@@ -4,7 +4,7 @@
 
 <div align="center">
 
-### Open Source Search Platform with LLMs for Federated Search and Retrieval Augmented Generation (RAG)
+### Open Source Search Platform for Federated Search with LLMs and GPT ⚡
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=blue&logoColor=blue&style=flat)](https://opensource.org/license/apache-2-0/)
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat&label=Release)](https://github.com/swirlai/swirl-search/releases)
