@@ -1,4 +1,4 @@
-[![Swirl Metasearch](assets/readme-header.png)](https://www.swirl.today)
+[![Swirl Metasearch](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/readme-header.png)](https://www.swirl.today)
 
 <h1 align="center">Swirl</h1>
 
