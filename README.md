@@ -1,15 +1,46 @@
-<h1>&nbsp; Swirl Metasearch 2.5.2<img alt='Swirl Metasearch Logo' src='https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl-logo-only-blue.png' width=38 align=left /></h1>
+[![Swirl Metasearch](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/readme-header.png)](https://www.swirl.today)
+
+<h1 align="center">Swirl</h1>
+
+<div align="center">
+
+### Open Source Search Platform for Federated Search with LLMs and GPT ⚡
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=blue&logoColor=blue&style=flat)](https://opensource.org/license/apache-2-0/)
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat&label=Release)](https://github.com/swirlai/swirl-search/releases)
-[![Docker Build](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml)
+[![Docker Build](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg?style=flat-square&branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml)
 [![Tests](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml)
-[![Built with spaCy](https://img.shields.io/badge/Built%20with-spaCy-09a3d5.svg?color=blue)](https://spacy.io)
-[![Slack](https://img.shields.io/badge/Slack--channel-gray?logo=slack&logoColor=black&style=flat)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
-[![Newsletter](https://img.shields.io/badge/Newsletter-gray?logo=revue&logoColor=black&style=flat)](https://groups.google.com/g/swirl-announce)
-[![Twitter](https://img.shields.io/twitter/follow/SWIRL_SEARCH?label=Follow%20%40SWIRL_SEARCH&color=gray&logoColor=black&style=flat)](https://twitter.com/SWIRL_SEARCH)
 
-Swirl Metasearch adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, etc. - and uses AI ([Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/)) to re-rank the unified results *without* extracting or indexing *anything*. It includes OAuth2 support for Microsoft 365 alongside integration with enterprise services such as Atlassian Jira and Confluence, JetBrains YouTrack, HubSpot and more.
+
+[![Built with spaCy](https://img.shields.io/badge/Built%20with-spaCy-09a3d5.svg?color=blue)](https://spacy.io)
+[![Slack](https://custom-icon-badges.demolab.com/badge/Join%20Our%20Slack-black?style=flat&logo=slack&color=38E54D&logoColor=27005D)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
+
+</div>
+
+Swirl 🌌 is an open source search platform to seamlessly connect databases, warehouses, search providers, and data siloes. Dive deep, unveil hidden insights, and navigate your data effortlessly. Whether you're a startup or a large enterprise, Swirl is tailored for you. 
+
+Use Swirl to search within your data 🔍. Swirl connects with Large Language Models GPT to provide insights and answers from your own data source. Enabling you to perform Retrieval Augmented Generation (RAG) on your own data. 
+
+Swirl is built in Python along with Django. Swirl is intended for use by anyone who wants to solve multi-silo search problems without moving, re-indexing or re-permissioning sensitive information.
+
+
+<div align="center">
+<h4>
+
+[Try Swirl in Docker](#start-swirl-in-docker) ⦁
+[Join our Slack Community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) ⦁
+[Key Features](#key-features) ⦁
+[Contribute](#contributing-to-swirl) ⦁
+[Documentation](#documentation)
+</h4>
+
+</div>
+
+<br/>
+
+# How Swirl Works
+
+Swirl adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, etc. - and uses AI ([Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/)) to re-rank the unified results *without* extracting or indexing *anything*. It includes OAuth2 support for Microsoft 365 alongside integration with enterprise services such as Atlassian Jira and Confluence, JetBrains YouTrack, HubSpot and more.
 
 Using the Galaxy UI, knowledge workers can systematically review the best results from all configured services including Apache [Solr](https://solr.apache.org/), [ChatGPT](https://openai.com/blog/chatgpt/), [Elastic](https://www.elastic.co/cn/downloads/elasticsearch), [OpenSearch](https://opensearch.org/downloads.html), [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery), plus generic HTTP/GET/POST with configurations for premium services like [Google's Programmable Search Engine](https://programmablesearchengine.google.com/about/), [Miro](https://miro.com/app/) and [Northern Light Research](https://northernlight.com/).
 
@@ -145,13 +176,16 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 # Contributing to Swirl
 
-Have an idea for a new feature, bug fix, or enhancement to Swirl?  Great, we'd love to see it!  To ensure a proper code review, all contributions to the project must go through a GitHub pull request.
+**Have an idea for a new feature, connector bug fix, or enhancement to Swirl?**  Great, we'd 💖 love to see it!  
 
-We follow a rough approximation of the [Gitflow branching model](https://nvie.com/posts/a-successful-git-branching-model/). Changes for the next release go on the `develop` branch. When submitting PRs to Swirl, please create a branch off of `develop` with a name that describes the change you're working on. 
+Join our [Slack community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) to discuss the changes you are trying to propose. The community and team members would love to help you contribute to Swirl. 
 
-For more general information about contributing to projects on Github, visit the [GitHub documentation](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) on this very subject.
+**Note**: Create a branch off of `develop` branch with a name that describes the change you're working on. We accept PRs to the `develop` branch so that the `main` branch remains stable. 
 
-Thanks for your help!
+To ensure a proper code review, all contributions to the project must go through a GitHub pull request. We follow a rough approximation of the [Gitflow branching model](https://nvie.com/posts/a-successful-git-branching-model/). Changes for the next release go on the `develop` branch.
+
+For more general information about contributing to projects on Github, visit the [GitHub documentation](https://docs.github.com/en/get-started/quickstart/contributing-to-projects).
+
 <br/>
 
 # Try Swirl Cloud
@@ -167,6 +201,8 @@ For information about Swirl as a managed service, please [contact us](mailto:hel
 <br/>
 
 # Support
+
+Do you have any questions or doubts. Reach us on the below links:
 
 * [Join the Swirl Metasearch Community on Slack!](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 
