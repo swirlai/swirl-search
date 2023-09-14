@@ -28,7 +28,7 @@ class PostSearchProviderTestCase(TestCase):
         assert page
         text = page.get_text_strip_html()
         assert text
-        assert text == '"     Test Page Welcome to the Test Page This is a simple page for testing purposes. Feel free to modify or expand upon it!  "'
+        assert text == '"     Test Page    Welcome to the Test Page This is a simple page for testing purposes. Feel free to modify or expand upon it!  "'
 
     @responses.activate
     def test_pagefetcher_1(self):

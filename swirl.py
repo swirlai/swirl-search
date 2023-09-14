@@ -3,7 +3,7 @@
 @contact:    sid@swirl.today
 @version:    SWIRL 1.x
 '''
-
+import re
 import argparse
 from asyncio.subprocess import STDOUT
 import sys
@@ -37,17 +37,21 @@ def get_swirl_version():
     url = SWIRL_VERSION_CHECK_URL
     try:
         page = get_page_fetcher_or_none(url=url).get_page()
-        version = page.get_text_strip_html()
+        version_text = page.get_text_strip_html()
+        match = re.search(r'(\d+\.\d+(?:\.\d+)?)', version_text)
+        if match:
+            version = match.group(1)
     except Exception as err:
         print(f'{err} while checking version, continuing')
     finally:
-        return version
+        return version.strip()
 
 def service_is_retired(service_name):
     ret = False
     try:
-        if (service_info := SERVICES.get(service_name,None)):
-                if service_info['retired']:
+        for service in SERVICES:
+            if service['name'] == service_name:
+                if service['retired']:
                     print(f"{service_name} is retired, ignoring", end='')
                     ret = True
     except Exception as err:
@@ -183,7 +187,7 @@ def start(service_list):
     try:
         sw_version = get_swirl_version()
         if sw_version != SWIRL_VERSION:
-            print(f"You're using {SWIRL_VERSION} of swirl, {sw_version} is available.")
+            print(f"You're using <<{SWIRL_VERSION}>> of swirl, <<{sw_version}>> is available.")
         else:
             print(f"You'r using {SWIRL_VERSION} of swirl, the current version.")
     except Exception as err:

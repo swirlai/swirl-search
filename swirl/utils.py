@@ -49,7 +49,7 @@ def is_running_celery_redis():
             r = redis.StrictRedis(host=url.hostname, port=url.port, db=0, decode_responses=True)
             response = r.ping()
             if response:
-                print("{url} checked.")
+                print(f"{url} checked.")
         except redis.ConnectionError:
             print("Redis is not running or cannot connect!")
             return False

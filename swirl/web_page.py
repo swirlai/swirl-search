@@ -58,17 +58,19 @@ class WebPage (metaclass=ABCMeta):
         return self._document_type
 
     def get_text_strip_html(self):
-        return self.html_to_text(self.get_text()).strip()
+        return self.html_to_text(self.get_text(), skip_summary=True).strip()
 
-    def html_to_text(self, html):
+    def html_to_text(self, html, skip_summary=False):
         ret_text = ""
         if not html : return ret_text
         try:
             # Assuming 'page_text' contains the raw HTML content
-            item_content = Document(html)
-
-            # Get the cleaned and readable version of the HTML
-            cleaned_html = item_content.summary()
+            if skip_summary:
+                cleaned_html = html
+            else:
+                item_content = Document(html)
+                # Get the cleaned and readable version of the HTML
+                cleaned_html = item_content.summary()
 
             # Use BeautifulSoup to extract text from the cleaned HTML
             soup = BeautifulSoup(cleaned_html, 'html.parser')
