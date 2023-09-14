@@ -786,7 +786,7 @@
         "authenticator": "",
         "connector": "RequestsGet",
         "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
-        "query_template": "{url}?query={query_string}&resultType=core&pageSize=25&format=json",
+        "query_template": "{url}?query={query_string}&resultType=core&format=json",
         "post_query_template": "{}",
         "http_request_headers": {},
         "query_processors": [
