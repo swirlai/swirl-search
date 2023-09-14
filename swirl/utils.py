@@ -8,10 +8,12 @@ import re
 import logging as logger
 import json
 from pathlib import Path
+import redis
 from django.core.paginator import Paginator
+from django.conf import settings
 from swirl.web_page import PageFetcherFactory
 from urllib.parse import urlparse
-from django.conf import settings
+
 
 SWIRL_MACHINE_AGENT   = {'User-Agent': 'SwirlMachineServer/1.0 (+http://swirl.today)'}
 SWIRL_CONTAINER_AGENT = {'User-Agent': 'SwirlContainer/1.0 (+http://swirl.today)'}
@@ -19,6 +21,43 @@ SWIRL_CONTAINER_AGENT = {'User-Agent': 'SwirlContainer/1.0 (+http://swirl.today)
 ##################################################
 ##################################################
 
+def safe_urlparse(url):
+    ret  = None
+    try:
+        ret =  urlparse(url)
+    except Exception as err:
+        print(f'{err} while parsing URL')
+    finally:
+        return ret
+
+def is_running_celery_redis():
+    """
+    check of the celey redis Brokers are available, if any are not
+    print a message retrurn false.
+    """
+    parsed_redis_urls = []
+    celery_urls = [settings.CELERY_BROKER_URL, settings.CELERY_RESULT_BACKEND]
+    for url in celery_urls:
+        if not (purl := safe_urlparse(url)):
+            continue
+        if not (purl.scheme or purl.scheme.lower() == 'redis'):
+            continue
+        parsed_redis_urls.append(purl)
+
+    for url in parsed_redis_urls:
+        try:
+            r = redis.StrictRedis(host=url.hostname, port=url.port, db=0, decode_responses=True)
+            response = r.ping()
+            if response:
+                print("{url} checked.")
+        except redis.ConnectionError:
+            print("Redis is not running or cannot connect!")
+            return False
+        except Exception as err:
+            print("{err} While checking if redis is running")
+            return False
+
+    return True
 
 def is_running_in_docker():
     try:

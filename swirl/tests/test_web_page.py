@@ -41,8 +41,6 @@ class PostSearchProviderTestCase(TestCase):
         assert text
         assert text == '" Test Page Welcome to the Test Page This is a simple page for testing purposes. Feel free to modify or expand upon it! "'
 
-
-
     def assert_page_fetch_default_options(self, pf, do_cache):
             """takes into account things that are not in the default becasue they are mandatory"""
             dops = PageFetcherOptions.get_page_fetch_defaults()
