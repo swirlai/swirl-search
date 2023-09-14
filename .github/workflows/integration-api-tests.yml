@@ -1,4 +1,4 @@
-name: Ingegration API Tests
+name: Integration API Tests
 
 on:
   schedule:
