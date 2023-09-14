@@ -6,35 +6,41 @@
 
 ### Open Source Search Platform for Federated Search with LLMs and GPT ⚡
 
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=blue&logoColor=blue&style=flat)](https://opensource.org/license/apache-2-0/)
-[![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat&label=Release)](https://github.com/swirlai/swirl-search/releases)
-[![Docker Build](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg?style=flat-square&branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml)
-[![Tests](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml)
-
-
-[![Built with spaCy](https://img.shields.io/badge/Built%20with-spaCy-09a3d5.svg?color=blue)](https://spacy.io)
-[![Slack](https://custom-icon-badges.demolab.com/badge/Join%20Our%20Slack-black?style=flat&logo=slack&color=38E54D&logoColor=27005D)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
-
-</div>
-
-Swirl 🌌 is an open source search platform to seamlessly connect databases, warehouses, search providers, and data siloes. Dive deep, unveil hidden insights, and navigate your data effortlessly. Whether you're a startup or a large enterprise, Swirl is tailored for you. 
-
-Use Swirl to search within your data 🔍. Swirl connects with Large Language Models GPT to provide insights and answers from your own data source. Enabling you to perform Retrieval Augmented Generation (RAG) on your own data. 
-
-Swirl is built in Python along with Django. Swirl is intended for use by anyone who wants to solve multi-silo search problems without moving, re-indexing or re-permissioning sensitive information.
-
-
 <div align="center">
 <h4>
 
 [Try Swirl in Docker](#start-swirl-in-docker) ⦁
-[Join our Slack Community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) ⦁
+[Join our Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) ⦁
 [Key Features](#key-features) ⦁
 [Contribute](#contributing-to-swirl) ⦁
 [Documentation](#documentation)
 </h4>
 
 </div>
+
+---
+
+<br/>
+
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=088395&logoColor=blue&style=flat-square)](https://opensource.org/license/apache-2-0/)
+[![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat-square&color=8DDFCB&label=Release)](https://github.com/swirlai/swirl-search/releases)
+[![Slack](https://custom-icon-badges.demolab.com/badge/Join%20Our%20Slack-black?style=flat-square&logo=slack&color=0E21A0&logoColor=white)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
+
+[![Docker Build](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg?style=flat-square&branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml)
+[![Tests](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml)
+
+</div>
+
+Swirl lets you build a customize search experience for your own data with open sourced Large Language Models and enterprise LLMs like ChatGPT, Claude, PaLM etc.
+
+Start Swirl in Docker. Connect to any data source, add your GPT/LLM connector key. Start searching. Get insights. Your data is just an API key away. 
+
+### Try Swirl with ChatGPT 🚀
+
+![](assets/1.png)
+
+
+
 
 <br/>
 
