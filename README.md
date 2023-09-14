@@ -31,9 +31,7 @@
 
 </div>
 
-Swirl lets you build a customize search experience for your own data with open sourced Large Language Models and enterprise LLMs like ChatGPT, Claude, PaLM etc.
-
-Start Swirl in Docker. Connect to any data source, add your GPT/LLM connector key. Start searching. Get insights. Your data is just an API key away. 
+Swirl lets you build a customize search experience for your own data with open sourced Large Language Models and enterprise LLMs like ChatGPT, Claude, PaLM etc. Start Swirl in Docker. Connect to any data source, add your GPT/LLM connector key. Start searching. Get insights. Your data is just an API key away. 
 
 ### Try Swirl with ChatGPT 🚀
 
