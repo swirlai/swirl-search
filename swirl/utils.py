@@ -9,12 +9,37 @@ import logging as logger
 import json
 from pathlib import Path
 from django.core.paginator import Paginator
-
+from swirl.web_page import PageFetcherFactory
 from urllib.parse import urlparse
 from django.conf import settings
 
+SWIRL_MACHINE_AGENT   = {'User-Agent': 'SwirlMachineServer/1.0 (+http://swirl.today)'}
+SWIRL_CONTAINER_AGENT = {'User-Agent': 'SwirlContainer/1.0 (+http://swirl.today)'}
+
 ##################################################
 ##################################################
+
+
+def is_running_in_docker():
+    try:
+        with open('/proc/1/cgroup', 'rt') as ifh:
+            return 'docker' in ifh.read()
+    except Exception as err:
+        logger.debug(f"{err} while checking for container")
+        return False
+
+def get_page_fetcher_or_none(url):
+
+    headers = SWIRL_CONTAINER_AGENT if is_running_in_docker() else SWIRL_MACHINE_AGENT
+
+    if (pf := PageFetcherFactory.alloc_page_fetcher(url=url, options= {
+                                                        "cache": "false",
+                                                        "headers":headers
+                                                })):
+        return pf
+    else:
+        logger.info(f"No fetcher for {url}")
+        return None
 
 def get_url_details(request):
     if request:

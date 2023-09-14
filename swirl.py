@@ -23,16 +23,33 @@ from datetime import datetime
 # environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 # django.setup()
 
-# from django.conf import settings
+from django.conf import settings
 
 module_name = 'swirl.py'
 
-from swirl.banner import SWIRL_BANNER, bcolors
-from swirl.services import SWIRL_SERVICES, SWIRL_SERVICES_DEBUG, SWIRL_SERVICES_DICT, SWIRL_SERVICES_DEBUG_DICT, SERVICES, SERVICES_DICT
+from swirl.banner import SWIRL_BANNER, bcolors, SWIRL_VERSION
+from swirl.utils import get_page_fetcher_or_none
+from swirl.services import SWIRL_SERVICES_DEBUG, SWIRL_SERVICES_DEBUG_DICT, SERVICES, SERVICES_DICT
 
 SWIRL_CORE_SERVICES = ['django', 'celery-worker']
+SWIRL_VERSION_CHECK_URL = 'https://updatecheck.swirl.today/'
 
 COMMAND_LIST = [ 'help', 'start', 'debug', 'start_sleep', 'stop', 'restart', 'migrate', 'setup', 'status', 'watch', 'logs' ]
+
+def get_swirl_version():
+    """
+    Fetch the current version of swirl and if it fails for any reason, return the current
+    version instead.
+    """
+    version = SWIRL_VERSION
+    url = SWIRL_VERSION_CHECK_URL
+    try:
+        page = get_page_fetcher_or_none(url=url).get_page()
+        version = page.get_text_strip_html()
+    except Exception as err:
+        print(f'{err} while checking version, continuing')
+    finally:
+        return version
 
 def check_rabbit():
     proc = subprocess.run(['ps','-ef'], capture_output=True)
@@ -173,6 +190,15 @@ def start(service_list):
 
     if flag:
         return False
+
+    try:
+        sw_version = get_swirl_version()
+        if sw_version != SWIRL_VERSION:
+            print(f"You're using {SWIRL_VERSION} of swirl, {sw_version} is available.")
+        else:
+            print(f"You'r using {SWIRL_VERSION} of swirl, the current version.")
+    except Exception as err:
+        print(f"INFO {err} getting version, continueing start")
 
     return True
 

@@ -589,6 +589,46 @@ def capitalize_search(list_lower, list_unknown):
 
     return list_capitalized
 
+def clean_string_keep_punct(s):
+
+    # remove entities and tags
+    s1 = remove_tags(s)
+
+    # parse s1 carefully
+    module_name = 'clean_string_2'
+    string_clean = ""
+    try:
+        for ch in s1.strip():
+            # numbers
+            if ch.isnumeric():
+                string_clean = string_clean + ch
+                continue
+            # letters
+            if ch.isalpha():
+                string_clean = string_clean + ch
+                continue
+            if ch in [ '"', "'", '’', ' ', '-', '$', '%', '?', ':', '(', ')', '.', '?', '!']:
+                string_clean = string_clean + ch
+                continue
+            if ch in [ '\n', ';', '/', '_', '|' ]:
+                string_clean = string_clean + ' '
+        # end for
+    except NameError as err:
+        return(f'{module_name}: Error: NameError: {err}')
+    except TypeError as err:
+        return(f'{module_name}: Error: TypeError: {err}')
+    # remove extra spaces
+    if '  ' in string_clean:
+        while '  ' in string_clean:
+            string_clean = string_clean.replace('  ', ' ')
+    # end if
+    # remove as single token
+    string_cleaner = []
+    for t in string_clean.split():
+        if t not in [ '-', '--']:
+            string_cleaner.append(t)
+    return ' '.join(string_cleaner)
+
 
 def json_to_flat_string(json_data, separator=' ', deadman=None):
     """
