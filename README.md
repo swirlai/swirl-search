@@ -11,14 +11,14 @@
 ### Open Source Platform for Searching Anything with LLMs and GPT
 
 <div align="center">
-<h4>
 
-[𝚂𝚝𝚊𝚛𝚝 𝚂𝚠𝚒𝚛𝚕](#start-swirl-in-docker) ⦁
+
+[𝚂𝚝𝚊𝚛𝚝 𝚂𝚎𝚊𝚛𝚌𝚑𝚒𝚗𝚐](#start-swirl-in-docker) ⦁
 [𝚂𝚕𝚊𝚌𝚔](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) ⦁
 [𝙺𝚎𝚢 𝙵𝚎𝚊𝚝𝚞𝚛𝚎𝚜 ](#key-features) ⦁
 [𝙲𝚘𝚗𝚝𝚛𝚒𝚋𝚞𝚝𝚎](#contributing-to-swirl) ⦁
 [𝙳𝚘𝚌𝚞𝚖𝚎𝚗𝚝𝚊𝚝𝚒𝚘𝚗](#documentation)
-</h4>
+
 
 </div>
 
