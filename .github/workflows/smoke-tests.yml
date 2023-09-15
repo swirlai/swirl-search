@@ -28,12 +28,8 @@ jobs:
       run: sudo apt upgrade -y
     - name: Run Install redis-server
       run: sudo apt install -y redis-server
-    - name: stop system redis
-      run: sudo systemctl stop redis-server.service
     - name: Set up SWIRL
       run: python swirl.py setup
-    - name: chown swirl redis.conf
-      run: sudo chown -R redis.redis /home/runner/work/swirl-search/swirl-search/redis.conf
     - name: Start up SWIRL
       run: python swirl.py start
     - name: Run Smoke tests
