@@ -1,19 +1,23 @@
-[![Swirl Metasearch](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/readme-header.png)](https://www.swirl.today)
+<div align="center">
+
+[![Swirl Metasearch](assets/header.png)](https://www.swirl.today)
+
+</div>
 
 <h1 align="center">Swirl</h1>
 
 <div align="center">
 
-### Open Source Search Platform for Federated Search with LLMs and GPT ⚡
+### Open Source Platform for Searching Anything with LLMs and GPT
 
 <div align="center">
 <h4>
 
-[Try Swirl in Docker](#start-swirl-in-docker) ⦁
-[Join our Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) ⦁
-[Key Features](#key-features) ⦁
-[Contribute](#contributing-to-swirl) ⦁
-[Documentation](#documentation)
+[𝗧𝗿𝘆 𝗦𝘄𝗶𝗿𝗹 𝗶𝗻 𝗗𝗼𝗰𝗸𝗲𝗿](#start-swirl-in-docker) ⦁
+[𝗝𝗼𝗶𝗻 𝗼𝘂𝗿 𝗦𝗹𝗮𝗰𝗸](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) ⦁
+[𝗞𝗲𝘆 𝗙𝗲𝗮𝘁𝘂𝗿𝗲𝘀 ](#key-features) ⦁
+[𝗖𝗼𝗻𝘁𝗿𝗶𝗯𝘂𝘁𝗲](#contributing-to-swirl) ⦁
+[𝗗𝗼𝗰𝘂𝗺𝗲𝗻𝘁𝗮𝘁𝗶𝗼𝗻](#documentation)
 </h4>
 
 </div>
@@ -31,14 +35,13 @@
 
 </div>
 
-Swirl lets you build a customize search experience for your own data with open sourced Large Language Models and enterprise LLMs like ChatGPT, Claude, PaLM etc. Start Swirl in Docker. Connect to any data source, add your GPT/LLM connector key. Start searching. Get insights. Your data is just an API key away. 
+Build a transformative search experience for your enterprise. Use Swirl to search and generate insights with AI and LLMs like ChatGPT, Claude, and PaLM. Connect to data bases, cloud providers, and data siloes. And start discovering and generating the answers you need.
+
+Swirl is as simple as ABC: Start in Docker, Connect with API, Search with Swirl. 
 
 ### Try Swirl with ChatGPT 🚀
 
-![](assets/1.png)
-
-
-
+![](assets/14.jpg)
 
 <br/>
 
