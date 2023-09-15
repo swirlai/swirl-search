@@ -1,6 +1,6 @@
 <div align="center">
 
-[![Swirl Metasearch](assets/header.png)](https://www.swirl.today)
+[![Swirl](assets/banner_1.png)](https://www.swirl.today)
 
 </div>
 
