@@ -13,11 +13,11 @@
 <div align="center">
 <h4>
 
-[𝗧𝗿𝘆 𝗦𝘄𝗶𝗿𝗹 𝗶𝗻 𝗗𝗼𝗰𝗸𝗲𝗿](#start-swirl-in-docker) ⦁
-[𝗝𝗼𝗶𝗻 𝗼𝘂𝗿 𝗦𝗹𝗮𝗰𝗸](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) ⦁
-[𝗞𝗲𝘆 𝗙𝗲𝗮𝘁𝘂𝗿𝗲𝘀 ](#key-features) ⦁
-[𝗖𝗼𝗻𝘁𝗿𝗶𝗯𝘂𝘁𝗲](#contributing-to-swirl) ⦁
-[𝗗𝗼𝗰𝘂𝗺𝗲𝗻𝘁𝗮𝘁𝗶𝗼𝗻](#documentation)
+[𝚂𝚝𝚊𝚛𝚝 𝚂𝚠𝚒𝚛𝚕](#start-swirl-in-docker) ⦁
+[𝚂𝚕𝚊𝚌𝚔](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) ⦁
+[𝙺𝚎𝚢 𝙵𝚎𝚊𝚝𝚞𝚛𝚎𝚜 ](#key-features) ⦁
+[𝙲𝚘𝚗𝚝𝚛𝚒𝚋𝚞𝚝𝚎](#contributing-to-swirl) ⦁
+[𝙳𝚘𝚌𝚞𝚖𝚎𝚗𝚝𝚊𝚝𝚒𝚘𝚗](#documentation)
 </h4>
 
 </div>
