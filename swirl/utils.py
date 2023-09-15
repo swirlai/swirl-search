@@ -61,8 +61,10 @@ def is_running_celery_redis():
 
 def is_running_in_docker():
     try:
-        with open('/proc/1/cgroup', 'rt') as ifh:
-            return 'docker' in ifh.read()
+        with open('/proc/1/sched', 'r') as f:
+            sched_first_line = f.readline().strip().lower()
+            target_string = "sh (1, #threads: 1)".lower()
+            return sched_first_line.replace(" ", "") == target_string.replace(" ", "")
     except Exception as err:
         logger.debug(f"{err} while checking for container")
         return False
