@@ -52,7 +52,7 @@ def service_is_retired(service_name):
         for service in SERVICES:
             if service['name'] == service_name:
                 if service['retired']:
-                    print(f"{service_name} is retired, ignoring", end='')
+                    print(f"{service_name} is retired, ignoring\n", end='')
                     ret = True
     except Exception as err:
         print(f"{err} checking retired service")
@@ -168,7 +168,7 @@ def start(service_list):
                 flag = True
             # end if
         else:
-            print(f"Warning: unknown service: {service_name}, ignoring")
+            print(f"Warning: unknown service: {service_name}, ignoring\n")
         # end if
     # end for
 
