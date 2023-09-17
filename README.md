@@ -17,7 +17,7 @@
 [𝚂𝚕𝚊𝚌𝚔](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) ⦁
 [𝙺𝚎𝚢 𝙵𝚎𝚊𝚝𝚞𝚛𝚎𝚜 ](#🌟-key-features) ⦁
 [𝙲𝚘𝚗𝚝𝚛𝚒𝚋𝚞𝚝𝚎](#👩‍💻-contributing-to-swirl) ⦁
-[𝙳𝚘𝚌𝚞𝚖𝚎𝚗𝚝𝚊𝚝𝚒𝚘𝚗](#📖-documentation)
+[𝙳𝚘𝚌𝚞𝚖𝚎𝚗𝚝𝚊𝚝𝚒𝚘𝚗](#📖-documentation) ⦁ [𝙲𝚘𝚗𝚗𝚎𝚌𝚝𝚒𝚘𝚗𝚜](#🔌-list-of-connectors)
 
 
 </div>
@@ -217,7 +217,7 @@ At Swirl, every user matters to us. Whether you're a beginner finding your way o
 
 * 📧 **Direct Support:** For any questions, suggestions, or even a simple hello, drop us an email at [support@swirl.today](mailto:support@swirl.today). We cherish every message and promise to get back to you promptly!
 
-Remember, you're part of our family now. Let's swirl the digital world together! 🌍💙
+Remember, you're part of our family now. 🌍💙
 
 
 <br/>
