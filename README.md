@@ -63,7 +63,9 @@ Swirl adapts and distributes user queries to anything with a search API - search
 
 [🔍 View More connectors]() 
 
-🚀 **Help Us Expand!** Want to see a new connector? [Contribute by adding a connector]() and join our growing community of contributors. Your efforts will be recognized in our contributors' hall of fame!
+🚀 **Help Us Expand!** Want to see a new connector? [Contribute by adding a connector]() and join our growing community of contributors. 
+
+<br/>
 
 # 🔥 Try Swirl Now In Docker
 
@@ -189,17 +191,19 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 <br/>
 
-# Contributing to Swirl 👩‍💻
+# Contributing to Swirl 🚀👩‍💻
 
-**Have an idea for a new feature, connector, bug fix, or enhancement to Swirl?**  Great, we'd 💖 love to see it!  
+**Got a brilliant idea or improvement for Swirl?** Whether it's a new feature, connector, bug fix, or enhancement, we're all ears—and we're thrilled you're here to help!
 
-Join our [Slack community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) to discuss the changes you are trying to propose. The community and team members would love to help you contribute to Swirl. 
+🔗 **Get Started in 3 Easy Steps**:
+1. **Connect with Fellow Enthusiasts** - Jump into our [Slack community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) and share your ideas. You'll find a welcoming group of Swirl enthusiasts and team members eager to assist and collaborate.
+2. **Branch It Out** - Always branch off from the `develop` branch with a descriptive name that encapsulates your idea or fix. Remember, all PRs should be made to the `develop` branch to ensure `main` remains our stable gold-standard.
+3. **Start Your Contribution** - Ready to get your hands dirty? Make sure all contributions come through a GitHub pull request. We roughly follow the [Gitflow branching model](https://nvie.com/posts/a-successful-git-branching-model/), so all changes destined for the next release should be made to the `develop` branch.
 
-**Note**: Create a branch off of `develop` branch with a name that describes the change you're working on. We accept PRs to the `develop` branch so that the `main` branch remains stable. 
+📚 **First time contributing on GitHub?** No worries, the [GitHub documentation](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) has you covered with a great guide on contributing to projects.
 
-To ensure a proper code review, all contributions to the project must go through a GitHub pull request. We follow a rough approximation of the [Gitflow branching model](https://nvie.com/posts/a-successful-git-branching-model/). Changes for the next release go on the `develop` branch.
+💡 Every contribution, big or small, makes a difference. Join us in shaping the future of Swirl!
 
-For more general information about contributing to projects on Github, visit the [GitHub documentation](https://docs.github.com/en/get-started/quickstart/contributing-to-projects).
 
 <br/>
 
