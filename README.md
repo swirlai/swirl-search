@@ -13,11 +13,11 @@
 <div align="center">
 
 
-[𝚂𝚝𝚊𝚛𝚝 𝚂𝚎𝚊𝚛𝚌𝚑𝚒𝚗𝚐](#start-swirl-in-docker) ⦁
+[𝚂𝚝𝚊𝚛𝚝 𝚂𝚎𝚊𝚛𝚌𝚑𝚒𝚗𝚐](#🔥-try-swirl-now-in-docker) ⦁
 [𝚂𝚕𝚊𝚌𝚔](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) ⦁
-[𝙺𝚎𝚢 𝙵𝚎𝚊𝚝𝚞𝚛𝚎𝚜 ](#key-features) ⦁
-[𝙲𝚘𝚗𝚝𝚛𝚒𝚋𝚞𝚝𝚎](#contributing-to-swirl) ⦁
-[𝙳𝚘𝚌𝚞𝚖𝚎𝚗𝚝𝚊𝚝𝚒𝚘𝚗](#documentation)
+[𝙺𝚎𝚢 𝙵𝚎𝚊𝚝𝚞𝚛𝚎𝚜 ](#🌟-key-features) ⦁
+[𝙲𝚘𝚗𝚝𝚛𝚒𝚋𝚞𝚝𝚎](#👩‍💻-contributing-to-swirl) ⦁
+[𝙳𝚘𝚌𝚞𝚖𝚎𝚗𝚝𝚊𝚝𝚒𝚘𝚗](#📖-documentation)
 
 
 </div>
@@ -178,7 +178,7 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 <br/>
 
-# Contributing to Swirl 🚀👩‍💻
+# 👩‍💻 Contributing to Swirl 
 
 **Got a brilliant idea or improvement for Swirl?** Whether it's a new feature, connector, bug fix, or enhancement, we're all ears—and we're thrilled you're here to help!
 
@@ -206,12 +206,15 @@ For information about Swirl as a managed service, please [contact us](mailto:hel
 
 <br/>
 
-# 👷‍♂️ Support
+# 👷‍♂️ Need Help? We're Here for You!
 
-Do you have any questions or doubts. Reach us on the below links:
+At Swirl, every user matters to us. Whether you're a beginner finding your way or an expert with feedback, we're here to support, listen, and help. Don't hesitate to reach out us.
 
-* [Join the Swirl Metasearch Community on Slack!](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
+* 🎉 **Join the Conversation:** Dive into our vibrant [Swirl Metasearch Community on Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) - it's where all the magic happens!
 
-* Email: [support@swirl.today](mailto:support@swirl.today) with issues, requests, questions, etc. - we'd love to hear from you!
+* 📧 **Direct Support:** For any questions, suggestions, or even a simple hello, drop us an email at [support@swirl.today](mailto:support@swirl.today). We cherish every message and promise to get back to you promptly!
+
+Remember, you're part of our family now. Let's swirl the digital world together! 🌍💙
+
 
 <br/>
