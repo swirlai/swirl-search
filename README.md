@@ -41,7 +41,7 @@ Build a transformative search experience for your enterprise. Use Swirl to searc
 
 Swirl is as simple as ABC: Start in Docker, Connect with API, Search with Swirl. 
 
-## Try Swirl with ChatGPT 🚀
+## 🚀 Try Swirl with ChatGPT 
 
 ![](assets/Animation_1.gif)
 
@@ -49,19 +49,23 @@ _Swirl with ChatGPT as a configured AI Model._
 
 <br/>
 
-# How Swirl Works
+# 🔎 How Swirl Works
 
-Swirl adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, etc. - and uses AI ([Large Language Models](https://techcrunch.com/2022/04/28/the-emerging-types-of-language-models-and-why-they-matter/)) to re-rank the unified results *without* extracting or indexing *anything*. It includes OAuth2 support for Microsoft 365 alongside integration with enterprise services such as Atlassian Jira and Confluence, JetBrains YouTrack, HubSpot and more.
+Swirl adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, data siloes etc. And uses Large Language Models to re-rank the unified results *without* extracting or indexing *anything*. 
 
-Using the Galaxy UI, knowledge workers can systematically review the best results from all configured services including Apache [Solr](https://solr.apache.org/), [ChatGPT](https://openai.com/blog/chatgpt/), [Elastic](https://www.elastic.co/cn/downloads/elasticsearch), [OpenSearch](https://opensearch.org/downloads.html), [PostgreSQL](https://www.postgresql.org/), [Google BigQuery](https://cloud.google.com/bigquery), plus generic HTTP/GET/POST with configurations for premium services like [Google's Programmable Search Engine](https://programmablesearchengine.google.com/about/), [Miro](https://miro.com/app/) and [Northern Light Research](https://northernlight.com/).
-
-![Metasearch diagram](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_arch_diagram.jpg)
-
-Built on the Python/Django stack, Swirl is intended for use by anyone who wants to solve multi-silo search problems without moving, re-indexing or re-permissioning sensitive information.
+![Swirl Diagram](assets/Animation_2.gif)
 
 <br/>
 
-# Try Swirl Now In Docker
+# 🔌 List of Connectors
+
+![Available Connectors in Swirl](assets/Connectors.png)
+
+[🔍 View More connectors]() 
+
+🚀 **Help Us Expand!** Want to see a new connector? [Contribute by adding a connector]() and join our growing community of contributors. Your efforts will be recognized in our contributors' hall of fame!
+
+# 🔥 Try Swirl Now In Docker
 
 ## Prerequisites
 
@@ -131,7 +135,7 @@ If the search page appears, click `Log Out` at the top, right. The Swirl login p
 
 The most recent Search object will be displayed at the top. Click on the `result_url` link to view the full JSON Response.
 
-## Notes
+## Notes 📝
 
 :warning: The Docker version of Swirl *does not* retain any data or configuration when shut down!
 
@@ -139,7 +143,7 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 :key: Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](4.-M365-Guide) or [contact us](mailto:hello@swirl.today).
 
-## Next Steps
+## Next Steps 👇
 
 * Check out the details of our [latest release](https://github.com/swirlai/swirl-search/releases)!
 
@@ -147,7 +151,7 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 <br/>
 
-# Key Features
+# 🌟 Key Features
 
 * [Microsoft 365 integration and OAUTH2 support](https://github.com/swirlai/swirl-search/wiki/4.-M365-Guide)
 
@@ -185,9 +189,9 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 <br/>
 
-# Contributing to Swirl
+# Contributing to Swirl 👩‍💻
 
-**Have an idea for a new feature, connector bug fix, or enhancement to Swirl?**  Great, we'd 💖 love to see it!  
+**Have an idea for a new feature, connector, bug fix, or enhancement to Swirl?**  Great, we'd 💖 love to see it!  
 
 Join our [Slack community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) to discuss the changes you are trying to propose. The community and team members would love to help you contribute to Swirl. 
 
@@ -199,19 +203,19 @@ For more general information about contributing to projects on Github, visit the
 
 <br/>
 
-# Try Swirl Cloud
+# ☁ Use the Swirl Cloud 
 
 For information about Swirl as a managed service, please [contact us](mailto:hello@swirl.today)!
 
 <br/>
 
-# Documentation
+# 📖 Documentation
 
 [Home](https://github.com/swirlai/swirl-search/wiki) | [Quick Start](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start) | [User Guide](https://github.com/swirlai/swirl-search/wiki/2.-User-Guide) | [Admin Guide](https://github.com/swirlai/swirl-search/wiki/3.-Admin-Guide) | [M365 Guide](https://github.com/swirlai/swirl-search/wiki/4.-M365-Guide) | [Developer Guide](https://github.com/swirlai/swirl-search/wiki/5.-Developer-Guide) | [Developer Reference](https://github.com/swirlai/swirl-search/wiki/6.-Developer-Reference)
 
 <br/>
 
-# Support
+# 👷‍♂️ Support
 
 Do you have any questions or doubts. Reach us on the below links:
 
