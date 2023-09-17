@@ -1,6 +1,6 @@
 <div align="center">
 
-[![Swirl](assets/banner_1.png)](https://www.swirl.today)
+[![Swirl](assets/header_2.png)](https://www.swirl.today)
 
 </div>
 
@@ -8,7 +8,7 @@
 
 <div align="center">
 
-### Open Source Platform for Searching Anything with LLMs and GPT
+### The Open Source Platform for **Enterprise Search** with LLMs and GPT
 
 <div align="center">
 
@@ -41,9 +41,11 @@ Build a transformative search experience for your enterprise. Use Swirl to searc
 
 Swirl is as simple as ABC: Start in Docker, Connect with API, Search with Swirl. 
 
-### Try Swirl with ChatGPT 🚀
+## Try Swirl with ChatGPT 🚀
 
-![](assets/14.jpg)
+![](assets/Animation_1.gif)
+
+_Swirl with ChatGPT as a configured AI Model._
 
 <br/>
 
