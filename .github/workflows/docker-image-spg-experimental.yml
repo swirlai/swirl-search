@@ -1,6 +1,8 @@
 name: EXPERIMENTAL Latest Spyglass Docker Build
 
 on:
+  schedule:
+    - cron: '3 * * * *'
   workflow_dispatch:
 
 # For debugging
