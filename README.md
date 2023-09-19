@@ -1,6 +1,6 @@
 <div align="center">
 
-[![Swirl](assets/header_2.png)](https://www.swirl.today)
+[![Swirl](assets/SwirlHeaderNarrow.png)](https://www.swirl.today)
 
 </div>
 
@@ -62,9 +62,9 @@ Swirl adapts and distributes user queries to anything with a search API - search
 
 # 🔌 List of Connectors
 
-![Available Connectors in Swirl](assets/Connectors.png)
+![Available Connectors in Swirl](assets/Connectors_2.png)
 
-[🔍 View More connectors]() 
+➕ **For Enterprise Support on Connectors**  Contact the Swirl Team at: [support@swirl.today](mailto:support@swirl.today)  
 
 🚀 **Help Us Expand!** Want to see a new connector? [Contribute by adding a connector]() and join our growing community of contributors. 
 
@@ -216,6 +216,8 @@ At Swirl, every user matters to us. Whether you're a beginner finding your way o
 * 🎉 **Join the Conversation:** Dive into our vibrant [Swirl Metasearch Community on Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) - it's where all the magic happens!
 
 * 📧 **Direct Support:** For any questions, suggestions, or even a simple hello, drop us an email at [support@swirl.today](mailto:support@swirl.today). We cherish every message and promise to get back to you promptly!
+
+* 💼 **Request A Connector (Enterprise Support)** Want to see a new conenctor quickly and fast. Contact the Swirl Team at: [support@swirl.today](mailto:support@swirl.today)
 
 Remember, you're part of our family now. 🌍💙
 
