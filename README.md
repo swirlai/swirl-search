@@ -8,16 +8,16 @@
 
 <div align="center">
 
-### The Open Source Platform for **Enterprise Search** with LLMs and GPT
+### Swirl is open-source software that uses AI to search multiple content and data sources, returning AI ranked results.
 
 <div align="center">
 
 
 [𝚂𝚝𝚊𝚛𝚝 𝚂𝚎𝚊𝚛𝚌𝚑𝚒𝚗𝚐](#🔥-try-swirl-now-in-docker) ⦁
 [𝚂𝚕𝚊𝚌𝚔](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) ⦁
-[𝙺𝚎𝚢 𝙵𝚎𝚊𝚝𝚞𝚛𝚎𝚜 ](#🌟-key-features) ⦁
-[𝙲𝚘𝚗𝚝𝚛𝚒𝚋𝚞𝚝𝚎](#👩‍💻-contributing-to-swirl) ⦁
-[𝙳𝚘𝚌𝚞𝚖𝚎𝚗𝚝𝚊𝚝𝚒𝚘𝚗](#📖-documentation) ⦁ [𝙲𝚘𝚗𝚗𝚎𝚌𝚝𝚒𝚘𝚗𝚜](#🔌-list-of-connectors)
+[𝙺𝚎𝚢 𝙵𝚎𝚊𝚝𝚞𝚛𝚎𝚜 ](#-key-features) ⦁
+[𝙲𝚘𝚗𝚝𝚛𝚒𝚋𝚞𝚝𝚎](#-contributing-to-swirl) ⦁
+[𝙳𝚘𝚌𝚞𝚖𝚎𝚗𝚝𝚊𝚝𝚒𝚘𝚗](#-documentation) ⦁ [𝙲𝚘𝚗𝚗𝚎𝚌𝚝𝚒𝚘𝚗𝚜](#-list-of-connectors)
 
 
 </div>
@@ -37,9 +37,17 @@
 
 </div>
 
-Build a transformative search experience for your enterprise. Use Swirl to search and generate insights with AI and LLMs like ChatGPT, Claude, and PaLM. Connect to data bases, cloud providers, and data siloes. And start discovering and generating the answers you need.
+Swirl is open-source software that uses AI to simultaneously search multiple content and data sources, returning AI ranked results.  The outcomes can be utilized to educate Generative AI, enabling you to get answers based on your data.
 
-Swirl is as simple as ABC: Start in Docker, Connect with API, Search with Swirl. 
+Swirl can connect to:
+
+* Databases (SQL & NoSQL)
+* Connect with Search Providers (Google Programmable Search, etc.)
+* Sources like PDFs, Codebases, Microsoft Office, & more.
+
+And generate insights with AI and LLMs like ChatGPT. Start discovering and generating the answers you need based on your Data.
+
+Swirl is as simple as ABC: Start in Docker, Connect with a Search API, Search with Swirl. 
 
 ## 🚀 Try Swirl with ChatGPT 
 
