@@ -103,27 +103,7 @@ docker compose up
 
 After a few minutes the following or similar should appear:
 
-```
-ssdtest-app-1  | Command successful!
-ssdtest-app-1  | __S_W_I_R_L__2_._5_._1________________________________________________________
-ssdtest-app-1  |
-ssdtest-app-1  | Warning: logs directory does not exist, creating it
-ssdtest-app-1  | Start: redis -> redis-server ./redis.conf ... Ok, pid: 28
-ssdtest-app-1  | Start: celery-worker -> celery -A swirl_server worker --loglevel INFO ... Ok, pid: 34
-ssdtest-app-1  | Start: celery-beats -> celery -A swirl_server beat --scheduler django_celery_beat.schedulers:DatabaseScheduler ... Ok, pid: 45
-ssdtest-app-1  | Updating .swirl... Ok
-ssdtest-app-1  |
-ssdtest-app-1  |   PID TTY          TIME CMD
-ssdtest-app-1  |    28 ?        00:00:00 redis-server
-ssdtest-app-1  |    34 ?        00:00:02 celery
-ssdtest-app-1  |    45 ?        00:00:02 celery
-ssdtest-app-1  |
-ssdtest-app-1  | Command successful!
-ssdtest-app-1  | 2023-08-29 13:16:11,070 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
-ssdtest-app-1  | 2023-08-29 13:16:11,074 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
-ssdtest-app-1  | 2023-08-29 13:16:11,075 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
-ssdtest-app-1  | 2023-08-29 13:16:11,079 INFO     Listening on TCP address 0.0.0.0:8000
-```
+<img src="assets/swirl_success_in_docker.png" height="70%" width="90%">
 
 * Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy>)
 
@@ -133,7 +113,7 @@ ssdtest-app-1  | 2023-08-29 13:16:11,079 INFO     Listening on TCP address 0.0.0
 
 * Enter a search in the search box and press the `Search` button. Ranked results appear in just a few seconds:
 
-![Swirl Results No M365](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_results_no_m365-galaxy_dark.png)
+<img src="assets/galaxy_ui_2.png" height="70%" weight="70%">
 
 * To view the raw JSON, open <http://localhost:8000/swirl/search/>
 
