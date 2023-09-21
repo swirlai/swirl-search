@@ -35,18 +35,22 @@ class DateFinderResultProcessor(ResultProcessor):
                     matches = re.findall(date_regex, item['body'])
                     if matches:
                         for match in matches:
-                            if '/' in match:
-                                date = datetime.strptime(match, '%m/%d/%Y')
-                            elif '.' in match:
-                                date = datetime.strptime(match, '%m.%d.%Y')
-                            elif '-' in match:
-                                date = datetime.strptime(match, '%m-%d-%Y')
-                            elif len(match.split()[0]) > 3:  # Check if month name is full month name
-                                date = datetime.strptime(match, '%B %d, %Y')
-                            else:
-                                date = datetime.strptime(match, '%b %d, %Y')
-                            item['date_published'] = date.strftime('%Y-%m-%d %H:%M:%S')
-                            updated = updated + 1
+                            try:
+                                if '/' in match:
+                                    date = datetime.strptime(match, '%m/%d/%Y')
+                                elif '.' in match:
+                                    date = datetime.strptime(match, '%m.%d.%Y')
+                                elif '-' in match:
+                                    date = datetime.strptime(match, '%m-%d-%Y')
+                                elif len(match.split()[0]) > 3:  # Check if month name is full month name
+                                    date = datetime.strptime(match, '%B %d, %Y')
+                                else:
+                                    date = datetime.strptime(match, '%b %d, %Y')
+                                item['date_published'] = date.strftime('%Y-%m-%d %H:%M:%S')
+                                updated = updated + 1
+                            except ValueError:
+                                logger.warning(f'ignoring invalud date {match}')
+                                continue
                             break
                 # end if
             # end if
