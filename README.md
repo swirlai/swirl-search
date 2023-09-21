@@ -17,7 +17,7 @@
 [𝚂𝚕𝚊𝚌𝚔](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) ⦁
 [𝙺𝚎𝚢 𝙵𝚎𝚊𝚝𝚞𝚛𝚎𝚜 ](#-key-features) ⦁
 [𝙲𝚘𝚗𝚝𝚛𝚒𝚋𝚞𝚝𝚎](#-contributing-to-swirl) ⦁
-[𝙳𝚘𝚌𝚞𝚖𝚎𝚗𝚝𝚊𝚝𝚒𝚘𝚗](#-documentation) ⦁ [𝙲𝚘𝚗𝚗𝚎𝚌𝚝𝚒𝚘𝚗𝚜](#-list-of-connectors)
+[𝙳𝚘𝚌𝚞𝚖𝚎𝚗𝚝𝚊𝚝𝚒𝚘𝚗](#-documentation) ⦁ [𝙲𝚘𝚗𝚗𝚎𝚌𝚝𝚘𝚛𝚜](#-list-of-connectors)
 
 
 </div>
