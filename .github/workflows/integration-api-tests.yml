@@ -1,4 +1,4 @@
-name: Ingegration API Tests
+name: Integration API Tests
 
 on:
   schedule:
@@ -38,7 +38,7 @@ jobs:
     - name: Start up SWIRL
       run: python swirl.py start
     - name: Run Integrated API tests
-      run: docker run --net=host -t swirlai/swirl-search:latest-integrated-api sh -c "behave --tags=integrated_api"
+      run: docker run --net=host -t swirlai/swirl-testing:latest-integrated-api sh -c "behave --tags=integrated_api"
     - name: Upload log files
       if: always()
       uses: actions/upload-artifact@v2
