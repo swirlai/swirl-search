@@ -12,22 +12,22 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
-  steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-            python-version: '3.10'
-            cache: 'pip' # caching pip stuff
-    - name: Run Install Swirl
-      run: ./install.sh
-    - name: Update apt
-      run: sudo apt -o Acquire::Retries=3 update
-    - name: Run Install redist-server
-      run: sudo apt install -y redis-server
-    - name: Set up SWIRL
-      run: python swirl.py setup
-    - name: Start up SWIRL
-      run: python swirl.py start
-    - name: Run Smoke tests
-      run: docker run --net=host -t swirlai/swirl-testing:latest-smoke-test sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+              python-version: '3.10'
+              cache: 'pip' # caching pip stuff
+      - name: Run Install Swirl
+        run: ./install.sh
+      - name: Update apt
+        run: sudo apt -o Acquire::Retries=3 update
+      - name: Run Install redist-server
+        run: sudo apt install -y redis-server
+      - name: Set up SWIRL
+        run: python swirl.py setup
+      - name: Start up SWIRL
+        run: python swirl.py start
+      - name: Run Smoke tests
+        run: docker run --net=host -t swirlai/swirl-testing:latest-smoke-test sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
