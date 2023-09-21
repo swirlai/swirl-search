@@ -103,7 +103,7 @@ docker compose up
 
 After a few minutes the following or similar should appear:
 
-<img src="assets/swirl_success_in_docker.png" height="70%" width="90%">
+<img src="assets/swirl_docker_1.png" height="70%" width="90%">
 
 * Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy>)
 
