@@ -1,9 +1,9 @@
-name: Tests
+name: SmokeTests
 
 on:
   workflow_run:
-    workflows: [Unit Tests]
-    types:
+    workflows: [UnitTests]
+    types: 
       - completed
 
 jobs:
