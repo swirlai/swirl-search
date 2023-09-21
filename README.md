@@ -43,7 +43,7 @@ Swirl is as simple as ABC: Start in Docker, Connect with API, Search with Swirl.
 
 ## 🚀 Try Swirl with ChatGPT 
 
-![](assets/Animation_1.gif)
+![Swirl with ChatGPT as a configured AI Model](assets/Animation_1.gif)
 
 _Swirl with ChatGPT as a configured AI Model._
 
@@ -62,7 +62,7 @@ Swirl adapts and distributes user queries to anything with a search API - search
 
 # 🔌 List of Connectors
 
-![Available Connectors in Swirl](assets/Connectors_2.png)
+<img src="assets/Connectors_2.png" height=60% width=70%/>
 
 ➕ **For Enterprise Support on Connectors**  Contact the Swirl Team at: [support@swirl.today](mailto:support@swirl.today)  
 
