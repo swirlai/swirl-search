@@ -36,6 +36,10 @@ class DateFinderResultProcessor(ResultProcessor):
                     if matches:
                         for match in matches:
                             if '/' in match:
+                                # common usage
+                                if match == '10/20/30':
+                                    # next match
+                                    continue
                                 date = datetime.strptime(match, '%m/%d/%Y')
                             elif '.' in match:
                                 date = datetime.strptime(match, '%m.%d.%Y')
