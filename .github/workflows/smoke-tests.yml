@@ -7,17 +7,7 @@ on:
       - completed
 
 jobs:
-  on-failure:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    steps:
-      - run: echo 'The Unit Tests workflow failed...not running Smoke Tests'
-  on-success:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    steps:
-      - run: echo 'The Unit Tests workflow completed successfully...now running Smoke Tests'
-    steps:
+  steps:
     - uses: actions/checkout@v3
     - name: Set up Python
       uses: actions/setup-python@v4
