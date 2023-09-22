@@ -5,6 +5,7 @@ on:
     workflows: [UnitTests]
     types: 
       - completed
+  workflow_dispatch:
 
 jobs:
 
