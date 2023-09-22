@@ -173,7 +173,7 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 # 👩‍💻 Contributing to Swirl 
 
-**Got a brilliant idea or improvement for Swirl?** Whether it's a new feature, connector, bug fix, or enhancement, we're all ears—and we're thrilled you're here to help!
+**Got a brilliant idea or improvement for Swirl?** We're all ears—and thrilled you're here to help!
 
 🔗 **Get Started in 3 Easy Steps**:
 1. **Connect with Fellow Enthusiasts** - Jump into our [Slack community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) and share your ideas. You'll find a welcoming group of Swirl enthusiasts and team members eager to assist and collaborate.
