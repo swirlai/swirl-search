@@ -1,38 +1,36 @@
-name: Docker Build
+name: DockerBuild
 
-# Build a multi-arch docker image for SWIRL
-# comment to start build
-
-# on:  # disabling 05:05 daily build and leaving this syntax for posterity
+# disabling 05:05 daily build and leaving this syntax for posterity
+# on:
 #  schedule:
 #  - cron: '05 05 * * *'
 
 on:
+  workflow_run:
+    workflows: [LatestSpyglassDockerBuild]
+    types: 
+      - completed
   workflow_dispatch:
-  push:
-    # only trigger on branches, not on tags
-    branches: 'main'
-
 
 jobs:
 
   build:
-
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: login to docker hub
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-    - name: pull latest UI image
-      run: docker pull swirlai/spyglass:latest
-    - name: builder bootstrap
-      run: docker buildx create --name devBuilder --use --bootstrap
-    - name: Build the Docker image
-      run: docker buildx build -t swirlai/swirl-search:latest --platform linux/amd64,linux/arm64 --push .
-    - name: Update repo description
-      uses: peter-evans/dockerhub-description@v3.3.0
-      with:
-        username: ${{ secrets.DOCKER_USERNAME_X }}
-        password: ${{ secrets.DOCKER_PASSWORD_X }}
-        repository: swirlai/swirl-search
+      - uses: actions/checkout@v3
+      - name: login to docker hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: pull latest UI image
+        run: docker pull swirlai/spyglass:latest
+      - name: builder bootstrap
+        run: docker buildx create --name devBuilder --use --bootstrap
+      - name: Build the Docker image
+        run: docker buildx build -t swirlai/swirl-search:latest --platform linux/amd64,linux/arm64 --push .
+      - name: Update repo description
+        uses: peter-evans/dockerhub-description@v3.3.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME_X }}
+          password: ${{ secrets.DOCKER_PASSWORD_X }}
+          repository: swirlai/swirl-search
