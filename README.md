@@ -43,9 +43,9 @@ Swirl is open source software that simultaneously searches multiple content sour
 
 Swirl can connect to:
 
-* Databases (SQL & NoSQL)
-* Connect with Search Providers (Google Programmable Search, etc.)
-* Sources like PDFs, Codebases, Microsoft Office, & more.
+* Databases (SQL & NoSQL, Google BigQuery)
+* Public data services (Google Programmable Search, Arxiv.org, etc.)
+* Enterprise sources (Microsoft 365, Jira, Miro etc.)
 
 And generate insights with AI and LLMs like ChatGPT. Start discovering and generating the answers you need based on your Data.
 
