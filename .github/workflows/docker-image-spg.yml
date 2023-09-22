@@ -1,6 +1,10 @@
-name: Latest Spyglass Docker Build
+name: LatestSpyglassDockerBuild
 
 on:
+  workflow_run:
+    workflows: [IntegrationAPITests]
+    types: 
+      - completed
   workflow_dispatch:
 
 # For debugging
@@ -11,14 +15,14 @@ on:
 jobs:
 
   build:
-
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build --no-cache -t swirlai/spyglass:latest  -f Dockerfile.spg .
-    - name: login to docker hub
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-    - name: Push the Docker image
-      run: docker push swirlai/spyglass
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: docker build --no-cache -t swirlai/spyglass:latest  -f Dockerfile.spg .
+      - name: login to docker hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Push the Docker image
+        run: docker push swirlai/spyglass
