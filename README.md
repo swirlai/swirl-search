@@ -39,7 +39,7 @@
 
 </div>
 
-Swirl is open-source software that uses AI to simultaneously search multiple content and data sources, returning AI ranked results.  The outcomes can be utilized to educate Generative AI, enabling you to get answers based on your data.
+Swirl is open source software that simultaneously searches multiple content sources and returns AI ranked results. Prompt your choice of Generative AI using the top N results to get answers incorporating your own data.
 
 Swirl can connect to:
 
