@@ -58,7 +58,7 @@ Swirl is as simple as ABC: Start in Docker, Connect with a Search API, Search wi
 _Swirl with ChatGPT as a configured AI Model._
 
 >**Note**
-> We need your help 🙏. Help us creating more examples and blogs with Swirl. Join our [Slack Community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) to discuss and know more. We'd be very happy to help you to contribute 🤗!
+> We need your help 🙏. Help us create more examples of things you can or want to do with Swirl. Join our [Slack Community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) to discuss and learn more. We'd be very happy to help you contribute 🤗!
 
 <br/>
 
