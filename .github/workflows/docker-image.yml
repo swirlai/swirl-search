@@ -1,10 +1,5 @@
 name: DockerBuild
 
-# disabling 05:05 daily build and leaving this syntax for posterity
-# on:
-#  schedule:
-#  - cron: '05 05 * * *'
-
 on:
   workflow_run:
     workflows: [LatestSpyglassDockerBuild]
@@ -13,12 +8,17 @@ on:
   workflow_dispatch:
 
 jobs:
-
   build:
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
+      # This step is for debugging workflow_run
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
       - uses: actions/checkout@v3
       - name: login to docker hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
@@ -29,7 +29,7 @@ jobs:
       - name: Build the Docker image
         run: docker buildx build -t swirlai/swirl-search:latest --platform linux/amd64,linux/arm64 --push .
       - name: Update repo description
-        uses: peter-evans/dockerhub-description@v3.3.0
+        uses: peter-evans/dockerhub-description@v3.4.2
         with:
           username: ${{ secrets.DOCKER_USERNAME_X }}
           password: ${{ secrets.DOCKER_PASSWORD_X }}
