@@ -1,3 +1,5 @@
+[![Swirl](assets/hack_swirl_fest.png)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
+
 <div align="center">
 
 [![Swirl](assets/transparent_header_3.png)](https://www.swirl.today)
