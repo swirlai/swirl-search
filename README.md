@@ -10,7 +10,7 @@
 
 <div align="center">
 
-### Swirl is open-source software that uses AI to search multiple content and data sources, returning AI ranked results.
+### Swirl is open-source software that simultaneously searches multiple content sources and returns AI ranked results.
 
 <div align="center">
 
@@ -33,7 +33,6 @@
 [![Slack](https://custom-icon-badges.demolab.com/badge/Join%20Our%20Slack-black?style=flat-square&logo=slack&color=0E21A0&logoColor=white)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 [![PRs Welcome](https://custom-icon-badges.demolab.com/badge/PRs%20Welcome-black?style=flat-square&logo=github&color=4D2DB7&logoColor=C70039)](#contributing-to-swirl)
 [![Website](https://custom-icon-badges.demolab.com/badge/www.swirl.today-black?style=flat-square&logo=globe&color=241468&logoColor=white)](https://www.swirl.today)
-
 [![Docker Build](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg?style=flat-square&branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml)
 [![Tests](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml)
 
@@ -47,9 +46,9 @@ Swirl can connect to:
 * Public data services (Google Programmable Search, Arxiv.org, etc.)
 * Enterprise sources (Microsoft 365, Jira, Miro etc.)
 
-And generate insights with AI and LLMs like ChatGPT. Start discovering and generating the answers you need based on your Data.
+And generate insights with AI and LLMs like ChatGPT. Start discovering and generating the answers you need based on your data.
 
-Swirl is as simple as ABC: Start in Docker, Connect with a Search API, Search with Swirl. 
+Swirl is as simple as ABC: (a) Download YML, (b) Start in Docker, (c) Search with Swirl. From there, add credentials to preloaded SearchProviders to get results from more sources.
 
 ## 🚀 Try Swirl with ChatGPT 
 
@@ -64,7 +63,7 @@ _Swirl with ChatGPT as a configured AI Model._
 
 # 🔎 How Swirl Works
 
-Swirl adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, data siloes etc. And uses Large Language Models to re-rank the unified results *without* extracting or indexing *anything*. 
+Swirl adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, data siloes, etc. And uses Large Language Models to re-rank the unified results *without* extracting or indexing *anything*. 
 
 ![Swirl Diagram](https://github.com/swirlai/swirl-search/wiki/images/Animation_2.gif)
 
@@ -76,7 +75,7 @@ Swirl adapts and distributes user queries to anything with a search API - search
 
 ➕ **For Enterprise Support on Connectors**  Contact the Swirl Team at: [support@swirl.today](mailto:support@swirl.today)  
 
-🚀 **Help Us Expand!** Want to see a new connector? [Contribute by adding a connector]() and join our growing community of contributors. 
+🚀 **Help Us Expand!** Want to see a new connector? [Contribute by adding a connector](#👩‍💻-contributing-to-swirl) and join our growing community of contributors. 
 
 <br/>
 
