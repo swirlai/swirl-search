@@ -5,6 +5,7 @@ on:
     workflows: [SmokeTests]
     types: 
       - completed
+  workflow_dispatch:
 
 jobs:
 
