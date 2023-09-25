@@ -6,15 +6,10 @@ name: DockerBuild
 #  - cron: '05 05 * * *'
 
 on:
-  workflow_run:
-    workflows: [LatestSpyglassDockerBuild]
-    types: 
-      - completed
   workflow_dispatch:
 
 jobs:
   build:
-    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
