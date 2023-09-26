@@ -77,7 +77,7 @@ class ChatGPT(Connector):
             self.response = []
             self.status = "ERR_PROMPT_FAILED"
             return
-
+        logger.info(f'CGPT completion system guide:{self.system_guide} query to provider : {self.query_to_provider}')
         self.query_to_provider = prompted_query
         completions = openai.ChatCompletion.create(
             model=MODEL,

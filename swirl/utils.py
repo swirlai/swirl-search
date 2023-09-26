@@ -8,13 +8,79 @@ import re
 import logging as logger
 import json
 from pathlib import Path
+import redis
 from django.core.paginator import Paginator
-
-from urllib.parse import urlparse
 from django.conf import settings
+from swirl.web_page import PageFetcherFactory
+from urllib.parse import urlparse
+
+
+SWIRL_MACHINE_AGENT   = {'User-Agent': 'SwirlMachineServer/1.0 (+http://swirl.today)'}
+SWIRL_CONTAINER_AGENT = {'User-Agent': 'SwirlContainer/1.0 (+http://swirl.today)'}
 
 ##################################################
 ##################################################
+
+def safe_urlparse(url):
+    ret  = None
+    try:
+        ret =  urlparse(url)
+    except Exception as err:
+        print(f'{err} while parsing URL')
+    finally:
+        return ret
+
+def is_running_celery_redis():
+    """
+    check of the celey redis Brokers are available, if any are not
+    print a message retrurn false.
+    """
+    parsed_redis_urls = []
+    celery_urls = [settings.CELERY_BROKER_URL, settings.CELERY_RESULT_BACKEND]
+    for url in celery_urls:
+        if not (purl := safe_urlparse(url)):
+            continue
+        if not (purl.scheme or purl.scheme.lower() == 'redis'):
+            continue
+        parsed_redis_urls.append(purl)
+
+    for url in parsed_redis_urls:
+        try:
+            r = redis.StrictRedis(host=url.hostname, port=url.port, db=0, decode_responses=True)
+            response = r.ping()
+            if response:
+                print(f"{url} checked.")
+        except redis.ConnectionError:
+            print("Redis is not running or cannot connect!")
+            return False
+        except Exception as err:
+            print("{err} While checking if redis is running")
+            return False
+
+    return True
+
+def is_running_in_docker():
+    try:
+        with open('/proc/1/sched', 'r') as f:
+            sched_first_line = f.readline().strip().lower()
+            target_string = "sh (1, #threads: 1)".lower()
+            return sched_first_line.replace(" ", "") == target_string.replace(" ", "")
+    except Exception as err:
+        logger.debug(f"{err} while checking for container")
+        return False
+
+def get_page_fetcher_or_none(url):
+
+    headers = SWIRL_CONTAINER_AGENT if is_running_in_docker() else SWIRL_MACHINE_AGENT
+
+    if (pf := PageFetcherFactory.alloc_page_fetcher(url=url, options= {
+                                                        "cache": "false",
+                                                        "headers":headers
+                                                })):
+        return pf
+    else:
+        logger.info(f"No fetcher for {url}")
+        return None
 
 def get_url_details(request):
     if request:
