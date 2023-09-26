@@ -42,7 +42,7 @@ def get_swirl_version():
         if match:
             version = match.group(1)
     except Exception as err:
-        print(f'{err} while checking version, continuing')
+        print('Error while checking version; installation continuing')
     finally:
         return version.strip()
 
