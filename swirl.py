@@ -3,7 +3,7 @@
 @contact:    sid@swirl.today
 @version:    SWIRL 1.x
 '''
-
+import re
 import argparse
 from asyncio.subprocess import STDOUT
 import sys
@@ -15,40 +15,50 @@ import time
 import signal
 from datetime import datetime
 
-# import django
-# from sys import path
-# from os import environ
-# from swirl.utils import swirl_setdir
-# path.append(swirl_setdir()) # path to settings.py file
-# environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
-# django.setup()
-
-# from django.conf import settings
+from swirl_server import settings
 
 module_name = 'swirl.py'
 
-from swirl.banner import SWIRL_BANNER, bcolors
-from swirl.services import SWIRL_SERVICES, SWIRL_SERVICES_DEBUG, SWIRL_SERVICES_DICT, SWIRL_SERVICES_DEBUG_DICT, SERVICES, SERVICES_DICT
+from swirl.banner import SWIRL_BANNER, bcolors, SWIRL_VERSION
+from swirl.utils import get_page_fetcher_or_none, is_running_celery_redis
+from swirl.services import SWIRL_SERVICES_DEBUG, SWIRL_SERVICES_DEBUG_DICT, SERVICES, SERVICES_DICT
 
 SWIRL_CORE_SERVICES = ['django', 'celery-worker']
+SWIRL_VERSION_CHECK_URL = 'https://updatecheck.swirl.today/'
 
 COMMAND_LIST = [ 'help', 'start', 'debug', 'start_sleep', 'stop', 'restart', 'migrate', 'setup', 'status', 'watch', 'logs' ]
 
-def check_rabbit():
-    proc = subprocess.run(['ps','-ef'], capture_output=True)
-    result = proc.stdout.decode('UTF-8')
-    list_result = []
-    if '\n' in result:
-        list_result = result.split('\n')
-    for l in list_result:
-        if 'rabbitmq' in l.lower():
-            if 'grep rabbitmq' in l.lower():
-                # ignore: grep rabbitmq
-                pass
-            else:
-                return l
+def get_swirl_version():
+    """
+    Fetch the current version of swirl and if it fails for any reason, return the current
+    version instead.
+    """
+    version = SWIRL_VERSION
+    url = SWIRL_VERSION_CHECK_URL
+    try:
+        page = get_page_fetcher_or_none(url=url).get_page()
+        version_text = page.get_text_strip_html()
+        match = re.search(r'(\d+\.\d+(?:\.\d+)?)', version_text)
+        if match:
+            version = match.group(1)
+    except Exception as err:
+        print('Error while checking version; startup continuing')
+    finally:
+        return version.strip()
 
-    return ""
+def service_is_retired(service_name):
+    ret = False
+    try:
+        for service in SERVICES:
+            if service['name'] == service_name:
+                if service['retired']:
+                    print(f"{service_name} is retired, ignoring\n", end='')
+                    ret = True
+    except Exception as err:
+        print(f"{err} checking retired service")
+    finally:
+        return ret
+
 
 def check_pid(pid):
     proc = subprocess.run(['ps','-p',str(pid)], capture_output=True)
@@ -133,19 +143,19 @@ def start(service_list):
         print("Warning: logs directory does not exist, creating it")
         os.mkdir('./logs')
 
+    if not is_running_celery_redis():
+           print(f"Error: Celery requires redis, settings.CELERY_BROKER_URL:{settings.CELERY_BROKER_URL}\n"
+                 f"settings.CELERY_RESULT_BACKEND:{settings.CELERY_RESULT_BACKEND} but it does not appear to be running,\n"
+                 "please consult the admin guide at https://github.com/swirlai/swirl-search/wiki/3.-Admin-Guide#installation.")
+           return False
+
     # start service_list
     pids = ""
     flag = False
     for service_name in service_list:
         if service_name in SERVICES_DICT:
-            # Fix for https://github.com/swirlai/swirl-search/issues/47
-            # if service_name == 'rabbitmq':
-            #     # check to see if it is running
-            #     rabbit = check_rabbit()
-            #     if rabbit:
-            #         print(f"Warning: rabbitmq appears to be running, skipping it:\n{rabbit}")
-            #         continue
-            # # end if
+            if service_is_retired(service_name=service_name):
+                continue
             print(f"Start: {service_name} -> {SERVICES_DICT[service_name]} ... ", end='')
             result = launch(service_name, SERVICES_DICT[service_name])
             time.sleep(5)
@@ -158,7 +168,7 @@ def start(service_list):
                 flag = True
             # end if
         else:
-            print(f"Warning: unknown service: {service_name}, ignoring")
+            print(f"Warning: unknown service: {service_name}, ignoring\n")
         # end if
     # end for
 
@@ -173,6 +183,15 @@ def start(service_list):
 
     if flag:
         return False
+
+    try:
+        sw_version = get_swirl_version()
+        if sw_version != SWIRL_VERSION:
+            print(f"You're using version {SWIRL_VERSION} of Swirl, and version {sw_version} is available.")
+        else:
+            print(f"You're using version {SWIRL_VERSION} of Swirl, the current version.")
+    except Exception as err:
+        print(f"INFO {err} getting version, continuing start")
 
     return True
 
@@ -236,6 +255,8 @@ def status(service_list):
     pid_string = ""
     for service_name in dict_pid:
         if service_name in service_list:
+            if service_is_retired(service_name=service_name):
+                continue
             pid_string = pid_string + str(dict_pid[service_name]) + ','
             print(f"Service: {service_name}...", end='')
             if check_pid(dict_pid[service_name]):
@@ -311,6 +332,8 @@ def stop(service_list):
     for service_name in dict_pid:
         # if in .swirl
         if service_name in service_list:
+            if service_is_retired(service_name=service_name):
+                continue
             # if specified as argument to command
             if service_name == SERVICES[0]['name']:
                 # except for the first listed service
@@ -411,12 +434,18 @@ def restart(service_list):
 ##################################################
 
 def help(service_list):
+    # Filter out the retired services
+    active_services = [service for service in service_list if not SERVICES[service].get('retired', False)]
+
     print("Usage: python swirl.py <command> [<service-list>]\n")
+
+    # Now use the active_services list to print the available services
     print(f"Available commands: {', '.join(COMMAND_LIST)}")
-    print(f"Available services: {', '.join(SERVICES_DICT.keys())}, core ({', '.join(SWIRL_CORE_SERVICES)})\n")
+    print(f"Available services: {', '.join(active_services)}, core ({', '.join(SWIRL_CORE_SERVICES)})\n")
     print("The start, status, stop and restart commands default to all SWIRL services.")
     print("Most optionally accept one or more SWIRL service names, separated by spaces.")
     print()
+
     result = True
 
 ##################################################
@@ -494,8 +523,9 @@ def main(argv):
                 if not service in SERVICES_DICT:
                     print(f"{bcolors.WARNING}Unknown service: {service}{bcolors.ENDC}")
                     print(f"Available services: ", end='')
-                    for swirl_service in SERVICES_DICT:
-                        print(f"{swirl_service} ", end='')
+                    for swirl_service in SERVICES:
+                        if not swirl_service['retired']:
+                            print(f"{swirl_service['name']} ", end='')
                     print()
                     return False
                 # end if

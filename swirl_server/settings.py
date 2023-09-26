@@ -201,11 +201,12 @@ CELERY_BEAT_SCHEDULE = {
          'schedule': crontab(minute=0,hour='*/4'),   # minute='*/10'
         },
 }
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-# CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-# CELERY_RESULT_BACKEND='rpc://'
+CELERY_BROKER_URL_DEF = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = env('CELERY_BROKER_URL',default=CELERY_BROKER_URL_DEF)
+
+CELERY_RESULT_BACKEND_DEF = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND', default=CELERY_RESULT_BACKEND_DEF)
 
 # EMAIL
 

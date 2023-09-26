@@ -13,6 +13,8 @@
 #   -d, --directory  Directory on local machine
 # Parse command-line options
 
+PROG=`basename $0`
+
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -h|--help) print_help=true ;;
@@ -35,9 +37,19 @@ if [ "$preview_image" = true -a "$experimental_image" = true ]; then
     exit
 fi
 
-PROG=`basename $0`
 
 set -e
+
+# check environment
+
+where_jq=`which jq`
+if [ $? -eq 0 ]; then
+    echo $PROG "Found jq command in ${where_jq}"
+else
+    echo $PROG "Could not find jq command on your path, please consult the admin guide at https://github.com/swirlai/swirl-search/wiki/3.-Admin-Guide#installation."
+    exit 1
+fi
+
 
 # local vars
 work_container=sw-spg-build_$$
