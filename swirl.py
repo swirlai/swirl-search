@@ -187,11 +187,11 @@ def start(service_list):
     try:
         sw_version = get_swirl_version()
         if sw_version != SWIRL_VERSION:
-            print(f"You're using <<{SWIRL_VERSION}>> of swirl, <<{sw_version}>> is available.")
+            print(f"You're using version {SWIRL_VERSION} of Swirl, and version {sw_version} is available.")
         else:
-            print(f"You'r using {SWIRL_VERSION} of swirl, the current version.")
+            print(f"You're using version {SWIRL_VERSION} of Swirl, the current version.")
     except Exception as err:
-        print(f"INFO {err} getting version, continueing start")
+        print(f"INFO {err} getting version, continuing start")
 
     return True
 
