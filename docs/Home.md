@@ -43,7 +43,7 @@ Search developers can render Swirl's JSON results in any existing UI or framewor
 
 # Documentation
 
-:small_blue_diamond: [Quick Start](1.-Quick-Start) :small_blue_diamond: [User Guide](2.-User-Guide) :small_blue_diamond: [Admin Guide](3.-Admin-Guide) :small_blue_diamond: [M365 Guide](4.-M365-Guide) :small_blue_diamond: [Developer Guide](5.-Developer-Guide) :small_blue_diamond: [Developer Reference](6.-Developer-Reference)
+:small_blue_diamond: [Quick Start](1.-Quick-Start.md) :small_blue_diamond: [User Guide](2.-User-Guide.md) :small_blue_diamond: [Admin Guide](3.-Admin-Guide.md) :small_blue_diamond: [M365 Guide](4.-M365-Guide.md) :small_blue_diamond: [Developer Guide](5.-Developer-Guide.md) :small_blue_diamond: [Developer Reference](6.-Developer-Reference.md)
 
 # Support
 
