@@ -2,9 +2,13 @@ name: UnitTests
 
 on:
   push:
+    paths-ignore:
+      - 'docs/**'
     # only trigger on branches, not on tags
     branches: 'main'
   workflow_dispatch:
+    paths-ignore:
+      - 'docs/**'
 
 jobs:
 
