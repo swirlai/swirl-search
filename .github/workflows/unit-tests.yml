@@ -4,11 +4,10 @@ on:
   push:
     paths-ignore:
       - 'docs/**'
+      - 'README.md'
     # only trigger on branches, not on tags
     branches: 'main'
   workflow_dispatch:
-    paths-ignore:
-      - 'docs/**'
 
 jobs:
 
