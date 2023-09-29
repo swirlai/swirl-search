@@ -1,3 +1,7 @@
+---
+layout: default
+---
+
 # Welcome to Swirl
 
 ## What is Metasearch? Is it the same as Federated Search?

@@ -10,7 +10,7 @@ url: "https://swirlai.github.io/swirl-search/" # the base hostname & protocol fo
 markdown: kramdown
 remote_theme: pages-themes/midnight@v0.2.0
 plugins:
-  - jekyll-feed ## The jekyll-feed plugin is commonly used to generate an Atom (RSS-like) feed of your posts.
+  - jekyll-feed # The jekyll-feed plugin is commonly used to generate an Atom (RSS-like) feed of your posts.
   - jekyll-remote-theme
 
 # Exclude from processing
