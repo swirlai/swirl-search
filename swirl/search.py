@@ -255,7 +255,8 @@ def search(id, session=None, request=None):
         search.save()
 
         processor_list = search.post_result_processors
-
+        if 'rag' in request.GET.keys() and "RAGPostResultProcessor" not in processor_list:
+            processor_list.append("RAGPostResultProcessor")
         for processor in processor_list:
             logger.debug(f"{module_name}: invoking processor: {processor}")
             try:
