@@ -1,4 +1,6 @@
-# What is Metasearch? Is it the same as Federated Search?
+# Welcome to Swirl
+
+## What is Metasearch? Is it the same as Federated Search?
 
 [Metasearch](https://en.wikipedia.org/wiki/Federated_search) is a technical approach in which a search engine (or "broker") accepts a query from some user (or system), distributes the query to other search engines, waits for the responses, then returns a normalized, unified and ideally relevancy-ranked set of results.
 
@@ -8,7 +10,7 @@ The metasearch approach differs from traditional [enterprise search engines](htt
 
 Metasearch leaves the source data in place and relies on each source's own search engine to get access. This makes federated search less suited for deep navigation - across a large e-commerce or data set catalog, for example - but ideal for delivering cross-silo results with a fraction of the effort. It is also excellent for information enrichment, entity analysis (such as competitive, customer, industry or market intelligence) and integrating unstructured data for content curation, data science and machine learning applications.
 
-# What is Swirl Metasearch?
+## What is Swirl Metasearch?
 
 [Swirl Metasearch](https://github.com/swirlai/swirl-search) is a metasearch engine built on the Python/Django stack and released under the Apache 2.0 license in 2022.
 
@@ -43,11 +45,10 @@ Search developers can render Swirl's JSON results in any existing UI or framewor
 
 # Documentation
 
-:small_blue_diamond: [Quick Start](1.-Quick-Start.md) :small_blue_diamond: [User Guide](2.-User-Guide.md) :small_blue_diamond: [Admin Guide](3.-Admin-Guide.md) :small_blue_diamond: [M365 Guide](4.-M365-Guide.md) :small_blue_diamond: [Developer Guide](5.-Developer-Guide.md) :small_blue_diamond: [Developer Reference](6.-Developer-Reference.md)
+[Quick Start](1.-Quick-Start.md) || [User Guide](2.-User-Guide.md) || [Admin Guide](3.-Admin-Guide.md) || [M365 Guide](4.-M365-Guide.md) || [Developer Guide](5.-Developer-Guide.md) || [Developer Reference](6.-Developer-Reference.md)
 
 # Support
 
-:small_blue_diamond: [Join the Swirl Metasearch Community on Slack!](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
+* [Join the Swirl Metasearch Community on Slack!](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 
-:small_blue_diamond: Email: [support@swirl.today](mailto:support@swirl.today) with issues, requests, questions, etc. - we'd love to hear from you!
-<br/>
+* Email: [support@swirl.today](mailto:support@swirl.today) with issues, requests, questions, etc. - we'd love to hear from you!
