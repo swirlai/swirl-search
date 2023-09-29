@@ -12,6 +12,7 @@ from celery.schedules import crontab
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from swirl.models import OauthToken
+from swirl.text_extractor import TextExtractorFactory
 
 
 import django
@@ -27,6 +28,87 @@ module_name = 'tasks.py'
 from swirl.connectors import *
 from swirl.models import SearchProvider
 from swirl.perfomance_logger import *
+from swirl.web_page import PageFetcherFactory
+from swirl.authenticators import SWIRL_AUTHENTICATORS_DISPATCH
+
+# use these to have the same options set for all fetches
+# while developing
+DEV_FETCH_OPTIONS = {
+    "cache": "false",
+    "headers": {
+        "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+    },
+    "timeout": 10
+}
+FETCH_OPTIONS = DEV_FETCH_OPTIONS
+
+@shared_task(name='rag_page_fetcher')
+def page_fetcher_task(searchprovider, swirl_score, url, provider_id, body, user_query):
+    from django.core.exceptions import ObjectDoesNotExist
+    def get_authenticator_from_search_provider(provider_id):
+        ret = None
+        if not provider_id:
+            logger.error(f"Blank provider ID getting fetch options")
+            return ret
+        try:
+            search_provider_obj = SearchProvider.objects.get(id=provider_id)
+            idp = search_provider_obj.authenticator
+            ret = SWIRL_AUTHENTICATORS_DISPATCH.get(idp)()
+        except ObjectDoesNotExist:
+            logger.error(f"Could not find search provider with id {provider_id} getting fetch options")
+        except KeyError as err:
+            logger.error(f"KeyError encountered: {err}")
+        except AttributeError:
+            logger.error(f"Unexpected attribute error for {idp}")
+        except Exception as err:
+            logger.error(f"Unexecpected exception {err} getting fetch options")
+        finally:
+            return ret
+
+    def get_page_fetcher_options_from_search_provider(provider_id):
+        ret_options = {}
+
+        if not provider_id:
+            logger.error(f"Blank provider ID getting fetch options")
+            return ret_options
+        try:
+            search_provider_obj = SearchProvider.objects.get(id=provider_id)
+            ret_options = search_provider_obj.page_fetch_config_json
+        except ObjectDoesNotExist:
+            logger.error(f"Could not find search provider with id {provider_id} getting fetch options")
+        except Exception as err:
+            logger.error(f"Unexecpected exception {err} getting fetch options")
+
+        return ret_options
+
+    logger.info(f"RAG {searchprovider} score: {swirl_score}")
+    # try to fetch the item
+    fetch_url = url
+    if fetch_url:
+        pf_options = get_page_fetcher_options_from_search_provider(provider_id=provider_id)
+        pf_options = FETCH_OPTIONS
+        pf = PageFetcherFactory.alloc_page_fetcher(url=fetch_url, options=pf_options)
+
+        if not (pf and (page := pf.get_page())):
+            return (False,)
+
+        # content_type = page.get_content_type()
+        # if content_type == 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+        #     text_extractor = TextExtractorFactory.alloc_text_extactor(page.get_content(),source_id=fetch_url)
+        #     text_for_query = text_extractor.extract_text()
+        # else:
+        #     text_for_query = page.get_text_for_query(user_query)
+
+        text_for_query = page.get_text_for_query(user_query)
+
+        response_url = page.get_response_url()
+        document_type = page.get_document_type()
+        json = page.get_json()
+        json = json if isinstance(json, dict) else {}
+        return text_for_query, response_url, document_type, body, url, json
+    else:
+        logger.warning("RAG No url in item, continueing")
+        return (False,)
 
 ##################################################
 ##################################################

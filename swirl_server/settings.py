@@ -46,11 +46,14 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django.contrib.admin',
     'django.contrib.auth',
+    'channels',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles'
 ]
+
+ASGI_APPLICATION = 'swirl_server.routing.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -274,3 +277,14 @@ SWIRL_WRITE_PATH_DEF = 'stored_results'
 SWIRL_WRITE_PATH = env('SWIRL_WRITE_PATH', default=SWIRL_WRITE_PATH_DEF)
 
 SWIRL_MAX_FIELD_LEN = 512
+
+CHANNEL_LAYERS = {
+    'default': {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(CELERY_BROKER_URL)],
+            'capacity': 300
+        },
+    },
+}
+ASGI_THREADS = 1000

@@ -118,6 +118,7 @@ class SearchProvider(models.Model):
     credentials = models.CharField(max_length=512, default=str, blank=True)
     tags = models.JSONField(default=list)
     http_request_headers = models.JSONField(default={}, blank=True)
+    page_fetch_config_json = models.JSONField(default={}, blank=True)
 
     class Meta:
         ordering = ['id']
