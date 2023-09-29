@@ -12,7 +12,6 @@ from celery.schedules import crontab
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from swirl.models import OauthToken
-from swirl.text_extractor import TextExtractorFactory
 
 
 import django
@@ -91,13 +90,6 @@ def page_fetcher_task(searchprovider, swirl_score, url, provider_id, body, user_
 
         if not (pf and (page := pf.get_page())):
             return (False,)
-
-        # content_type = page.get_content_type()
-        # if content_type == 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
-        #     text_extractor = TextExtractorFactory.alloc_text_extactor(page.get_content(),source_id=fetch_url)
-        #     text_for_query = text_extractor.extract_text()
-        # else:
-        #     text_for_query = page.get_text_for_query(user_query)
 
         text_for_query = page.get_text_for_query(user_query)
 
