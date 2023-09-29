@@ -510,7 +510,7 @@ class MicrosoftOutlookMessagesDatesort(MicrosoftAPITestCase):
         mock_send_request.return_value = mock_response
         result = self._run_search()
         mock_send_request.assert_called_with('https://graph.microsoft.com/beta/search/query', params=None,
-                                             query={'requests': [{'entityTypes': ['message'], 'query': {'queryString': 'test'}, 'orderby': 'createdDateTime desc'}]},
+                                             query={'requests': [{'entityTypes': ['message'], 'query': {'queryString': '(test) AND (NOT contenttype:folder)'}, 'orderby': 'createdDateTime desc'}]},
                                              headers={'Authorization': 'Bearer access_token'})
 
 class MicrosoftOutlookMessagesDatesortWithQueryMapping(MicrosoftAPITestCase):
@@ -582,5 +582,5 @@ class MicrosoftOutlookMessagesDatesortWithQueryMapping(MicrosoftAPITestCase):
         mock_send_request.return_value = mock_response
         result = self._run_search()
         mock_send_request.assert_called_with('https://graph.microsoft.com/beta/search/query', params=None,
-                                             query={'requests': [{'entityTypes': ['message'], 'query': {'queryString': 'test'}, 'orderby': 'my_custom_datesort desc'}]},
-                                             headers={'Authorization': 'Bearer access_token'})
+                                            query={'requests': [{'entityTypes': ['message'], 'query': {'queryString': '(test) AND (NOT contenttype:folder)'}, 'orderby': 'my_custom_datesort desc'}]},
+                                            headers={'Authorization': 'Bearer access_token'})
