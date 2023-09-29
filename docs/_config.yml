@@ -3,12 +3,12 @@ title: Swirl Documentation
 email: support@swirl.today
 description: >- # this means to ignore newlines until "baseurl:"
   Swirl is open source software that simultaneously searches multiple content sources and returns AI ranked results.
-baseurl: "/swirl-search" # the subpath of your site, e.g. /blog. If there's no subpath, leave it as an empty string.
+baseurl: "" # the subpath of your site, e.g. /blog. If there's no subpath, leave it as an empty string.
 url: "https://swirlai.github.io/swirl-search" # the base hostname & protocol for your site
 
 # Build settings
 markdown: kramdown
-remote_theme: mattgraham/midnight
+remote_theme: pages-themes/midnight
 plugins:
   - jekyll-feed # The jekyll-feed plugin is commonly used to generate an Atom (RSS-like) feed of your posts.
   - jekyll-remote-theme
