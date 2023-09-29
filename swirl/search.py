@@ -255,8 +255,8 @@ def search(id, session=None, request=None):
         search.save()
 
         processor_list = search.post_result_processors
-        if 'rag' in request.GET.keys() and "RAGPostResultProcessor" not in processor_list:
-            processor_list.append("RAGPostResultProcessor")
+        add_to_post_processors_if_tag_in_request(request=request, processor_list=search.post_result_processors,
+                                                 tag="rag", processor_name="RAGPostResultProcessor")
         for processor in processor_list:
             logger.debug(f"{module_name}: invoking processor: {processor}")
             try:
@@ -311,6 +311,15 @@ def search(id, session=None, request=None):
     logger.info(f"{user} search {search.id} {search.status} {retrieved} {search.time}")
 
     return True
+
+def add_to_post_processors_if_tag_in_request(processor_list, tag, processor_name, request):
+    if not (request and tag and processor_name):
+        return
+    try:
+       if tag in request.GET.keys() and processor_name not in processor_list:
+            processor_list.append(processor_name)
+    except Exception as err:
+        logger.warning(f'{err} while adding {processor_name} for {tag}')
 
 def error_return(msg, swqrx_logger):
     logger.error(msg)
