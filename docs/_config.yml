@@ -3,9 +3,11 @@ title: Swirl Documentation
 email: support@swirl.today
 
 # Build settings
+markdown: kramdown
 remote_theme: pages-themes/midnight
 plugins:
   - jekyll-remote-theme
+  - jemoji
 
 # Exclude from processing
 # The following items will not be processed, by default. Create a custom list to override the default setting.
