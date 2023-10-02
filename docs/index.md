@@ -43,10 +43,12 @@ Search developers can render Swirl's JSON results in any existing UI or framewor
 
 # Documentation
 
-| [Quick Start](1.-Quick-Start.md) | [User Guide](2.-User-Guide.md) | [Admin Guide](3.-Admin-Guide.md) | [M365 Guide](4.-M365-Guide.md) | [Developer Guide](5.-Developer-Guide.md) | [Developer Reference](6.-Developer-Reference.md) |
+| [Home](index.md) | [Quick Start](1.-Quick-Start.md) | [User Guide](2.-User-Guide.md) | [Admin Guide](3.-Admin-Guide.md) | [M365 Guide](4.-M365-Guide.md) | [Developer Guide](5.-Developer-Guide.md) | [Developer Reference](6.-Developer-Reference.md) |
 
 # Support
 
 * [Join the Swirl Metasearch Community on Slack!](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 
 * Email: [support@swirl.today](mailto:support@swirl.today) with issues, requests, questions, etc. - we'd love to hear from you!
+
+<br/>
