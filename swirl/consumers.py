@@ -49,8 +49,10 @@ class Consumer(AsyncWebsocketConsumer):
         else:
             try:
                 rag_result = Result.objects.get(search_id=search_id, searchprovider='ChatGPT')
-                if rag_result.json_results[0]['body'][0]:
-                    return rag_result.json_results[0]['body'][0]
+                if rag_result:
+                    if rag_result.json_results[0]['body'][0]:
+                        return rag_result.json_results[0]['body'][0]
+                    return False
             except: 
                 pass
             rag_processor = RAGPostResultProcessor(search_id=search_id, request_id='', is_socket_logic=True)
