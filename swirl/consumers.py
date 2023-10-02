@@ -37,8 +37,10 @@ class Consumer(AsyncWebsocketConsumer):
             while 1:
                 try:
                     rag_result = Result.objects.get(search_id=search_id, searchprovider='ChatGPT')
-                    if rag_result.json_results[0]['body'][0]:
-                        return rag_result.json_results[0]['body'][0]
+                    if rag_result:
+                        if rag_result.json_results[0]['body'][0]:
+                            return rag_result.json_results[0]['body'][0]
+                        return False
                     time.sleep(1)
                     continue
                 except:
@@ -47,8 +49,10 @@ class Consumer(AsyncWebsocketConsumer):
         else:
             try:
                 rag_result = Result.objects.get(search_id=search_id, searchprovider='ChatGPT')
-                if rag_result.json_results[0]['body'][0]:
-                    return rag_result.json_results[0]['body'][0]
+                if rag_result:
+                    if rag_result.json_results[0]['body'][0]:
+                        return rag_result.json_results[0]['body'][0]
+                    return False
             except: 
                 pass
             rag_processor = RAGPostResultProcessor(search_id=search_id, request_id='', is_socket_logic=True)
@@ -62,12 +66,17 @@ class Consumer(AsyncWebsocketConsumer):
 
 
     async def receive(self, text_data):
-        result = await self.get_rag_result(self.scope['search_id'])
-        if result:
-            await self.send(text_data=json.dumps({
-                'message': result
-            }))
-        else:
+        try:
+            result = await self.get_rag_result(self.scope['search_id'])
+            if result:
+                await self.send(text_data=json.dumps({
+                    'message': result
+                }))
+            else:
+                await self.send(text_data=json.dumps({
+                    'message': 'No data'
+                }))
+        except:
             await self.send(text_data=json.dumps({
                 'message': 'No data'
             }))
