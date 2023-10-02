@@ -1,7 +1,9 @@
 # Site settings
+title: Swirl Documentation
+email: support@swirl.today
 
 # Build settings
-remote_theme: pages-themes/hacker
+remote_theme: pages-themes/midnight
 plugins:
   - jekyll-remote-theme
 
