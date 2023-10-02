@@ -4,13 +4,7 @@ email: support@swirl.today
 
 # Build settings
 markdown: kramdown
-remote_theme: pages-themes/midnight
+remote_theme: pages-themes/hacker
 plugins:
   - jekyll-remote-theme
   - jemoji
-
-# Exclude from processing
-# The following items will not be processed, by default. Create a custom list to override the default setting.
-exclude:
-  - Gemfile
-  - Gemfile.lock
