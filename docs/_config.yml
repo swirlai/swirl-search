@@ -6,5 +6,6 @@ email: support@swirl.today
 markdown: kramdown
 remote_theme: pages-themes/hacker
 plugins:
+  - jekyll-toc
   - jekyll-remote-theme
   - jemoji
