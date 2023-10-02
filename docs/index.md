@@ -1,4 +1,11 @@
-# What is Metasearch? Is it the same as Federated Search?
+# Swirl Documentation
+{:.no_toc}
+
+**Contents**
+* TOC
+{:toc}
+
+## What is Metasearch? Is it the same as Federated Search?
 
 [Metasearch](https://en.wikipedia.org/wiki/Federated_search) is a technical approach in which a search engine (or "broker") accepts a query from some user (or system), distributes the query to other search engines, waits for the responses, then returns a normalized, unified and ideally relevancy-ranked set of results.
 
@@ -8,7 +15,7 @@ The metasearch approach differs from traditional [enterprise search engines](htt
 
 Metasearch leaves the source data in place and relies on each source's own search engine to get access. This makes federated search less suited for deep navigation - across a large e-commerce or data set catalog, for example - but ideal for delivering cross-silo results with a fraction of the effort. It is also excellent for information enrichment, entity analysis (such as competitive, customer, industry or market intelligence) and integrating unstructured data for content curation, data science and machine learning applications.
 
-# What is Swirl Metasearch?
+## What is Swirl Metasearch?
 
 [Swirl Metasearch](https://github.com/swirlai/swirl-search) is a metasearch engine built on the Python/Django stack and released under the Apache 2.0 license in 2022.
 
