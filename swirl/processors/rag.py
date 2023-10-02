@@ -98,6 +98,8 @@ class RAGPostResultProcessor(PostResultProcessor):
 
         if not rag_item_list:
             self.warning("RAG No content found!")
+            result = Result.objects.create(owner=self.search.owner, search_id=self.search, provider_id=5, searchprovider='ChatGPT', query_string_to_provider=self.search.query_string_processed.strip(), query_to_provider='None', status='READY', retrieved=1, found=1, json_results=[], time=0.0)
+            result.save()
             return 0
 
         user_query = self.search.query_string_processed.strip()
@@ -183,6 +185,8 @@ class RAGPostResultProcessor(PostResultProcessor):
 
         if len(new_prompt_text) < 5:
             self.warning(f"RAG too short after fallback, giving up")
+            result = Result.objects.create(owner=self.search.owner, search_id=self.search, provider_id=5, searchprovider='ChatGPT', query_string_to_provider=new_prompt_text[:256], query_to_provider='None', status='READY', retrieved=1, found=1, json_results=[], time=0.0)
+            result.save()
             return 0
 
         try:
@@ -200,6 +204,8 @@ class RAGPostResultProcessor(PostResultProcessor):
                 logger.info(f'RAG:\t url:{k} problem:{v}')
         except Exception as err:
             logger.error(f"error : {err} while creating CGPT response")
+            result = Result.objects.create(owner=self.search.owner, search_id=self.search, provider_id=5, searchprovider='ChatGPT', query_string_to_provider=new_prompt_text[:256], query_to_provider='None', status='READY', retrieved=1, found=1, json_results=[], time=0.0)
+            result.save()
             return 0
 
         logger.info(f'RAGTITLE: {self.search.query_string_processed}')
