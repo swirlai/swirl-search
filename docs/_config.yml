@@ -9,3 +9,7 @@ plugins:
   - jekyll-toc
   - jekyll-remote-theme
   - jemoji
+
+# Kramdown settings
+kramdown:
+  toc_levels: 1..2
