@@ -13,3 +13,4 @@ plugins:
 # Kramdown settings
 kramdown:
   toc_levels: 1..2
+  smart_quotes: [apos, apos, quot, quot]
