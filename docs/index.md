@@ -28,7 +28,8 @@ Use Swirl's APIs to run searches and track their progress in real-time, then ret
 ![Swirl Results](images/swirl_results_no_m365-galaxy_dark.png)
 
 Swirl provides a `swirl_score` and `swirl_rank` for each item, as well as the original source's ranking, so users can see instantly what was most relevant across all sources. 
-``` json
+
+``` shell
  "results": [
         {
             "swirl_rank": 1,
