@@ -25,6 +25,7 @@ from swirl.connectors.connector import Connector
 from datetime import datetime
 
 import openai
+import litellm
 
 MODEL_3 = "gpt-3.5-turbo"
 MODEL_4 = "gpt-4"
@@ -50,10 +51,10 @@ class ChatGPT(Connector):
         logger.debug(f"{self}: execute_search()")
 
         if self.provider.credentials:
-            openai.api_key = self.provider.credentials
+            litellm.api_key = self.provider.credentials
         else:
             if getattr(settings, 'OPENAI_API_KEY', None):
-                openai.api_key = settings.OPENAI_API_KEY
+                litellm.api_key = settings.OPENAI_API_KEY
             else:
                 self.status = "ERR_NO_CREDENTIALS"
                 return
@@ -79,7 +80,7 @@ class ChatGPT(Connector):
             return
         logger.info(f'CGPT completion system guide:{self.system_guide} query to provider : {self.query_to_provider}')
         self.query_to_provider = prompted_query
-        completions = openai.ChatCompletion.create(
+        completions = litellm.completion(
             model=MODEL,
             messages=[
                 {"role": "system", "content": self.system_guide},

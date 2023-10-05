@@ -13,6 +13,7 @@ from swirl.processors.processor import *
 from swirl.processors.utils import get_tag
 
 import openai
+import litellm
 MODEL_3 = "gpt-3.5-turbo"
 MODEL_4 = "gpt-4"
 
@@ -96,12 +97,12 @@ class ChatGPTQueryProcessor(QueryProcessor):
             logger.info(f"{self.type} model {MODEL} system guide {self.system_guide} prompt {self.prompt} Do Filter {self.do_filter}")
 
             if getattr(settings, 'OPENAI_API_KEY', None):
-                openai.api_key = settings.OPENAI_API_KEY
+                litellm.api_key = settings.OPENAI_API_KEY
             else:
                 self.warning('API key not available')
                 return self.query_string
 
-            response = openai.ChatCompletion.create(
+            response = litellm.completion(
                 model=MODEL,
                 messages=[
                     {"role": "system", "content": self.system_guide},

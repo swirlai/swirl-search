@@ -20,6 +20,7 @@ bs4
 google-cloud-bigquery
 opensearch-py
 openai
+litellm
 msal
 PyJWT
 pyahocorasick
