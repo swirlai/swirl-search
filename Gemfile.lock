@@ -192,9 +192,6 @@ GEM
       jekyll-seo-tag (~> 2.0)
     jekyll-titles-from-headings (0.5.3)
       jekyll (>= 3.3, < 5.0)
-    jekyll-toc (0.18.0)
-      jekyll (>= 3.9)
-      nokogiri (~> 1.12)
     jekyll-watch (2.2.1)
       listen (~> 3.0)
     jemoji (0.12.0)
@@ -259,7 +256,8 @@ PLATFORMS
 
 DEPENDENCIES
   github-pages
-  jekyll-toc
+  jekyll-default-layout
+  jekyll-include-cache
   webrick
 
 BUNDLED WITH
