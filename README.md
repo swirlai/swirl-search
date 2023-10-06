@@ -63,7 +63,9 @@ _Swirl with ChatGPT as a configured AI Model._
 
 # 🔎 How Swirl Works
 
-Swirl adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, data siloes, etc. And uses Large Language Models to re-rank the unified results *without* extracting or indexing *anything*. 
+Swirl revolutionizes the way user queries are processed and optimized for diverse information sources. By seamlessly interfacing with a plethora of search APIs, including search engines, databases, noSQL engines, cloud/SaaS services, and isolated data silos, Swirl ensures a comprehensive and holistic approach to information retrieval.
+
+At its core, Swirl leverages the power of Large Language Models, representing the pinnacle of natural language processing, to dynamically re-rank the amalgamated results. This unique approach eliminates the need for extracting or indexing data, streamlining the search process and minimizing resource consumption. 
 
 ![Swirl Diagram](https://github.com/swirlai/swirl-search/wiki/images/Animation_2.gif)
 
