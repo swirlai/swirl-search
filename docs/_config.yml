@@ -44,7 +44,7 @@ back_to_top_text: "Back to top"
 callouts_level: loud # or quiet
 callouts:
   highlight:
-    # title: Highlight
+    title: Note
     color: yellow
   warning:
     title: Warning
