@@ -1,0 +1,20 @@
+{
+  "name": "Asana", 
+  "active": false, 
+  "default": false, 
+  "connector": "RequestsGet", 
+  "url": "https://app.asana.com/api/1.0/tasks", 
+  "query_template": "{url}?query={query_string}", 
+  "query_processors": ["AdaptiveQueryProcessor"], 
+  "query_mappings": "",
+  "result_processors": [
+    "MappingResultProcessor",
+    "LenLimitingResultProcessor",
+    "CosineRelevancyResultProcessor"
+  ],
+  "response_mappings": "RESULTS=results",
+  "result_mappings": "title=name, body=gid|resource_type|resource_subtype",
+  "results_per_query": 10, 
+  "credentials": "bearer=your-Asana-PAT", 
+  "tags": ["Asana", "Tasks"] 
+}
