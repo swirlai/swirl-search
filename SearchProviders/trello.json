@@ -1,0 +1,37 @@
+{
+    "name": "TrelloSearchProvider",
+    "version": "1.0",
+    "type": "searchprovider",
+    "code": """
+import requests
+
+class TrelloSearchProvider(SearchProvider):
+    def __init__(self, api_key, api_token):
+        self.api_key = api_key
+        self.api_token = api_token
+        self.base_url = "https://api.trello.com/1"
+
+    def search(self, query):
+        headers = {
+            "Authorization": f"Bearer {self.api_token}",
+        }
+
+        params = {
+            "query": query,
+        }
+
+        response = requests.get(f"{self.base_url}/search", headers=headers, params=params)
+        response.raise_for_status()
+
+        results = []
+        for card in response.json()["cards"]:
+            results.append(SearchResult(
+                title=card["name"],
+                url=card["url"],
+                snippet=card["desc"],
+            ))
+
+        return results
+
+"""
+}
