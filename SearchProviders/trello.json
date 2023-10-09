@@ -1,37 +1,16 @@
 {
-    "name": "TrelloSearchProvider",
-    "version": "1.0",
-    "type": "searchprovider",
-    "code": """
-import requests
-
-class TrelloSearchProvider(SearchProvider):
-    def __init__(self, api_key, api_token):
-        self.api_key = api_key
-        self.api_token = api_token
-        self.base_url = "https://api.trello.com/1"
-
-    def search(self, query):
-        headers = {
-            "Authorization": f"Bearer {self.api_token}",
-        }
-
-        params = {
-            "query": query,
-        }
-
-        response = requests.get(f"{self.base_url}/search", headers=headers, params=params)
-        response.raise_for_status()
-
-        results = []
-        for card in response.json()["cards"]:
-            results.append(SearchResult(
-                title=card["name"],
-                url=card["url"],
-                snippet=card["desc"],
-            ))
-
-        return results
-
-"""
+  "name": "Trello Search",
+  "active": false,
+  "default": false,
+  "connector": "RequestsGet",
+  "url": "https://api.trello.com/1/search",
+  "query_template": "{url}?query={query_string}&key=APIKey&token=APIToken",
+  "query_processors": ["AdaptiveQueryProcessor"],
+  "query_mappings": "",
+  "result_processors": ["MappingResultProcessor", "LenLimitingResultProcessor", "CosineRelevancyResultProcessor"],
+  "response_mappings": "FOUND=size,RESULTS=results",
+  "result_mappings": "id=id,fullName=fullName,username=username,email=email,url=url,avatarUrl=avatarUrl,avatarHash=avatarHash,memberType=memberType,status=status,initials=initials,products=products,idBoards=idBoards,idOrganizations=idOrganizations,limits=limits,prefs=prefs,trophies=trophies,uploadedAvatarHash=uploadedAvatarHash,uploadedAvatarUrl=uploadedAvatarUrl,premiumFeatures=premiumFeatures,isAaMastered=isAaMastered,ixUpdate=ixUpdate,idBoardsPinned=idBoardsPinned",
+  "results_per_query": 1,
+  "credentials": "",
+  "tags": ["Trello", "API"]
 }
