@@ -24,6 +24,7 @@
 - [ ] Bugfix (non-breaking change that solves an issue)
 - [ ] New Feature / Enhancement (non-breaking change that add or improves functionality)
 - [ ] New Feature (breaking change that is not backwards compatible and/or alters current functionality)
+- [ ] Documentation (change to product documentation or Readme.md only)
 
 
 ## PR Checklist
