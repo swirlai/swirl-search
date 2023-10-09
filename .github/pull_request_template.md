@@ -1,5 +1,5 @@
 ## Branching
-Always branch off from the `develop` branch with a descriptive name that encapsulates your idea or fix. This practice helps ensure that our `main` branch remains our stable.
+Always branch off from the `develop` branch with a descriptive name that encapsulates your idea or fix. This practice helps ensure that our `main` branch remains stable.
 
 <!--- Provide a general summary of your changes in the TITLE above -->
 
