@@ -3,7 +3,7 @@
         "active": true,
         "default": true,
         "connector": "RequestsGet",
-        "url": "https://api.trello.com/1"",
+        "url": "https://api.trello.com/1",
         "query_template": "{url}?q={query_string}",
         "query_processors": [
             "AdaptiveQueryProcessor"
@@ -14,7 +14,7 @@
         ],
         "response_mappings": "RESULTS=cards",
         "result_mappings": "title=name,body=desc",
-        "credentials": "bearer=<your-trello-token>,
+        "credentials": "bearer=<your-trello-token>",
         "tags": [
             "Trello"
         ]
