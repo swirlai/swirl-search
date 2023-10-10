@@ -20,3 +20,7 @@ Have questions about Swirl?  Need some techncial guidance on your journey toward
 * Join the [Swirl Metasearch Community on Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)!
 
 * Email: [support@swirl.today](mailto:support@swirl.today) with issues, requests, questions, etc. - we'd love to hear from you!
+
+Many thanks!
+
+~ Team Swirl
