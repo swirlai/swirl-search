@@ -1,0 +1,28 @@
+{
+        "name": "Algolia Search",
+        "active": true,
+        "default": true,
+        "connector": "RequestsGet",
+        "url": "https://<Application-ID>-dsn.algolia.net/1/indexes/{indexName}",
+        "query_template": "{url}?query={query_string}",
+        "http_request_headers": {
+            "X-Algolia-Application-Id": "<Your-Algolia-Application-Id>",
+            "X-Algolia-API-Key": "<Your-Algolia-API-Key>"
+        },
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "result_processors": [
+            "MappingResultProcessor",
+            "LenLimitingResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "FOUND=nbHits,RESULTS=hits",
+        "result_mappings": "title=hits.name,body=hits._snippetResult.bio.value,date_published=hits.year,url=NO_PAYLOAD",
+        "results_per_query": 10,
+        "tags": [
+            "Algolia",
+            "Search",
+            "External"
+        ]
+}
