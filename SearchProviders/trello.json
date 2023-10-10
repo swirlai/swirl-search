@@ -9,7 +9,7 @@
   "query_mappings": "",
   "result_processors": ["MappingResultProcessor", "LenLimitingResultProcessor", "CosineRelevancyResultProcessor"],
   "response_mappings": "FOUND=size,RESULTS=results",
-  "result_mappings": "id=id,fullName=fullName,username=username,email=email,url=url,avatarUrl=avatarUrl,avatarHash=avatarHash,memberType=memberType,status=status,initials=initials,products=products,idBoards=idBoards,idOrganizations=idOrganizations,limits=limits,prefs=prefs,trophies=trophies,uploadedAvatarHash=uploadedAvatarHash,uploadedAvatarUrl=uploadedAvatarUrl,premiumFeatures=premiumFeatures,isAaMastered=isAaMastered,ixUpdate=ixUpdate,idBoardsPinned=idBoardsPinned",
+  "result_mappings": "title=fullName|url=url|body=products|author=email|date_published=ixUpdate|status=status|prefs=prefs|trophies=trophies|NO_PAYLOAD",
   "results_per_query": 1,
   "credentials": "",
   "tags": ["Trello", "API"]
