@@ -6,6 +6,8 @@ Have an idea for a new feature or enhancement to Swirl?  Find a bug in the code 
  
  All code contributions should go on the `develop` branch, which helps ensure that our `main` branch remains stable. When submitting PRs to Swirl, please create a branch off of `develop` and fill out the PR Template completely.
 
+If you are contributing a new SearchProvider to the project, please land your new JSON file in the `SearchProviders/untested` directory of the `develop` branch.
+
 For more general information about contributing to projects on Github, visit the [GitHub documentation](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) on this very subject.
 
 ## Testing
