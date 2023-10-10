@@ -1,7 +1,7 @@
 {
   "name": "Trello Search",
-  "active": false,
-  "default": false,
+  "active": true,
+  "default": true,
   "connector": "RequestsGet",
   "url": "https://api.trello.com/1/search",
   "query_template": "{url}?query={query_string}&key=APIKey&token=APIToken",
@@ -9,7 +9,7 @@
   "query_mappings": "",
   "result_processors": ["MappingResultProcessor", "LenLimitingResultProcessor", "CosineRelevancyResultProcessor"],
   "response_mappings": "FOUND=size,RESULTS=results",
-  "result_mappings": "title=fullName|url=url|body=products|author=email|date_published=ixUpdate|status=status|prefs=prefs|trophies=trophies|NO_PAYLOAD",
+  "result_mappings": "title=fullName,body=products,author=email | status | prefs | trophies,url=NO_PAYLOAD",
   "results_per_query": 1,
   "credentials": "",
   "tags": ["Trello", "API"]
