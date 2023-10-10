@@ -1,0 +1,3 @@
+tasks:
+    - name: Dev Server
+      command: docker-compose pull && docker-compose up
