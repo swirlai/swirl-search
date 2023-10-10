@@ -1,4 +1,11 @@
-# &nbsp; DOCKER BUILD for Swirl Metasearch <img alt='Swirl Metasearch Logo' src='https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl-logo-only-blue.png' width=38 align=left />
+---
+layout: default
+title: Docker Build
+nav_exclude: true
+search_exclude: true
+---
+
+# DOCKER BUILD for Swirl Metasearch <img alt='Swirl Metasearch Logo' src='https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl-logo-only-blue.png' width=38 align=left />
 
 :warning: Warning: when using Docker the Swirl database is instantly and irrevocably deleted upon container shutdown!
 
