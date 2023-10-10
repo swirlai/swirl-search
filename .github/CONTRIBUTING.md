@@ -11,11 +11,13 @@ For more general information about contributing to projects on Github, visit the
 ## Testing
 When submitting a PR, we ask that you please describe in detail how you tested your changes, including details of your testing environment and the tests you ran to validate your change.  Screenshots of working SearchProviders are very helpful, especially if the source you're connecting to is private (not-publicly searchable).
 
-## Docuementation
-If your change warrants an update to our existing Product Documentation, or if you are adding a new feature to Swirl, please provide the appropriate documentation content (text and screenshots) as part of your PR.
+## Documentation
+If your change warrants an update to our existing [Product Documentation](https://github.com/swirlai/swirl-search/wiki), or if you are adding a new feature to Swirl, please provide the appropriate documentation content (text and screenshots) as part of your PR.
 
 ## Support
 Have questions about Swirl?  Need some techncial guidance on your journey toward contributing to the project?  We're here to help!
+
+* Check out the [Product Documentation](https://github.com/swirlai/swirl-search/wiki)
 
 * Join the [Swirl Metasearch Community on Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)!
 
