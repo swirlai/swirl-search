@@ -1,7 +1,7 @@
 {
         "name": "Algolia Search",
-        "active": false,
-        "default": false,
+        "active": true,
+        "default": true,
         "connector": "RequestsGet",
         "url": "https://<Application-ID>-dsn.algolia.net/1/indexes/{indexName}",
         "query_template": "{url}?query={query_string}",
