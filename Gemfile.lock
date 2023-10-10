@@ -258,6 +258,7 @@ DEPENDENCIES
   github-pages
   jekyll-default-layout
   jekyll-include-cache
+  jekyll-remote-theme
   webrick
 
 BUNDLED WITH
