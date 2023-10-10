@@ -78,19 +78,6 @@ search:
   # Supports true or false (default)
   button: false
 
-exclude:
- # from https://github.com/jekyll/jekyll/blob/master/lib/site_template/_config.yml:
-   - .sass-cache/
-   - .jekyll-cache/
-   - gemfiles/
-   - Gemfile
-   - Gemfile.lock
-   - node_modules/
-   - vendor/bundle/
-   - vendor/cache/
-   - vendor/gems/
-   - vendor/ruby/
-
 # Build settings
 markdown: kramdown
 remote_theme: "just-the-docs/just-the-docs"
