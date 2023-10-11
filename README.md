@@ -186,6 +186,13 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 <br/>
 
+# All Thanks To Our Contributors
+
+<a href="https://github.com/swirlai/swirl-search/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=swirlai/swirl-search" />
+</a>
+
+
 # ☁ Use the Swirl Cloud 
 
 For information about Swirl as a managed service, please [contact us](mailto:hello@swirl.today)!
