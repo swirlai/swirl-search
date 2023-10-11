@@ -80,11 +80,12 @@ search:
 
 # Build settings
 markdown: kramdown
-remote_theme: "just-the-docs/just-the-docs"
+# remote_theme: "just-the-docs/just-the-docs"
+theme: just-the-docs
 plugins:
-  - jekyll-remote-theme
+#  - jekyll-remote-theme
   - jekyll-default-layout
-  - jekyll-include-cache
+#  - jekyll-include-cache
   - jemoji
 
 # Kramdown settings
