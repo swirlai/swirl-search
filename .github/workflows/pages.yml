@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: docs
+        working-directory: ./docs
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -56,8 +56,8 @@ jobs:
           JEKYLL_ENV: production
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
-        # Added path param to Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        # Added path param to Upload artifact to specify 'docs/_site'
+        uses: actions/upload-pages-artifact@v2
         with:
           path: "docs/_site/"
 
