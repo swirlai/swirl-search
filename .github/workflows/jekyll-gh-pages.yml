@@ -28,7 +28,7 @@ concurrency:
 jobs:
   # Build job
   # Added working-directory param to defaults
-  # Added path param to Upload artifact
+  # Added docs/ direcotry to source and desitnation lines
   build:
     runs-on: ubuntu-latest
     defaults:
@@ -42,12 +42,10 @@ jobs:
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
-          source: ./
-          destination: ./_site
+          source: ./docs
+          destination: ./docs/_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
-        with:
-          path: "docs/_site/"
 
   # Deployment job
   deploy:
