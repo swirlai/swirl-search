@@ -88,11 +88,3 @@ plugins:
 # Kramdown settings
 kramdown:
   smart_quotes: [apos, apos, quot, quot]
-
-# Jekyll defaults
-defaults:
-  -
-    scope:
-      path: "" # an empty string here means all files in the project
-    values:
-      layout: "default"
