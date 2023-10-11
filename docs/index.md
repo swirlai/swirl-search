@@ -1,4 +1,5 @@
 ---
+layout: default
 title: Swirl Overview
 nav_order: 1
 ---
