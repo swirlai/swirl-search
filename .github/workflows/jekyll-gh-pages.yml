@@ -1,7 +1,9 @@
-# Swirl's customized workflow for building and deploying a Jekyll site to GitHub Pages
+# Sample workflow for building and deploying a Jekyll site to GitHub Pages
+# Customized for publishing Swirl's documentation
 name: Deploy Jekyll with GitHub Pages dependencies preinstalled
 
-# Runs on pushes targeting the default branch + changes to the docs/ directory only
+# Runs on pushes targeting the default branch
+# Added paths param to trigger workflow only on changes to the docs directory
 on:
   push:
     branches:
@@ -24,7 +26,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Build job + working-directory parameter specified
+  # Build job
+  # Added working-directory param to defaults
+  # Added path param to Upload artifact
   build:
     runs-on: ubuntu-latest
     defaults:
@@ -42,6 +46,8 @@ jobs:
           destination: ./_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
+        with:
+          path: "docs/_site/"
 
   # Deployment job
   deploy:
