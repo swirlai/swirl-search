@@ -1,5 +1,4 @@
 ---
-layout: default
 title: Docker Build
 nav_exclude: true
 search_exclude: true
