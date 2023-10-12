@@ -206,7 +206,7 @@ At Swirl, every user matters to us. Whether you're a beginner finding your way o
 
 * 📧 **Direct Support:** For any questions, suggestions, or even a simple hello, drop us an email at [support@swirl.today](mailto:support@swirl.today). We cherish every message and promise to get back to you promptly!
 
-* 💼 **Request A Connector (Enterprise Support)** Want to see a new conenctor quickly and fast. Contact the Swirl Team at: [support@swirl.today](mailto:support@swirl.today)
+* 💼 **Request A Connector (Enterprise Support)** Want to see a new connector quickly and fast. Contact the Swirl Team at: [support@swirl.today](mailto:support@swirl.today)
 
 Remember, you're part of our family now. 🌍💙
 
