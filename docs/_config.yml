@@ -82,6 +82,17 @@ theme: just-the-docs
 plugins:
   - jekyll-default-layout
   - jemoji
+disable_disk_cache: true
+
+exclude:
+ # Modified from https://github.com/jekyll/jekyll/blob/master/lib/site_template/_config.yml:
+   - .sass-cache/
+   - .jekyll-cache/
+   - node_modules/
+   - vendor/bundle/
+   - vendor/cache/
+   - vendor/gems/
+   - vendor/ruby/
 
 # Kramdown settings
 kramdown:
