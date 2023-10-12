@@ -3,8 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from swirl.models import Result, Search
 from swirl.processors import *
-import time
-
+import asyncio
 
 class Consumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -30,10 +29,17 @@ class Consumer(AsyncWebsocketConsumer):
         )
 
     @database_sync_to_async
-    def get_rag_result(self, search_id):
+    def get_rag_result(self, search_id, rag_query_items):
         search = Search.objects.get(id=search_id)
         isRagIncluded = "RAGPostResultProcessor" in search.post_result_processors
-        if isRagIncluded:
+        isRagItemsUpdated = False
+        try:
+            rag_result = Result.objects.get(search_id=search_id, searchprovider='ChatGPT')
+            isRagItemsUpdated = True
+            isRagItemsUpdated = not(set(rag_result.json_results[0]['rag_query_items']) == set(rag_query_items))
+        except:
+            pass
+        if isRagIncluded and not isRagItemsUpdated:
             while 1:
                 try:
                     rag_result = Result.objects.get(search_id=search_id, searchprovider='ChatGPT')
@@ -41,21 +47,22 @@ class Consumer(AsyncWebsocketConsumer):
                         if rag_result.json_results[0]['body'][0]:
                             return rag_result.json_results[0]['body'][0]
                         return False
-                    time.sleep(1)
+                    asyncio.sleep(0.5)
                     continue
                 except:
-                    time.sleep(1)
+                    asyncio.sleep(0.5)
                     continue
         else:
             try:
                 rag_result = Result.objects.get(search_id=search_id, searchprovider='ChatGPT')
-                if rag_result:
+                isRagItemsUpdated = not(set(rag_result.json_results[0]['rag_query_items']) == set(rag_query_items))
+                if rag_result and not isRagItemsUpdated:
                     if rag_result.json_results[0]['body'][0]:
                         return rag_result.json_results[0]['body'][0]
                     return False
-            except: 
+            except:
                 pass
-            rag_processor = RAGPostResultProcessor(search_id=search_id, request_id='', is_socket_logic=True)
+            rag_processor = RAGPostResultProcessor(search_id=search_id, request_id='', is_socket_logic=True, rag_query_items=rag_query_items)
             if rag_processor.validate():
                 result = rag_processor.process(should_return=True)
                 try:
@@ -67,7 +74,7 @@ class Consumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         try:
-            result = await self.get_rag_result(self.scope['search_id'])
+            result = await self.get_rag_result(self.scope['search_id'], self.scope['rag_query_items'])
             if result:
                 await self.send(text_data=json.dumps({
                     'message': result

@@ -364,10 +364,13 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         # score results by field, adjusting for field length
         highlighted_json_results = []
         swrel_logger.start_pass_2()
+        swirl_id = 1
         for results in self.results:
             if not results.json_results:
                 continue
             for item in results.json_results:
+                item['swirl_id'] = swirl_id
+                swirl_id = swirl_id + 1
                 if 'swirl_score' in item:
                     logger.debug(f"already scored - {item['url']}")
                 item['swirl_score'] = 0.0

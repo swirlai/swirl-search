@@ -81,17 +81,32 @@ class RAGPostResultProcessor(PostResultProcessor):
 
     type="RAGPostResultProcessor"
 
+    def __init__(self, search_id, request_id='', is_socket_logic=False, rag_query_items=False):
+        super().__init__(search_id=search_id, request_id=request_id, is_socket_logic=is_socket_logic, rag_query_items=rag_query_items)
+
+        try:
+            rag_result = Result.objects.get(search_id=search_id, searchprovider='ChatGPT')
+            if rag_result:
+                logger.info(f'RAG: previous RAG result was deleted')
+                rag_result.delete()
+        except:
+            pass
+
     def _log_n_store_warn(self, url, warn, buffer):
         logger.warning(warn)
         buffer[url] = warn
 
     def background_process(self):
         rag_item_list = []
-
+        rag_query_items = self.rag_query_items or []
         for result in self.results:
             if result.json_results:
                 for item in result.json_results:
-                    if 'swirl_score' in item:
+                    if rag_query_items:
+                        if item['swirl_id'] in rag_query_items:
+                            rag_item_list.append(item)
+                            item['provider_id'] = result.provider_id
+                    elif 'swirl_score' in item:
                         if item['swirl_score'] > 50.0:
                             rag_item_list.append(item)
                             item['provider_id'] = result.provider_id
@@ -220,7 +235,8 @@ class RAGPostResultProcessor(PostResultProcessor):
         rag_result['searchprovider'] = 'ChatGPT'
         rag_result['searchprovider_rank'] = 1
         rag_result['result_block'] = 'ai_summary'
-
+        rag_result['rag_query_items'] = [item['swirl_id'] for item in chosen_rag]
+        
         result = Result.objects.create(owner=self.search.owner, search_id=self.search, provider_id=5, searchprovider='ChatGPT', query_string_to_provider=new_prompt_text[:256], query_to_provider='None', status='READY', retrieved=1, found=1, json_results=[rag_result], time=0.0)
         result.save()
         return result
