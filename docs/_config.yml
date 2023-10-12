@@ -25,11 +25,10 @@ nav_external_links:
   - title: Swirl on GitHub
     url: https://github.com/swirlai/swirl-search
     hide_icon: false # set to true to hide the external link icon - defaults to false
-    opens_in_new_tab: true
   - title: Swirl.Today
     url: https://swirl.today/
     hide_icon: false # set to true to hide the external link icon - defaults to false
-    opens_in_new_tab: true
+nav_external_links_new_tab: true # set to true to open all external links in new tabs
 
 # Aux links for the upper right navigation
 aux_links:
@@ -53,7 +52,6 @@ callouts:
 # Enable or disable the site search
 # Supports true (default) or false
 search_enabled: true
-
 search:
   # Split pages into sections that can be searched individually
   # Supports 1 - 6, default: 2
@@ -84,6 +82,17 @@ theme: just-the-docs
 plugins:
   - jekyll-default-layout
   - jemoji
+disable_disk_cache: true
+
+exclude:
+ # Modified from https://github.com/jekyll/jekyll/blob/master/lib/site_template/_config.yml:
+   - .sass-cache/
+   - .jekyll-cache/
+   - node_modules/
+   - vendor/bundle/
+   - vendor/cache/
+   - vendor/gems/
+   - vendor/ruby/
 
 # Kramdown settings
 kramdown:

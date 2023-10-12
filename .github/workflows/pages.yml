@@ -6,9 +6,13 @@
 # Sample workflow for building and deploying a Jekyll site to GitHub Pages
 name: Deploy Jekyll site to Pages
 
+# Modified trigger to only start this workflow on docs dir changes
 on:
   push:
-    branches: ["main"]
+    branches:
+      - "main"
+    paths:
+      - "docs/**"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -28,14 +32,17 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: docs # Added working-dir spec for docs dir
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup Ruby
+        uses: actions/checkout@v4
+      - name: Setup Ruby # Do NOT add the working-dir spec here (to the 'with:')
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1' # Not needed with a .ruby-version file
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          ruby-version: '3.2' # Not needed with a .ruby-version file
+          bundler-cache: true # Runs 'bundle install' and caches installed gems automatically
           cache-version: 0 # Increment this number if you need to re-download cached gems
       - name: Setup Pages
         id: pages
@@ -47,7 +54,9 @@ jobs:
           JEKYLL_ENV: production
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: "docs/_site/" # Added path param to specify docs dir
 
   # Deployment job
   deploy:
