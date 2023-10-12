@@ -16,7 +16,7 @@ word "SECURITY" in the title.
 
 In the email body please provide:
 * your contact information (full name, phone number)
-* a breif description of the vulnerability being reported
+* a brief description of the vulnerability being reported
 * the affected version of Swirl
 * a detailed description of how to reproduce it (screenshots if possible)
 
