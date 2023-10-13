@@ -12,7 +12,7 @@ class bcolors:
 
 SWIRL_VERSION = '3.0.0'
 
-SWIRL_BANNER_TEXT = "__S_W_I_R_L__3_._0_._0_________________________________________________________"
+SWIRL_BANNER_TEXT = "__S_W_I_R_L__3_._0_._0__________________________________________________________"
 SWIRL_BANNER = f'{bcolors.BOLD}{SWIRL_BANNER_TEXT}{bcolors.ENDC}'
 
 #############################################
