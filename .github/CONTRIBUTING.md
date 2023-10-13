@@ -16,14 +16,24 @@ When submitting a PR, we ask that you please describe in detail how you tested y
 ## SearchProvider Contributions
 If you are contributing a new SearchProvider to the project, please land your new JSON file in the `SearchProviders/untested` directory of the `develop` branch.
 
-_(add additional content about testing new SPs here)_
+New SearchProvider JSON should contain, at minimum:
+- Complete and correct `url` and `query_template` fields for the source.
+- Any custom headers required by the source specified in the `http_request_headers` field.
+- Any available `response_mappings` values returned by the source, especially `FOUND=` and `RESULTS=` values.
+- Valid `result_mappings` for Swirl's supported fields (`title`, `body`, `author`, `date_published`, and `url`) plus any relevant PAYLOAD data returned by the source.
+- At least one Tag value appropriate to the source (`tags` field).
+- Some indication of the type of authentication required by the source, where applicable; for example:
+```
+"credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
+```
+Consult the [User Guide](https://docs.swirl.today/2.-User-Guide.html) for more details on SearchProvider JSON.
 
-Screenshots of working SearchProviders are very helpful, especially if the source you're connecting to is private (not-publicly searchable) or requires authentication.
+Screenshots of working SearchProviders are very helpful as well, especially if the source you're connecting to is private (not-publicly searchable) or requires authentication.
 
 ## Documentation Contributions
 Swirl's [Product Documentation](https://docs.swirl.today/) is maintained _only on the `main` branch_ of the repo, in the `docs/` directory.  It is published to our documenation website via a GitHub Pages workflow.  When submitting PRs for documentation corrections, updates, or additions, please create a branch off of `main` and fill out the PR Template completely.
 
-If you submit a code change that warrants an update to the Product Documentation, or if you are adding a new feature to Swirl, we expect _a separate PR_ off `main` that contains only the related documentation updates or additions.
+If you submit a code change that warrants an update to the Product Documentation, or if you are adding a new feature to Swirl, we expect _a separate PR_ off `main` that contains the related documentation updates or additions.
 
 ## Support
 Have questions about Swirl?  Need some additional guidance on your journey toward contributing to the project?  We're here to help!
