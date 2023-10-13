@@ -1,8 +1,16 @@
-# &nbsp; DOCKER BUILD for Swirl Metasearch <img alt='Swirl Metasearch Logo' src='https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl-logo-only-blue.png' width=38 align=left />
+---
+layout: default
+title: Docker Build
+nav_exclude: true
+search_exclude: true
+---
 
-:warning: Warning: when using Docker the Swirl database is instantly and irrevocably deleted upon container shutdown!
+# DOCKER BUILD for Swirl 
 
-Please [contact support](#support) for a Docker image suitable for production deployment. 
+{: .warning }
+The Docker version of Swirl does *not* retain any data or configuration when shut down!
+
+Please [contact support](mailto:support@swirl.today) for a Docker image suitable for production deployment. 
 
 <br/>
 
@@ -42,7 +50,7 @@ This command should produce a long response starting with:
 ...etc...
 ```
 
-If you see any error messages, please [contact support](#support) for assistance.
+If you see any error messages, please [contact support](mailto:support@swirl.today) for assistance.
 
 <br/>
 
@@ -67,7 +75,7 @@ The Container ID in this example is `swirl-c-app-1`. It will be different if you
 
 Moments later, Docker desktop will reflect the running Container:
 
-![Swirl running in Docker](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_docker.png)
+![Swirl running in Docker](https://docs.swirl.today/images/swirl_docker.png)
 
 <br/>
 
@@ -122,13 +130,10 @@ After 5-7 seconds, this should bring up a unified, relevancy ranked result list:
 
 ## Notes
 
-:warning: Warning: when using Docker the Swirl database is instantly and irrevocably deleted upon container shutdown!
+{: .warning }
+Swirl in Docker cannot use localhost to connect to local endpoints!
 
-Please [contact support](#support) for a Docker image suitable for production deployment. 
-
-**Important: Swirl in Docker cannot use localhost to connect to local endpoints!**
-
-For example: if you have solr running on localhost:8983, Swirl will be unable to contact it from inside the Docker container using that URL.
+For example: If you have solr running on localhost:8983, Swirl will be unable to contact it from inside the Docker container using that URL.
 
 To configure such a source, get the hostname. On OS/X:
 
@@ -142,22 +147,3 @@ In the SearchProvider configuration, replace localhost with the hostname:
 ```
 "url": "http://AgentCooper.local:8983/solr/{collection}/select?wt=json",
 ```
-
-<br/>
-
-## Documentation
-
-* [Quick Start Guide](https://github.com/swirlai/swirl-search/wiki/1.-Quick-Start)
-* [User Guide](https://github.com/swirlai/swirl-search/wiki/2.-User-Guide)
-* [Admin Guide](https://github.com/swirlai/swirl-search/wiki/3.-Admin-Guide)
-* [M365 Guide](https://github.com/swirlai/swirl-search/wiki/4.-M365-Guide)
-* [Developer Guide](https://github.com/swirlai/swirl-search/wiki/5.-Developer-Guide)
-* [Developer Reference](https://github.com/swirlai/swirl-search/wiki/6.-Developer-Reference)
-
-<br/>
-
-# Support
-
-:small_blue_diamond: [Join Swirl SEARCH #support on Slack!](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
-
-:small_blue_diamond: Email: [support@swirl.today](mailto:support@swirl.today) with issues, requests, questions, etc - we'd love to hear from you!

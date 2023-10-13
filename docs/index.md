@@ -1,9 +1,18 @@
-# Swirl Documentation
-{:.no_toc}
-
-**Contents**
-* TOC
+---
+layout: default
+title: Swirl Overview
+nav_order: 1
+---
+<details markdown="block">
+  <summary>
+    Table of Contents
+  </summary>
+  {: .text-delta }
+- TOC
 {:toc}
+</details>
+
+# Swirl Overview
 
 ## What is Metasearch? Is it the same as Federated Search?
 
@@ -29,7 +38,7 @@ Use Swirl's APIs to run searches and track their progress in real-time, then ret
 
 Swirl provides a `swirl_score` and `swirl_rank` for each item, as well as the original source's ranking, so users can see instantly what was most relevant across all sources. 
 
-``` shell
+``` json
  "results": [
         {
             "swirl_rank": 1,
@@ -48,15 +57,3 @@ Swirl provides a `swirl_score` and `swirl_rank` for each item, as well as the or
 ```
 
 Search developers can render Swirl's JSON results in any existing UI or framework without having to normalize the field names. Data scientists and engineers, search managers, analysts and implementers who have worked with Elastic or Solr will find it easy to add results from any source with a typical search API to their existing search infrastructure. 
-
-# Documentation
-
-| [Home](index.md) | [Quick Start](1.-Quick-Start.md) | [User Guide](2.-User-Guide.md) | [Admin Guide](3.-Admin-Guide.md) | [M365 Guide](4.-M365-Guide.md) | [Developer Guide](5.-Developer-Guide.md) | [Developer Reference](6.-Developer-Reference.md) |
-
-# Support
-
-* [Join the Swirl Metasearch Community on Slack!](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
-
-* Email: [support@swirl.today](mailto:support@swirl.today) with issues, requests, questions, etc. - we'd love to hear from you!
-
-<br/>
