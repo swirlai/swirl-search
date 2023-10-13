@@ -218,7 +218,7 @@ Remember, you're part of our family now. 🌍💙
 <table>
   <tr>
      <td>
-       <p align="center"> <img src="https://github.com/malivinayak/malivinayak/blob/main/LICENSE-Logo/License-Apache.png" width="80%"></img>
+       <p align="center"> <img src="https://github.com/malivinayak/malivinayak/blob/main/LICENSE-Logo/License-Apache.png?raw=true" width="80%"></img>
     </td>
     <td> 
       <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg"/> <br> 
