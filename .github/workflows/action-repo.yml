@@ -1,4 +1,4 @@
-name: Broken link check for repo
+name: Broken Link Checker
 on:
   workflow_dispatch:
 
@@ -9,10 +9,10 @@ jobs:
     steps:
       - name: Check for broken links
         id: link-report
-        uses: celinekurpershoek/link-checker # Should always pull the latest release version
+        uses: celinekurpershoek/link-checker@v1.0.2
         with:
           # Required:
-          url: "https://github.com/swirlai/swirl-search"
+          url: "https://github.com/swirlai/swirl-search" # Scans this repo
           # optional:
           honorRobotExclusions: false
           ignorePatterns: "github,google,localhost,opensource"
