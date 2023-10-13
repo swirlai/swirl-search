@@ -11,14 +11,14 @@ Have an idea for a new feature or enhancement to Swirl? Find a bug in the code t
 For more general information about contributing to projects on Github, check out the [GitHub documentation](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) on this very subject.
 
 ### Testing
-When submitting a PR, we ask that you please describe in detail how you tested your changes, including details of your testing environment and the tests you ran to validate your change.
+When submitting a PR, we ask that you please describe in detail how you tested your changes, including details of your testing environment and the tests you ran to validate your change.  Screenshots or short videos showing the change or new feature working correctly are also very helpful.
 
-### New SearchProviders
+## SearchProvider Contributions
 If you are contributing a new SearchProvider to the project, please land your new JSON file in the `SearchProviders/untested` directory of the `develop` branch.
 
 _(add additional content about testing new SPs here)_
 
-Screenshots of working SearchProviders are very helpful, especially if the source you're connecting to is private (not-publicly searchable).
+Screenshots of working SearchProviders are very helpful, especially if the source you're connecting to is private (not-publicly searchable) or requires authentication.
 
 ## Documentation Contributions
 Swirl's [Product Documentation](https://docs.swirl.today/) is maintained _only on the `main` branch_ of the repo, in the `docs/` directory.  It is published to our documenation website via a GitHub Pages workflow.  When submitting PRs for documentation corrections, updates, or additions, please create a branch off of `main` and fill out the PR Template completely.
