@@ -79,63 +79,78 @@ Swirl adapts and distributes user queries to anything with a search API - search
 
 <br/>
 
-# 🔥 Try Swirl Now In Docker
+# Installation and Setup
 
-## Prerequisites
+### Step 1: Clone the Repository
 
-* To run Swirl in Docker, you must have the latest [Docker app](https://docs.docker.com/get-docker/) for MacOS, Linux, or Windows installed and running locally.
+Begin by cloning the Swirl repository from GitHub:
 
-* Windows users must also install and configure either the WSL 2 or the Hyper-V backend, as outlined in the  [System Requirements for installing Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/#system-requirements).
+```bash
+git clone repo-link
+cd swirl-search
+```
+
+### Step 2: Set Up Microsoft 365 Credentials
+Before proceeding, you need to set up [Microsoft 365 (M365)](https://docs.swirl.today/4.-M365-Guide.html) credentials. Refer to the M365 Guide for detailed instructions on how to obtain these credentials.
+
+Complete the '.env.dist' file in the project's root directory and add the M365 credentials as follows:
+```bash
+MICROSOFT_CLIENT_ID='your-microsoft-client-id'
+MICROSOFT_CLIENT_SECRET='your-microsoft-client-secret'
+MICROSOFT_REDIRECT_URI='your-microsoft-redirect-uri'
+```
+After a few minutes, the Swirl application should be up and running.
+### Step 3: Build and Run Swirl
+With the M365 credentials in place, you can now build and run Swirl using Docker:
+### Prerequisites
+- To run Swirl in Docker, you must have the latest Docker app for MacOS, Linux, or Windows installed and running locally.
+
+- Windows users must also install and configure either the WSL 2 or the Hyper-V backend, as outlined in the System Requirements for installing Docker Desktop on Windows.
 
 ## Start Swirl in Docker
-
 > **Warning** 
-> Make sure the Docker app is running before proceeding!
+> Make sure the Docker app is running before proceeding
 
-* Download [https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml](https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml)
-
+Download the Docker Compose configuration file:
+bash
+Copy code
 ```
 curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
 ```
-
-* In MacOS or Linux, run the following command from the Console:
-
+In MacOS or Linux, run the following command from the Console:
+bash
+Copy code
 ```
 docker-compose pull && docker-compose up
 ```
-
-* In Windows, run the following command from PowerShell:
+In Windows, run the following command from PowerShell:
+bash
+Copy code
+docker 
 
 ```
-docker compose up
+compose up
+
 ```
 
-After a few minutes the following or similar should appear:
+## Step 4: Access Swirl
 
-<img src="https://github.com/swirlai/swirl-search/wiki/images/swirl_docker_1.png" height="70%" width="90%">
+- 🌐 After running the above commands, open your web browser and navigate to [http://localhost:8000](http://localhost:8000).
 
-* Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy>)
+- 🎉 Congratulations! You've successfully set up the Swirl project. You can now start using Swirl for metasearch and exploration.
 
-* If the search page appears, click `Log Out` at the top, right. The Swirl login page will appear.
+- 👤 You'll be directed to the sign-in page. To access Swirl, use the following credentials:
 
-* Enter the username `admin` and password `password`, then click `Login`.
+   - Username: admin
+   - Password: password
 
-* Enter a search in the search box and press the `Search` button. Ranked results appear in just a few seconds:
+- 🔒 If the search page appears, click Log Out at the top right. The Swirl login page will appear.
 
-<img src="https://github.com/swirlai/swirl-search/wiki/images/galaxy_ui_2.png" height="70%" weight="70%">
+- 🔍 Enter a search in the search box and press the Search button. Ranked results appear in just a few seconds.
 
-* To view the raw JSON, open <http://localhost:8000/swirl/search/>
+Feel free to explore the project's documentation for further information and features.
 
-The most recent Search object will be displayed at the top. Click on the `result_url` link to view the full JSON Response.
-
-## Notes 📝
-
-> **Warning**
-> The Docker version of Swirl *does not* retain any data or configuration when shut down!
-
-:key: Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
-
-:key: Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](4.-M365-Guide) or [contact us](mailto:hello@swirl.today).
+If you encounter any issues or have questions, please refer to our [Slack support channel](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) for assistance.
 
 ## Next Steps 👇
 
@@ -212,3 +227,6 @@ Remember, you're part of our family now. 🌍💙
 
 
 <br/>
+# Swirl Project Setup Guide
+
+Welcome to Swirl, a powerful metasearch and exploration tool. This guide will walk you through the installation and setup process.
