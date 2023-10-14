@@ -229,6 +229,3 @@ Remember, you're part of our family now. 🌍💙
 
 
 <br/>
-# Swirl Project Setup Guide
-
-Welcome to Swirl, a powerful metasearch and exploration tool. This guide will walk you through the installation and setup process.
