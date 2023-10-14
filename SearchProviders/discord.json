@@ -1,0 +1,22 @@
+{
+    "name": "Discord",
+    "active": true,
+    "default": true,
+    "connector": "Discord",
+    "url": "",
+    "query_template": "Fetch last {limit} messages from channel {channel_id}",
+    "query_processors": [
+        "DiscordMessageQueryProcessor"
+    ],
+    "query_mappings": "NOT=True",
+    "result_processors": [
+        "MappingResultProcessor"
+    ],
+    "response_mappings": "AUTHOR=message.author.name, CONTENT=message.content, TIMESTAMP=message.created_at",
+    "result_mappings": "MESSAGE_CONTENT=message['Content']",
+    "results_per_query": 5,
+    "credentials": "add token here",
+    "tags": [
+        "Discord"
+    ]
+}
