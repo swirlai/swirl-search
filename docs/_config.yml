@@ -1,0 +1,16 @@
+# Site settings
+title: Swirl Documentation
+email: support@swirl.today
+
+# Build settings
+markdown: kramdown
+remote_theme: pages-themes/hacker
+plugins:
+  - jekyll-toc
+  - jekyll-remote-theme
+  - jemoji
+
+# Kramdown settings
+kramdown:
+  toc_levels: 1..2
+  smart_quotes: [apos, apos, quot, quot]
