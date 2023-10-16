@@ -1,5 +1,5 @@
 # Contributing to Swirl
-Have an idea for a new feature or enhancement to Swirl? Find a bug in the code that you can fix?  Catch a typo in our Product Documentation? That's great!  Read on for guidance on contributing to the project.
+Have an idea for a new feature or enhancement to Swirl? Find a bug in the code that you can fix?  Catch a typo in our Product Documentation? That's great!  Read on for a guide to contributing to the project.
 
 ## Code Contributions
 
@@ -14,18 +14,16 @@ For more general information about contributing to projects on Github, check out
 When submitting a PR, we ask that you please describe in detail how you tested your changes, including details of your testing environment and the tests you ran to validate your change.  Screenshots or short videos showing the change or new feature working correctly are also very helpful.
 
 ## New SearchProviders
-If you are contributing a new SearchProvider to the project, please land your new JSON file in the `SearchProviders/untested` directory of the `develop` branch.
+If you are contributing a new SearchProvider to the project, please target your new JSON file to the `SearchProviders/untested` directory of the `develop` branch.
 
 New SearchProvider JSON should contain, at minimum:
-- Complete and correct `url` and `query_template` fields for the source.
+- Complete and correct `url` and `query_template` fields.
 - Any custom headers required by the source specified in the `http_request_headers` field.
 - Any available `response_mappings` values returned by the source, especially `FOUND=` and `RESULTS=` values.
-- Valid `result_mappings` for Swirl's supported fields (`title`, `body`, `author`, `date_published`, and `url`) plus any relevant PAYLOAD data returned by the source.
+- Valid `result_mappings` for Swirl's supported fields (`title`, `body`, `author`, `date_published`, and `url`) plus any relevant PAYLOAD selections based on the full response.
 - At least one Tag value appropriate to the source (`tags` field).
-- Some indication of the type of authentication required by the source, where applicable; for example:
-```
-"credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
-```
+- Accurate placeholder for the authentication required by the source, when applicable.
+
 Consult the [User Guide](https://docs.swirl.today/2.-User-Guide.html) for more details on SearchProvider JSON.
 
 Screenshots of working SearchProviders are very helpful as well, especially if the source you're connecting to is private (not-publicly searchable) or requires authentication.
