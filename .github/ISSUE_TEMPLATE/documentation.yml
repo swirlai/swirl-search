@@ -1,0 +1,26 @@
+name: Documentation 📚
+description: Report what can be improved from the documentation
+labels: [documentation]
+title: "Doc: "
+body:
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      options:
+        - label: I searched if there's another issue like this?
+          required: true
+  - type: dropdown
+    attributes:
+      label: We need to
+      description: Choose what we need to do with the documentation
+      multiple: false
+      options:
+        - "Add"
+        - "Update"
+        - "Delete"
+  - type: textarea
+    attributes:
+      label: Describe
+      description: Describe what we need to do with the documantation
+    validations:
+      required: false
