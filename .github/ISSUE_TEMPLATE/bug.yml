@@ -7,7 +7,7 @@ body:
     attributes:
       label: Is there an existing issue for this?
       options:
-        - label: I searched if there's another issu like this?
+        - label: I searched if there's another issue like this?
           required: true
   - type: textarea
     attributes:
