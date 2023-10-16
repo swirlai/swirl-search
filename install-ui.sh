@@ -46,7 +46,7 @@ where_jq=`which jq`
 if [ $? -eq 0 ]; then
     echo $PROG "Found jq command in ${where_jq}"
 else
-    echo $PROG "Could not find jq command on your path, please consult the admin guide at https://github.com/swirlai/swirl-search/wiki/3.-Admin-Guide#installation."
+    echo $PROG "Could not find jq command on your path, please consult the admin guide at https://docs.swirl.today/3.-Admin-Guide#installation."
     exit 1
 fi
 
