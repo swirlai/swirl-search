@@ -13,7 +13,7 @@ For more general information about contributing to projects on Github, check out
 ### Testing
 When submitting a PR, we ask that you please describe in detail how you tested your changes, including details of your testing environment and the tests you ran to validate your change.  Screenshots or short videos showing the change or new feature working correctly are also very helpful.
 
-## SearchProvider Contributions
+## New SearchProviders
 If you are contributing a new SearchProvider to the project, please land your new JSON file in the `SearchProviders/untested` directory of the `develop` branch.
 
 New SearchProvider JSON should contain, at minimum:
@@ -30,8 +30,8 @@ Consult the [User Guide](https://docs.swirl.today/2.-User-Guide.html) for more d
 
 Screenshots of working SearchProviders are very helpful as well, especially if the source you're connecting to is private (not-publicly searchable) or requires authentication.
 
-## Documentation Contributions
-Swirl's [Product Documentation](https://docs.swirl.today/) is maintained _only on the `main` branch_ of the repo, in the `docs/` directory.  It is published to our documenation website via a GitHub Pages workflow.  When submitting PRs for documentation corrections, updates, or additions, please create a branch off of `main` and fill out the PR Template completely.
+## Product Documentation
+Swirl's [Product Documentation](https://docs.swirl.today/) is maintained _only on the `main` branch_ of the repo, in the `docs/` directory.  It is published to our documentation website via a GitHub Pages workflow.  When submitting PRs for documentation corrections, updates, or additions, please create a branch off of `main` and fill out the PR Template completely.
 
 If you submit a code change that warrants an update to the Product Documentation, or if you are adding a new feature to Swirl, we expect _a separate PR_ off `main` that contains the related documentation updates or additions.
 
