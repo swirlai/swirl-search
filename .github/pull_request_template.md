@@ -1,36 +1,25 @@
-## Branching
-Always branch off from the `develop` branch with a descriptive name that encapsulates your idea or fix. This practice helps ensure that our `main` branch remains stable.
-
 <!--- Provide a general summary of your changes in the TITLE above -->
 
+## Branching Reminders
+- For core code changes, create a branch off `develop`
+- For product documentation changes, create a branch off `main` 
+- Always name your branch in a way that clearly describes your proposed changes
+
 ## Description
-<!--- Describe your changes in detail -->
+<!--- Describe in detail the work in this PR. -->
 
 
 ## Related Issue(s)
-<!--- If this PR addresses any open Issues, please link to them here. -->
+<!--- If this PR addresses any open Issues, please link to them. -->
 
 
 ## Testing and Validation
-<!--- Please describe in detail how you tested your changes, including details of your testing environment and the tests you ran to validate your change, etc. -->
+<!--- Please describe in detail how you tested this PR. -->
 
 
-## Screenshots (if appropriate):
-
-
-## Documentation
-<!-- Please note any proposed updates to the repo Readme file or the product documentation to support this PR. -->
-
-
-## Changes Include
+## Type of Change
 <!-- Check all that apply to this PR. -->
-- [ ] Bugfix (non-breaking change that solves an issue)
+- [ ] Bug fix or other non-breaking change that addresses an issue
 - [ ] New Feature / Enhancement (non-breaking change that add or improves functionality)
 - [ ] New Feature (breaking change that is not backwards compatible and/or alters current functionality)
-- [ ] Documentation (change to product documentation or Readme.md only)
-
-
-## PR Checklist
-- [ ] This PR targets the `develop` branch of the [swirl-search](https://github.com/swirlai/swirl-search) repo.
-- [ ] The above portion of this template is filled out completely.
-- [ ] This PR has been tested for correct functionality and validated not to break existing product code.
+- [ ] Documentation (change to product documentation or README.md only)
