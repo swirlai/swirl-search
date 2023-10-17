@@ -2,7 +2,7 @@
 title: Swirl Documentation
 description: "One search box to find it all"
 repository: "swirlai/swirl-search"
-url: https://docs.swirl.today/
+url: https://docs.swirl.today
 baseurl: "" # the subpath of your site, e.g. /blog
 
 # Set a path/url to a logo that will be displayed instead of the title
