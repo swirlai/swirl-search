@@ -28,10 +28,10 @@ jobs:
         retry_count: 3
 
         # A comma separated links to exclude during URL checks
-        exclude_urls: https://login.microsoftonline.com/common
+        # exclude_urls: https://login.microsoftonline.com/common
 
         # A comma separated patterns to exclude during URL checks
         exclude_patterns: localhost,etc,xx,googleapis,hostname,graph.microsoft.com,swirl.youtrack.cloud
 
         # Exclude these files from the checker
-        exclude_files: docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock
+        exclude_files: docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/
