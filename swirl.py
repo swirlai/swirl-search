@@ -146,7 +146,7 @@ def start(service_list):
     if not is_running_celery_redis():
            print(f"Error: Celery requires redis, settings.CELERY_BROKER_URL:{settings.CELERY_BROKER_URL}\n"
                  f"settings.CELERY_RESULT_BACKEND:{settings.CELERY_RESULT_BACKEND} but it does not appear to be running,\n"
-                 "please consult the admin guide at https://github.com/swirlai/swirl-search/wiki/3.-Admin-Guide#installation.")
+                 "please consult the admin guide at https://docs.swirl.today/3.-Admin-Guide#installation.")
            return False
 
     # start service_list
