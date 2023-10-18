@@ -1,6 +1,14 @@
 name: Check URLs
 
+# Trigger to only run this workflow automatically on docs/ directory changes
 on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "docs/**"
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
