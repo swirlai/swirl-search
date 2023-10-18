@@ -31,13 +31,14 @@ jobs:
         exclude_urls: 
 
         # A comma separated patterns to exclude during URL checks
-        exclude_patterns: localhost:8000,localhost:9200,localhost:5601,https://www.googleapis.com/customsearch,https://xx.apis.it.h.edu
+        # exclude_patterns: localhost:8000,localhost:9200,localhost:5601,https://www.googleapis.com/customsearch,https://xx.apis.it.h.edu
+        exclude_patterns: localhost,googleapis.com,xx,hostname,graph.microsoft.com,etc
 
         # Exclude these files from the checker
         exclude_files: googlec95caf0bd4a8c5df.html,Gemfile,Gemfile.lock
 
         # Choose whether to force a pass when checks are done.
-        force_pass: true
+        # force_pass: true
 
         # Choose whether to print a more verbose end summary with files and broken URLs
         verbose: true
