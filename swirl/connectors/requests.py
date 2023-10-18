@@ -307,8 +307,11 @@ class Requests(Connector):
                         if type(json_data[0]) == dict:
                             mapped_response['RESULTS'] = json_data
                 else:
-                    self.error(f'{self}: RESULTS missing from mapped_response')
-                    return
+                    if type(json_data) == dict:
+                        mapped_response['RESULTS'] = [json_data]
+                    else:
+                        self.error(f'{self}: RESULTS missing from mapped_response')
+                        return
                 # end if
             # end if
             if 'RESULT' in self.response_mappings:
