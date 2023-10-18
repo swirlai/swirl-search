@@ -31,7 +31,7 @@ jobs:
         exclude_urls: 
 
         # A comma separated patterns to exclude during URL checks
-        exclude_patterns: 
+        exclude_patterns: localhost:8000,localhost:9200,localhost:5601, https://www.googleapis.com/customsearch,https://xx.apis.it.h.edu
 
         # choose if the force pass or not
         force_pass : true
