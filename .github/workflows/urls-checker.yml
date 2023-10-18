@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: urls-checker
-      uses: urlstechie/urlchecker-action@0.0.34
+      uses: urlstechie/urlchecker-action@0.0.34  # From here: https://github.com/urlstechie/urlchecker-action
       with:
         # A subfolder or path to navigate to in the present or cloned repository
         subfolder: docs
@@ -31,10 +31,10 @@ jobs:
         exclude_urls: 
 
         # A comma separated patterns to exclude during URL checks
-        exclude_patterns: localhost:8000,localhost:9200,localhost:5601, https://www.googleapis.com/customsearch,https://xx.apis.it.h.edu
+        exclude_patterns: localhost:8000,localhost:9200,localhost:5601,https://www.googleapis.com/customsearch,https://xx.apis.it.h.edu
 
         # Exclude these files from the checker
-        exclude_files: docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock
+        exclude_files: googlec95caf0bd4a8c5df.html,Gemfile,Gemfile.lock
 
         # Choose whether to force a pass when checks are done.
         force_pass: true
