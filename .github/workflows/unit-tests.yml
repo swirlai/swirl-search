@@ -6,8 +6,6 @@ on:
       - 'docs/**'
       - '.github/**'
       - 'README.md'
-      - 'Gemfile'
-      - 'Gemfile.lock'
     # only trigger on branches, not on tags
     branches: 'main'
   # Allows you to run this workflow manually from the Actions tab
