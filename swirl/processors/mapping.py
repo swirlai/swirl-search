@@ -13,8 +13,6 @@ from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
 from swirl.processors.processor import *
-from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
-from swirl.processors.result_map_btc_converter import ResultMapBtcConverter
 from swirl.processors.result_map_converter import ResultMapConverter
 
 from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format, date_str_to_timestamp, result_processor_feedback_provider_query_terms

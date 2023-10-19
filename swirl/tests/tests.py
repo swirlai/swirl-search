@@ -15,8 +15,8 @@ from swirl.processors.adaptive import *
 from swirl.processors.chatgpt_query import *
 from swirl.processors.transform_query_processor import *
 from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list, match_all, tokenize_word_list
-from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
 from swirl.processors.result_map_btc_converter import ResultMapBtcConverter
+from swirl.processors.result_map_converter import ResultMapConverter
 from swirl.processors.dedupe import DedupeByFieldResultProcessor
 from swirl.utils import select_providers, http_auth_parse
 
@@ -744,18 +744,18 @@ def rm_url_encoder_test_expected():
 @pytest.mark.django_db
 def test_rm_url_encoder(rm_url_encoder_test_cases, rm_url_encoder_test_expected):
     for k in rm_url_encoder_test_cases.keys():
-        uc  = ResultMapUrlEncoder(k)
+        uc  = ResultMapConverter(k)
         assert uc.get_key() == rm_url_encoder_test_expected[k].get('key')
         assert uc.get_value(rm_url_encoder_test_cases.get(k)) == rm_url_encoder_test_expected[k].get('value')
 
     # Boundary cases:
-    uc  = ResultMapUrlEncoder(None)
+    uc  = ResultMapConverter(None)
     k = uc.get_key()
     v = uc.get_value('foo')
     assert k == None
     assert v == 'foo'
 
-    uc  = ResultMapUrlEncoder('')
+    uc  = ResultMapConverter('')
     k = uc.get_key()
     v = uc.get_value('foo')
     assert k == ''
