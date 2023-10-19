@@ -16,6 +16,7 @@ from swirl.processors.chatgpt_query import *
 from swirl.processors.transform_query_processor import *
 from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list, match_all, tokenize_word_list
 from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
+from swirl.processors.result_map_btc_converter import ResultMapBtcConverter
 from swirl.processors.dedupe import DedupeByFieldResultProcessor
 from swirl.utils import select_providers, http_auth_parse
 
@@ -760,6 +761,50 @@ def test_rm_url_encoder(rm_url_encoder_test_cases, rm_url_encoder_test_expected)
     assert k == ''
     assert v == 'foo'
 
+@pytest.fixture
+def rm_btc_converter_test_cases():
+    return {
+        'sw_btcconvert(foo)': '100000000',  # Represents 1 BTC in satoshis
+        'bar': '200000000',  # Represents 2 BTC in satoshis
+        'sw_btcconvert(baz)': '100',  # Represents 0.000001 BTC in satoshis
+        'sw_btcconvert(waldo)': '12345678',  # Represents 0.12345678 BTC in satoshis
+        'sw_btcconvert(fred)': '50000000',  # Represents 0.5 BTC in satoshis
+    }
+
+@pytest.fixture
+def rm_btc_converter_test_expected():
+    return {
+        'sw_btcconvert(foo)': {'key': 'foo', 'value': '1'},
+        'bar': {'key': 'bar', 'value': '200000000'},  # This value won't be converted since there's no directive
+        'sw_btcconvert(baz)': {'key': 'baz', 'value': '0.000001'},
+        'sw_btcconvert(waldo)': {'key': 'waldo', 'value': '0.12345678'},
+        'sw_btcconvert(fred)': {'key': 'fred', 'value': '0.5'}
+    }
+
+@pytest.mark.django_db
+def test_rm_btc_converter(rm_btc_converter_test_cases, rm_btc_converter_test_expected):
+    for k, v in rm_btc_converter_test_cases.items():
+        converter = ResultMapBtcConverter(k)
+        assert converter.get_key() == rm_btc_converter_test_expected[k]['key']
+        assert converter.get_value(v) == rm_btc_converter_test_expected[k]['value']
+
+# Boundary cases
+@pytest.mark.django_db
+def test_rm_btc_converter_boundary_cases():
+    # Test for None key
+    converter = ResultMapBtcConverter(None)
+    assert converter.get_key() == None
+    assert converter.get_value('foo') == 'foo'
+
+    # Test for empty string key
+    converter = ResultMapBtcConverter('')
+    assert converter.get_key() == ''
+    assert converter.get_value('foo') == 'foo'
+
+    # Test for the directive but missing parens
+    converter = ResultMapBtcConverter('sw_btcconvertfoo')
+    assert converter.get_key() == 'sw_btcconvertfoo'
+    assert converter.get_value('foo') == 'foo'
 
 @pytest.fixture
 def prefix_toks_test_cases():
