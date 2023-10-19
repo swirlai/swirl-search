@@ -76,12 +76,17 @@ search:
   # Supports true or false (default)
   button: false
 
+relative_links:
+  enabled:     true
+  collections: false
+
 # Build settings
 markdown: kramdown
 theme: just-the-docs
 plugins:
   - jekyll-default-layout
   - jekyll-sitemap
+  - jekyll-relative-links
   - jemoji
 disable_disk_cache: true
 
