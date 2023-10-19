@@ -15,7 +15,6 @@ from swirl.processors.adaptive import *
 from swirl.processors.chatgpt_query import *
 from swirl.processors.transform_query_processor import *
 from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list, match_all, tokenize_word_list
-from swirl.processors.result_map_btc_converter import ResultMapBtcConverter
 from swirl.processors.result_map_converter import ResultMapConverter
 from swirl.processors.dedupe import DedupeByFieldResultProcessor
 from swirl.utils import select_providers, http_auth_parse
@@ -784,7 +783,7 @@ def rm_btc_converter_test_expected():
 @pytest.mark.django_db
 def test_rm_btc_converter(rm_btc_converter_test_cases, rm_btc_converter_test_expected):
     for k, v in rm_btc_converter_test_cases.items():
-        converter = ResultMapBtcConverter(k)
+        converter = ResultMapConverter(k)
         assert converter.get_key() == rm_btc_converter_test_expected[k]['key']
         assert converter.get_value(v) == rm_btc_converter_test_expected[k]['value']
 
@@ -792,17 +791,17 @@ def test_rm_btc_converter(rm_btc_converter_test_cases, rm_btc_converter_test_exp
 @pytest.mark.django_db
 def test_rm_btc_converter_boundary_cases():
     # Test for None key
-    converter = ResultMapBtcConverter(None)
+    converter = ResultMapConverter(None)
     assert converter.get_key() == None
     assert converter.get_value('foo') == 'foo'
 
     # Test for empty string key
-    converter = ResultMapBtcConverter('')
+    converter = ResultMapConverter('')
     assert converter.get_key() == ''
     assert converter.get_value('foo') == 'foo'
 
     # Test for the directive but missing parens
-    converter = ResultMapBtcConverter('sw_btcconvertfoo')
+    converter = ResultMapConverter('sw_btcconvertfoo')
     assert converter.get_key() == 'sw_btcconvertfoo'
     assert converter.get_value('foo') == 'foo'
 
