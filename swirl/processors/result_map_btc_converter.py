@@ -48,4 +48,4 @@ class ResultMapBtcConverter():
         """
         Return the value, either as is, or converted if directed.
         """
-        return self.__optional_convert_value(v)
+        return self.__optional_convert_value(str(v))
