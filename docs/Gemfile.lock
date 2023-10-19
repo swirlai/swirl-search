@@ -55,6 +55,8 @@ GEM
       jekyll (>= 3.0, < 5.0)
     jekyll-include-cache (0.2.1)
       jekyll (>= 3.7, < 5.0)
+    jekyll-relative-links (0.7.0)
+      jekyll (>= 3.3, < 5.0)
     jekyll-sass-converter (3.0.0)
       sass-embedded (~> 1.54)
     jekyll-seo-tag (2.8.0)
@@ -117,6 +119,7 @@ PLATFORMS
 DEPENDENCIES
   jekyll (~> 4.3.2)
   jekyll-default-layout
+  jekyll-relative-links
   jekyll-sitemap
   jemoji
   just-the-docs
