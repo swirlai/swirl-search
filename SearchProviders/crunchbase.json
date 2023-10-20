@@ -1,6 +1,5 @@
 {
     "name": "Organizations - Crunchbase.com",
-    "shared": true,
     "active": false,
     "default": false,
     "authenticator": "",
