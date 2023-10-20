@@ -15,7 +15,7 @@ from swirl.processors.adaptive import *
 from swirl.processors.chatgpt_query import *
 from swirl.processors.transform_query_processor import *
 from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list, match_all, tokenize_word_list
-from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
+from swirl.processors.result_map_converter import ResultMapConverter
 from swirl.processors.dedupe import DedupeByFieldResultProcessor
 from swirl.utils import select_providers, http_auth_parse
 
@@ -743,23 +743,67 @@ def rm_url_encoder_test_expected():
 @pytest.mark.django_db
 def test_rm_url_encoder(rm_url_encoder_test_cases, rm_url_encoder_test_expected):
     for k in rm_url_encoder_test_cases.keys():
-        uc  = ResultMapUrlEncoder(k)
+        uc  = ResultMapConverter(k)
         assert uc.get_key() == rm_url_encoder_test_expected[k].get('key')
         assert uc.get_value(rm_url_encoder_test_cases.get(k)) == rm_url_encoder_test_expected[k].get('value')
 
     # Boundary cases:
-    uc  = ResultMapUrlEncoder(None)
+    uc  = ResultMapConverter(None)
     k = uc.get_key()
     v = uc.get_value('foo')
     assert k == None
     assert v == 'foo'
 
-    uc  = ResultMapUrlEncoder('')
+    uc  = ResultMapConverter('')
     k = uc.get_key()
     v = uc.get_value('foo')
     assert k == ''
     assert v == 'foo'
 
+@pytest.fixture
+def rm_btc_converter_test_cases():
+    return {
+        'sw_btcconvert(foo)': '100000000',  # Represents 1 BTC in satoshis
+        'bar': '200000000',  # Represents 2 BTC in satoshis
+        'sw_btcconvert(baz)': '100',  # Represents 0.000001 BTC in satoshis
+        'sw_btcconvert(waldo)': '12345678',  # Represents 0.12345678 BTC in satoshis
+        'sw_btcconvert(fred)': '50000000',  # Represents 0.5 BTC in satoshis
+    }
+
+@pytest.fixture
+def rm_btc_converter_test_expected():
+    return {
+        'sw_btcconvert(foo)': {'key': 'foo', 'value': '1'},
+        'bar': {'key': 'bar', 'value': '200000000'},  # This value won't be converted since there's no directive
+        'sw_btcconvert(baz)': {'key': 'baz', 'value': '0.000001'},
+        'sw_btcconvert(waldo)': {'key': 'waldo', 'value': '0.12345678'},
+        'sw_btcconvert(fred)': {'key': 'fred', 'value': '0.5'}
+    }
+
+@pytest.mark.django_db
+def test_rm_btc_converter(rm_btc_converter_test_cases, rm_btc_converter_test_expected):
+    for k, v in rm_btc_converter_test_cases.items():
+        converter = ResultMapConverter(k)
+        assert converter.get_key() == rm_btc_converter_test_expected[k]['key']
+        assert converter.get_value(v) == rm_btc_converter_test_expected[k]['value']
+
+# Boundary cases
+@pytest.mark.django_db
+def test_rm_btc_converter_boundary_cases():
+    # Test for None key
+    converter = ResultMapConverter(None)
+    assert converter.get_key() == None
+    assert converter.get_value('foo') == 'foo'
+
+    # Test for empty string key
+    converter = ResultMapConverter('')
+    assert converter.get_key() == ''
+    assert converter.get_value('foo') == 'foo'
+
+    # Test for the directive but missing parens
+    converter = ResultMapConverter('sw_btcconvertfoo')
+    assert converter.get_key() == 'sw_btcconvertfoo'
+    assert converter.get_value('foo') == 'foo'
 
 @pytest.fixture
 def prefix_toks_test_cases():

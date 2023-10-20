@@ -1,0 +1,34 @@
+name: Check URLs
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: urls-checker
+      uses: urlstechie/urlchecker-action@0.0.34  # From here: https://github.com/urlstechie/urlchecker-action
+      with:
+        # A comma-separated list of file types to cover in the URL checks
+        file_types: .md,.html,.yml,.conf,.txt,.py,.json,.sh,.ini,.spg
+
+        # Choose whether to include file with no URLs in the prints.
+        print_all: false
+
+        # Choose whether to print a more verbose end summary with files and broken URLs
+        verbose: true
+
+        # The timeout seconds to provide to requests, defaults to 5 seconds
+        timeout: 5
+
+        # How many times to retry a failed request (each is logged, defaults to 1)
+        retry_count: 3
+
+        # A comma separated patterns to exclude during URL checks
+        exclude_patterns: localhost,api,apis,rss,etc,xx,googleapis,hostname,graph.microsoft.com,login.microsoftonline.com
+
+        # Exclude these files from the checker
+        exclude_files: docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/
