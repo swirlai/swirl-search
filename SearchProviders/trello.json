@@ -13,7 +13,8 @@
     "CosineRelevancyResultProcessor"
   ],
   "response_mappings": "RESULTS=cards",
-  "result_mappings": "title=name,body=desc",
+  "result_mappings": "title=name,body=desc,url=url,author=username,date_published=dateLastActivity",
   "credentials": "bearer=<your-trello-token>",
   "tags": ["Trello"]
 }
+
