@@ -12,8 +12,8 @@
     "LenLimitingResultProcessor",
     "CosineRelevancyResultProcessor"
   ],
-  "response_mappings": "RESULTS=root_object.hits.hits",
-  "result_mappings": "title=fields.title, body=fields.id|fields.resource_type|fields.resource_subtype",
+  "response_mappings": "RESULTS=root_object.hits.hits, #found=root_object.hits.found, #retrieved=root_object.hits.retrieved",
+  "result_mappings": "title=fields.title, body=fields.id|fields.resource_type|fields.resource_subtype, author=fields.author, date_published=fields.date_published, url=fields.url",
   "results_per_query": 10,
   "credentials": "",
   "tags": ["Vespa", "Search"]
