@@ -1,7 +1,6 @@
 [
     {
         "name": "Bitcoin Transaction - Blockchain.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -35,7 +34,6 @@
     },
     {
         "name": "Bitcoin Address - Blockchain.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",

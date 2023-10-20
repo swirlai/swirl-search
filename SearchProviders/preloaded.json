@@ -780,7 +780,6 @@
     },
     {
         "name": "Europe PubMed Central - EuropePMC.org",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -811,7 +810,6 @@
     },
     {
         "name": "arXiv - ArXiv.org",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -841,7 +839,6 @@
     },
     {
         "name": "Hacker News Stories - HN.Algolia.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -872,7 +869,6 @@
     },
     {
         "name": "Hacker News Comments - HN.Algolia.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -903,7 +899,6 @@
     },
     {
         "name": "Google News - News.Google.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -934,7 +929,6 @@
     },
     {
         "name": "ServiceNow Knowledge - ServiceNow.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -967,7 +961,6 @@
     },
     {
         "name": "ServiceNow Service Catalog - ServiceNow.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -1000,7 +993,6 @@
     },
     {
         "name": "Organizations - Crunchbase.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -1065,7 +1057,6 @@
     },
     {
         "name": "Bitcoin Transaction - Blockchain.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -1099,7 +1090,6 @@
     },
     {
         "name": "Bitcoin Address - Blockchain.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -1129,6 +1119,37 @@
             "Blockchain",
             "Bitcoin",
             "Wallet"
+        ]
+    },
+    {
+        "name": "Swirl Documentation - Google PSE",
+        "active": true,
+        "default": true,
+        "authenticator": "",
+        "connector": "RequestsGet",
+        "url": "https://www.googleapis.com/customsearch/v1",
+        "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+        "post_query_template": {},
+        "http_request_headers": {},
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "cx=f047885d9696f447c,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "DateFinderResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
+        "result_mappings": "title=title,url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
+        "eval_credentials": "",
+        "tags": [
+            "Swirl",
+            "Documentation"
         ]
     }
 ]
