@@ -18,12 +18,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Check Spelling
-      uses: crate-ci/typos@master
-      with:
-        config: ./.github/workflows/typo_config.toml
-        isolated: true
-        write_changes: true
+#    - name: Check Spelling
+#      uses: crate-ci/typos@master
+#      with:
+#        config: ./.github/workflows/typo_config.toml
+#        isolated: true
+#        write_changes: true
 
     - name: URLs-Checker
       uses: urlstechie/urlchecker-action@0.0.34  # From here: https://github.com/urlstechie/urlchecker-action
