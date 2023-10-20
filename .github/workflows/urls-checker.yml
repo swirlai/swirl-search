@@ -1,4 +1,4 @@
-name: Check URLs
+name: Check URLs + Spelling
 
 # Trigger to only run this workflow automatically on docs/ directory changes
 on:
@@ -21,6 +21,7 @@ jobs:
     - name: Check Spelling
       uses: crate-ci/typos@master
       with:
+        config: ./.github/workflows/typo_config.toml
         isolated: true
         write_changes: true
 
