@@ -1,0 +1,4 @@
+# Exclude the following from spell checking
+
+[files]
+extend-exclude = ["./swirl/tests/*"]
