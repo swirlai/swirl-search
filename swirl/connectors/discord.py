@@ -5,7 +5,6 @@ from django.conf import settings
 
 from swirl.connectors.connector import Connector
 from swirl.connectors.mappings import *
-
 logger = get_task_logger(__name__)
 path.append(swirl_setdir())
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
@@ -23,24 +22,23 @@ class Discord(Connector):
     async def on_ready(self):
         await self.client.wait_until_ready()
         await asyncio.sleep(2)
-        #replace your channel id here
         channel_id = 718114919056146528
         target_channel = self.client.get_channel(channel_id)
         if target_channel is None:
-            print('Channel not found')
+            logger.error(f"Channel {channel_id} not found")
             self.status = "ERR_CHANNEL_NOT_FOUND"
             return
 
-        print('Connected')
         messages_data = []
-        async for message in target_channel.history(limit=5):
+        channel_name = target_channel.name
+        async for message in target_channel.history(limit=int(self.provider.results_per_query)):
             messages_data.append({
                 "author": message.author.name,
                 "body": message.content,
-                "title": "discord"
+                "title": f"{message.author.name}_{channel_name}_{message.created_at}"
             })
         self.response = messages_data
-        logger.info(f"data={messages_data}")
+        logger.debug(f"data={messages_data}")
         await self.client.close()
 
     def execute_search(self, session=None):
@@ -49,7 +47,6 @@ class Discord(Connector):
         else:
             if getattr(settings, 'DISCORD_BOT_TOKEN', None):
                 token = settings.DISCORD_BOT_TOKEN
-                logger.info(f"token={token}")
             else:
                 self.status = "ERR_NO_CREDENTIALS"
                 return

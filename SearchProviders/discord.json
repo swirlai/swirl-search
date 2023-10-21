@@ -6,15 +6,15 @@
     "url": "",
     "query_template": "Fetch last {limit} messages from channel {channel_id}",
     "query_processors": [
-        "DiscordMessageQueryProcessor"
+        "GenericQueryProcessor"
     ],
     "query_mappings": "NOT=True",
     "result_processors": [
         "MappingResultProcessor"
     ],
-    "response_mappings": "AUTHOR=message.author.name, CONTENT=message.content, TIMESTAMP=message.created_at",
-    "result_mappings": "MESSAGE_CONTENT=message['Content']",
-    "results_per_query": 5,
+    "response_mappings": "",
+    "result_mappings": "",
+    "results_per_query": 20,
     "credentials": "add token here",
     "tags": [
         "Discord"
