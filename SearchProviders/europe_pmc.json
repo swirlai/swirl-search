@@ -1,6 +1,5 @@
 {
     "name": "Europe PubMed Central - EuropePMC.org",
-    "shared": true,
     "active": false,
     "default": false,
     "authenticator": "",

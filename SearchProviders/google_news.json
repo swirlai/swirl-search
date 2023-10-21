@@ -1,6 +1,5 @@
 {
     "name": "Google News - News.Google.com",
-    "shared": true,
     "active": false,
     "default": false,
     "authenticator": "",
