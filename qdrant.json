@@ -1,0 +1,20 @@
+{
+"name": "Qdrant",
+"active": true,
+"default": false,
+"connector": "QdrantRestSearch",
+"url": "https://localhost:6333/search/",
+"query_template": "{url}?query={query_string}&fields={fields}&hits={hits}",
+"query_processors": ["AdaptiveQueryProcessor"],
+"query_mappings": "",
+"result_processors": [
+ "MappingResultProcessor",
+ "LenLimitingResultProcessor",
+ "CosineRelevancyResultProcessor"
+],
+"response_mappings": "RESULTS=root_object.hits.hits",
+"result_mappings": "title=fields.title, body=fields.id|fields.resource_type|fields.resource_subtype",
+"results_per_query": 5,
+"credentials": "",
+"tags": ["Qdrant", "Search"]
+}
