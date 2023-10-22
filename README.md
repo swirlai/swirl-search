@@ -172,12 +172,12 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 # 👩‍💻 Contributing to Swirl 
 
-**Got a brilliant idea or improvement for Swirl?** We're all ears—and thrilled you're here to help!
+**Do you have a brilliant idea or improvement for Swirl?** We're all ears—and thrilled you're here to help!
 
 🔗 **Get Started in 3 Easy Steps**:
 1. **Connect with Fellow Enthusiasts** - Jump into our [Slack community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) and share your ideas. You'll find a welcoming group of Swirl enthusiasts and team members eager to assist and collaborate.
-2. **Branch It Out** - Always branch off from the `develop` branch with a descriptive name that encapsulates your idea or fix. Remember, all PRs should be made to the `develop` branch to ensure `main` remains our stable gold-standard.
-3. **Start Your Contribution** - Ready to get your hands dirty? Make sure all contributions come through a GitHub pull request. We roughly follow the [Gitflow branching model](https://nvie.com/posts/a-successful-git-branching-model/), so all changes destined for the next release should be made to the `develop` branch.
+2. **Branch It Out** - Always branch off from the `development` branch with a descriptive name that encapsulates your idea or fix. Remember, all PRs should be made to the `development` branch to ensure `main` remains our stable gold-standard.
+3. **Start Your Contribution** - Ready to get your hands dirty? Make sure all contributions come through a GitHub pull request. We roughly follow the [Gitflow branching model](https://nvie.com/posts/a-successful-git-branching-model/), so all changes destined for the next release should be made to the `development` branch.
 
 📚 **First time contributing on GitHub?** No worries, the [GitHub documentation](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) has you covered with a great guide on contributing to projects.
 
@@ -200,7 +200,7 @@ For information about Swirl as a managed service, please [contact us](mailto:hel
 
 # 👷‍♂️ Need Help? We're Here for You!
 
-At Swirl, every user matters to us. Whether you're a beginner finding your way or an expert with feedback, we're here to support, listen, and help. Don't hesitate to reach out us.
+At Swirl, every user matters to us. Whether you're a beginner finding your way or an expert with feedback, we're here to support, listen, and help. Don't hesitate to reach out to us.
 
 * 🎉 **Join the Conversation:** Dive into our vibrant [Swirl Metasearch Community on Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) - it's where all the magic happens!
 
