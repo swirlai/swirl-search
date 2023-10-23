@@ -2,4 +2,3 @@
 
 [files]
 extend-exclude = ["swirl/tests/"]
-extend-exclude = ["scripts/fix_csv.py/fo*"]
