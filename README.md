@@ -10,7 +10,7 @@
 
 <div align="center">
 
-### Swirl is open-source software that simultaneously searches multiple content sources and returns AI ranked results.
+### Swirl is an open-source software that simultaneously searches multiple content sources and returns AI-ranked results.
 
 <div align="center">
 
@@ -38,17 +38,17 @@
 
 </div>
 
-Swirl is open source software that simultaneously searches multiple content sources and returns AI ranked results. Prompt your choice of Generative AI using the top N results to get answers incorporating your own data.
+Swirl is an open-source software that simultaneously searches multiple content sources and returns AI ranked results. Prompt your choice of Generative AI using the top N results to get answers incorporating your own data.
 
 Swirl can connect to:
 
-* Databases (SQL & NoSQL, Google BigQuery)
+* Databases (SQL and NoSQL, Google BigQuery)
 * Public data services (Google Programmable Search, Arxiv.org, etc.)
-* Enterprise sources (Microsoft 365, Jira, Miro etc.)
+* Enterprise sources (Microsoft 365, Jira, Miro, etc.)
 
 And generate insights with AI and LLMs like ChatGPT. Start discovering and generating the answers you need based on your data.
 
-Swirl is as simple as ABC: (a) Download YML, (b) Start in Docker, (c) Search with Swirl. From there, add credentials to preloaded SearchProviders to get results from more sources.
+Swirl is as simple as ABC: (a) Download YML; (b) Start in Docker; (c) Search with Swirl. From there, add credentials to preloaded SearchProviders to get results from more sources.
 
 ## 🚀 Try Swirl with ChatGPT 
 
@@ -63,7 +63,7 @@ _Swirl with ChatGPT as a configured AI Model._
 
 # 🔎 How Swirl Works
 
-Swirl adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, data siloes, etc. And uses Large Language Models to re-rank the unified results *without* extracting or indexing *anything*. 
+Swirl adapts and distributes user queries to anything with a search API—search engines, databases, noSQL engines, cloud/SaaS services, data silos, etc. And it uses large language models to re-rank the unified results *without* extracting or indexing *anything*.
 
 ![Swirl Diagram](https://docs.swirl.today/images/Animation_2.gif)
 
