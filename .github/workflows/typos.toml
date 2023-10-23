@@ -2,3 +2,4 @@
 
 [files]
 extend-exclude = ["swirl/tests/"]
+extend-ignore-identifiers-re = ["^fo =$"]
