@@ -4,4 +4,4 @@
 extend-exclude = ["swirl/tests/"]
 
 [default]
-extend-ignore-re = "^fo =$"
+extend-ignore-re = ["^fo =$"]
