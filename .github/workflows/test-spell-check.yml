@@ -15,5 +15,5 @@ jobs:
     - name: Check Spelling
       uses: crate-ci/typos@master
       with:
-        config: ./.github/workflows/typos.toml
+        config: typos.toml
         write_changes: true
