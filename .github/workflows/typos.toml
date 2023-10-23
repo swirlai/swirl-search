@@ -1,4 +1,4 @@
 # Exclude the following from spell checking workflow job
 
 [files]
-extend-exclude = ["./swirl/tests/"]
+extend-exclude = ["./swirl/tests/*"]
