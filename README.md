@@ -172,7 +172,7 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 # 👩‍💻 Contributing to Swirl 
 
-**Got a brilliant idea or improvement for Swirl?** We're all ears—and thrilled you're here to help!
+**Do you have a brilliant idea or improvement for Swirl?** We're all ears—and thrilled you're here to help!
 
 🔗 **Get Started in 3 Easy Steps**:
 1. **Connect with Fellow Enthusiasts** - Jump into our [Slack community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) and share your ideas. You'll find a welcoming group of Swirl enthusiasts and team members eager to assist and collaborate.
@@ -200,7 +200,7 @@ For information about Swirl as a managed service, please [contact us](mailto:hel
 
 # 👷‍♂️ Need Help? We're Here for You!
 
-At Swirl, every user matters to us. Whether you're a beginner finding your way or an expert with feedback, we're here to support, listen, and help. Don't hesitate to reach out us.
+At Swirl, every user matters to us. Whether you're a beginner finding your way or an expert with feedback, we're here to support, listen, and help. Don't hesitate to reach out to us.
 
 * 🎉 **Join the Conversation:** Dive into our vibrant [Swirl Metasearch Community on Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) - it's where all the magic happens!
 
