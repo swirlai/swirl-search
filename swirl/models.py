@@ -67,6 +67,7 @@ class SearchProvider(models.Model):
         'MicrosoftTeams': 'Microsoft',
     })
     CONNECTOR_CHOICES = [
+        ('Qdrant', 'Qdrant'),
         ('Discord', 'Discord'),
         ('ChatGPT', 'ChatGPT Query String'),
         ('RequestsGet', 'HTTP/GET returning JSON'),

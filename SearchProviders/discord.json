@@ -10,7 +10,8 @@
     ],
     "query_mappings": "NOT=True",
     "result_processors": [
-        "MappingResultProcessor"
+        "MappingResultProcessor",
+        "CosineRelevancyResultProcessor"
     ],
     "response_mappings": "",
     "result_mappings": "",
