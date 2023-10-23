@@ -8,7 +8,7 @@ on:
     paths:
       - "docs/**"
 
-  # Allows you to run this workflow manually from the Actions tab
+  # Also allow manual run of this workflow from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -18,13 +18,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    # Spell check job (commented out until working correctly)
 #    - name: Check Spelling
 #      uses: crate-ci/typos@master
 #      with:
-#        config: ./.github/workflows/typo_config.toml
-#        isolated: true
+#        config: ./.github/workflows/typos.toml
 #        write_changes: true
 
+    # URL check job
     - name: URLs-Checker
       uses: urlstechie/urlchecker-action@0.0.34  # From here: https://github.com/urlstechie/urlchecker-action
       with:

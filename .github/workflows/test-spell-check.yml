@@ -1,0 +1,19 @@
+name: Testing spell check
+
+# Only allow manual run of this workflow from the Actions tab
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Spell check job
+    - name: Check Spelling
+      uses: crate-ci/typos@master
+      with:
+        config: ./.github/workflows/typos.toml
+        write_changes: true
