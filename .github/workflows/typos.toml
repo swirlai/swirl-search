@@ -3,5 +3,6 @@
 [files]
 extend-exclude = ["swirl/tests/"]
 
-[default]
-extend-ignore-re = ["^fo =$"]
+[default.extend-identifiers]
+# Don't correct this variable from scripts/fix_csv.py
+fo = "fo"
