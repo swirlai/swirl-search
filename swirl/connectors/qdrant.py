@@ -23,8 +23,7 @@ class Qdrant(Connector):
         self.qdrant_key = getattr(settings, 'QDRANT_API_KEY', None)
         self.qdrant_url = getattr(settings, 'QDRANT_URL', None)
         self.cohere = cohere.Client(self.cohere_key)
-        # self.collection_name = "database_collection"
-        self.collection_name = "resume_collection_name"
+        self.collection_name = "your_collection_name"
         self.qdrant = QdrantClient(
             url=self.qdrant_url,
             api_key=self.qdrant_key,
