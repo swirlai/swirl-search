@@ -38,7 +38,7 @@ Have questions about Swirl?  Need some additional guidance on your journey towar
 
 * Check out the [Product Documentation](https://docs.swirl.today/)
 
-* Join the [Swirl Metasearch Community on Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)!
+* Join the [Swirl Community on Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)!
 
 * Email: [support@swirl.today](mailto:support@swirl.today) with issues, requests, questions, etc. - we'd love to hear from you!
 
