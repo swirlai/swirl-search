@@ -1,6 +1,6 @@
 name: Security Testing Build
 
-# Build a multi-arch docker image for testing security updates to SWIRL
+# Build a multi-arch docker image for testing security updates to Swirl
 
 on:
   push:
