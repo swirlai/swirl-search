@@ -3,7 +3,7 @@
 # Usage:
 #   install-ui.sh [<options>]
 #
-# Install the UI into SWIRL static directory. The SWIRL install and setup must be run
+# Install the UI into Swirl static directory. The Swril install and setup must be run
 # before this command can be used.
 #
 # Options:
@@ -81,7 +81,7 @@ fi
 
 # check environment
 if ! [ -d "$target_dir" ]; then
-    echo $PROG : "Target directory $target_dir does not exist, please make sure you've run set up and are in the SWIRL home directory"
+    echo $PROG : "Target directory $target_dir does not exist, please make sure you've run set up and are in the Swirl home directory"
     exit 1
 fi
 
