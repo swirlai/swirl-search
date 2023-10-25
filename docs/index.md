@@ -68,7 +68,7 @@ Search developers can render Swirl's JSON results in any existing UI or framewor
 
 RAG operates in two steps.
 
-![Picture TBD](TBD)
+![Swirl RAG AI Insight with results](images/swirl_rag_pulmonary_3.png)
 
 1. Retrieve relevant documents based on the given input query
 
