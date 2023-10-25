@@ -45,7 +45,7 @@ OPENAI_API_KEY=
 
 To configure a Swirl server to listen on a particular port, hostname, via HTTPS, etc., modify the `.env` file and then restart Swirl. There should never be a `.env` file in the Swirl repo, and when updating Swirl to a new version, no migration of these settings should be needed. They remain in `.env`.
 
-The `SWIRL_EXPLAIN` item determines if Swirl will show the [explain structure](5.-Developer-Guide.md#understand-the-explain-structure) or not.
+The `SWIRL_EXPLAIN` item determines if Swirl will show the [explain structure](Developer-Guide.md#understand-the-explain-structure) or not.
 
 The `SECRET_KEY` is actually a [salt](https://en.wikipedia.org/wiki/Salt_(cryptography)) used by Django. Swirl recommends [generating a new one](https://docs.djangoproject.com/en/4.1/topics/signing/) for production use.
 
@@ -180,12 +180,12 @@ Swirl uses the following configuration items, defined in the [`swirl_server/sett
 | CELERY_BEATS_SCHEDULE | Defines the schedule for the [Search Expiration Service](#search-expiration-service) and [Search Subscriber Service](#search-subscriber-service) | See the linked sections. |
 | SWIRL_DEFAULT_QUERY_LANGUAGE | Determines which stopword dictionary is loaded | `SWIRL_DEFAULT_QUERY_LANGUAGE = 'english'` | 
 | SWIRL_TIMEOUT | The number of seconds to wait until declaring federation complete, and terminating any connectors that haven't responded | `SWIRL_TIMEOUT = 10` |
-| SWIRL_Q_WAIT | The number of seconds to wait before redirecting to the Result Mixer after using the [q= parameter](5.-Developer-Guide.md#create-a-search-object-with-the-q-url-parameter) | `SWIRL_Q_WAIT = 7` |
-| SWIRL_RERUN_WAIT | The number of seconds to wait before redirecting to the Result Mixer when [re-running a search](5.-Developer-Guide.md#re-run-a-search) | `SWIRL_RERUN_WAIT = 8` |
-| SWIRL_SUBSCRIBE_WAIT | The number of seconds to wait before timing out and reporting an error when [updating a search](5.-Developer-Guide.md#update-a-search) | `SWIRL_SUBSCRIBE_WAIT = 20` |
-| SWIRL_DEDUPE_FIELD | The field to use when [detecting and removing duplicates](5.-Developer-Guide.md#detect-and-remove-duplicate-results) with the `DedupeByFieldPostResultProcessor` | `SWIRL_DEDUPE_FIELD = 'url'` |
-| SWIRL_DEDUPE_SIMILARITY_MINIMUM | The minimum similarity score that constitutes a duplicate, when [detecting and removing duplicates](5.-Developer-Guide.md#detect-and-remove-duplicate-results) with the `DedupeBySimilarityPostResultProcessor` | `SWIRL_DEDUPE_SIMILARITY_MINIMUM = 0.95` |
-| SWIRL_DEDUPE_SIMILARITY_FIELDS | A list of the fields to use when determining the similarity between documents when [detecting and removing duplicates](5.-Developer-Guide.md#detect-and-remove-duplicate-results) with the `DedupeBySimilarityPostResultProcessor` | `SWIRL_DEDUPE_SIMILARITY_FIELDS = ['title', 'body']` | 
+| SWIRL_Q_WAIT | The number of seconds to wait before redirecting to the Result Mixer after using the [q= parameter](Developer-Guide.md#create-a-search-object-with-the-q-url-parameter) | `SWIRL_Q_WAIT = 7` |
+| SWIRL_RERUN_WAIT | The number of seconds to wait before redirecting to the Result Mixer when [re-running a search](Developer-Guide.md#re-run-a-search) | `SWIRL_RERUN_WAIT = 8` |
+| SWIRL_SUBSCRIBE_WAIT | The number of seconds to wait before timing out and reporting an error when [updating a search](Developer-Guide.md#update-a-search) | `SWIRL_SUBSCRIBE_WAIT = 20` |
+| SWIRL_DEDUPE_FIELD | The field to use when [detecting and removing duplicates](Developer-Guide.md#detect-and-remove-duplicate-results) with the `DedupeByFieldPostResultProcessor` | `SWIRL_DEDUPE_FIELD = 'url'` |
+| SWIRL_DEDUPE_SIMILARITY_MINIMUM | The minimum similarity score that constitutes a duplicate, when [detecting and removing duplicates](Developer-Guide.md#detect-and-remove-duplicate-results) with the `DedupeBySimilarityPostResultProcessor` | `SWIRL_DEDUPE_SIMILARITY_MINIMUM = 0.95` |
+| SWIRL_DEDUPE_SIMILARITY_FIELDS | A list of the fields to use when determining the similarity between documents when [detecting and removing duplicates](Developer-Guide.md#detect-and-remove-duplicate-results) with the `DedupeBySimilarityPostResultProcessor` | `SWIRL_DEDUPE_SIMILARITY_FIELDS = ['title', 'body']` | 
 | SWIRL_RELEVANCY_CONFIG | Defines the relevancy score weights for important fields | See below |
 | SWIRL_MAX_MATCHES | Configures the maximum number of matches for any given result, before being cut-off. This helps protect against favoring very long articles. | `SWIRL_MAX_MATCHES = 5` |
 | SWIRL_MIN_SIMILARITY | Configures the minimum threshold at which a query hit in a result will be scored. Lower values will increase recall but lower precision. | `SWIRL_MIN_SIMILARITY = 0.54` |
@@ -236,7 +236,7 @@ If you change the `crontab` entry in the database and don't change the `CELERY_B
 
 # Search Subscriber Service
 
-When one or more Search objects [have the subscribe property set to True](5.-Developer-Guide.md#subscribe-to-a-search), Swirl will periodically [update that Search](5.-Developer-Guide.md#update-a-search).
+When one or more Search objects [have the subscribe property set to True](Developer-Guide.md#subscribe-to-a-search), Swirl will periodically [update that Search](Developer-Guide.md#update-a-search).
 
 By default, the Subscriber service runs every four hours. The frequency is defined in the [Django settings](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py):
 

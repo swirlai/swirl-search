@@ -16,7 +16,7 @@ nav_order: 6
 
 ## Intended Audience
 
-This guide is intended to provide developers with an overview of Swirl and how to accomplish specific tasks with it. Please refer to the [Developer Reference](6.-Developer-Reference.md) for lists of system states, system objects and properties, etc.
+This guide is intended to provide developers with an overview of Swirl and how to accomplish specific tasks with it. Please refer to the [Developer Reference](Developer-Reference.md) for lists of system states, system objects and properties, etc.
 
 # Terminology
 
@@ -154,7 +154,7 @@ The `qs=` parameter works like the `q=` parameter does (*see above*), except tha
 
 For example: [http://localhost:8000/swirl/search?qs=knowledge+management](http://localhost:8000/swirl/search?qs=knowledge+management)
 
-The `qs=` parameter can also be used with the [providers](#specify-searchproviders-with-the-providers-url-parameter) and [result_mixer](6.-Developer-Reference.md#mixers-1) parameters.
+The `qs=` parameter can also be used with the [providers](#specify-searchproviders-with-the-providers-url-parameter) and [result_mixer](Developer-Reference.md#mixers-1) parameters.
 
 Note that `&page=` is NOT supported with `qs=`; to access the second page of results use the `next_page` property from the `info.results` structure.
 
@@ -187,7 +187,7 @@ Should a SearchProvider include a NOT'ted term in a result, a message is placed 
 
 ![Swirl results with NOT detection](images/swirl_not_detection.png.png)
 
-One way to address this is to make sure the [NOT query-mapping](2.-User-Guide.md#query-mappings) is set correctly for that provider.
+One way to address this is to make sure the [NOT query-mapping](User-Guide.md#query-mappings) is set correctly for that provider.
 
 ## Subscribe to a Search
 
@@ -265,7 +265,7 @@ Swirl will set the `status` to "FULL_UPDATE_READY" when finished updating. New r
 
 The `messages` part of the Search object will contain messages from the federation process. The Result objects from each SearchProvider contain `messages` from that source. 
 
-Use the [NewItems Mixers](6.-Developer-Reference.md#mixers-1) to view only new results for a Search. 
+Use the [NewItems Mixers](Developer-Reference.md#mixers-1) to view only new results for a Search. 
 
 ## Subscribe to a Search with M365 Sources
 
@@ -336,7 +336,7 @@ http://localhost:8000/swirl/search/?update=<search-id>
 
 The update will change the `Search.sort` to "date" prior to running, to favor new results. Swirl will also de-duplicate results using the `url` field, by default. As the update proceeds, Swirl will update the Search and Result message fields as appropriate, along with the result counts.
 
-Use the [`RelevancyNewItemsMixer` and `DateNewItemsMixer`](6.-Developer-Reference.md#mixers-1) to retrieve new, updated results.
+Use the [`RelevancyNewItemsMixer` and `DateNewItemsMixer`](Developer-Reference.md#mixers-1) to retrieve new, updated results.
 
 ## Add Spelling Correction
 
@@ -355,7 +355,7 @@ Use Spellcheck cautiously as it tends to cause a lack of results from sources th
 
 ## Expire Search Objects
 
-If your Swirl installation is using the [Search Expiration Service](3.-Admin-Guide.md#search-expiration-service), users can specify the retention setting for each Search. 
+If your Swirl installation is using the [Search Expiration Service](Admin-Guide.md#search-expiration-service), users can specify the retention setting for each Search. 
 
 The following table describes the `Search.retention` field:
 
@@ -366,7 +366,7 @@ The following table describes the `Search.retention` field:
 | 2 | Retain for 1 day | 
 | 3 | Retain for 1 month |
 
-The exact time of expiration is determined by the [Celery Beat Configuration](3.-Admin-Guide.md#configuring-celery--redis) and the [Search Expiration Service](3.-Admin-Guide.md#search-expiration-service) configuration.
+The exact time of expiration is determined by the [Celery Beat Configuration](Admin-Guide.md#configuring-celery--redis) and the [Search Expiration Service](Admin-Guide.md#search-expiration-service) configuration.
 
 ## Manage Results
 
@@ -471,7 +471,7 @@ As of version 1.6, Swirl is configured to load English stopwords only. To change
 
 ## Understand the Explain Structure
 
-The [CosineRelevancyProcessor](6.-Developer-Reference.md#cosinerelevancypostresultprocessor) outputs a JSON structure that explains the `swirl_score` for each result. It is displayed by default; to hide it add `&explain=False` to any mixer URL.
+The [CosineRelevancyProcessor](Developer-Reference.md#cosinerelevancypostresultprocessor) outputs a JSON structure that explains the `swirl_score` for each result. It is displayed by default; to hide it add `&explain=False` to any mixer URL.
 
 ![Swirl Result with Explain](images/swirl_result_individual.png)
 
@@ -572,14 +572,14 @@ The `"eval_credentials": "",` option can be used to set a credential variable in
 
 NOTES:
 * Import new connectors in [`swirl/connectors/__init__.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/__init__.py)
-* Add new processors to the appropriate CHOICES section of [swirl/models.py](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) - note this will require [database migration](3.-Admin-Guide.md#database-migration) 
+* Add new processors to the appropriate CHOICES section of [swirl/models.py](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) - note this will require [database migration](Admin-Guide.md#database-migration) 
 * Connectors should only import the objects required for a single connection - for example requests, Elastic or SQLite3
 * To implement a variation on an existing transport, derive a class from it, then override just the `normalize_response` method.
 * Make sure the new `execute_query` method:
     * Supports `results_per_query` > 10, including automatic paging if needed
     * Supports date sorting, if the source repository does
 * Develop `query_mappings` including especially `DATE_SORT`, `PAGE`, `NOT_CHAR` and `NOT`
-* Results from each source should be processed with a result processor, ideally the [MappingResultProcessor](6.-Developer-Reference.md#result-processors).
+* Results from each source should be processed with a result processor, ideally the [MappingResultProcessor](Developer-Reference.md#result-processors).
 
 ## Develop New Processors
 
@@ -602,7 +602,7 @@ The following table describes the classes available:
 
 NOTES:
 * Import new processors in [`swirl/processors/__init__.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/processors/__init__.py)
-* Add new processors to the appropriate `CHOICES` part of [swirl/models.py](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) - note this will require [database migration](3.-Admin-Guide.md#database-migration) 
+* Add new processors to the appropriate `CHOICES` part of [swirl/models.py](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) - note this will require [database migration](Admin-Guide.md#database-migration) 
 * Only `PostResultProcessors` should access model data
 * Make sure the `process()` method returns data or a count of the number of results updated
 * Helper functions to create Result dictionaries and highlight text are located in [swirl/processors/utils.py](https://github.com/swirlai/swirl-search/tree/main/swirl/processors/utils.py)
@@ -655,7 +655,7 @@ The `finalize()` method trims the `self.mixed_results` to the appropriate page, 
 Notes:
 
 * Import new mixers in [`swirl/mixers/__init__.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/mixers/__init__.py)
-* Add new mixers to the appropriate `CHOICES` section of [`swirl/models.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) - note this will require [database migration](3.-Admin-Guide.md#database-migration)
+* Add new mixers to the appropriate `CHOICES` section of [`swirl/models.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) - note this will require [database migration](Admin-Guide.md#database-migration)
 
 # Using Query Transformations
 
@@ -909,7 +909,7 @@ Some NOT query examples:
     "query_string": "generative ai NOT chatgpt"
 }
 ```
-Swirl may rewrite these queries depending on the SearchProvider `query_mappings`. See [Search Syntax](2.-User-Guide.md#search-syntax) for more information.
+Swirl may rewrite these queries depending on the SearchProvider `query_mappings`. See [Search Syntax](User-Guide.md#search-syntax) for more information.
 
 To turn on date sort:
 
@@ -955,9 +955,9 @@ Here's the starting example, modified to request 20 results from source provider
 }
 ```
 
-The retention setting will cause the search to be deleted after 1 hour, assuming the [Search Expiration Service](3.-Admin-Guide.md#search-expiration-service) is running.
+The retention setting will cause the search to be deleted after 1 hour, assuming the [Search Expiration Service](Admin-Guide.md#search-expiration-service) is running.
 
-Here are examples that will work if the [Funding Dataset](6.-Developer-Reference.md#funding-data-set) is installed:
+Here are examples that will work if the [Funding Dataset](Developer-Reference.md#funding-data-set) is installed:
 
 ``` shell
 electric vehicle company:tesla
