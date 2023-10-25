@@ -24,7 +24,7 @@ New SearchProvider JSON should contain, at minimum:
 - At least one Tag value appropriate to the source (`tags` field).
 - Accurate placeholder for the authentication required by the source, when applicable.
 
-Consult the [User Guide](https://docs.swirl.today/2.-User-Guide.html) for more details on SearchProvider JSON.
+Consult the [User Guide](https://docs.swirl.today/User-Guide.html) for more details on SearchProvider JSON.
 
 Screenshots of working SearchProviders are very helpful as well, especially if the source you're connecting to is private (not-publicly searchable) or requires authentication.
 
