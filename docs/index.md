@@ -24,6 +24,8 @@ The metasearch approach differs from traditional [enterprise search engines](htt
 
 Metasearch leaves the source data in place and relies on each source's own search engine to get access. This makes federated search less suited for deep navigation - across a large e-commerce or data set catalog, for example - but ideal for delivering cross-silo results with a fraction of the effort. It is also excellent for information enrichment, entity analysis (such as competitive, customer, industry or market intelligence) and integrating unstructured data for content curation, data science and machine learning applications.
 
+<br/>
+
 ## What is Swirl Metasearch?
 
 [Swirl Metasearch](https://github.com/swirlai/swirl-search) is a metasearch engine built on the Python/Django stack and released under the Apache 2.0 license in 2022.
@@ -57,3 +59,25 @@ Swirl provides a `swirl_score` and `swirl_rank` for each item, as well as the or
 ```
 
 Search developers can render Swirl's JSON results in any existing UI or framework without having to normalize the field names. Data scientists and engineers, search managers, analysts and implementers who have worked with Elastic or Solr will find it easy to add results from any source with a typical search API to their existing search infrastructure. 
+
+<br/>
+
+## What is Retrieval Augmented Generation (RAG)? Does Swirl support it?
+
+[Retrieval-Augmented Generation (RAG)](https://research.ibm.com/blog/retrieval-augmented-generation-RAG) is a machine learning framework that combines the strengths of pre-trained language models with external information retrieval systems to generate more informed and contextually relevant outputs. 
+
+RAG operates in two steps.
+
+![Picture TBD](TBD)
+
+1. Retrieve relevant documents based on the given input query
+
+2. Use these retrieved passages as additional context when prompting generative AI
+
+The results of RAG should always be an AI insight *plus* citations: the documents used in the prompt that create the insight, so the user can verify the results and, over time, learn to trust the RAG system.
+
+The benefit of RAG is that it allows models to pull in real-world information that wasn't present in their training data, thereby enhancing their capability to provide detailed and accurate answers. This approach bridges the gap between pure generation-based models and retrieval-based models, offering a hybrid solution that capitalizes on the strengths of both paradigms.
+
+[Swirl]() supports RAG as of release 3.0. Refer to the [AI Guide](TBD) for more information.
+
+
