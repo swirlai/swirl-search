@@ -85,7 +85,7 @@ def page_fetcher_task(searchprovider, swirl_score, url, provider_id, body, user_
     fetch_url = url
     if fetch_url:
         pf_options = get_page_fetcher_options_from_search_provider(provider_id=provider_id)
-        pf_options = FETCH_OPTIONS
+        # DEV ONLY pf_options = FETCH_OPTIONS
         pf = PageFetcherFactory.alloc_page_fetcher(url=fetch_url, options=pf_options)
 
         if not (pf and (page := pf.get_page())):
