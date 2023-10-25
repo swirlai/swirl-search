@@ -83,7 +83,8 @@ class RAGPostResultProcessor(PostResultProcessor):
 
     def __init__(self, search_id, request_id='', is_socket_logic=False, rag_query_items=False):
         super().__init__(search_id=search_id, request_id=request_id, is_socket_logic=is_socket_logic, rag_query_items=rag_query_items)
-
+        self.tasks = None
+        self.stop_background_thread = False
         try:
             rag_result = Result.objects.get(search_id=search_id, searchprovider='ChatGPT')
             if rag_result:
@@ -95,6 +96,9 @@ class RAGPostResultProcessor(PostResultProcessor):
     def _log_n_store_warn(self, url, warn, buffer):
         logger.warning(warn)
         buffer[url] = warn
+
+    def stop_processing(self):
+        self.stop_background_thread = True
 
     def background_process(self):
         rag_item_list = []
@@ -163,7 +167,10 @@ class RAGPostResultProcessor(PostResultProcessor):
         ]
 
         result_group = group(*tasks).apply_async()
+        self.tasks = result_group
         results = result_group.get()
+        if self.stop_background_thread:
+            return 0
         for result in results:
             if result[0] == False:
                 continue

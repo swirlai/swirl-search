@@ -255,8 +255,8 @@ def search(id, session=None, request=None):
         search.save()
 
         processor_list = search.post_result_processors
-        add_to_post_processors_if_tag_in_request(request=request, processor_list=search.post_result_processors,
-                                                 tag="rag", processor_name="RAGPostResultProcessor")
+        # add_to_post_processors_if_tag_in_request(request=request, processor_list=search.post_result_processors,
+        #                                          tag="rag", processor_name="RAGPostResultProcessor")
         for processor in processor_list:
             logger.debug(f"{module_name}: invoking processor: {processor}")
             try:
