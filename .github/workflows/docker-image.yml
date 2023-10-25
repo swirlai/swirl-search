@@ -1,6 +1,6 @@
 name: Docker Build
 
-# Build a multi-arch docker image for SWIRL
+# Build a multi-arch docker image for Swirl
 # comment to start build
 
 on:

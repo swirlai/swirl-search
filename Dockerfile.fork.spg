@@ -1,4 +1,4 @@
-## Build the spyglass UI for SWIRL
+## Build the spyglass UI for Swirl
 ## docker build -t swirlai/spyglass:fork-x -f Dockerfile.fork.spg .
 FROM node:14.17.5 AS builder
 RUN git clone https://bitbucket.org/swirl-spyglass/spyglass.git /usr/src/spyglass

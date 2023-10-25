@@ -1,7 +1,7 @@
 '''
 @author:     Sid Probstein
 @contact:    sid@swirl.today
-@version:    SWIRL 1.x
+@version:    Swirl 1.x
 '''
 
 import os
