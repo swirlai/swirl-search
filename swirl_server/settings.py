@@ -204,7 +204,7 @@ CELERY_BEAT_SCHEDULE = {
          'schedule': crontab(minute=0,hour='*/4'),   # minute='*/10'
         },
 }
-
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BROKER_URL_DEF = 'redis://localhost:6379/0'
 CELERY_BROKER_URL = env('CELERY_BROKER_URL',default=CELERY_BROKER_URL_DEF)
 
