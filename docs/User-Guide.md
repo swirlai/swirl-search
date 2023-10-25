@@ -52,7 +52,7 @@ The Docker version of Swirl does *not* retain any data or configuration when shu
 Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
 
 {: .highlight }
-Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](4.-M365-Guide.md) or [contact us](mailto:hello@swirl.today).
+Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
 
 ## Filtering Results by Source
 
@@ -195,7 +195,7 @@ For more information, see [Organizing SearchProviders with Active, Default and T
 
 Swirl returns a unified result set consisting of results from all responding SearchProviders, matched by stemmed word form, and re-ranked using a cosine vector similarity relevancy model based on [spaCy](https://spacy.io/) and normalized by query and token length. It also incorporates the original `searchprovider_rank`.
 
-For more details please consult the Developer Guide [Configure Relevancy Field Weights](5.-Developer-Guide.md#configure-relevancy-field-weights) and [Understand the Explain Structure](5.-Developer-Guide.md#understand-the-explain-structure) sections.
+For more details please consult the Developer Guide [Configure Relevancy Field Weights](Developer-Guide.md#configure-relevancy-field-weights) and [Understand the Explain Structure](Developer-Guide.md#understand-the-explain-structure) sections.
 
 ## Hit Highlighting
 
@@ -204,7 +204,7 @@ Swirl highlights occurrences of query terms in the `title`, `body` and `author` 
 ``` json
     "body": "<em>Performance</em> <em>management</em> is the process of setting goals and expectations for employees and then tracking and measuring their progress. This can be done through regular one-on-one meetings, <em>performance</em> reviews, and other feedback mechanisms.",
 ```
-As of version 1.10, Swirl can also integrate source synonym configurations into relevancy calculations with corresponding hit highlighting.  See the Developer Guide [Integrate Source Synonyms Into Swirl Relevancy](5.-Developer-Guide.md#integrate-source-synonyms-into-swirl-relevancy)
+As of version 1.10, Swirl can also integrate source synonym configurations into relevancy calculations with corresponding hit highlighting.  See the Developer Guide [Integrate Source Synonyms Into Swirl Relevancy](Developer-Guide.md#integrate-source-synonyms-into-swirl-relevancy)
 section for details.
 
 # Using SearchProviders
@@ -224,12 +224,12 @@ Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up 
 | atlassian.json | Atlassian [Confluence Cloud](https://www.atlassian.com/software/confluence) and [Jira Cloud](https://www.atlassian.com/software/jira) | Requires a bearer token; Confluence searches the [CQL `text~` content](https://developer.atlassian.com/server/confluence/performing-text-searches-using-cql/) and Jira searches the [JQL `text~` content](https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-searching-in-jira-cloud/#Advancedsearching-textPerformingtextsearches) |
 | chatgpt.json | ChatGPT AI chatbot | Requires an OpenAI API key |
 | document_db.json | SQLite3 document database | [documents_db.csv](https://github.com/swirlai/swirl-search/tree/main/Data/documents_db.csv) |
-| elastic_cloud.json | elasticsearch, cloud version | [Enron Email Dataset](6.-Developer-Reference.md#enron-email-data-set) requires cloud_id, credentials |
-| elasticsearch.json | elasticsearch, local install | [Enron Email Dataset](6.-Developer-Reference.md#enron-email-data-set) requires host, port, credentials | 
+| elastic_cloud.json | elasticsearch, cloud version | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) requires cloud_id, credentials |
+| elasticsearch.json | elasticsearch, local install | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) requires host, port, credentials | 
 | europe_pmc.json | Searches the [EuropePMC.org](https://europepmc.org/) repository of life-sciences literature | No authorization required |
-| funding_db_bigquery.json | BigQuery funding database  | [Funding Dataset](6.-Developer-Reference.md#funding-data-set) |
-| funding_db_postgres.json  | PostgreSQL funding database | [Funding Dataset](6.-Developer-Reference.md#funding-data-set) |
-| funding_db_sqlite3.json  | SQLite3 funding database  | [Funding Dataset](6.-Developer-Reference.md#funding-data-set) |
+| funding_db_bigquery.json | BigQuery funding database  | [Funding Dataset](Developer-Reference.md#funding-data-set) |
+| funding_db_postgres.json  | PostgreSQL funding database | [Funding Dataset](Developer-Reference.md#funding-data-set) |
+| funding_db_sqlite3.json  | SQLite3 funding database  | [Funding Dataset](Developer-Reference.md#funding-data-set) |
 | github.json | Searches public repositories for Code, Commits, Issues, and Pull Requests | Requires a bearer token |
 | google_news.json | Searches the [Google News](https://news.google.com/) feed | No authorization required |
 | google_pse.json | Four Google Programmable Search Engines (PSE) | Includes shared Swirl credentials; may return a 429 error if overused |
@@ -237,11 +237,11 @@ Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up 
 | http_get_with_auth.json | Generic HTTP GET query with basic authentication | Requires url, credentials | 
 | http_post_with_auth.json | Generic HTTP POST query with basic authentication | Requires url, credentials |
 | hubspot.json | Searches the HubSpot CRM for Companies, Contacts, and Deals | Requires a bearer token | 
-| microsoft.json | Searches M365 Outlook Messages, Calendar Events, OneDrive Files, SharePoint Sites, and Teams Chat | See the [M365 Guide](4.-M365-Guide.md) for details |
+| microsoft.json | Searches M365 Outlook Messages, Calendar Events, OneDrive Files, SharePoint Sites, and Teams Chat | See the [M365 Guide](M365-Guide.md) for details |
 | miro.json | [Miro.com](https://miro.com) drawing service  | Requires a bearer token |
 | newsdata_io.json | Newsdata.io internet news source | Requires username and password<br/>archive provider also included |
 | nlresearch.json | NLResearch.com is a premium and internet content search engine from [Northern Light](https://northernlight.com/) | Requires username and password |
-| opensearch.json  | OpenSearch 2.x | [Developer Guide](6.-Developer-Reference.md#elastic--opensearch) |
+| opensearch.json  | OpenSearch 2.x | [Developer Guide](Developer-Reference.md#elastic--opensearch) |
 | preloaded.json | All preloaded SearchProviders | Defaults in the Swirl distribution |
 | servicenow.json | Searches the Knowledge and Service Catalog centers of ServiceNow | Requires username and password |
 | solr.json | the original, open source search engine, local install | Requires host, port, collection |
@@ -266,7 +266,7 @@ Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up 
     * Swirl includes example SearchProviders for [arXiv](https://arxiv.org/), [EuropePMC](https://europepmc.org/), and [LinkedIn](https://www.linkedin.com/) profiles via a new Google PSE.
     * Both the ChatGPT [`Connector`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/chatgpt.py) and [`QueryProcessor`](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/chatgpt_query.py) were updated to use OpenAI's [`ChatCompletion`](https://platform.openai.com/docs/api-reference/chat) method which supports the latest GPT models - including GPT-4 - and a much greater range of interactivity.
         * Three new Tags and one new `query_mapping` option are available for the ChatGPT SearchProvider to help shape the Prompt or Default Role passed to ChatGPT along with the user's query.
-        * The ChatGPT SearchProvder now queries the GPT-3.5-Turbo model by default.
+        * The ChatGPT SearchProvider now queries the GPT-3.5-Turbo model by default.
 
 * As of Release 2.6, Swirl includes SearchProviders for [ServiceNow](https://www.servicenow.com/) (Knowledge and Service Catalog), [Google News](https://news.google.com/) and a searchable version of the [Hacker News](https://hn.algolia.com/) feeds.
 
@@ -333,7 +333,7 @@ Three properties of SearchProviders are intended to allow expressive querying by
 | ---------- | ---------- |
 | Active | True/False setting that specifies if the SearchProvider is to receive Search queries or not. If `false`, the SearchProvider will not be queried, even if specified in a `searchprovider_list` |
 | Default | True/False setting that specifies if the SearchProvider is to be queried for searches that don't specify a `searchprovider_list`. If `false`, the SearchProvider must be specified in the `searchprovider_list` |
-| Tags | List of strings that organize providers into groups. Tags can be specified in combination with SearchProvider names and/or ids in `Search.searchprovider_list`, in the `providers=` [URL parameter](5.-Developer-Guide.md#create-a-search-object-with-the-q-url-parameter), or in a query in the form `tag:term` |
+| Tags | List of strings that organize providers into groups. Tags can be specified in combination with SearchProvider names and/or ids in `Search.searchprovider_list`, in the `providers=` [URL parameter](Developer-Guide.md#create-a-search-object-with-the-q-url-parameter), or in a query in the form `tag:term` |
 
 The suggestion is that SearchProviders who are good for most any search be left with `Default` set to `True`. Providers specific to a topic should have `Default` set to `False` and then `"Tags": [ "topic1", "topic2" ]` etc. When creating a search this ensures that the best providers for general querying are used when no `searchprovider_list` is specified. When the user desires to target a specific SearchProvider set, any combination of Tags or SearchProvider `name` and `id` values may be used freely.
 
@@ -375,7 +375,7 @@ At federation time, this becomes the following URL:
 
 The `url` field is configured per SearchProvider. Any key/value pairs that never change for that SearchProvider should be put there.
 
-The `query_string` is provided by Swirl as described in the [Developer Guide](5.-Developer-Guide.md#workflow)
+The `query_string` is provided by Swirl as described in the [Developer Guide](Developer-Guide.md#workflow)
 
 ### HTTP Request Headers
 
@@ -467,7 +467,7 @@ For example, from the [Solr with Auth SearchProvider](https://github.com/swirlai
 
 ### Other Credentials
 
-Consult the Developer Guide for details on how to [Develop New Connector](5.-Developer-Guide.md#develop-new-connectors).
+Consult the Developer Guide for details on how to [Develop New Connector](Developer-Guide.md#develop-new-connectors).
 
 ## Response Mappings
 
@@ -630,7 +630,7 @@ Results objects will reflect both date values:
 
 The `json_result` schema for each result in the Result list is defined by the `create_result_dictionary()` function in [`swirl/processors/utils.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/processors/utils.py).
 
-[Result mixers](6.-Developer-Reference.md#mixers-1) further manipulate and re-organize the data from multiple results.
+[Result mixers](Developer-Reference.md#mixers-1) further manipulate and re-organize the data from multiple results.
 
 The Result schema can be seen in [`swirl/models.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) 
 
