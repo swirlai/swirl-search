@@ -31,3 +31,5 @@ channels
 channels-redis
 tika
 discord.py
+cohere
+qdrant-client
