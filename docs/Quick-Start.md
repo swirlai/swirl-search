@@ -133,7 +133,7 @@ The Docker version of Swirl does *not* retain any data or configuration when shu
 Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
 
 {: .highlight }
-Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](4.-M365-Guide.md) or [contact us](mailto:hello@swirl.today).
+Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
 
 # Local Installation
 
@@ -284,4 +284,4 @@ Removing Swirl's `static/` content will also remove the Galaxy UI files! You wil
 Swirl includes four (4) Google Programmable Search Engines (PSEs), complete with shared credentials, to get you up and running right away. These credentials are shared with the Swirl Community.
 
 {: .highlight }
-Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](4.-M365-Guide.md) or [contact us](mailto:hello@swirl.today).
+Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
