@@ -130,7 +130,7 @@ The most recent Search object will be displayed at the top. Click on the `result
 The Docker version of Swirl does *not* retain any data or configuration when shut down!
 
 {: .highlight }
-Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
+Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
 
 {: .highlight }
 Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
@@ -281,7 +281,7 @@ If the search page appears, click `Log Out` at the top, right. The Swirl login p
 Removing Swirl's `static/` content will also remove the Galaxy UI files! You will need to re-install Galaxy if you have removed Swirl's `static/` directory and then run either `python manage.py collectstatic` or `python swirl.py setup`.
 
 {: .highlight }
-Swirl includes four (4) Google Programmable Search Engines (PSEs), complete with shared credentials, to get you up and running right away. These credentials are shared with the Swirl Community.
+Swirl includes five (5) Google Programmable Search Engines (PSEs), complete with shared credentials, to get you up and running right away. These credentials are shared with the Swirl Community.
 
 {: .highlight }
 Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
