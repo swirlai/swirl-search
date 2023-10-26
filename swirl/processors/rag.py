@@ -29,6 +29,8 @@ MODEL = MODEL_3
 MODEL_TOK_MAX = MODEL_3_TOK_MAX
 MODEL_DEFAULT_SYSTEM_GUIDE = "You are a helpful assistant who considers recent information when answering questions."
 FETCH_TO_SECS=10
+DO_MESSAGE_MOCK_ON_ERROR=True
+MESSAGE_MOCK_ON_ERROR=f"Mock API resposne from {MODEL}. This is a mock response for testing purpose only."
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -225,10 +227,15 @@ class RAGPostResultProcessor(PostResultProcessor):
             for (k,v) in fetch_prompt_errors.items():
                 logger.info(f'RAG:\t url:{k} problem:{v}')
         except Exception as err:
-            logger.error(f"error : {err} while creating CGPT response")
-            result = Result.objects.create(owner=self.search.owner, search_id=self.search, provider_id=5, searchprovider='ChatGPT', query_string_to_provider=new_prompt_text[:256], query_to_provider='None', status='READY', retrieved=1, found=1, json_results=[], time=0.0)
-            result.save()
-            return 0
+            if DO_MESSAGE_MOCK_ON_ERROR:
+                logger.error(f"error : {err} while creating CGPT response")
+                logger.info(f'Returning mock message instead : {MESSAGE_MOCK_ON_ERROR}')
+                model_response = MESSAGE_MOCK_ON_ERROR
+            else:
+                logger.error(f"error : {err} while creating CGPT response")
+                result = Result.objects.create(owner=self.search.owner, search_id=self.search, provider_id=5, searchprovider='ChatGPT', query_string_to_provider=new_prompt_text[:256], query_to_provider='None', status='READY', retrieved=1, found=1, json_results=[], time=0.0)
+                result.save()
+                return 0
 
         logger.info(f'RAGTITLE: {self.search.query_string_processed}')
         logger.info(f'RAGBODY: {model_response}')
