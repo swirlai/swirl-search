@@ -3,7 +3,7 @@
 # Usage:
 #   install-ui.sh [<options>]
 #
-# Install the UI into Swirl static directory. The Swril install and setup must be run
+# Install the UI into Swirl static directory. The Swirl install and setup must be run
 # before this command can be used.
 #
 # Options:
