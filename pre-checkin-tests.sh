@@ -36,7 +36,7 @@ echo $PROG "unit tests succeeded"
 export ALLOWED_HOSTS=localhost,host.docker.internal
 echo $PROG "running smoke tests"
 if [ ! -e ".swirl" ]; then
-    echo $PROG "starting SWIRL"
+    echo $PROG "starting Swirl"
     python swirl.py start
 
 fi
@@ -48,6 +48,6 @@ docker run -e SWIRL_TEST_HOST=host.docker.internal --net=host -t swirlai/swirl-s
 
 echo $PROG "smoke tests succeeded"
 if [ -e ".swirl" ]; then
-        echo $PROG "stoping SWIRL"
+        echo $PROG "stopping Swirl"
     python swirl.py stop
 fi

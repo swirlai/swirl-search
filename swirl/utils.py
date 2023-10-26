@@ -205,7 +205,7 @@ def select_providers(providers, start_tag, tags_in_query_list):
         # end if
     # end for
 
-    # For the case of mis-spelled or non-existant start tag, there can be no providers that match, in that
+    # For the case of misspelled or non-existent start tag, there can be no providers that match, in that
     # case return all providers that have default == true
     if len(selected_provider_list) == 0:
         selected_provider_list = default_provider_list

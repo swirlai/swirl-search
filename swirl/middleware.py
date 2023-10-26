@@ -59,6 +59,11 @@ class WebSocketTokenMiddleware(BaseMiddleware):
         query_string = scope.get("query_string", b"").decode("utf-8")
         query_params = parse_qs(query_string)
         token_key = query_params.get("token", [""])[0]
+        rag_query_items = query_params.get("rag_items", [""])[0]
+        if rag_query_items:
+            scope['rag_query_items'] = rag_query_items.split(',')
+        else:
+            scope['rag_query_items'] = []
 
         ### DJANGO TOKEN CHECKING
 

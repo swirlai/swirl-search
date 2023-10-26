@@ -1,7 +1,7 @@
 '''
 @author:     Sid Probstein
 @contact:    sid@swirl.today
-@version:    SWIRL 1.x
+@version:    Swirl 1.x
 '''
 
 # from webbrowser import get
@@ -27,8 +27,8 @@ router.register(r'sapi/searchproviders', views.SearchProviderViewSet, basename='
 
 urlpatterns = [
     path('openapi', get_schema_view(
-            title="SWIRL Swagger",
-            description="SWIRL API descriptions",
+            title="Swirl Swagger",
+            description="Swirl API descriptions",
             version="1.1.0"
         ), name='openapi-schema'),
     path('swagger-ui/', TemplateView.as_view(

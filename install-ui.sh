@@ -3,7 +3,7 @@
 # Usage:
 #   install-ui.sh [<options>]
 #
-# Install the UI into SWIRL static directory. The SWIRL install and setup must be run
+# Install the UI into Swirl static directory. The Swril install and setup must be run
 # before this command can be used.
 #
 # Options:
@@ -46,7 +46,7 @@ where_jq=`which jq`
 if [ $? -eq 0 ]; then
     echo $PROG "Found jq command in ${where_jq}"
 else
-    echo $PROG "Could not find jq command on your path, please consult the admin guide at https://github.com/swirlai/swirl-search/wiki/3.-Admin-Guide#installation."
+    echo $PROG "Could not find jq command on your path, please consult the admin guide at https://docs.swirl.today/Admin-Guide#installation."
     exit 1
 fi
 
@@ -81,7 +81,7 @@ fi
 
 # check environment
 if ! [ -d "$target_dir" ]; then
-    echo $PROG : "Target directory $target_dir does not exist, please make sure you've run set up and are in the SWIRL home directory"
+    echo $PROG : "Target directory $target_dir does not exist, please make sure you've run set up and are in the Swirl home directory"
     exit 1
 fi
 
