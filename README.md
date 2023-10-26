@@ -135,13 +135,13 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 :key: Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
 
-:key: Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](https://docs.swirl.today/4.-M365-Guide.html) or [contact us](mailto:hello@swirl.today).
+:key: Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](https://docs.swirl.today/M365-Guide.html) or [contact us](mailto:hello@swirl.today).
 
 ## Next Steps 👇
 
 * Check out the details of our [latest release](https://github.com/swirlai/swirl-search/releases)!
 
-* Head over to the [Quick Start Guide](https://docs.swirl.today/1.-Quick-Start.html) and install Swirl locally!
+* Head over to the [Quick Start Guide](https://docs.swirl.today/Quick-Start.html) and install Swirl locally!
 
 <br/>
 
@@ -149,22 +149,22 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 | ✦ | Feature |
 |:-----:|:--------|
-| 📌 | [Microsoft 365 integration and OAUTH2 support](https://docs.swirl.today/4.-M365-Guide.html) |
-| 🔍 | [SearchProvider configurations](https://github.com/swirlai/swirl-search/tree/main/SearchProviders) for all included Connectors. They can be [organized with the active, default and tags properties](https://docs.swirl.today/2.-User-Guide.html#organizing-searchproviders-with-active-default-and-tags). |
-| ✏️ | [Adaptation of the query for each provider](https://docs.swirl.today/2.-User-Guide.html#search-syntax) such as rewriting `NOT term` to `-term`, removing NOTted terms from providers that don't support NOT, and passing down the AND, + and OR operators. |
-| ⏳ | [Synchronous or asynchronous search federation](https://docs.swirl.today/5.-Developer-Guide.html#architecture) via [APIs](http://localhost:8000/swirl/swagger-ui/) |
-| 🛎️ | [Optional subscribe feature](https://docs.swirl.today/5.-Developer-Guide.html#subscribe-to-a-search) to continuously monitor any search for new results |
-| 🛠️ | Pipelining of [Processor](https://docs.swirl.today/5.-Developer-Guide.html#develop-new-processors) stages for real-time adaptation and transformation of queries, responses and results |
-| 🗄️ | [Results stored](https://docs.swirl.today/6.-Developer-Reference.html#result-objects) in SQLite3 or PostgreSQL for post-processing, consumption and/or analytics |
-| ➡️ | Built-in [Query Transformation](https://docs.swirl.today/5.-Developer-Guide.html#using-query-transformations) support, including re-writing and replacement |
-| 📖 | [Matching on word stems](https://docs.swirl.today/6.-Developer-Reference.html#cosinerelevancypostresultprocessor) and [handling of stopwords](https://docs.swirl.today/5.-Developer-Guide.html#configure-stopwords-language) via NLTK |
-| 🚫 | [Duplicate detection](https://docs.swirl.today/5.-Developer-Guide.html#detect-and-remove-duplicate-results) on field or by configurable Cosine Similarity threshold |
-| 🔄 | Re-ranking of unified results [using Cosine Vector Similarity](https://docs.swirl.today/6.-Developer-Reference.html#cosinerelevancypostresultprocessor) based on [spaCy](https://spacy.io/)'s large language model and [NLTK](https://www.nltk.org/) |
-| 🎚️ | [Result mixers](https://docs.swirl.today/6.-Developer-Reference.html#mixers-1) order results by relevancy, date or round-robin (stack) format, with optional filtering of just new items in subscribe mode |
+| 📌 | [Microsoft 365 integration and OAUTH2 support](https://docs.swirl.today/M365-Guide.html) |
+| 🔍 | [SearchProvider configurations](https://github.com/swirlai/swirl-search/tree/main/SearchProviders) for all included Connectors. They can be [organized with the active, default and tags properties](https://docs.swirl.today/User-Guide.html#organizing-searchproviders-with-active-default-and-tags). |
+| ✏️ | [Adaptation of the query for each provider](https://docs.swirl.today/User-Guide.html#search-syntax) such as rewriting `NOT term` to `-term`, removing NOTted terms from providers that don't support NOT, and passing down the AND, + and OR operators. |
+| ⏳ | [Synchronous or asynchronous search federation](https://docs.swirl.today/Developer-Guide.html#architecture) via [APIs](http://localhost:8000/swirl/swagger-ui/) |
+| 🛎️ | [Optional subscribe feature](https://docs.swirl.today/Developer-Guide.html#subscribe-to-a-search) to continuously monitor any search for new results |
+| 🛠️ | Pipelining of [Processor](https://docs.swirl.today/Developer-Guide.html#develop-new-processors) stages for real-time adaptation and transformation of queries, responses and results |
+| 🗄️ | [Results stored](https://docs.swirl.today/Developer-Reference.html#result-objects) in SQLite3 or PostgreSQL for post-processing, consumption and/or analytics |
+| ➡️ | Built-in [Query Transformation](https://docs.swirl.today/Developer-Guide.html#using-query-transformations) support, including re-writing and replacement |
+| 📖 | [Matching on word stems](https://docs.swirl.today/Developer-Reference.html#cosinerelevancypostresultprocessor) and [handling of stopwords](https://docs.swirl.today/Developer-Guide.html#configure-stopwords-language) via NLTK |
+| 🚫 | [Duplicate detection](https://docs.swirl.today/Developer-Guide.html#detect-and-remove-duplicate-results) on field or by configurable Cosine Similarity threshold |
+| 🔄 | Re-ranking of unified results [using Cosine Vector Similarity](https://docs.swirl.today/Developer-Reference.html#cosinerelevancypostresultprocessor) based on [spaCy](https://spacy.io/)'s large language model and [NLTK](https://www.nltk.org/) |
+| 🎚️ | [Result mixers](https://docs.swirl.today/Developer-Reference.html#mixers-1) order results by relevancy, date or round-robin (stack) format, with optional filtering of just new items in subscribe mode |
 | 📄 | Page through all results requested, re-run, re-score and update searches using URLs provided with each result set |
 | 📁 | [Sample data sets](https://github.com/swirlai/swirl-search/tree/main/Data) for use with SQLite3 and PostgreSQL |
-| ✒️ | [Optional spell correction](https://docs.swirl.today/5.-Developer-Guide.html#add-spelling-correction) using [TextBlob](https://textblob.readthedocs.io/en/dev/quickstart.html#spelling-correction) |
-| ⌛ | [Optional search/result expiration service](https://docs.swirl.today/3.-Admin-Guide.html#search-expiration-service) to limit storage use |
+| ✒️ | [Optional spell correction](https://docs.swirl.today/Developer-Guide.html#add-spelling-correction) using [TextBlob](https://textblob.readthedocs.io/en/dev/quickstart.html#spelling-correction) |
+| ⌛ | [Optional search/result expiration service](https://docs.swirl.today/Admin-Guide.html#search-expiration-service) to limit storage use |
 | 🔌 | Easily extensible [Connector](https://github.com/swirlai/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/swirlai/swirl-search/tree/main/swirl/mixers) objects |
 
 
@@ -194,7 +194,7 @@ For information about Swirl as a managed service, please [contact us](mailto:hel
 
 # 📖 Documentation
 
-[Overview](https://docs.swirl.today/) | [Quick Start](https://docs.swirl.today/1.-Quick-Start) | [User Guide](https://docs.swirl.today/2.-User-Guide) | [Admin Guide](https://docs.swirl.today/3.-Admin-Guide) | [M365 Guide](https://docs.swirl.today/4.-M365-Guide) | [Developer Guide](https://docs.swirl.today/5.-Developer-Guide) | [Developer Reference](https://docs.swirl.today/6.-Developer-Reference)
+[Overview](https://docs.swirl.today/) | [Quick Start](https://docs.swirl.today/Quick-Start) | [User Guide](https://docs.swirl.today/User-Guide) | [Admin Guide](https://docs.swirl.today/Admin-Guide) | [M365 Guide](https://docs.swirl.today/M365-Guide) | [Developer Guide](https://docs.swirl.today/Developer-Guide) | [Developer Reference](https://docs.swirl.today/Developer-Reference)
 
 <br/>
 

@@ -16,7 +16,7 @@ nav_order: 7
 
 ## Intended Audience
 
-This guide is intended to provide developers with detailed reference information about Swirl. Please refer to the [Developer Guide](5.-Developer-Guide.md) for an overview of how to work with Swirl.
+This guide is intended to provide developers with detailed reference information about Swirl. Please refer to the [Developer Guide](Developer-Guide.md) for an overview of how to work with Swirl.
 
 # State Table
 
@@ -65,7 +65,7 @@ The following table describes in more detail all the steps in the federation pro
 | Status | Meaning | 
 | ---------- | ---------- |
 | ERR_DUPLICATE_RESULT_OBJECTS | More than one Result object was found; [contact support](#support) for assistance. |
-| ERR_NEED_PERMISSION | The Django User did not have sufficient permissions to perform the requested operation. More: [Permissioning Normal Users](3.-Admin-Guide.md#permissioning-normal-users) | 
+| ERR_NEED_PERMISSION | The Django User did not have sufficient permissions to perform the requested operation. More: [Permissioning Normal Users](Admin-Guide.md#permissioning-normal-users) | 
 | ERR_NO_ACTIVE_SEARCHPROVIDERS | Search failed because no specified SearchProviders were active |
 | ERR_NO_RESULTS | Swirl has not received results from any source |
 | ERR_NO_SEARCHPROVIDERS | Search failed because no SearchProviders were specified |
@@ -108,7 +108,7 @@ A SearchProvider defines some searchable source. It includes metadata identifyin
 | result_grouping_field | Used with the `DedupeByFieldResultProcessor` result processor, this string defines the specific source field to use for duplicate suppression. | "" (`"resource.conversationId"`) |
 | result_processors | A list of processors to use to normalize results from this source | "CosineRelevancyResultProcessor" (`"MappingResultProcessor","CosineRelevancyResultProcessor"`) |
 | response_mappings | List of response keys and JSONPaths to transform this providers response into a JSON result set | "" (`"FOUND=searchInformation.totalResults, RETRIEVED=queries.request[0].count, RESULTS=items"`) |
-| result_mappings | List of keys, optionally with values; see [User Guide, Result Mappings](2.-User-Guide.md#result-mapping-options) for notes on special keys | "" (`"url=link,body=snippet,cacheId,NO_PAYLOAD"`) |
+| result_mappings | List of keys, optionally with values; see [User Guide, Result Mappings](User-Guide.md#result-mapping-options) for notes on special keys | "" (`"url=link,body=snippet,cacheId,NO_PAYLOAD"`) |
 | results_per_query | The number of results to request from this source for each query | 10 (`20`) |
 | credentials | The credentials to use for this source. Dependent on the source. | "" (`"key=your-google-json-api-key"`) |
 | eval_credentials | A credential variable set in the session and then be used in the SearchProvider. | "" (`"session["my-connector-token"]"`) |
@@ -151,7 +151,7 @@ The only required property is a `query_string` with the actual text to be search
 | new_result_url | Link to the updated Result object for the search which uses the `RelevancyNewItemsMixer` | Automatic (`"http://localhost:8000/swirl/results?search_id=17&result_mixer=RelevancyNewItemsMixer"`) | 
 | messages | Messages from SearchProviders | "" (`Retrieved 1 of 1 results from: Document DB Search`) | 
 | result_mixer | The name of the Mixer object (see below) to use for ordering results | RoundRobinMixer (`Stack2Mixer`) | 
-| retention | The retention setting for this object; `0` = retain indefinitely; see [Search Expiration Service](3.-Admin-Guide.md#search-expiration-service) for details | 0 (`2` for daily deletion) | 
+| retention | The retention setting for this object; `0` = retain indefinitely; see [Search Expiration Service](Admin-Guide.md#search-expiration-service) for details | 0 (`2` for daily deletion) | 
 | tags | Parameter (string) that can be passed into a search and will be attached to the Search object that is stored in Swirl | "" (`{ "query_string": "knowledge management", "tags": ["max_length:50"] }`) | 
 
 {: .highlight }
@@ -166,7 +166,7 @@ There are some special Search tags that control query processing.  For example, 
 | /swirl/search/?q=some+query | Create a Search object with default values except for `query_string` which is set to the `q=` parameter value; return redirects to result set; also accepts `providers` parameter |
 | /swirl/search/?qs=some+query | Create Search object as above, but return results synchronously; also accepts `providers` and `result_mixer` parameters |
 | /swirl/search/?rerun=id | Re-run a Search, deleting any previously stored Results |
-| /swirl/search/?update=id | [Update a Search](5.-Developer-Guide.md#update-a-search) with new results since the last time you ran it |
+| /swirl/search/?update=id | [Update a Search](Developer-Guide.md#update-a-search) with new results since the last time you ran it |
 
 # Result Objects
 
@@ -204,7 +204,7 @@ However, the goal of Swirl (and [federated search](Home.md#what-is-metasearch-is
 | Field | Description | Example |
 | ---------- | ---------- | ---------- |
 | swirl_rank | Swirl's relevancy ranking for this result | `1` |
-| swirl_score | A metric showing the relevancy of the result to the query. It is not meant to be meaningful as a number otherwise. It is only shown if [&explain=True](5.-Developer-Guide.md#understand-the-explain-structure) is set. | `1890.6471312936828` |
+| swirl_score | A metric showing the relevancy of the result to the query. It is not meant to be meaningful as a number otherwise. It is only shown if [&explain=True](Developer-Guide.md#understand-the-explain-structure) is set. | `1890.6471312936828` |
 | searchprovider | The human-readable name for the SearchProvider | `"OneDrive Files - Microsoft 365"` |
 | searchprovider_rank | The SearchProvider's ranking of this result | `3`
 | title | The source-reported title for this result, with search term matches highlighted | `German car industry to invest in <em>electric</em> <em>vehicles</em> ...` |
@@ -217,7 +217,7 @@ However, the goal of Swirl (and [federated search](Home.md#what-is-metasearch-is
 | title_hit_highlights | TBD | TBD |
 | body_hit_highlights | TBD | TBD |
 | payload | A dictionary of all remaining keys in the SearchProvider's response | `{}` |
-| explain | A dictionary containing (a) the matching word stems, (b) similarity scores for each match in each field, (c) length adjustments and other metadata, (d) `hits` information. It is only shown if [&explain=True](5.-Developer-Guide.md#understand-the-explain-structure) is set. | `{}` |
+| explain | A dictionary containing (a) the matching word stems, (b) similarity scores for each match in each field, (c) length adjustments and other metadata, (d) `hits` information. It is only shown if [&explain=True](Developer-Guide.md#understand-the-explain-structure) is set. | `{}` |
 
 {: .highlight }
 Note that PAYLOAD can be totally different from SearchProvider to SearchProvider. It is up to the caller to access the PAYLOAD and extract whatever is needed, generally by making a new Processor (see below) or adding `result_mappings`.
@@ -290,7 +290,7 @@ More information: [BigQuery Documentation](https://cloud.google.com/bigquery/doc
 ## ChatGPT
 
 {: .highlight }
-For Release 2.5.1, both the ChatGPT [`Connector`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/chatgpt.py) and [`QueryProcessor`](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/chatgpt_query.py) were updated to use the [`ChatCompletion`](https://platform.openai.com/docs/api-reference/chat) method which supports the latest  GPT models, including `GPT-4`, and a much greater range of interactivity. The ChatGPT SearchProvder now queries the `GPT-3.5-Turbo` model by default.
+For Release 2.5.1, both the ChatGPT [`Connector`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/chatgpt.py) and [`QueryProcessor`](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/chatgpt_query.py) were updated to use the [`ChatCompletion`](https://platform.openai.com/docs/api-reference/chat) method which supports the latest  GPT models, including `GPT-4`, and a much greater range of interactivity. The ChatGPT SearchProvider now queries the `GPT-3.5-Turbo` model by default.
 
 The [ChatGPT Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/chatgpt.py) makes use of the OpenAI APIs. It will return at most one result.
 
@@ -428,9 +428,9 @@ This is the default OpenSearch SearchProvider that connects to a local instance 
 }
 ```
 
-Note the use of JSONPaths in the `result_mappings`. This is essential for Elastic and OpenSearch since they embed results in a `_source` field unless otherwise configured. For more details consult the [User Guide, Result Mappings](2.-User-Guide.md#result-mappings) section.
+Note the use of JSONPaths in the `result_mappings`. This is essential for Elastic and OpenSearch since they embed results in a `_source` field unless otherwise configured. For more details consult the [User Guide, Result Mappings](User-Guide.md#result-mappings) section.
 
-Use the [PAYLOAD Field](2.-User-Guide.md#payload-field) to store extra content that doesn't map to an existing item.
+Use the [PAYLOAD Field](User-Guide.md#payload-field) to store extra content that doesn't map to an existing item.
 
 ## Microsoft Graph
 
@@ -684,7 +684,7 @@ And here it is again, configured for SOLR with the [tech products example collec
 
 To adapt RequestsGet for your JSON response, just replace the JSONPaths on the right of the FOUND, RETRIEVED, and RESULT configurations in `response_mappings`, following the left-to-right format of `swirl_key=source-key`. If the response provides a dictionary wrapper around each result, use the RESULT path to extract it.
 
-From there, map results fields to Swirl's schema as described in the [User Guide, Result Mapping](2.-User-Guide.md#result-mappings) section. Use the [PAYLOAD Field](2.-User-Guide.md#payload-field) to store any extra content from SearchProviders that doesn't map to an existing Swirl field.
+From there, map results fields to Swirl's schema as described in the [User Guide, Result Mapping](User-Guide.md#result-mappings) section. Use the [PAYLOAD Field](User-Guide.md#payload-field) to store any extra content from SearchProviders that doesn't map to an existing Swirl field.
 
 Add additional required `key/value` parameters to the `url` - if they won't change from SearchProvider to SearchProvider - or by adding a mapping in the `query_template` and a default or guide value in the `query_mappings`. (See `{collection}` in the SOLR example above.)
 
@@ -874,10 +874,10 @@ The following table details the Result Mixers included with Swirl:
 
 | Mixer | Description | Notes |
 | ---------- | ---------- | ---------- | 
-| RelevancyMixer | Organizes results by [relevancy](2.-User-Guide.md#relevancy-ranking) score (descending), then source rank (ascending) | The default; depends on `relevancy_processor` being installed as the `search.post_result_processors` (also the default) |
-| RelevancyNewItemsMixer | Organizes results as above, but hiding results that don't have the `new` field as [created during Search updates](5.-Developer-Guide.md#update-a-search) | This is the default for `search.new_result_url`|
+| RelevancyMixer | Organizes results by [relevancy](User-Guide.md#relevancy-ranking) score (descending), then source rank (ascending) | The default; depends on `relevancy_processor` being installed as the `search.post_result_processors` (also the default) |
+| RelevancyNewItemsMixer | Organizes results as above, but hiding results that don't have the `new` field as [created during Search updates](Developer-Guide.md#update-a-search) | This is the default for `search.new_result_url`|
 | DateMixer | Organizes results by `date_published`. Results with "unknown" for `date_published` are omitted | Use when you want date sorted results | 
-| DateNewItemsMixer | Organizes results as above, but hiding results that don't have the `new` field as [created during Search updates](5.-Developer-Guide.md#update-a-search) | This is the default for `search.new_result_url` when `search.date` is set to `sort` |     
+| DateNewItemsMixer | Organizes results as above, but hiding results that don't have the `new` field as [created during Search updates](Developer-Guide.md#update-a-search) | This is the default for `search.new_result_url` when `search.date` is set to `sort` |     
 | RoundRobinMixer | Organizes results by taking 1 result from each responding SearchProvider, alternating; actually calls `Stack1Mixer` (see below) | Good for searches with `search.sort` set to "date" or anytime you want a cross-section of results instead of just the ones with the most evidence | 
 | Stack1Mixer | Organizes results by taking 1 result from each responding SearchProvider, alternating | Good for cross-sections of data |
 | Stack2Mixer | Organizes results by taking 2 from each responding SearchProvider, alternating | Good for cross-sections of data with 4-6 sources |
@@ -941,7 +941,7 @@ This file was processed with [scripts/fix_csv.py](https://github.com/swirlai/swi
 
 ### Loading into SQLite3 
 
-1. Activate [sqlite_web](3.-Admin-Guide.md#sqlite-web)
+1. Activate [sqlite_web](Admin-Guide.md#sqlite-web)
 Then, from the swirl-home directory:
 ``` shell
 sqlite_web db.sqlite3
@@ -958,7 +958,7 @@ sqlite_web db.sqlite3
 6. Click `Import`.
 ![Sqlite loading funding dataset](images/sqlite_import_funding_2.png)
 
-7. Load the [Funding DB SQLite3](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_sqlite3.json) SearchProvider as [described in the User Guide, SearchProvider](2.-User-Guide.md#using-searchproviders) section.
+7. Load the [Funding DB SQLite3](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_sqlite3.json) SearchProvider as [described in the User Guide, SearchProvider](User-Guide.md#using-searchproviders) section.
 
 ### Loading into PostgreSQL
 
@@ -993,7 +993,7 @@ CREATE UNIQUE INDEX funding_pkey ON funding(id int4_ops);
 COPY funding(permalink,company,numemps,category,city,state,fundeddate,raisedamt,raisedcurrency,round) FROM '/path/to/Data/funding_db.csv' DELIMITER ',' CSV HEADER;
 ```
 
-* Load the [Funding DB PostgreSQL](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_postgres.json) SearchProvider as [described in the User Guide, SearchProvider](2.-User-Guide.md#using-searchproviders) section.
+* Load the [Funding DB PostgreSQL](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_postgres.json) SearchProvider as [described in the User Guide, SearchProvider](User-Guide.md#using-searchproviders) section.
 
 ### Loading into BigQuery
 
@@ -1003,7 +1003,7 @@ COPY funding(permalink,company,numemps,category,city,state,fundeddate,raisedamt,
 
 * Load the CSV file into this table: [Loading CSV data into a table](https://cloud.google.com/bigquery/docs/loading-data-cloud-storage-csv#loading_csv_data_into_a_table)
 
-* Load the [Funding DB BigQuery](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_bigquery.json) SearchProvider as [described in the User Guide, SearchProvider](2.-User-Guide.md#using-searchproviders) section.
+* Load the [Funding DB BigQuery](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_bigquery.json) SearchProvider as [described in the User Guide, SearchProvider](User-Guide.md#using-searchproviders) section.
 
 ## Enron Email Data Set
 
