@@ -21,13 +21,13 @@ class SearchProviderSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = SearchProvider
-        fields = ['id', 'name', 'owner', 'shared', 'date_created', 'date_updated', 'active', 'default', 'authenticator','connector', 'url', 'query_template', 'post_query_template', 'http_request_headers', 'query_processors', 'query_mappings', 'result_grouping_field', 'result_processors', 'response_mappings', 'result_mappings', 'results_per_query', 'credentials', 'eval_credentials', 'tags']
+        fields = ['id', 'name', 'owner', 'shared', 'date_created', 'date_updated', 'active', 'default', 'authenticator','connector', 'url', 'query_template', 'post_query_template', 'http_request_headers', 'page_fetch_config_json', 'query_processors', 'query_mappings', 'result_grouping_field', 'result_processors', 'response_mappings', 'result_mappings', 'results_per_query', 'credentials', 'eval_credentials', 'tags']
 
 class SearchProviderNoCredentialsSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = SearchProvider
-        fields = ['id', 'name', 'owner', 'shared', 'date_created', 'date_updated', 'active', 'default', 'authenticator', 'connector', 'url', 'query_template', 'post_query_template', 'http_request_headers', 'query_processors', 'query_mappings', 'result_processors', 'response_mappings', 'result_mappings', 'results_per_query', 'tags']
+        fields = ['id', 'name', 'owner', 'shared', 'date_created', 'date_updated', 'active', 'default', 'authenticator', 'connector', 'url', 'query_template', 'post_query_template', 'http_request_headers', 'page_fetch_config_json', 'query_processors', 'query_mappings', 'result_processors', 'response_mappings', 'result_mappings', 'results_per_query', 'tags']
 
 class SearchSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')

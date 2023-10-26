@@ -1,14 +1,20 @@
 {
     "name": "Europe PubMed Central - EuropePMC.org",
-    "shared": true,
-    "active": false,
-    "default": false,
+    "active": true,
+    "default": true,
     "authenticator": "",
     "connector": "RequestsGet",
     "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
     "query_template": "{url}?query={query_string}&resultType=core&format=json",
     "post_query_template": "{}",
     "http_request_headers": {},
+    "page_fetch_config_json": {
+        "cache": "false",
+        "headers": {
+            "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+        },
+        "timeout": 10
+},
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],

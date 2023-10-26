@@ -231,7 +231,7 @@ class TestResultProcessor(ResultProcessor):
 
     def process(self):
 
-        # to do: test to ensure operation on a SWIRL result, i.e. after Generic or MappingResultProcessor
+        # to do: test to ensure operation on a Swirl result, i.e. after Generic or MappingResultProcessor
         for item in self.results:
             item['test'] = True
 
@@ -250,7 +250,7 @@ class DuplicateHalfResultProcessor(ResultProcessor):
 
     def process(self):
 
-        # to do: test to ensure operation on a SWIRL result, i.e. after Generic or MappingResultProcessor
+        # to do: test to ensure operation on a Swirl result, i.e. after Generic or MappingResultProcessor
         switch = 0
         results_hd = []
         for item in self.results:

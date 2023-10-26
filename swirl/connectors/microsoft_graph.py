@@ -92,7 +92,7 @@ class M365SearchQuery(M365Post):
                         self.entity_type
                     ],
                     "query": {
-                        "queryString": query
+                        "queryString": f'({query}) AND (NOT contenttype:folder)'
                     }
                 }
             ]

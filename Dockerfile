@@ -33,7 +33,6 @@ RUN mkdir /app
 COPY ./db.sqlite3.dist /app/db.sqlite3
 COPY ./.env.docker /app/.env
 COPY ./install-ui.sh /app/install-ui.sh
-COPY ./redis.conf /app/redis.conf
 ADD ./swirl /app/swirl
 
 # Install Galaxy UI
