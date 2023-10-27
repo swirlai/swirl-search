@@ -62,13 +62,13 @@ Search developers can render Swirl's JSON results in any existing UI or framewor
 
 [Retrieval Augmented Generation (RAG)](https://research.ibm.com/blog/retrieval-augmented-generation-RAG) is a machine learning framework that combines the strengths of pre-trained language models with external information retrieval systems to generate more informed and contextually relevant outputs. 
 
-RAG operates in two steps.
-
-![Swirl RAG AI Insight with results](images/swirl_rag_pulmonary_3.png)
+RAG operates in two step:
 
 1. Retrieve relevant documents based on the given input query
 
 2. Use these retrieved passages as additional context when prompting generative AI
+
+![Swirl RAG AI Insight with results](images/swirl_rag_pulmonary_3.png)
 
 The results of RAG should always be an AI insight *plus* citations: the documents used in the prompt that create the insight, so the user can verify the results and, over time, learn to trust the RAG system.
 
