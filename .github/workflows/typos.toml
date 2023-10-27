@@ -2,7 +2,6 @@
 
 [files]
 extend-exclude = ["swirl/tests/"]
-extend-exclude = ["SearchProviders/"]
 
 [default.extend-identifiers]
 # Don't correct this variable from scripts/fix_csv.py
