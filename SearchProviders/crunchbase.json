@@ -1,0 +1,64 @@
+{
+    "name": "Organizations - Crunchbase.com",
+    "active": false,
+    "default": false,
+    "authenticator": "",
+    "connector": "RequestsPost",
+    "url": "https://api.crunchbase.com/api/v4/searches/organizations",
+    "query_template": "{url}",
+    "post_query_template": {
+        "field_ids": [
+            "created_at",
+            "entity_def_id",
+            "facebook",
+            "facet_ids",
+            "identifier",
+            "image_id",
+            "image_url",
+            "linkedin",
+            "location_identifiers",
+            "name",
+            "permalink",
+            "short_description",
+            "stock_exchange_symbol",
+            "twitter",
+            "updated_at",
+            "uuid"
+        ],
+        "query": [
+            {
+                "type": "predicate",
+                "field_id": "identifier",
+                "operator_id": "contains",
+                "values": [
+                    "{query_string}"
+                ]
+            }
+        ]
+    },
+    "http_request_headers": {
+        "Content-Type": "application/json",
+        "X-cb-user-key": "<your-Crunchbase-Basic-API-key>"
+    },
+    "page_fetch_config_json": {},
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "NOT=true",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "FOUND=count,RESULTS=entities",
+    "result_mappings": "title=properties.name,body=properties.short_description,date_published=properties.created_at,url='https://www.crunchbase.com/organization/{properties.permalink}',properties.updated_at,properties.stock_exchange_symbol,properties.facet_ids[*],properties.location_identifiers[*].value,properties.linkedin.value,properties.facebook.value,properties.twitter.value,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "",
+    "eval_credentials": "",
+    "tags": [
+        "Crunchbase",
+        "Organizations",
+        "Internal"
+
+    ]
+}

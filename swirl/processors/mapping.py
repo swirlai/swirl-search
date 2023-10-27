@@ -2,6 +2,7 @@
 @author:     Sid Probstein
 @contact:    sid@swirl.today
 '''
+import json as stdjson
 import logging
 from celery.utils.log import get_task_logger
 logging.basicConfig(level=logging.INFO)
@@ -12,7 +13,8 @@ from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
 from swirl.processors.processor import *
-from swirl.processors.result_map_url_encoder import ResultMapUrlEncoder
+from swirl.processors.result_map_converter import ResultMapConverter
+
 from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format, date_str_to_timestamp, result_processor_feedback_provider_query_terms
 from swirl.swirl_common import RESULT_MAPPING_COMMANDS
 
@@ -115,7 +117,7 @@ class MappingResultProcessor(ResultProcessor):
                     result_dict = {}
                     # self.warning(f"template_list: {template_list}")
                     for k in template_list:
-                        uc = ResultMapUrlEncoder(f'$.{k[1:-1]}')
+                        uc = ResultMapConverter(f'$.{k[1:-1]}')  # Use the new combined class
                         jxp_key = uc.get_key()
                         try:
                             jxp = parse(jxp_key)

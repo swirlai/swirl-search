@@ -780,15 +780,21 @@
     },
     {
         "name": "Europe PubMed Central - EuropePMC.org",
-        "shared": true,
-        "active": false,
-        "default": false,
+        "active": true,
+        "default": true,
         "authenticator": "",
         "connector": "RequestsGet",
         "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
         "query_template": "{url}?query={query_string}&resultType=core&format=json",
         "post_query_template": "{}",
         "http_request_headers": {},
+        "page_fetch_config_json": {
+            "cache": "false",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "timeout": 10
+    },    
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -811,7 +817,6 @@
     },
     {
         "name": "arXiv - ArXiv.org",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -841,7 +846,6 @@
     },
     {
         "name": "Hacker News Stories - HN.Algolia.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -872,7 +876,6 @@
     },
     {
         "name": "Hacker News Comments - HN.Algolia.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -903,7 +906,6 @@
     },
     {
         "name": "Google News - News.Google.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -934,7 +936,6 @@
     },
     {
         "name": "ServiceNow Knowledge - ServiceNow.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -967,7 +968,6 @@
     },
     {
         "name": "ServiceNow Service Catalog - ServiceNow.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -996,6 +996,167 @@
             "ServiceNow",
             "ServiceCatalog",
             "Items"
+        ]
+    },
+    {
+        "name": "Organizations - Crunchbase.com",
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "RequestsPost",
+        "url": "https://api.crunchbase.com/api/v4/searches/organizations",
+        "query_template": "{url}",
+        "post_query_template": {
+            "field_ids": [
+                "created_at",
+                "entity_def_id",
+                "facebook",
+                "facet_ids",
+                "identifier",
+                "image_id",
+                "image_url",
+                "linkedin",
+                "location_identifiers",
+                "name",
+                "permalink",
+                "short_description",
+                "stock_exchange_symbol",
+                "twitter",
+                "updated_at",
+                "uuid"
+            ],
+            "query": [
+                {
+                    "type": "predicate",
+                    "field_id": "identifier",
+                    "operator_id": "contains",
+                    "values": [
+                        "{query_string}"
+                    ]
+                }
+            ]
+        },
+        "http_request_headers": {
+            "Content-Type": "application/json",
+            "X-cb-user-key": "<your-Crunchbase-Basic-API-key>"
+        },
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "FOUND=count,RESULTS=entities",
+        "result_mappings": "title=properties.name,body=properties.short_description,date_published=properties.created_at,url='https://www.crunchbase.com/organization/{properties.permalink}',properties.updated_at,properties.stock_exchange_symbol,properties.facet_ids[*],properties.location_identifiers[*].value,properties.linkedin.value,properties.facebook.value,properties.twitter.value,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Crunchbase",
+            "Organizations",
+            "Internal"
+    
+        ]
+    },
+    {
+        "name": "Bitcoin Transaction - Blockchain.com",
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "RequestsGet",
+        "url": "https://blockchain.info/rawtx/",
+        "query_template": "{url}{query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {
+            "X-API-Token": "<your-blockchain.com-api-key>"
+        },
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title='Bitcoin Hash ID {hash}',body='Transaction ID {hash} sent {sw_btcconvert(inputs[*].prev_out.value)} BTC from these addresses {inputs[*].prev_out.addr} to these addresses {out[*].addr} for a fee of {sw_btcconvert(fee)} BTC.',date_published=time,url='https://www.blockchain.com/explorer/transactions/btc/{hash}',ver,weight,size,block_index,lock_time,double_spend,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Blockchain",
+            "Bitcoin",
+            "HashID"
+        ]
+    },
+    {
+        "name": "Bitcoin Address - Blockchain.com",
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "RequestsGet",
+        "url": "https://blockchain.info/rawaddr/",
+        "query_template": "{url}{query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {
+            "X-API-Token": "<your-blockchain.com-api-key>"
+        },
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title='Bitcoin Address {address}',body='Bitcoin wallet {address} has made {n_tx} transactions. It has sent {sw_btcconvert(total_sent)} BTC and has received {sw_btcconvert(total_received)} BTC. The current value of this wallet is {sw_btcconvert(final_balance)} BTC.',date_published=txs[0].time,url='https://www.blockchain.com/explorer/addresses/btc/{address}',hash160,n_unredeemed,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Blockchain",
+            "Bitcoin",
+            "Wallet"
+        ]
+    },
+    {
+        "name": "Swirl Documentation - Google PSE",
+        "active": true,
+        "default": true,
+        "authenticator": "",
+        "connector": "RequestsGet",
+        "url": "https://www.googleapis.com/customsearch/v1",
+        "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+        "post_query_template": {},
+        "http_request_headers": {},
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "cx=f047885d9696f447c,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "DateFinderResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
+        "result_mappings": "title=title,url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
+        "eval_credentials": "",
+        "tags": [
+            "Swirl",
+            "Documentation"
         ]
     }
 ]

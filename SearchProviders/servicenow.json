@@ -1,7 +1,6 @@
 [
     {
         "name": "ServiceNow Knowledge - ServiceNow.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -34,7 +33,6 @@
     },
     {
         "name": "ServiceNow Service Catalog - ServiceNow.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",

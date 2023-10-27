@@ -43,6 +43,13 @@ Make sure the Docker app is running before proceeding!
 curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
 ```
 
+* *Optional*: To enable Swirl's Real-Time Retrieval Augmented Generation (RAG) in Docker, run the following commands from the Console using a valid OpenAI API key:
+``` shell
+export MSAL_CB_PORT=8000
+export MSAL_HOST=localhost
+export OPENAI_API_KEY=‘<your-OpenAI-API-key>’
+```
+
 * On MacOS or Linux, run the following command from the Console:
 
 ``` shell
@@ -130,7 +137,7 @@ The most recent Search object will be displayed at the top. Click on the `result
 The Docker version of Swirl does *not* retain any data or configuration when shut down!
 
 {: .highlight }
-Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
+Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
 
 {: .highlight }
 Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
@@ -281,7 +288,7 @@ If the search page appears, click `Log Out` at the top, right. The Swirl login p
 Removing Swirl's `static/` content will also remove the Galaxy UI files! You will need to re-install Galaxy if you have removed Swirl's `static/` directory and then run either `python manage.py collectstatic` or `python swirl.py setup`.
 
 {: .highlight }
-Swirl includes four (4) Google Programmable Search Engines (PSEs), complete with shared credentials, to get you up and running right away. These credentials are shared with the Swirl Community.
+Swirl includes five (5) Google Programmable Search Engines (PSEs), complete with shared credentials, to get you up and running right away. These credentials are shared with the Swirl Community.
 
 {: .highlight }
 Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
