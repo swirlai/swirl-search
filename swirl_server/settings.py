@@ -46,11 +46,14 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django.contrib.admin',
     'django.contrib.auth',
+    'channels',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles'
 ]
+
+ASGI_APPLICATION = 'swirl_server.routing.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -201,7 +204,7 @@ CELERY_BEAT_SCHEDULE = {
          'schedule': crontab(minute=0,hour='*/4'),   # minute='*/10'
         },
 }
-
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BROKER_URL_DEF = 'redis://localhost:6379/0'
 CELERY_BROKER_URL = env('CELERY_BROKER_URL',default=CELERY_BROKER_URL_DEF)
 
@@ -274,3 +277,14 @@ SWIRL_WRITE_PATH_DEF = 'stored_results'
 SWIRL_WRITE_PATH = env('SWIRL_WRITE_PATH', default=SWIRL_WRITE_PATH_DEF)
 
 SWIRL_MAX_FIELD_LEN = 512
+
+CHANNEL_LAYERS = {
+    'default': {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(CELERY_BROKER_URL)],
+            'capacity': 300
+        },
+    },
+}
+ASGI_THREADS = 1000

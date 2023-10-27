@@ -1,7 +1,6 @@
 [
     {
         "name": "Hacker News Stories - HN.Algolia.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -32,7 +31,6 @@
     },
     {
         "name": "Hacker News Comments - HN.Algolia.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",

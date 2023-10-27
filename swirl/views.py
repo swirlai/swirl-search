@@ -123,8 +123,8 @@ def registration(request):
             confirmation_url = request.build_absolute_uri(confirmation_url)
             logger.debug(f"{module_name}: User registered: {confirmation_url}")
             send_mail(
-                'Register to try Swirl Metasearch Hosted!',
-                f'Hello! You have been invited to try Swirl Metasearch! Please click the following link to complete your registration: {confirmation_url}',
+                'Register to try Hosted Swirl!',
+                f'Hello! You have been invited to try Swirl! Please click the following link to complete your registration: {confirmation_url}',
                 settings.EMAIL_HOST_USER,
                 [user.email],
                 fail_silently=False,

@@ -1,7 +1,7 @@
 '''
 @author:     Sid Probstein
 @contact:    sid@swirl.today
-@version:    SWIRL 1.x
+@version:    Swirl 1.x
 '''
 import re
 import argparse
@@ -146,7 +146,7 @@ def start(service_list):
     if not is_running_celery_redis():
            print(f"Error: Celery requires redis, settings.CELERY_BROKER_URL:{settings.CELERY_BROKER_URL}\n"
                  f"settings.CELERY_RESULT_BACKEND:{settings.CELERY_RESULT_BACKEND} but it does not appear to be running,\n"
-                 "please consult the admin guide at https://github.com/swirlai/swirl-search/wiki/3.-Admin-Guide#installation.")
+                 "please consult the admin guide at https://docs.swirl.today/Admin-Guide#installation.")
            return False
 
     # start service_list
@@ -249,7 +249,7 @@ def status(service_list):
     dict_pid = load_swirl_file()
 
     if not dict_pid:
-        print(f"SWIRL does not appear to be running - .swirl not found")
+        print(f"Swirl does not appear to be running - .swirl not found")
         return True
 
     pid_string = ""
@@ -442,8 +442,8 @@ def help(service_list):
     # Now use the active_services list to print the available services
     print(f"Available commands: {', '.join(COMMAND_LIST)}")
     print(f"Available services: {', '.join(active_services)}, core ({', '.join(SWIRL_CORE_SERVICES)})\n")
-    print("The start, status, stop and restart commands default to all SWIRL services.")
-    print("Most optionally accept one or more SWIRL service names, separated by spaces.")
+    print("The start, status, stop and restart commands default to all Swirl services.")
+    print("Most optionally accept one or more Swirl service names, separated by spaces.")
     print()
 
     result = True
@@ -452,7 +452,7 @@ def help(service_list):
 
 def setup(service_list):
 
-    print("Setting Up SWIRL:")
+    print("Setting Up Swirl:")
 
     result = migrate(service_list)
     if not result:
@@ -488,9 +488,9 @@ def main(argv):
     print(f"{SWIRL_BANNER}")
     print()
 
-    parser = argparse.ArgumentParser(description="Manage the SWIRL server")
+    parser = argparse.ArgumentParser(description="Manage the Swirl server")
     parser.add_argument('command', nargs='+', help="Specify 'help' to get a list of available commands")
-    parser.add_argument('-d', '--debug', action="store_true", help="start SWIRL in debug mode")
+    parser.add_argument('-d', '--debug', action="store_true", help="start Swirl in debug mode")
     args = parser.parse_args()
 
     if args.debug:

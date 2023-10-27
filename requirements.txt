@@ -26,5 +26,7 @@ pyahocorasick
 redis
 xmltodict
 readability-lxml
-
-
+tiktoken
+channels
+channels-redis
+tika

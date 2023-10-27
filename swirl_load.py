@@ -24,7 +24,7 @@ def main(argv):
     print(f"{SWIRL_BANNER}")
     print()
     # arguments
-    parser = argparse.ArgumentParser(description="Bulk load SWIRL SEARCH objects in json format")
+    parser = argparse.ArgumentParser(description="Bulk load Swirl objects in json format")
     parser.add_argument('filespec', help="path to one or more json files to load, optionally including wildcards, example folder-name/*.txt")
     parser.add_argument('-d', '--debug', action="store_true", help="provide debugging information")
     parser.add_argument('-u', '--username')
@@ -70,7 +70,7 @@ def main(argv):
             json_list.append(json_data)
         
         if args.debug:
-            print(f"{module_name}: debug: SWIRL='{args.swirl}'")
+            print(f"{module_name}: debug: Swirl='{args.swirl}'")
 
         records = 0
         errors = 0
@@ -106,7 +106,7 @@ def main(argv):
             # end if
         # end for
 
-        print(f"{module_name}: fed {records} into SWIRL, {errors} errors")
+        print(f"{module_name}: fed {records} into Swirl, {errors} errors")
 
 #############################################    
     

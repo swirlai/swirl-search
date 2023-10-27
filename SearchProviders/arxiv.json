@@ -1,6 +1,5 @@
 {
     "name": "arXiv - ArXiv.org",
-    "shared": true,
     "active": false,
     "default": false,
     "authenticator": "",
