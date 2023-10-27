@@ -274,8 +274,8 @@ Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up 
 
 * As of Release 3.0.0:
     * Swirl includes SearchProviders for [Blockchain.com](https://www.blockchain.com/) Bitcoin transactions and addresses as well as for [Crunchbase](https://www.crunchbase.com/) organizations.
-    * A new Google PSE SearchProvider that specifically targets [Swirl's new documentation website](https://docs.swirl.today/) is included and active by default.
-    * The EuropePMC SearchProvider is now active by default and configured to return Retrieval Augmented Generation (RAG) results.
+    * A new Google PSE SearchProvider that targets the [new Swirl documentation website](https://docs.swirl.today/) is included and enabled by default.
+    * The EuropePMC SearchProvider is preloaded, set to active status, and configured to participate in Retrieval Augmented Generation (RAG) by default.
 
 ## Activating
 
