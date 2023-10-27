@@ -22,7 +22,7 @@ This guide details how to configure and tune Swirl (v. 3.0 or newer) to perform 
 
 # Setting up RAG
 
-1. Install Swirl 3.0 as noted in the [Quick Start Guide](Quick-Start.md), including the latest version of the Galaxy UI.
+1. Install Swirl 3.0 as noted in the [Quick Start Guide](Quick-Start.md#local-installation), including the latest version of the Galaxy UI.
 
 2. Add an OpenAI API key to the `.env` file:
 ```
@@ -43,7 +43,7 @@ OPENAI_API_KEY=your-key-here
 ```
 *This default `ws:` can be used locally but should NEVER be done in production since it is not secure!*
 
-4. Add the following configuration to the `page_fetch_config_json parameter` of each SearchProvider you wish to have participate in RAG:
+4. Add the following configuration to the `page_fetch_config_json` parameter of each SearchProvider you wish to have participate in RAG:
 ```
 "page_fetch_config_json": {
         "cache": "false",
@@ -72,7 +72,7 @@ python swirl.py restart
 9. Click the "Generate AI Response" switch. A spinner will appear. The RAG response will appear in 5-15 seconds :slightly_smiling_face: depending on a variety of factors.
 ![Galaxy with human directed RAG AI insight](images/swirl_rag_pulmonary_3.png)
 
-10. Verify the RAG insight you received by reviewing the citations - result numbers, in brackets, at the end of the relevant passage.  
+10. Verify the RAG insight you received by reviewing the citations at the end RAG response. 
 
 ## Notes
 
