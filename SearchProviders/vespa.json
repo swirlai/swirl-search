@@ -1,7 +1,7 @@
 {
   "name": "Vespa",
   "active": true,
-  "default": false,
+  "default": true,
   "connector": "VespaRestSearch",
   "url": "https://localhost:8080/search/",
   "query_template": "{url}?query={query_string}&fields={fields}&hits={hits}",
