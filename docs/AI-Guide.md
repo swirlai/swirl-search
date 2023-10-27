@@ -29,19 +29,19 @@ This guide details how to configure and tune Swirl (v. 3.0 or newer) to perform 
 OPENAI_API_KEY=your-key-here
 ```
 
-3. If installing locally, for non-production use ONLY, change the following line in `static/api/config/default` from:
+3. When installing for PRODUCTION use, change the following line in `static/api/config/default` from:
 ```
 "webSocketConfig": {
-    "url": "wss://localhost:8000/chatgpt-data"
+    "url": "ws://localhost:8000/chatgpt-data"
   }
 ``` 
 ...to...
 ```
 "webSocketConfig": {
-    "url": "ws://localhost:8000/chatgpt-data"
+    "url": "wss://localhost:8000/chatgpt-data"
   }
 ```
-*This should NEVER be done in production since `ws:` is not secure!*
+*This default `ws:` can be used locally but should NEVER be done in production since it is not secure!*
 
 4. Add the following configuration to the `page_fetch_config_json parameter` of each SearchProvider you wish to have participate in RAG:
 ```
@@ -53,9 +53,7 @@ OPENAI_API_KEY=your-key-here
         "timeout": 10
 }, 
 ```
-Adjust the `timeout` value if necessary. Change the `User-Agent` string as needed, and/or authorize it to fetch pages from internal applications. Note that this configuration item has already been added to the following providers:
-* [European PMC](../SearchProviders/europe_pmc.json)
-* TBD others
+Adjust the `timeout` value if necessary. Change the `User-Agent` string as needed, and/or authorize it to fetch pages from internal applications. Note that this configuration item has already been added to the [European PMC](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/europe_pmc.json) SearchProvider.
 
 5. Restart Swirl: 
 ```
