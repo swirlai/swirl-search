@@ -29,7 +29,7 @@ MODEL = MODEL_3
 MODEL_TOK_MAX = MODEL_3_TOK_MAX
 MODEL_DEFAULT_SYSTEM_GUIDE = "You are a helpful assistant who considers recent information when answering questions."
 FETCH_TO_SECS=10
-DO_MESSAGE_MOCK_ON_ERROR=True
+DO_MESSAGE_MOCK_ON_ERROR=False
 MESSAGE_MOCK_ON_ERROR=f"Mock API resposne from {MODEL}. This is a mock response for testing purpose only."
 
 from celery.utils.log import get_task_logger
