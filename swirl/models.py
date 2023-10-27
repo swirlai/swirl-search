@@ -68,6 +68,7 @@ class SearchProvider(models.Model):
     })
     CONNECTOR_CHOICES = [
         ('ChatGPT', 'ChatGPT Query String'),
+        ('YahooSearch', 'YahooSearch Query String'),
         ('RequestsGet', 'HTTP/GET returning JSON'),
         ('RequestsPost', 'HTTP/POST returning JSON'),
         ('Elastic', 'Elasticsearch Query String'),

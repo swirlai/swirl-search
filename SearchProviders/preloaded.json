@@ -1158,5 +1158,29 @@
             "Swirl",
             "Documentation"
         ]
+    },
+    {
+        "name": "Yahoo Search",
+        "active": false,
+        "default": true,
+        "connector": "yahoosearch",
+        "url": "",
+        "query_template": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "p='{query_to_provider}'",
+        "result_processors": [
+            "GenericResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "BLOCK=ai_summary",
+        "results_per_query": 10,
+        "credentials": "your-serpapi-API-key-here",
+        "tags": [
+            "Yahoo",
+            "Query",
+            "SearchEngine"
+        ]
     }
 ]
