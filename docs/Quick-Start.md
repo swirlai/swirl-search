@@ -43,6 +43,13 @@ Make sure the Docker app is running before proceeding!
 curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
 ```
 
+* *Optional*: To enable Swirl's Real-Time Retrieval Augmented Generation (RAG) in Docker, run the following commands from the Console using a valid OpenAI API key:
+``` shell
+export MSAL_CB_PORT=8000
+export MSAL_HOST=localhost
+export OPENAI_API_KEY=‘<your-OpenAI-API-key>’
+```
+
 * On MacOS or Linux, run the following command from the Console:
 
 ``` shell

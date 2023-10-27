@@ -18,7 +18,7 @@ nav_order: 3
 
 This guide is intended for developers, data scientists, program managers, or anyone who wants to use Swirl, including searching and customizing SearchProviders. 
 
-For background information on Swirl, please review [What is Metasearch](Home#what-is-metasearch-is-it-the-same-as-federated-search) and [What is Swirl Metasearch?](Home#what-is-swirl-metasearch).
+For background information on Swirl, please review the [Swirl Overview](index.md).
 
 # Terminology
 
