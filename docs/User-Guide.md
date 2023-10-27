@@ -49,7 +49,7 @@ If the search page appears, click `Log Out` at the top, right. The Swirl login p
 The Docker version of Swirl does *not* retain any data or configuration when shut down!
 
 {: .highlight }
-Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
+Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
 
 {: .highlight }
 Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
@@ -214,7 +214,7 @@ SearchProviders are the essential element of Swirl. They make it quick and easy 
 SearchProviders are JSON objects. Swirl's distribution comes preloaded with a variety of configurations for sources like Elastic, Solr, PostgreSQL, BigQuery, NLResearch.com, Miro.com, Atlassian, and more.
 
 {: .highlight }
-Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
+Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
 
 [SearchProvider Example JSON](https://github.com/swirlai/swirl-search/tree/main/SearchProviders)
 
@@ -222,7 +222,9 @@ Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up 
 | ---------- | ---------- | ---------- | 
 | arxiv.json | Searches the [arXiv.org](https://arxiv.org/) repository of scientific papers | No authorization required |
 | atlassian.json | Atlassian [Confluence Cloud](https://www.atlassian.com/software/confluence) and [Jira Cloud](https://www.atlassian.com/software/jira) | Requires a bearer token; Confluence searches the [CQL `text~` content](https://developer.atlassian.com/server/confluence/performing-text-searches-using-cql/) and Jira searches the [JQL `text~` content](https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-searching-in-jira-cloud/#Advancedsearching-textPerformingtextsearches) |
+| blockchain-bitcoin.json | Searches [Blockchain.com](https://www.blockchain.com/) for specific Bitcoin Addresses (wallets) and Transactions IDs (hashes) | Requires a Blockchain.com API key |
 | chatgpt.json | ChatGPT AI chatbot | Requires an OpenAI API key |
+| crunchbase.json | Searches organizations via the [Crunchbase](https://www.crunchbase.com/) basic API | Requires a Crunchbase.com API key |
 | document_db.json | SQLite3 document database | [documents_db.csv](https://github.com/swirlai/swirl-search/tree/main/Data/documents_db.csv) |
 | elastic_cloud.json | elasticsearch, cloud version | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) requires cloud_id, credentials |
 | elasticsearch.json | elasticsearch, local install | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) requires host, port, credentials | 
@@ -232,7 +234,7 @@ Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up 
 | funding_db_sqlite3.json  | SQLite3 funding database  | [Funding Dataset](Developer-Reference.md#funding-data-set) |
 | github.json | Searches public repositories for Code, Commits, Issues, and Pull Requests | Requires a bearer token |
 | google_news.json | Searches the [Google News](https://news.google.com/) feed | No authorization required |
-| google_pse.json | Four Google Programmable Search Engines (PSE) | Includes shared Swirl credentials; may return a 429 error if overused |
+| google_pse.json | Five Google Programmable Search Engines (PSE) | Includes shared Swirl credentials; may return a 429 error if overused |
 | hacker_news.json | Queries a [searchable version](https://hn.algolia.com/) of the Hacker News feeds | No authorization required |
 | http_get_with_auth.json | Generic HTTP GET query with basic authentication | Requires url, credentials | 
 | http_post_with_auth.json | Generic HTTP POST query with basic authentication | Requires url, credentials |
@@ -269,6 +271,11 @@ Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up 
         * The ChatGPT SearchProvider now queries the GPT-3.5-Turbo model by default.
 
 * As of Release 2.6, Swirl includes SearchProviders for [ServiceNow](https://www.servicenow.com/) (Knowledge and Service Catalog), [Google News](https://news.google.com/) and a searchable version of the [Hacker News](https://hn.algolia.com/) feeds.
+
+* As of Release 3.0.0:
+    * Swirl includes SearchProviders for [Blockchain.com](https://www.blockchain.com/) Bitcoin transactions and addresses as well as for [Crunchbase](https://www.crunchbase.com/) organizations.
+    * A new Google PSE SearchProvider that specifically targets [Swirl's new documentation website](https://docs.swirl.today/) is included and active by default.
+    * The EuropePMC SearchProvider is now active by default and configured to return Retrieval Augmented Generation (RAG) results.
 
 ## Activating
 
