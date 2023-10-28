@@ -1,0 +1,15 @@
+// Site Title
+// We replaced this with the logo option; leaving this in case we switch back
+a.site-title.lh-tight {
+    text-wrap: nowrap;
+}
+
+// In-Page ToC
+.text-delta {
+    color: goldenrod;
+    font-weight: bold;
+}
+#markdown-toc li a {
+    color: goldenrod;
+    font-weight: lighter;
+}
