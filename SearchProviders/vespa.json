@@ -1,0 +1,20 @@
+{
+  "name": "Vespa",
+  "active": true,
+  "default": true,
+  "connector": "VespaRestSearch",
+  "url": "https://localhost:8080/search/",
+  "query_template": "{url}?query={query_string}&fields={fields}&hits={hits}",
+  "query_processors": ["AdaptiveQueryProcessor"],
+  "query_mappings": "",
+  "result_processors": [
+    "MappingResultProcessor",
+    "LenLimitingResultProcessor",
+    "CosineRelevancyResultProcessor"
+  ],
+  "response_mappings": "RESULTS=root_object.hits.hits, FOUND=root_object.hits.found, RETRIEVED=root_object.hits.retrieved",
+  "result_mappings": "title=fields.title, body=fields.id|fields.resource_type|fields.resource_subtype, author=fields.author, date_published=fields.date_published, url=fields.url",
+  "results_per_query": 10,
+  "credentials": "",
+  "tags": ["Vespa", "Search"]
+}
