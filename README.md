@@ -79,6 +79,11 @@ Swirl adapts and distributes user queries to anything with a search API - search
 
 <br/>
 
+### All Thanks To Our Contributors:
+<a href="https://github.com/swirlai/swirl-search/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=swirlai/swirl-search" />
+</a>
+
 # 🔥 Try Swirl Now In Docker
 
 ## Prerequisites
