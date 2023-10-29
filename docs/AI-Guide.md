@@ -74,7 +74,12 @@ python swirl.py restart
 
 10. Verify the RAG insight you received by reviewing the citations at the end RAG response. 
 
+{: .warning }
+In Release 3.0, the RAG process utilizes only the *first 10 results* that are selected either automatically or manually using the "Select Items" option.
+
 ## Notes
+
+* To cancel a RAG process, click the "Generate AI Summary" toggle off during the run.
 
 * Swirl does not recommend RAG with public web data due to difficulties extracting article content; for those seeking a solution for public data please [contact Swirl](mailto:hello@swirl.today).
 

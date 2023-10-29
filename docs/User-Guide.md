@@ -552,7 +552,8 @@ The following table explains the `result_mappings` options:
 | swirl_key = source_key1\|source_key2\|source_keyN | This maps multiple keys from the source provider's result list to Swirl's result list; as [noted above](#multiple-mappings) the first populated field is mapped and the rest are copied to the PAYLOAD | `body=content\|description,...` |
 | swirl_key='template {variable} etc' | This allows any number of source provider result fields to be turned into a string that is then copied to a Swirl field (like `body`) or the PAYLOAD. Commas (,) are not supported in the string at this time. | `'{x}: {y}'=title` |
 | source_key | This maps a key from the source provider's raw format to Swirl's result PAYLOAD. | `cacheId, _source.products` |
-| sw_urlencode | An optional directive which will cause the specified value to be URL encoded; it can be used anyplace the template such as `url` field mappings. | `url=sw_urlencode(<hitId>)` |
+| sw_urlencode | An optional directive which will cause the specified value to be URL encoded; it can be used anyplace in the template such as `url` field mappings. | `url=sw_urlencode(<hitId>)` |
+| sw_btcconvert | An optional directive which will convert the provided Satoshi value to Bitcoin; it can be used anyplace in the template such as `result_mappings` | `sw_btcconvert(<fee>)` |
 | NO_PAYLOAD | By default, Swirl copies all result keys from the SearchProvider to the PAYLOAD. If `NO_PAYLOAD` is specified, Swirl copies only the explicitly mapped fields.| `NO_PAYLOAD` |
 | FILE_SYSTEM | If specified, Swirl will assume that this SearchProvider is a file system and weight matches against the `body` higher. | `FILE_SYSTEM` |
 | BLOCK | If specified, Swirl will place this SearchProvider's results in a separate, top-level JSON result block named as specified, and note this in the appropriate `info` blocks. | `BLOCK=ai_summary` |
