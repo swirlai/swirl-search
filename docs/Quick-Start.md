@@ -47,7 +47,7 @@ curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.
 ``` shell
 export MSAL_CB_PORT=8000
 export MSAL_HOST=localhost
-export OPENAI_API_KEY=‘<your-OpenAI-API-key>’
+export OPENAI_API_KEY='<your-OpenAI-API-key>'
 ```
 
 * On MacOS or Linux, run the following command from the Console:
