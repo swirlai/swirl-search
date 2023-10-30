@@ -1,9 +1,7 @@
 name: DockerBuild
 
-# disabling 05:05 daily build and leaving this syntax for posterity
-# on:
-#  schedule:
-#  - cron: '05 05 * * *'
+# Build a multi-arch docker image for Swirl
+# comment to start build
 
 on:
   workflow_dispatch:

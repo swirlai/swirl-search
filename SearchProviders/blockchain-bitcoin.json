@@ -1,0 +1,68 @@
+[
+    {
+        "name": "Bitcoin Transaction - Blockchain.com",
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "RequestsGet",
+        "url": "https://blockchain.info/rawtx/",
+        "query_template": "{url}{query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {
+            "X-API-Token": "<your-blockchain.com-api-key>"
+        },
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title='Bitcoin Hash ID {hash}',body='Transaction ID {hash} sent {sw_btcconvert(inputs[*].prev_out.value)} BTC from these addresses {inputs[*].prev_out.addr} to these addresses {out[*].addr} for a fee of {sw_btcconvert(fee)} BTC.',date_published=time,url='https://www.blockchain.com/explorer/transactions/btc/{hash}',ver,weight,size,block_index,lock_time,double_spend,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Blockchain",
+            "Bitcoin",
+            "HashID"
+        ]
+    },
+    {
+        "name": "Bitcoin Address - Blockchain.com",
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "RequestsGet",
+        "url": "https://blockchain.info/rawaddr/",
+        "query_template": "{url}{query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {
+            "X-API-Token": "<your-blockchain.com-api-key>"
+        },
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title='Bitcoin Address {address}',body='Bitcoin wallet {address} has made {n_tx} transactions. It has sent {sw_btcconvert(total_sent)} BTC and has received {sw_btcconvert(total_received)} BTC. The current value of this wallet is {sw_btcconvert(final_balance)} BTC.',date_published=txs[0].time,url='https://www.blockchain.com/explorer/addresses/btc/{address}',hash160,n_unredeemed,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Blockchain",
+            "Bitcoin",
+            "Wallet"
+        ]
+    }    
+]

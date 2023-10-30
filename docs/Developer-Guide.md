@@ -657,6 +657,44 @@ Notes:
 * Import new mixers in [`swirl/mixers/__init__.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/mixers/__init__.py)
 * Add new mixers to the appropriate `CHOICES` section of [`swirl/models.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) - note this will require [database migration](Admin-Guide.md#database-migration)
 
+# Retrieval Augmented Generation Web Socket API
+
+## WebSocket Interaction Protocol for UI Developers 
+Available as of Swirl 3.0:  This section outlines the protocol for WebSocket interactions with the Swirl server.
+
+1. Initialize the WebSocket
+- **Action:** Create a WebSocket connection.
+- **Parameters:**
+        * `searchId`: Swirl unique identifier of a search
+        * `ragItems`: Optional array of integer that identify an individual search result in the search result of the search.
+- **Behavior:** Initializes a new WebSocket connection. Send the initial information (like `searchId` and `ragItems`) to the server. This setup is required before any data exchange can happen. **NOTE:** Necessary authentication should be handled before attempting to establish a WebSocket connection. This might involve sending a token or other credentials.
+
+2. Sending Data
+- **Action:** Send a RAG message over the WebSocket connection.
+- **Parameters:**
+        * `data`: Can be either an empty message, which initiates the RAG processing or a `stop` command. Stop will cleanly shutdown the currently running RAG for the search ID used in establishing the connection.
+
+3. Receiving Data
+- **Action:** Receive rag result data from the WebSocket connection.
+- **Return Value:** A JSON RAG result with the following structure, or simple `No data` if no response was available due to error:
+``` shell
+{
+        'message': {
+          'date_published':<timestamp-response-creation>
+          'title':<query-string>,
+          'body':<ai_repsonse>,
+          'author':'ChatGPT'
+          'searchprovider':'ChatGPT'
+          'searchprovider_rank':1
+          'result_block':'ai_summary'
+          'rag_query_items':[<list-of-rag-items-passed-in>]
+        }
+ }       
+```
+4. Connection Teardown
+- **Action:** Properly close the WebSocket connection.
+- **Behavior:** Closes the WebSocket connection gracefully.
+
 # Using Query Transformations
 
 ## Query Transformation Rules

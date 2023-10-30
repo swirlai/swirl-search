@@ -205,9 +205,23 @@ def select_providers(providers, start_tag, tags_in_query_list):
         # end if
     # end for
 
-    # For the case of mis-spelled or non-existant start tag, there can be no providers that match, in that
+    # For the case of misspelled or non-existent start tag, there can be no providers that match, in that
     # case return all providers that have default == true
     if len(selected_provider_list) == 0:
         selected_provider_list = default_provider_list
 
     return selected_provider_list
+
+def generate_unique_id():
+    return str(uuid.uuid4())
+
+def remove_file(filename):
+    if filename and os.path.exists(filename):
+        try:
+            os.remove(filename)
+        except Exception as err:
+            logger.error(f"Failed to delete file {filename}. Error: {err}")
+
+def make_dir_if_not_exist(dir_name):
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)

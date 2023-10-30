@@ -18,7 +18,7 @@ nav_order: 3
 
 This guide is intended for developers, data scientists, program managers, or anyone who wants to use Swirl, including searching and customizing SearchProviders. 
 
-For background information on Swirl, please review [What is Metasearch](Home#what-is-metasearch-is-it-the-same-as-federated-search) and [What is Swirl Metasearch?](Home#what-is-swirl-metasearch).
+For background information on Swirl, please review the [Swirl Overview](index.md).
 
 # Terminology
 
@@ -49,7 +49,7 @@ If the search page appears, click `Log Out` at the top, right. The Swirl login p
 The Docker version of Swirl does *not* retain any data or configuration when shut down!
 
 {: .highlight }
-Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
+Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
 
 {: .highlight }
 Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
@@ -214,7 +214,7 @@ SearchProviders are the essential element of Swirl. They make it quick and easy 
 SearchProviders are JSON objects. Swirl's distribution comes preloaded with a variety of configurations for sources like Elastic, Solr, PostgreSQL, BigQuery, NLResearch.com, Miro.com, Atlassian, and more.
 
 {: .highlight }
-Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
+Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
 
 [SearchProvider Example JSON](https://github.com/swirlai/swirl-search/tree/main/SearchProviders)
 
@@ -222,7 +222,9 @@ Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up 
 | ---------- | ---------- | ---------- | 
 | arxiv.json | Searches the [arXiv.org](https://arxiv.org/) repository of scientific papers | No authorization required |
 | atlassian.json | Atlassian [Confluence Cloud](https://www.atlassian.com/software/confluence) and [Jira Cloud](https://www.atlassian.com/software/jira) | Requires a bearer token; Confluence searches the [CQL `text~` content](https://developer.atlassian.com/server/confluence/performing-text-searches-using-cql/) and Jira searches the [JQL `text~` content](https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-searching-in-jira-cloud/#Advancedsearching-textPerformingtextsearches) |
+| blockchain-bitcoin.json | Searches [Blockchain.com](https://www.blockchain.com/) for specific Bitcoin Addresses (wallets) and Transactions IDs (hashes) | Requires a Blockchain.com API key |
 | chatgpt.json | ChatGPT AI chatbot | Requires an OpenAI API key |
+| crunchbase.json | Searches organizations via the [Crunchbase](https://www.crunchbase.com/) basic API | Requires a Crunchbase.com API key |
 | document_db.json | SQLite3 document database | [documents_db.csv](https://github.com/swirlai/swirl-search/tree/main/Data/documents_db.csv) |
 | elastic_cloud.json | elasticsearch, cloud version | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) requires cloud_id, credentials |
 | elasticsearch.json | elasticsearch, local install | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) requires host, port, credentials | 
@@ -232,7 +234,7 @@ Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up 
 | funding_db_sqlite3.json  | SQLite3 funding database  | [Funding Dataset](Developer-Reference.md#funding-data-set) |
 | github.json | Searches public repositories for Code, Commits, Issues, and Pull Requests | Requires a bearer token |
 | google_news.json | Searches the [Google News](https://news.google.com/) feed | No authorization required |
-| google_pse.json | Four Google Programmable Search Engines (PSE) | Includes shared Swirl credentials; may return a 429 error if overused |
+| google_pse.json | Five Google Programmable Search Engines (PSE) | Includes shared Swirl credentials; may return a 429 error if overused |
 | hacker_news.json | Queries a [searchable version](https://hn.algolia.com/) of the Hacker News feeds | No authorization required |
 | http_get_with_auth.json | Generic HTTP GET query with basic authentication | Requires url, credentials | 
 | http_post_with_auth.json | Generic HTTP POST query with basic authentication | Requires url, credentials |
@@ -269,6 +271,11 @@ Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up 
         * The ChatGPT SearchProvider now queries the GPT-3.5-Turbo model by default.
 
 * As of Release 2.6, Swirl includes SearchProviders for [ServiceNow](https://www.servicenow.com/) (Knowledge and Service Catalog), [Google News](https://news.google.com/) and a searchable version of the [Hacker News](https://hn.algolia.com/) feeds.
+
+* As of Release 3.0.0:
+    * Swirl includes SearchProviders for [Blockchain.com](https://www.blockchain.com/) Bitcoin transactions and addresses as well as for [Crunchbase](https://www.crunchbase.com/) organizations.
+    * A new Google PSE SearchProvider that targets the [new Swirl documentation website](https://docs.swirl.today/) is included and enabled by default.
+    * The EuropePMC SearchProvider is preloaded, set to active status, and configured to participate in Retrieval Augmented Generation (RAG) by default.
 
 ## Activating
 
@@ -545,7 +552,8 @@ The following table explains the `result_mappings` options:
 | swirl_key = source_key1\|source_key2\|source_keyN | This maps multiple keys from the source provider's result list to Swirl's result list; as [noted above](#multiple-mappings) the first populated field is mapped and the rest are copied to the PAYLOAD | `body=content\|description,...` |
 | swirl_key='template {variable} etc' | This allows any number of source provider result fields to be turned into a string that is then copied to a Swirl field (like `body`) or the PAYLOAD. Commas (,) are not supported in the string at this time. | `'{x}: {y}'=title` |
 | source_key | This maps a key from the source provider's raw format to Swirl's result PAYLOAD. | `cacheId, _source.products` |
-| sw_urlencode | An optional directive which will cause the specified value to be URL encoded; it can be used anyplace the template such as `url` field mappings. | `url=sw_urlencode(<hitId>)` |
+| sw_urlencode | An optional directive which will cause the specified value to be URL encoded; it can be used anyplace in the template such as `url` field mappings. | `url=sw_urlencode(<hitId>)` |
+| sw_btcconvert | An optional directive which will convert the provided Satoshi value to Bitcoin; it can be used anyplace in the template such as `result_mappings` | `sw_btcconvert(<fee>)` |
 | NO_PAYLOAD | By default, Swirl copies all result keys from the SearchProvider to the PAYLOAD. If `NO_PAYLOAD` is specified, Swirl copies only the explicitly mapped fields.| `NO_PAYLOAD` |
 | FILE_SYSTEM | If specified, Swirl will assume that this SearchProvider is a file system and weight matches against the `body` higher. | `FILE_SYSTEM` |
 | BLOCK | If specified, Swirl will place this SearchProvider's results in a separate, top-level JSON result block named as specified, and note this in the appropriate `info` blocks. | `BLOCK=ai_summary` |

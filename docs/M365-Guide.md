@@ -207,6 +207,9 @@ The local Teams app must already be open when clicking a Teams Chat result link 
 {: .highlight }
 For results containing recurring Microsoft 365 Calendar events or nested Outlook Message threads, only the most recent events and messages are shown.
 
+{: .highlight }
+In version 3.0.0, the OneDrive SearchProvider was updated to omit folders as results; it now only returns documents.
+
 * Open the admin console: <http://localhost:8000/swirl/>
 
 * Click `SearchProviders` to access the JSON endpoint listing all SearchProviders. 

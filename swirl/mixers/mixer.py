@@ -1,7 +1,7 @@
 '''
 @author:     Sid Probstein
 @contact:    sid@swirl.today
-@version:    SWIRL 1.3
+@version:    Swirl 1.3
 '''
 import json
 from urllib.parse import urlparse
