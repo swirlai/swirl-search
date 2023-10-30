@@ -14,10 +14,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Print Branch Name for Dispatch
+      if: github.event_name == 'workflow_dispatch'
+      run: echo "Running on branch (Dispatch) ${{ github.ref }}"
     - name: Print Branch Name for Workflow Run
       if: github.event_name == 'workflow_run'
-      run: echo "Running on branch (Workflow Run) ${{ github.event.workflow_run.outputs.branch }}"
-
+      run: echo "Running on branch (Workflow Run) ${{ github.event.workflow_run.outputs.branch_name }}"
     - name: Checkout code with specific branch
       uses: actions/checkout@v3
       with:
