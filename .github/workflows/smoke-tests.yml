@@ -15,7 +15,8 @@ jobs:
 
     steps:
     - name: Print Branch Name
-      run: echo "Running on reference: $GITHUB_REF"
+      run: |
+        echo "Running on reference: ${{ github.ref }}"
     - name: Checkout code with specific branch
       uses: actions/checkout@v3
     - name: Set up Python
