@@ -30,11 +30,12 @@ jobs:
       run: ./install-test.sh
     - name: Run pytest unit tests
       run: pytest
-    - name: Set branch name
-      id: extract_branch
+    - name: Write branch name to file
       run: |
-        BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
-        echo "branch=$BRANCH_NAME" >> $GITHUB_ENV
-
-    outputs:
-      branch_name: ${{ steps.extract_branch.outputs.branch }}
+        echo $(echo $GITHUB_REF | cut -d "/" -f 3) > branch.txt
+    
+    - name: Upload branch name as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: branch-name
+        path: branch.txt
