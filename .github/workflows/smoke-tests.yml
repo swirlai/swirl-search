@@ -20,12 +20,14 @@ jobs:
         name: branch-name
     - name: Read and print branch name
       run: |
+        cat branch.txt
         BRANCH_NAME=$(cat branch.txt)
+        echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
         echo "Running on branch $BRANCH_NAME"
     - name: Checkout code with specific branch
       uses: actions/checkout@v3
       with:
-        ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.workflow_run.outputs.branch_name }}
+        ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || env.BRANCH_NAME }}      
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
