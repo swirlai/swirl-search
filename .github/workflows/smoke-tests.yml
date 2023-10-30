@@ -16,7 +16,7 @@ jobs:
     steps:
     - name: Print Branch Name
       run: echo "Running on branch ${{ github.event.workflow_run.head_branch }}"
-
+    
     - name: Checkout code with specific branch
       uses: actions/checkout@v3
       with:

@@ -17,9 +17,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Print Branch Name
-      run: echo "Running on branch ${{ github.event.workflow_run.head_branch }}"
-
     - name: Checkout the code
       uses: actions/checkout@v3
     - name: Set up Python
