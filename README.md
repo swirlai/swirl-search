@@ -10,7 +10,7 @@
 
 <div align="center">
 
-### Swirl is open-source software that simultaneously searches multiple content sources and returns AI ranked results.
+### Swirl is open source software that simultaneously searches multiple content sources and returns AI ranked results.
 
 <div align="center">
 
@@ -201,7 +201,7 @@ For information about Swirl as a managed service, please [contact us](mailto:hel
 
 # 📖 Documentation
 
-[Overview](https://docs.swirl.today/) | [Quick Start](https://docs.swirl.today/Quick-Start) | [User Guide](https://docs.swirl.today/User-Guide) | [Admin Guide](https://docs.swirl.today/Admin-Guide) | [M365 Guide](https://docs.swirl.today/M365-Guide) | [Developer Guide](https://docs.swirl.today/Developer-Guide) | [Developer Reference](https://docs.swirl.today/Developer-Reference)
+[Overview](https://docs.swirl.today/) | [Quick Start](https://docs.swirl.today/Quick-Start) | [User Guide](https://docs.swirl.today/User-Guide) | [Admin Guide](https://docs.swirl.today/Admin-Guide) | [M365 Guide](https://docs.swirl.today/M365-Guide) | [Developer Guide](https://docs.swirl.today/Developer-Guide) | [Developer Reference](https://docs.swirl.today/Developer-Reference) | [AI Guide](https://docs.swirl.today/AI-Guide)
 
 <br/>
 
@@ -216,6 +216,3 @@ At Swirl, every user matters to us. Whether you're a beginner finding your way o
 * 💼 **Request A Connector (Enterprise Support)** Want to see a new connector quickly and fast. Contact the Swirl Team at: [support@swirl.today](mailto:support@swirl.today)
 
 Remember, you're part of our family now. 🌍💙
-
-
-<br/>
