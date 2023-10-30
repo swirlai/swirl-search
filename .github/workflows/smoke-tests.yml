@@ -15,12 +15,12 @@ jobs:
 
     steps:
     - name: Print Branch Name
-      run: echo "Running on branch ${{ github.event.workflow_run.head_branch }}"
+      run: echo "Running on branch ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.workflow_run.outputs.branch_name }}"
     
     - name: Checkout code with specific branch
       uses: actions/checkout@v3
       with:
-        ref: ${{ github.event.workflow_run.head_branch }}
+        ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.workflow_run.outputs.branch_name }}
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
