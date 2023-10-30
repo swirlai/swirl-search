@@ -6,7 +6,7 @@ on:
       - 'docs/**'
       - '.github/**'
       - 'README.md'
-    # only trigger on branches, not on tags
+    # Only trigger on branches, not on tags
     branches: 'main'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -29,3 +29,11 @@ jobs:
       run: ./install-test.sh
     - name: Run pytest unit tests
       run: pytest
+    - name: Set branch name
+      id: extract_branch
+      run: |
+        BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
+        echo "::set-output name=branch::$BRANCH_NAME"
+
+    outputs:
+      branch_name: ${{ steps.extract_branch.outputs.branch }}
