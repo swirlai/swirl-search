@@ -15,15 +15,25 @@ jobs:
 
     steps:
     - name: Download branch name artifact
+      if: github.event_name == 'workflow_run'
       uses: actions/download-artifact@v2
       with:
         name: branch-name
-    - name: Read and print branch name
+    
+    - name: Read and set branch name
+      if: github.event_name == 'workflow_run'
       run: |
-        cat branch.txt
         BRANCH_NAME=$(cat branch.txt)
         echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
         echo "Running on branch $BRANCH_NAME"
+    
+    - name: Set branch for manual run
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
+        echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+        echo "Running on branch $BRANCH_NAME"
+    
     - name: Checkout code with specific branch
       uses: actions/checkout@v3
       with:
