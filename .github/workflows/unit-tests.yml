@@ -34,7 +34,7 @@ jobs:
       id: extract_branch
       run: |
         BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
-        echo "::set-output name=branch::$BRANCH_NAME"
+        echo "branch=$BRANCH_NAME" >> $GITHUB_ENV
 
     outputs:
       branch_name: ${{ steps.extract_branch.outputs.branch }}
