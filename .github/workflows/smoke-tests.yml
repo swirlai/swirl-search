@@ -14,6 +14,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Print event payload
+      run: echo "$PAYLOAD"
+      env:
+        PAYLOAD: ${{ toJson(github.event) }}
     - name: Download branch artifact
       uses: actions/download-artifact@v3
       with:
