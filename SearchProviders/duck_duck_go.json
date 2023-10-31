@@ -1,0 +1,19 @@
+{
+  "name": "DuckDuckGo", 
+  "active": false, 
+  "default": false, 
+  "connector": "RequestsGet", 
+  "url": "https://api.duckduckgo.com/", 
+  "query_template": "{url}?q={query_string}&format=json&pretty=1", 
+  "query_processors": ["AdaptiveQueryProcessor"], 
+  "query_mappings": "",
+  "result_processors": [
+    "MappingResultProcessor",
+    "LenLimitingResultProcessor",
+    "CosineRelevancyResultProcessor"
+  ],
+  "response_mappings": "RESULTS=results",
+  "result_mappings": "title=Heading, body=RelatedTopics",
+  "results_per_query": 10, 
+  "tags": ["DuckDuckGo", "Search"] 
+}
