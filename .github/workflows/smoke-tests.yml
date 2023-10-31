@@ -15,14 +15,14 @@ jobs:
 
     steps:
     - name: Download branch artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v2
       with:
         name: branch-info
         path: .
     - name: Read branch from file
       id: read_branch
       run: |
-        echo "::set-output name=branch::$(cat branch.txt)"        
+        echo "::set-output name=branch::$(cat branch.txt)"
     - name: Checkout the code
       uses: actions/checkout@v4
       with:
