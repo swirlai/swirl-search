@@ -21,7 +21,7 @@ jobs:
     - name: Download branch artifact
       uses: actions/download-artifact@v3
       with:
-        name: branch-info
+        name: branch-info-${{ github.event.workflow_run.id }}
     - name: Read branch from file
       id: read_branch
       run: |
