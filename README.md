@@ -10,7 +10,7 @@
 
 <div align="center">
 
-### Swirl is open-source software that simultaneously searches multiple content sources and returns AI ranked results.
+### Swirl is open source software that simultaneously searches multiple content sources and returns AI ranked results.
 
 <div align="center">
 
@@ -98,6 +98,13 @@ Swirl adapts and distributes user queries to anything with a search API - search
 curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
 ```
 
+* *Optional*: To enable Swirl's Real-Time Retrieval Augmented Generation (RAG) in Docker, run the following commands from the Console using a valid OpenAI API key:
+``` shell
+export MSAL_CB_PORT=8000
+export MSAL_HOST=localhost
+export OPENAI_API_KEY=‘<your-OpenAI-API-key>’
+```
+
 * In MacOS or Linux, run the following command from the Console:
 
 ```
@@ -133,7 +140,7 @@ The most recent Search object will be displayed at the top. Click on the `result
 > **Warning**
 > The Docker version of Swirl *does not* retain any data or configuration when shut down!
 
-:key: Swirl includes four (4) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
+:key: Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
 
 :key: Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](https://docs.swirl.today/M365-Guide.html) or [contact us](mailto:hello@swirl.today).
 
@@ -194,7 +201,7 @@ For information about Swirl as a managed service, please [contact us](mailto:hel
 
 # 📖 Documentation
 
-[Overview](https://docs.swirl.today/) | [Quick Start](https://docs.swirl.today/Quick-Start) | [User Guide](https://docs.swirl.today/User-Guide) | [Admin Guide](https://docs.swirl.today/Admin-Guide) | [M365 Guide](https://docs.swirl.today/M365-Guide) | [Developer Guide](https://docs.swirl.today/Developer-Guide) | [Developer Reference](https://docs.swirl.today/Developer-Reference)
+[Overview](https://docs.swirl.today/) | [Quick Start](https://docs.swirl.today/Quick-Start) | [User Guide](https://docs.swirl.today/User-Guide) | [Admin Guide](https://docs.swirl.today/Admin-Guide) | [M365 Guide](https://docs.swirl.today/M365-Guide) | [Developer Guide](https://docs.swirl.today/Developer-Guide) | [Developer Reference](https://docs.swirl.today/Developer-Reference) | [AI Guide](https://docs.swirl.today/AI-Guide)
 
 <br/>
 
@@ -209,6 +216,3 @@ At Swirl, every user matters to us. Whether you're a beginner finding your way o
 * 💼 **Request A Connector (Enterprise Support)** Want to see a new connector quickly and fast. Contact the Swirl Team at: [support@swirl.today](mailto:support@swirl.today)
 
 Remember, you're part of our family now. 🌍💙
-
-
-<br/>
