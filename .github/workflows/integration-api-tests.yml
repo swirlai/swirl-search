@@ -14,7 +14,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout the code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.workflow_run.head_branch }}
+    - name: Print full branch reference
+      run: |
+        echo "Running on reference: ${{ github.ref }}"
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
