@@ -1,0 +1,19 @@
+{
+    "name": "Yandex",
+    "active": False,
+    "default": False,
+    "connector": "RequestsGet",
+    "url": "https://yandex.com/search/xml?l10n=en&user=swirl&query={query_string}",
+    "query_template": "{url}",
+    "query_processors": ["AdaptiveQueryProcessor"],
+    "query_mappings": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "LenLimitingResultProcessor",
+        "CosineRelevancyResultProcessor",
+    ],
+    "response_mappings": "RESULTS=response.results",
+    "result_mappings": "title=title, body=snippet",
+    "results_per_query": 10,
+    "tags": ["Yandex", "Search"],
+}
