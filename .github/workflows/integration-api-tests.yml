@@ -21,7 +21,7 @@ jobs:
     - name: Read branch from file
       id: read_branch
       run: |
-        echo "::set-output name=branch::$(cat branch.txt)"        
+        echo "::set-output name=branch::$(cat branch.txt)"
     - name: Checkout the code
       uses: actions/checkout@v4
       with:
