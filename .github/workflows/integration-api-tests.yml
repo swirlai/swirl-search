@@ -1,17 +1,20 @@
-name: Ingegration API Tests
+name: IntegrationAPITests
 
 on:
-  schedule:
-  - cron: '05 05 * * *'
-  push:
-    branches: 'develop'
+  workflow_run:
+    workflows: [SmokeTests]
+    types:
+      - completed
+  workflow_dispatch:
 
 jobs:
+
   build:
+    if: (github.event_name == 'workflow_dispatch') || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -24,7 +27,7 @@ jobs:
     - name: upgrade Ubuntu to latest patches
       run: sudo apt upgrade -y
     - name: stop update-notifier which restarts datetime
-      run: sudo systemctl stop update-notifier-download.timer    
+      run: sudo systemctl stop update-notifier-download.timer
     - name: disable update-notifier which restarts datetime
       run: sudo systemctl disable update-notifier-download.timer
     - name: Run Install redist-server

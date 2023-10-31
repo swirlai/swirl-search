@@ -1,18 +1,24 @@
-name: Unit Tests
+name: UnitTests
 
 on:
   push:
-    # only trigger on branches, not on tags
-    branches: 'develop'
+    paths-ignore:
+      - 'docs/**'
+      - '.github/**'
+      - 'README.md'
+    # Only trigger on branches, not on tags
+    branches: 'main'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
 
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout the code
+      uses: actions/checkout@v4
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -24,11 +30,3 @@ jobs:
       run: ./install-test.sh
     - name: Run pytest unit tests
       run: pytest
-    - name: Upload log files
-      if: always()
-      uses: actions/upload-artifact@v2
-      with:
-        name: log-files
-        path: |
-          logs/
-          /var/log/syslog*

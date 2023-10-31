@@ -1,20 +1,24 @@
-name: Smoke Test
+name: SmokeTests
 
-
-on: # build at 05:05 UTC each day
-  schedule:
-    - cron: '05 05 * * *'
-  push:
-    branches: 'develop'
+on:
+  workflow_run:
+    workflows: [UnitTests]
+    types:
+      - completed
+  workflow_dispatch:
 
 jobs:
 
   build:
-
+    if: (github.event_name == 'workflow_dispatch') || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Print Branch Name
+      run: |
+        echo "Running on reference: ${{ github.ref }}"
+    - name: Checkout the code
+      uses: actions/checkout@v4
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
