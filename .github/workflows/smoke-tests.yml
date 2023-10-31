@@ -15,10 +15,9 @@ jobs:
 
     steps:
     - name: Download branch artifact
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: branch-info
-        path: .
     - name: Read branch from file
       id: read_branch
       run: |
