@@ -14,13 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Print event payload
-      run: echo "$PAYLOAD"
-      env:
-        PAYLOAD: ${{ toJson(github.event) }}
-    - name: Check artifact URL response
-      run: |
-        curl -I -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "${{ github.event.workflow_run.artifacts_url }}"
+    - name: Wait for 30 seconds
+      run: sleep 30
     - name: Download branch artifact
       uses: actions/download-artifact@v3
       with:
