@@ -40,5 +40,5 @@ jobs:
     - name: Upload branch file as artifact
       uses: actions/upload-artifact@v3
       with:
-        name: branch-info
+        name: branch-info-${{ github.run_id }}
         path: branch.txt
