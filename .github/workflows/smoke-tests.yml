@@ -14,21 +14,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Download branch artifact using dawidd6's action
-      if: github.event_name == 'workflow_run' # Only attempt to download the artifact if triggered by another workflow
+    - name: Download branch and run_id artifacts
       uses: dawidd6/action-download-artifact@v2
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         workflow: unit-tests.yml
-        name: branch-info-${{ github.event.workflow_run.id }}
+        name: branch-info-${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || github.run_id }}
       continue-on-error: true # Allow the step to fail without stopping the workflow
     - name: Determine branch for checkout
       id: determine_branch
       run: |
-        if [[ -f branch.txt ]]; then
+        if [[ -f branch.txt && -f run_id.txt ]]; then
           echo "branch=$(cat branch.txt)" >> $GITHUB_ENV
+          echo "original_run_id=$(cat run_id.txt)" >> $GITHUB_ENV
         else
-          # Extract the branch name from the github.ref context
           BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
           echo "branch=$BRANCH_NAME" >> $GITHUB_ENV
         fi
@@ -60,7 +59,7 @@ jobs:
       run: docker run --net=host -t swirlai/swirl-testing:latest-smoke-test sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
     - name: Upload log files
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: log-files
         path: |
