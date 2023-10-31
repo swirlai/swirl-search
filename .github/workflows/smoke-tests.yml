@@ -18,9 +18,10 @@ jobs:
       uses: actions/checkout@v4
       with:
         ref: ${{ github.event.workflow_run.head_branch }}
-    - name: Print full branch reference
+    - name: Print checked out branch
+      if: github.event_name == 'workflow_run'
       run: |
-        echo "Running on reference: ${{ github.ref }}"
+        echo "Checked out branch: ${{ github.event.workflow_run.head_branch }}"
     - name: Set up Python
       uses: actions/setup-python@v4
       with:

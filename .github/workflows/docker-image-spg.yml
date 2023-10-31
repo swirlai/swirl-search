@@ -19,7 +19,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout the code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
       - name: Build the Docker image
         run: docker build --no-cache -t swirlai/spyglass:latest  -f Dockerfile.spg .
       - name: login to docker hub
