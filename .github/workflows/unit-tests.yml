@@ -35,6 +35,10 @@ jobs:
       run: |
         BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
         echo "::set-output name=branch::$BRANCH_NAME"
-    
-    outputs:
-      branch_name: ${{ steps.extract_branch.outputs.branch }}
+    - name: Write branch to file
+      run: echo "${{ steps.extract_branch.outputs.branch }}" > branch.txt
+    - name: Upload branch file as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: branch-info
+        path: branch.txt
