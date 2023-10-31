@@ -1,0 +1,19 @@
+{
+    "name": "InternetArchieve", 
+    "active": false, 
+    "default": false, 
+    "connector": "RequestsGet", 
+    "url": "https://archive.org/services/search/v1/scrape", 
+    "query_template": "{url}?REQUIRE_AUTH=false&debug=false&xvar=production&total_only=false&count=1000&fields=identifier&?q={query_string}", 
+    "query_processors": ["AdaptiveQueryProcessor"], 
+    "query_mappings": "",
+    "result_processors": [
+      "MappingResultProcessor",
+      "LenLimitingResultProcessor",
+      "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "RESULTS=results",
+    "result_mappings": "body=items",
+    "results_per_query": 10, 
+    "tags": ["InternetArchive", "Search"] 
+}
