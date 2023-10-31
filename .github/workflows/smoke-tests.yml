@@ -14,13 +14,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Wait for 30 seconds
-      run: sleep 30
-    - name: Download branch artifact
-      uses: actions/download-artifact@v3
+    - name: Download branch artifact using dawidd6's action
+      uses: dawidd6/action-download-artifact@v2
       with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        workflow: UnitTests.yml
         name: branch-info-${{ github.event.workflow_run.id }}
-        path: .
     - name: Read branch from file
       id: read_branch
       run: |
