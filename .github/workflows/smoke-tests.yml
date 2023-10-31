@@ -15,34 +15,30 @@ jobs:
 
     steps:
     - name: Download branch artifact using dawidd6's action
+      if: github.event_name == 'workflow_run' # Only attempt to download the artifact if triggered by another workflow
       uses: dawidd6/action-download-artifact@v2
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         workflow: unit-tests.yml
         name: branch-info-${{ github.event.workflow_run.id }}
-    
-    - name: Print branch from artifact
-      run: cat branch.txt
-    
-    - name: Read branch from file
-      id: read_branch
+      continue-on-error: true # Allow the step to fail without stopping the workflow
+    - name: Determine branch for checkout
+      id: determine_branch
       run: |
-        echo "branch=$(cat branch.txt)" >> $GITHUB_ENV
-    
+        if [[ -f branch.txt ]]; then
+          echo "branch=$(cat branch.txt)" >> $GITHUB_ENV
+        else
+          # Extract the branch name from the github.ref context
+          BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
+          echo "branch=$BRANCH_NAME" >> $GITHUB_ENV
+        fi
     - name: Print branch to be checked out
       run: |
         echo "Branch to checkout: ${{ env.branch }}"
-    
     - name: Checkout the code
       uses: actions/checkout@v4
       with:
         ref: ${{ env.branch }}
-    
-    - name: Print checked out branch
-      if: github.event_name == 'workflow_run'
-      run: |
-        echo "Checked out branch: ${{ env.branch }}"
-    
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
