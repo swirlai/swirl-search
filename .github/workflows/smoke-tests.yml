@@ -20,18 +20,29 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         workflow: unit-tests.yml
         name: branch-info-${{ github.event.workflow_run.id }}
+    
+    - name: Print branch from artifact
+      run: cat branch.txt
+    
     - name: Read branch from file
       id: read_branch
       run: |
-        echo "::set-output name=branch::$(cat branch.txt)"
+        echo "branch=$(cat branch.txt)" >> $GITHUB_ENV
+    
+    - name: Print branch to be checked out
+      run: |
+        echo "Branch to checkout: ${{ env.branch }}"
+    
     - name: Checkout the code
       uses: actions/checkout@v4
       with:
-        ref: ${{ steps.read_branch.outputs.branch }}
+        ref: ${{ env.branch }}
+    
     - name: Print checked out branch
       if: github.event_name == 'workflow_run'
       run: |
-        echo "Checked out branch: ${{ steps.read_branch.outputs.branch }}"
+        echo "Checked out branch: ${{ env.branch }}"
+    
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
