@@ -1,0 +1,19 @@
+{
+    "name": "Ecosia",
+    "active": False,
+    "default": False,
+    "connector": "RequestsGet",
+    "url": "https://api.ecosia.org/v1/search",
+    "query_template": "{url}?q={query_string}",
+    "query_processors": ["AdaptiveQueryProcessor"],
+    "query_mappings": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "LenLimitingResultProcessor",
+        "CosineRelevancyResultProcessor",
+    ],
+    "response_mappings": "RESULTS=results",
+    "result_mappings": "title=title, body=snippet",
+    "results_per_query": 10,
+    "tags": ["Ecosia", "Search"],
+}
