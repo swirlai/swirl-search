@@ -30,3 +30,11 @@ jobs:
       run: ./install-test.sh
     - name: Run pytest unit tests
       run: pytest
+    - name: Set branch name
+      id: extract_branch
+      run: |
+        BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
+        echo "::set-output name=branch::$BRANCH_NAME"
+    
+    outputs:
+      branch_name: ${{ steps.extract_branch.outputs.branch }}
