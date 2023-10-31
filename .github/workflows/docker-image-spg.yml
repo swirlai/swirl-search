@@ -19,13 +19,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
-      - name: Build the Docker image
-        run: docker build --no-cache -t swirlai/spyglass:latest  -f Dockerfile.spg .
-      - name: login to docker hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-      - name: Push the Docker image
-        run: docker push swirlai/spyglass
+    - name: Download branch artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: branch-info
+    - name: Read branch from file
+      id: read_branch
+      run: |
+        echo "::set-output name=branch::$(cat branch.txt)"        
+    - name: Checkout the code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ steps.read_branch.outputs.branch }}
+    - name: Print checked out branch
+      if: github.event_name == 'workflow_run'
+      run: |
+        echo "Checked out branch: ${{ steps.read_branch.outputs.branch }}"
+    - name: Build the Docker image
+      run: docker build --no-cache -t swirlai/spyglass:latest  -f Dockerfile.spg .
+    - name: login to docker hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+    - name: Push the Docker image
+      run: docker push swirlai/spyglass

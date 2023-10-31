@@ -14,14 +14,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Download branch artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: branch-info
+    - name: Read branch from file
+      id: read_branch
+      run: |
+        echo "::set-output name=branch::$(cat branch.txt)"        
     - name: Checkout the code
       uses: actions/checkout@v4
       with:
-        ref: ${{ github.event.workflow_run.head_branch }}
+        ref: ${{ steps.read_branch.outputs.branch }}
     - name: Print checked out branch
       if: github.event_name == 'workflow_run'
       run: |
-        echo "Checked out branch: ${{ github.event.workflow_run.head_branch }}"
+        echo "Checked out branch: ${{ steps.read_branch.outputs.branch }}"
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
