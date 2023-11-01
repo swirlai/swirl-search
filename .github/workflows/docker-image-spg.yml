@@ -30,9 +30,9 @@ jobs:
     - name: Determine branch for checkout
       id: determine_branch
       run: |
-        if [[ -f branch.txt && -f run_id.txt ]]; then
-          echo "branch=$(cat branch.txt)" >> $GITHUB_ENV
-          echo "original_run_id=$(cat run_id.txt)" >> $GITHUB_ENV
+        if [[ -f ./artifacts/branch.txt && -f ./artifacts/run_id.txt ]]; then
+          echo "branch=$(cat ./artifacts/branch.txt)" >> $GITHUB_ENV
+          echo "original_run_id=$(cat ./artifacts/run_id.txt)" >> $GITHUB_ENV
         else
           BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
           echo "branch=$BRANCH_NAME" >> $GITHUB_ENV
