@@ -23,7 +23,7 @@ jobs:
       uses: dawidd6/action-download-artifact@v2
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        workflow: unit-tests.yml
+        workflow: integration-api-tests.yml
         name: branch-info-${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || github.run_id }}
       continue-on-error: true # Allow the step to fail without stopping the workflow
     - name: Determine branch for checkout
