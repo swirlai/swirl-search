@@ -18,7 +18,7 @@ jobs:
       uses: dawidd6/action-download-artifact@v2
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        workflow: unit-tests.yml
+        workflow: smoke-tests.yml
         name: branch-info-${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || github.run_id }}
       continue-on-error: true # Allow the step to fail without stopping the workflow
     - name: Determine branch for checkout
@@ -61,6 +61,13 @@ jobs:
       run: python swirl.py start
     - name: Run Integrated API tests
       run: docker run --net=host -t swirlai/swirl-testing:latest-integrated-api sh -c "behave --tags=integrated_api"
+    - name: Re-upload branch and run_id for subsequent workflows
+      uses: actions/upload-artifact@v3
+      with:
+        name: branch-info-${{ github.run_id }}
+        path: |
+          branch.txt
+          run_id.txt
     - name: Upload log files
       if: always()
       uses: actions/upload-artifact@v3

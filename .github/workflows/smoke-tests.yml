@@ -57,6 +57,13 @@ jobs:
       run: python swirl.py start
     - name: Run Smoke tests
       run: docker run --net=host -t swirlai/swirl-testing:latest-smoke-test sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
+    - name: Re-upload branch and run_id for subsequent workflows
+      uses: actions/upload-artifact@v3
+      with:
+        name: branch-info-${{ github.run_id }}
+        path: |
+          branch.txt
+          run_id.txt
     - name: Upload log files
       if: always()
       uses: actions/upload-artifact@v3
