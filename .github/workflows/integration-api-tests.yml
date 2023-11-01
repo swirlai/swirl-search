@@ -20,6 +20,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         workflow: smoke-tests.yml
         name: branch-info-${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || github.run_id }}
+        path: ./artifacts
       continue-on-error: true # Allow the step to fail without stopping the workflow
     - name: Determine branch for checkout
       id: determine_branch
@@ -66,8 +67,8 @@ jobs:
       with:
         name: branch-info-${{ github.run_id }}
         path: |
-          branch.txt
-          run_id.txt
+          ./artifacts/branch.txt
+          ./artifacts/run_id.txt
     - name: Upload log files
       if: always()
       uses: actions/upload-artifact@v3
