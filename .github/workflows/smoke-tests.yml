@@ -60,6 +60,10 @@ jobs:
       run: docker run --net=host -t swirlai/swirl-testing:latest-smoke-test sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
     - name: List current directory contents
       run: ls -al    
+    - name: Write branch and run_id to artifacts directory again
+      run: |
+        echo "${{ env.branch }}" > ./artifacts/branch.txt
+        echo "${{ env.original_run_id }}" > ./artifacts/run_id.txt  
     - name: Re-upload branch and run_id for subsequent workflows
       uses: actions/upload-artifact@v3
       with:
