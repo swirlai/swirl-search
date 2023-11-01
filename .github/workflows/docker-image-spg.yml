@@ -2,9 +2,10 @@ name: LatestSpyglassDockerBuild
 
 on:
   workflow_run:
-    workflows: [IntegrationAPITests]
+    workflows: [AutomatedTests]
     types: 
       - completed
+  # Allow manual run of this workflow from the Actions tab
   workflow_dispatch:
 
 # For debugging
@@ -23,7 +24,7 @@ jobs:
       uses: dawidd6/action-download-artifact@v2
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        workflow: integration-api-tests.yml
+        workflow: automated-tests.yml
         name: branch-info-${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || github.run_id }}
         path: ./artifacts
       continue-on-error: true # Allow the step to fail without stopping the workflow
@@ -50,3 +51,15 @@ jobs:
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
     - name: Push the Docker image
       run: docker push swirlai/spyglass
+    - name: Ensure artifacts directory exists and write branch and run_id again
+      run: |
+        mkdir -p ./artifacts
+        echo "${{ env.branch }}" > ./artifacts/branch.txt
+        echo "${{ env.original_run_id }}" > ./artifacts/run_id.txt
+    - name: Re-upload branch and run_id for subsequent workflows
+      uses: actions/upload-artifact@v3
+      with:
+        name: branch-info-${{ github.run_id }}
+        path: |
+          ./artifacts/branch.txt
+          ./artifacts/run_id.txt
