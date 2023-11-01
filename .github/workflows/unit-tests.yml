@@ -35,15 +35,14 @@ jobs:
       run: |
         BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
         echo "branch=$BRANCH_NAME" >> $GITHUB_ENV
-        echo "::set-output name=branch::$BRANCH_NAME"
     - name: Write branch and run_id to file
       run: |
-        echo "${{ steps.extract_branch.outputs.branch }}" > branch.txt
+        echo "${{ env.branch }}" > branch.txt
         echo "${{ github.run_id }}" > run_id.txt
     - name: Upload branch and run_id files as artifact
       uses: actions/upload-artifact@v3
       with:
         name: branch-info-${{ github.run_id }}
         path: |
-          branch.txt
-          run_id.txt
+          ./artifacts/branch.txt
+          ./artifacts/run_id.txt
