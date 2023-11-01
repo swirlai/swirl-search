@@ -67,8 +67,6 @@ class SearchProvider(models.Model):
         'MicrosoftTeams': 'Microsoft',
     })
     CONNECTOR_CHOICES = [
-        ('Qdrant', 'Qdrant'),
-        ('Discord', 'Discord'),
         ('ChatGPT', 'ChatGPT Query String'),
         ('RequestsGet', 'HTTP/GET returning JSON'),
         ('RequestsPost', 'HTTP/POST returning JSON'),
@@ -76,6 +74,8 @@ class SearchProvider(models.Model):
         ('OpenSearch', 'OpenSearch Query String'),
         # Uncomment the line below to enable PostgreSQL
         # ('PostgreSQL', 'PostgreSQL'),
+        #('Qdrant', 'Qdrant'),
+        #('Discord', 'Discord'),
         ('BigQuery', 'Google BigQuery'),
         ('Sqlite3', 'Sqlite3'),
         ('M365OutlookMessages', 'M365 Outlook Messages'),
