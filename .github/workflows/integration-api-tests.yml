@@ -62,10 +62,11 @@ jobs:
       run: python swirl.py start
     - name: Run Integrated API tests
       run: docker run --net=host -t swirlai/swirl-testing:latest-integrated-api sh -c "behave --tags=integrated_api"
-    - name: Write branch and run_id to artifacts directory again
+    - name: Ensure artifacts directory exists and write branch and run_id again
       run: |
+        mkdir -p ./artifacts
         echo "${{ env.branch }}" > ./artifacts/branch.txt
-        echo "${{ env.original_run_id }}" > ./artifacts/run_id.txt    
+        echo "${{ env.original_run_id }}" > ./artifacts/run_id.txt
     - name: Re-upload branch and run_id for subsequent workflows
       uses: actions/upload-artifact@v3
       with:
