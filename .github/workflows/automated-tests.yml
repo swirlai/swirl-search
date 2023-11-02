@@ -1,14 +1,15 @@
-name: AutomatedTests
+name: WIP-AutomatedTests
 # An attempt to combine our 3 existing testing workflows into one.
 
 on:
-  push:
-    paths-ignore:
-      - 'docs/**'
-      - '.github/**'
-      - 'README.md'
+# Commenting out the on-push for now; this workflow is still WIP
+#  push:
+#    paths-ignore:
+#      - 'docs/**'
+#      - '.github/**'
+#      - 'README.md'
     # Only trigger on branches, not on tags
-    branches: 'main'
+#    branches: 'main'
   # Allow manual run of this workflow from the Actions tab
   workflow_dispatch:
 
