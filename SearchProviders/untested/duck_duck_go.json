@@ -12,8 +12,8 @@
     "LenLimitingResultProcessor",
     "CosineRelevancyResultProcessor"
   ],
-  "response_mappings": "RESULTS=results",
-  "result_mappings": "title=Heading, body=RelatedTopics",
+  "response_mappings": "RESULTS=RelatedTopics",
+  "result_mappings": "url=meta['developer']['url'],body=snippet,author=meta['developer']['name']",
   "results_per_query": 10, 
   "tags": ["DuckDuckGo", "Search"] 
 }
