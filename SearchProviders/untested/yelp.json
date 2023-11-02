@@ -9,11 +9,10 @@
     "query_mappings": "",
     "result_processors": [
       "MappingResultProcessor",
-      "LenLimitingResultProcessor",
       "CosineRelevancyResultProcessor"
     ],
-    "response_mappings": "RESULTS=results",
-    "result_mappings": "regin=regin, body=businesses",
+    "response_mappings": "FOUND=total,RESULTS=results",
+    "result_mappings": "title=term,body=businesses",
     "results_per_query": 10, 
     "credentials": "bearer=<your-yelp-token>",
     "tags": ["Yelp", "Search"] 
