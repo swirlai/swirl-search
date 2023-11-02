@@ -15,7 +15,7 @@
         "GenericResultProcessor"
     ],
     "response_mappings": "RESULTS=body",
-    "result_mappings": "body=body,author=author,date_published=date_published",
+    "result_mappings": "title=title,body=body,author=author,date_published=date_published",
     "results_per_query": 10,
     "credentials": "your-serpapi-API-key-here",
     "tags": [
