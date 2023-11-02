@@ -1,27 +1,12 @@
-[![Swirl](https://docs.swirl.today/images/hack_swirl_fest.png)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
-
 <div align="center">
 
 [![Swirl](https://docs.swirl.today/images/transparent_header_3.png)](https://www.swirl.today)
 
-</div>
-
-<h1 align="center">Swirl</h1>
-
-<div align="center">
+<h1>Swirl</h1>
 
 ### Swirl is open source software that simultaneously searches multiple content sources and returns AI ranked results.
 
-<div align="center">
-
-
-[𝚂𝚝𝚊𝚛𝚝 𝚂𝚎𝚊𝚛𝚌𝚑𝚒𝚗𝚐](#-try-swirl-now-in-docker) ⦁
-[𝚂𝚕𝚊𝚌𝚔](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) ⦁
-[𝙺𝚎𝚢 𝙵𝚎𝚊𝚝𝚞𝚛𝚎𝚜 ](#-key-features) ⦁
-[𝙲𝚘𝚗𝚝𝚛𝚒𝚋𝚞𝚝𝚎](#-contributing-to-swirl) ⦁
-[𝙳𝚘𝚌𝚞𝚖𝚎𝚗𝚝𝚊𝚝𝚒𝚘𝚗](#-documentation) ⦁ [𝙲𝚘𝚗𝚗𝚎𝚌𝚝𝚘𝚛𝚜](#-list-of-connectors)
-
-
+[Start Searching](#-try-swirl-now-in-docker) · [Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) · [Key Features ](#-key-features) · [Contribute](#-contributing-to-swirl) · [Documentation](#-documentation) · [Connectors](#-list-of-connectors)
 </div>
 
 ---
@@ -30,11 +15,10 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=088395&logoColor=blue&style=flat-square)](https://opensource.org/license/apache-2-0/)
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat-square&color=8DDFCB&label=Release)](https://github.com/swirlai/swirl-search/releases)
-[![Slack](https://custom-icon-badges.demolab.com/badge/Join%20Our%20Slack-black?style=flat-square&logo=slack&color=0E21A0&logoColor=white)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
-[![PRs Welcome](https://custom-icon-badges.demolab.com/badge/PRs%20Welcome-black?style=flat-square&logo=github&color=4D2DB7&logoColor=C70039)](#contributing-to-swirl)
-[![Website](https://custom-icon-badges.demolab.com/badge/www.swirl.today-black?style=flat-square&logo=globe&color=241468&logoColor=white)](https://www.swirl.today)
 [![Docker Build](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg?style=flat-square&branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml)
 [![Tests](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml)
+[![Slack](https://custom-icon-badges.demolab.com/badge/Join%20Our%20Slack-black?style=flat-square&logo=slack&color=0E21A0&logoColor=white)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
+[![Website](https://custom-icon-badges.demolab.com/badge/www.swirl.today-black?style=flat-square&logo=globe&color=241468&logoColor=white)](https://www.swirl.today)
 
 </div>
 
@@ -42,9 +26,9 @@ Swirl is open source software that simultaneously searches multiple content sour
 
 Swirl can connect to:
 
-* Databases (SQL & NoSQL, Google BigQuery)
-* Public data services (Google Programmable Search, Arxiv.org, etc.)
-* Enterprise sources (Microsoft 365, Jira, Miro etc.)
+* Databases (SQL, NoSQL, Google BigQuery)
+* Public data services (Google Programmable Search Engines, ArXiv.org, etc.)
+* Enterprise sources (Microsoft 365, Jira, Miro, etc.)
 
 And generate insights with AI and LLMs like ChatGPT. Start discovering and generating the answers you need based on your data.
 
@@ -63,7 +47,7 @@ _Swirl with ChatGPT as a configured AI Model._
 
 # 🔎 How Swirl Works
 
-Swirl adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, data siloes, etc. And uses Large Language Models to re-rank the unified results *without* extracting or indexing *anything*. 
+Swirl adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, data siloes, etc. and uses Large Language Models to re-rank the unified results *without* extracting or indexing *anything*. 
 
 ![Swirl Diagram](https://docs.swirl.today/images/Animation_2.gif)
 
@@ -92,7 +76,7 @@ Swirl adapts and distributes user queries to anything with a search API - search
 > **Warning** 
 > Make sure the Docker app is running before proceeding!
 
-* Download [https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml](https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml)
+* Download the YML file: [https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml](https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml)
 
 ```
 curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
@@ -174,22 +158,20 @@ The most recent Search object will be displayed at the top. Click on the `result
 | ⌛ | [Optional search/result expiration service](https://docs.swirl.today/Admin-Guide.html#search-expiration-service) to limit storage use |
 | 🔌 | Easily extensible [Connector](https://github.com/swirlai/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/swirlai/swirl-search/tree/main/swirl/mixers) objects |
 
-
 <br/>
 
 # 👩‍💻 Contributing to Swirl 
 
-**Do you have a brilliant idea or improvement for Swirl?** We're all ears—and thrilled you're here to help!
+**Do you have a brilliant idea or improvement for Swirl?** We're all ears, and thrilled you're here to help!
 
 🔗 **Get Started in 3 Easy Steps**:
 1. **Connect with Fellow Enthusiasts** - Jump into the [Swirl Slack Community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) and share your ideas. You'll find a welcoming group of Swirl enthusiasts and team members eager to assist and collaborate.
-2. **Branch It Out** - Always branch off from the `develop` branch with a descriptive name that encapsulates your idea or fix. Remember, all PRs should be made to the `develop` branch to ensure `main` remains our stable gold-standard.
+2. **Branch It Out** - Always branch off from the `develop` branch with a descriptive name that encapsulates your idea or fix.
 3. **Start Your Contribution** - Ready to get your hands dirty? Make sure all contributions come through a GitHub pull request. We roughly follow the [Gitflow branching model](https://nvie.com/posts/a-successful-git-branching-model/), so all changes destined for the next release should be made to the `develop` branch.
 
 📚 **First time contributing on GitHub?** No worries, the [GitHub documentation](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) has you covered with a great guide on contributing to projects.
 
 💡 Every contribution, big or small, makes a difference. Join us in shaping the future of Swirl!
-
 
 <br/>
 
