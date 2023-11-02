@@ -48,3 +48,11 @@ jobs:
         path: |
           ./artifacts/branch.txt
           ./artifacts/run_id.txt
+    - name: Upload log files
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: log-files
+        path: |
+          logs/
+          /var/log/syslog*

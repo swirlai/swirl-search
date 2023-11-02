@@ -1,28 +1,69 @@
 name: DockerBuild
 
-# Build a multi-arch docker image for Swirl
-# comment to start build
-
 on:
+  workflow_run:
+    workflows: [LatestSpyglassDockerBuild]
+    types: 
+      - completed
+  # Allow manual run of this workflow from the Actions tab
   workflow_dispatch:
 
+# For debugging
+# on:
+#   push:
+#     branches: ''
+
 jobs:
+
   build:
+    if: (github.event_name == 'workflow_dispatch') || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - name: login to docker hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-      - name: pull latest UI image
-        run: docker pull swirlai/spyglass:latest
-      - name: builder bootstrap
-        run: docker buildx create --name devBuilder --use --bootstrap
-      - name: Build the Docker image
-        run: docker buildx build -t swirlai/swirl-search:latest --platform linux/amd64,linux/arm64 --push .
-      - name: Update repo description
-        uses: peter-evans/dockerhub-description@v3.4.2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME_X }}
-          password: ${{ secrets.DOCKER_PASSWORD_X }}
-          repository: swirlai/swirl-search
+    - name: Download branch and run_id artifacts
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        workflow: docker-image-spg.yml
+        name: branch-info-${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || github.run_id }}
+        path: ./artifacts
+      continue-on-error: true # Allow the step to fail without stopping the workflow
+    - name: Determine branch for checkout
+      id: determine_branch
+      run: |
+        if [[ -f ./artifacts/branch.txt && -f ./artifacts/run_id.txt ]]; then
+          echo "branch=$(cat ./artifacts/branch.txt)" >> $GITHUB_ENV
+          echo "original_run_id=$(cat ./artifacts/run_id.txt)" >> $GITHUB_ENV
+        else
+          BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
+          echo "branch=$BRANCH_NAME" >> $GITHUB_ENV
+        fi
+    - name: Print branch to be checked out
+      run: |
+        echo "Branch to checkout: ${{ env.branch }}"
+    - name: Checkout the code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ env.branch }}
+    - name: login to docker hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+    - name: pull latest UI image
+      run: docker pull swirlai/spyglass:latest
+    - name: builder bootstrap
+      run: docker buildx create --name devBuilder --use --bootstrap
+    - name: Build the Docker image
+      run: docker buildx build -t swirlai/swirl-search:latest --platform linux/amd64,linux/arm64 --push .
+    - name: Update repo description
+      uses: peter-evans/dockerhub-description@v3.4.2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME_X }}
+        password: ${{ secrets.DOCKER_PASSWORD_X }}
+        repository: swirlai/swirl-search
+    - name: Upload log files
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: log-files
+        path: |
+          logs/
+          /var/log/syslog*
