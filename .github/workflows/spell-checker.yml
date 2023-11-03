@@ -1,0 +1,18 @@
+name: Check Spelling
+
+# Only allow manual run of this workflow from the Actions tab
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check Spelling
+      uses: crate-ci/typos@master  # From here:  https://github.com/crate-ci/typos
+      with:
+        config: ./.github/workflows/typos.toml
+        write_changes: true  # Writes changes on the Action's local checkout
