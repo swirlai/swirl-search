@@ -1,13 +1,12 @@
 from rest_framework.authtoken.models import Token
-from django.http import HttpResponseForbidden, HttpResponse
+from django.http import HttpResponseForbidden
 from swirl.models import Search
 from swirl.authenticators import *
 from channels.middleware import BaseMiddleware
 from channels.db import database_sync_to_async
 from urllib.parse import parse_qs
 from django.core.exceptions import ObjectDoesNotExist
-import json
-import yaml
+
 import jwt
 import logging as logger
 
@@ -108,19 +107,3 @@ class WebSocketTokenMiddleware(BaseMiddleware):
             return Search.objects.filter(pk=search_id, owner=user).exists()
         except ObjectDoesNotExist:
             return None
-        
-class SwaggerMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        format = request.GET.get('format')
-        if '/swirl/swagger' in request.path and format and format == 'openapi':
-            response = self.get_response(request)
-            if response.status_code == 200:
-                openapi_data = json.loads(response.content)
-                yaml_content = yaml.dump(openapi_data, default_flow_style=False)
-                response = HttpResponse(yaml_content, content_type='text/yaml')
-                return response
-            return self.get_response(request)
-        return self.get_response(request)
