@@ -6,9 +6,11 @@ on:
       - 'docs/**'
       - '.github/**'
       - 'README.md'
-    # Only trigger on branches, not on tags
-    branches: 'main'
-  # Allows you to run this workflow manually from the Actions tab
+    # Trigger this workflow on pushes to the following branches
+    branches:
+      - main
+      - develop
+  # Allows manual run of this workflow from the Actions tab (on any branch)
   workflow_dispatch:
 
 jobs:
@@ -24,11 +26,11 @@ jobs:
       with:
             python-version: '3.11'
             cache: 'pip' # caching pip stuff
-    - name: Run Install Swirl
+    - name: Install Swirl
       run: ./install.sh
-    - name: Run Install Tests Swirl
+    - name: Install Tests
       run: ./install-test.sh
-    - name: Run pytest unit tests
+    - name: Run pytest Unit Tests
       run: pytest
     - name: Create artifacts directory
       run: mkdir -p artifacts
