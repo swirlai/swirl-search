@@ -170,6 +170,9 @@ class AuthenticatorSerializer(serializers.ModelSerializer):
 class AuthenticatorViewSet(viewsets.ModelViewSet):
     serializer_class = AuthenticatorSerializer
 
+    def get_queryset(self):
+        return AuthenticatorModel.objects.all()
+
     def list(self, request):
         return return_authenticators_list(request)
 
@@ -567,7 +570,6 @@ class SearchViewSet(viewsets.ModelViewSet):
         return Response(paginate(serializer.data, self.request), status=status.HTTP_200_OK)
 
     ########################################
-
     def create(self, request):
 
         # check permissions
