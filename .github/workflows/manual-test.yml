@@ -1,7 +1,8 @@
 name: Manual Dispatch Test
 
 on:
-    workflow_dispatch: {}
+    workflow_dispatch:
+    push:
   
 jobs:
   test-job:
