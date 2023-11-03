@@ -1,8 +1,8 @@
 name: Manual Dispatch Test
 
 on:
-  workflow_dispatch
-
+    workflow_dispatch: {}
+  
 jobs:
   test-job:
     runs-on: ubuntu-latest
