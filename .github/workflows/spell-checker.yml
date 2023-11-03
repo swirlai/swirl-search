@@ -1,4 +1,4 @@
-name: Check Spelling
+name: CheckSpelling
 
 # Trigger to only run this workflow automatically on docs/ directory changes
 on:
@@ -8,7 +8,7 @@ on:
     paths:
       - "docs/**"
 
-  # Also allow manual run of this workflow from the Actions tab
+  # Allows manual run of this workflow from the Actions tab (on any branch)
   workflow_dispatch:
 
 jobs:

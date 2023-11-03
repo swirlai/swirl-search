@@ -1,11 +1,12 @@
 name: IntegrationAPITests
 
 on:
+  # Run this workflow automatically if SmokeTests completed successfully
   workflow_run:
     workflows: [SmokeTests]
     types:
       - completed
-  # Allows you to run this workflow manually from the Actions tab
+  # Allows manual run of this workflow from the Actions tab (on any branch)
   workflow_dispatch:
 
 jobs:
@@ -40,26 +41,26 @@ jobs:
       uses: actions/checkout@v4
       with:
         ref: ${{ env.branch }}
-    - name: Set up Python
+    - name: Setup Python
       uses: actions/setup-python@v4
       with:
             python-version: '3.11'
             cache: 'pip' # caching pip stuff
-    - name: Run Install Swirl
+    - name: Install Swirl
       run: ./install.sh
     - name: Update apt
       run: sudo apt -o Acquire::Retries=3 update
-    - name: upgrade Ubuntu to latest patches
+    - name: Upgrade Ubuntu to latest patches
       run: sudo apt upgrade -y
-    - name: stop update-notifier which restarts datetime
+    - name: Stop the update-notifier which restarts datetime
       run: sudo systemctl stop update-notifier-download.timer
-    - name: disable update-notifier which restarts datetime
+    - name: Disable the update-notifier which restarts datetime
       run: sudo systemctl disable update-notifier-download.timer
-    - name: Run Install redist-server
+    - name: Install redis-server
       run: sudo apt install -y redis-server
-    - name: Set up Swirl
+    - name: Setup Swirl
       run: python swirl.py setup
-    - name: Start up Swirl
+    - name: Start Swirl
       run: python swirl.py start
     - name: Run Integrated API tests
       run: docker run --net=host -t swirlai/swirl-testing:latest-integrated-api sh -c "behave --tags=integrated_api"
