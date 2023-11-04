@@ -2,6 +2,7 @@
 	"info": {
 		"_postman_id": "c95e9c5d-7f1e-497d-8331-b827f3535aef",
 		"name": "Swirl",
+		"description": "<img src=\"https://swirl.today/wp-content/uploads/2023/07/swirl-company-logo-white-250x100-1-1.png\">\n\n# Swirl Documentation\n\nThank you for taking a look at Swirl! For more information, visit our documention site:\n\n- [Overview](https://docs.swirl.today/)\n- [Quick Start](https://docs.swirl.today/Quick-Start)\n- [User Guide](https://docs.swirl.today/User-Guide)\n- [Admin Guide](https://docs.swirl.today/Admin-Guide)\n- [M365 Guide](https://docs.swirl.today/M365-Guide)\n- [Developer Guide](https://docs.swirl.today/Developer-Guide)\n- [Developer Reference](https://docs.swirl.today/Developer-Reference)\n- [AI Guide](https://docs.swirl.today/AI-Guide)\n    \n\nFor more information, please visit:\n\n- [www.swirl.today](https://swirl.today)\n- [github.com/swirlai/swirl-search](https://github.com/swirlai/swirl-search)\n    \n\nFor support. please:\n\n- Join the [Swirl Community on Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) and visit the #support channel\n- Email: [support@swirl.today](mailto:support@swirl.today)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "30951883",
 		"_collection_link": "https://winter-robot-24235.postman.co/workspace/My-Workspace~035521da-9255-4685-8e34-5b3c78679e48/collection/30951883-c95e9c5d-7f1e-497d-8331-b827f3535aef?action=share&creator=30951883&source=collection_link"
