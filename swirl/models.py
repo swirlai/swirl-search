@@ -245,7 +245,7 @@ class QueryTransform(models.Model) :
         ('synonym', 'Synonym' ),
         ('bag', 'Synonym Bag' )
     ]
-    qrx_type =  models.CharField(max_length=64, default='', choices=QUERY_TRASNSFORM_TYPE_CHOICES)
+    qrx_type =  models.CharField(max_length=64, default='rewrite', choices=QUERY_TRASNSFORM_TYPE_CHOICES)
     config_content = models.TextField()
     class Meta:
         unique_together = [
