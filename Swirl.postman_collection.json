@@ -1,12 +1,13 @@
 {
 	"info": {
-		"_postman_id": "a50db930-dcad-49b1-a3b4-8e3fc0237908",
+		"_postman_id": "c95e9c5d-7f1e-497d-8331-b827f3535aef",
 		"name": "Swirl",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30951883"
 	},
 	"item": [
 		{
-			"name": "SearchProviders",
+			"name": "Create SearchProvider",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -34,7 +35,7 @@
 			"response": []
 		},
 		{
-			"name": "SearchProviders",
+			"name": "List SearchProviders",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -58,7 +59,7 @@
 			"response": []
 		},
 		{
-			"name": "Search",
+			"name": "Create Search",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -68,6 +69,10 @@
 						"type": "default"
 					}
 				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"query_string\": \"swirl metasearch\"\n}"
+				},
 				"url": {
 					"raw": "{{baseUrl}}swirl/search/",
 					"host": [
@@ -82,7 +87,7 @@
 			"response": []
 		},
 		{
-			"name": "Search",
+			"name": "Search QS",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -93,20 +98,31 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}swirl/search/",
+					"raw": "{{baseUrl}}swirl/search/?qs=swirl+metasearch",
 					"host": [
 						"{{baseUrl}}swirl"
 					],
 					"path": [
 						"search",
 						""
+					],
+					"query": [
+						{
+							"key": "qs",
+							"value": "swirl+metasearch"
+						},
+						{
+							"key": "providers",
+							"value": "2,3",
+							"disabled": true
+						}
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Results",
+			"name": "Search Q",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -117,7 +133,42 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}swirl/results?search_id=59",
+					"raw": "{{baseUrl}}swirl/search/?q=swirl+metasearch",
+					"host": [
+						"{{baseUrl}}swirl"
+					],
+					"path": [
+						"search",
+						""
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "swirl+metasearch"
+						},
+						{
+							"key": "providers",
+							"value": "2,3",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Results by search_id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}swirl/results?search_id=1",
 					"host": [
 						"{{baseUrl}}swirl"
 					],
@@ -127,7 +178,7 @@
 					"query": [
 						{
 							"key": "search_id",
-							"value": "59"
+							"value": "1"
 						}
 					]
 				}
