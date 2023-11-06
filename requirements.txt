@@ -1,5 +1,5 @@
 requests
-django
+Django==4.2.7
 django_restframework
 django-celery-beat
 django-rest-swagger
@@ -30,3 +30,4 @@ tiktoken
 channels
 channels-redis
 tika
+drf-yasg

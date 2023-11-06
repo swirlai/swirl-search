@@ -170,6 +170,9 @@ class AuthenticatorSerializer(serializers.ModelSerializer):
 class AuthenticatorViewSet(viewsets.ModelViewSet):
     serializer_class = AuthenticatorSerializer
 
+    def get_queryset(self):
+        return AuthenticatorModel.objects.all()
+
     def list(self, request):
         return return_authenticators_list(request)
 
