@@ -30,3 +30,4 @@ tiktoken
 channels
 channels-redis
 tika
+drf-yasg
