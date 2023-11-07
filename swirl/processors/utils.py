@@ -769,11 +769,24 @@ def _date_float_parse_to_timestamp(s):
         logger.debug(f'{x} : unable to convert {s} as float to timestamp')
     return ret
 
+def try_micro_conversion(date_str):
+    try:
+        if date_str.isdigit() and len(date_str) >= 13:
+            ret_date_str = f'{int(date_str)/1000}'
+            return ret_date_str
+        else:
+            return date_str
+    except Exception as err:
+        logger.debug(f'micro conversion failed {err}')
+        return date_str
+
+
 def date_str_to_timestamp(s):
     """
         Convert the input to a string and try to make a timestamp from it using known string formats
         and raw numeric values
     """
+    s = try_micro_conversion(s)
     ret = _date_str_parse_to_timestamp(s)
     if not ret: ret = _date_float_parse_to_timestamp(s)
     if not ret:
