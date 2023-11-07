@@ -1,11 +1,6 @@
 name: PREVIEWSpyglassDockerBuild
 
 on:
-  # Run this workflow automatically if IntegrationAPITests completed successfully
-  workflow_run:
-    workflows: [IntegrationAPITests]
-    types: 
-      - completed
   # Allows manual run of this workflow from the Actions tab (on any branch)
   workflow_dispatch:
 
