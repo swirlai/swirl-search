@@ -19,7 +19,7 @@ nltk
 bs4
 google-cloud-bigquery
 opensearch-py
-openai
+openai==0.28.1
 msal
 PyJWT
 pyahocorasick
