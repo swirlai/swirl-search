@@ -590,10 +590,10 @@ class SearchViewSet(viewsets.ModelViewSet):
             if Search.objects.filter(id=serializer.data['id'], owner=self.request.user).exists():
                 search = Search.objects.get(id=serializer.data['id'])
                 search.status = 'ERR_NO_SEARCHPROVIDERS'
-                search.save
+                search.save()
         else:
             # search_task.delay(serializer.data['id'], Authenticator().get_session_data(request))
-            logger.info(f"{request.user} search_post {search.id}")
+            logger.info(f"{request.user} search_post")
             run_search(serializer.data['id'], Authenticator().get_session_data(request), request=request)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
