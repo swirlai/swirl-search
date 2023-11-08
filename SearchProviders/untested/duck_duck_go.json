@@ -3,17 +3,16 @@
   "active": false, 
   "default": false, 
   "connector": "RequestsGet", 
-  "url": "https://api.duckduckgo.com/", 
-  "query_template": "{url}?q={query_string}&format=json&pretty=1", 
+  "url": "https://api.duckduckgo.com/?format=json&pretty=1", 
+  "query_template": "{url}&q={query_string}", 
   "query_processors": ["AdaptiveQueryProcessor"], 
   "query_mappings": "",
   "result_processors": [
     "MappingResultProcessor",
-    "LenLimitingResultProcessor",
     "CosineRelevancyResultProcessor"
   ],
   "response_mappings": "RESULTS=RelatedTopics",
-  "result_mappings": "url=meta['developer']['url'],body=snippet,author=meta['developer']['name']",
+  "result_mappings": "title=FirstURL,body=Result,author=meta.developer.name",
   "results_per_query": 10, 
   "tags": ["DuckDuckGo", "Search"] 
 }
