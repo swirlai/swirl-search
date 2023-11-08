@@ -41,8 +41,8 @@ class Authenticator(models.Model):
 class OauthToken(models.Model):
     owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     idp = models.CharField(max_length=32, default='Microsoft')
-    token = models.CharField(max_length=2048)
-    refresh_token = models.CharField(max_length=2048, blank=True, null=True)
+    token = models.CharField(max_length=4096)
+    refresh_token = models.CharField(max_length=4096, blank=True, null=True)
     class Meta:
         unique_together = [['owner', 'idp']]
 
