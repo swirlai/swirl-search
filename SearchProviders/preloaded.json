@@ -1158,5 +1158,40 @@
             "Swirl",
             "Documentation"
         ]
+    },
+    {
+        "name": "Cards - Atlassian Trello",
+        "shared": true,
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "RequestsGet",
+        "url": "https://api.trello.com/1/search?modelTypes=cards&card_board=true&card_members=true&card_attachments=true&partial=true&card_list=true&card_fields=id,closed,dueComplete,dateLastActivity,desc,due,email,labels,name,start,url",
+        "query_template": "{url}&query={query_string}&key=<your-Trello-API-Key>&token=<your-Trello-API-Token>",
+        "post_query_template": {},
+        "http_request_headers": {
+            "Content-Type": "application/json"
+        },
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CleanTextResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "RESULTS=cards",
+        "result_mappings": "title=name,body=desc,date_published=dateLastActivity,url=url,id,board.name,list.name,labels[*].color,members[*].fullName,attachments[*].name,email,start,due,dueComplete,closed,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Trello",
+            "Atlassian",
+            "Internal"
+        ]
     }
 ]
