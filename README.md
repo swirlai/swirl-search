@@ -89,6 +89,8 @@ export MSAL_HOST=localhost
 export OPENAI_API_KEY=‘<your-OpenAI-API-key>’
 ```
 
+:key: Check out [OpenAI's YouTube video](https://youtu.be/nafDyRsVnXU?si=YpvyaRvhX65vtBrb) if you don't have an OpenAI API Key.
+
 * In MacOS or Linux, run the following command from the Console:
 
 ```

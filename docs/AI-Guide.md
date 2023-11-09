@@ -28,6 +28,7 @@ This guide details how to configure and tune Swirl (v. 3.0 or newer) to perform 
 ```
 OPENAI_API_KEY=your-key-here
 ```
+*Check out [OpenAI's YouTube video](https://youtu.be/nafDyRsVnXU?si=YpvyaRvhX65vtBrb) if you don't have an OpenAI API Key.*
 
 3. When installing for PRODUCTION use, change the following line in `static/api/config/default` from:
 ```

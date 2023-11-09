@@ -19,9 +19,6 @@ nav_order: 2
 This guide is intended for anyone who wants to download and install Swirl. 
 
 {: .warning }
-Version 2.5.0 of Swirl replaced RabbitMQ with Redis (`redis-server`). If you are upgrading from a previous version, please consult the [Local Installation](#local-installation) section for updated instructions or [contact support](#support).
-
-{: .warning }
 As of version 2.6.0, Swirl's start-up process no longer starts `redis`.  You must now have `redis` installed *and running* before starting Swirl.
 
 # Docker Installation
@@ -49,6 +46,9 @@ export MSAL_CB_PORT=8000
 export MSAL_HOST=localhost
 export OPENAI_API_KEY='<your-OpenAI-API-key>'
 ```
+
+{: .highlight }
+Check out [OpenAI's YouTube video](https://youtu.be/nafDyRsVnXU?si=YpvyaRvhX65vtBrb) if you don't have an OpenAI API Key.
 
 * On MacOS or Linux, run the following command from the Console:
 
@@ -147,14 +147,11 @@ Using Swirl with Microsoft 365 requires installation and approval by an authoriz
 ## Prerequisites
 
 {: .warning }
-Version 2.5.0 of Swirl replaced RabbitMQ with Redis (`redis-server`). If you are upgrading from a previous version, please note the updated instructions below or [contact support](#support).
-
-{: .warning }
 As of version 2.6.0, Swirl's start-up process no longer starts `redis`.  You must now have `redis` installed *and running* before starting Swirl.
 
 ### MacOS
 
-* Python 3.11.5 or newer ([stable release](https://www.python.org/downloads/)) with `pip`
+* Python 3.11.x with `pip`
     * If necessary, modify the system PATH so that Python runs when you type `python` at the Terminal (not `python3`)
     * [venv](https://docs.python.org/3/library/venv.html) (*optional*)
     * [pyenv](https://github.com/pyenv/pyenv) (*optional*)
@@ -168,6 +165,9 @@ As of version 2.6.0, Swirl's start-up process no longer starts `redis`.  You mus
 brew install jq
 ```
 * Redis must be running
+
+{: .warning }
+Swirl has not yet been validated on Python 3.12.x as some required packages have not yet completed their own 3.12.x upgrades.
 
 ### Linux
 
