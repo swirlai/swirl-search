@@ -1,0 +1,180 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Swirl",
+    "description": "Swirl is a metasearch engine that uses AI to simultaneously re-rank results and then optionally prompt Generative AI - enabling you to get answers based on your own data."
+  },
+  "host": "search.swirl.today",
+  "basePath": "/swirl/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/searchproviders/": {
+      "get": {
+        "summary": "SearchProviders List",
+        "description": "SearchProviders List",
+        "operationId": "SearchprovidersList",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": "application/json",
+            "description": "Content-Type"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        }
+      },
+      "post": {
+        "summary": "SearchProviders Create",
+        "description": "SearchProviders Create",
+        "operationId": "SearchprovidersCreate",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": "application/json",
+            "description": "Content-Type"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        }
+      }
+    },
+    "/search/": {
+      "get": {
+        "summary": "SearchQS",
+        "description": "SearchQS",
+        "operationId": "SearchQS",
+        "parameters": [
+          {
+            "name": "qs",
+            "default": "swirl metasearch",
+            "in": "query",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": "application/json",
+            "description": "Content-Type"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "x-ms-visibility": "important"
+      },
+      "post": {
+        "summary": "Search Create",
+        "description": "Search Create",
+        "operationId": "SearchCreate",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": "application/json",
+            "description": "Content-Type"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "query_string": {
+                  "type": "string",
+                  "description": "query_string"
+                }
+              },
+              "default": {
+                "query_string": "swirl metasearch"
+              }
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        }
+      }
+    },
+    "/results": {
+      "get": {
+        "summary": "Results",
+        "description": "Results",
+        "operationId": "Results",
+        "parameters": [
+          {
+            "name": "search_id",
+            "default": "1",
+            "in": "query",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": "application/json",
+            "description": "Content-Type"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        }
+      }
+    }
+  },
+  "definitions": {},
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "undefined": {
+      "type": "basic"
+    }
+  },
+  "security": [],
+  "tags": []
+}

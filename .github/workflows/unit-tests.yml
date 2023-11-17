@@ -1,18 +1,23 @@
-name: Unit Tests
+name: UnitTests
 
 on:
   push:
-    # only trigger on branches, not on tags
+    paths-ignore:
+      - '.github/**'
+      - 'README.md'
+    # Only trigger on branches, not on tags
     branches: 'develop'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
 
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout the code
+      uses: actions/checkout@v4
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -24,9 +29,27 @@ jobs:
       run: ./install-test.sh
     - name: Run pytest unit tests
       run: pytest
+    - name: Create artifacts directory
+      run: mkdir -p artifacts
+    - name: Set branch name
+      id: extract_branch
+      run: |
+        BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
+        echo "branch=$BRANCH_NAME" >> $GITHUB_ENV
+    - name: Write branch and run_id to file
+      run: |
+        echo "${{ env.branch }}" > ./artifacts/branch.txt
+        echo "${{ github.run_id }}" > ./artifacts/run_id.txt
+    - name: Upload branch and run_id files as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: branch-info-${{ github.run_id }}
+        path: |
+          ./artifacts/branch.txt
+          ./artifacts/run_id.txt
     - name: Upload log files
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: log-files
         path: |

@@ -1,6 +1,7 @@
-name: Latest Spyglass Docker Build
+name: LatestSpyglassDockerBuild
 
 on:
+  # Allow manual run of this workflow from the Actions tab
   workflow_dispatch:
 
 # For debugging
@@ -11,14 +12,22 @@ on:
 jobs:
 
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout the code
+      uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker build -t swirlai/spyglass:latest  -f Dockerfile.spg .
     - name: login to docker hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
     - name: Push the Docker image
       run: docker push swirlai/spyglass
+    - name: Upload log files
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: log-files
+        path: |
+          logs/
+          /var/log/syslog*
