@@ -557,7 +557,7 @@
         "default": false,
         "connector": "RequestsGet",
         "url": "https://api.github.com/search/issues",
-        "query_template": "{url}?q={query_string}%2Bis%3Aissue",
+        "query_template": "{url}?q={query_string}+is%3Aissue",
         "post_query_template": "{}",
         "http_request_headers": {
             "Accept": "application/vnd.github.text-match+json"
@@ -589,7 +589,7 @@
         "default": false,
         "connector": "RequestsGet",
         "url": "https://api.github.com/search/issues",
-        "query_template": "{url}?q={query_string}%2Bis%3Apull-request",
+        "query_template": "{url}?q={query_string}+is%3Apull-request",
         "post_query_template": "{}",
         "http_request_headers": {
             "Accept": "application/vnd.github.text-match+json"
@@ -1157,6 +1157,76 @@
         "tags": [
             "Swirl",
             "Documentation"
+        ]
+    },
+    {
+        "name": "Cards - Atlassian Trello",
+        "shared": true,
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "RequestsGet",
+        "url": "https://api.trello.com/1/search?modelTypes=cards&card_board=true&card_members=true&card_attachments=true&partial=true&card_list=true&card_fields=id,closed,dueComplete,dateLastActivity,desc,due,email,labels,name,start,url",
+        "query_template": "{url}&query={query_string}&key=<your-Trello-API-Key>&token=<your-Trello-API-Token>",
+        "post_query_template": {},
+        "http_request_headers": {
+            "Content-Type": "application/json"
+        },
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CleanTextResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "RESULTS=cards",
+        "result_mappings": "title=name,body=desc,date_published=dateLastActivity,url=url,id,board.name,list.name,labels[*].color,members[*].fullName,attachments[*].name,email,start,due,dueComplete,closed,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Trello",
+            "Atlassian",
+            "Internal"
+        ]
+    },
+    {
+        "name": "Tasks - Asana.com",
+        "shared": true,
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "RequestsGet",
+        "url": "https://app.asana.com/api/1.0/workspaces/<your-workspace-gid>/tasks/search?opt_fields=gid,resource_type,assignee_status,completed,completed_at,completed_by.name,created_at,created_by.name,due_on,likes.user.name,modified_at,name,notes,num_subtasks,start_on,assignee.name,assignee_section.name,followers.name,parent.name,permalink_url,projects.name,tags.name,workspace.name",
+        "query_template": "{url}&text={query_string}",
+        "post_query_template": {},
+        "http_request_headers": {
+            "Content-Type": "application/json"
+        },
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CleanTextResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "RESULTS=data",
+        "result_mappings": "title=name,body=notes,date_published=created_at,author=created_by.name,url=permalink_url,gid,resource_type,num_subtasks,start_on,due_on,assignee.name,assignee_status,assignee_section.name,completed,completed_at,completed_by.name,modified_at,workspace.name,projects[*].name,parent.name,followers[*].name,tags[*].name,likes[*].user.name,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=<your-Asana-PAT>",
+        "eval_credentials": "",
+        "tags": [
+            "Asana",
+            "Tasks",
+            "Internal"
         ]
     }
 ]

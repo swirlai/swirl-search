@@ -76,17 +76,18 @@ class ChatGPTQueryProcessor(QueryProcessor):
 
         if filter_tag_value == None or len(filter_tag_value) <= 0:
             self.do_filter = MODEL_DEFAULT_DO_FILTER
-        try:
-            if filter_tag_value.lower() == 'true':
-                self.do_filter = True
-            elif filter_tag_value.lower() == 'false':
-                self.do_filter = False
-            else:
-                logger.error(f"Error parsing filter tag {filter_tag_value} using default: {MODEL_DEFAULT_DO_FILTER}")
+        else:
+            try:
+                if filter_tag_value.lower() == 'true':
+                    self.do_filter = True
+                elif filter_tag_value.lower() == 'false':
+                    self.do_filter = False
+                else:
+                    logger.error(f"Error parsing filter tag {filter_tag_value} using default: {MODEL_DEFAULT_DO_FILTER}")
+                    self.do_filter = MODEL_DEFAULT_DO_FILTER
+            except Exception as x:
+                logger.error(f"Exception parsing filter tag {filter_tag_value} using default: {MODEL_DEFAULT_DO_FILTER}")
                 self.do_filter = MODEL_DEFAULT_DO_FILTER
-        except Exception as x:
-            logger.error(f"Exception parsing filter tag {filter_tag_value} using default: {MODEL_DEFAULT_DO_FILTER}")
-            self.do_filter = MODEL_DEFAULT_DO_FILTER
 
     def process(self):
         try:

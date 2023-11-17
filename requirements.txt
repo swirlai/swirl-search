@@ -1,5 +1,5 @@
 requests
-django
+Django==4.2.7
 django_restframework
 django-celery-beat
 django-rest-swagger
@@ -19,7 +19,7 @@ nltk
 bs4
 google-cloud-bigquery
 opensearch-py
-openai
+openai==0.28.1
 msal
 PyJWT
 pyahocorasick
