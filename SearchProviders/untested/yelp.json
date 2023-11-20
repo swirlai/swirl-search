@@ -11,8 +11,8 @@
       "MappingResultProcessor",
       "CosineRelevancyResultProcessor"
     ],
-    "response_mappings": "FOUND=total,RESULTS=results",
-    "result_mappings": "title=term,body=businesses",
+    "response_mappings": "FOUND=total,RESULTS=businesses",
+    "result_mappings": "title=name,body=businesses[*],url=url",
     "results_per_query": 10, 
     "credentials": "bearer=<your-yelp-token>",
     "tags": ["Yelp", "Search"] 
