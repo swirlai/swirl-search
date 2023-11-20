@@ -1,0 +1,19 @@
+{
+    "name": "Yelp", 
+    "active": false, 
+    "default": false, 
+    "connector": "RequestsGet", 
+    "url": "https://api.yelp.com/v3/businesses/search", 
+    "query_template": "{url}?sort_by=best_match&limit=20&location={query_string}&format=json&pretty=1", 
+    "query_processors": ["AdaptiveQueryProcessor"], 
+    "query_mappings": "",
+    "result_processors": [
+      "MappingResultProcessor",
+      "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "FOUND=total,RESULTS=businesses",
+    "result_mappings": "title=name,body=businesses[*],url=url",
+    "results_per_query": 10, 
+    "credentials": "bearer=<your-yelp-token>",
+    "tags": ["Yelp", "Search"] 
+  }
