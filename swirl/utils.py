@@ -40,13 +40,22 @@ def is_running_celery_redis():
     for url in celery_urls:
         if not (purl := safe_urlparse(url)):
             continue
-        if not (purl.scheme or purl.scheme.lower() == 'redis'):
+        if not (purl.scheme or purl.scheme.lower() == 'redis' or purl.scheme.lower() == 'rediss'):
             continue
         parsed_redis_urls.append(purl)
 
     for url in parsed_redis_urls:
         try:
-            r = redis.StrictRedis(host=url.hostname, port=url.port, db=0, decode_responses=True)
+            password = url.password
+            hostname = url.hostname
+            port = url.port
+            db = int(url.path.lstrip('/')) if url.path else 0  # Extracting DB index, default is 0
+            scheme = url.scheme
+            use_ssl = scheme.lower() == 'rediss' # Enable SSL if the scheme is 'rediss'
+            r = redis.StrictRedis(host=hostname, port=port, db=db, password=password,
+                                ssl=use_ssl,
+                                ssl_cert_reqs='required' if use_ssl else None,
+                                decode_responses=True)
             response = r.ping()
             if response:
                 print(f"{url} checked.")
