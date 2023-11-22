@@ -90,18 +90,18 @@ class ChatGPTQueryProcessor(QueryProcessor):
                 logger.error(f"Exception parsing filter tag {filter_tag_value} using default: {MODEL_DEFAULT_DO_FILTER}")
                 self.do_filter = MODEL_DEFAULT_DO_FILTER
 
-    def process(self):
+    def process(self, client=None):
         try:
             self.set_guide_from_tags()
             self.set_prompt_from_tags()
             self.set_do_filter_from_tags()
             logger.info(f"{self.type} model {MODEL} system guide {self.system_guide} prompt {self.prompt} Do Filter {self.do_filter}")
-            client = None
-            if getattr(settings, 'OPENAI_API_KEY', None):
-                client = OpenAI(api_key=settings.OPENAI_API_KEY)
-            else:
-                self.warning('API key not available')
-                return self.query_string
+            if client is None:
+                if getattr(settings, 'OPENAI_API_KEY', None):
+                    client = OpenAI(api_key=settings.OPENAI_API_KEY)
+                else:
+                    self.warning('API key not available')
+                    return self.query_string
 
             response = client.chat.completions.create(
                 model=MODEL,
