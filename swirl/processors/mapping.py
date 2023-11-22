@@ -49,7 +49,7 @@ class MappingResultProcessor(ResultProcessor):
 
         list_results = []
         provider_query_term_results = []
-        result_block = ""
+        # result_block = ""
 
         json_types = [str,int,float,list,dict]
         use_payload = True
@@ -88,11 +88,11 @@ class MappingResultProcessor(ResultProcessor):
                     # control codez
                     if swirl_key.isupper():
                         # to do: check the result mappings list???
-                        if swirl_key == 'BLOCK':
-                            result_block = source_key
-                        else:
+                        # if swirl_key == 'BLOCK':
+                        #     result_block = source_key
+                        # else:
                             # ignore for now
-                            continue
+                        continue
                     # check for field list |
                     source_field_list = []
                     if '|' in source_key:
@@ -254,8 +254,8 @@ class MappingResultProcessor(ResultProcessor):
             # final assembly
             if payload:
                 swirl_result['payload'] = payload
-            if result_block:
-                swirl_result['result_block'] = result_block
+            # if result_block:
+            #     swirl_result['result_block'] = result_block
             # try to find a title, if none provided
             if swirl_result['title'] == "":
                 if swirl_result['url']:

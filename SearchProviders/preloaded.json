@@ -114,7 +114,7 @@
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
-        "result_mappings": "BLOCK=ai_summary",
+        "result_mappings": "",
         "results_per_query": 10,
         "credentials": "your-OpenAI-API-key-here",
         "tags": [
