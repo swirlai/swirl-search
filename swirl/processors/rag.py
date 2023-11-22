@@ -222,7 +222,7 @@ class RAGPostResultProcessor(PostResultProcessor):
                 ],
                 temperature=0
             )
-            model_response = completions_new['choices'][0]['message']['content'] # FROM API Doc
+            model_response = completions_new.choices[0].message.content
             logger.info(f'RAG: fetch_prompt_errors follow:')
             for (k,v) in fetch_prompt_errors.items():
                 logger.info(f'RAG:\t url:{k} problem:{v}')

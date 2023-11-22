@@ -88,8 +88,7 @@ class ChatGPT(Connector):
             ],
             temperature=0
         )
-        message = completions['choices'][0]['message']['content'] # FROM API Doc
-
+        message = completions.choices[0].message.content
         self.found = 1
         self.retrieved = 1
         self.response = message.replace("\n\n", "")

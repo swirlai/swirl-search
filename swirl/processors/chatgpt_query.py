@@ -111,7 +111,7 @@ class ChatGPTQueryProcessor(QueryProcessor):
                 ],
                 temperature=0
             )
-            message = response['choices'][0]['message']['content'] # FROM API Doc
+            message = response.choices[0].message.content
             logger.info(f"ChatGPT Response: {message}")
 
             if not self.do_filter:
