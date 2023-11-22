@@ -12,7 +12,8 @@ from django.conf import settings
 from swirl.processors.processor import *
 from swirl.processors.utils import get_tag
 
-import openai
+from openai import OpenAI
+
 MODEL_3 = "gpt-3.5-turbo"
 MODEL_4 = "gpt-4"
 
@@ -95,20 +96,20 @@ class ChatGPTQueryProcessor(QueryProcessor):
             self.set_prompt_from_tags()
             self.set_do_filter_from_tags()
             logger.info(f"{self.type} model {MODEL} system guide {self.system_guide} prompt {self.prompt} Do Filter {self.do_filter}")
-
+            client = None
             if getattr(settings, 'OPENAI_API_KEY', None):
-                openai.api_key = settings.OPENAI_API_KEY
+                client = OpenAI(api_key=settings.OPENAI_API_KEY)
             else:
                 self.warning('API key not available')
                 return self.query_string
 
-            response = openai.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model=MODEL,
                 messages=[
                     {"role": "system", "content": self.system_guide},
                     {"role": "user", "content": self.prompt.format(query_string=self.query_string)    },
                 ],
-                temperature=0,
+                temperature=0
             )
             message = response['choices'][0]['message']['content'] # FROM API Doc
             logger.info(f"ChatGPT Response: {message}")

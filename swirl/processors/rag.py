@@ -12,7 +12,7 @@ from swirl.processors.processor import *
 
 from datetime import datetime
 
-import openai
+from openai import OpenAI
 
 from celery import group
 import threading
@@ -214,13 +214,13 @@ class RAGPostResultProcessor(PostResultProcessor):
             return 0
 
         try:
-            completions_new = openai.ChatCompletion.create(
+            completions_new = self.client.chat.completions.create(
                 model=MODEL,
                 messages=[
                     {"role": "system", "content": rag_prompt.get_role_system_guide_text()},
                     {"role": "user", "content": new_prompt_text},
                 ],
-                temperature=0,
+                temperature=0
             )
             model_response = completions_new['choices'][0]['message']['content'] # FROM API Doc
             logger.info(f'RAG: fetch_prompt_errors follow:')
@@ -260,8 +260,9 @@ class RAGPostResultProcessor(PostResultProcessor):
 
         logger.info('RUN RAG')
         # to do: remove foo:etc
+        self.client = None
         if getattr(settings, 'OPENAI_API_KEY', None):
-            openai.api_key = settings.OPENAI_API_KEY
+            self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
         else:
             logger.warning("RAG OPENAI_API_KEY unset!")
             return 0
