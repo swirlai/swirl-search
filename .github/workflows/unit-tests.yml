@@ -2,11 +2,14 @@ name: UnitTests
 
 on:
   push:
+    # Only trigger on branches, not on tags
+    branches:
+      - 'main'
+      - 'develop'
     paths-ignore:
       - '.github/**'
+      - 'docs/**'
       - 'README.md'
-    # Only trigger on branches, not on tags
-    branches: 'develop'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -23,9 +26,9 @@ jobs:
       with:
             python-version: '3.11'
             cache: 'pip' # caching pip stuff
-    - name: Run Install Swirl
+    - name: Install Swirl
       run: ./install.sh
-    - name: Run Install Tests Swirl
+    - name: Install pytest unit tests
       run: ./install-test.sh
     - name: Run pytest unit tests
       run: pytest
