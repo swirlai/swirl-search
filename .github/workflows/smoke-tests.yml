@@ -1,12 +1,11 @@
 name: SmokeTests
 
 on:
-  # Run this workflow automatically if UnitTests completed successfully
   workflow_run:
     workflows: [UnitTests]
     types:
       - completed
-  # Allows manual run of this workflow from the Actions tab (on any branch)
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -41,7 +40,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         ref: ${{ env.branch }}
-    - name: Setup Python
+    - name: Set up Python
       uses: actions/setup-python@v4
       with:
             python-version: '3.11'
@@ -54,11 +53,11 @@ jobs:
       run: sudo apt upgrade -y
     - name: Install redis-server
       run: sudo apt install -y redis-server
-    - name: Setup Swirl
+    - name: Set up Swirl
       run: python swirl.py setup
     - name: Start Swirl
       run: python swirl.py start
-    - name: Run Smoke Tests
+    - name: Run smoke tests
       run: docker run --net=host -t swirlai/swirl-testing:latest-smoke-test sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
     - name: Ensure artifacts directory exists and write branch and run_id again
       run: |

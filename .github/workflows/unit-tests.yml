@@ -2,15 +2,15 @@ name: UnitTests
 
 on:
   push:
-    paths-ignore:
-      - 'docs/**'
-      - '.github/**'
-      - 'README.md'
-    # Trigger this workflow on pushes to the following branches
+    # Only trigger on branches, not on tags
     branches:
-      - main
-      - develop
-  # Allows manual run of this workflow from the Actions tab (on any branch)
+      - 'main'
+      - 'develop'
+    paths-ignore:
+      - '.github/**'
+      - 'docs/**'
+      - 'README.md'
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -28,9 +28,9 @@ jobs:
             cache: 'pip' # caching pip stuff
     - name: Install Swirl
       run: ./install.sh
-    - name: Install Tests
+    - name: Install pytest unit tests
       run: ./install-test.sh
-    - name: Run pytest Unit Tests
+    - name: Run pytest unit tests
       run: pytest
     - name: Create artifacts directory
       run: mkdir -p artifacts
