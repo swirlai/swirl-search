@@ -6,6 +6,30 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {},
+        "page_fetch_config_json": {
+            "cache": "false",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "www.businesswire.com": {
+                "timeout": 60
+            },
+            "www.linkedin.com": {
+                "timeout": 5
+            },
+            "rs.linkedin.com": {
+                "timeout": 5
+            },
+            "uk.linkedin.com": {
+                "timeout": 5
+            },
+            "au.linkedin.com": {
+                "timeout": 5
+            },
+            "timeout": 30
+        },
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -30,6 +54,30 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {},
+        "page_fetch_config_json": {
+            "cache": "false",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "www.businesswire.com": {
+                "timeout": 60
+            },
+            "www.linkedin.com": {
+                "timeout": 5
+            },
+            "rs.linkedin.com": {
+                "timeout": 5
+            },
+            "uk.linkedin.com": {
+                "timeout": 5
+            },
+            "au.linkedin.com": {
+                "timeout": 5
+            },
+            "timeout": 30
+        },
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -54,6 +102,30 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {},
+        "page_fetch_config_json": {
+            "cache": "false",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "www.businesswire.com": {
+                "timeout": 60
+            },
+            "www.linkedin.com": {
+                "timeout": 5
+            },
+            "rs.linkedin.com": {
+                "timeout": 5
+            },
+            "uk.linkedin.com": {
+                "timeout": 5
+            },
+            "au.linkedin.com": {
+                "timeout": 5
+            },
+            "timeout": 30
+        },
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -110,7 +182,28 @@
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
         "post_query_template": {},
         "http_request_headers": {},
-        "page_fetch_config_json": {},
+        "page_fetch_config_json": {
+            "cache": "false",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "www.businesswire.com": {
+                "timeout": 60
+            },
+            "www.linkedin.com": {
+                "timeout": 5
+            },
+            "rs.linkedin.com": {
+                "timeout": 5
+            },
+            "uk.linkedin.com": {
+                "timeout": 5
+            },
+            "au.linkedin.com": {
+                "timeout": 5
+            },
+            "timeout": 30
+        },
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
