@@ -46,9 +46,7 @@ from swirl.tasks import update_microsoft_token_task
 from swirl.search import search as run_search
 
 SWIRL_EXPLAIN = getattr(settings, 'SWIRL_EXPLAIN', True)
-SWIRL_RERUN_WAIT = getattr(settings, 'SWIRL_RERUN_WAIT', 8)
 SWIRL_SUBSCRIBE_WAIT = getattr(settings, 'SWIRL_SUBSCRIBE_WAIT', 20)
-SWIRL_Q_WAIT = getattr(settings, 'SWIRL_Q_WAIT', 7)
 
 def remove_duplicates(my_list):
     new_list = []
@@ -422,7 +420,6 @@ class SearchViewSet(viewsets.ModelViewSet):
             new_search.save()
             logger.info(f"{request.user} search_q {new_search.id}")
             # search_task.delay(new_search.id, Authenticator().get_session_data(request))
-            # time.sleep(SWIRL_Q_WAIT)
             run_search(new_search.id, Authenticator().get_session_data(request),request=request)
             return redirect(f'/swirl/results?search_id={new_search.id}')
 
@@ -496,9 +493,6 @@ class SearchViewSet(viewsets.ModelViewSet):
                     return
                 return Response(paginate(results, self.request), status=status.HTTP_200_OK)
             else:
-                tries = tries + 1
-                if tries > SWIRL_RERUN_WAIT:
-                    return Response(f'Timeout: {tries}, {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 time.sleep(1)
             # end if
         # end if
@@ -532,7 +526,6 @@ class SearchViewSet(viewsets.ModelViewSet):
             rerun_search.save()
             logger.info(f"{request.user} rerun {rerun_id}")
             # search_task.delay(rerun_search.id, Authenticator().get_session_data(request))
-            # time.sleep(SWIRL_RERUN_WAIT)
             run_search(rerun_search.id, Authenticator().get_session_data(request), request=request)
             return redirect(f'/swirl/results?search_id={rerun_search.id}')
         # end if
