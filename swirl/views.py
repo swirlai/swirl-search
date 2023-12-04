@@ -493,9 +493,6 @@ class SearchViewSet(viewsets.ModelViewSet):
                     return
                 return Response(paginate(results, self.request), status=status.HTTP_200_OK)
             else:
-                tries = tries + 1
-                if tries > 8:
-                    return Response(f'Timeout: {tries}, {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 time.sleep(1)
             # end if
         # end if
