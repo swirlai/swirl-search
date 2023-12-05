@@ -8,15 +8,20 @@ import re
 import logging as logger
 import json
 from pathlib import Path
+import uuid
 import redis
 from django.core.paginator import Paginator
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from swirl.web_page import PageFetcherFactory
 from urllib.parse import urlparse
 
 
 SWIRL_MACHINE_AGENT   = {'User-Agent': 'SwirlMachineServer/1.0 (+http://swirl.today)'}
 SWIRL_CONTAINER_AGENT = {'User-Agent': 'SwirlContainer/1.0 (+http://swirl.today)'}
+SEARCH_PROVIDER_LIST = os.listdir("../SearchProviders/*.json")
+User = get_user_model()
+USER_LIST = User.objects.all()
 
 ##################################################
 ##################################################
@@ -73,10 +78,17 @@ def get_page_fetcher_or_none(url):
 
     headers = SWIRL_CONTAINER_AGENT if is_running_in_docker() else SWIRL_MACHINE_AGENT
     #info = number of search providers, objects, django users, hostname, domain name
-
+    info = [
+        len(SEARCH_PROVIDER_LIST), 
+        #number of objects
+        len(USER_LIST), 
+        #hostname
+        # Domain name
+        ]
     if (pf := PageFetcherFactory.alloc_page_fetcher(url=url, options= {
                                                         "cache": "false",
-                                                        "headers":headers
+                                                        "headers":headers,
+                                                        "info": info
                                                 })):
         return pf
     else:
