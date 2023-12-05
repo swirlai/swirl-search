@@ -304,7 +304,7 @@ def search(id, session=None, request=None):
 
     # log info
     retrieved = 0
-    run_processor_if_tag_in_request(request=request, search=search, swqrx_logger=swqrx_logger, session=session, tag="rag", processor_name="RAGPostResultProcessor")
+    run_processor_if_tag_in_request(request=request, search=search, swqrx_logger=swqrx_logger, tag="rag", processor_name="RAGPostResultProcessor")
     for current_retrieved in results:
         if isinstance(current_retrieved, int) and current_retrieved > 0:
             retrieved = retrieved + current_retrieved
@@ -312,12 +312,12 @@ def search(id, session=None, request=None):
 
     return True
 
-def run_processor_if_tag_in_request(tag, processor_name, request, search, swqrx_logger, session):
+def run_processor_if_tag_in_request(tag, processor_name, request, search, swqrx_logger):
     if not (request and tag and processor_name):
         return
     try:
        if tag in request.GET.keys() and processor_name:
-            processor = alloc_processor(processor=processor_name)(search_id=search.id, request_id=swqrx_logger.request_id, session=session, should_get_results=True)
+            processor = alloc_processor(processor=processor_name)(search_id=search.id, request_id=swqrx_logger.request_id, should_get_results=True)
             if processor.validate():
                 return processor.process()
             return False
