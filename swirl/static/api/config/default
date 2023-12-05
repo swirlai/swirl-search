@@ -80,6 +80,7 @@
     },
     "webSocketConfig": {
       "url": "ws://localhost:8000/chatgpt-data",
-      "timeout": 30000
+      "timeout": 30000,
+      "timeoutText": "Timeout: No response from Generative AI."
     }
   }
