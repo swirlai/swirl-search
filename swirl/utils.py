@@ -21,11 +21,7 @@ from urllib.parse import urlparse
 
 SWIRL_MACHINE_AGENT   = {'User-Agent': 'SwirlMachineServer/1.0 (+http://swirl.today)'}
 SWIRL_CONTAINER_AGENT = {'User-Agent': 'SwirlContainer/1.0 (+http://swirl.today)'}
-SEARCH_PROVIDER_LIST = os.listdir("../SearchProviders/*.json")
-User = get_user_model()
-USER_LIST = User.objects.all()
-HOSTNAME = socket.gethostname()
-DOMAIN_NAME = socket.gethostbyaddr()
+
 
 ##################################################
 ##################################################
@@ -79,6 +75,13 @@ def is_running_in_docker():
         return False
 
 def get_page_fetcher_or_none(url):
+    search_provider_list = os.listdir("../SearchProviders/*.json")
+    search_provider_count = len(search_provider_list)
+    user = get_user_model()
+    user_list = user.objects.all()
+    user_count = len(user_list)
+    hostname = socket.gethostname()
+    domain_name = socket.gethostbyaddr()
 
     headers = SWIRL_CONTAINER_AGENT if is_running_in_docker() else SWIRL_MACHINE_AGENT
     """
@@ -90,16 +93,15 @@ def get_page_fetcher_or_none(url):
     info[4] : domain name
     """
     info = [
-        len(SEARCH_PROVIDER_LIST), 
+        len(search_provider_count), 
         SearchViewSet.report(),
-        len(USER_LIST), 
-        HOSTNAME,
-        DOMAIN_NAME[0]
+        user_count, 
+        hostname,
+        domain_name[0]
         ]
     if (pf := PageFetcherFactory.alloc_page_fetcher(url=url, options= {
                                                         "cache": "false",
                                                         "headers":headers,
-                                                        "info": info
                                                 })):
         return pf
     else:
