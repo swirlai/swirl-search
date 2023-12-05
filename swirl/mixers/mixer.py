@@ -201,48 +201,48 @@ class Mixer:
                 if 'swirl_score' in result:
                     del result['swirl_score']
             # end if
-            # if 'result_block' in result:
-            #     block_name = result['result_block']
-            #     del result['result_block']
-            #     if block_name in block_dict:
-            #         block_count = block_count + 1
-            #         result['swirl_rank'] = block_count
-            #         block_dict[block_name].append(result)
-            #     else:
-            #         block_count = 1
-            #         result['swirl_rank'] = block_count
-            #         block_dict[block_name] = [result]
-            #     # end if
-            #     peek_search_provider = result.get('searchprovider', None)
-            #     if peek_search_provider and self.mix_wrapper['info'].get(peek_search_provider, None):
-            #         del self.mix_wrapper['info'][result['searchprovider']]
-            #     # end if
-            # else:
-            result['swirl_rank'] = mixed_result_number
-            mixed_results.append(result)
-            mixed_result_number = mixed_result_number + 1
+            if 'result_block' in result:
+                block_name = result['result_block']
+                del result['result_block']
+                if block_name in block_dict:
+                    block_count = block_count + 1
+                    result['swirl_rank'] = block_count
+                    block_dict[block_name].append(result)
+                else:
+                    block_count = 1
+                    result['swirl_rank'] = block_count
+                    block_dict[block_name] = [result]
+                # end if
+                peek_search_provider = result.get('searchprovider', None)
+                if peek_search_provider and self.mix_wrapper['info'].get(peek_search_provider, None):
+                    del self.mix_wrapper['info'][result['searchprovider']]
+                # end if
+            else:
+                result['swirl_rank'] = mixed_result_number
+                mixed_results.append(result)
+                mixed_result_number = mixed_result_number + 1
             # end if
         # end for
 
         # block results
-        # self.mix_wrapper['info']['results']['result_blocks'] = []
+        self.mix_wrapper['info']['results']['result_blocks'] = []
 
         # default block, if specified in settings
-        # if settings.SWIRL_DEFAULT_RESULT_BLOCK:
-        #     self.mix_wrapper['info']['results']['result_blocks'].append(settings.SWIRL_DEFAULT_RESULT_BLOCK)
-        #     self.mix_wrapper[settings.SWIRL_DEFAULT_RESULT_BLOCK] = []
+        if settings.SWIRL_DEFAULT_RESULT_BLOCK:
+            self.mix_wrapper['info']['results']['result_blocks'].append(settings.SWIRL_DEFAULT_RESULT_BLOCK)
+            self.mix_wrapper[settings.SWIRL_DEFAULT_RESULT_BLOCK] = []
 
         # blocks specified by provider(s)
-        # moved_to_block = 0
-        # for block in block_dict:
-        #     self.mix_wrapper[block] = block_dict[block]
-        #     moved_to_block = moved_to_block + len(block_dict[block])
-        #     if not block in self.mix_wrapper['info']['results']['result_blocks']:
-        #         self.mix_wrapper['info']['results']['result_blocks'].append(block)
-        # if moved_to_block > 0:
-        #     self.mix_wrapper['info']['results']['retrieved_total'] = self.found - moved_to_block
-        #     if self.mix_wrapper['info']['results']['retrieved_total'] < 0:
-        #         self.warning("Block count exceeds result count")
+        moved_to_block = 0
+        for block in block_dict:
+            self.mix_wrapper[block] = block_dict[block]
+            moved_to_block = moved_to_block + len(block_dict[block])
+            if not block in self.mix_wrapper['info']['results']['result_blocks']:
+                self.mix_wrapper['info']['results']['result_blocks'].append(block)
+        if moved_to_block > 0:
+            self.mix_wrapper['info']['results']['retrieved_total'] = self.found - moved_to_block
+            if self.mix_wrapper['info']['results']['retrieved_total'] < 0:
+                self.warning("Block count exceeds result count")
 
         # extract the page of mixed results
         self.mixed_results = mixed_results

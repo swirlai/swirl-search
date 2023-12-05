@@ -36,7 +36,7 @@ class Consumer(AsyncWebsocketConsumer):
                 return False
         except:
             pass
-        rag_processor = RAGPostResultProcessor(search_id=search_id, request_id='', is_socket_logic=True, rag_query_items=rag_query_items)
+        rag_processor = RAGPostResultProcessor(search_id=search_id, request_id='', should_get_results=True, rag_query_items=rag_query_items)
         instances[search_id] = rag_processor
         if rag_processor.validate():
             result = rag_processor.process(should_return=True)

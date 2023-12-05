@@ -245,10 +245,6 @@ class OidcAuthView(APIView):
 class UpdateMicrosoftToken(APIView):
     def post(self, request):
         try:
-            headers = {
-                'Authorization': request.headers['Authorization'],
-                'Microsoft-Authorization': request.headers['Microsoft-Authorization']
-            }
             # just return succcess,don't call the task
             # result = update_microsoft_token_task.delay(headers).get()
             result = { 'user': request.user.username, 'status': 'success' }
@@ -461,10 +457,6 @@ class SearchViewSet(viewsets.ModelViewSet):
             new_search.save()
             # log info
             logger.info(f"{request.user} search_qs {new_search.id}")
-            headers = {
-                'Authorization': request.headers.get('Authorization', ''),
-                'Microsoft-Authorization': request.headers.get('Microsoft-Authorization', '')
-            }
             res = run_search(new_search.id, Authenticator().get_session_data(request), request=request)
             if not res:
                 logger.info(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
