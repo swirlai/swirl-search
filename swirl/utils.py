@@ -72,6 +72,7 @@ def is_running_in_docker():
 def get_page_fetcher_or_none(url):
 
     headers = SWIRL_CONTAINER_AGENT if is_running_in_docker() else SWIRL_MACHINE_AGENT
+    #info = number of search providers, objects, django users, hostname, domain name
 
     if (pf := PageFetcherFactory.alloc_page_fetcher(url=url, options= {
                                                         "cache": "false",
