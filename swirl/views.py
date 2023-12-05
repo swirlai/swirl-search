@@ -376,6 +376,9 @@ class SearchViewSet(viewsets.ModelViewSet):
     serializer_class = SearchSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
+    def report(self):
+        return self.queryset
+
     def list(self, request):
         # check permissions
         if not request.user.has_perm('swirl.view_search'):

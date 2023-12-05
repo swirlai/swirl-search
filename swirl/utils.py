@@ -10,10 +10,12 @@ import json
 from pathlib import Path
 import uuid
 import redis
+import socket
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from swirl.web_page import PageFetcherFactory
+from views import SearchViewSet
 from urllib.parse import urlparse
 
 
@@ -22,6 +24,8 @@ SWIRL_CONTAINER_AGENT = {'User-Agent': 'SwirlContainer/1.0 (+http://swirl.today)
 SEARCH_PROVIDER_LIST = os.listdir("../SearchProviders/*.json")
 User = get_user_model()
 USER_LIST = User.objects.all()
+HOSTNAME = socket.gethostname()
+DOMAIN_NAME = socket.gethostbyaddr()
 
 ##################################################
 ##################################################
@@ -77,13 +81,20 @@ def is_running_in_docker():
 def get_page_fetcher_or_none(url):
 
     headers = SWIRL_CONTAINER_AGENT if is_running_in_docker() else SWIRL_MACHINE_AGENT
-    #info = number of search providers, objects, django users, hostname, domain name
+    """
+    info is a tuple with 5 elements. 
+    info[0] : number of search providers
+    info[1] : number of search objects
+    info[2] : number of django users
+    info[3] : hostname 
+    info[4] : domain name
+    """
     info = [
         len(SEARCH_PROVIDER_LIST), 
-        #number of objects
+        SearchViewSet.report(),
         len(USER_LIST), 
-        #hostname
-        # Domain name
+        HOSTNAME,
+        DOMAIN_NAME[0]
         ]
     if (pf := PageFetcherFactory.alloc_page_fetcher(url=url, options= {
                                                         "cache": "false",
