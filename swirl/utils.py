@@ -16,7 +16,6 @@ from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from swirl.web_page import PageFetcherFactory
-from views import SearchViewSet
 from urllib.parse import urlparse
 
 
@@ -84,6 +83,8 @@ def is_running_in_docker():
         return False
 
 def get_page_fetcher_or_none(url):
+    from swirl.views import SearchViewSet
+    
     search_provider_count = provider_getter()
     user = get_user_model()
     user_list = user.objects.all()
