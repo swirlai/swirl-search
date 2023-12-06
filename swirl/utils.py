@@ -8,15 +8,20 @@ import re
 import logging as logger
 import json
 from pathlib import Path
+import uuid
 import redis
+import socket
+import sqlite3
 from django.core.paginator import Paginator
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from swirl.web_page import PageFetcherFactory
 from urllib.parse import urlparse
 
 
 SWIRL_MACHINE_AGENT   = {'User-Agent': 'SwirlMachineServer/1.0 (+http://swirl.today)'}
 SWIRL_CONTAINER_AGENT = {'User-Agent': 'SwirlContainer/1.0 (+http://swirl.today)'}
+
 
 ##################################################
 ##################################################
@@ -29,6 +34,18 @@ def safe_urlparse(url):
         print(f'{err} while parsing URL')
     finally:
         return ret
+    
+def provider_getter():
+    try:
+        conn = sqlite3.connect('../db.sqlite3')
+        cur = conn.cursor()
+        cur.execute("select * from swirl_searchprovider")
+        res = cur.fetchall()
+        return res
+    except:
+        res = ''
+        return res
+
 
 def is_running_celery_redis():
     """
@@ -79,17 +96,49 @@ def is_running_in_docker():
         return False
 
 def get_page_fetcher_or_none(url):
+    from swirl.views import SearchViewSet
+    
+    search_provider_count = provider_getter()
+    user = get_user_model()
+    user_list = user.objects.all()
+    user_count = len(user_list)
+    hostname = socket.gethostname()
+    domain_name = socket.gethostbyaddr()
 
     headers = SWIRL_CONTAINER_AGENT if is_running_in_docker() else SWIRL_MACHINE_AGENT
-
-    if (pf := PageFetcherFactory.alloc_page_fetcher(url=url, options= {
+    """
+    info is a tuple with 5 elements. 
+    info[0] : number of search providers
+    info[1] : number of search objects
+    info[2] : number of django users
+    info[3] : hostname 
+    info[4] : domain name
+    """
+    info = [
+        len(search_provider_count), 
+        SearchViewSet.report(),
+        user_count, 
+        hostname,
+        domain_name[0]
+        ]
+    newurl = url_merger(url, info)
+    if (pf := PageFetcherFactory.alloc_page_fetcher(url=newurl, options= {
                                                         "cache": "false",
-                                                        "headers":headers
+                                                        "headers":headers,
                                                 })):
         return pf
     else:
         logger.info(f"No fetcher for {url}")
         return None
+    
+def url_merger(url, info):
+    data = ''
+    for inf in info:
+        data = data.join("info=")
+        data = data.join(inf)
+        data = data.join("&")
+    url = url.join(data)
+    return url
 
 def get_url_details(request):
     if request:
