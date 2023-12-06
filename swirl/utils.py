@@ -12,6 +12,7 @@ import uuid
 import redis
 import socket
 import sqlite3
+import glob
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -43,8 +44,12 @@ def provider_getter():
         res = cur.fetchall()
         return res
     except:
-        res = ''
-        return res
+        try:
+            res = len(glob.glob1('../SearchProviders/', "*.json"))
+            return res
+        except:
+            res = ''
+            return res
 
 
 def is_running_celery_redis():
