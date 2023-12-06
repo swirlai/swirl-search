@@ -11,6 +11,7 @@ from pathlib import Path
 import uuid
 import redis
 import socket
+import sqlite3
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -34,6 +35,14 @@ def safe_urlparse(url):
         print(f'{err} while parsing URL')
     finally:
         return ret
+    
+def provider_getter():
+    conn = sqlite3.connect('../db.sqlite3')
+    cur = conn.cursor()
+    cur.execute("select * from swirl_searchprovider")
+    res = cur.fetchall()
+    return res
+
 
 def is_running_celery_redis():
     """
@@ -75,8 +84,7 @@ def is_running_in_docker():
         return False
 
 def get_page_fetcher_or_none(url):
-    search_provider_list = os.listdir("../SearchProviders/*.json")
-    search_provider_count = len(search_provider_list)
+    search_provider_count = provider_getter()
     user = get_user_model()
     user_list = user.objects.all()
     user_count = len(user_list)
@@ -99,7 +107,8 @@ def get_page_fetcher_or_none(url):
         hostname,
         domain_name[0]
         ]
-    if (pf := PageFetcherFactory.alloc_page_fetcher(url=url, options= {
+    newurl = url_merger(url, info)
+    if (pf := PageFetcherFactory.alloc_page_fetcher(url=newurl, options= {
                                                         "cache": "false",
                                                         "headers":headers,
                                                 })):
@@ -107,6 +116,15 @@ def get_page_fetcher_or_none(url):
     else:
         logger.info(f"No fetcher for {url}")
         return None
+    
+def url_merger(url, info):
+    data = ''
+    for inf in info:
+        data = data.join("info=")
+        data = data.join(inf)
+        data = data.join("&")
+    url = url.join(data)
+    return url
 
 def get_url_details(request):
     if request:
