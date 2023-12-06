@@ -45,7 +45,7 @@ def provider_getter():
         return res
     except:
         try:
-            res = len(glob.glob1('../SearchProviders/', "*.json"))
+            res = glob.glob1('../SearchProviders/', "*.json")
             return res
         except:
             res = ''
