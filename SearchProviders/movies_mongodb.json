@@ -1,6 +1,6 @@
 {
-    "name": "Netflix Movies - MongoDB",
-    "active": true,
+    "name": "IMDB Movie Samples - MongoDB",
+    "active": false,
     "default": false,
     "authenticator": "",
     "connector": "MongoDB",
@@ -19,9 +19,9 @@
         "CosineRelevancyResultProcessor"
     ],
     "response_mappings": "",
-    "result_mappings": "title=name,body=fullplot,date_published=year,date_published_display=year,author=directors[*],url=poster,genres[*],rated,runtime,languages[*],cast[*],writers[*],awards.text,imdb.rating,tomatoes.viewer.rating,tomatoes.critic.rating,NO_PAYLOAD",
+    "result_mappings": "title=name,body=fullplot,date_published=released,date_published_display=year,author=directors[*],url=poster,lastupdated,genres[*],rated,runtime,languages[*],cast[*],writers[*],awards.text,imdb.rating,tomatoes.viewer.rating,tomatoes.critic.rating,NO_PAYLOAD",
     "results_per_query": 10,
-    "credentials": "",
+    "credentials": "mongodb+srv://<mongodb-username>:<mongodb-password>@<mongdb-cluster>.mongodb.net/?retryWrites=true&w=majority",
     "eval_credentials": "",
     "tags": [
         "Movies",
