@@ -31,3 +31,4 @@ channels
 channels-redis
 tika
 drf-yasg
+pymongo
