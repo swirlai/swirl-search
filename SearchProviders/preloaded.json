@@ -1012,8 +1012,8 @@
         "default": false,
         "authenticator": "",
         "connector": "RequestsGet",
-        "url": "https://<your-ServiceNow-domain>.service-now.com/api/sn_km_api/knowledge/articles",
-        "query_template": "{url}?query={query_string}&fields=language,published,rating,author,kb_knowledge_base",
+        "url": "https://<your-ServiceNow-domain>.service-now.com/api/sn_km_api/knowledge/articles?fields=active,article_type,author,kb_category,sys_created_on,helpful_count,kb_knowledge_base,published,rating,topic,sys_updated_on,sys_updated_by,sys_view_count",
+        "query_template": "{url}?query={query_string}",
         "post_query_template": "{}",
         "http_request_headers": {
             "Accept": "application/json"
@@ -1028,7 +1028,7 @@
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "FOUND=result.meta.count,RESULTS=result.articles",
-        "result_mappings": "title=title,body=snippet,date_published=fields.published.value,author=fields.author.display_value,url='https://<your-ServiceNow-domain>.service-now.com/kb_view.do?sysparm_article={number}',fields.kb_knowledge_base.display_value,fields.language.display_value,fields.rating.display_value,NO_PAYLOAD",
+        "result_mappings": "title=title,body=snippet,date_published=fields.published.value,author=fields.author.display_value,url='https://<your-ServiceNow-domain>.service-now.com/kb_view.do?sysparm_article={number}',fields.active.display_value,fields.article_type.display_value,fields.kb_category.display_value,fields.sys_created_on.display_value,fields.helpful_count.value,fields.kb_knowledge_base.display_value,fields.rating.value,fields.topic.display_value,fields.sys_updated_on.display_value,fields.sys_updated_by.display_value,fields.sys_view_count.value,NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "HTTPBasicAuth('servicenow-username','servicenow-password')",
         "eval_credentials": "",
