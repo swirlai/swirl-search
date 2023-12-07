@@ -1,0 +1,31 @@
+{
+    "name": "Netflix Movies - MongoDB",
+    "active": true,
+    "default": false,
+    "authenticator": "",
+    "connector": "MongoDB",
+    "url": "sample_mflix:movies",
+    "query_template": "{'$text': {'$search': '{query_string}'}}",
+    "post_query_template": {},
+    "http_request_headers": {},
+    "page_fetch_config_json": {},
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "NOT_CHAR=-",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "title=name,body=fullplot,date_published=year,date_published_display=year,author=directors[*],url=poster,genres[*],rated,runtime,languages[*],cast[*],writers[*],awards.text,imdb.rating,tomatoes.viewer.rating,tomatoes.critic.rating,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "",
+    "eval_credentials": "",
+    "tags": [
+        "Movies",
+        "MongoDB",
+        "Internal"
+    ]
+}
