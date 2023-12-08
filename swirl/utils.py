@@ -117,7 +117,6 @@ def get_page_fetcher_or_none(url):
     user_list = user.objects.all()
     user_count = len(user_list)
     hostname = socket.gethostname()
-    #domain_name = socket.getfqdn() for AD users
 
     headers = SWIRL_CONTAINER_AGENT if is_running_in_docker() else SWIRL_MACHINE_AGENT
     """
