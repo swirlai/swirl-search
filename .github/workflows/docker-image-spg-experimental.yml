@@ -1,7 +1,7 @@
-name: EXPERIMENTALSpyglassDockerBuild
+name: EXPERIMENT SpyglassDockerBuild
 
 on:
-  # Allows manual run of this workflow from the Actions tab (on any branch)
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # For debugging

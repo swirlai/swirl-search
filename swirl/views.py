@@ -46,9 +46,7 @@ from swirl.tasks import update_microsoft_token_task
 from swirl.search import search as run_search
 
 SWIRL_EXPLAIN = getattr(settings, 'SWIRL_EXPLAIN', True)
-SWIRL_RERUN_WAIT = getattr(settings, 'SWIRL_RERUN_WAIT', 8)
 SWIRL_SUBSCRIBE_WAIT = getattr(settings, 'SWIRL_SUBSCRIBE_WAIT', 20)
-SWIRL_Q_WAIT = getattr(settings, 'SWIRL_Q_WAIT', 7)
 
 def remove_duplicates(my_list):
     new_list = []
@@ -170,6 +168,9 @@ class AuthenticatorSerializer(serializers.ModelSerializer):
 class AuthenticatorViewSet(viewsets.ModelViewSet):
     serializer_class = AuthenticatorSerializer
 
+    def get_queryset(self):
+        return AuthenticatorModel.objects.all()
+
     def list(self, request):
         return return_authenticators_list(request)
 
@@ -244,10 +245,6 @@ class OidcAuthView(APIView):
 class UpdateMicrosoftToken(APIView):
     def post(self, request):
         try:
-            headers = {
-                'Authorization': request.headers['Authorization'],
-                'Microsoft-Authorization': request.headers['Microsoft-Authorization']
-            }
             # just return succcess,don't call the task
             # result = update_microsoft_token_task.delay(headers).get()
             result = { 'user': request.user.username, 'status': 'success' }
@@ -376,6 +373,9 @@ class SearchViewSet(viewsets.ModelViewSet):
     serializer_class = SearchSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
+    def report(self):
+        return self.queryset
+
     def list(self, request):
         # check permissions
         if not request.user.has_perm('swirl.view_search'):
@@ -419,7 +419,6 @@ class SearchViewSet(viewsets.ModelViewSet):
             new_search.save()
             logger.info(f"{request.user} search_q {new_search.id}")
             # search_task.delay(new_search.id, Authenticator().get_session_data(request))
-            # time.sleep(SWIRL_Q_WAIT)
             run_search(new_search.id, Authenticator().get_session_data(request),request=request)
             return redirect(f'/swirl/results?search_id={new_search.id}')
 
@@ -461,10 +460,6 @@ class SearchViewSet(viewsets.ModelViewSet):
             new_search.save()
             # log info
             logger.info(f"{request.user} search_qs {new_search.id}")
-            headers = {
-                'Authorization': request.headers.get('Authorization', ''),
-                'Microsoft-Authorization': request.headers.get('Microsoft-Authorization', '')
-            }
             res = run_search(new_search.id, Authenticator().get_session_data(request), request=request)
             if not res:
                 logger.info(f'Search failed: {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -493,9 +488,6 @@ class SearchViewSet(viewsets.ModelViewSet):
                     return
                 return Response(paginate(results, self.request), status=status.HTTP_200_OK)
             else:
-                tries = tries + 1
-                if tries > SWIRL_RERUN_WAIT:
-                    return Response(f'Timeout: {tries}, {new_search.status}!!', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 time.sleep(1)
             # end if
         # end if
@@ -529,7 +521,6 @@ class SearchViewSet(viewsets.ModelViewSet):
             rerun_search.save()
             logger.info(f"{request.user} rerun {rerun_id}")
             # search_task.delay(rerun_search.id, Authenticator().get_session_data(request))
-            # time.sleep(SWIRL_RERUN_WAIT)
             run_search(rerun_search.id, Authenticator().get_session_data(request), request=request)
             return redirect(f'/swirl/results?search_id={rerun_search.id}')
         # end if
@@ -587,10 +578,10 @@ class SearchViewSet(viewsets.ModelViewSet):
             if Search.objects.filter(id=serializer.data['id'], owner=self.request.user).exists():
                 search = Search.objects.get(id=serializer.data['id'])
                 search.status = 'ERR_NO_SEARCHPROVIDERS'
-                search.save
+                search.save()
         else:
             # search_task.delay(serializer.data['id'], Authenticator().get_session_data(request))
-            logger.info(f"{request.user} search_post {search.id}")
+            logger.info(f"{request.user} search_post")
             run_search(serializer.data['id'], Authenticator().get_session_data(request), request=request)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -12,7 +12,7 @@ from swirl.processors.processor import *
 
 from datetime import datetime
 
-import openai
+from openai import OpenAI
 
 from celery import group
 import threading
@@ -83,8 +83,8 @@ class RAGPostResultProcessor(PostResultProcessor):
 
     type="RAGPostResultProcessor"
 
-    def __init__(self, search_id, request_id='', is_socket_logic=False, rag_query_items=False):
-        super().__init__(search_id=search_id, request_id=request_id, is_socket_logic=is_socket_logic, rag_query_items=rag_query_items)
+    def __init__(self, search_id, request_id='', should_get_results=False, rag_query_items=False):
+        super().__init__(search_id=search_id, request_id=request_id, should_get_results=should_get_results, rag_query_items=rag_query_items)
         self.tasks = None
         self.stop_background_thread = False
         try:
@@ -214,15 +214,15 @@ class RAGPostResultProcessor(PostResultProcessor):
             return 0
 
         try:
-            completions_new = openai.ChatCompletion.create(
+            completions_new = self.client.chat.completions.create(
                 model=MODEL,
                 messages=[
                     {"role": "system", "content": rag_prompt.get_role_system_guide_text()},
                     {"role": "user", "content": new_prompt_text},
                 ],
-                temperature=0,
+                temperature=0
             )
-            model_response = completions_new['choices'][0]['message']['content'] # FROM API Doc
+            model_response = completions_new.choices[0].message.content
             logger.info(f'RAG: fetch_prompt_errors follow:')
             for (k,v) in fetch_prompt_errors.items():
                 logger.info(f'RAG:\t url:{k} problem:{v}')
@@ -248,7 +248,8 @@ class RAGPostResultProcessor(PostResultProcessor):
         rag_result['author'] = 'ChatGPT'
         rag_result['searchprovider'] = 'ChatGPT'
         rag_result['searchprovider_rank'] = 1
-        rag_result['result_block'] = 'ai_summary'
+        if settings.SWIRL_DEFAULT_RESULT_BLOCK:
+            rag_result['result_block'] = getattr(settings, 'SWIRL_DEFAULT_RESULT_BLOCK', 'ai_summary')
         rag_result['rag_query_items'] = [str(item['swirl_id']) for item in chosen_rag]
 
         result = Result.objects.create(owner=self.search.owner, search_id=self.search, provider_id=5, searchprovider='ChatGPT', query_string_to_provider=new_prompt_text[:256], query_to_provider='None', status='READY', retrieved=1, found=1, json_results=[rag_result], time=0.0)
@@ -256,12 +257,11 @@ class RAGPostResultProcessor(PostResultProcessor):
         return result
 
 
-    def process(self, should_return=False):
-
-        logger.info('RUN RAG')
+    def process(self, should_return=True):
         # to do: remove foo:etc
+        self.client = None
         if getattr(settings, 'OPENAI_API_KEY', None):
-            openai.api_key = settings.OPENAI_API_KEY
+            self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
         else:
             logger.warning("RAG OPENAI_API_KEY unset!")
             return 0

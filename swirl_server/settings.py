@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles'
+    'django.contrib.staticfiles',
+    'drf_yasg'
 ]
 
 ASGI_APPLICATION = 'swirl_server.routing.application'
@@ -69,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'swirl.middleware.TokenMiddleware',
     'swirl.middleware.SpyglassAuthenticatorsMiddleware',
+    'swirl.middleware.SwaggerMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -226,8 +228,6 @@ EMAIL_HOST_PASSWORD = 'your_sendgrid_password'
 SWIRL_DEFAULT_QUERY_LANGUAGE = 'english'
 SWIRL_TIMEOUT_DEFAULT = 10
 SWIRL_TIMEOUT = env.int('SWIRL_TIMEOUT',default=SWIRL_TIMEOUT_DEFAULT)
-SWIRL_Q_WAIT = 7
-SWIRL_RERUN_WAIT = 8
 SWIRL_SUBSCRIBE_WAIT = 20
 SWIRL_DEDUPE_FIELD = 'url'
 SWIRL_DEDUPE_SIMILARITY_MINIMUM = 0.95
