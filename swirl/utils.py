@@ -45,7 +45,7 @@ def provider_getter():
             res = cur.fetchone()
             return res[0]
     except Exception as err:
-        print(f'DNDEBUG : {err} while getting provider count')
+        print(f'{err} while getting provider count, defaulting to -1')
         return -1 # not set
 
 def get_search_count():
@@ -57,7 +57,7 @@ def get_search_count():
             res = cur.fetchone()
             return res[0]
     except Exception as err:
-        print(f'DNDEBUG : {err} while getting search count')
+        print(f'{err} while getting search count, defaulting to -1')
         return -1 # not set
 
 def is_running_celery_redis():
@@ -117,8 +117,7 @@ def get_page_fetcher_or_none(url):
     user_list = user.objects.all()
     user_count = len(user_list)
     hostname = socket.gethostname()
-   #ip_addr = socket.gethostbyname(hostname)
-    #domain_name = socket.gethostbyaddr(ip_addr)
+    domain_name = socket.getfqdn()
 
     headers = SWIRL_CONTAINER_AGENT if is_running_in_docker() else SWIRL_MACHINE_AGENT
     """
@@ -134,6 +133,7 @@ def get_page_fetcher_or_none(url):
         search_count,
         user_count,
         hostname,
+        domain_name
         ]
     newurl = url_merger(url, info)
     if (pf := PageFetcherFactory.alloc_page_fetcher(url=newurl, options= {
@@ -150,7 +150,7 @@ def url_merger(base_url, info):
     for i in info:
         data.append("info=" + str(i))
     url = f"{base_url}?{'&'.join(data)}"
-    print(f'DNDEBUG: info url {url}')
+    print(url)
     return url
 
 def get_url_details(request):

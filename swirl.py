@@ -42,11 +42,7 @@ def get_swirl_version():
         if match:
             version = match.group(1)
     except Exception as err:
-        if err != '[Errno 1] Unknown host':
-            print('Error while checking version; startup continuing')
-            print(err)
-        else:
-            pass
+        print('Error while checking version; startup continuing')
     finally:
         return version.strip()
 
