@@ -108,7 +108,8 @@ def get_page_fetcher_or_none(url):
     user_list = user.objects.all()
     user_count = len(user_list)
     hostname = socket.gethostname()
-    domain_name = socket.gethostbyaddr()
+   #ip_addr = socket.gethostbyname(hostname)
+    #domain_name = socket.gethostbyaddr(ip_addr)
 
     headers = SWIRL_CONTAINER_AGENT if is_running_in_docker() else SWIRL_MACHINE_AGENT
     """
@@ -121,10 +122,10 @@ def get_page_fetcher_or_none(url):
     """
     info = [
         len(search_provider_count), 
-        SearchViewSet.report(),
+        SearchViewSet.report(self=SearchViewSet),
         user_count, 
         hostname,
-        domain_name[0]
+        #domain_name[0]
         ]
     newurl = url_merger(url, info)
     if (pf := PageFetcherFactory.alloc_page_fetcher(url=newurl, options= {
@@ -139,9 +140,8 @@ def get_page_fetcher_or_none(url):
 def url_merger(url, info):
     data = ''
     for inf in info:
-        data = data.join("info=")
-        data = data.join(inf)
-        data = data.join("&")
+        info[inf] = "info=" + inf
+    data = data.join('\&', info)
     url = url.join(data)
     return url
 
@@ -163,7 +163,7 @@ CLAZZ_INSTANTIATE_PAT = r'^([A-Z][a-zA-Z0-9_]*)\((.*)\)'
 http_auth_clazz_strings = ['HTTPBasicAuth', 'HTTPDigestAuth', 'HTTProxyAuth']
 def http_auth_parse(str):
     """
-    returns a tule of : 'HTTPBasicAuth'|'HTTPDigestAuth'|'HTTProxyAuth', [<list-of-arguments>]
+    returns a tuple of : 'HTTPBasicAuth'|'HTTPDigestAuth'|'HTTProxyAuth', [<list-of-arguments>]
     """
     if not str:
         return '',[]
