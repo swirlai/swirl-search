@@ -17,7 +17,7 @@ from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from swirl.web_page import PageFetcherFactory
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote
 
 
 SWIRL_MACHINE_AGENT   = {'User-Agent': 'SwirlMachineServer/1.0 (+http://swirl.today)'}
@@ -35,22 +35,30 @@ def safe_urlparse(url):
         print(f'{err} while parsing URL')
     finally:
         return ret
-    
+
 def provider_getter():
     try:
-        conn = sqlite3.connect('../db.sqlite3')
-        cur = conn.cursor()
-        cur.execute("select * from swirl_searchprovider")
-        res = cur.fetchall()
-        return res
-    except:
-        try:
-            res = glob.glob1('../SearchProviders/', "*.json")
-            return res
-        except:
-            res = ''
-            return res
+        conn = sqlite3.connect('./db.sqlite3')
+        with conn:
+            cur = conn.cursor()
+            cur.execute("SELECT COUNT(*) FROM swirl_searchprovider")
+            res = cur.fetchone()
+            return res[0]
+    except Exception as err:
+        print(f'DNDEBUG : {err} while getting provider count')
+        return -1 # not set
 
+def get_search_count():
+    try:
+        conn = sqlite3.connect('./db.sqlite3')
+        with conn:
+            cur = conn.cursor()
+            cur.execute("SELECT COUNT(*) FROM swirl_search")
+            res = cur.fetchone()
+            return res[0]
+    except Exception as err:
+        print(f'DNDEBUG : {err} while getting search count')
+        return -1 # not set
 
 def is_running_celery_redis():
     """
@@ -102,8 +110,9 @@ def is_running_in_docker():
 
 def get_page_fetcher_or_none(url):
     from swirl.views import SearchViewSet
-    
+
     search_provider_count = provider_getter()
+    search_count = get_search_count()
     user = get_user_model()
     user_list = user.objects.all()
     user_count = len(user_list)
@@ -113,19 +122,18 @@ def get_page_fetcher_or_none(url):
 
     headers = SWIRL_CONTAINER_AGENT if is_running_in_docker() else SWIRL_MACHINE_AGENT
     """
-    info is a tuple with 5 elements. 
+    info is a tuple with 5 elements.
     info[0] : number of search providers
     info[1] : number of search objects
     info[2] : number of django users
-    info[3] : hostname 
+    info[3] : hostname
     info[4] : domain name
     """
     info = [
-        len(search_provider_count), 
-        SearchViewSet.report(self=SearchViewSet),
-        user_count, 
+        search_provider_count,
+        search_count,
+        user_count,
         hostname,
-        #domain_name[0]
         ]
     newurl = url_merger(url, info)
     if (pf := PageFetcherFactory.alloc_page_fetcher(url=newurl, options= {
@@ -136,13 +144,13 @@ def get_page_fetcher_or_none(url):
     else:
         logger.info(f"No fetcher for {url}")
         return None
-    
-def url_merger(url, info):
-    data = ''
-    for inf in info:
-        info[inf] = "info=" + inf
-    data = data.join('\&', info)
-    url = url.join(data)
+
+def url_merger(base_url, info):
+    data = []
+    for i in info:
+        data.append("info=" + str(i))
+    url = f"{base_url}?{'&'.join(data)}"
+    print(f'DNDEBUG: info url {url}')
     return url
 
 def get_url_details(request):
