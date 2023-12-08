@@ -148,7 +148,6 @@ def url_merger(base_url, info):
     for i in info:
         data.append("info=" + str(i))
     url = f"{base_url}?{'&'.join(data)}"
-    print(url)
     return url
 
 def get_url_details(request):
