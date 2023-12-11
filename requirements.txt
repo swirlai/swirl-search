@@ -32,3 +32,5 @@ channels-redis
 tika
 drf-yasg
 pymongo
+snowflake-connector-python
+oracledb

@@ -147,8 +147,6 @@ class OpenSearch(Connector):
             self.status = "ERR_CLIENT_INIT_FAILED"
             return
 
-        logger.debug(f"{self}: client.search()")
-
         response = None
         try:
             # security review 1.7 - OK - limited to Elasticsearch
@@ -169,7 +167,6 @@ class OpenSearch(Connector):
         except TransportError as err:
             self.error(f"client.search reports Transport Error: {err}")
 
-        logger.debug(f"{self}: response: {response}")
         self.response = response
         return
 

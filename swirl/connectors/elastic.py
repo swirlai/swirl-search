@@ -148,7 +148,6 @@ class Elastic(Connector):
             self.error(f"es.search reports '{err}'")
 
         self.response = response
-        logger.debug(f"{self}: response: {self.response}")
 
         return
 

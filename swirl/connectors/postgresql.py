@@ -63,17 +63,16 @@ class PostgreSQL(DBConnector):
             cursor.execute(self.count_query)
             found = cursor.fetchone()
         except Error as err:
-            self.error(f"execute_count_query: {err}")
+            self.error(f"{err} connecting to {self.type}")
+            self.status = 'ERR'
             return
 
-        # found = (1460,)
         if found == None:
             found = 0
         else:
             found = found[0]
 
         if 'json' in self.count_query.lower():
-            # to do: check on this
             self.warning(f"Ignoring 0 return from find, since 'json' appears in the query_string")
         else:
             if found == 0:
@@ -95,7 +94,7 @@ class PostgreSQL(DBConnector):
             column_names = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
         except Error as err:
-            self.error(f"execute_count_query: {err}")
+            self.error(f"{err} querying {self.type}")
             return
 
         # rows is a list of tuple results
@@ -108,49 +107,10 @@ class PostgreSQL(DBConnector):
         # end if
 
         self.response = rows
-        logger.debug(f"{self}: response: {self.response}")
+
+        cursor.close()
+        connection.close()
 
         self.column_names = column_names
         self.found = found
-
-        return
-
-    ########################################
-
-    def normalize_response(self):
-
-        logger.debug(f"{self}: normalize_response()")
-
-        rows = self.response
-        found = self.found
-
-        if found == 0:
-            self.status = 'READY'
-            return
-
-        # rows = [ (1, 'lifelock', 'LifeLock', '', 'web', 'Tempe', 'AZ', datetime.date(2007, 5, 1), Decimal('6850000'), 'USD', 'b'), etc ]
-
-        trimmed_rows = []
-        column_names = self.column_names
-        for row in rows:
-            dict_row = {}
-            n_field = 0
-            for field in column_names:
-                dict_row[field] = row[n_field]
-                n_field = n_field + 1
-            # end for
-            trimmed_rows.append(dict_row)
-        # end for
-        retrieved = len(trimmed_rows)
-        if retrieved == 0:
-            self.error(f"rows were returned, but couldn't serialize them")
-            return
-
-        if retrieved > found:
-            found = retrieved
-
-        self.found = found
-        self.retrieved = retrieved
-        self.results = trimmed_rows
-
         return
