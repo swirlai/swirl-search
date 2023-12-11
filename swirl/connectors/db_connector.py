@@ -120,3 +120,46 @@ class DBConnector(Connector):
             return False
 
         return True
+    
+    ########################################
+
+    def normalize_response(self):
+
+        logger.debug(f"{self}: normalize_response()")
+
+        rows = self.response
+        found = self.found
+
+        if found == 0:
+            self.status = 'READY'
+            return
+
+        trimmed_rows = []
+        column_names = self.column_names
+        for row in rows:
+            dict_row = {}
+            n_field = 0
+            for field in column_names:
+                # to handle None columns e.g. Snowflake
+                if row[n_field]:
+                    dict_row[field] = row[n_field]
+                else:
+                    dict_row[field] = ''
+                n_field = n_field + 1
+            # end for
+            trimmed_rows.append(dict_row)
+        # end for
+        retrieved = len(trimmed_rows)
+        if retrieved == 0:
+            self.error(f"rows were returned, but couldn't serialize them")
+            return
+
+        if retrieved > found:
+            found = retrieved
+
+        self.found = found
+        self.retrieved = retrieved
+        self.results = trimmed_rows
+
+        return
+
