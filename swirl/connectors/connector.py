@@ -75,7 +75,7 @@ class Connector:
         try:
             self.search_user = User.objects.get(id=self.search.owner.id)
         except ObjectDoesNotExist as err:
-            logger.warn("unable to find search user, no auth check")
+            logger.warning("unable to find search user, no auth check")
 
         self.query_mappings = get_mappings_dict(self.provider.query_mappings)
         self.response_mappings = get_mappings_dict(self.provider.response_mappings)
@@ -254,11 +254,18 @@ class Connector:
                 self.status = 'READY'
                 return
 
-        # trim response to requested length
-        if len(self.response) > self.provider.results_per_query:
-            self.response = self.response[:self.provider.results_per_query]
-            self.retrieved = self.provider.results_per_query
-
+        if isinstance(self.response, str):
+            if len(self.response) > self.provider.results_per_query:
+                self.response = self.response[:self.provider.results_per_query]
+                self.retrieved = self.provider.results_per_query
+        elif isinstance(self.response, (list, tuple)):
+            if len(self.response) > self.provider.results_per_query:
+                self.response = self.response[:self.provider.results_per_query]
+                self.retrieved = len(self.response)
+        else:
+            self.error("self.response is neither a string nor a list/tuple.")
+            return
+        
         self.results = self.response
         return
 
@@ -297,6 +304,7 @@ class Connector:
             return
 
         # process results
+        retrieved = 0
         if self.results:
             retrieved = len(self.results)
         self.message(f"Retrieved {retrieved} of {self.found} results from: {self.provider.name}")
@@ -408,4 +416,21 @@ class Connector:
             new_result.save()
         except Error as err:
             self.error(f'save_results() failed: {err.args}, {err}', save_results=False)
+            # Log everything except for the json_message
+            logger.error( "failed to save "
+                f"search_id={self.search}, "
+                f"searchprovider={self.provider.name}, "
+                f"provider_id={self.provider.id}, "
+                f"query_string_to_provider={self.query_string_to_provider}, "
+                f"query_to_provider={self.query_to_provider}, "
+                f"query_processors={query_processors}, "
+                f"result_processors={result_processors}, "
+                f"messages={self.messages}, "
+                f"status={self.status}, "
+                f"found={self.found}, "
+                f"retrieved={self.retrieved}, "
+                f"time={(end_time - self.start_time):.1f}, "
+                f"owner={self.search.owner}, "
+                f"result_processor_json_feedback={self.result_processor_json_feedback}"
+            )
         return self.retrieved
