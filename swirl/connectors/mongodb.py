@@ -22,13 +22,14 @@ from logging import DEBUG
 logger = get_task_logger(__name__)
 # logger.setLevel(DEBUG)
 
-from swirl.connectors.db_connector import DBConnector
+from swirl.connectors.connector import Connector
+from swirl.processors.utils import get_tag
 from swirl.connectors.utils import bind_query_mappings
 
 ########################################
 ########################################
 
-class MongoDB(DBConnector):
+class MongoDB(Connector):
 
     type = "MongoDB"
 
@@ -40,16 +41,29 @@ class MongoDB(DBConnector):
 
         self.count_query = None
 
+        # remove quotes
+        if '"' in self.query_string_to_provider or "'" in self.query_string_to_provider:
+            self.query_string_to_provider = self.query_string_to_provider.replace('"','').replace("'",'')
+
         query_to_provider = bind_query_mappings(self.provider.query_template, self.provider.query_mappings)
         if '{query_string}' in query_to_provider:
-            # add escaped \\" around each word so the search is an "All" instead of "Any" :\
-            mongo_query = ''
-            for term in self.query_string_to_provider.split():
-                if term.startswith('-'):
-                    mongo_query = mongo_query + term + ' '
-                else:
-                    mongo_query = mongo_query + '\\"' + term + '\\"' + ' '
-            query_to_provider = query_to_provider.replace('{query_string}', mongo_query.strip())
+            # if search.tag has match_all, 
+            if not 'MATCH_ANY' in self.search.tags and not 'MATCH_ANY' in self.provider.query_mappings:
+                # add '\\" around each term :\
+                mongo_query = ''
+                for term in self.query_string_to_provider.split():
+                    if term.startswith('-'):
+                        mongo_query = mongo_query + term + ' '
+                    else:
+                        mongo_query = mongo_query + '\\"' + term + '\\"' + ' '
+                # not an f string!
+                query_to_provider = query_to_provider.replace('{query_string}', mongo_query.strip())
+            else:
+                # not an f string!
+                query_to_provider = query_to_provider.replace('{query_string}', self.query_string_to_provider)
+            # end if
+
+        self.warning(f"qtp: {query_to_provider}")
 
         try:
             # convert string to json
@@ -77,7 +91,6 @@ class MongoDB(DBConnector):
 
         logger.debug(f"{self}: execute_search()")
 
-        # connect to the db
         config = self.provider.url.split(':')
         if len(config) != 2:
             self.error(f'Invalid configuration: {config}')
@@ -97,6 +110,8 @@ class MongoDB(DBConnector):
 
         except Exception as err:
             self.error(f"{err} connecting to {self.type}")
+            self.status = 'ERR'
+            client.close()
             return
  
         logger.debug(f"{self}: count {found}")
@@ -109,11 +124,10 @@ class MongoDB(DBConnector):
             return
         # end if
  
-        # now run the actual query
         try:
             if self.search.sort.lower() == 'date':
-                if 'DATE_SORT' in self.query_mappings:
-                    results = collection.find(self.query_to_provider).sort(self.query_mappings['DATE_SORT'], -1).limit(self.provider.results_per_query)
+                if 'sort_by_date' in self.query_mappings:
+                    results = collection.find(self.query_to_provider).sort(self.query_mappings['sort_by_date'], -1).limit(self.provider.results_per_query)
                 else:
                     self.warning("Date sort requested, but `DATE_SORT` missing from `query_mappings`, ignoring")
                     results = collection.find(self.query_to_provider).limit(self.provider.results_per_query)
@@ -121,7 +135,10 @@ class MongoDB(DBConnector):
                 results = collection.find(self.query_to_provider).limit(self.provider.results_per_query)
             self.response = list(results)
         except Exception as err:
-            self.error(f"{err} connecting to {self.type}")
+            self.error(f"{err} querying {self.type}")
+            self.status = 'ERR'
+            client.close()
+            return
         finally:
             client.close()
 

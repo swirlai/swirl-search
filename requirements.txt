@@ -4,6 +4,7 @@ amqp==5.1.1
 annotated-types==0.5.0
 anyio==3.7.1
 asgiref==3.7.2
+asn1crypto==1.5.1
 async-timeout==4.0.3
 attrs==23.1.0
 autobahn==23.6.2
@@ -49,6 +50,7 @@ drf-yasg==1.21.7
 elastic-transport==8.4.0
 elasticsearch==8.9.0
 en-core-web-lg @ https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.6.0/en_core_web_lg-3.6.0-py3-none-any.whl
+filelock==3.13.1
 flower==2.0.1
 frozenlist==1.4.0
 google-api-core==2.11.1
@@ -87,9 +89,11 @@ numpy==1.25.2
 openai==1.3.4
 openapi-codec==1.3.2
 opensearch-py==2.3.1
+oracledb==1.4.2
 packaging==23.1
 pathy==0.10.2
 pika==1.3.2
+platformdirs==3.11.0
 pluggy==1.3.0
 ply==3.11
 preshed==3.0.8
@@ -123,6 +127,8 @@ simplejson==3.19.1
 six==1.16.0
 smart-open==6.3.0
 sniffio==1.3.0
+snowflake-connector-python==3.6.0
+sortedcontainers==2.4.0
 soupsieve==2.4.1
 spacy==3.6.1
 spacy-legacy==3.0.12
@@ -134,6 +140,7 @@ textblob==0.17.1
 thinc==8.1.12
 tika==2.6.0
 tiktoken==0.5.1
+tomlkit==0.12.3
 tornado==6.3.3
 tqdm==4.66.1
 Twisted==23.8.0
