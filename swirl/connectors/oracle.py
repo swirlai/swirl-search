@@ -6,7 +6,7 @@
 from sys import path
 from os import environ
 
-import cx_Oracle
+import oracledb
 
 import json
 
@@ -52,7 +52,7 @@ class Oracle(DBConnector):
 
         try:
             # Create a new connection
-            conn = cx_Oracle.connect(username, password, dsn)
+            conn = oracledb.connect(username, password, dsn)
             cursor = conn.cursor()
             cursor.execute(self.count_query)
             found = cursor.fetchone()[0]
@@ -65,8 +65,9 @@ class Oracle(DBConnector):
             
             cursor.execute(self.query_to_provider)
             self.column_names = [col[0].lower() for col in cursor.description]
+            # this is a problem TO DO
             results = [dict(zip(self.column_names, row)) for row in cursor]
-        except cx_Oracle.DatabaseError as e:
+        except oracledb.DatabaseError as e:
             error, = e.args
             self.error(f"Database error: {error.code}, {error.message}")
             self.status = 'ERR'
@@ -76,7 +77,9 @@ class Oracle(DBConnector):
 
         try:
             if results:
-                self.response = json.dumps(results, default=str)
+                self.results = json.dumps(results, default=str)
+                # ensure that self.response is not normalized by the base DBConnector class
+                self.response = None
         except json.JSONDecodeError as err:
             self.error(f"{err} converting JSON")
 

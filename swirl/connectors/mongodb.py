@@ -41,10 +41,14 @@ class MongoDB(Connector):
 
         self.count_query = None
 
+        # remove quotes
+        if '"' in self.query_string_to_provider or "'" in self.query_string_to_provider:
+            self.query_string_to_provider = self.query_string_to_provider.replace('"','').replace("'",'')
+
         query_to_provider = bind_query_mappings(self.provider.query_template, self.provider.query_mappings)
         if '{query_string}' in query_to_provider:
             # if search.tag has match_all, 
-            if 'MATCH_ALL' in self.search.tags:
+            if not 'MATCH_ANY' in self.search.tags and not 'MATCH_ANY' in self.provider.query_mappings:
                 # add '\\" around each term :\
                 mongo_query = ''
                 for term in self.query_string_to_provider.split():
@@ -58,6 +62,8 @@ class MongoDB(Connector):
                 # not an f string!
                 query_to_provider = query_to_provider.replace('{query_string}', self.query_string_to_provider)
             # end if
+
+        self.warning(f"qtp: {query_to_provider}")
 
         try:
             # convert string to json
@@ -120,8 +126,8 @@ class MongoDB(Connector):
  
         try:
             if self.search.sort.lower() == 'date':
-                if 'DATE_SORT' in self.query_mappings:
-                    results = collection.find(self.query_to_provider).sort(self.query_mappings['DATE_SORT'], -1).limit(self.provider.results_per_query)
+                if 'sort_by_date' in self.query_mappings:
+                    results = collection.find(self.query_to_provider).sort(self.query_mappings['sort_by_date'], -1).limit(self.provider.results_per_query)
                 else:
                     self.warning("Date sort requested, but `DATE_SORT` missing from `query_mappings`, ignoring")
                     results = collection.find(self.query_to_provider).limit(self.provider.results_per_query)

@@ -127,12 +127,17 @@ class DBConnector(Connector):
 
         logger.debug(f"{self}: normalize_response()")
 
-        rows = self.response
         found = self.found
 
         if found == 0:
             self.status = 'READY'
             return
+
+        if not self.response:
+            # assume the connector took care of it
+            return
+        
+        rows = self.response
 
         trimmed_rows = []
         column_names = self.column_names
@@ -160,6 +165,5 @@ class DBConnector(Connector):
         self.found = found
         self.retrieved = retrieved
         self.results = trimmed_rows
-
         return
 
