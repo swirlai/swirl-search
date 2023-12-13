@@ -216,7 +216,7 @@ Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up 
 | atlassian.json | Searches Atlassian [Confluence Cloud](https://www.atlassian.com/software/confluence), [Jira Cloud](https://www.atlassian.com/software/jira), and [Trello](https://trello.com/) Cards. | Requires a bearer token and/or Trello API key; Confluence searches the [CQL `text~` content](https://developer.atlassian.com/server/confluence/performing-text-searches-using-cql/) and Jira searches the [JQL `text~` content](https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-searching-in-jira-cloud/#Advancedsearching-textPerformingtextsearches) |
 | blockchain-bitcoin.json | Searches [Blockchain.com](https://www.blockchain.com/) for specific Bitcoin Addresses (wallets) and Transactions IDs (hashes) | Requires a Blockchain.com API key |
 | chatgpt.json | ChatGPT AI chatbot | Requires an OpenAI API key |
-| company_snowflake.json | Searches the [Snowflake](https://www.snowflake.com/) `FreeCompanyResearch` dataset | Requires a Snowflake username and password |
+| company_snowflake.json | Searches the [Snowflake](https://www.snowflake.com/en/) `FreeCompanyResearch` dataset | Requires a Snowflake username and password |
 | crunchbase.json | Searches organizations via the [Crunchbase](https://www.crunchbase.com/) basic API | Requires a Crunchbase.com API key |
 | document_db.json | SQLite3 document database | [documents_db.csv](https://github.com/swirlai/swirl-search/tree/main/Data/documents_db.csv) |
 | elastic_cloud.json | elasticsearch, cloud version | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) Requires cloud_id, credentials |
@@ -273,7 +273,7 @@ Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up 
     * A new Google PSE SearchProvider that targets the [new Swirl documentation website](https://docs.swirl.today/) is included and enabled by default.
     * The EuropePMC SearchProvider is preloaded, set to active status, and configured to participate in Retrieval Augmented Generation (RAG) by default.
 
-* As of Release 3.1.0, Swirl includes SearchProviders for [Asana](https://asana.com/) Tasks, [Atlassian Trello](https://trello.com/) Cards, [Internet Archive Library](https://archive.org/) items, [Mongodb Atlas](https://www.mongodb.com/), [Oracle](https://www.oracle.com/) (WIP), and [Snowflake](https://www.snowflake.com/).
+* As of Release 3.1.0, Swirl includes SearchProviders for [Asana](https://asana.com/) Tasks, [Atlassian Trello](https://trello.com/) Cards, [Internet Archive Library](https://archive.org/) items, [Mongodb Atlas](https://www.mongodb.com/), [Oracle](https://www.oracle.com/) (WIP), and [Snowflake](https://www.snowflake.com/en/).
 
 ## Activating
 
