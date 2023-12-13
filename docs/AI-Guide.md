@@ -83,6 +83,17 @@ In Release 3.0, the RAG process utilizes only the *first 10 results* that are se
 
 ## Notes
 
+* As of Swirl 3.1.0, RAG processing is now available through a single API call, e.g. `?qs=metasearch&rag=true`.  See the [Developer Guide](https://docs.swirl.today/Developer-Guide.html#get-synchronous-results-with-the-qs-url-parameter) for more details about the `?qs=` parameter.
+
+* As of Swirl 3.1.0, configurations for a default timeout value (30 seconds) and the text to display when the timeout is exceeded were added to RAG processing.  These options are available in the `static/api/config/default` file.
+```
+"webSocketConfig": {
+    "url": "ws://localhost:8000/chatgpt-data",
+    "timeout": 30000,
+    "timeoutText": "Timeout: No response from Generative AI."
+  }
+```
+
 * RAG processing with public web data can be problematic due to difficulties extracting article content; for those seeking a solution for public data please [contact Swirl](mailto:hello@swirl.today).
 
 * The community edition of Swirl is intended to RAG with sources you can fetch without authenticating. If you need to perform RAG with content from enterprise services like Microsoft 365, ServiceNow, Salesforce, Atlassian with OAUTH2 and SSO, please [contact us for information about Swirl Enterprise](mailto:hello@swirl.today) - which supports all of that, and more, out of the box.
