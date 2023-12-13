@@ -516,7 +516,13 @@ The included [IMDB Movie Samples](https://github.com/swirlai/swirl-search/blob/m
 }
 ```
 
-More information: Mongodb Atlas [sample data sets](https://www.mongodb.com/developer/products/atlas/atlas-sample-datasets/).
+The MongoDB SearchProvider is configured with `MATCH_ALL` by default, which requires that all search terms be present in a result (similar to a Boolean `AND` operator). This can be changed to `MATCH_ANY`, which would only require one search term be present in a result (similar to a Boolean `OR` operator). There are two way to change the default behavior.
+
+* Update the `query_mappings` of the SP:
+```
+"query_mappings": "DATE_SORT=year,NOT_CHAR=-,MATCH_ANY",
+```
+* Add a Search Tag (not a SearchProvider Tag).
 
 ## Oracle
 
