@@ -247,10 +247,13 @@ The following table describes the included source Connectors:
 | ChatGPT | Asks OpenAI ChatGPT | `credentials` |
 | Elastic | Searches Elasticsearch | `url` or `cloud_id`, `query_template`, `index_name`, `credentials` |
 | Microsoft Graph | Uses the Microsoft Graph API to search M365 content | `credentials` |
+| Mongodb | Searches a Mongodb Atlas search index | `mongo_uri`, `database_name`, `collection_name`, `credentials` |
 | OpenSearch | Searches OpenSearch | `url`, `query_template`, `index_name`, `credentials` |
+| Oracle | Tested against 23c Free (and presumably supporting earlier versions) | `credentials` |
 | PostgreSQL | Searches PostgreSQL database | `url` (connection parameters), `query_template`, `credentials` |
 | RequestsGet | Searches any web endpoint using HTTP/GET with JSON response, including Google PSE, SOLR, Northern Light and more (see below) | `url`, `credentials` |
 | RequestsPost | Searches any web endpoint using HTTP/POST with JSON response, including M365 | `url`, `credentials` |
+| Snowflake | Searches Snowflake datasets | `credentials`, `database`, `warehouse` |
 | Sqlite3 | Searches SQLite3 databases | `url` (database file path), `query_template` |
 
 Connectors are specified in, and configured by, SearchProvider objects. 
@@ -280,7 +283,8 @@ The included [BigQuery SearchProvider](https://github.com/swirlai/swirl-search/b
     "credentials": "/path/to/bigquery/token.json",
     "tags": [
         "Company",
-        "BigQuery"
+        "BigQuery",
+        "Internal"
     ]
 }
 ```
@@ -315,7 +319,7 @@ The included [SearchProvider](https://github.com/swirlai/swirl-search/blob/main/
         "CosineRelevancyResultProcessor"
     ],
     "response_mappings": "",
-    "result_mappings": "BLOCK=ai_summary",
+    "result_mappings": "",
     "results_per_query": 10,
     "credentials": "your-openai-API-key-here",
     "tags": [
@@ -330,9 +334,6 @@ The `Question` and `ChatGPT` SearchProvider Tags make it easy to target ChatGPT 
 ``` shell
 Question: Tell me about knowledge management software?
 ```
-
-{: .warning }
-You must remove the default `result_mappings` value of `BLOCK=ai_summary` in the SearchProvider configuration to enable the `ChatGPT` or `Question` Tags! Otherwise, these Tags will be ignored.
 
 ### ChatGPT SearchProvider Tags
 
@@ -396,7 +397,8 @@ Here is an example of a SearchProvider to connect to ElasticCloud using the `clo
     "credentials": "(\"elastic\", \"elastic-password\")",
     "tags": [
         "Enron",
-        "Elastic"
+        "Elastic",
+        "Internal"
     ]
 }
 ```
@@ -423,7 +425,8 @@ This is the default OpenSearch SearchProvider that connects to a local instance 
     "credentials": "'admin','password'",
     "tags": [
         "Enron",
-        "OpenSearch"
+        "OpenSearch",
+        "Internal"
     ]
 }
 ```
@@ -481,25 +484,21 @@ The [PostgreSQL connector](https://github.com/swirlai/swirl-search/blob/main/swi
 
 To use PostgreSQL with Swirl:
 
-1. Install [PostgreSQL](https://www.postgresql.org/) 
-2. Modify the system PATH so that `pg_config` from the PostgreSQL distribution runs from the command line
-3. Install `psycopg2` using `pip`:
+* Install [PostgreSQL](https://www.postgresql.org/) 
+* Modify the system PATH so that `pg_config` from the PostgreSQL distribution runs from the command line
+* Install `psycopg2` using `pip`:
 
 ``` shell
 pip install psycopg2
 ```
 
-4. Uncomment the PostgreSQL Connector in the following modules:
-
-* [swirl.connectors.__init__.py](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/__init__.py)
-
+* Uncomment the PostgreSQL Connector in the following modules:
+  * [swirl.connectors.__init__.py](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/__init__.py)
 ```
 # uncomment this to enable PostgreSQL
 # from swirl.connectors.postgresql import PostgreSQL
 ```
-
-* [swirl.models.py](https://github.com/swirlai/swirl-search/blob/main/swirl/models.py)
-
+  * [swirl.models.py](https://github.com/swirlai/swirl-search/blob/main/swirl/models.py)
 ``` python
     CONNECTOR_CHOICES = [
         ('RequestsGet', 'HTTP/GET returning JSON'),
@@ -511,19 +510,19 @@ pip install psycopg2
     ]
 ```
 
-5. Run Swirl setup:
+* Run Swirl setup:
 
 ``` shell
 python swirl.py setup
 ```
 
-6. Restart Swirl:
+* Restart Swirl:
 
 ``` shell
 python swirl.py restart
 ```
 
-7. Add a PostgreSQL SearchProvider like the one provided with the [Funding Dataset](#funding-data-set)
+* Add a PostgreSQL SearchProvider like the one provided with the [Funding Dataset](#funding-data-set)
 
 {: .highlight }
 Suggestions on how to improve this process are [most welcome](#support)!
@@ -532,7 +531,7 @@ Here is an example of a basic SearchProvider using PostgreSQL:
 
 ``` json
 {
-    "name": "Company Funding Records - PostgreSQL",
+    "name": "Company Funding Records - PostgreSQL)",
     "default": false,
     "connector": "PostgreSQL",
     "url": "host:port:database:username:password",
@@ -547,7 +546,9 @@ Here is an example of a basic SearchProvider using PostgreSQL:
     ],
     "result_mappings": "title='{company} series {round}',body='{city} {fundeddate}: {company} raised usd ${raisedamt}\nThe company is headquartered in {city} and employs {numemps}',date_published=fundeddate,NO_PAYLOAD",
     "tags": [
-        "Company"
+        "Company",
+        "PostgreSQL",
+        "Internal"
     ]
 }
 ```
@@ -587,9 +588,35 @@ Here is the same connector, configured for three different Google Programmable S
 [
     {
         "name": "Enterprise Search Engines - Google PSE",
+        "active": true,
+        "default": true,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {},
+        "page_fetch_config_json": {
+            "cache": "false",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "www.businesswire.com": {
+                "timeout": 60
+            },
+            "www.linkedin.com": {
+                "timeout": 5
+            },
+            "rs.linkedin.com": {
+                "timeout": 5
+            },
+            "uk.linkedin.com": {
+                "timeout": 5
+            },
+            "au.linkedin.com": {
+                "timeout": 5
+            },
+            "timeout": 30
+        },
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -609,9 +636,35 @@ Here is the same connector, configured for three different Google Programmable S
     },
     {
         "name": "Strategy Consulting - Google PSE",
+        "active": true,
+        "default": true,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {},
+        "page_fetch_config_json": {
+            "cache": "false",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "www.businesswire.com": {
+                "timeout": 60
+            },
+            "www.linkedin.com": {
+                "timeout": 5
+            },
+            "rs.linkedin.com": {
+                "timeout": 5
+            },
+            "uk.linkedin.com": {
+                "timeout": 5
+            },
+            "au.linkedin.com": {
+                "timeout": 5
+            },
+            "timeout": 30
+        },
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -631,9 +684,35 @@ Here is the same connector, configured for three different Google Programmable S
     },
     {
         "name": "Mergers & Acquisitions - Google PSE",
+        "active": true,
+        "default": true,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {},
+        "page_fetch_config_json": {
+            "cache": "false",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "www.businesswire.com": {
+                "timeout": 60
+            },
+            "www.linkedin.com": {
+                "timeout": 5
+            },
+            "rs.linkedin.com": {
+                "timeout": 5
+            },
+            "uk.linkedin.com": {
+                "timeout": 5
+            },
+            "au.linkedin.com": {
+                "timeout": 5
+            },
+            "timeout": 30
+        },
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -676,13 +755,14 @@ And here it is again, configured for SOLR with the [tech products example collec
     "result_mappings": "title=name,body=features,response",
     "credentials": "",
     "tags": [
-        "Products",
-        "Solr"
+        "TechProducts",
+        "Solr",
+        "Internal"
     ]
 }
 ```
 
-To adapt RequestsGet for your JSON response, just replace the JSONPaths on the right of the FOUND, RETRIEVED, and RESULT configurations in `response_mappings`, following the left-to-right format of `swirl_key=source-key`. If the response provides a dictionary wrapper around each result, use the RESULT path to extract it.
+To adapt RequestsGet for your JSON response, just replace the JSONPaths on the right of the `FOUND`, `RETRIEVED`, and `RESULT` configurations in `response_mappings`, following the left-to-right format of `swirl_key=source-key`. If the response provides a dictionary wrapper around each result, use the RESULT path to extract it.
 
 From there, map results fields to Swirl's schema as described in the [User Guide, Result Mapping](User-Guide.md#result-mappings) section. Use the [PAYLOAD Field](User-Guide.md#payload-field) to store any extra content from SearchProviders that doesn't map to an existing Swirl field.
 
@@ -757,7 +837,9 @@ Here is an example of a SearchProvider using SQLite3:
     ],
     "result_mappings": "title='{company} series {round}',body='{city} {fundeddate}: {company} raised usd ${raisedamt}\nThe company is headquartered in {city} and employs {numemps}',date_published=fundeddate,NO_PAYLOAD",
     "tags": [
-        "Company"
+        "Company",
+        "SQLite3",
+        "Internal"
     ]
 }
 ```
