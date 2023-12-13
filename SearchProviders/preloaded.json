@@ -6,6 +6,30 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {},
+        "page_fetch_config_json": {
+            "cache": "false",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "www.businesswire.com": {
+                "timeout": 60
+            },
+            "www.linkedin.com": {
+                "timeout": 5
+            },
+            "rs.linkedin.com": {
+                "timeout": 5
+            },
+            "uk.linkedin.com": {
+                "timeout": 5
+            },
+            "au.linkedin.com": {
+                "timeout": 5
+            },
+            "timeout": 30
+        },
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -31,6 +55,30 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {},
+        "page_fetch_config_json": {
+            "cache": "false",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "www.businesswire.com": {
+                "timeout": 60
+            },
+            "www.linkedin.com": {
+                "timeout": 5
+            },
+            "rs.linkedin.com": {
+                "timeout": 5
+            },
+            "uk.linkedin.com": {
+                "timeout": 5
+            },
+            "au.linkedin.com": {
+                "timeout": 5
+            },
+            "timeout": 30
+        },
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -56,6 +104,30 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+        "post_query_template": "{}",
+        "http_request_headers": {},
+        "page_fetch_config_json": {
+            "cache": "false",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "www.businesswire.com": {
+                "timeout": 60
+            },
+            "www.linkedin.com": {
+                "timeout": 5
+            },
+            "rs.linkedin.com": {
+                "timeout": 5
+            },
+            "uk.linkedin.com": {
+                "timeout": 5
+            },
+            "au.linkedin.com": {
+                "timeout": 5
+            },
+            "timeout": 30
+        },
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -114,7 +186,7 @@
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
-        "result_mappings": "BLOCK=ai_summary",
+        "result_mappings": "",
         "results_per_query": 10,
         "credentials": "your-OpenAI-API-key-here",
         "tags": [
@@ -940,8 +1012,8 @@
         "default": false,
         "authenticator": "",
         "connector": "RequestsGet",
-        "url": "https://<your-ServiceNow-domain>.service-now.com/api/sn_km_api/knowledge/articles",
-        "query_template": "{url}?query={query_string}&fields=language,published,rating,author,kb_knowledge_base",
+        "url": "https://<your-ServiceNow-domain>.service-now.com/api/sn_km_api/knowledge/articles?fields=active,article_type,author,kb_category,sys_created_on,helpful_count,kb_knowledge_base,published,rating,topic,sys_updated_on,sys_updated_by,sys_view_count",
+        "query_template": "{url}?query={query_string}",
         "post_query_template": "{}",
         "http_request_headers": {
             "Accept": "application/json"
@@ -956,7 +1028,7 @@
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "FOUND=result.meta.count,RESULTS=result.articles",
-        "result_mappings": "title=title,body=snippet,date_published=fields.published.value,author=fields.author.display_value,url='https://<your-ServiceNow-domain>.service-now.com/kb_view.do?sysparm_article={number}',fields.kb_knowledge_base.display_value,fields.language.display_value,fields.rating.display_value,NO_PAYLOAD",
+        "result_mappings": "title=title,body=snippet,date_published=fields.published.value,author=fields.author.display_value,url='https://<your-ServiceNow-domain>.service-now.com/kb_view.do?sysparm_article={number}',fields.active.display_value,fields.article_type.display_value,fields.kb_category.display_value,fields.sys_created_on.display_value,fields.helpful_count.value,fields.kb_knowledge_base.display_value,fields.rating.value,fields.topic.display_value,fields.sys_updated_on.display_value,fields.sys_updated_by.display_value,fields.sys_view_count.value,NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "HTTPBasicAuth('servicenow-username','servicenow-password')",
         "eval_credentials": "",
@@ -1136,9 +1208,30 @@
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "post_query_template": {},
+        "post_query_template": "{}",
         "http_request_headers": {},
-        "page_fetch_config_json": {},
+        "page_fetch_config_json": {
+            "cache": "false",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "www.businesswire.com": {
+                "timeout": 60
+            },
+            "www.linkedin.com": {
+                "timeout": 5
+            },
+            "rs.linkedin.com": {
+                "timeout": 5
+            },
+            "uk.linkedin.com": {
+                "timeout": 5
+            },
+            "au.linkedin.com": {
+                "timeout": 5
+            },
+            "timeout": 30
+        },
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -1157,6 +1250,170 @@
         "tags": [
             "Swirl",
             "Documentation"
+        ]
+    },
+    {
+        "name": "Cards - Atlassian Trello",
+        "shared": true,
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "RequestsGet",
+        "url": "https://api.trello.com/1/search?modelTypes=cards&card_board=true&card_members=true&card_attachments=true&partial=true&card_list=true&card_fields=id,closed,dueComplete,dateLastActivity,desc,due,email,labels,name,start,url",
+        "query_template": "{url}&query={query_string}&key=<your-Trello-API-Key>&token=<your-Trello-API-Token>",
+        "post_query_template": {},
+        "http_request_headers": {
+            "Content-Type": "application/json"
+        },
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CleanTextResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "RESULTS=cards",
+        "result_mappings": "title=name,body=desc,date_published=dateLastActivity,url=url,id,board.name,list.name,labels[*].color,members[*].fullName,attachments[*].name,email,start,due,dueComplete,closed,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Trello",
+            "Atlassian",
+            "Internal"
+        ]
+    },
+    {
+        "name": "Tasks - Asana.com",
+        "shared": true,
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "RequestsGet",
+        "url": "https://app.asana.com/api/1.0/workspaces/<your-workspace-gid>/tasks/search?opt_fields=gid,resource_type,assignee_status,completed,completed_at,completed_by.name,created_at,created_by.name,due_on,likes.user.name,modified_at,name,notes,num_subtasks,start_on,assignee.name,assignee_section.name,followers.name,parent.name,permalink_url,projects.name,tags.name,workspace.name",
+        "query_template": "{url}&text={query_string}",
+        "post_query_template": {},
+        "http_request_headers": {
+            "Content-Type": "application/json"
+        },
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CleanTextResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "RESULTS=data",
+        "result_mappings": "title=name,body=notes,date_published=created_at,author=created_by.name,url=permalink_url,gid,resource_type,num_subtasks,start_on,due_on,assignee.name,assignee_status,assignee_section.name,completed,completed_at,completed_by.name,modified_at,workspace.name,projects[*].name,parent.name,followers[*].name,tags[*].name,likes[*].user.name,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "bearer=<your-Asana-PAT>",
+        "eval_credentials": "",
+        "tags": [
+            "Asana",
+            "Tasks",
+            "Internal"
+        ]
+    },
+    {
+        "name": "Internet Archive Items - Archive.org",
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "RequestsGet",
+        "url": "https://archive.org/services/search/v1/scrape?xvar=production&fields=*&count=100",
+        "query_template": "{url}&q={query_string}",
+        "post_query_template": {},
+        "http_request_headers": {
+            "Content-Type": "application/json"
+        },
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "FOUND=total,RESULTS=items",
+        "result_mappings": "title=title,body=description,date_published=publicdate,author=creator,url='https://archive.org/details/{identifier}',curatenote,files_count,subject,format[*],collection[*],downloads,scanner,mediatype,primary_collection,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "InternetArchive",
+            "Library",
+            "Items"
+        ]
+    },
+    {
+        "name": "IMDB Movie Samples - MongoDB",
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "MongoDB",
+        "url": "sample_mflix:movies",
+        "query_template": "{'$text': {'$search': '{query_string}'}}",
+        "post_query_template": {},
+        "http_request_headers": {},
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "DATE_SORT=year,NOT_CHAR=-",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=name,body=fullplot,date_published=released,date_published_display=year,author=directors[*],url=poster,lastupdated,genres[*],rated,runtime,languages[*],cast[*],writers[*],awards.text,imdb.rating,tomatoes.viewer.rating,tomatoes.critic.rating,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "mongodb+srv://<mongodb-username>:<mongodb-password>@<mongdb-cluster>.mongodb.net/?retryWrites=true&w=majority",
+        "eval_credentials": "",
+        "tags": [
+            "Movies",
+            "MongoDB",
+            "Internal"
+        ]
+    },
+    {
+        "name": "Free Company Records - Snowflake",
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "Snowflake",
+        "url": "<snowflake-instance-address>",
+        "query_template": "SELECT {fields} FROM {table} WHERE {field1} ILIKE '%{query_string}%';",
+        "post_query_template": {},
+        "http_request_headers": {},
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "fields=*,sort_by_date=founded,table=FREECOMPANYDATASET,field1=name",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title='{name}  ({founded})',body='{name} was founded in {founded} in {country}. It has {size} employees and operates in the {industry} industry.',url='https://{linkedin_url}',date_published=founded,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "<username>:<password>:FREE_COMPANY_DATASET:COMPUTE_WH",
+        "eval_credentials": "",
+        "tags": [
+            "Company",
+            "Snowflake"
         ]
     }
 ]

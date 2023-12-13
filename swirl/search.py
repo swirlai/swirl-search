@@ -255,8 +255,7 @@ def search(id, session=None, request=None):
         search.save()
 
         processor_list = search.post_result_processors
-        # add_to_post_processors_if_tag_in_request(request=request, processor_list=search.post_result_processors,
-        #                                          tag="rag", processor_name="RAGPostResultProcessor")
+        
         for processor in processor_list:
             logger.debug(f"{module_name}: invoking processor: {processor}")
             try:
@@ -305,6 +304,7 @@ def search(id, session=None, request=None):
 
     # log info
     retrieved = 0
+    run_processor_if_tag_in_request(request=request, search=search, swqrx_logger=swqrx_logger, tag="rag", processor_name="RAGPostResultProcessor")
     for current_retrieved in results:
         if isinstance(current_retrieved, int) and current_retrieved > 0:
             retrieved = retrieved + current_retrieved
@@ -312,12 +312,15 @@ def search(id, session=None, request=None):
 
     return True
 
-def add_to_post_processors_if_tag_in_request(processor_list, tag, processor_name, request):
+def run_processor_if_tag_in_request(tag, processor_name, request, search, swqrx_logger):
     if not (request and tag and processor_name):
         return
     try:
-       if tag in request.GET.keys() and processor_name not in processor_list:
-            processor_list.append(processor_name)
+       if tag in request.GET.keys() and processor_name:
+            processor = alloc_processor(processor=processor_name)(search_id=search.id, request_id=swqrx_logger.request_id, should_get_results=True)
+            if processor.validate():
+                return processor.process()
+            return False
     except Exception as err:
         logger.warning(f'{err} while adding {processor_name} for {tag}')
 

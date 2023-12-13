@@ -63,6 +63,7 @@ class Sqlite3(DBConnector):
             found = cursor.fetchone()
         except Error as err:
             self.error(f"execute_count_query: {err}")
+            self.status = 'ERR'
             return
 
         if found == None:
@@ -92,6 +93,9 @@ class Sqlite3(DBConnector):
             rows = cursor.fetchall()
         except Error as err:
             self.error(f"execute_count_query: {err}")
+            self.status = 'ERR'
+            cursor.close()
+            connection.close()
             return
 
         if rows == None:
@@ -102,44 +106,11 @@ class Sqlite3(DBConnector):
         # end if
 
         self.response = rows
-        logger.debug(f"{self}: response: {self.response}")
-
         self.found = found
+        self.status = 'READY'
+
+        cursor.close()
+        connection.close()
+
         return
-
-    ########################################
-
-    def normalize_response(self):
-        
-        logger.debug(f"{self}: normalize_response()")
-
-        rows = self.response
-        found = self.found
-
-        if found == 0:
-            return
-
-        trimmed_rows = []
-        field_list = rows[0].keys()
-        for row in rows:
-            dict_row = {}
-            n_field = 0
-            for field in field_list:
-                dict_row[field] = row[n_field]
-                n_field = n_field + 1
-            # end for
-            trimmed_rows.append(dict_row)
-        # end for
-        retrieved = len(trimmed_rows)
-        if retrieved == 0:
-            self.error(f"rows were returned, but couldn't serialize them")
-            return
-
-        if retrieved > found:
-            found = retrieved
-
-        self.found = found
-        self.retrieved = retrieved
-        # self.messages.append(f"Retrieved1 {retrieved} of {found} results from: {self.provider.name}")
-        self.results = trimmed_rows
-        return
+    

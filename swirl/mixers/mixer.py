@@ -100,9 +100,9 @@ class Mixer:
             self.mix_wrapper['info'][result.searchprovider]['query_to_provider'] = result.query_to_provider
             self.mix_wrapper['info'][result.searchprovider]['query_processors'] = result.query_processors
             self.mix_wrapper['info'][result.searchprovider]['result_processors'] = result.result_processors
-            if result.json_results:
-                if 'result_block' in result.json_results[0]:
-                    self.mix_wrapper['info'][result.searchprovider]['result_block'] = result.json_results[0]['result_block']
+            # if result.json_results:
+            #     if 'result_block' in result.json_results[0]:
+            #         self.mix_wrapper['info'][result.searchprovider]['result_block'] = result.json_results[0]['result_block']
             self.mix_wrapper['info'][result.searchprovider]['search_time'] = result.time
 
         if self.search.messages:

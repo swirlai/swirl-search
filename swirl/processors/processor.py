@@ -181,7 +181,7 @@ class PostResultProcessor(Processor):
 
     ########################################
 
-    def __init__(self, search_id, request_id='', is_socket_logic=False, rag_query_items=False):
+    def __init__(self, search_id, request_id='', should_get_results=False, rag_query_items=False):
 
         self.search_id = search_id
         self.search = None
@@ -194,7 +194,7 @@ class PostResultProcessor(Processor):
             self.error(f"Search not found {search_id}")
             return 0
         self.search = Search.objects.get(id=search_id)
-        if self.search.status == 'POST_RESULT_PROCESSING' or self.search.status == 'RESCORING' or is_socket_logic:
+        if self.search.status == 'POST_RESULT_PROCESSING' or self.search.status == 'RESCORING' or should_get_results:
             # security review for 1.7 - OK, filtered by search ID
             self.results = Result.objects.filter(search_id=search_id)
         else:

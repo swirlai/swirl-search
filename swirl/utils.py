@@ -8,15 +8,21 @@ import re
 import logging as logger
 import json
 from pathlib import Path
+import uuid
 import redis
+import socket
+import sqlite3
+import glob
 from django.core.paginator import Paginator
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from swirl.web_page import PageFetcherFactory
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote
 
 
 SWIRL_MACHINE_AGENT   = {'User-Agent': 'SwirlMachineServer/1.0 (+http://swirl.today)'}
 SWIRL_CONTAINER_AGENT = {'User-Agent': 'SwirlContainer/1.0 (+http://swirl.today)'}
+
 
 ##################################################
 ##################################################
@@ -30,6 +36,30 @@ def safe_urlparse(url):
     finally:
         return ret
 
+def provider_getter():
+    try:
+        conn = sqlite3.connect('./db.sqlite3')
+        with conn:
+            cur = conn.cursor()
+            cur.execute("SELECT COUNT(*) FROM swirl_searchprovider")
+            res = cur.fetchone()
+            return res[0]
+    except Exception as err:
+        print(f'{err} while getting provider count, defaulting to -1')
+        return -1 # not set
+
+def get_search_count():
+    try:
+        conn = sqlite3.connect('./db.sqlite3')
+        with conn:
+            cur = conn.cursor()
+            cur.execute("SELECT COUNT(*) FROM swirl_search")
+            res = cur.fetchone()
+            return res[0]
+    except Exception as err:
+        print(f'{err} while getting search count, defaulting to -1')
+        return -1 # not set
+
 def is_running_celery_redis():
     """
     check of the celey redis Brokers are available, if any are not
@@ -40,13 +70,22 @@ def is_running_celery_redis():
     for url in celery_urls:
         if not (purl := safe_urlparse(url)):
             continue
-        if not (purl.scheme or purl.scheme.lower() == 'redis'):
+        if not (purl.scheme or purl.scheme.lower() == 'redis' or purl.scheme.lower() == 'rediss'):
             continue
         parsed_redis_urls.append(purl)
 
     for url in parsed_redis_urls:
         try:
-            r = redis.StrictRedis(host=url.hostname, port=url.port, db=0, decode_responses=True)
+            password = url.password
+            hostname = url.hostname
+            port = url.port
+            db = int(url.path.lstrip('/')) if url.path else 0  # Extracting DB index, default is 0
+            scheme = url.scheme
+            use_ssl = scheme.lower() == 'rediss' # Enable SSL if the scheme is 'rediss'
+            r = redis.StrictRedis(host=hostname, port=port, db=db, password=password,
+                                ssl=use_ssl,
+                                ssl_cert_reqs='required' if use_ssl else None,
+                                decode_responses=True)
             response = r.ping()
             if response:
                 print(f"{url} checked.")
@@ -70,17 +109,46 @@ def is_running_in_docker():
         return False
 
 def get_page_fetcher_or_none(url):
+    from swirl.views import SearchViewSet
+
+    search_provider_count = provider_getter()
+    search_count = get_search_count()
+    user = get_user_model()
+    user_list = user.objects.all()
+    user_count = len(user_list)
+    hostname = socket.gethostname()
 
     headers = SWIRL_CONTAINER_AGENT if is_running_in_docker() else SWIRL_MACHINE_AGENT
-
-    if (pf := PageFetcherFactory.alloc_page_fetcher(url=url, options= {
+    """
+    info is a tuple with 5 elements.
+    info[0] : number of search providers
+    info[1] : number of search objects
+    info[2] : number of django users
+    info[3] : hostname
+    info[4] : domain name
+    """
+    info = [
+        search_provider_count,
+        search_count,
+        user_count,
+        hostname,
+        ]
+    newurl = url_merger(url, info)
+    if (pf := PageFetcherFactory.alloc_page_fetcher(url=newurl, options= {
                                                         "cache": "false",
-                                                        "headers":headers
+                                                        "headers":headers,
                                                 })):
         return pf
     else:
         logger.info(f"No fetcher for {url}")
         return None
+
+def url_merger(base_url, info):
+    data = []
+    for i in info:
+        data.append("info=" + str(i))
+    url = f"{base_url}?{'&'.join(data)}"
+    return url
 
 def get_url_details(request):
     if request:
@@ -100,7 +168,7 @@ CLAZZ_INSTANTIATE_PAT = r'^([A-Z][a-zA-Z0-9_]*)\((.*)\)'
 http_auth_clazz_strings = ['HTTPBasicAuth', 'HTTPDigestAuth', 'HTTProxyAuth']
 def http_auth_parse(str):
     """
-    returns a tule of : 'HTTPBasicAuth'|'HTTPDigestAuth'|'HTTProxyAuth', [<list-of-arguments>]
+    returns a tuple of : 'HTTPBasicAuth'|'HTTPDigestAuth'|'HTTProxyAuth', [<list-of-arguments>]
     """
     if not str:
         return '',[]

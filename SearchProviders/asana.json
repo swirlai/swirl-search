@@ -1,0 +1,35 @@
+{
+    "name": "Tasks - Asana.com",
+    "shared": true,
+    "active": false,
+    "default": false,
+    "authenticator": "",
+    "connector": "RequestsGet",
+    "url": "https://app.asana.com/api/1.0/workspaces/<your-workspace-gid>/tasks/search?opt_fields=gid,resource_type,assignee_status,completed,completed_at,completed_by.name,created_at,created_by.name,due_on,likes.user.name,modified_at,name,notes,num_subtasks,start_on,assignee.name,assignee_section.name,followers.name,parent.name,permalink_url,projects.name,tags.name,workspace.name",
+    "query_template": "{url}&text={query_string}",
+    "post_query_template": {},
+    "http_request_headers": {
+        "Content-Type": "application/json"
+    },
+    "page_fetch_config_json": {},
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "CleanTextResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "RESULTS=data",
+    "result_mappings": "title=name,body=notes,date_published=created_at,author=created_by.name,url=permalink_url,gid,resource_type,num_subtasks,start_on,due_on,assignee.name,assignee_status,assignee_section.name,completed,completed_at,completed_by.name,modified_at,workspace.name,projects[*].name,parent.name,followers[*].name,tags[*].name,likes[*].user.name,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "bearer=<your-Asana-PAT>",
+    "eval_credentials": "",
+    "tags": [
+        "Asana",
+        "Tasks",
+        "Internal"
+    ]
+}

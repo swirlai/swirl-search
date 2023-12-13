@@ -1,7 +1,7 @@
-name: PREVIEWSpyglassDockerBuild
+name: PREVIEW Spyglass Docker Build
 
 on:
-  # Allows manual run of this workflow from the Actions tab (on any branch)
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # For debugging
@@ -11,19 +11,11 @@ on:
 
 jobs:
   build:
-    # Run this workflow automatically only on develop (see last line of the 'if' statement)
-    if: >
-      github.event_name == 'workflow_dispatch' || 
-      (github.event_name == 'workflow_run' && 
-       github.event.workflow_run.conclusion == 'success' && 
-       github.event.workflow_run.head_branch == 'develop')
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout the code
       uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.workflow_run.head_branch }}
     - name: Build the Docker image
       run: docker build --no-cache -t swirlai/spyglass:preview  -f Dockerfile.develop.spg .
     - name: Login to docker hub

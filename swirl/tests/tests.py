@@ -19,6 +19,7 @@ from swirl.processors.result_map_converter import ResultMapConverter
 from swirl.processors.dedupe import DedupeByFieldResultProcessor
 from swirl.utils import select_providers, http_auth_parse
 
+
 logger = logging.getLogger(__name__)
 
 ######################################################################
@@ -484,57 +485,45 @@ def test_cgptqp_1():
     tc = 'gig economy'
     expected = 'gig economy'
 
-    settings.OPENAI_API_KEY = "aFakeKey"
-    with mock.patch('openai.ChatCompletion.create') as mock_create:
-        mock_create.return_value = {
-            "choices": [
-                {
-                    "index": 0,
-                    "message": {
-                    "role": "assistant",
-                    "content": "Gig economy large scale economics"
-                    },
-                    "finish_reason": "stop"
-                }
-            ],
-        }
-        cgptqp = ChatGPTQueryProcessor(tc,
+    with mock.patch('openai.OpenAI') as mock_openai:
+        client_instance = mock.MagicMock()
+        mock_openai.return_value = client_instance
+        mock_create = mock.MagicMock()
+        mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
+        client_instance.chat.completions.create = mock_create
+        cgptqp = ChatGPTQueryProcessor(
+            tc,
             '',
             ["PROMPT:Write a more precise query of similar length to this : {query_string}",]
         )
-        actual = cgptqp.process()
+        actual = cgptqp.process(client=client_instance)
         assert actual == expected
-        mock_create.assert_called_once_with(model=MODEL, messages=[
+        mock_create.assert_called_once_with(
+            model=MODEL,
+            messages=[
                 {"role": "system", "content": "You are helping a user formulate better queries"},
-                {"role": "user", "content":   "Write a more precise query of similar length to this : gig economy"}
+                {"role": "user", "content": "Write a more precise query of similar length to this : gig economy"}
             ],
-            temperature=0)
+            temperature=0
+        )
 
 @pytest.mark.django_db
 def test_cgptqp_2():
     tc = 'gig economy'
     expected = 'gig economy'
 
-    settings.OPENAI_API_KEY = "aFakeKey"
-    with mock.patch('openai.ChatCompletion.create') as mock_create:
-        mock_create.return_value = {
-            "choices": [
-                {
-                    "index": 0,
-                    "message": {
-                    "role": "assistant",
-                    "content": "Gig economy large scale economics"
-                    },
-                    "finish_reason": "stop"
-                }
-            ],
-        }
+    with mock.patch('openai.OpenAI') as mock_openai:
+        client_instance = mock.MagicMock()
+        mock_openai.return_value = client_instance
+        mock_create = mock.MagicMock()
+        mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
+        client_instance.chat.completions.create = mock_create
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:Write a more precise query of similar length to this : {query_string}",
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator"]
         )
-        actual = cgptqp.process()
+        actual = cgptqp.process(client=client_instance)
         assert actual == expected
         mock_create.assert_called_once_with(model=MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
@@ -547,26 +536,18 @@ def test_cgptqp_3():
     tc = 'gig economy'
     expected = 'gig economy'
 
-    settings.OPENAI_API_KEY = "aFakeKey"
-    with mock.patch('openai.ChatCompletion.create') as mock_create:
-        mock_create.return_value = {
-            "choices": [
-                {
-                    "index": 0,
-                    "message": {
-                    "role": "assistant",
-                    "content": "Gig economy large scale economics"
-                    },
-                    "finish_reason": "stop"
-                }
-            ],
-        }
+    with mock.patch('openai.OpenAI') as mock_openai:
+        client_instance = mock.MagicMock()
+        mock_openai.return_value = client_instance
+        mock_create = mock.MagicMock()
+        mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
+        client_instance.chat.completions.create = mock_create
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator"]
         )
-        actual = cgptqp.process()
+        actual = cgptqp.process(client=client_instance)
         assert actual == expected
         mock_create.assert_called_once_with(model=MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
@@ -579,27 +560,19 @@ def test_cgptqp_4():
     tc = 'gig economy'
     expected = 'gig economy'
 
-    settings.OPENAI_API_KEY = "aFakeKey"
-    with mock.patch('openai.ChatCompletion.create') as mock_create:
-        mock_create.return_value = {
-            "choices": [
-                {
-                    "index": 0,
-                    "message": {
-                    "role": "assistant",
-                    "content": "Gig economy large scale economics"
-                    },
-                    "finish_reason": "stop"
-                }
-            ],
-        }
+    with mock.patch('openai.OpenAI') as mock_openai:
+        client_instance = mock.MagicMock()
+        mock_openai.return_value = client_instance
+        mock_create = mock.MagicMock()
+        mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
+        client_instance.chat.completions.create = mock_create
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
              "CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator"]
         )
-        actual = cgptqp.process()
+        actual = cgptqp.process(client=client_instance)
         assert actual == expected
         mock_create.assert_called_once_with(model=MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
@@ -613,20 +586,12 @@ def test_cgptqp_5():
     tc = 'gig economy'
     expected = 'Gig economy large scale economics'
 
-    settings.OPENAI_API_KEY = "aFakeKey"
-    with mock.patch('openai.ChatCompletion.create') as mock_create:
-        mock_create.return_value = {
-            "choices": [
-                {
-                    "index": 0,
-                    "message": {
-                    "role": "assistant",
-                    "content": "Gig economy large scale economics"
-                    },
-                    "finish_reason": "stop"
-                }
-            ],
-        }
+    with mock.patch('openai.OpenAI') as mock_openai:
+        client_instance = mock.MagicMock()
+        mock_openai.return_value = client_instance
+        mock_create = mock.MagicMock()
+        mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
+        client_instance.chat.completions.create = mock_create
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
@@ -634,7 +599,7 @@ def test_cgptqp_5():
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator",
              "CHAT_QUERY_DO_FILTER:False"]
         )
-        actual = cgptqp.process()
+        actual = cgptqp.process(client=client_instance)
         assert actual == expected
         assert not cgptqp.do_filter
         mock_create.assert_called_once_with(model=MODEL, messages=[
@@ -649,20 +614,12 @@ def test_cgptqp_6():
     tc = 'gig economy'
     expected = 'gig economy'
 
-    settings.OPENAI_API_KEY = "aFakeKey"
-    with mock.patch('openai.ChatCompletion.create') as mock_create:
-        mock_create.return_value = {
-            "choices": [
-                {
-                    "index": 0,
-                    "message": {
-                    "role": "assistant",
-                    "content": "Gig economy large scale economics"
-                    },
-                    "finish_reason": "stop"
-                }
-            ],
-        }
+    with mock.patch('openai.OpenAI') as mock_openai:
+        client_instance = mock.MagicMock()
+        mock_openai.return_value = client_instance
+        mock_create = mock.MagicMock()
+        mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
+        client_instance.chat.completions.create = mock_create
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
@@ -670,7 +627,7 @@ def test_cgptqp_6():
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator",
              "CHAT_QUERY_DO_FILTER:True"]
         )
-        actual = cgptqp.process()
+        actual = cgptqp.process(client=client_instance)
         assert actual == expected
         assert cgptqp.do_filter
         mock_create.assert_called_once_with(model=MODEL, messages=[
@@ -685,20 +642,12 @@ def test_cgptqp_7():
     tc = 'gig economy'
     expected = 'gig economy'
 
-    settings.OPENAI_API_KEY = "aFakeKey"
-    with mock.patch('openai.ChatCompletion.create') as mock_create:
-        mock_create.return_value = {
-            "choices": [
-                {
-                    "index": 0,
-                    "message": {
-                    "role": "assistant",
-                    "content": "Gig economy large scale economics"
-                    },
-                    "finish_reason": "stop"
-                }
-            ],
-        }
+    with mock.patch('openai.OpenAI') as mock_openai:
+        client_instance = mock.MagicMock()
+        mock_openai.return_value = client_instance
+        mock_create = mock.MagicMock()
+        mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
+        client_instance.chat.completions.create = mock_create
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
@@ -706,7 +655,7 @@ def test_cgptqp_7():
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator",
              "CHAT_QUERY_DO_FILTER:xxx"]
         )
-        actual = cgptqp.process()
+        actual = cgptqp.process(client=client_instance)
         assert actual == expected
         assert cgptqp.do_filter == MODEL_DEFAULT_DO_FILTER
         mock_create.assert_called_once_with(model=MODEL, messages=[

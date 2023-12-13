@@ -41,8 +41,8 @@ class Authenticator(models.Model):
 class OauthToken(models.Model):
     owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     idp = models.CharField(max_length=32, default='Microsoft')
-    token = models.CharField(max_length=2048)
-    refresh_token = models.CharField(max_length=2048, blank=True, null=True)
+    token = models.CharField(max_length=4096)
+    refresh_token = models.CharField(max_length=4096, blank=True, null=True)
     class Meta:
         unique_together = [['owner', 'idp']]
 
@@ -81,6 +81,9 @@ class SearchProvider(models.Model):
         ('M365OutlookCalendar', 'M365 Outlook Calendar'),
         ('M365SharePointSites', 'M365 SharePoint Sites'),
         ('MicrosoftTeams', 'Microsoft Teams'),
+        ('MongoDB', 'MongoDB'),
+        ('Oracle','Oracle'),
+        ('Snowflake','Snowflake')
     ]
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
@@ -245,7 +248,7 @@ class QueryTransform(models.Model) :
         ('synonym', 'Synonym' ),
         ('bag', 'Synonym Bag' )
     ]
-    qrx_type =  models.CharField(max_length=64, default='', choices=QUERY_TRASNSFORM_TYPE_CHOICES)
+    qrx_type =  models.CharField(max_length=64, default='rewrite', choices=QUERY_TRASNSFORM_TYPE_CHOICES)
     config_content = models.TextField()
     class Meta:
         unique_together = [

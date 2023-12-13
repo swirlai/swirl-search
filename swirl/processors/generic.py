@@ -44,13 +44,13 @@ class GenericResultProcessor(ResultProcessor):
 
         use_payload = True
         file_system = False
-        result_block = None
+        # result_block = None
         if 'NO_PAYLOAD' in self.provider.result_mappings:
             self.warning(f"NO_PAYLOAD is not supported by GenericResultProcessor, ignoring")
         if 'FILE_SYSTEM' in self.provider.result_mappings:
             file_system = True
-        if 'BLOCK' in self.provider.result_mappings:
-            result_block = get_mappings_dict(self.provider.result_mappings)['BLOCK']
+        # if 'BLOCK' in self.provider.result_mappings:
+        #     result_block = get_mappings_dict(self.provider.result_mappings)['BLOCK']
 
         list_results = []
         result_number = 1
@@ -81,8 +81,8 @@ class GenericResultProcessor(ResultProcessor):
             if file_system:
                 swirl_result['_relevancy_model'] = 'FILE_SYSTEM'
 
-            if result_block:
-                swirl_result['result_block'] = result_block
+            # if result_block:
+            #     swirl_result['result_block'] = result_block
 
             # try to find a title, if none provided
             if swirl_result['title'] == "":

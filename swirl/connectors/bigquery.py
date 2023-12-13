@@ -48,9 +48,9 @@ class BigQuery(DBConnector):
         # connect to the db
         try:
             client = bigquery.Client()
-            # to do: review/test the below
         except Error as err:
             self.error(f"{err} connecting to {self.type}")
+            self.status = 'ERR'
             return
 
         # issue the count(*) query
@@ -69,49 +69,18 @@ class BigQuery(DBConnector):
         # end if
 
         # issue the main query
-        query_job = client.query(self.query_to_provider)
-        results = query_job.result()
-        self.response = list(results)
-        logger.debug(f"{self}: response: {self.response}")
+        try:
+            query_job = client.query(self.query_to_provider)
+            results = query_job.result()
+            self.response = list(results)
+        except Error as err:
+            self.error(f"{err} querying {self.type}")
+            self.status = 'ERR'
+            client.close()
+            return
+
+        client.close()
 
         self.column_names = dict(self.response[0]).keys()
         self.found = found
-
-        return
-
-    ########################################
-
-    def normalize_response(self):
-
-        logger.debug(f"{self}: normalize_response()")
-
-        rows = self.response
-        found = self.found
-
-        if found == 0:
-            return
-
-        trimmed_rows = []
-        column_names = self.column_names
-        for row in rows:
-            dict_row = {}
-            n_field = 0
-            for field in column_names:
-                dict_row[field] = row[n_field]
-                n_field = n_field + 1
-            # end for
-            trimmed_rows.append(dict_row)
-        # end for
-        retrieved = len(trimmed_rows)
-        if retrieved == 0:
-            self.error(f"rows were returned, but couldn't serialize them")
-            return
-
-        if retrieved > found:
-            found = retrieved
-
-        self.found = found
-        self.retrieved = retrieved
-        # self.messages.append(f"Retrieved1 {retrieved} of {found} results from: {self.provider.name}")
-        self.results = trimmed_rows
         return
