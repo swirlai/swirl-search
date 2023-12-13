@@ -476,6 +476,54 @@ There are 5 pre-configured SearchProviders for querying the authenticated user's
     }
 ```
 
+## Mongodb
+
+The [Mongodb connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/mongodb.py) uses the `pymongo` package to connect to an [Atlas Search](https://www.mongodb.com/docs/atlas/atlas-search/atlas-search-overview/) index.
+
+The included [IMDB Movie Samples](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/movies_mongodb.json) SearchProvider is configured to search the `sample_mflix` collection, `movies` sample table.
+
+``` json
+{
+    "name": "IMDB Movie Samples - MongoDB",
+    "active": false,
+    "default": false,
+    "authenticator": "",
+    "connector": "MongoDB",
+    "url": "sample_mflix:movies",
+    "query_template": "{'$text': {'$search': '{query_string}'}}",
+    "post_query_template": {},
+    "http_request_headers": {},
+    "page_fetch_config_json": {},
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "DATE_SORT=year,NOT_CHAR=-",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "title=name,body=fullplot,date_published=released,date_published_display=year,author=directors[*],url=poster,lastupdated,genres[*],rated,runtime,languages[*],cast[*],writers[*],awards.text,imdb.rating,tomatoes.viewer.rating,tomatoes.critic.rating,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "mongodb+srv://<mongodb-username>:<mongodb-password>@<mongdb-cluster>.mongodb.net/?retryWrites=true&w=majority",
+    "eval_credentials": "",
+    "tags": [
+        "Movies",
+        "MongoDB",
+        "Internal"
+    ]
+}
+```
+
+More information: Mongodb Atlas [sample data sets](https://www.mongodb.com/developer/products/atlas/atlas-sample-datasets/).
+
+## Oracle
+
+The [Oracle connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/oracle.py) use the `oracledb` package to connect to an Oracle instance.
+
+As of Swirl 3.1.0, the included [Free Public DB](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/oracle.json) SearchProvider has tested against 23c Free and presumably supports earlier versions.  This SearchProvider will be improved and preloaded in a future release.
+
 ## PostgreSQL
 
 The [PostgreSQL connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/postgresql.py) uses the [psycopg2](https://pypi.org/project/psycopg2/) driver. 
@@ -812,6 +860,47 @@ The [RequestsPost connector](https://github.com/swirlai/swirl-search/blob/main/s
 ```
 
 [Contact Support](#support) for help getting started.
+
+## Snowflake
+
+The [Snowflake connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/snowflake.py) uses the `snowflake-connector-python` package to connect to a Snowflake instance.
+
+The included [Free Company Records](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/company_snowflake.json) SearchProvider is configured to search the `FreeCompanyResearch` dataset available in the Snowflake Marketplace.
+
+``` json
+{
+    "name": "Free Company Records - Snowflake",
+    "active": false,
+    "default": false,
+    "authenticator": "",
+    "connector": "Snowflake",
+    "url": "<snowflake-instance-address>",
+    "query_template": "SELECT {fields} FROM {table} WHERE {field1} ILIKE '%{query_string}%';",
+    "post_query_template": {},
+    "http_request_headers": {},
+    "page_fetch_config_json": {},
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "fields=*,sort_by_date=founded,table=FREECOMPANYDATASET,field1=name",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "title='{name}  ({founded})',body='{name} was founded in {founded} in {country}. It has {size} employees and operates in the {industry} industry.',url='https://{linkedin_url}',date_published=founded,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "<username>:<password>:FREE_COMPANY_DATASET:COMPUTE_WH",
+    "eval_credentials": "",
+    "tags": [
+        "Company",
+        "Snowflake"
+    ]
+}
+```
+
+Note: Putting a fixed SQL query in the `query_template` is perfectly acceptable. Anything that doesn't change in the URL can be stored here.
 
 ## SQLite3
 
