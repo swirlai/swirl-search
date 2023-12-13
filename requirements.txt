@@ -31,7 +31,7 @@ constantly==15.1.0
 coreapi==2.3.3
 coreschema==0.0.4
 cron-descriptor==1.4.0
-cryptography==41.0.3
+cryptography==41.0.6
 cssselect==1.2.0
 cymem==2.0.7
 daphne==4.0.0
