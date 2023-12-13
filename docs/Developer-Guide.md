@@ -156,6 +156,8 @@ For example: [http://localhost:8000/swirl/search?qs=knowledge+management](http:/
 
 The `qs=` parameter can also be used with the [providers](#specify-searchproviders-with-the-providers-url-parameter) and [result_mixer](Developer-Reference.md#mixers-1) parameters.
 
+As of Swirl 3.1.0, RAG processing is now available through a single API call using `qs=`, e.g. `?qs=metasearch&rag=true`.
+
 Note that `&page=` is NOT supported with `qs=`; to access the second page of results use the `next_page` property from the `info.results` structure.
 
 ``` json
@@ -682,7 +684,7 @@ Available as of Swirl 3.0:  This section outlines the protocol for WebSocket int
         'message': {
           'date_published':<timestamp-response-creation>
           'title':<query-string>,
-          'body':<ai_repsonse>,
+          'body':<ai_response>,
           'author':'ChatGPT'
           'searchprovider':'ChatGPT'
           'searchprovider_rank':1

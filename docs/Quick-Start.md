@@ -18,9 +18,6 @@ nav_order: 2
 
 This guide is intended for anyone who wants to download and install Swirl. 
 
-{: .warning }
-As of version 2.6.0, Swirl's start-up process no longer starts `redis`.  You must now have `redis` installed *and running* before starting Swirl.
-
 # Docker Installation
 
 ## Prerequisites
@@ -65,54 +62,54 @@ docker compose up
 After a few minutes, the following or similar should appear:
 
 ``` shell
-docker-redis-1  | 1:C 26 Sep 2023 16:20:10.054 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
-docker-redis-1  | 1:C 26 Sep 2023 16:20:10.054 * Redis version=7.2.1, bits=64, commit=00000000, modified=0, pid=1, just started
-docker-redis-1  | 1:C 26 Sep 2023 16:20:10.054 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
-docker-redis-1  | 1:M 26 Sep 2023 16:20:10.054 * monotonic clock: POSIX clock_gettime
-docker-redis-1  | 1:M 26 Sep 2023 16:20:10.056 * Running mode=standalone, port=6379.
-docker-redis-1  | 1:M 26 Sep 2023 16:20:10.056 * Server initialized
-docker-redis-1  | 1:M 26 Sep 2023 16:20:10.056 * Ready to accept connections tcp
-docker-app-1    | __S_W_I_R_L__2_._6______________________________________________________________
-docker-app-1    | 
-docker-app-1    | Setting Up SWIRL:
-docker-app-1    | Checking Migrations:
-docker-app-1    | No changes detected
-docker-app-1    | 
-docker-app-1    | 
-docker-app-1    | Migrating:
-docker-app-1    | 
-docker-app-1    | Operations to perform:
-docker-app-1    |   Apply all migrations: admin, auth, authtoken, contenttypes, django_celery_beat, sessions, swirl
-docker-app-1    | Running migrations:
-docker-app-1    |   No migrations to apply.
-docker-app-1    | 
-docker-app-1    | 
-docker-app-1    | Collecting Statics:
-docker-app-1    | 
-docker-app-1    | 
-docker-app-1    | 215 static files copied to '/app/static'.
-docker-app-1    | 
-docker-app-1    | Ok
-docker-app-1    | Command successful!
-docker-app-1    | __S_W_I_R_L__2_._6______________________________________________________________
-docker-app-1    | 
-docker-app-1    | Warning: logs directory does not exist, creating it
-docker-app-1    | ParseResult(scheme='redis', netloc='redis:6379', path='/0', params='', query='', fragment='') checked.
-docker-app-1    | ParseResult(scheme='redis', netloc='redis:6379', path='/0', params='', query='', fragment='') checked.
-docker-app-1    | Start: celery-worker -> celery -A swirl_server worker --loglevel INFO ... Ok, pid: 27
-docker-app-1    | Start: celery-beats -> celery -A swirl_server beat --scheduler django_celery_beat.schedulers:DatabaseScheduler ... Ok, pid: 38
-docker-app-1    | Updating .swirl... Ok
-docker-app-1    | 
-docker-app-1    |   PID TTY          TIME CMD
-docker-app-1    |    27 ?        00:00:04 celery
-docker-app-1    |    38 ?        00:00:03 celery
-docker-app-1    | 
-docker-app-1    | You are using version 2.6 of Swirl, the current version.
-docker-app-1    | Command successful!
-docker-app-1    | 2023-09-26 12:20:40,303 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
-docker-app-1    | 2023-09-26 12:20:40,303 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
-docker-app-1    | 2023-09-26 12:20:40,303 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
-docker-app-1    | 2023-09-26 12:20:40,303 INFO     Listening on TCP address 0.0.0.0:8000
+redis-1  | 1:C 13 Dec 2023 19:55:56.338 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+redis-1  | 1:C 13 Dec 2023 19:55:56.338 * Redis version=7.2.3, bits=64, commit=00000000, modified=0, pid=1, just started
+redis-1  | 1:C 13 Dec 2023 19:55:56.338 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+redis-1  | 1:M 13 Dec 2023 19:55:56.339 * monotonic clock: POSIX clock_gettime
+redis-1  | 1:M 13 Dec 2023 19:55:56.340 * Running mode=standalone, port=6379.
+redis-1  | 1:M 13 Dec 2023 19:55:56.340 * Server initialized
+redis-1  | 1:M 13 Dec 2023 19:55:56.341 * Ready to accept connections tcp
+app-1    | __S_W_I_R_L__3_._1_._0__________________________________________________________
+app-1    | 
+app-1    | Setting Up Swirl:
+app-1    | Checking Migrations:
+app-1    | No changes detected
+app-1    | 
+app-1    | 
+app-1    | Migrating:
+app-1    | 
+app-1    | Operations to perform:
+app-1    |   Apply all migrations: admin, auth, authtoken, contenttypes, django_celery_beat, sessions, swirl
+app-1    | Running migrations:
+app-1    |   No migrations to apply.
+app-1    | 
+app-1    | 
+app-1    | Collecting Statics:
+app-1    | 
+app-1    | 
+app-1    | 245 static files copied to '/app/static'.
+app-1    | 
+app-1    | Ok
+app-1    | Command successful!
+app-1    | __S_W_I_R_L__3_._1_._0__________________________________________________________
+app-1    | 
+app-1    | Warning: logs directory does not exist, creating it
+app-1    | ParseResult(scheme='redis', netloc='redis:6379', path='/0', params='', query='', fragment='') checked.
+app-1    | ParseResult(scheme='redis', netloc='redis:6379', path='/0', params='', query='', fragment='') checked.
+app-1    | Start: celery-worker -> celery -A swirl_server worker --loglevel INFO ... Ok, pid: 46
+app-1    | Start: celery-beats -> celery -A swirl_server beat --scheduler django_celery_beat.schedulers:DatabaseScheduler ... Ok, pid: 67
+app-1    | Updating .swirl... Ok
+app-1    | 
+app-1    |   PID TTY          TIME CMD
+app-1    |    46 ?        00:00:05 celery
+app-1    |    67 ?        00:00:04 celery
+app-1    | 
+app-1    | You're using version 3.1.0 of Swirl, the current version.
+app-1    | Command successful!
+app-1    | 2023-12-13 14:56:26,655 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
+app-1    | 2023-12-13 14:56:26,655 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+app-1    | 2023-12-13 14:56:26,656 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
+app-1    | 2023-12-13 14:56:26,656 INFO     Listening on TCP address 0.0.0.0:8000
 ```
 
 * Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy>)
@@ -171,12 +168,15 @@ Swirl has not yet been validated on Python 3.12.x as some required packages have
 
 ### Linux
 
-* Python 3.11.5 or newer ([stable release](https://www.python.org/downloads/)) with `pip`
+* Python 3.11.x with `pip`
 * Redis and jq installed:
 ``` shell
 sudo apt install jq redis-server -y
 ```
 * Redis must be running
+
+{: .warning }
+Swirl has not yet been validated on Python 3.12.x as some required packages have not yet completed their own 3.12.x upgrades.
 
 ### Windows
 
