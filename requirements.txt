@@ -150,7 +150,7 @@ types-PyYAML==6.0.12.11
 typing_extensions==4.7.1
 tzdata==2023.3
 uritemplate==4.1.1
-urllib3==1.26.16
+urllib3==1.26.18
 vine==5.0.0
 wasabi==1.1.2
 wcwidth==0.2.6
