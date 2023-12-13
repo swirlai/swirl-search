@@ -212,13 +212,15 @@ Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up 
 | SearchProvider | Description | Notes |
 | ---------- | ---------- | ---------- | 
 | arxiv.json | Searches the [arXiv.org](https://arxiv.org/) repository of scientific papers | No authorization required |
-| atlassian.json | Atlassian [Confluence Cloud](https://www.atlassian.com/software/confluence) and [Jira Cloud](https://www.atlassian.com/software/jira) | Requires a bearer token; Confluence searches the [CQL `text~` content](https://developer.atlassian.com/server/confluence/performing-text-searches-using-cql/) and Jira searches the [JQL `text~` content](https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-searching-in-jira-cloud/#Advancedsearching-textPerformingtextsearches) |
+| asana.json | Searches Tasks in [Asana](https://asana.com/) | Requires an Asana personal access token |
+| atlassian.json | Searches Atlassian [Confluence Cloud](https://www.atlassian.com/software/confluence), [Jira Cloud](https://www.atlassian.com/software/jira), and [Trello](https://trello.com/) Cards. | Requires a bearer token and/or Trello API key; Confluence searches the [CQL `text~` content](https://developer.atlassian.com/server/confluence/performing-text-searches-using-cql/) and Jira searches the [JQL `text~` content](https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-searching-in-jira-cloud/#Advancedsearching-textPerformingtextsearches) |
 | blockchain-bitcoin.json | Searches [Blockchain.com](https://www.blockchain.com/) for specific Bitcoin Addresses (wallets) and Transactions IDs (hashes) | Requires a Blockchain.com API key |
 | chatgpt.json | ChatGPT AI chatbot | Requires an OpenAI API key |
+| company_snowflake.json | Searches the [Snowflake](https://www.snowflake.com/en/) `FreeCompanyResearch` dataset | Requires a Snowflake username and password |
 | crunchbase.json | Searches organizations via the [Crunchbase](https://www.crunchbase.com/) basic API | Requires a Crunchbase.com API key |
 | document_db.json | SQLite3 document database | [documents_db.csv](https://github.com/swirlai/swirl-search/tree/main/Data/documents_db.csv) |
-| elastic_cloud.json | elasticsearch, cloud version | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) requires cloud_id, credentials |
-| elasticsearch.json | elasticsearch, local install | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) requires host, port, credentials | 
+| elastic_cloud.json | elasticsearch, cloud version | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) Requires cloud_id, credentials |
+| elasticsearch.json | elasticsearch, local install | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) Requires host, port, credentials | 
 | europe_pmc.json | Searches the [EuropePMC.org](https://europepmc.org/) repository of life-sciences literature | No authorization required |
 | funding_db_bigquery.json | BigQuery funding database  | [Funding Dataset](Developer-Reference.md#funding-data-set) |
 | funding_db_postgres.json  | PostgreSQL funding database | [Funding Dataset](Developer-Reference.md#funding-data-set) |
@@ -230,11 +232,14 @@ Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up 
 | http_get_with_auth.json | Generic HTTP GET query with basic authentication | Requires url, credentials | 
 | http_post_with_auth.json | Generic HTTP POST query with basic authentication | Requires url, credentials |
 | hubspot.json | Searches the HubSpot CRM for Companies, Contacts, and Deals | Requires a bearer token | 
+| internet_archive.json | Searches the [Internet Archive Library](https://archive.org/) of items | No authorization required |
 | microsoft.json | Searches M365 Outlook Messages, Calendar Events, OneDrive Files, SharePoint Sites, and Teams Chat | See the [M365 Guide](M365-Guide.md) for details |
 | miro.json | [Miro.com](https://miro.com) drawing service  | Requires a bearer token |
+| movies_mongodb.json | Searches the [Mongodb Atlas](https://www.mongodb.com/) `sample_mflix` collection, `movies` sample table | Requires database username and password, plus Atlas cluster URL |
 | newsdata_io.json | Newsdata.io internet news source | Requires username and password<br/>archive provider also included |
 | nlresearch.json | NLResearch.com is a premium and internet content search engine from [Northern Light](https://northernlight.com/) | Requires username and password |
 | opensearch.json  | OpenSearch 2.x | [Developer Guide](Developer-Reference.md#elastic--opensearch) |
+| oracle.json | Tested against [Oracle](https://www.oracle.com/) 23c Free (and presumably supporting earlier versions) | Requires Oracle username and password |
 | preloaded.json | All preloaded SearchProviders | Defaults in the Swirl distribution |
 | servicenow.json | Searches the Knowledge and Service Catalog centers of ServiceNow | Requires username and password |
 | solr.json | the original, open source search engine, local install | Requires host, port, collection |
@@ -267,6 +272,8 @@ Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up 
     * Swirl includes SearchProviders for [Blockchain.com](https://www.blockchain.com/) Bitcoin transactions and addresses as well as for [Crunchbase](https://www.crunchbase.com/) organizations.
     * A new Google PSE SearchProvider that targets the [new Swirl documentation website](https://docs.swirl.today/) is included and enabled by default.
     * The EuropePMC SearchProvider is preloaded, set to active status, and configured to participate in Retrieval Augmented Generation (RAG) by default.
+
+* As of Release 3.1.0, Swirl includes SearchProviders for [Asana](https://asana.com/) Tasks, [Atlassian Trello](https://trello.com/) Cards, [Internet Archive Library](https://archive.org/) items, [Mongodb Atlas](https://www.mongodb.com/), [Oracle](https://www.oracle.com/) (WIP), and [Snowflake](https://www.snowflake.com/en/).
 
 ## Activating
 
@@ -547,68 +554,7 @@ The following table explains the `result_mappings` options:
 | sw_btcconvert | An optional directive which will convert the provided Satoshi value to Bitcoin; it can be used anyplace in the template such as `result_mappings` | `sw_btcconvert(<fee>)` |
 | NO_PAYLOAD | By default, Swirl copies all result keys from the SearchProvider to the PAYLOAD. If `NO_PAYLOAD` is specified, Swirl copies only the explicitly mapped fields.| `NO_PAYLOAD` |
 | FILE_SYSTEM | If specified, Swirl will assume that this SearchProvider is a file system and weight matches against the `body` higher. | `FILE_SYSTEM` |
-| BLOCK | If specified, Swirl will place this SearchProvider's results in a separate, top-level JSON result block named as specified, and note this in the appropriate `info` blocks. | `BLOCK=ai_summary` |
-
-#### BLOCK Example
-
-For a working example of the new `BLOCK` configuration, check out the Swirl 2.0 [default ChatGPT configuration](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/chatgpt.json) with the `ai_summary` result block:
-
-``` json
-{
-    "name": "ChatGPT - OpenAI",
-    "active": false,
-    "default": true,
-    "connector": "ChatGPT",
-    "url": "",
-    "query_template": "",
-    "query_processors": [
-        "AdaptiveQueryProcessor"
-    ],
-    "query_mappings": "PROMPT='Tell me about: {query_to_provider}'",
-    "result_processors": [
-        "GenericResultProcessor",
-        "CosineRelevancyResultProcessor"
-    ],
-    "response_mappings": "",
-    "result_mappings": "BLOCK=ai_summary",
-    "results_per_query": 10,
-    "credentials": "your-openai-API-key-here",
-    "tags": [
-        "ChatGPT",
-        "Question"
-    ]
-}
-```
-
-{: .warning }
-You must remove the default `result_mappings` value of `BLOCK=ai_summary` in the SearchProvider configuration to enable the `ChatGPT` or `Question` Tags! Otherwise, these Tags will be ignored.
-
-The configuration is noted in the appropriate `info` blocks of Results as well:
-
-``` json
-"info": {
-        ...
-        "ChatGPT (web/OpenAI)": {
-            ...
-            "result_block": "ai_summary",
-            ...
-        }
-        ...
-        "results": {
-            ...
-            "result_blocks": [
-                "ai_summary"
-            ],
-            ...
-        }
-},
-"ai_summary": [
-        {
-            ...
-            "searchprovider": "ChatGPT (web/OpenAI)",
-            ...
-
-```
+| BLOCK | As of Release 3.1.0, this feature is used exclusively by Swirl's RAG processing; that output appears in this `info` block of the Result object. | `BLOCK=ai_summary` |
 
 #### Date Published Display
 
