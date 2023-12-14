@@ -79,7 +79,7 @@ python swirl.py restart
 To cancel a RAG process, click the "Generate AI Summary" toggle off.
 
 {: .warning }
-In Release 3.0, the RAG process utilizes only the *first 10 results* that are selected either automatically or manually using the "Select Items" option.
+Swirl's RAG processing utilizes only the *first 10 results* that are selected either automatically or manually using the "Select Items" option.
 
 ## Notes
 
