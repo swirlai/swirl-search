@@ -1,6 +1,6 @@
-FROM python:3.11.6-slim-bookworm
+FROM python:3.12.1-slim-bookworm
 
-# try to upgrade to a more recent vesion of openssl
+# try to upgrade to a more recent version of openssl
 RUN apt-get update
 RUN apt-get -y upgrade openssl
 
