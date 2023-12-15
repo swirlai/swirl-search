@@ -1,6 +1,5 @@
 {
     "name": "Tasks - Asana.com",
-    "shared": true,
     "active": false,
     "default": false,
     "authenticator": "",
