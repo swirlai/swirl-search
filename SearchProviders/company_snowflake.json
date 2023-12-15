@@ -1,6 +1,6 @@
 {
     "name": "Free Company Records - Snowflake",
-    "active": true,
+    "active": false,
     "default": false,
     "authenticator": "",
     "connector": "Snowflake",

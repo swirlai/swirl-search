@@ -1,6 +1,6 @@
 {
     "name": "Free Public DB - Oracle",
-    "active": true,
+    "active": false,
     "default": false,
     "authenticator": "",
     "connector": "Oracle",
