@@ -5,7 +5,7 @@
     "authenticator": "",
     "connector": "Snowflake",
     "url": "<snowflake-instance-address>",
-    "query_template": "SELECT {fields} FROM {table} WHERE {field1} ILIKE '%{query_string}%';",
+    "query_template": "SELECT {fields} FROM {table} WHERE {field1} ILIKE '%{query_string}%' AND NULLIF(TRIM(founded), '') IS NOT NULL ORDER BY TRY_TO_NUMBER(REGEXP_REPLACE(SPLIT_PART(size, '-', 1), '[^0-9]', '')) DESC;",
     "post_query_template": {},
     "http_request_headers": {},
     "page_fetch_config_json": {},
