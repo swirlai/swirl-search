@@ -21,9 +21,9 @@
         "CosineRelevancyResultProcessor"
     ],
     "response_mappings": "FOUND=total.value,RESULTS=results",
-    "result_mappings": "title=properties.name,body=properties.notes,date_published=createdAt,url='https://www.opensanctions.org/entities/{id}',id,schema,target,last_seen,datasets[*],referents[*],sourceUrl[*],NO_PAYLOAD",
+    "result_mappings": "title=caption,body=properties.notes[*],date_published=properties.createdAt[*],url='https://www.opensanctions.org/entities/{id}',properties.title[*],properties.nationality[*],properties.birthDate[*],properties.gender[*],properties.name[*],properties.alias[*],properties.position[*],properties.topics[*],properties.sourceUrl[*],id,target,first_seen,properties.modifiedAt[*],NO_PAYLOAD",
     "results_per_query": 10,
-    "credentials": "api_key=<your-opensanctions-api-key>",
+    "credentials": "",
     "eval_credentials": "",
     "tags": [
         "OpenSanctions",
