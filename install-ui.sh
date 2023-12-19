@@ -113,6 +113,7 @@ docker cp "$work_container:/usr/src/spyglass/ui/config-swirl-demo.db.json" $work
 docker rm -f $work_container
 rm -rf $target_dir/$ui_home
 mkdir $target_dir/$ui_home
+mkdir -p $target_dir/$conf_home
 cp -r $work_dir/* $target_dir/$ui_home
 jq '.default' $work_dir/config-swirl-demo.db.json | sed -e "s/<msal-app-id>/$MSAL_APP_ID/" \
 -e "s/<msal-tenant-id>/$MSAL_TENANT_ID/" \
