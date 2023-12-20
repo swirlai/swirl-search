@@ -11,7 +11,7 @@ RUN apt-get -y install jq
 RUN apt-get update -y
 RUN apt-get install apt-file -y
 RUN apt-file update
-RUN apt-get install -y python3-dev build-essential
+# RUN apt-get install -y python3-dev build-essential
 RUN apt-get install -y procps
 
 RUN pip install --no-cache-dir --upgrade pip
