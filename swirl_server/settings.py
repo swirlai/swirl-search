@@ -264,7 +264,15 @@ SWIRL_SEARCH_FORM_URL = env('SWIRL_SEARCH_FORM_URL', default=SWIRL_SEARCH_FORM_U
 
 SWIRL_DEFAULT_RESULT_BLOCK = 'ai_summary'
 
+# LiteLLM keys
 OPENAI_API_KEY = env.get_value('OPENAI_API_KEY', default='')
+VERTEX_PROJECT = env.get_value('VERTEX_PROJECT', default='')
+VERTEX_LOCATION = env.get_value('VERTEX_LOCATION', default='')
+HUGGINGFACE_API_KEY = env.get_value('HUGGINGFACE_API_KEY', default='')
+AZURE_API_KEY = env.get_value('AZURE_API_KEY', default='')
+AZURE_API_BASE = env.get_value('AZURE_API_BASE', default='')
+AZURE_API_VERSION = env.get_value('AZURE_API_VERSION', default='')
+ANTHROPIC_API_KEY = env.get_value('ANTHROPIC_API_KEY', default='')
 
 MICROSOFT_CLIENT_ID= env('MICROSOFT_CLIENT_ID')
 MICROSOFT_CLIENT_SECRET = env('MICROSOFT_CLIENT_SECRET')
