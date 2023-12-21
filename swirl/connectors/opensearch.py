@@ -86,14 +86,14 @@ class OpenSearch(Connector):
         client = None
         if self.provider.credentials:
             # extract auth
-            # format 'username','password'
-            credential_list = self.provider.credentials.split(',')
+            # format username:password
+            credential_list = self.provider.credentials.split(':')
             if len(credential_list) != 2:
                 self.error("invalid credentials: {self.provider.credentials}")
                 self.status = "ERR_INVALID_CREDENTIALS"
                 return
-            username = credential_list[0][1:-1]
-            password = credential_list[1][1:-1]
+            username = credential_list[0]
+            password = credential_list[1]
             auth = (username, password)
             # ca_certs_path = '/full/path/to/root-ca.pem' # Provide a CA bundle if you use intermediate CAs with your root CA.
             # Optional client certificates if you don't want to use HTTP basic authentication.
