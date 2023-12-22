@@ -80,10 +80,16 @@ class Elastic(Connector):
 
         auth = None
         if self.provider.credentials:
-            if self.provider.credentials.startswith('http_auth='):
-                auth = self.provider.credentials.split("http_auth=")[1]
-            else:
-                auth = self.provider.credentials
+            # extract auth
+            # format username:password
+            credential_list = self.provider.credentials.split(':')
+            if len(credential_list) != 2:
+                self.error("invalid credentials: {self.provider.credentials}")
+                self.status = "ERR_INVALID_CREDENTIALS"
+                return
+            username = credential_list[0][1:-1]
+            password = credential_list[1][1:-1]
+            auth = (username, password)
         else:
             self.status = "ERR_NO_CREDENTIALS"
             return
