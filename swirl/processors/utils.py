@@ -364,12 +364,14 @@ def highlight_list(target_str, word_list):
     # Step 1 : Create canonical word list in lower case
     hili_words =  tokenize_word_list(word_list)
     ret = target_str
+    stop_words = ['a', 'the', 'and']
     # create a unique list of words from the target, so that we only highlight each once.
     all_words = _tokenize_word_text(target_str)
-
     # Now for all terms in the target list, find them, case insensitive in the list of hi light
     # words and then highlight them in the return tartget string.
-    for word in all_words:
+    new_words = [word for word in all_words if word not in stop_words]
+    for word in new_words:
+
         # If the word matches any of the source words, add it to the list of highlighted words
         if word.lower() in hili_words:
             ret = ret.replace(word,f'{SWIRL_HIGHLIGHT_START_CHAR}{word}{SWIRL_HIGHLIGHT_END_CHAR}')
