@@ -60,7 +60,7 @@ urlpatterns = [
     path('register/confirm_sent/', views.registration_confirmation_sent, name='registration_confirmation_sent'),
 
     path('login/', views.LoginView.as_view()),
-    path('logout/', views.LogoutView.as_view()),
+    path('swirl-logout/', views.LogoutView.as_view()),
     path('oidc_authenticate/', views.OidcAuthView.as_view()),
     path('microsoft/update_token', views.UpdateMicrosoftToken.as_view()),
 
