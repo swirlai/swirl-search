@@ -370,8 +370,9 @@ def highlight_list(target_str, word_list):
     # Now for all terms in the target list, find them, case insensitive in the list of hi light
     # words and then highlight them in the return tartget string.
     for word in all_words:
+        l_word = word.lower()
         # If the word matches any of the source words, add it to the list of highlighted words
-        if word.lower() in hili_words:
+        if l_word in hili_words and not l_word in stopwords:
             ret = ret.replace(word,f'{SWIRL_HIGHLIGHT_START_CHAR}{word}{SWIRL_HIGHLIGHT_END_CHAR}')
 
     return ret
