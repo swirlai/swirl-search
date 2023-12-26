@@ -170,7 +170,7 @@ class RAGPostResultProcessor(PostResultProcessor):
 
         result_group = group(*tasks).apply_async()
         self.tasks = result_group
-        results = result_group.get()
+        results = result_group.get(interval=0.05, timeout=120)
         if self.stop_background_thread:
             return 0
         for result in results:
