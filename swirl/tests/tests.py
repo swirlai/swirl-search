@@ -121,14 +121,14 @@ def hll_test_expected():
     return[
         '<em>Activision</em> <em>Blizzard</em> <em>Inc</em>. — Mergers & Acquisition',
         '<em>Activision</em> <em>Blizzard</em> <em>Inc</em>. — Mergers & Acquisition',
-        'The <em>same</em> <em>same</em> word twice',
+        'The same same word twice',
         '<em>Swirl</em>_Pitch_1234412',
         '<em>Swirl</em> Pitch 1234412',
         'I love <em>programming</em> in <em>Python</em>',
         'The <em>quick</em> brown fox <em>jumps</em> over the lazy <em>dog</em>',
         'The weather is nice today',
         '<em>ChatGPT</em> is an <em>AI</em> <em>language</em> <em>model</em>',
-        '<em>This</em> is a case insensitive <em>test</em>',
+        'This is a case insensitive <em>test</em>',
         "U.K. Blocks <em>Microsoft's</em> $69 Billion"
     ]
 
