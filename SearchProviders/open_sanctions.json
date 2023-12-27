@@ -5,7 +5,7 @@
     "authenticator": "",
     "connector": "RequestsGet",
     "url": "https://api.opensanctions.org/search/default",
-    "query_template": "{url}?q={query_string}",
+    "query_template": "{url}?q={query_string}*",
     "post_query_template": "{}",
     "http_request_headers": {
         "Authorization": "ApiKey <OpenSanctions-API-Key>"
@@ -27,6 +27,6 @@
     "eval_credentials": "",
     "tags": [
         "OpenSanctions",
-        "People"
+        "Entities"
     ]
 }
