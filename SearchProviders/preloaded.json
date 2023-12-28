@@ -337,7 +337,7 @@
         "response_mappings": "",
         "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "(\"elastic\", \"elastic-password\")",
+        "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,username:password",
         "tags": [
             "Enron",
             "Elastic",
@@ -866,7 +866,7 @@
                 "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
             },
             "timeout": 10
-    },    
+    },
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -1131,7 +1131,7 @@
             "Crunchbase",
             "Organizations",
             "Internal"
-    
+
         ]
     },
     {

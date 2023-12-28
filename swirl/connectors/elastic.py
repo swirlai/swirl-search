@@ -73,30 +73,59 @@ class Elastic(Connector):
         return
 
     ########################################
+    def str_to_bool(self,s):
+        return s.strip().lower() in ['true', '1', 'yes', 'y']
+
+    def log_invalid_credentials(self):
+        self.error("invalid credentials: {self.provider.credentials}")
+        self.status = "ERR_INVALID_CREDENTIALS"
+
+    def get_creds(self):
+
+        if not self.provider.credentials:
+            self.error("no credentials: {self.provider.credentials}")
+            self.status = "ERR_NO_CREDENTIALS"
+            return
+
+        cred_list = self.provider.credentials.split(',')
+        uname=''
+        pw=''
+        ca_certs = ''
+        verify_certs=False
+        for cre in cred_list:
+            if ':' in cre:
+                (uname,pw) = cre.split(':')
+                if not (uname and pw):
+                    self.log_invalid_credentials()
+                    break
+            elif '=' in cre:
+                (k,v) = cre.split('=')
+                if not (k and v):
+                    self.log_invalid_credentials()
+                    break
+                if k.strip().lower() == 'verify_certs':
+                    verify_certs= self.str_to_bool(v)
+                elif k.strip().lower() == 'ca_certs':
+                    ca_certs = v.strip()
+                else:
+                    self.log_invalid_credentials()
+                    break
+            else:
+                self.log_invalid_credentials()
+                break
+
+        return uname,pw,verify_certs,ca_certs
 
     def execute_search(self, session=None):
 
         logger.debug(f"{self}: execute_search()")
 
         auth = None
-        if self.provider.credentials:
-            # extract auth
-            # format username:password
-            credential_list = self.provider.credentials.split(':')
-            if len(credential_list) != 2:
-                self.error("invalid credentials: {self.provider.credentials}")
-                self.status = "ERR_INVALID_CREDENTIALS"
-                return
-            username = credential_list[0][1:-1]
-            password = credential_list[1][1:-1]
-            auth = (username, password)
-        else:
-            self.status = "ERR_NO_CREDENTIALS"
+        (username,password,verify_certs,ca_certs)=self.get_creds()
+        if self.status in ("ERR_INVALID_CREDENTIALS", "ERR_NO_CREDENTIALS"):
             return
 
-        if not auth:
-            self.status = "ERR_BAD_CREDENTIALS"
-            return
+        auth = (username, password)
 
         url = None
         if self.provider.url:
@@ -110,9 +139,13 @@ class Elastic(Connector):
         if not url:
             self.status = "ERR_NO_URL"
             return
-        
+
         try:
-            es = Elasticsearch(basic_auth=tuple(auth), hosts=url)
+            es = Elasticsearch(basic_auth=tuple(auth),
+                            hosts=url,
+                            verify_certs=verify_certs,
+                            ca_certs=ca_certs
+                            )
         except NameError as err:
             self.error(f'NameError: {err}')
         except TypeError as err:
@@ -126,7 +159,7 @@ class Elastic(Connector):
         else:
             self.status = "ERR_NO_INDEX_SPECIFIED"
             return
-        
+
         # extract query (dict)
         query_pattern = r"query=({.*})"
         match = re.search(query_pattern, self.query_to_provider)
