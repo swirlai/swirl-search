@@ -18,7 +18,7 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 from swirl.connectors.utils import bind_query_mappings
-from swirl.connectors.connector import Connector
+from swirl.connectors.oes_common import OpenElasticCommon
 
 from elasticsearch import Elasticsearch
 from elasticsearch import *
@@ -29,13 +29,12 @@ import ast
 ########################################
 ########################################
 
-class Elastic(Connector):
+class Elastic(OpenElasticCommon):
 
     type = "Elastic"
 
     def __init__(self, provider_id, search_id, update, request_id=''):
         super().__init__(provider_id, search_id, update, request_id)
-
 
 
     ########################################
@@ -71,50 +70,6 @@ class Elastic(Connector):
 
         self.query_to_provider = elastic_query
         return
-
-    ########################################
-    def str_to_bool(self,s):
-        return s.strip().lower() in ['true', '1', 'yes', 'y']
-
-    def log_invalid_credentials(self):
-        self.error("invalid credentials: {self.provider.credentials}")
-        self.status = "ERR_INVALID_CREDENTIALS"
-
-    def get_creds(self):
-
-        if not self.provider.credentials:
-            self.error("no credentials: {self.provider.credentials}")
-            self.status = "ERR_NO_CREDENTIALS"
-            return
-
-        cred_list = self.provider.credentials.split(',')
-        uname=''
-        pw=''
-        ca_certs = ''
-        verify_certs=False
-        for cre in cred_list:
-            if ':' in cre:
-                (uname,pw) = cre.split(':')
-                if not (uname and pw):
-                    self.log_invalid_credentials()
-                    break
-            elif '=' in cre:
-                (k,v) = cre.split('=')
-                if not (k and v):
-                    self.log_invalid_credentials()
-                    break
-                if k.strip().lower() == 'verify_certs':
-                    verify_certs= self.str_to_bool(v)
-                elif k.strip().lower() == 'ca_certs':
-                    ca_certs = v.strip()
-                else:
-                    self.log_invalid_credentials()
-                    break
-            else:
-                self.log_invalid_credentials()
-                break
-
-        return uname,pw,verify_certs,ca_certs
 
     def execute_search(self, session=None):
 
