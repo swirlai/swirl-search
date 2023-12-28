@@ -12,7 +12,7 @@
         "CosineRelevancyResultProcessor"
     ],
     "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
-    "credentials": "elastic,elastic-password",
+    "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,username:password",
     "tags": [
         "Enron",
         "Elastic",
