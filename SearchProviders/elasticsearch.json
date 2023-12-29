@@ -3,7 +3,7 @@
     "active": false,
     "default": false,
     "connector": "Elastic",
-    "url": "http://localhost:9200/",
+    "url": "https://localhost:9200/",
     "query_template": "index='{index_name}', query={'query_string': {'query': '{query_string}', 'default_field': '{default_field}'}}",
     "query_processors": [
         "AdaptiveQueryProcessor"
