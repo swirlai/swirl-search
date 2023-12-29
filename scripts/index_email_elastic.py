@@ -7,6 +7,7 @@ import sys
 import csv
 import argparse
 import os
+import dateutil
 from dateutil import parser
 from elasticsearch import Elasticsearch
 
@@ -17,7 +18,7 @@ def main(argv):
     # arguments
     parser = argparse.ArgumentParser(description="Bulk index email in CSV format to elasticsearch/opensearch")
     parser.add_argument('filespec', help="path to the csv file to load")
-    parser.add_argument('-e', '--elasticsearch', help="the URL to elasticsearch", default='http://localhost:9200/')
+    parser.add_argument('-e', '--elasticsearch', help="the URL to elasticsearch", default='https://localhost:9200/')
     parser.add_argument('-i', '--index', help="the index to receive the email messages", default='email')
     parser.add_argument('-m', '--max', help="maximum number of rows to index", default=0)
     parser.add_argument('-u', '--username', default='elastic', help="the elastic user, default 'elastic'")
@@ -32,8 +33,13 @@ def main(argv):
 
     f = open(args.filespec, 'r')
     csvr = csv.reader(f, quoting=csv.QUOTE_ALL)
-    es = Elasticsearch(http_auth=(args.username, args.password), hosts='')
-
+    # Insert path to Elastic cert below
+    ca_certs = "<PATH-TO-CERT>"
+    es = Elasticsearch(basic_auth=tuple((args.username, args.password)),
+                       hosts=args.elasticsearch,
+                       verify_certs=True,
+                       ca_certs=ca_certs
+                       )
     print("Indexing...")
 
     rows = 0
@@ -56,7 +62,7 @@ def main(argv):
                 continue
             if field.startswith('Date:'):
                 s_date = field[field.find(':')+1:].strip()
-                dt = parser.parse(s_date)
+                dt = dateutil.parser.parse(s_date)
                 email['date_published'] = dt.strftime('%Y-%m-%d %H:%M:%S.%f')
             if field.startswith('Subject:'):
                 email['subject'] = field[field.find(':')+1:].strip()
