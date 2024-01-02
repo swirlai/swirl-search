@@ -1198,6 +1198,16 @@ This data set consists of 500,000+ emails from 150 employees of the former Enron
 PUT /email
 ```
 
+{: .highlight }
+To index the Enron data into Elastic, you must first update the load script with the path to a certificate, as required by Elastic.
+
+* Add the path to a valid certificate as the value in `scripts/index_email_elastic.py`, line 37, and save the change.
+
+``` shell
+# Insert path to Elastic cert below
+ca_certs = "<PATH-TO-CERT>"
+```
+
 * Index the `emails.csv` from the Swirl directory:
 
 For Elastic:
