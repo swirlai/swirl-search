@@ -40,4 +40,4 @@ jobs:
         exclude_patterns: localhost,api,apis,rss,etc,xx,googleapis,hostname,graph.microsoft.com,login.microsoftonline.com
 
         # Exclude these files from the checker
-        exclude_files: docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/,SearchProviders/
+        exclude_files: docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/,SearchProviders/,Swirl.postman_collection.json
