@@ -50,6 +50,8 @@ nav_order: 8
 
 When finished click the "Review + create" tab. The following screen should appear:
 
-![Azure Marketplace Confirm Screenshot]()
+![Azure Marketplace Confirm Screenshot](https://swirl.youtrack.cloud/api/files/8-784?sign=MTcwNDU4NTYwMDAwMHwxLTF8OC03ODR8Nmliejc1ZVVLT1JyaVEwa08wZEdTOUp3WHBTdlZaSDgxdlRkcEJUY0NzNA0K&updated=1704392932988)
+
+<br/>
 
 If you encounter errors or warnings, please [contact support](#support) for assistance.
