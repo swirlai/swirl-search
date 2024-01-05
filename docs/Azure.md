@@ -22,7 +22,7 @@ The user performing this installation must be an authorized M365 tenant Administ
 * Click the "Get It Now" button, and on the following screen, select a "Plan" option and click the blue "Create" button.
 ![Azure Marketplace Create Screenshot](images/Azure_Marketplace-1.png)
 
-* Click into the "Basics" tab. Select an Azure "Subscription", specify a "Resource Group" (optional), select a Region, provide an Application Name of your choosing, and the Manged Resource Group name. 
+* Click into the "Basics" tab. Select an Azure "Subscription", specify a new "Resource Group" specifically for the Swirl Managed App, select a Region, provide an Application Name of your choosing, and the Manged Resource Group name.  Click the "Next" button to save this configuration.
 ![Azure Marketplace Basics Screenshot](images/Azure_Marketplace-3.png)
 
 * Click into the "App Registration" tab and read the instructions provided there.
@@ -45,7 +45,7 @@ Save the script output, as it will be required for the next step!
 | Azure DNS Zone | The existing DNS Zone the application will be deployed in (e.g.: `example.com`) |
 | DNS Zone Resource Group | Value required for Swirl to automatically update the DNS Zone swirl will be registered in. Search your Azure DNS Zones for the appropriate Zone name to identify the the Resource Group this `zonefile` is associated with. |
 | App Endpoint Prefix | The DNS A Record name of the host where Swirl will be deployed (e.g.: `swirl.example.com`) |
-| OpenAI API Key | Allows Swirl to connect and use an OpenAI account via the API | 
+| OpenAI API Key | Allows Swirl to connect to and use an OpenAI account via the API. | 
 | App Admin User Email | The email of the user registering/deploying this application |
 
 * When all of the above steps are completed, click the "Review + create" tab. 
