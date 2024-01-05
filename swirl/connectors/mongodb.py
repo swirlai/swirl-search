@@ -41,37 +41,27 @@ class MongoDB(Connector):
 
         self.count_query = None
 
-        # remove quotes
-        if '"' in self.query_string_to_provider or "'" in self.query_string_to_provider:
-            self.query_string_to_provider = self.query_string_to_provider.replace('"','').replace("'",'')
+        mongo_query = ""       
+        # if search.tag has match_all
+        if not 'MATCH_ANY' in self.search.tags and not 'MATCH_ANY' in self.provider.query_mappings:
+            # add '\\" around each term :\
+            for term in self.query_string_to_provider.split():
+                if term.startswith('-'):
+                    mongo_query = mongo_query + term + ' '
+                else:
+                    mongo_query = mongo_query + '"' + term + '"' + ' '
+        else:
+            mongo_query = self.query_string_to_provider
+        # end if
 
-        query_to_provider = bind_query_mappings(self.provider.query_template, self.provider.query_mappings)
-        if '{query_string}' in query_to_provider:
-            # if search.tag has match_all, 
-            if not 'MATCH_ANY' in self.search.tags and not 'MATCH_ANY' in self.provider.query_mappings:
-                # add '\\" around each term :\
-                mongo_query = ''
-                for term in self.query_string_to_provider.split():
-                    if term.startswith('-'):
-                        mongo_query = mongo_query + term + ' '
-                    else:
-                        mongo_query = mongo_query + '\\"' + term + '\\"' + ' '
-                # not an f string!
-                query_to_provider = query_to_provider.replace('{query_string}', mongo_query.strip())
-            else:
-                # not an f string!
-                query_to_provider = query_to_provider.replace('{query_string}', self.query_string_to_provider)
-            # end if
-
-        self.warning(f"qtp: {query_to_provider}")
-
-        try:
-            # convert string to json
-            query_to_provider = query_to_provider.replace("'",'"')
-            self.query_to_provider = json.loads(query_to_provider)
-        except Exception as err:
-            self.error(f"Error converting query to JSON: {err}")
+        query_to_provider_json = self.provider.query_template_json
+        if "{query_string}" in query_to_provider_json["$text"]["$search"]:
+            query_to_provider_json["$text"]["$search"] = query_to_provider_json["$text"]["$search"].replace("{query_string}", mongo_query.strip())
+        else:
+            self.error("{query_string} not found in query_to_provider_json!")
             self.status = 'ERR'
+
+        self.query_to_provider = query_to_provider_json
 
         return
 
