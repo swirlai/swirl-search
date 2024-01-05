@@ -55,10 +55,7 @@ urlpatterns = [
     path('authenticators.html', views.authenticators, name='authenticators'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('microsoft-callback', Microsoft().callback, name='microsoft_callback'),
-    path('register/', views.registration, name='register'),
-    path('register/confirm/<str:token>/<str:signature>/', views.registration_confirmation, name='registration_confirmation'),
-    path('register/confirm_sent/', views.registration_confirmation_sent, name='registration_confirmation_sent'),
-
+    
     path('login/', views.LoginView.as_view()),
     path('swirl-logout/', views.LogoutView.as_view()),
     path('oidc_authenticate/', views.OidcAuthView.as_view()),

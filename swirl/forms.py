@@ -27,22 +27,6 @@ module_name = 'forms.py'
 ##################################################
 ##################################################
 
-class RegistrationForm(UserCreationForm):
-    email = forms.EmailField(max_length=254, help_text='Required. Enter a valid email address.')
-
-    class Meta:
-        model = User
-        fields = ('email', 'password1', 'password2')
-
-    def save(self, commit=True):
-            user = super().save(commit=False)
-            user.username = self.cleaned_data['email']
-            if commit:
-                user.save()
-            return user
-
-##################################################
-
 class SearchForm(forms.Form):
     q = forms.CharField()
     search_id = forms.IntegerField(required=False)
