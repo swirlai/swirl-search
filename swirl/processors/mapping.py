@@ -250,6 +250,10 @@ class MappingResultProcessor(ResultProcessor):
                 swirl_result['title'] = swirl_result['title'].replace('<matched_term>', '')
                 swirl_result['title'] = swirl_result['title'].replace('</matched_term>', '')
 
+            if 'LC_URL' in self.provider.result_mappings:
+                self.warning("LC_URL!")
+                swirl_result['url'] = swirl_result['url'].lower()
+
             #############################################
             # final assembly
             if payload:
