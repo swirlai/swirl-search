@@ -351,7 +351,11 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         (dict_result_lens, list_query_lens) = self._pass_2_extract_result_len_stats()
 
         if not dict_result_lens:
-            self.error('Dictionary of result lengths is empty. Was CosineRelevancyResultProcessor included in Search Providers Processor configuration?')
+            if self.result_count == 0:
+                # not an error
+                pass
+            else:
+                self.error('Dictionary of result lengths is empty. Was CosineRelevancyResultProcessor included in Search Providers Processor configuration?')
 
         for field in dict_result_lens:
             dict_len_median[field] = median(dict_result_lens[field])
