@@ -12,7 +12,8 @@ from swirl.processors.processor import *
 
 from datetime import datetime
 
-from openai import OpenAI
+from swirl.ai_provider.ai_provider import AI_RAG_USE
+from swirl.ai_provider.swirl_ai_client_factory import SwirlAIClientFactory
 
 from celery import group
 import threading
@@ -214,15 +215,11 @@ class RAGPostResultProcessor(PostResultProcessor):
             return 0
 
         try:
-            completions_new = self.client.chat.completions.create(
-                model=MODEL,
-                messages=[
-                    {"role": "system", "content": rag_prompt.get_role_system_guide_text()},
-                    {"role": "user", "content": new_prompt_text},
-                ],
-                temperature=0
+            model_response = self.client.get_completion(
+                system_text=rag_prompt.get_role_system_guide_text(),
+                prompt=new_prompt_text,
+                temperature=0,
             )
-            model_response = completions_new.choices[0].message.content
             logger.info(f'RAG: fetch_prompt_errors follow:')
             for (k,v) in fetch_prompt_errors.items():
                 logger.info(f'RAG:\t url:{k} problem:{v}')
@@ -260,11 +257,15 @@ class RAGPostResultProcessor(PostResultProcessor):
     def process(self, should_return=True):
         # to do: remove foo:etc
         self.client = None
-        if getattr(settings, 'OPENAI_API_KEY', None):
-            self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
-        else:
-            logger.warning("RAG OPENAI_API_KEY unset!")
+        try :
+            logger.debug('allocating client')
+            self.client = SwirlAIClientFactory.alloc_ai_client(usage=AI_RAG_USE)
+            logger.debug('Client allocation complete!')
+        except ValueError as err:
+            logger.warning("RAG no api keys found!")
+            logger.warning(err)
             return 0
+
         if should_return:
             return self.background_process()
         else:
