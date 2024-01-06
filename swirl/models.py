@@ -106,6 +106,7 @@ class SearchProvider(models.Model):
         ('DedupeByFieldResultProcessor', 'DedupeByFieldResultProcessor'),
         ('LenLimitingResultProcessor', 'LenLimitingResultProcessor'),
         ('CleanTextResultProcessor','CleanTextResultProcessor'),
+        ('RequireQueryStringInTitleResultProcessor','RequireQueryStringInTitleResultProcessor'),
         ('CosineRelevancyResultProcessor','CosineRelevancyResultProcessor')
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
