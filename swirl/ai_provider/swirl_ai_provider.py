@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class SwirlAIClient(metaclass=ABCMeta):
     """
-    SwirlAIClient abstracts the AIClient methods used to switch between our internal client and LiteLLM. 
+    SwirlAIClient abstracts the AIClient methods used to switch between our internal client and LiteLLM.
     """
 
 
@@ -21,5 +21,5 @@ class SwirlAIClient(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def get_completion(super, system_text, prompt, temperature): 
+    def get_completion(super, system_text, prompt, temperature):
         pass

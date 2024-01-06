@@ -215,12 +215,11 @@ class RAGPostResultProcessor(PostResultProcessor):
             return 0
 
         try:
-            completions_new = self.client.get_completion(
+            model_response = self.client.get_completion(
                 system_text=rag_prompt.get_role_system_guide_text(),
                 prompt=new_prompt_text,
                 temperature=0,
             )
-            model_response = completions_new.choices[0].message.content
             logger.info(f'RAG: fetch_prompt_errors follow:')
             for (k,v) in fetch_prompt_errors.items():
                 logger.info(f'RAG:\t url:{k} problem:{v}')

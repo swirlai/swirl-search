@@ -13,12 +13,12 @@ AI_QUERY_USE = "AI_QUERY_USE"
 class LLMClient(SwirlAIClient):
     """
     Encapsulates the methods by which we dynamically switch between LLM providers, abstracts client creation and utilization.
-    
+
         usage: client = LLMClient(api_key = key, usage = USAGE)
                 response = client.chat.completions.create(model=model, messages=messages, temperature=0)
     Returns:
         A single instance of the LLMClient() class
-    
+
     Exceptions:
         - ValueError when no API keys are found
     """
@@ -36,9 +36,9 @@ class LLMClient(SwirlAIClient):
         """
 
         self._usage = usage
-        self._api_provider = None    
-        self._api_key = None    
-        self._model_deploy = None   
+        self._api_provider = None
+        self._api_key = None
+        self._model_deploy = None
         self._api_base = None
         self._api_version = None
         self._swirl_rw_model  = getattr(settings, "SWIRL_REWRITE_MODEL", None)
@@ -63,7 +63,7 @@ class LLMClient(SwirlAIClient):
         self._huggingface_base = getattr(settings, 'HUGGINGFACE_API_BASE', None)
         self._huggingface_key = getattr(settings, 'HUGGINGFACE_API_KEY', None)
 
-        logger.info(f'Getters done')  
+        logger.info(f'Getters done')
         """
         Setting Provider, API Key, API ENDPOINT/BASE, Model/deployment name, etc ...
         """
@@ -152,4 +152,4 @@ class LLMClient(SwirlAIClient):
             api_version = self._api_version,
             max_tokens = self.max_tokens()
         )
-        return completions_new
+        return completions_new.choices[0].message.content

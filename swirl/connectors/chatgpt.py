@@ -81,12 +81,11 @@ class ChatGPT(Connector):
             return
         logger.info(f'CGPT completion system guide:{self.system_guide} query to provider : {self.query_to_provider}')
         self.query_to_provider = prompted_query
-        completions = client.get_completion(
+        message = client.get_completion(
             system_text=self.system_guide,
             prompt=self.query_to_provider,
             temperature=0,
         )
-        message = completions.choices[0].message.content
         self.found = 1
         self.retrieved = 1
         self.response = message.replace("\n\n", "")

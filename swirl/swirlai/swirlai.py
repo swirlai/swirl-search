@@ -88,7 +88,7 @@ class OpenAIClient(SwirlAIClient):
             return self._swirl_q_model
         else:
             return self._swirl_rag_model
-        
+
 
     def get_completion(self, system_text, prompt, temperature):
         completions_new = self.openai_client.chat.completions.create(
@@ -99,4 +99,4 @@ class OpenAIClient(SwirlAIClient):
             ],
             temperature=temperature
         )
-        return completions_new
+        return completions_new.choices[0].message.content

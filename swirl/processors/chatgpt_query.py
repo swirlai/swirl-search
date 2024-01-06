@@ -104,12 +104,11 @@ class ChatGPTQueryProcessor(QueryProcessor):
                     self.warning('API key not available')
                     return self.query_string
 
-            response = client.get_completion(
+            message = client.get_completion(
                 system_text=self.system_guide,
                 prompt=self.prompt.format(query_string=self.query_string),
                 temperature=0,
             )
-            message = response.choices[0].message.content
             logger.info(f"ChatGPT Response: {message}")
 
             if not self.do_filter:
