@@ -62,7 +62,7 @@ This guide is intended to provide developers with an overview of Swirl and how t
 
     * Executes query processing as specified in `Search.query_processors`
 
-    * Constructs and validates the query for the SearchProvider using the `url`, `query_template`, and `query_mappings`
+    * Constructs and validates the query for the SearchProvider using the `url`, `query_template` or `query_template_json`, and `query_mappings`
 
     * Connects to the SearchProvider, sends the query, and gathers the response
 
@@ -354,6 +354,12 @@ If you want to apply spellcheck to a single SearchProvider, put it in that Searc
 
 {: .warning }
 Use Spellcheck cautiously as it tends to cause a lack of results from sources that have sparse indexes and limited or no fuzzy search.
+
+## Adjust Relevancy for a Single SearchProvider
+
+Swirl 3.2 includes a new `RequireQueryStringInTitleResultProcessor`. If installed after the MappingResultProcessor it will drop results that don't include the user's query in the title. 
+
+This processor is intended for use with sources like LinkedIn that frequently return related profiles that mention a person, but aren't about them. (Swirl will normally rank these results poorly, but this will eliminate them entirely.)
 
 ## Expire Search Objects
 
