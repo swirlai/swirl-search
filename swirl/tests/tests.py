@@ -480,7 +480,7 @@ def test_aqp(aqp_test_cases, aqp_test_expected):
         assert actual == aqp_test_expected[i]
         i = i + 1
 
-# pytest.mark.skipif(True, reason='This will be broken until further fixes are made to these tests')
+@pytest.mark.django_db
 def test_cgptqp_1():
     tc = 'gig economy'
     expected = 'gig economy'
@@ -504,6 +504,7 @@ def test_cgptqp_1():
             temperature=0
         )
 
+@pytest.mark.django_db
 def test_cgptqp_2():
     tc = 'gig economy'
     expected = 'gig economy'
@@ -526,6 +527,7 @@ def test_cgptqp_2():
                 prompt="Write a more precise query of similar length to this : gig economy",
                 temperature=0)
 
+@pytest.mark.django_db
 def test_cgptqp_3():
     tc = 'gig economy'
     expected = 'gig economy'
@@ -548,6 +550,7 @@ def test_cgptqp_3():
                 prompt="Write a more precise query of similar length to this : gig economy",
             temperature=0)
 
+@pytest.mark.django_db
 def test_cgptqp_4():
     tc = 'gig economy'
     expected = 'gig economy'
@@ -571,7 +574,7 @@ def test_cgptqp_4():
                 prompt="This should be used: gig economy",
             temperature=0)
 
-
+@pytest.mark.django_db
 def test_cgptqp_5():
     tc = 'gig economy'
     expected = 'Gig economy large scale economics'
@@ -597,7 +600,7 @@ def test_cgptqp_5():
                 prompt="This should be used: gig economy",
             temperature=0)
 
-
+@pytest.mark.django_db
 def test_cgptqp_6():
     tc = 'gig economy'
     expected = 'gig economy'
@@ -623,7 +626,7 @@ def test_cgptqp_6():
                 prompt="This should be used: gig economy",
             temperature=0)
 
-
+@pytest.mark.django_db
 def test_cgptqp_7():
     tc = 'gig economy'
     expected = 'gig economy'
