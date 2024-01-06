@@ -229,12 +229,33 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         # by default, if the user is superuser, the searchprovider is shared
-        if self.request.user.is_superuser:
-           request.data['shared'] = 'true'
+        # if self.request.user.is_superuser:
+        #    request.data['shared'] = 'true'
+        # serializer = SearchProviderSerializer(data=request.data)
+        # serializer.is_valid(raise_exception=True)
+        # serializer.save(owner=self.request.user)
+        # return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        serializer = SearchProviderSerializer(data=request.data)
+        is_list = isinstance(request.data, list)
+
+        # Modify data if the user is a superuser
+        if request.user.is_superuser:
+            if is_list:
+                # Apply changes to each item in the list
+                for item in request.data:
+                    item['shared'] = 'true'
+            else:
+                # Apply changes to the single object
+                request.data['shared'] = 'true'
+
+        # Use 'many' parameter based on whether request.data is a list or not
+        serializer = SearchProviderSerializer(data=request.data, many=is_list)
         serializer.is_valid(raise_exception=True)
-        serializer.save(owner=self.request.user)
+
+        # Save the serialized data
+        serializer.save(owner=request.user)
+
+        # Return response
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     ########################################
