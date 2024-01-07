@@ -221,22 +221,6 @@ class Requests(Connector):
                 self.error(f"request.{self.get_method()} returned: {response.status_code} {response.reason} from: {self.provider.name} for: {page_query}")
                 return
             # end if
-
-            # # normalize the response
-            # content_type = response.headers['Content-Type']
-            # json_data = None
-            # if 'text/xml' in content_type or 'application/xml' in content_type or 'application/atom+xml' in content_type:
-            #     json_data = xmltodict.parse(response.text)
-            # else:
-            #     if not 'application/json' in content_type:
-            #         logger.debug(f"content header not xml or explicitly json, assuming json")
-            #     try:
-            #         json_data = response.json()
-            #         if isinstance(json_data, list) and isinstance(json_data[0], list):
-            #             headers = json_data[0]
-            #             json_data = [dict(zip(headers, sublist)) for sublist in json_data[1:]]
-            #     except ValueError as err:
-            #         logger.warning(f"Error in parsing the response as JSON: {err}")
    
             # normalize the response
             content_type = response.headers['Content-Type']
