@@ -48,7 +48,7 @@ Save the script output, as it will be required for the next step!
 | OpenAI API Key | Allows Swirl to connect to and use an OpenAI account via the API. | 
 | App Admin User Email | The email of the user registering/deploying this application |
 
-* When all of the above steps are completed, click into the "Review + create" tab and review your configuration.  Click "Create" button to complete the setup and install Swirl!
+* When all of the above steps are completed, click into the "Review + create" tab and review your configuration.  Click the "Create" button to complete the setup and install Swirl!
 ![Azure Marketplace Confirm Screenshot](images/Azure_Marketplace-5.png)
 
 # Questions
