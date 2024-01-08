@@ -22,7 +22,7 @@ The user performing this installation must be an authorized M365 tenant Administ
 * Click the "Get It Now" button, and on the following screen, select a "Plan" option and click the blue "Create" button.
 ![Azure Marketplace Create Screenshot](images/Azure_Marketplace-1.png)
 
-* Click into the "Basics" tab. Select an Azure "Subscription", specify a new "Resource Group" specifically for the Swirl Managed App, select a Region, provide an Application Name of your choosing, and the Manged Resource Group name.  Click the "Next" button to save this configuration.
+* Click into the "Basics" tab. Select an Azure "Subscription", specify a new "Resource Group" specifically for the Swirl Managed App, select a Region, and provide an Application Name of your choosing.  The "Managed Resource Group" value should already be provided.  Click the "Next" button to save this configuration.
 ![Azure Marketplace Basics Screenshot](images/Azure_Marketplace-3.png)
 
 * Click into the "App Registration" tab and read the instructions provided there.
@@ -48,7 +48,7 @@ Save the script output, as it will be required for the next step!
 | OpenAI API Key | Allows Swirl to connect to and use an OpenAI account via the API. | 
 | App Admin User Email | The email of the user registering/deploying this application |
 
-* When all of the above steps are completed, click the "Review + create" tab. 
+* When all of the above steps are completed, click into the "Review + create" tab and review your configuration.  Click "Create" button to complete the setup and install Swirl!
 ![Azure Marketplace Confirm Screenshot](images/Azure_Marketplace-5.png)
 
 # Questions

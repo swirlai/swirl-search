@@ -302,7 +302,7 @@ If you have the raw JSON of SearchProvider, install it by copying/pasting into t
 3. Paste one SearchProvider's JSON at a time into the form and press the `POST` button
 4. Swirl will respond with the finished SearchProvider
 
-As of Swirl 3.2 you can copy/paste lists of SearchProviders into the endpoint, and Swirl will load them all. 
+As of Swirl 3.2.0, you can copy/paste lists of SearchProviders into the endpoint, and Swirl will load them all. 
 
 ## Bulk Loading
 
@@ -334,7 +334,7 @@ From here, you can use the form at the bottom of the page to:
 
 ## Query Templating
 
-Most SearchProviders require a `query_template``. This is usually bound to query_mappings during the federation process. For example, here is the template for the MongoDB movie table:
+Most SearchProviders require a `query_template`. This is usually bound to `query_mappings` during the federation process. For example, here is the original `query_template` for the MongoDB movie SearchProvider:
 
 ```
     "query_template": "{'$text': {'$search': '{query_string}'}}",
@@ -342,7 +342,7 @@ Most SearchProviders require a `query_template``. This is usually bound to query
 
 This format is not actually JSON, but rather a string. The single quotes are required, so that the JSON can use double quotes. 
 
-As of Swirl 3.2, elastic, opensearch and MongoDB all use the new `query_template_json` field, which stores the template as JSON. For example, here is the MongoDB `query_template_json`:
+As of Swirl 3.2.0, MongoDB all use the new `query_template_json` field, which stores the template as JSON. For example, here is the new MongoDB `query_template_json`:
 
 ```
 "query_template_json": {
@@ -449,7 +449,7 @@ INFO     search.py: invoking processor: CosineRelevancyPostResultProcessor
         ],
 ```
 
-Swirl Release 3.2 includes a new RequireQueryStringInTitleResultProcessor. This processor may be installed after the MappingResultProcessor. It drops result items that don't include the user's query in the title. It is recommended for use with noisy services like LinkedIn via Google PSE.
+Swirl Release 3.2.0 includes a new `RequireQueryStringInTitleResultProcessor`. This processor may be installed after the `MappingResultProcessor`. It drops result items that don't include the user's query in the title. It is recommended for use with noisy services like LinkedIn via Google PSE.
 
 ## Authentication & Credentials
 
@@ -533,7 +533,7 @@ The mappings `url=link` and `body=snippet` map the Swirl result fields to the co
 For Release 2.5.1, [`requests.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requests.py) was updated to handle XML responses from source APIs and convert them to JSON for mapping in SearchProvider configurations.
 
 {: .highlight }
-For Release 3.2, [`requests.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requests.py) was updated to handle list-of-list responses from source APIs, where the first list element is the field names. For example:
+For Release 3.2.0, [`requests.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requests.py) was updated to handle list-of-list responses from source APIs, where the first list element is the field names. For example:
 
 ```
 [
