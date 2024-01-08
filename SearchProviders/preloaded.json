@@ -1354,34 +1354,39 @@
         ]
     },
     {
-        "name": "IMDB Movie Samples - MongoDB",
+        "name": "IMDB Movies - MongoDB",
         "active": false,
         "default": false,
         "authenticator": "",
         "connector": "MongoDB",
         "url": "sample_mflix:movies",
-        "query_template": "{'$text': {'$search': '{query_string}'}}",
+        "query_template": "",
+        "query_template_json": {
+            "$text": {
+                "$search": "{query_string}"
+            }
+        },
         "post_query_template": {},
+        "post_query_template_json": {},
         "http_request_headers": {},
         "page_fetch_config_json": {},
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
-        "query_mappings": "DATE_SORT=year,NOT_CHAR=-",
+        "query_mappings": "sort_by_date=year,NOT_CHAR=-,MATCH_ALL",
         "result_grouping_field": "",
         "result_processors": [
             "MappingResultProcessor",
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
-        "result_mappings": "title=name,body=fullplot,date_published=released,date_published_display=year,author=directors[*],url=poster,lastupdated,genres[*],rated,runtime,languages[*],cast[*],writers[*],awards.text,imdb.rating,tomatoes.viewer.rating,tomatoes.critic.rating,NO_PAYLOAD",
+        "result_mappings": "title=name,body=fullplot,date_published=year,date_published_display=year,author=directors[*],url=poster,genres[*],rated,runtime,languages[*],cast[*],writers[*],awards.text,imdb.rating,tomatoes.viewer.rating,tomatoes.critic.rating,NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "mongodb+srv://<mongodb-username>:<mongodb-password>@<mongdb-cluster>.mongodb.net/?retryWrites=true&w=majority",
         "eval_credentials": "",
         "tags": [
             "Movies",
-            "MongoDB",
-            "Internal"
+            "MongoDB"
         ]
     },
     {
