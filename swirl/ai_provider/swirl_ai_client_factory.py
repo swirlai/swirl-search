@@ -16,7 +16,7 @@ class SwirlAIClientFactory():
         @staticmethod
         def alloc_ai_client(usage):
             llm_api = getattr(settings, 'LLM_API', None)
-
+            api_provider = None
 
             if llm_api == None or llm_api == 'internal':
                 api_provider = 'internal'
