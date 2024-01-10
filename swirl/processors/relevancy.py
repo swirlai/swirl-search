@@ -66,7 +66,6 @@ class CosineRelevancyResultProcessor(ResultProcessor):
         for item in self.results:
             dict_score = {}
             if 'explain' in item:
-                logger.debug("Copying explain!!!!")
                 dict_score = item['explain']
                 item['dict_score'] = dict_score
                 dict_len = {}
@@ -90,7 +89,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                                 result_field = result_field.replace('-', ' ')
                         result_field_list = result_field.strip().split()
                         if field in dict_len:
-                            self.warning("duplicate field?")
+                            self.warning("Duplicate field detected, ignoring")
                         else:
                             dict_len[field] = len(result_field_list)
                         if field in dict_result_lens:
@@ -109,13 +108,6 @@ class CosineRelevancyResultProcessor(ResultProcessor):
 
             if not 'hits' in item:
                 item['hits'] = {}
-
-            if 'explain' in item:
-                logger.debug("Skipping item with explain already")
-                continue
-
-            if 'title' in dict_score:
-                logger.debug("Found title in dict_score!")
 
             dict_score['stems'] = ' '.join(parsed_query.query_stemmed_list)
             dict_len = {}
@@ -316,6 +308,8 @@ class CosineRelevancyResultProcessor(ResultProcessor):
         swrel_logger.complete_pass_1()
         return self.modified
 
+#############################################
+    
 class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
     type = 'CosineRelevancyPostResultProcessor'
@@ -483,3 +477,33 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         swrel_logger.complete_pass_2()
 
         return self.results_updated
+
+#############################################
+    
+class DropIrrelevantPostResultProcessor(PostResultProcessor):
+
+    type = 'DropIrrelevantPostResultProcessor'
+
+    def process(self):
+        
+        modified = 0
+
+        for results in self.results:
+            if not results.json_results:
+                continue
+            relevant_results = []
+            for item in results.json_results:  
+                # to do: override from tag   
+                if 'swirl_score' in item:
+                    if item['swirl_score'] > settings.MIN_SWIRL_SCORE:
+                        relevant_results.append(item)
+                    else:
+                        modified = modified - 1
+                else:
+                    modified = modified - 1
+
+            results.json_results = relevant_results
+            results.save()
+
+        return modified
+
