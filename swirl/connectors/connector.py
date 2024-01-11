@@ -330,13 +330,13 @@ class Connector:
                                                             result_processor_json_feedback=self.result_processor_json_feedback)
                 modified = proc.process()
                 self.results = proc.get_results()
-                ## Check if this processor generated feed back and if so, remember it and merge it in to the exsiting
+                ## Check if this processor generated feed back and if so, remember it and merge it in to the existing
                 if self.results and 'result_processor_feedback' in self.results[-1]:
                     self.result_processor_json_feedback =  self.results.pop(-1)
             except (NameError, TypeError, ValueError) as err:
                 self.error(f'{processor}: {err.args}, {err}')
                 return
-            if modified < 0:
+            if modified and modified < 0:
                 # if len(last_results) + modified != len(self.results):
                 #     self.warning(f"{processor} reported {modified} modified results, but returned {len(self.results)}!!")
                 self.message(f"{processor} deleted {-1*modified} results from: {self.provider.name}")
@@ -348,8 +348,11 @@ class Connector:
         # end for
         self.processed_results = self.results
         self.status = 'READY'
-        self.retrieved = len(self.processed_results) # adjust retrieved in case processing effected the size of the list.
-
+        if not self.processed_results:
+            logger.debug("No processed results")
+            self.retrieved =0 # adjust retrieved in case processing effected the size of the list.
+        else:
+            self.retrieved = len(self.processed_results)
         return
 
     ########################################
@@ -393,6 +396,7 @@ class Connector:
                 result.retrieved = result.retrieved + self.retrieved
                 result.time = f'{result.time + (end_time - self.start_time):.1f}'
                 result.json_results = result.json_results + self.processed_results
+                self.cat_results()
                 result.query_processors = query_processors
                 result.result_processors = result_processors
                 result.status = 'UPDATED'
@@ -434,3 +438,15 @@ class Connector:
                 f"result_processor_json_feedback={self.result_processor_json_feedback}"
             )
         return self.retrieved
+
+
+    def cat_results(result, self):
+        #result.json_results = result.json_results + self.processed_results
+        if not result.json_results and not self.processed_results:
+            result.json_results = []
+        else:
+            if result.json_results and self.processed_results:
+                result.json_results = result.json_results + self.processed_results
+            else:
+                if not result.json_results:
+                    result.json_results = self.processed_results

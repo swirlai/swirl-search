@@ -296,7 +296,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
 
         # end for result in results.json_results:
 
-        # Note the length here beforewe had the feedback below
+        # Note the length here before we had the feedback below
         self.modified = len(self.results)
 
         # Add list_query_lens to result processor feedback
@@ -475,8 +475,10 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
         self.results_updated = int(updated)
         swrel_logger.complete_pass_2()
-
-        return self.results_updated
+        if self.results_updated == None:
+            return 0
+        else:
+            return self.results_updated
 
 #############################################
     
