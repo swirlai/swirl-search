@@ -187,7 +187,10 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                                 max_similarity = 0.0
                                 for sent in sent_tokenize(result_field):
                                     result_sent_nlp = nlp(sent)
-                                    qvs = query_nlp.similarity(result_sent_nlp)
+                                    if not result_sent_nlp.has_vector:
+                                        qvs = 0.0
+                                    else:
+                                        qvs = query_nlp.similarity(result_sent_nlp)
                                     if qvs > max_similarity:
                                         max_similarity = qvs
                                 # end for
