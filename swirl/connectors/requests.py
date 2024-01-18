@@ -298,10 +298,12 @@ class Requests(Connector):
                 found = int(mapped_response['FOUND'])
                 self.found = found
             # check for 0 response
-            if found == 0 or retrieved == 0:
+            is_empty_list = 'RESULTS' in mapped_response and type(mapped_response['RESULTS']) == list and len(mapped_response['RESULTS']) == 0
+            if found == 0 or retrieved == 0 or is_empty_list:
                 # no results, not an error
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.retrieved = 0
+                self.found = 0
                 self.status = 'READY'
                 return
             # process the results
