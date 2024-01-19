@@ -1,0 +1,138 @@
+{
+  "type": "swirl",
+  "resultType": "hybrid",
+  "resultColumns": [
+    {
+      "field": "searchprovider",
+      "label": "Provider",
+      "text_align": "left",
+      "width": 1
+    },
+    {
+      "field": "title",
+      "label": "Title",
+      "text_align": "left",
+      "width": 1
+    },
+    {
+      "field": "author",
+      "label": "Author",
+      "text_align": "left",
+      "width": 1
+    },
+    {
+      "field": "body",
+      "label": "Body",
+      "text_align": "left",
+      "width": 2
+    }
+  ],
+  "resultLayout": {
+    "summary": [
+      [
+        [
+          [
+            {
+              "type": "title",
+              "fields": [
+                "title",
+                "swirl_rank",
+                "url"
+              ]
+            },
+            {
+              "type": "body",
+              "fields": [
+                "body"
+              ],
+              "max_lines": 4
+            }
+          ]
+        ]
+      ],
+      [
+        [
+          [
+            {
+              "type": "string",
+              "label": "Published",
+              "format": "medium",
+              "fields": [
+                "date_published"
+              ]
+            },
+            {
+              "type": "json",
+              "label": null,
+              "fields": [
+                "payload"
+              ],
+              "delimiter": ", "
+            },
+            {
+              "type": "authorship",
+              "fields": [
+                "searchprovider",
+                "searchprovider_rank",
+                "author",
+                "url"
+              ]
+            }
+          ]
+        ]
+      ]
+    ]
+  },
+  "facetLayout": [
+    {
+      "title": "Swirl Filters",
+      "facets": [
+        "Source"
+      ]
+    }
+  ],
+  "jsonFacet": {
+    "Source": {
+      "type": "terms",
+      "displayField": "Source",
+      "facetField": "searchprovider_rank"
+    }
+  },
+  "defaultFilters": {
+    "result_mixer": "result_mixer:RelevancyMixer"
+  },
+  "cart": {
+    "enabled": false,
+    "addText": "Add to Cart...",
+    "addImage": "assets/images/folder_into.png",
+    "removeText": "Remove from Cart...",
+    "removeImage": "assets/images/folder_out.png"
+  },
+  "msalConfig": {
+    "auth": {
+      "clientId": "",
+      "authority": "https://login.microsoftonline.com/",
+      "redirectUri": "http://:/galaxy/microsoft-callback"
+    }
+  },
+  "oauthConfig": {
+    "issuer": "https://login.microsoftonline.com/common/v2.0",
+    "redirectUri": "http://:/galaxy/oidc-callback",
+    "clientId": "<app-id>",
+    "scope": "openid email",
+    "responseType": "code",
+    "requireHttps": false,
+    "oidc": true,
+    "strictDiscoveryDocumentValidation": false,
+    "tokenEndpoint": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+    "userinfoEndpoint": "https://graph.microsoft.com/v1.0/me",
+    "skipIssuerCheck": true
+  },
+  "webSocketConfig": {
+    "url": "ws://:/chatgpt-data",
+    "timeout": 60000,
+    "timeoutText": "Timeout: No response from Generative AI."
+  },
+  "shouldUseTokenFromOauth": false,
+  "minimumSwirlScore": 100
+}
