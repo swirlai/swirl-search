@@ -25,26 +25,36 @@ The user performing this installation must be an authorized M365 tenant Administ
 * Click into the "Basics" tab. Select an Azure "Subscription", specify a new "Resource Group" specifically for the Swirl Managed App, select a Region, and provide an Application Name of your choosing.  The "Managed Resource Group" value should already be provided.  Click the "Next" button to save this configuration.
 ![Azure Marketplace Basics Screenshot](images/Azure_Marketplace-3.png)
 
+{: .highlight }
+Make note of the Application Name value as it will be used in the next steps!
+
 * Click into the "App Registration" tab and read the instructions provided there.
 ![Azure Marketplace Select Screenshot](images/Azure_Marketplace-2.png)
 
-* Download the script using the link at the bottom of the "App Registration" tab and run it in the target installation tenant.
+* Download the script using the link at the bottom of the "App Registration" tab and run it in the target installation tenant.  The "Application Name" value from above is required in some of the script inputs.
+```
+Enter the FQDN for the Swirl app: <your-application-name>.<your-domain>
+Enter your Azure Tenant ID: <your-tenant-id>
+Enter your Azure Subscription ID: <your-subscription-id>
+Enter your name of the App to register (no spaces, use _ or - for multiword): <your-application-name>
+Enter your DNS Zone Resource Group: <your-DNS-zone-resource-group>
+```
 
 {: .highlight }
-Save the script output, as it will be required for the next step!
+Save the script output as it will be used in for the next step!
 
 * Click into the "Deployment Configuration" tab. Fill out the form, including all required values, using the values reported by the script from the previous step.
 ![Azure Marketplace Configure Screenshot](images/Azure_Marketplace-4.png)
 
 | Field | Explanation | 
 | ----- | ----------- | 
-| Environment | Descriptive name to identify the intended deployment release such as `dev`, `testing`, `qa`, or `production` |
+| Environment | Your "Application Name" from the Basics tab. |
 | Client ID | Value provided by the `swirl_appreg.sh` script |
 | Object ID | Value provided by running the `az` command found in the tooltips: `az ad signed-in-user show --query id -o tsv` |
 | User Identity Name | Value provided by the `swirl_appreg.sh` script |
 | Azure DNS Zone | The existing DNS Zone the application will be deployed in (e.g.: `example.com`) |
 | DNS Zone Resource Group | Value required for Swirl to automatically update the DNS Zone swirl will be registered in. Search your Azure DNS Zones for the appropriate Zone name to identify the the Resource Group this `zonefile` is associated with. |
-| App Endpoint Prefix | The DNS A Record name of the host where Swirl will be deployed (e.g.: `swirl.example.com`) |
+| App Endpoint Prefix | Your "Application Name" from the Basics tab. |
 | OpenAI API Key | Allows Swirl to connect to and use an OpenAI account via the API. | 
 | App Admin User Email | The email of the user registering/deploying this application |
 
