@@ -40,7 +40,7 @@ jobs:
         docker tag dnred90.azurecr.io/redis swopnoff03.azurecr.io/redis:${{ env.RED_VERSION }}
         docker tag dnred90.azurecr.io/redis swopnoff03.azurecr.io/redis:latest
 
-    - name: login to acr swirl and pullg
+    - name: login to acr swirl and pull
       run: |
         echo "${{ secrets.ACR_SWR_PW }}" | docker login dnswo90.azurecr.io -u "${{ secrets.ACR_SWR_USER }}" --password-stdin
         docker pull dnswo90.azurecr.io/swirl
