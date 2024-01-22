@@ -79,11 +79,16 @@ class DedupeByFieldPostResultProcessor(PostResultProcessor):
 
         dupes = 0
         dedupe_key_dict = {}
-        for result in self.results:
-            deduped_item_list = []
-            dupes = dupes + _dedup_results(result.json_results, dedupe_key_dict, deduped_item_list, SWIRL_DEDUPE_FIELD)
-            result.json_results = deduped_item_list
-            result.save()
+        if not self.results or self.results == None:
+            return None
+        else:
+            for result in self.results:
+                if not result or result is None:
+                    continue
+                deduped_item_list = []
+                dupes = dupes + _dedup_results(result.json_results, dedupe_key_dict, deduped_item_list, SWIRL_DEDUPE_FIELD)
+                result.json_results = deduped_item_list
+                result.save()
         # end for
 
         if dupes > 0:
