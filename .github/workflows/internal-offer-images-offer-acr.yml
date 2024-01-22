@@ -42,7 +42,7 @@ jobs:
 
     - name: login to acr swirl and pull
       run: |
-        echo "${{ secrets.ACR_SWR_PW }}" | docker login dnsw090.azurecr.io -u "${{ secrets.ACR_SWR_USER }}" --password-stdin
+        echo "${{ secrets.ACR_SWR_PW }}" | docker login dnswo90.azurecr.io -u "${{ secrets.ACR_SWR_USER }}" --password-stdin
         docker pull dnswr90.azurecr.io/swirl
         docker tag dnswr90.azurecr.io/swirl swopnoff03.azurecr.io/swirl:${{ env.SWR_VERSION }}
         docker tag dnswr90.azurecr.io/swirl swopnoff03.azurecr.io/swirl:latest
