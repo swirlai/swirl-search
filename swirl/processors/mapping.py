@@ -46,7 +46,6 @@ class MappingResultProcessor(ResultProcessor):
 
 
     def process(self):
-        #self.modified = 0
         list_results = []
         provider_query_term_results = []
         # result_block = ""

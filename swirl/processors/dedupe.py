@@ -79,7 +79,7 @@ class DedupeByFieldPostResultProcessor(PostResultProcessor):
 
         dupes = 0
         dedupe_key_dict = {}
-        if not self.results or self.results == None:
+        if not self.results or self.results is None:
             return None
         else:
             for result in self.results:
@@ -91,7 +91,7 @@ class DedupeByFieldPostResultProcessor(PostResultProcessor):
                 result.save()
         # end for
 
-        if dupes > 0:
+        if dupes > 0 and dupes is not None:
             self.results_updated = -1 * dupes
         else:
             self.results_updated = 0

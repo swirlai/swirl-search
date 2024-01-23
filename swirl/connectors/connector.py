@@ -395,7 +395,6 @@ class Connector:
                 result.found = max(result.found, self.found)
                 result.retrieved = result.retrieved + self.retrieved
                 result.time = f'{result.time + (end_time - self.start_time):.1f}'
-                result.json_results = result.json_results + self.processed_results
                 self.cat_results()
                 result.query_processors = query_processors
                 result.result_processors = result_processors
