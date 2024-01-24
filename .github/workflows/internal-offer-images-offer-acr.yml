@@ -15,24 +15,8 @@ jobs:
     steps:
     - name: Setup Environment Variables
       run: |
-        echo "TTM_VERSION=9.0.$(( $(echo ${{ github.run_number }}) + 0 ))" >> $GITHUB_ENV
-        echo "TIK_VERSION=9.0.$(( $(echo ${{ github.run_number }}) + 0 ))" >> $GITHUB_ENV
         echo "SWR_VERSION=9.0.$(( $(echo ${{ github.run_number }}) + 0 ))" >> $GITHUB_ENV
         echo "RED_VERSION=9.0.$(( $(echo ${{ github.run_number }}) + 0 ))" >> $GITHUB_ENV
-    - name: login to acr topic text matcher and pull
-      run: |
-        echo "${{ secrets.ACR_TTM_PW }}" | docker login dnttm90.azurecr.io -u "${{ secrets.ACR_TTM_USER }}" --password-stdin
-        docker pull dnttm90.azurecr.io/topic-text-matcher
-        docker tag dnttm90.azurecr.io/topic-text-matcher swopnoff03.azurecr.io/topic-text-matcher:${{ env.TTM_VERSION }}
-        docker tag dnttm90.azurecr.io/topic-text-matcher swopnoff03.azurecr.io/topic-text-matcher:latest
-
-    - name: login to acr tika and pull
-      run: |
-        echo "${{ secrets.ACR_TIK_PW }}" | docker login dntik90.azurecr.io -u "${{ secrets.ACR_TIK_USER }}" --password-stdin
-        docker pull dntik90.azurecr.io/tika
-        docker tag dntik90.azurecr.io/tika swopnoff03.azurecr.io/tika:${{ env.TIK_VERSION }}
-        docker tag dntik90.azurecr.io/tika swopnoff03.azurecr.io/tika:latest
-
     - name: login to acr redis and pull
       run: |
         echo "${{ secrets.ACR_RED_PW }}" | docker login dnred90.azurecr.io -u "${{ secrets.ACR_RED_USER }}" --password-stdin
@@ -50,10 +34,6 @@ jobs:
     - name: login to acr offer and push
       run: |
         echo "${{ secrets.ACR_OFF_PW }}" | docker login swopnoff03.azurecr.io -u "${{ secrets.ACR_OFF_USER }}" --password-stdin
-        docker push swopnoff03.azurecr.io/topic-text-matcher:${{ env.TTM_VERSION }}
-        docker push swopnoff03.azurecr.io/topic-text-matcher:latest
-        docker push swopnoff03.azurecr.io/tika:${{ env.TIK_VERSION }}
-        docker push swopnoff03.azurecr.io/tika:latest
         docker push swopnoff03.azurecr.io/redis:${{ env.RED_VERSION }}
         docker push swopnoff03.azurecr.io/redis:latest
         docker push swopnoff03.azurecr.io/swirl:${{ env.SWR_VERSION }}
