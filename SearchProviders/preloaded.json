@@ -235,7 +235,7 @@
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
-        "result_mappings": "title='{company}',body='{company} raised ${raisedamt} series {round} on {fundeddate}. The company is located in {city} {state} and has {numemps} employees.',url=permalink,date_published=fundeddate,NO_PAYLOAD",
+        "result_mappings": "title='{company}',body='{company} raised ${raisedamt} series {round} on {fundeddate}. The company is located in {city} {state} and has {numemps} employees.',url=id,date_published=fundeddate,NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "/path/to/bigquery/token.json",
         "tags": [
@@ -299,7 +299,7 @@
         "active": false,
         "default": false,
         "connector": "OpenSearch",
-        "url": "http://localhost:9200/",
+        "url": "https://localhost:9200/",
         "query_template": "{\"query\":{\"query_string\":{\"query\":\"{query_string}\",\"default_field\":\"{default_field}\",\"default_operator\":\"and\"}}}",
         "query_processors": [
             "AdaptiveQueryProcessor"
@@ -312,7 +312,7 @@
         "response_mappings": "",
         "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "'admin','password'",
+        "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,username:password",
         "tags": [
             "Enron",
             "OpenSearch",
@@ -324,7 +324,7 @@
         "active": false,
         "default": false,
         "connector": "Elastic",
-        "url": "http://localhost:9200/",
+        "url": "https://localhost:9200/",
         "query_template": "index='{index_name}', query={'query_string': {'query': '{query_string}', 'default_field': '{default_field}'}}",
         "query_processors": [
             "AdaptiveQueryProcessor"
@@ -337,7 +337,7 @@
         "response_mappings": "",
         "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "(\"elastic\", \"elastic-password\")",
+        "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,username:password",
         "tags": [
             "Enron",
             "Elastic",
@@ -837,6 +837,7 @@
         "result_grouping_field": "",
         "result_processors": [
             "MappingResultProcessor",
+            "RequireQueryStringInTitleResultProcessor",
             "DateFinderResultProcessor",
             "CosineRelevancyResultProcessor"
         ],
@@ -866,7 +867,7 @@
                 "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
             },
             "timeout": 10
-    },    
+    },
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -1131,7 +1132,7 @@
             "Crunchbase",
             "Organizations",
             "Internal"
-    
+
         ]
     },
     {
@@ -1254,7 +1255,6 @@
     },
     {
         "name": "Cards - Atlassian Trello",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -1289,7 +1289,6 @@
     },
     {
         "name": "Tasks - Asana.com",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",
@@ -1356,34 +1355,39 @@
         ]
     },
     {
-        "name": "IMDB Movie Samples - MongoDB",
+        "name": "IMDB Movies - MongoDB",
         "active": false,
         "default": false,
         "authenticator": "",
         "connector": "MongoDB",
         "url": "sample_mflix:movies",
-        "query_template": "{'$text': {'$search': '{query_string}'}}",
+        "query_template": "",
+        "query_template_json": {
+            "$text": {
+                "$search": "{query_string}"
+            }
+        },
         "post_query_template": {},
+        "post_query_template_json": {},
         "http_request_headers": {},
         "page_fetch_config_json": {},
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
-        "query_mappings": "DATE_SORT=year,NOT_CHAR=-",
+        "query_mappings": "sort_by_date=year,NOT_CHAR=-,MATCH_ALL",
         "result_grouping_field": "",
         "result_processors": [
             "MappingResultProcessor",
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
-        "result_mappings": "title=name,body=fullplot,date_published=released,date_published_display=year,author=directors[*],url=poster,lastupdated,genres[*],rated,runtime,languages[*],cast[*],writers[*],awards.text,imdb.rating,tomatoes.viewer.rating,tomatoes.critic.rating,NO_PAYLOAD",
+        "result_mappings": "title=name,body=fullplot,date_published=year,date_published_display=year,author=directors[*],url=poster,genres[*],rated,runtime,languages[*],cast[*],writers[*],awards.text,imdb.rating,tomatoes.viewer.rating,tomatoes.critic.rating,NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "mongodb+srv://<mongodb-username>:<mongodb-password>@<mongdb-cluster>.mongodb.net/?retryWrites=true&w=majority",
         "eval_credentials": "",
         "tags": [
             "Movies",
-            "MongoDB",
-            "Internal"
+            "MongoDB"
         ]
     },
     {
@@ -1393,7 +1397,7 @@
         "authenticator": "",
         "connector": "Snowflake",
         "url": "<snowflake-instance-address>",
-        "query_template": "SELECT {fields} FROM {table} WHERE {field1} ILIKE '%{query_string}%';",
+        "query_template": "SELECT {fields} FROM {table} WHERE {field1} ILIKE '%{query_string}%' AND NULLIF(TRIM(founded), '') IS NOT NULL ORDER BY TRY_TO_NUMBER(REGEXP_REPLACE(SPLIT_PART(size, '-', 1), '[^0-9]', '')) DESC;",
         "post_query_template": {},
         "http_request_headers": {},
         "page_fetch_config_json": {},
@@ -1414,6 +1418,68 @@
         "tags": [
             "Company",
             "Snowflake"
+        ]
+    },
+    {
+        "name": "Entities - LittleSis.org",
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "RequestsGet",
+        "url": "https://littlesis.org/api/entities/search",
+        "query_template": "{url}?q={query_string}*",
+        "post_query_template": "{}",
+        "http_request_headers": {},
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "RESULTS=data",
+        "result_mappings": "title=attributes.name,body=attributes.summary,date_published=attributes.updated_at,url=links.self,attributes.id,attributes.start_date,attributes.end_date,attributes.website,attributes.blurb,attributes.aliases[*],attributes.types[*],attributes.extensions[*].Person.birthplace,attributes.tags[*],NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "LittleSis",
+            "Entities"
+        ]
+    },
+    {
+        "name": "Entities - OpenSanctions.org",
+        "active": false,
+        "default": false,
+        "authenticator": "",
+        "connector": "RequestsGet",
+        "url": "https://api.opensanctions.org/search/default",
+        "query_template": "{url}?q={query_string}*",
+        "post_query_template": "{}",
+        "http_request_headers": {
+            "Authorization": "ApiKey <OpenSanctions-API-Key>"
+        },
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "FOUND=total.value,RESULTS=results",
+        "result_mappings": "title=caption,body=properties.notes[*],date_published=properties.createdAt[*],url='https://www.opensanctions.org/entities/{id}',properties.title[*],properties.nationality[*],properties.birthDate[*],properties.gender[*],properties.name[*],properties.alias[*],properties.position[*],properties.topics[*],properties.sourceUrl[*],id,target,first_seen,properties.modifiedAt[*],NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "OpenSanctions",
+            "Entities"
         ]
     }
 ]

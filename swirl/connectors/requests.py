@@ -221,17 +221,36 @@ class Requests(Connector):
                 self.error(f"request.{self.get_method()} returned: {response.status_code} {response.reason} from: {self.provider.name} for: {page_query}")
                 return
             # end if
-
+   
             # normalize the response
             content_type = response.headers['Content-Type']
             json_data = None
+
             if 'text/xml' in content_type or 'application/xml' in content_type or 'application/atom+xml' in content_type:
                 json_data = xmltodict.parse(response.text)
             else:
-                json_data = response.json()
                 if not 'application/json' in content_type:
-                    logger.debug(f"content header not xml or explitily json, assuming json")
-
+                    logger.debug(f"content header not xml or explicitly json, assuming json")
+                try:
+                    raw_json_data = response.json()
+                    # Check for list of lists format
+                    if isinstance(raw_json_data, list) and raw_json_data and isinstance(raw_json_data[0], list):
+                        headers = raw_json_data[0]
+                        json_data = [dict(zip(headers, sublist)) for sublist in raw_json_data[1:]]
+                    # Check for Thoughtspot format
+                    elif isinstance(raw_json_data, dict) and "contents" in raw_json_data:
+                        json_data = []
+                        for content in raw_json_data["contents"]:
+                            if "column_names" in content and "data_rows" in content:
+                                headers = content["column_names"]
+                                for row in content["data_rows"]:
+                                    json_data.append(dict(zip(headers, row)))
+                    else:
+                        json_data = raw_json_data
+                except ValueError as err:
+                    logger.warning(f"Error parsing response as JSON: {err}")
+            # end if
+                    
             mapped_response = {}
             if not json_data:
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
@@ -279,10 +298,12 @@ class Requests(Connector):
                 found = int(mapped_response['FOUND'])
                 self.found = found
             # check for 0 response
-            if found == 0 or retrieved == 0:
+            is_empty_list = 'RESULTS' in mapped_response and type(mapped_response['RESULTS']) == list and len(mapped_response['RESULTS']) == 0
+            if found == 0 or retrieved == 0 or is_empty_list:
                 # no results, not an error
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.retrieved = 0
+                self.found = 0
                 self.status = 'READY'
                 return
             # process the results

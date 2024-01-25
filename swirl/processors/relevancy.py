@@ -66,7 +66,6 @@ class CosineRelevancyResultProcessor(ResultProcessor):
         for item in self.results:
             dict_score = {}
             if 'explain' in item:
-                logger.debug("Copying explain!!!!")
                 dict_score = item['explain']
                 item['dict_score'] = dict_score
                 dict_len = {}
@@ -90,7 +89,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                                 result_field = result_field.replace('-', ' ')
                         result_field_list = result_field.strip().split()
                         if field in dict_len:
-                            self.warning("duplicate field?")
+                            self.warning("Duplicate field detected, ignoring")
                         else:
                             dict_len[field] = len(result_field_list)
                         if field in dict_result_lens:
@@ -109,13 +108,6 @@ class CosineRelevancyResultProcessor(ResultProcessor):
 
             if not 'hits' in item:
                 item['hits'] = {}
-
-            if 'explain' in item:
-                logger.debug("Skipping item with explain already")
-                continue
-
-            if 'title' in dict_score:
-                logger.debug("Found title in dict_score!")
 
             dict_score['stems'] = ' '.join(parsed_query.query_stemmed_list)
             dict_len = {}
@@ -195,7 +187,10 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                                 max_similarity = 0.0
                                 for sent in sent_tokenize(result_field):
                                     result_sent_nlp = nlp(sent)
-                                    qvs = query_nlp.similarity(result_sent_nlp)
+                                    if not result_sent_nlp.has_vector:
+                                        qvs = 0.0
+                                    else:
+                                        qvs = query_nlp.similarity(result_sent_nlp)
                                     if qvs > max_similarity:
                                         max_similarity = qvs
                                 # end for
@@ -304,7 +299,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
 
         # end for result in results.json_results:
 
-        # Note the length here beforewe had the feedback below
+        # Note the length here before we had the feedback below
         self.modified = len(self.results)
 
         # Add list_query_lens to result processor feedback
@@ -316,6 +311,8 @@ class CosineRelevancyResultProcessor(ResultProcessor):
         swrel_logger.complete_pass_1()
         return self.modified
 
+#############################################
+    
 class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
     type = 'CosineRelevancyPostResultProcessor'
@@ -351,7 +348,11 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         (dict_result_lens, list_query_lens) = self._pass_2_extract_result_len_stats()
 
         if not dict_result_lens:
-            self.error('Dictionary of result lengths is empty. Was CosineRelevancyResultProcessor included in Search Providers Processor configuration?')
+            if self.result_count == 0:
+                # not an error
+                pass
+            else:
+                self.error('Dictionary of result lengths is empty. Was CosineRelevancyResultProcessor included in Search Providers Processor configuration?')
 
         for field in dict_result_lens:
             dict_len_median[field] = median(dict_result_lens[field])
@@ -477,5 +478,37 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
         self.results_updated = int(updated)
         swrel_logger.complete_pass_2()
+        if self.results_updated == None:
+            return 0
+        else:
+            return self.results_updated
 
-        return self.results_updated
+#############################################
+    
+class DropIrrelevantPostResultProcessor(PostResultProcessor):
+
+    type = 'DropIrrelevantPostResultProcessor'
+
+    def process(self):
+        
+        modified = 0
+
+        for results in self.results:
+            if not results.json_results:
+                continue
+            relevant_results = []
+            for item in results.json_results:  
+                # to do: override from tag   
+                if 'swirl_score' in item:
+                    if item['swirl_score'] > settings.MIN_SWIRL_SCORE:
+                        relevant_results.append(item)
+                    else:
+                        modified = modified - 1
+                else:
+                    modified = modified - 1
+
+            results.json_results = relevant_results
+            results.save()
+
+        return modified
+

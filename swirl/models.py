@@ -88,6 +88,7 @@ class SearchProvider(models.Model):
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
     query_template = models.CharField(max_length=2048, default='{url}?q={query_string}', blank=True)
+    query_template_json = models.JSONField(default={}, blank=True)
     post_query_template = models.JSONField(default={}, blank=True)
     QUERY_PROCESSOR_CHOICES = [
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
@@ -106,6 +107,8 @@ class SearchProvider(models.Model):
         ('DedupeByFieldResultProcessor', 'DedupeByFieldResultProcessor'),
         ('LenLimitingResultProcessor', 'LenLimitingResultProcessor'),
         ('CleanTextResultProcessor','CleanTextResultProcessor'),
+        ('RequireQueryStringInTitleResultProcessor','RequireQueryStringInTitleResultProcessor'),
+        ('DropIrrelevantPostResultProcessor','DropIrrelevantPostResultProcessor'),
         ('CosineRelevancyResultProcessor','CosineRelevancyResultProcessor')
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
@@ -222,7 +225,7 @@ class Result(models.Model):
     retrieved = models.IntegerField(default=0)
     found = models.IntegerField(default=0)
     time = models.FloatField(default=0.0)
-    json_results = models.JSONField(default=list)
+    json_results = models.JSONField(default=list, null=True)
     tags = models.JSONField(default=list)
 
     class Meta:

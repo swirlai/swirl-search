@@ -222,6 +222,31 @@ class CleanTextResultProcessor(ResultProcessor):
 
 #############################################
 
+class RequireQueryStringInTitleResultProcessor(ResultProcessor):
+
+    type="RequireQueryStringInTitleResultProcessor"
+
+    def __init__(self, results, provider, query_string, request_id='', **kwargs):
+        super().__init__(results, provider, query_string, request_id=request_id, **kwargs)
+
+    def process(self):
+        
+        self.processed_results = []
+        self.modified = 0
+
+        for item in self.results:
+            if 'title' in item:
+                if self.query_string.lower() in item['title'].lower():
+                    self.processed_results.append(item)
+                else:
+                    self.modified = self.modified - 1
+            else:
+                self.modified = self.modified - 1
+
+        return self.modified
+    
+#############################################
+
 class TestResultProcessor(ResultProcessor):
 
     type="TestResultProcessor"

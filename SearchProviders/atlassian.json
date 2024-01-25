@@ -53,7 +53,6 @@
     },
     {
         "name": "Cards - Atlassian Trello",
-        "shared": true,
         "active": false,
         "default": false,
         "authenticator": "",

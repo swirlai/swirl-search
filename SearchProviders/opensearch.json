@@ -3,7 +3,7 @@
     "active": false,
     "default": false,
     "connector": "OpenSearch",
-    "url": "http://localhost:9200/",
+    "url": "https://localhost:9200/",
     "query_template": "{\"query\":{\"query_string\":{\"query\":\"{query_string}\",\"default_field\":\"{default_field}\",\"default_operator\":\"and\"}}}",
     "query_processors": [
         "AdaptiveQueryProcessor"
@@ -14,7 +14,7 @@
         "CosineRelevancyResultProcessor"
     ],
     "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
-    "credentials": "'admin','password'",
+    "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,username:password",
     "tags": [
         "Enron",
         "OpenSearch",

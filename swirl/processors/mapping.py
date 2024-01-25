@@ -46,7 +46,6 @@ class MappingResultProcessor(ResultProcessor):
 
 
     def process(self):
-
         list_results = []
         provider_query_term_results = []
         # result_block = ""
@@ -250,6 +249,10 @@ class MappingResultProcessor(ResultProcessor):
                 swirl_result['title'] = swirl_result['title'].replace('<matched_term>', '')
                 swirl_result['title'] = swirl_result['title'].replace('</matched_term>', '')
 
+            if 'LC_URL' in self.provider.result_mappings:
+                self.warning("LC_URL!")
+                swirl_result['url'] = swirl_result['url'].lower()
+
             #############################################
             # final assembly
             if payload:
@@ -274,7 +277,7 @@ class MappingResultProcessor(ResultProcessor):
             if result_number > self.provider.results_per_query:
                 # self.warning("Truncating extra results, found & retrieved may be incorrect")
                 break
-            # unique list of terms from highligts
+            # unique list of terms from highlights
         # end for
 
         fb = result_processor_feedback_provider_query_terms(provider_query_term_results)

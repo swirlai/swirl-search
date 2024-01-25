@@ -23,7 +23,7 @@
     "response_mappings": "",
     "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,body_hit_highlights=highlight.content, title_hit_highlights=highlight.subject,NO_PAYLOAD",
     "results_per_query": 10,
-    "credentials": "'admin','admin'",
+    "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,username:password",
     "eval_credentials": "",
     "tags": [
         "Enron",

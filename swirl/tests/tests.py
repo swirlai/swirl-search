@@ -121,14 +121,14 @@ def hll_test_expected():
     return[
         '<em>Activision</em> <em>Blizzard</em> <em>Inc</em>. — Mergers & Acquisition',
         '<em>Activision</em> <em>Blizzard</em> <em>Inc</em>. — Mergers & Acquisition',
-        'The <em>same</em> <em>same</em> word twice',
+        'The same same word twice',
         '<em>Swirl</em>_Pitch_1234412',
         '<em>Swirl</em> Pitch 1234412',
         'I love <em>programming</em> in <em>Python</em>',
         'The <em>quick</em> brown fox <em>jumps</em> over the lazy <em>dog</em>',
         'The weather is nice today',
         '<em>ChatGPT</em> is an <em>AI</em> <em>language</em> <em>model</em>',
-        '<em>This</em> is a case insensitive <em>test</em>',
+        'This is a case insensitive <em>test</em>',
         "U.K. Blocks <em>Microsoft's</em> $69 Billion"
     ]
 
@@ -485,12 +485,12 @@ def test_cgptqp_1():
     tc = 'gig economy'
     expected = 'gig economy'
 
-    with mock.patch('openai.OpenAI') as mock_openai:
+    with mock.patch('swirl.ai_provider.swirl_ai_provider.SwirlAIClient') as mock_LLM_Client:
         client_instance = mock.MagicMock()
-        mock_openai.return_value = client_instance
+        mock_LLM_Client.return_value = client_instance
         mock_create = mock.MagicMock()
-        mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
-        client_instance.chat.completions.create = mock_create
+        mock_create.return_value = "Gig economy large scale economics"
+        client_instance.get_completion = mock_create
         cgptqp = ChatGPTQueryProcessor(
             tc,
             '',
@@ -498,12 +498,9 @@ def test_cgptqp_1():
         )
         actual = cgptqp.process(client=client_instance)
         assert actual == expected
-        mock_create.assert_called_once_with(
-            model=MODEL,
-            messages=[
-                {"role": "system", "content": "You are helping a user formulate better queries"},
-                {"role": "user", "content": "Write a more precise query of similar length to this : gig economy"}
-            ],
+        mock_create.assert_called_once_with (
+            system_text = "You are helping a user formulate better queries",
+            prompt =  "Write a more precise query of similar length to this : gig economy",
             temperature=0
         )
 
@@ -512,12 +509,12 @@ def test_cgptqp_2():
     tc = 'gig economy'
     expected = 'gig economy'
 
-    with mock.patch('openai.OpenAI') as mock_openai:
+    with mock.patch('swirl.ai_provider.swirl_ai_provider.SwirlAIClient') as mock_LLM_Client:
         client_instance = mock.MagicMock()
-        mock_openai.return_value = client_instance
+        mock_LLM_Client.return_value = client_instance
         mock_create = mock.MagicMock()
-        mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
-        client_instance.chat.completions.create = mock_create
+        mock_create.return_value = "Gig economy large scale economics"
+        client_instance.get_completion = mock_create
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:Write a more precise query of similar length to this : {query_string}",
@@ -525,23 +522,22 @@ def test_cgptqp_2():
         )
         actual = cgptqp.process(client=client_instance)
         assert actual == expected
-        mock_create.assert_called_once_with(model=MODEL, messages=[
-                {"role": "system", "content": "You are a malevolent dictator"},
-                {"role": "user", "content":   "Write a more precise query of similar length to this : gig economy"}
-            ],
-            temperature=0)
+        mock_create.assert_called_once_with(
+                system_text="You are a malevolent dictator",
+                prompt="Write a more precise query of similar length to this : gig economy",
+                temperature=0)
 
 @pytest.mark.django_db
 def test_cgptqp_3():
     tc = 'gig economy'
     expected = 'gig economy'
 
-    with mock.patch('openai.OpenAI') as mock_openai:
+    with mock.patch('swirl.ai_provider.swirl_ai_provider.SwirlAIClient') as mock_LLM_Client:
         client_instance = mock.MagicMock()
-        mock_openai.return_value = client_instance
+        mock_LLM_Client.return_value = client_instance
         mock_create = mock.MagicMock()
-        mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
-        client_instance.chat.completions.create = mock_create
+        mock_create.return_value = "Gig economy large scale economics"
+        client_instance.get_completion = mock_create
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
@@ -549,10 +545,9 @@ def test_cgptqp_3():
         )
         actual = cgptqp.process(client=client_instance)
         assert actual == expected
-        mock_create.assert_called_once_with(model=MODEL, messages=[
-                {"role": "system", "content": "You are a malevolent dictator"},
-                {"role": "user", "content":   "Write a more precise query of similar length to this : gig economy"}
-            ],
+        mock_create.assert_called_once_with(
+                system_text="You are a malevolent dictator",
+                prompt="Write a more precise query of similar length to this : gig economy",
             temperature=0)
 
 @pytest.mark.django_db
@@ -560,12 +555,12 @@ def test_cgptqp_4():
     tc = 'gig economy'
     expected = 'gig economy'
 
-    with mock.patch('openai.OpenAI') as mock_openai:
+    with mock.patch('swirl.ai_provider.swirl_ai_provider.SwirlAIClient') as mock_LLM_Client:
         client_instance = mock.MagicMock()
-        mock_openai.return_value = client_instance
+        mock_LLM_Client.return_value = client_instance
         mock_create = mock.MagicMock()
-        mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
-        client_instance.chat.completions.create = mock_create
+        mock_create.return_value = "Gig economy large scale economics"
+        client_instance.get_completion = mock_create
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
@@ -574,24 +569,22 @@ def test_cgptqp_4():
         )
         actual = cgptqp.process(client=client_instance)
         assert actual == expected
-        mock_create.assert_called_once_with(model=MODEL, messages=[
-                {"role": "system", "content": "You are a malevolent dictator"},
-                {"role": "user", "content":   "This should be used: gig economy"}
-            ],
+        mock_create.assert_called_once_with(
+                system_text="You are a malevolent dictator",
+                prompt="This should be used: gig economy",
             temperature=0)
-
 
 @pytest.mark.django_db
 def test_cgptqp_5():
     tc = 'gig economy'
     expected = 'Gig economy large scale economics'
 
-    with mock.patch('openai.OpenAI') as mock_openai:
+    with mock.patch('swirl.ai_provider.swirl_ai_provider.SwirlAIClient') as mock_LLM_Client:
         client_instance = mock.MagicMock()
-        mock_openai.return_value = client_instance
+        mock_LLM_Client.return_value = client_instance
         mock_create = mock.MagicMock()
-        mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
-        client_instance.chat.completions.create = mock_create
+        mock_create.return_value = "Gig economy large scale economics"
+        client_instance.get_completion = mock_create
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
@@ -602,24 +595,22 @@ def test_cgptqp_5():
         actual = cgptqp.process(client=client_instance)
         assert actual == expected
         assert not cgptqp.do_filter
-        mock_create.assert_called_once_with(model=MODEL, messages=[
-                {"role": "system", "content": "You are a malevolent dictator"},
-                {"role": "user", "content":   "This should be used: gig economy"}
-            ],
+        mock_create.assert_called_once_with(
+                system_text="You are a malevolent dictator",
+                prompt="This should be used: gig economy",
             temperature=0)
-
 
 @pytest.mark.django_db
 def test_cgptqp_6():
     tc = 'gig economy'
     expected = 'gig economy'
 
-    with mock.patch('openai.OpenAI') as mock_openai:
+    with mock.patch('swirl.ai_provider.swirl_ai_provider.SwirlAIClient') as mock_LLM_Client:
         client_instance = mock.MagicMock()
-        mock_openai.return_value = client_instance
+        mock_LLM_Client.return_value = client_instance
         mock_create = mock.MagicMock()
-        mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
-        client_instance.chat.completions.create = mock_create
+        mock_create.return_value = "Gig economy large scale economics"
+        client_instance.get_completion = mock_create
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
@@ -630,24 +621,22 @@ def test_cgptqp_6():
         actual = cgptqp.process(client=client_instance)
         assert actual == expected
         assert cgptqp.do_filter
-        mock_create.assert_called_once_with(model=MODEL, messages=[
-                {"role": "system", "content": "You are a malevolent dictator"},
-                {"role": "user", "content":   "This should be used: gig economy"}
-            ],
+        mock_create.assert_called_once_with(
+                system_text="You are a malevolent dictator",
+                prompt="This should be used: gig economy",
             temperature=0)
-
 
 @pytest.mark.django_db
 def test_cgptqp_7():
     tc = 'gig economy'
     expected = 'gig economy'
 
-    with mock.patch('openai.OpenAI') as mock_openai:
+    with mock.patch('swirl.ai_provider.swirl_ai_provider.SwirlAIClient') as mock_LLM_Client:
         client_instance = mock.MagicMock()
-        mock_openai.return_value = client_instance
+        mock_LLM_Client.return_value = client_instance
         mock_create = mock.MagicMock()
-        mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
-        client_instance.chat.completions.create = mock_create
+        mock_create.return_value = "Gig economy large scale economics"
+        client_instance.get_completion = mock_create
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
@@ -658,10 +647,9 @@ def test_cgptqp_7():
         actual = cgptqp.process(client=client_instance)
         assert actual == expected
         assert cgptqp.do_filter == MODEL_DEFAULT_DO_FILTER
-        mock_create.assert_called_once_with(model=MODEL, messages=[
-                {"role": "system", "content": "You are a malevolent dictator"},
-                {"role": "user", "content":   "This should be used: gig economy"}
-            ],
+        mock_create.assert_called_once_with(
+                system_text="You are a malevolent dictator",
+                prompt="This should be used: gig economy",
             temperature=0)
 
 

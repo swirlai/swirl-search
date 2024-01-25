@@ -1,6 +1,6 @@
-FROM python:3.11.6-slim-bookworm
+FROM python:3.12.1-slim-bookworm
 
-# try to upgrade to a more recent vesion of openssl
+# try to upgrade to a more recent version of openssl
 RUN apt-get update
 RUN apt-get -y upgrade openssl
 
@@ -36,9 +36,9 @@ COPY ./install-ui.sh /app/install-ui.sh
 ADD ./swirl /app/swirl
 
 # Install Galaxy UI
-RUN mkdir /app/swirl/static/galaxy
-COPY --from=swirlai/spyglass:latest /usr/src/spyglass/ui/dist/spyglass/browser/. /app/swirl/static/galaxy
-COPY --from=swirlai/spyglass:latest /usr/src/spyglass/ui/config-swirl-demo.db.json /app/
+RUN mkdir -p /app/swirl/static/galaxy
+COPY --from=swirlai/spyglass:preview /usr/src/spyglass/ui/dist/spyglass/browser/. /app/swirl/static/galaxy
+COPY --from=swirlai/spyglass:preview /usr/src/spyglass/ui/config-swirl-demo.db.json /app/
 
 ADD ./swirl_server /app/swirl_server
 ADD ./SearchProviders /app/SearchProviders

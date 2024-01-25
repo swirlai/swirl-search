@@ -25,6 +25,8 @@ def _get_field_value_top_level_or_payload (item, field):
 
 def _dedup_results (results, dedupe_key_dict, deduped_item_list, grouping_field):
     n_dups = 0
+    if not results or results is None:
+        return None
     for item in results:
         f_value = _get_field_value_top_level_or_payload(item, grouping_field)
         if f_value:
@@ -79,14 +81,22 @@ class DedupeByFieldPostResultProcessor(PostResultProcessor):
 
         dupes = 0
         dedupe_key_dict = {}
-        for result in self.results:
-            deduped_item_list = []
-            dupes = dupes + _dedup_results(result.json_results, dedupe_key_dict, deduped_item_list, SWIRL_DEDUPE_FIELD)
-            result.json_results = deduped_item_list
-            result.save()
+        if not self.results or self.results is None:
+            return None
+        else:
+            for result in self.results:
+                if not result or result is None:
+                    continue
+                deduped_item_list = []
+                if _dedup_results(result.json_results, dedupe_key_dict, deduped_item_list, SWIRL_DEDUPE_FIELD):
+                    dupes = dupes + _dedup_results(result.json_results, dedupe_key_dict, deduped_item_list, SWIRL_DEDUPE_FIELD)
+                else:
+                    dupes = 0
+                result.json_results = deduped_item_list
+                result.save()
         # end for
 
-        if dupes > 0:
+        if dupes > 0 and dupes is not None:
             self.results_updated = -1 * dupes
         else:
             self.results_updated = 0
