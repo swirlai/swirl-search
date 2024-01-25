@@ -37,8 +37,8 @@ ADD ./swirl /app/swirl
 
 # Install Galaxy UI
 RUN mkdir -p /app/swirl/static/galaxy
-COPY --from=swirlai/spyglass:preview /usr/src/spyglass/ui/dist/spyglass/browser/. /app/swirl/static/galaxy
-COPY --from=swirlai/spyglass:preview /usr/src/spyglass/ui/config-swirl-demo.db.json /app/
+COPY --from=swirlai/spyglass:latest /usr/src/spyglass/ui/dist/spyglass/browser/. /app/swirl/static/galaxy
+COPY --from=swirlai/spyglass:latest /usr/src/spyglass/ui/config-swirl-demo.db.json /app/
 
 ADD ./swirl_server /app/swirl_server
 ADD ./SearchProviders /app/SearchProviders
