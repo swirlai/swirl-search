@@ -21,7 +21,7 @@ class GenericQueryProcessor(QueryProcessor):
 
     def process(self):
         return clean_string(self.query_string).strip()
-
+    
 #############################################
 
 class TestQueryProcessor(QueryProcessor):
