@@ -226,7 +226,7 @@ class Result(models.Model):
     retrieved = models.IntegerField(default=0)
     found = models.IntegerField(default=0)
     time = models.FloatField(default=0.0)
-    json_results = models.JSONField(default=list)
+    json_results = models.JSONField(default=list, null=True)
     tags = models.JSONField(default=list)
 
     class Meta:
