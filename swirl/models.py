@@ -109,7 +109,6 @@ class SearchProvider(models.Model):
         ('LenLimitingResultProcessor', 'LenLimitingResultProcessor'),
         ('CleanTextResultProcessor','CleanTextResultProcessor'),
         ('RequireQueryStringInTitleResultProcessor','RequireQueryStringInTitleResultProcessor'),
-        ('DropIrrelevantPostResultProcessor','DropIrrelevantPostResultProcessor'),
         ('CosineRelevancyResultProcessor','CosineRelevancyResultProcessor')
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
@@ -169,6 +168,7 @@ class Search(models.Model):
     pre_query_processors = models.JSONField(default=getSearchPreQueryProcessorsDefault, blank=True)
     POST_RESULT_PROCESSOR_CHOICES = [
         ('CosineRelevancyPostResultProcessor', 'CosineRelevancyPostResultProcessor'),
+        ('DropIrrelevantPostResultProcessor','DropIrrelevantPostResultProcessor'),
         ('DedupeByFieldPostResultProcessor', 'DedupeByFieldPostResultProcessor'),
         ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor'),
     ]
