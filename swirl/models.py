@@ -94,6 +94,7 @@ class SearchProvider(models.Model):
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('TestQueryProcessor', 'TestQueryProcessor'),
         ('AdaptiveQueryProcessor', 'AdaptiveQueryProcessor'),
+        ('NoModQueryProcessor', 'NoModQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor')
     ]
     query_processors = models.JSONField(default=getSearchProviderQueryProcessorsDefault, blank=True)
