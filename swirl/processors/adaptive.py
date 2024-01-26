@@ -129,3 +129,20 @@ class AdaptiveQueryProcessor(QueryProcessor):
             query = "None"
 
         return query
+
+#############################################
+
+class NoModQueryProcessor(QueryProcessor):
+
+    type = 'NoModQueryProcessor'
+
+    def process(self):
+        
+        if self.tags:
+            for tag in self.tags:
+                tagx = tag + ':'
+                if self.query_string.lower().startswith(tagx.lower()):
+                    return self.query_string[len(tagx):]
+        
+        return self.query_string
+
