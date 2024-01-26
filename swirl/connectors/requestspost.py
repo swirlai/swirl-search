@@ -62,7 +62,10 @@ class RequestsPost(Requests):
         if post_json_str and post_json_str != '{}' and post_json_str != '"{}"':
             post_json_str     = bind_query_mappings(post_json_str, self.provider.query_mappings, self.provider.url)
             if '{query_string}' in post_json_str:
-                post_json_str = post_json_str.replace('{query_string}', urllib.parse.quote_plus(self.query_string_to_provider))
+                if 'NO_URL_ENCODE' in self.provider.query_mappings:
+                    post_json_str = post_json_str.replace('{query_string}', self.query_string_to_provider)
+                else:
+                    post_json_str = post_json_str.replace('{query_string}', urllib.parse.quote_plus(self.query_string_to_provider))
             post_json = json.loads(post_json_str)
         else:
             post_json=query

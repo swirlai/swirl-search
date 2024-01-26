@@ -242,7 +242,7 @@ class Requests(Connector):
                         json_data = []
                         for content in raw_json_data["contents"]:
                             if "column_names" in content and "data_rows" in content:
-                                headers = content["column_names"]
+                                headers = [column_name.replace(" ", "_") for column_name in content["column_names"]]
                                 for row in content["data_rows"]:
                                     json_data.append(dict(zip(headers, row)))
                     else:
