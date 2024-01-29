@@ -170,6 +170,7 @@ class Search(models.Model):
     pre_query_processors = models.JSONField(default=getSearchPreQueryProcessorsDefault, blank=True)
     POST_RESULT_PROCESSOR_CHOICES = [
         ('CosineRelevancyPostResultProcessor', 'CosineRelevancyPostResultProcessor'),
+        ('DropIrrelevantPostResultProcessor','DropIrrelevantPostResultProcessor'),
         ('DedupeByFieldPostResultProcessor', 'DedupeByFieldPostResultProcessor'),
         ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor'),
     ]
