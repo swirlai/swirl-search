@@ -110,6 +110,7 @@ class SearchProvider(models.Model):
         ('CleanTextResultProcessor','CleanTextResultProcessor'),
         ('RequireQueryStringInTitleResultProcessor','RequireQueryStringInTitleResultProcessor'),
         ('DropIrrelevantPostResultProcessor','DropIrrelevantPostResultProcessor'),
+        ('AutomaticPayloadMapperResultProcessor', 'AutomaticPayloadMapperResultProcessor'),
         ('CosineRelevancyResultProcessor','CosineRelevancyResultProcessor')
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
