@@ -12,8 +12,7 @@ from django.conf import settings
 from swirl.processors.processor import *
 from swirl.processors.utils import get_tag
 
-from swirl.ai_provider.ai_provider import AI_REWRITE_USE
-from swirl.ai_provider.swirl_ai_client_factory import SwirlAIClientFactory
+from openai import OpenAI
 
 MODEL_3 = "gpt-3.5-turbo"
 MODEL_4 = "gpt-4"
@@ -99,16 +98,20 @@ class ChatGPTQueryProcessor(QueryProcessor):
             logger.info(f"{self.type} model {MODEL} system guide {self.system_guide} prompt {self.prompt} Do Filter {self.do_filter}")
             if client is None:
                 if getattr(settings, 'OPENAI_API_KEY', None):
-                    client = SwirlAIClientFactory(usage=AI_REWRITE_USE)
+                    client = OpenAI(api_key=settings.OPENAI_API_KEY)
                 else:
                     self.warning('API key not available')
                     return self.query_string
 
-            message = client.get_completion(
-                system_text=self.system_guide,
-                prompt=self.prompt.format(query_string=self.query_string),
-                temperature=0,
+            response = client.chat.completions.create(
+                model=MODEL,
+                messages=[
+                    {"role": "system", "content": self.system_guide},
+                    {"role": "user", "content": self.prompt.format(query_string=self.query_string)    },
+                ],
+                temperature=0
             )
+            message = response.choices[0].message.content
             logger.info(f"ChatGPT Response: {message}")
 
             if not self.do_filter:
