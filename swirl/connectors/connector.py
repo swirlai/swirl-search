@@ -125,7 +125,7 @@ class Connector:
                     if self.status not in ['FEDERATING', 'READY']:
                         self.error(f"execute_search() failed, status {self.status}")
                         return False
-                    if self.status == 'FEDERATING':
+                    if self.status in ['FEDERATING', 'READY']:
                         self.normalize_response()
                     if self.status not in ['FEDERATING', 'READY']:
                         self.error(f"normalize_response() failed, status {self.status}")
