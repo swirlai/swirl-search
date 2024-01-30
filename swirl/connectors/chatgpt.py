@@ -24,9 +24,7 @@ from swirl.connectors.connector import Connector
 
 from datetime import datetime
 
-from swirl.ai_provider.ai_provider import AI_QUERY_USE
-from swirl.ai_provider.swirl_ai_client_factory import SwirlAIClientFactory
-
+from swirl.openai.openai import AI_QUERY_USE, OpenAIClient
 
 MODEL_3 = "gpt-3.5-turbo"
 MODEL_4 = "gpt-4"
@@ -51,14 +49,12 @@ class ChatGPT(Connector):
 
         logger.debug(f"{self}: execute_search()")
         client = None
-        if self.provider.credentials:
-            client = SwirlAIClientFactory.alloc_ai_client(usage=AI_QUERY_USE)
-        else:
-            if getattr(settings, 'OPENAI_API_KEY', None):
-                client = SwirlAIClientFactory.alloc_ai_client(usage=AI_QUERY_USE)
-            else:
-                self.status = "ERR_NO_CREDENTIALS"
-                return
+        try:
+            client = OpenAIClient(usage=AI_QUERY_USE, key=self.provider.credentials)
+        except ValueError as valErr:
+            logger.error(f"err {valErr} while initilizing OpenAI client")
+            self.status = "ERR_NO_CREDENTIALS"
+            return
 
         prompted_query = ""
         if self.query_to_provider.endswith('?'):
@@ -81,11 +77,15 @@ class ChatGPT(Connector):
             return
         logger.info(f'CGPT completion system guide:{self.system_guide} query to provider : {self.query_to_provider}')
         self.query_to_provider = prompted_query
-        message = client.get_completion(
-            system_text=self.system_guide,
-            prompt=self.query_to_provider,
-            temperature=0,
+        completions = client.openai_client.chat.completions.create(
+            model=client.get_model(),
+            messages=[
+                {"role": "system", "content": self.system_guide},
+                {"role": "user", "content": self.query_to_provider},
+            ],
+            temperature=0
         )
+        message = completions.choices[0].message.content
         self.found = 1
         self.retrieved = 1
         self.response = message.replace("\n\n", "")

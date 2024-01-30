@@ -34,4 +34,3 @@ drf-yasg
 pymongo
 snowflake-connector-python
 oracledb
-litellm==1.16.12

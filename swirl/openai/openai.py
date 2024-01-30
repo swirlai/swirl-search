@@ -1,5 +1,4 @@
 from django.conf import settings
-from swirl.ai_provider.swirl_ai_provider import SwirlAIClient
 
 import logging
 import os
@@ -7,13 +6,13 @@ logger = logging.getLogger(__name__)
 
 MODEL_3 = "gpt-3.5-turbo"
 MODEL_4 = "gpt-4"
-MODEL = MODEL_3
+MODEL = MODEL_4
 
 AI_RAG_USE  = "AI_RAG_USE"
 AI_REWRITE_USE =  "AI_REWRITE_USE"
 AI_QUERY_USE = "AI_QUERY_USE"
 
-class OpenAIClient(SwirlAIClient):
+class OpenAIClient:
     """
     Encapsulates the logic for initializing different types of AI clients,
     abstracts the complexity of client creation, and provides clear access to the
@@ -73,7 +72,12 @@ class OpenAIClient(SwirlAIClient):
             return self._azure_model
         else:
             # otherwise use models as per usage
-            return MODEL
+            if self._usage == AI_REWRITE_USE:
+                return self._swirl_rw_model
+            elif self._usage == AI_QUERY_USE:
+                return self._swirl_q_model
+            else:
+                return self._swirl_rag_model
 
     def get_encoding_model(self):
         # otherwise use models as per usage
@@ -83,15 +87,3 @@ class OpenAIClient(SwirlAIClient):
             return self._swirl_q_model
         else:
             return self._swirl_rag_model
-
-
-    def get_completion(self, system_text, prompt, temperature):
-        completions_new = self.openai_client.chat.completions.create(
-            model=self.get_model(),
-            messages=[
-                {"role": "system", "content": system_text},
-                {"role": "user", "content": prompt},
-            ],
-            temperature=temperature
-        )
-        return completions_new.choices[0].message.content
