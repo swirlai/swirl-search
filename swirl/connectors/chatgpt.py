@@ -24,8 +24,7 @@ from swirl.connectors.connector import Connector
 
 from datetime import datetime
 
-from openai import OpenAI
-
+from swirl.openai.openai import AI_QUERY_USE, OpenAIClient
 
 MODEL_3 = "gpt-3.5-turbo"
 MODEL_4 = "gpt-4"
@@ -50,14 +49,12 @@ class ChatGPT(Connector):
 
         logger.debug(f"{self}: execute_search()")
         client = None
-        if self.provider.credentials:
-            client = OpenAI(api_key=self.provider.credentials)
-        else:
-            if getattr(settings, 'OPENAI_API_KEY', None):
-                client = OpenAI(api_key=settings.OPENAI_API_KEY)
-            else:
-                self.status = "ERR_NO_CREDENTIALS"
-                return
+        try:
+            client = OpenAIClient(usage=AI_QUERY_USE, key=self.provider.credentials)
+        except ValueError as valErr:
+            logger.error(f"err {valErr} while initilizing OpenAI client")
+            self.status = "ERR_NO_CREDENTIALS"
+            return
 
         prompted_query = ""
         if self.query_to_provider.endswith('?'):
@@ -80,8 +77,8 @@ class ChatGPT(Connector):
             return
         logger.info(f'CGPT completion system guide:{self.system_guide} query to provider : {self.query_to_provider}')
         self.query_to_provider = prompted_query
-        completions = client.chat.completions.create(
-            model=MODEL,
+        completions = client.openai_client.chat.completions.create(
+            model=client.get_model(),
             messages=[
                 {"role": "system", "content": self.system_guide},
                 {"role": "user", "content": self.query_to_provider},

@@ -12,7 +12,7 @@ from swirl.processors.processor import *
 
 from datetime import datetime
 
-from openai import OpenAI
+from swirl.openai.openai import OpenAIClient, AI_RAG_USE
 
 from celery import group
 import threading
@@ -153,7 +153,8 @@ class RAGPostResultProcessor(PostResultProcessor):
         max_tokens = MODEL_TOK_MAX
         fallback_text = ""
         fallback_tokens = 0
-        rag_prompt = RagPrompt(user_query,max_tokens=max_tokens,model=MODEL)
+        rag_prompt = RagPrompt(user_query, max_tokens=max_tokens, model=self.client.get_encoding_model())
+
         fetch_prompt_errors = {}
         from swirl.tasks import page_fetcher_task
         tasks = [
@@ -214,8 +215,8 @@ class RAGPostResultProcessor(PostResultProcessor):
             return 0
 
         try:
-            completions_new = self.client.chat.completions.create(
-                model=MODEL,
+            completions_new = self.client.openai_client.chat.completions.create(
+                model=self.client.get_model(),
                 messages=[
                     {"role": "system", "content": rag_prompt.get_role_system_guide_text()},
                     {"role": "user", "content": new_prompt_text},
@@ -260,11 +261,15 @@ class RAGPostResultProcessor(PostResultProcessor):
     def process(self, should_return=True):
         # to do: remove foo:etc
         self.client = None
-        if getattr(settings, 'OPENAI_API_KEY', None):
-            self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
-        else:
-            logger.warning("RAG OPENAI_API_KEY unset!")
+        try :
+            logger.debug('allocating client')
+            self.client = OpenAIClient(usage=AI_RAG_USE)
+            logger.debug('allocacate client complete')
+        except ValueError as err:
+            logger.warning("RAG OPENAI_KEY unset!")
+            logger.warning(err)
             return 0
+
         if should_return:
             return self.background_process()
         else:
