@@ -18,14 +18,13 @@ class SwirlAIClientFactory():
             llm_api = getattr(settings, 'LLM_API', None)
 
 
-            if llm_api == None or llm_api == 'internal':
-                api_provider = 'internal'
+            if llm_api == None:
+                api_provider = 'standard'
                 logger.info(f'Provider {api_provider} selected')
                 try:
                     client = OpenAIClient(usage=usage)
-                except:
-                    logger.error(f'Error when attempting to allocate an OpenAIClient')
-                return client
+                except NotImplementedError as e:
+                    logger.error(f'Error {e} when attempting to allocate an OpenAIClient')
             elif llm_api == 'litellm':
                 api_provider = 'litellm'
                 logger.info(f'Provider {api_provider} selected')
