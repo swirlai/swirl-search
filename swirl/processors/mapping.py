@@ -46,6 +46,7 @@ class MappingResultProcessor(ResultProcessor):
 
 
     def process(self):
+
         list_results = []
         provider_query_term_results = []
         # result_block = ""
@@ -277,7 +278,7 @@ class MappingResultProcessor(ResultProcessor):
             if result_number > self.provider.results_per_query:
                 # self.warning("Truncating extra results, found & retrieved may be incorrect")
                 break
-            # unique list of terms from highlights
+            # unique list of terms from highligts
         # end for
 
         fb = result_processor_feedback_provider_query_terms(provider_query_term_results)

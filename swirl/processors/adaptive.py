@@ -124,9 +124,7 @@ class AdaptiveQueryProcessor(QueryProcessor):
                 # remove the notted portion
                 return ' '.join(list_and)
 
-        if not query:
-            self.warning(f"query is empty")
-            query = "None"
+        # self.warning(f"query: {query}")
 
         return query
 
