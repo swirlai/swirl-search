@@ -24,8 +24,7 @@ from swirl.connectors.connector import Connector
 
 from datetime import datetime
 
-from swirl.ai_provider.ai_provider import AI_QUERY_USE
-from swirl.ai_provider.swirl_ai_client_factory import SwirlAIClientFactory
+from openai import OpenAI
 
 
 MODEL_3 = "gpt-3.5-turbo"
@@ -52,10 +51,10 @@ class ChatGPT(Connector):
         logger.debug(f"{self}: execute_search()")
         client = None
         if self.provider.credentials:
-            client = SwirlAIClientFactory.alloc_ai_client(usage=AI_QUERY_USE)
+            client = OpenAI(api_key=self.provider.credentials)
         else:
             if getattr(settings, 'OPENAI_API_KEY', None):
-                client = SwirlAIClientFactory.alloc_ai_client(usage=AI_QUERY_USE)
+                client = OpenAI(api_key=settings.OPENAI_API_KEY)
             else:
                 self.status = "ERR_NO_CREDENTIALS"
                 return
@@ -81,11 +80,15 @@ class ChatGPT(Connector):
             return
         logger.info(f'CGPT completion system guide:{self.system_guide} query to provider : {self.query_to_provider}')
         self.query_to_provider = prompted_query
-        message = client.get_completion(
-            system_text=self.system_guide,
-            prompt=self.query_to_provider,
-            temperature=0,
+        completions = client.chat.completions.create(
+            model=MODEL,
+            messages=[
+                {"role": "system", "content": self.system_guide},
+                {"role": "user", "content": self.query_to_provider},
+            ],
+            temperature=0
         )
+        message = completions.choices[0].message.content
         self.found = 1
         self.retrieved = 1
         self.response = message.replace("\n\n", "")
