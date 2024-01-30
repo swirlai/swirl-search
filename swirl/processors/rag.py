@@ -262,11 +262,11 @@ class RAGPostResultProcessor(PostResultProcessor):
         # to do: remove foo:etc
         self.client = None
         try :
-            logger.debug('allocating client')
+            logger.debug('RAG allocating client')
             self.client = OpenAIClient(usage=AI_RAG_USE)
-            logger.debug('allocacate client complete')
+            logger.debug(f'RAG allocacate client complete {self.client}')
         except ValueError as err:
-            logger.warning("RAG OPENAI_KEY unset!")
+            logger.warning(f"RAG : {err} allocating openAI client")
             logger.warning(err)
             return 0
 
