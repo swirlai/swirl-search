@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 MODEL_3 = "gpt-3.5-turbo"
 MODEL_4 = "gpt-4"
-MODEL = MODEL_3
+MODEL = MODEL_4
 
 AI_RAG_USE  = "AI_RAG_USE"
 AI_REWRITE_USE =  "AI_REWRITE_USE"
@@ -73,7 +73,12 @@ class OpenAIClient(SwirlAIClient):
             return self._azure_model
         else:
             # otherwise use models as per usage
-            return MODEL
+            if self._usage == AI_REWRITE_USE:
+                return self._swirl_rw_model
+            elif self._usage == AI_QUERY_USE:
+                return self._swirl_q_model
+            else:
+                return self._swirl_rag_model
 
     def get_encoding_model(self):
         # otherwise use models as per usage
