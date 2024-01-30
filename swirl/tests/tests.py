@@ -22,6 +22,8 @@ from swirl.utils import select_providers, http_auth_parse
 
 logger = logging.getLogger(__name__)
 
+TEST_AI_MODEL = "fake-model"
+
 ######################################################################
 ## fixtures
 
@@ -484,22 +486,25 @@ def test_aqp(aqp_test_cases, aqp_test_expected):
 def test_cgptqp_1():
     tc = 'gig economy'
     expected = 'gig economy'
-
     with mock.patch('openai.OpenAI') as mock_openai:
         client_instance = mock.MagicMock()
         mock_openai.return_value = client_instance
         mock_create = mock.MagicMock()
         mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
         client_instance.chat.completions.create = mock_create
+        mock_swirlai_client = mock.MagicMock()
+        mock_swirlai_client.get_model = mock.MagicMock()
+        mock_swirlai_client.get_model.return_value = 'fake-model'
+        mock_swirlai_client.openai_client = client_instance
         cgptqp = ChatGPTQueryProcessor(
             tc,
             '',
             ["PROMPT:Write a more precise query of similar length to this : {query_string}",]
         )
-        actual = cgptqp.process(client=client_instance)
+        actual = cgptqp.process(client=mock_swirlai_client)
         assert actual == expected
         mock_create.assert_called_once_with(
-            model=MODEL,
+            model=TEST_AI_MODEL,
             messages=[
                 {"role": "system", "content": "You are helping a user formulate better queries"},
                 {"role": "user", "content": "Write a more precise query of similar length to this : gig economy"}
@@ -518,14 +523,18 @@ def test_cgptqp_2():
         mock_create = mock.MagicMock()
         mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
         client_instance.chat.completions.create = mock_create
+        mock_swirlai_client = mock.MagicMock()
+        mock_swirlai_client.get_model = mock.MagicMock()
+        mock_swirlai_client.get_model.return_value = 'fake-model'
+        mock_swirlai_client.openai_client = client_instance
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:Write a more precise query of similar length to this : {query_string}",
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator"]
         )
-        actual = cgptqp.process(client=client_instance)
+        actual = cgptqp.process(client=mock_swirlai_client)
         assert actual == expected
-        mock_create.assert_called_once_with(model=MODEL, messages=[
+        mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "Write a more precise query of similar length to this : gig economy"}
             ],
@@ -542,14 +551,18 @@ def test_cgptqp_3():
         mock_create = mock.MagicMock()
         mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
         client_instance.chat.completions.create = mock_create
+        mock_swirlai_client = mock.MagicMock()
+        mock_swirlai_client.get_model = mock.MagicMock()
+        mock_swirlai_client.get_model.return_value = 'fake-model'
+        mock_swirlai_client.openai_client = client_instance
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator"]
         )
-        actual = cgptqp.process(client=client_instance)
+        actual = cgptqp.process(client=mock_swirlai_client)
         assert actual == expected
-        mock_create.assert_called_once_with(model=MODEL, messages=[
+        mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "Write a more precise query of similar length to this : gig economy"}
             ],
@@ -566,15 +579,20 @@ def test_cgptqp_4():
         mock_create = mock.MagicMock()
         mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
         client_instance.chat.completions.create = mock_create
+        mock_swirlai_client = mock.MagicMock()
+        mock_swirlai_client.get_model = mock.MagicMock()
+        mock_swirlai_client.get_model.return_value = 'fake-model'
+        mock_swirlai_client.openai_client = client_instance
+
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
              "CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator"]
         )
-        actual = cgptqp.process(client=client_instance)
+        actual = cgptqp.process(client=mock_swirlai_client)
         assert actual == expected
-        mock_create.assert_called_once_with(model=MODEL, messages=[
+        mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "This should be used: gig economy"}
             ],
@@ -592,6 +610,11 @@ def test_cgptqp_5():
         mock_create = mock.MagicMock()
         mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
         client_instance.chat.completions.create = mock_create
+        mock_swirlai_client = mock.MagicMock()
+        mock_swirlai_client.get_model = mock.MagicMock()
+        mock_swirlai_client.get_model.return_value = 'fake-model'
+        mock_swirlai_client.openai_client = client_instance
+
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
@@ -599,10 +622,10 @@ def test_cgptqp_5():
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator",
              "CHAT_QUERY_DO_FILTER:False"]
         )
-        actual = cgptqp.process(client=client_instance)
+        actual = cgptqp.process(client=mock_swirlai_client)
         assert actual == expected
         assert not cgptqp.do_filter
-        mock_create.assert_called_once_with(model=MODEL, messages=[
+        mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "This should be used: gig economy"}
             ],
@@ -620,6 +643,11 @@ def test_cgptqp_6():
         mock_create = mock.MagicMock()
         mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
         client_instance.chat.completions.create = mock_create
+        mock_swirlai_client = mock.MagicMock()
+        mock_swirlai_client.get_model = mock.MagicMock()
+        mock_swirlai_client.get_model.return_value = 'fake-model'
+        mock_swirlai_client.openai_client = client_instance
+
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
@@ -627,10 +655,10 @@ def test_cgptqp_6():
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator",
              "CHAT_QUERY_DO_FILTER:True"]
         )
-        actual = cgptqp.process(client=client_instance)
+        actual = cgptqp.process(client=mock_swirlai_client)
         assert actual == expected
         assert cgptqp.do_filter
-        mock_create.assert_called_once_with(model=MODEL, messages=[
+        mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "This should be used: gig economy"}
             ],
@@ -648,6 +676,11 @@ def test_cgptqp_7():
         mock_create = mock.MagicMock()
         mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
         client_instance.chat.completions.create = mock_create
+        mock_swirlai_client = mock.MagicMock()
+        mock_swirlai_client.get_model = mock.MagicMock()
+        mock_swirlai_client.get_model.return_value = 'fake-model'
+        mock_swirlai_client.openai_client = client_instance
+
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
@@ -655,10 +688,10 @@ def test_cgptqp_7():
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator",
              "CHAT_QUERY_DO_FILTER:xxx"]
         )
-        actual = cgptqp.process(client=client_instance)
+        actual = cgptqp.process(client=mock_swirlai_client)
         assert actual == expected
         assert cgptqp.do_filter == MODEL_DEFAULT_DO_FILTER
-        mock_create.assert_called_once_with(model=MODEL, messages=[
+        mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "This should be used: gig economy"}
             ],
