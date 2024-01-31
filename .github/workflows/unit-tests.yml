@@ -22,7 +22,7 @@ jobs:
     - name: Checkout the code
       uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
             python-version: '3.11'
             cache: 'pip' # caching pip stuff
@@ -44,7 +44,7 @@ jobs:
         echo "${{ env.branch }}" > ./artifacts/branch.txt
         echo "${{ github.run_id }}" > ./artifacts/run_id.txt
     - name: Upload branch and run_id files as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: branch-info-${{ github.run_id }}
         path: |
@@ -52,7 +52,7 @@ jobs:
           ./artifacts/run_id.txt
     - name: Upload log files
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: log-files
         path: |
