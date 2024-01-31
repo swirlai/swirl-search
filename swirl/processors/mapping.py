@@ -278,7 +278,7 @@ class MappingResultProcessor(ResultProcessor):
             if result_number > self.provider.results_per_query:
                 # self.warning("Truncating extra results, found & retrieved may be incorrect")
                 break
-            # unique list of terms from highligts
+            # unique list of terms from highlights
         # end for
 
         fb = result_processor_feedback_provider_query_terms(provider_query_term_results)
@@ -305,7 +305,7 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
 
         if not self.results:
             return 0
-                
+
         result_profile = profile_data(self.results)
         if 'str' in result_profile:
             if 'title' in result_profile['str']:
@@ -336,9 +336,9 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
 
         ###########################
         # find fields
-           
+
         # find title/body
-        if 'str' in payload_profile:  
+        if 'str' in payload_profile:
             if len(payload_profile['str']) > 0:
                 if len(payload_profile['str']) == 1:
                     # only 1 str
@@ -375,7 +375,7 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
                 float_fields = list_by_population_desc(payload_profile['float'])
                 if float_fields:
                     to_title = float_fields[0]
-            
+
         # date
         if 'date' in payload_profile:
             date_list = list_by_population_desc(payload_profile['date'])
@@ -387,7 +387,7 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
             to_url = list_by_population_desc(payload_profile['url'])
             if to_url:
                 to_url = to_url[0]
-                    
+
         automapped_fields = []
         if to_title:
             automapped_fields.append(to_title)
@@ -404,7 +404,7 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
 
         ###########################
         # auto map
-        
+
         automapped_results = []
         for item in self.results:
             # check for name matches, first, never overwriting
@@ -425,7 +425,7 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
                                 item['k'] = item['payload'][f]
                                 automapped_fields.append(f)
                                 self.warning("copying payload field {f}")
-                                
+
             # copy automapped fields, never overwriting
             if to_title:
                 if not item['title']:
@@ -438,7 +438,7 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
                     item['url'] = str(item['payload'][to_url])
             if to_date:
                  item['date_published'] = date_str_to_timestamp(item['payload'][to_date])
-                    
+
             # remove automapped_fields from item['payload']
             # to do: this might have to be adjusted depending on what works above
             if 'payload' in item:
@@ -447,7 +447,7 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
 
             ###########################
             # filter the payload, remove objects etc
-                    
+
             clean_payload = {}
             for k in item['payload']:
                 if type(item['payload'][k]) in [str, int, float]:
