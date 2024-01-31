@@ -1,0 +1,531 @@
+[
+        {
+            "swirl_rank": 1,
+            "swirl_score": 962.8834842478615,
+            "searchprovider": "Enterprise Search Engines - Google PSE",
+            "searchprovider_rank": 3,
+            "title": "<em>Knowledge</em> Management | Attivio",
+            "url": "https://www.attivio.com/solutions/knowledge-management",
+            "body": "Raise Your Enterprise IQ. Is <em>knowledge</em> in your organization scattered across people and systems? Attivio unifies your information across organizational silos ...",
+            "date_published": "unknown",
+            "date_published_display": "",
+            "date_retrieved": "2024-01-31 13:21:00.645905",
+            "author": "www.attivio.com",
+            "title_hit_highlights": [],
+            "body_hit_highlights": [],
+            "payload": {
+                "cacheId": "MDAwA-xm-OQJ",
+                "pagemap.metatags[*].['og:type']": "article",
+                "pagemap.metatags[*].['og:site_name']": "Attivio"
+            },
+            "swirl_id": 3,
+            "explain": {
+                "stems": "knowledg",
+                "title": {
+                    "knowledge_*": 0.8599674418160647,
+                    "Knowledge_0": 0.8599674418160647,
+                    "result_length_adjust": 2.3333333333333335,
+                    "query_length_adjust": 1.0
+                },
+                "body": {
+                    "knowledge_s*": 0.7065865881821506,
+                    "knowledge_5": 0.6530997143497747,
+                    "result_length_adjust": 1.0476190476190477,
+                    "query_length_adjust": 1.0
+                },
+                "hits": {
+                    "title": {
+                        "knowledge": [
+                            0
+                        ]
+                    },
+                    "body": {
+                        "knowledge": [
+                            5
+                        ]
+                    },
+                    "author": []
+                }
+            },
+            "dict_len": {
+                "title": 3,
+                "body": 21,
+                "author": 3
+            }
+        },
+        {
+            "swirl_rank": 2,
+            "swirl_score": 921.7637277470965,
+            "searchprovider": "Enterprise Search Engines - Google PSE",
+            "searchprovider_rank": 5,
+            "title": "<em>knowledge</em> management | Attivio",
+            "url": "https://www.attivio.com/blog/tag/knowledge-management",
+            "body": "<em>knowledge</em> management blog tag - Attivio is a leader in natural language processing, machine learning, analytics, and cognitive search solutions.",
+            "date_published": "unknown",
+            "date_published_display": "",
+            "date_retrieved": "2024-01-31 13:21:00.683459",
+            "author": "www.attivio.com",
+            "title_hit_highlights": [],
+            "body_hit_highlights": [],
+            "payload": {
+                "cacheId": "NAGehDc8NM4J",
+                "pagemap.metatags[*].['og:type']": "article",
+                "pagemap.metatags[*].['og:site_name']": "Attivio"
+            },
+            "swirl_id": 5,
+            "explain": {
+                "stems": "knowledg",
+                "title": {
+                    "knowledge_*": 0.8786434726293926,
+                    "knowledge_0": 0.8786434726293926,
+                    "result_length_adjust": 2.3333333333333335,
+                    "query_length_adjust": 1.0
+                },
+                "body": {
+                    "knowledge_*": 0.7505625741397635,
+                    "knowledge_0": 0.655722243603936,
+                    "result_length_adjust": 1.1578947368421053,
+                    "query_length_adjust": 1.0
+                },
+                "hits": {
+                    "title": {
+                        "knowledge": [
+                            0
+                        ]
+                    },
+                    "body": {
+                        "knowledge": [
+                            0
+                        ]
+                    },
+                    "author": []
+                }
+            },
+            "dict_len": {
+                "title": 3,
+                "body": 19,
+                "author": 3
+            }
+        },
+        {
+            "swirl_rank": 3,
+            "swirl_score": 807.4661784684728,
+            "searchprovider": "Enterprise Search Engines - Google PSE",
+            "searchprovider_rank": 7,
+            "title": "<em>Knowledge</em> Manager | Attivio",
+            "url": "https://www.attivio.com/role/knowledge-manager",
+            "body": "Understand what sources best satisfy user queries, and understand where true gaps in <em>knowledge</em> exist. BENEFITS. Improve Productivity. Reduce wasted search time ...",
+            "date_published": "unknown",
+            "date_published_display": "",
+            "date_retrieved": "2024-01-31 13:21:00.718960",
+            "author": "www.attivio.com",
+            "title_hit_highlights": [],
+            "body_hit_highlights": [],
+            "payload": {
+                "cacheId": "eVs9K5fsuxwJ",
+                "pagemap.metatags[*].['og:type']": "article",
+                "pagemap.metatags[*].['og:site_name']": "Attivio"
+            },
+            "swirl_id": 7,
+            "explain": {
+                "stems": "knowledg",
+                "title": {
+                    "knowledge_*": 0.76618901875215,
+                    "Knowledge_0": 0.76618901875215,
+                    "result_length_adjust": 2.3333333333333335,
+                    "query_length_adjust": 1.0
+                },
+                "body": {
+                    "knowledge_*": 0.7758414427344913,
+                    "knowledge_13": 0.6420636965005883,
+                    "result_length_adjust": 1.0,
+                    "query_length_adjust": 1.0
+                },
+                "hits": {
+                    "title": {
+                        "knowledge": [
+                            0
+                        ]
+                    },
+                    "body": {
+                        "knowledge": [
+                            13
+                        ]
+                    },
+                    "author": []
+                }
+            },
+            "dict_len": {
+                "title": 3,
+                "body": 22,
+                "author": 3
+            }
+        },
+        {
+            "swirl_rank": 4,
+            "swirl_score": 797.4524684018305,
+            "searchprovider": "Enterprise Search Engines - Google PSE",
+            "searchprovider_rank": 6,
+            "title": "<em>Knowledge</em> Workers Have Changed, Has Your <em>Knowledge</em> ...",
+            "url": "https://www.attivio.com/blog/post/knowledge-workers-have-changed-has-your-knowledge-management-toolset",
+            "body": "<em>Knowledge</em> Workers Have Changed, Has Your <em>Knowledge</em> Management Toolset? By Jane Zupan, July 13, 2017. Category: Cognitive Search & Insight. | Tags:.",
+            "date_published": "2017-07-13 00:00:00",
+            "date_published_display": "",
+            "date_retrieved": "2024-01-31 13:21:00.701209",
+            "author": "www.attivio.com",
+            "title_hit_highlights": [],
+            "body_hit_highlights": [],
+            "payload": {
+                "cacheId": "nRA9g-SINkgJ",
+                "pagemap.metatags[*].['og:type']": "article",
+                "pagemap.metatags[*].['og:site_name']": "Attivio",
+                "pagemap.metatags[*].['og:description']": "“Knowledge workers are workers whose main capital is knowledge.” (Wikipedia)It seems like a simple definition of a knowledge worker, someone who works with..."
+            },
+            "swirl_id": 6,
+            "explain": {
+                "stems": "knowledg",
+                "title": {
+                    "knowledge_*": 0.6782062500220636,
+                    "Knowledge_0": 0.6737373093701872,
+                    "Knowledge_6": 0.6069061299640123,
+                    "result_length_adjust": 1.0,
+                    "query_length_adjust": 1.0
+                },
+                "body": {
+                    "knowledge_s*": 0.6936981593922836,
+                    "Knowledge_0": 0.6737373093701872,
+                    "Knowledge_6": 0.6447626540717767,
+                    "result_length_adjust": 1.1,
+                    "query_length_adjust": 1.0
+                },
+                "hits": {
+                    "title": {
+                        "knowledge": [
+                            0,
+                            6
+                        ]
+                    },
+                    "body": {
+                        "knowledge": [
+                            0,
+                            6
+                        ]
+                    },
+                    "author": []
+                }
+            },
+            "dict_len": {
+                "title": 7,
+                "body": 20,
+                "author": 3
+            }
+        },
+        {
+            "swirl_rank": 5,
+            "swirl_score": 668.9105540623883,
+            "searchprovider": "Enterprise Search Engines - Google PSE",
+            "searchprovider_rank": 4,
+            "title": "<em>Knowledge</em> Management Gets Cognitive eBook",
+            "url": "https://www.attivio.com/learn/resources/ebook/knowledge-management-gets-cognitive",
+            "body": "Get the eBook <em>Knowledge</em> Management Gets Cognitive to learn how cognitive search drives a machine learning approach to the personalized delivery of ...",
+            "date_published": "unknown",
+            "date_published_display": "",
+            "date_retrieved": "2024-01-31 13:21:00.665527",
+            "author": "www.attivio.com",
+            "title_hit_highlights": [],
+            "body_hit_highlights": [],
+            "payload": {
+                "cacheId": "Mpt4ROVPovMJ",
+                "pagemap.metatags[*].['og:type']": "article",
+                "pagemap.metatags[*].['og:site_name']": "Attivio"
+            },
+            "swirl_id": 4,
+            "explain": {
+                "stems": "knowledg",
+                "title": {
+                    "knowledge_*": 0.8308490706959981,
+                    "Knowledge_0": 0.8357533422150513,
+                    "result_length_adjust": 1.4,
+                    "query_length_adjust": 1.0
+                },
+                "body": {
+                    "knowledge_*": 0.609492668148711,
+                    "Knowledge_3": 0.6931980633598013,
+                    "result_length_adjust": 1.0,
+                    "query_length_adjust": 1.0
+                },
+                "hits": {
+                    "title": {
+                        "knowledge": [
+                            0
+                        ]
+                    },
+                    "body": {
+                        "knowledge": [
+                            3
+                        ]
+                    },
+                    "author": []
+                }
+            },
+            "dict_len": {
+                "title": 5,
+                "body": 22,
+                "author": 3
+            }
+        },
+        {
+            "swirl_rank": 6,
+            "swirl_score": 634.2152503763768,
+            "searchprovider": "Enterprise Search Engines - Google PSE",
+            "searchprovider_rank": 1,
+            "title": "Attivio Named a Leader in Cognitive Search and <em>Knowledge</em> ...",
+            "url": "https://www.attivio.com/news/press-releases/attivio-named-leader-cognitive-search-and-knowledge-discovery-solutions",
+            "body": "Jun 7, 2017 ... Attivio today announced that Forrester positioned Attivio as a “Leader” in its report The Forrester Wave™: Cognitive Search and <em>Knowledge</em> ...",
+            "date_published": "2017-06-07 00:00:00",
+            "date_published_display": "",
+            "date_retrieved": "2024-01-31 13:21:00.558997",
+            "author": "www.attivio.com",
+            "title_hit_highlights": [],
+            "body_hit_highlights": [],
+            "payload": {
+                "cacheId": "EWU8UjqThMQJ",
+                "pagemap.metatags[*].['og:type']": "article",
+                "pagemap.metatags[*].['og:site_name']": "Attivio",
+                "pagemap.metatags[*].['og:description']": "Attivio today announced that Forrester positioned Attivio as a “Leader” in its report The Forrester Wave™: Cognitive Search and Knowledge Discovery..."
+            },
+            "swirl_id": 1,
+            "explain": {
+                "stems": "knowledg",
+                "title": {
+                    "knowledge_*": 0.6231254670880473,
+                    "Knowledge_8": 0.8024764853235323,
+                    "result_length_adjust": 0.7777777777777778,
+                    "query_length_adjust": 1.0
+                },
+                "body": {
+                    "knowledge_*": 0.6073329794317174,
+                    "Knowledge_22": 0.8024764853235323,
+                    "result_length_adjust": 0.9565217391304348,
+                    "query_length_adjust": 1.0
+                },
+                "hits": {
+                    "title": {
+                        "knowledge": [
+                            8
+                        ]
+                    },
+                    "body": {
+                        "knowledge": [
+                            23
+                        ]
+                    },
+                    "author": []
+                }
+            },
+            "dict_len": {
+                "title": 9,
+                "body": 23,
+                "author": 3
+            }
+        },
+        {
+            "swirl_rank": 7,
+            "swirl_score": 507.56212465601453,
+            "searchprovider": "Enterprise Search Engines - Google PSE",
+            "searchprovider_rank": 8,
+            "title": "Customer Support Search for <em>Knowledge</em> Bases & Help Desk ...",
+            "url": "https://www.elastic.co/enterprise-search/customer-support",
+            "body": "Type-ahead suggestions, results management, and NLP and generative AI-powered question answering can convert self-service to your <em>knowledge</em> base into your ...",
+            "date_published": "unknown",
+            "date_published_display": "",
+            "date_retrieved": "2024-01-31 13:21:00.737131",
+            "author": "www.elastic.co",
+            "title_hit_highlights": [],
+            "body_hit_highlights": [],
+            "payload": {
+                "cacheId": "beitdA6TY60J",
+                "pagemap.metatags[*].['og:type']": "article",
+                "pagemap.metatags[*].['og:site_name']": "Elastic",
+                "pagemap.metatags[*].['og:description']": "Help customers find information quickly and easily with modern, AI-powered search. Resolve customer issues in record time, and see satisfaction skyrocket while support costs plummet...."
+            },
+            "swirl_id": 8,
+            "explain": {
+                "stems": "knowledg",
+                "title": {
+                    "knowledge_*": 0.6986464498667241,
+                    "Knowledge_4": 0.729299072360154,
+                    "result_length_adjust": 0.875,
+                    "query_length_adjust": 1.0
+                },
+                "body": {
+                    "knowledge_*": 0.6821218424040659,
+                    "knowledge_16": 0.6597395707622791,
+                    "result_length_adjust": 1.1,
+                    "query_length_adjust": 1.0
+                },
+                "hits": {
+                    "title": {
+                        "knowledge": [
+                            4
+                        ]
+                    },
+                    "body": {
+                        "knowledge": [
+                            16
+                        ]
+                    },
+                    "author": []
+                }
+            },
+            "dict_len": {
+                "title": 8,
+                "body": 20,
+                "author": 3
+            }
+        },
+        {
+            "swirl_rank": 8,
+            "swirl_score": 469.7386218804883,
+            "searchprovider": "Enterprise Search Engines - Google PSE",
+            "searchprovider_rank": 2,
+            "title": "Transform Enterprise Search with a <em>Knowledge</em> Graph",
+            "url": "https://www.attivio.com/blog/post/transform-enterprise-search-knowledge-graph",
+            "body": "Dec 3, 2017 ... <em>Knowledge</em> Graphs in enterprise search platforms transform basic search into a set of relationships, connecting what may at first glance seem ...",
+            "date_published": "2017-12-03 00:00:00",
+            "date_published_display": "",
+            "date_retrieved": "2024-01-31 13:21:00.619460",
+            "author": "www.attivio.com",
+            "title_hit_highlights": [],
+            "body_hit_highlights": [],
+            "payload": {
+                "cacheId": "LD8xXQEMAbwJ",
+                "pagemap.metatags[*].['og:type']": "article",
+                "pagemap.metatags[*].['og:site_name']": "Attivio",
+                "pagemap.metatags[*].['og:description']": "The ability to search for information and find what you need is a critical knowledge management capability for any enterprise search platform. But too often..."
+            },
+            "swirl_id": 2,
+            "explain": {
+                "stems": "knowledg",
+                "title": {
+                    "knowledge_*": 0.6779787278412792,
+                    "Knowledge_5": 0.5986414345218745,
+                    "result_length_adjust": 1.0,
+                    "query_length_adjust": 1.0
+                },
+                "body": {
+                    "knowledge_*": 0.5525711781186231,
+                    "Knowledge_3": 0.4982470379823397,
+                    "result_length_adjust": 0.9166666666666666,
+                    "query_length_adjust": 1.0
+                },
+                "hits": {
+                    "title": {
+                        "knowledge": [
+                            5
+                        ]
+                    },
+                    "body": {
+                        "knowledge": [
+                            4
+                        ]
+                    },
+                    "author": []
+                }
+            },
+            "dict_len": {
+                "title": 7,
+                "body": 24,
+                "author": 3
+            }
+        },
+        {
+            "swirl_rank": 9,
+            "swirl_score": 269.5064913763065,
+            "searchprovider": "Enterprise Search Engines - Google PSE",
+            "searchprovider_rank": 9,
+            "title": "Cognitive Search & Insight Platform - Attivio",
+            "url": "https://www.attivio.com/platform",
+            "body": "The Attivio Cognitive Search and Insight Platform combines self-learning technologies such as natural language processing, machine learning, and <em>knowledge</em> ...",
+            "date_published": "unknown",
+            "date_published_display": "",
+            "date_retrieved": "2024-01-31 13:21:00.754275",
+            "author": "www.attivio.com",
+            "title_hit_highlights": [],
+            "body_hit_highlights": [],
+            "payload": {
+                "cacheId": "LVnzCzaCBt4J",
+                "pagemap.metatags[*].['og:type']": "article",
+                "pagemap.metatags[*].['og:site_name']": "Attivio"
+            },
+            "swirl_id": 9,
+            "explain": {
+                "stems": "knowledg",
+                "body": {
+                    "knowledge_*": 0.7171396191369975,
+                    "knowledge_18": 0.8219506041083962,
+                    "result_length_adjust": 1.1578947368421053,
+                    "query_length_adjust": 1.0
+                },
+                "hits": {
+                    "title": [],
+                    "body": {
+                        "knowledge": [
+                            18
+                        ]
+                    },
+                    "author": []
+                }
+            },
+            "dict_len": {
+                "title": 5,
+                "body": 19,
+                "author": 3
+            }
+        },
+        {
+            "swirl_rank": 10,
+            "swirl_score": 178.08671629749975,
+            "searchprovider": "Enterprise Search Engines - Google PSE",
+            "searchprovider_rank": 10,
+            "title": "Transforming the Digital Workplace with Cognitive Search | Attivio",
+            "url": "https://www.attivio.com/blog/post/transforming-digital-workplace-cognitive-search",
+            "body": "Nov 2, 2017 ... <em>Knowledge</em> Management: Employees have one place to look for information and find answers, experts, and content they need. · The Intranet: Create a ...",
+            "date_published": "2017-11-02 00:00:00",
+            "date_published_display": "",
+            "date_retrieved": "2024-01-31 13:21:00.772651",
+            "author": "www.attivio.com",
+            "title_hit_highlights": [],
+            "body_hit_highlights": [],
+            "payload": {
+                "cacheId": "aME--TkAvIoJ",
+                "pagemap.metatags[*].['og:type']": "article",
+                "pagemap.metatags[*].['og:site_name']": "Attivio",
+                "pagemap.metatags[*].['og:description']": "In the rush to keep up with customer demands, organizations are launching digital transformation initiatives without considering the effect these plans will..."
+            },
+            "swirl_id": 10,
+            "explain": {
+                "stems": "knowledg",
+                "body": {
+                    "knowledge_*": 0.6761347390638212,
+                    "Knowledge_3": 0.6869289002010679,
+                    "result_length_adjust": 0.88,
+                    "query_length_adjust": 1.0
+                },
+                "hits": {
+                    "title": [],
+                    "body": {
+                        "knowledge": [
+                            4
+                        ]
+                    },
+                    "author": []
+                }
+            },
+            "dict_len": {
+                "title": 8,
+                "body": 25,
+                "author": 3
+            }
+        }
+    ]

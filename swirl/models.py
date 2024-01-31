@@ -109,7 +109,6 @@ class SearchProvider(models.Model):
         ('LenLimitingResultProcessor', 'LenLimitingResultProcessor'),
         ('CleanTextResultProcessor','CleanTextResultProcessor'),
         ('RequireQueryStringInTitleResultProcessor','RequireQueryStringInTitleResultProcessor'),
-        ('DropIrrelevantPostResultProcessor','DropIrrelevantPostResultProcessor'),
         ('AutomaticPayloadMapperResultProcessor', 'AutomaticPayloadMapperResultProcessor'),
         ('CosineRelevancyResultProcessor','CosineRelevancyResultProcessor')
     ]
