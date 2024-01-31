@@ -18,7 +18,7 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 from swirl.connectors.utils import bind_query_mappings
-from swirl.connectors.connector import Connector
+from swirl.connectors.oes_common import OpenElasticCommon
 
 from elasticsearch import Elasticsearch
 from elasticsearch import *
@@ -29,13 +29,12 @@ import ast
 ########################################
 ########################################
 
-class Elastic(Connector):
+class Elastic(OpenElasticCommon):
 
     type = "Elastic"
 
     def __init__(self, provider_id, search_id, update, request_id=''):
         super().__init__(provider_id, search_id, update, request_id)
-
 
 
     ########################################
@@ -72,25 +71,16 @@ class Elastic(Connector):
         self.query_to_provider = elastic_query
         return
 
-    ########################################
-
     def execute_search(self, session=None):
 
         logger.debug(f"{self}: execute_search()")
 
         auth = None
-        if self.provider.credentials:
-            if self.provider.credentials.startswith('http_auth='):
-                auth = self.provider.credentials.split("http_auth=")[1]
-            else:
-                auth = self.provider.credentials
-        else:
-            self.status = "ERR_NO_CREDENTIALS"
+        (username,password,verify_certs,ca_certs)=self.get_creds()
+        if self.status in ("ERR_INVALID_CREDENTIALS", "ERR_NO_CREDENTIALS"):
             return
 
-        if not auth:
-            self.status = "ERR_BAD_CREDENTIALS"
-            return
+        auth = (username, password)
 
         url = None
         if self.provider.url:
@@ -104,9 +94,13 @@ class Elastic(Connector):
         if not url:
             self.status = "ERR_NO_URL"
             return
-        
+
         try:
-            es = Elasticsearch(basic_auth=tuple(auth), hosts=url)
+            es = Elasticsearch(basic_auth=tuple(auth),
+                            hosts=url,
+                            verify_certs=verify_certs,
+                            ca_certs=ca_certs
+                            )
         except NameError as err:
             self.error(f'NameError: {err}')
         except TypeError as err:
@@ -120,7 +114,7 @@ class Elastic(Connector):
         else:
             self.status = "ERR_NO_INDEX_SPECIFIED"
             return
-        
+
         # extract query (dict)
         query_pattern = r"query=({.*})"
         match = re.search(query_pattern, self.query_to_provider)

@@ -56,6 +56,7 @@ work_container=sw-spg-build_$$
 work_dir=/tmp/swirl_ui_install_work_dir_$$
 target_dir=./static
 ui_home=galaxy
+conf_home=api/config
 
 echo $PROG "remove install target : $target_dir/$ui_home"
 rm -rf $target_dir/$ui_home
@@ -66,6 +67,7 @@ if [ -n "$source_dir" ]; then
 	echo $PROG "source_dir: $source_dir target_dir: $target_dir"
 	echo "cp -r $source_dir/ui/dist/spyglass/browser/* $target_dir/$ui_home"
 	mkdir -p $target_dir/$ui_home
+	mkdir -p $target_dir/$conf_home
 	cp -rv $source_dir/ui/dist/spyglass/browser/* $target_dir/$ui_home
 	jq '.default' $source_dir/ui/config-swirl-demo.db.json | sed -e "s/<msal-app-id>/$MSAL_APP_ID/" \
 								     -e "s/<msal-tenant-id>/$MSAL_TENANT_ID/" \
@@ -111,6 +113,7 @@ docker cp "$work_container:/usr/src/spyglass/ui/config-swirl-demo.db.json" $work
 docker rm -f $work_container
 rm -rf $target_dir/$ui_home
 mkdir $target_dir/$ui_home
+mkdir -p $target_dir/$conf_home
 cp -r $work_dir/* $target_dir/$ui_home
 jq '.default' $work_dir/config-swirl-demo.db.json | sed -e "s/<msal-app-id>/$MSAL_APP_ID/" \
 -e "s/<msal-tenant-id>/$MSAL_TENANT_ID/" \

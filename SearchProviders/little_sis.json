@@ -1,0 +1,30 @@
+{
+    "name": "Entities - LittleSis.org",
+    "active": false,
+    "default": false,
+    "authenticator": "",
+    "connector": "RequestsGet",
+    "url": "https://littlesis.org/api/entities/search",
+    "query_template": "{url}?q={query_string}*",
+    "post_query_template": "{}",
+    "http_request_headers": {},
+    "page_fetch_config_json": {},
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "RESULTS=data",
+    "result_mappings": "title=attributes.name,body=attributes.summary,date_published=attributes.updated_at,url=links.self,attributes.id,attributes.start_date,attributes.end_date,attributes.website,attributes.blurb,attributes.aliases[*],attributes.types[*],attributes.extensions[*].Person.birthplace,attributes.tags[*],NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "",
+    "eval_credentials": "",
+    "tags": [
+        "LittleSis",
+        "Entities"
+    ]
+}

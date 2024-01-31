@@ -186,6 +186,7 @@ class PostResultProcessor(Processor):
         self.search_id = search_id
         self.search = None
         self.results_updated = -1
+        self.result_count = -1
         self.request_id = request_id
         self.rag_query_items = rag_query_items
 
@@ -197,6 +198,10 @@ class PostResultProcessor(Processor):
         if self.search.status == 'POST_RESULT_PROCESSING' or self.search.status == 'RESCORING' or should_get_results:
             # security review for 1.7 - OK, filtered by search ID
             self.results = Result.objects.filter(search_id=search_id)
+            # count the number retrieved across all result sets
+            self.result_count = 0
+            for result in self.results:
+                self.result_count = self.result_count + result.retrieved
         else:
             logger.warning(f"search.status {self.search.status}, this processor requires: status == 'POST_RESULT_PROCESSING'")
             return 0

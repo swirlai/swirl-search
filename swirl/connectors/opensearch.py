@@ -19,7 +19,7 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 from swirl.connectors.utils import bind_query_mappings
-from swirl.connectors.connector import Connector
+from swirl.connectors.oes_common import OpenElasticCommon
 import json
 
 from opensearchpy import OpenSearch as opensearch
@@ -28,7 +28,7 @@ from opensearchpy.exceptions import AuthenticationException, AuthorizationExcept
 ########################################
 ########################################
 
-class OpenSearch(Connector):
+class OpenSearch(OpenElasticCommon):
 
     type = "OpenSearch"
 
@@ -85,15 +85,10 @@ class OpenSearch(Connector):
 
         client = None
         if self.provider.credentials:
-            # extract auth
-            # format 'username','password'
-            credential_list = self.provider.credentials.split(',')
-            if len(credential_list) != 2:
-                self.error("invalid credentials: {self.provider.credentials}")
-                self.status = "ERR_INVALID_CREDENTIALS"
+            (username,password,verify_certs,ca_certs)=self.get_creds()
+            if self.status in ("ERR_INVALID_CREDENTIALS", "ERR_NO_CREDENTIALS"):
                 return
-            username = credential_list[0][1:-1]
-            password = credential_list[1][1:-1]
+
             auth = (username, password)
             # ca_certs_path = '/full/path/to/root-ca.pem' # Provide a CA bundle if you use intermediate CAs with your root CA.
             # Optional client certificates if you don't want to use HTTP basic authentication.
@@ -107,10 +102,10 @@ class OpenSearch(Connector):
                     # client_cert = client_cert_path,
                     # client_key = client_key_path,
                     use_ssl = True,
-                    verify_certs = False,
+                    verify_certs = verify_certs,
                     ssl_assert_hostname = False,
                     ssl_show_warn = False,
-                    # ca_certs = ca_certs_path
+                    ca_certs = ca_certs
                 )
             except SSLError:
                 self.error(f"client.search reports SSL Error")

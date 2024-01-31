@@ -12,7 +12,7 @@
         "MappingResultProcessor",	
         "CosineRelevancyResultProcessor"
     ],
-    "result_mappings": "title='{company}',body='{company} raised ${raisedamt} series {round} on {fundeddate}. The company is located in {city} {state} and has {numemps} employees.',url=permalink,date_published=fundeddate,NO_PAYLOAD",
+    "result_mappings": "title='{company}',body='{company} raised ${raisedamt} series {round} on {fundeddate}. The company is located in {city} {state} and has {numemps} employees.',url=id,date_published=fundeddate,NO_PAYLOAD",
     "credentials": "/path/to/bigquery/token.json",
     "tags": [
         "Company",

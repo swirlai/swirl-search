@@ -88,11 +88,13 @@ class SearchProvider(models.Model):
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
     query_template = models.CharField(max_length=2048, default='{url}?q={query_string}', blank=True)
+    query_template_json = models.JSONField(default={}, blank=True)
     post_query_template = models.JSONField(default={}, blank=True)
     QUERY_PROCESSOR_CHOICES = [
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('TestQueryProcessor', 'TestQueryProcessor'),
         ('AdaptiveQueryProcessor', 'AdaptiveQueryProcessor'),
+        ('NoModQueryProcessor', 'NoModQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor')
     ]
     query_processors = models.JSONField(default=getSearchProviderQueryProcessorsDefault, blank=True)
@@ -106,6 +108,8 @@ class SearchProvider(models.Model):
         ('DedupeByFieldResultProcessor', 'DedupeByFieldResultProcessor'),
         ('LenLimitingResultProcessor', 'LenLimitingResultProcessor'),
         ('CleanTextResultProcessor','CleanTextResultProcessor'),
+        ('RequireQueryStringInTitleResultProcessor','RequireQueryStringInTitleResultProcessor'),
+        ('AutomaticPayloadMapperResultProcessor', 'AutomaticPayloadMapperResultProcessor'),
         ('CosineRelevancyResultProcessor','CosineRelevancyResultProcessor')
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
@@ -165,6 +169,7 @@ class Search(models.Model):
     pre_query_processors = models.JSONField(default=getSearchPreQueryProcessorsDefault, blank=True)
     POST_RESULT_PROCESSOR_CHOICES = [
         ('CosineRelevancyPostResultProcessor', 'CosineRelevancyPostResultProcessor'),
+        ('DropIrrelevantPostResultProcessor','DropIrrelevantPostResultProcessor'),
         ('DedupeByFieldPostResultProcessor', 'DedupeByFieldPostResultProcessor'),
         ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor'),
     ]

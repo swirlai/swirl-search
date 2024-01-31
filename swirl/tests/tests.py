@@ -11,16 +11,20 @@ import logging
 from django.urls import reverse
 from rest_framework.test import APIClient
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from swirl.processors.adaptive import *
 from swirl.processors.chatgpt_query import *
 from swirl.processors.transform_query_processor import *
 from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list, match_all, tokenize_word_list
 from swirl.processors.result_map_converter import ResultMapConverter
 from swirl.processors.dedupe import DedupeByFieldResultProcessor
+from swirl.processors.relevancy import DropIrrelevantPostResultProcessor
 from swirl.utils import select_providers, http_auth_parse
 
 
 logger = logging.getLogger(__name__)
+
+TEST_AI_MODEL = "fake-model"
 
 ######################################################################
 ## fixtures
@@ -121,14 +125,14 @@ def hll_test_expected():
     return[
         '<em>Activision</em> <em>Blizzard</em> <em>Inc</em>. — Mergers & Acquisition',
         '<em>Activision</em> <em>Blizzard</em> <em>Inc</em>. — Mergers & Acquisition',
-        'The <em>same</em> <em>same</em> word twice',
+        'The same same word twice',
         '<em>Swirl</em>_Pitch_1234412',
         '<em>Swirl</em> Pitch 1234412',
         'I love <em>programming</em> in <em>Python</em>',
         'The <em>quick</em> brown fox <em>jumps</em> over the lazy <em>dog</em>',
         'The weather is nice today',
         '<em>ChatGPT</em> is an <em>AI</em> <em>language</em> <em>model</em>',
-        '<em>This</em> is a case insensitive <em>test</em>',
+        'This is a case insensitive <em>test</em>',
         "U.K. Blocks <em>Microsoft's</em> $69 Billion"
     ]
 
@@ -163,6 +167,58 @@ def get_ddrp_suser(pw):
         is_staff=True,  # Set to True if your view requires a staff user
         is_superuser=True,  # Set to True if your view requires a superuser
     )
+
+def get_dirp_suser(pw):
+    dirp_uname = 'test_dirp_user'
+    try:
+        return User.objects.get(username=dirp_uname)
+    except ObjectDoesNotExist:
+        pass
+
+    return User.objects.create_user(
+        username=dirp_uname,
+        password=pw,
+        is_staff=True,  # Set to True if your view requires a staff user
+        is_superuser=True,  # Set to True if your view requires a superuser
+    )
+
+def get_dirp_provider_data():
+    return {
+        "name": "test DDRP",
+        "shared": True,
+        "active": True,
+        "default": True,
+        "connector": "M365OutlookMessages",
+        "url": "",
+        "query_template": "{url}",
+        "query_processor": "",
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT=true,NOT_CHAR=-",
+        "result_processor": "",
+        "result_grouping_field":"conversationId",
+        "result_processors": [
+            "MappingResultProcessor",
+            "DropIrrelevantPostResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "",
+        "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.conversationId,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": ""
+    }
+
+
+def create_dirp_provider(password):
+    provider = get_dirp_provider_data()
+    serializer = SearchProviderSerializer(data=provider)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(owner=get_dirp_suser(password))
+    provider_id = serializer.data['id']
+    return provider_id
+
 
 def create_ddrp_provider(password):
     provider = get_ddrp_provider_data()
@@ -262,9 +318,19 @@ def test_match_all(match_all_test_cases_target, match_all_test_cases_find, match
         assert r == match_all_test_expected[index]
         print(f"Elapsed time for index {index}: {elapsed_time} seconds")
 
+def get_dirp_result():
+    data_dir = os.path.dirname(os.path.abspath(__file__))
+    # Build the absolute file path for the JSON file in the 'data' subdirectory
+    json_file_path = os.path.join(data_dir, 'data', 'dirp-result.json')
+
+    # Read the JSON file
+    with open(json_file_path, 'r') as file:
+        data = json.load(file)
+    return data
+
 
 @pytest.fixture
-def ms_message_result_converation():
+def ms_message_result_conversation():
     data_dir = os.path.dirname(os.path.abspath(__file__))
     # Build the absolute file path for the JSON file in the 'data' subdirectory
     json_file_path = os.path.join(data_dir, 'data', 'outlook_message_results.json')
@@ -459,10 +525,39 @@ def test_select_providers_two_active_with_embedded_no_start_tag_with_defaults(te
     assert len(pl) == 2
 
 @pytest.mark.django_db
-def test_dd_result_processor(ms_message_result_converation, test_suser_pw):
+def test_dirp_result_processor(test_suser_pw):
+    ## create a provider
+    dirpp_id = create_dirp_provider(test_suser_pw)
+    dirp_provider = SearchProvider.objects.get(pk=dirpp_id)
+
+    ## create a search
+    s = Search.objects.create(query_string='dirp',searchprovider_list=dirpp_id,owner=get_dirp_suser(test_suser_pw),status='POST_RESULT_PROCESSING',tags=[])
+    s.save()
+    dirp_json = get_dirp_result()
+    result = Result.objects.create(owner=get_dirp_suser(test_suser_pw),
+                                search_id=s,
+                                provider_id=dirpp_id,
+                                searchprovider='M365OutlookMessages',
+                                query_string_to_provider='dirp',
+                                query_to_provider='None',
+                                status='READY',
+                                retrieved=1,
+                                found=1,
+                                json_results=dirp_json,
+                                time=1.9)
+    result.save()
+    n = 0
+    ## test it
+    dirp = DropIrrelevantPostResultProcessor(search_id=s.id)
+    n = dirp.process()
+    assert n == -3
+
+
+@pytest.mark.django_db
+def test_dd_result_processor(ms_message_result_conversation, test_suser_pw):
     ddrp_id = create_ddrp_provider(test_suser_pw)
     ddrp_provider = SearchProvider.objects.get(pk=ddrp_id)
-    ddrp = DedupeByFieldResultProcessor(ms_message_result_converation, ddrp_provider, "dune")
+    ddrp = DedupeByFieldResultProcessor(ms_message_result_conversation, ddrp_provider, "dune")
     r = ddrp.process()
     assert r
     assert len(ddrp.get_results()) == 1
@@ -484,22 +579,25 @@ def test_aqp(aqp_test_cases, aqp_test_expected):
 def test_cgptqp_1():
     tc = 'gig economy'
     expected = 'gig economy'
-
     with mock.patch('openai.OpenAI') as mock_openai:
         client_instance = mock.MagicMock()
         mock_openai.return_value = client_instance
         mock_create = mock.MagicMock()
         mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
         client_instance.chat.completions.create = mock_create
+        mock_swirlai_client = mock.MagicMock()
+        mock_swirlai_client.get_model = mock.MagicMock()
+        mock_swirlai_client.get_model.return_value = 'fake-model'
+        mock_swirlai_client.openai_client = client_instance
         cgptqp = ChatGPTQueryProcessor(
             tc,
             '',
             ["PROMPT:Write a more precise query of similar length to this : {query_string}",]
         )
-        actual = cgptqp.process(client=client_instance)
+        actual = cgptqp.process(client=mock_swirlai_client)
         assert actual == expected
         mock_create.assert_called_once_with(
-            model=MODEL,
+            model=TEST_AI_MODEL,
             messages=[
                 {"role": "system", "content": "You are helping a user formulate better queries"},
                 {"role": "user", "content": "Write a more precise query of similar length to this : gig economy"}
@@ -518,14 +616,18 @@ def test_cgptqp_2():
         mock_create = mock.MagicMock()
         mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
         client_instance.chat.completions.create = mock_create
+        mock_swirlai_client = mock.MagicMock()
+        mock_swirlai_client.get_model = mock.MagicMock()
+        mock_swirlai_client.get_model.return_value = 'fake-model'
+        mock_swirlai_client.openai_client = client_instance
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:Write a more precise query of similar length to this : {query_string}",
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator"]
         )
-        actual = cgptqp.process(client=client_instance)
+        actual = cgptqp.process(client=mock_swirlai_client)
         assert actual == expected
-        mock_create.assert_called_once_with(model=MODEL, messages=[
+        mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "Write a more precise query of similar length to this : gig economy"}
             ],
@@ -542,14 +644,18 @@ def test_cgptqp_3():
         mock_create = mock.MagicMock()
         mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
         client_instance.chat.completions.create = mock_create
+        mock_swirlai_client = mock.MagicMock()
+        mock_swirlai_client.get_model = mock.MagicMock()
+        mock_swirlai_client.get_model.return_value = 'fake-model'
+        mock_swirlai_client.openai_client = client_instance
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator"]
         )
-        actual = cgptqp.process(client=client_instance)
+        actual = cgptqp.process(client=mock_swirlai_client)
         assert actual == expected
-        mock_create.assert_called_once_with(model=MODEL, messages=[
+        mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "Write a more precise query of similar length to this : gig economy"}
             ],
@@ -566,15 +672,20 @@ def test_cgptqp_4():
         mock_create = mock.MagicMock()
         mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
         client_instance.chat.completions.create = mock_create
+        mock_swirlai_client = mock.MagicMock()
+        mock_swirlai_client.get_model = mock.MagicMock()
+        mock_swirlai_client.get_model.return_value = 'fake-model'
+        mock_swirlai_client.openai_client = client_instance
+
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
              "CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator"]
         )
-        actual = cgptqp.process(client=client_instance)
+        actual = cgptqp.process(client=mock_swirlai_client)
         assert actual == expected
-        mock_create.assert_called_once_with(model=MODEL, messages=[
+        mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "This should be used: gig economy"}
             ],
@@ -592,6 +703,11 @@ def test_cgptqp_5():
         mock_create = mock.MagicMock()
         mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
         client_instance.chat.completions.create = mock_create
+        mock_swirlai_client = mock.MagicMock()
+        mock_swirlai_client.get_model = mock.MagicMock()
+        mock_swirlai_client.get_model.return_value = 'fake-model'
+        mock_swirlai_client.openai_client = client_instance
+
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
@@ -599,10 +715,10 @@ def test_cgptqp_5():
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator",
              "CHAT_QUERY_DO_FILTER:False"]
         )
-        actual = cgptqp.process(client=client_instance)
+        actual = cgptqp.process(client=mock_swirlai_client)
         assert actual == expected
         assert not cgptqp.do_filter
-        mock_create.assert_called_once_with(model=MODEL, messages=[
+        mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "This should be used: gig economy"}
             ],
@@ -620,6 +736,11 @@ def test_cgptqp_6():
         mock_create = mock.MagicMock()
         mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
         client_instance.chat.completions.create = mock_create
+        mock_swirlai_client = mock.MagicMock()
+        mock_swirlai_client.get_model = mock.MagicMock()
+        mock_swirlai_client.get_model.return_value = 'fake-model'
+        mock_swirlai_client.openai_client = client_instance
+
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
@@ -627,10 +748,10 @@ def test_cgptqp_6():
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator",
              "CHAT_QUERY_DO_FILTER:True"]
         )
-        actual = cgptqp.process(client=client_instance)
+        actual = cgptqp.process(client=mock_swirlai_client)
         assert actual == expected
         assert cgptqp.do_filter
-        mock_create.assert_called_once_with(model=MODEL, messages=[
+        mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "This should be used: gig economy"}
             ],
@@ -648,6 +769,11 @@ def test_cgptqp_7():
         mock_create = mock.MagicMock()
         mock_create.return_value.choices[0].message.content = "Gig economy large scale economics"
         client_instance.chat.completions.create = mock_create
+        mock_swirlai_client = mock.MagicMock()
+        mock_swirlai_client.get_model = mock.MagicMock()
+        mock_swirlai_client.get_model.return_value = 'fake-model'
+        mock_swirlai_client.openai_client = client_instance
+
         cgptqp = ChatGPTQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
@@ -655,10 +781,10 @@ def test_cgptqp_7():
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator",
              "CHAT_QUERY_DO_FILTER:xxx"]
         )
-        actual = cgptqp.process(client=client_instance)
+        actual = cgptqp.process(client=mock_swirlai_client)
         assert actual == expected
         assert cgptqp.do_filter == MODEL_DEFAULT_DO_FILTER
-        mock_create.assert_called_once_with(model=MODEL, messages=[
+        mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "This should be used: gig economy"}
             ],
