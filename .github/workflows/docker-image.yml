@@ -26,7 +26,7 @@ jobs:
     - name: Build the Docker image
       run: docker buildx build -t swirlai/swirl-search:latest --platform linux/amd64,linux/arm64 --push .
     - name: Update repo description
-      uses: peter-evans/dockerhub-description@v3.4.2
+      uses: peter-evans/dockerhub-description@v4
       with:
         username: ${{ secrets.DOCKER_USERNAME_X }}
         password: ${{ secrets.DOCKER_PASSWORD_X }}
