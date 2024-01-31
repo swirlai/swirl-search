@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - name: Download branch and run_id artifacts
-      uses: dawidd6/action-download-artifact@v2
+      uses: dawidd6/action-download-artifact@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         workflow: unit-tests.yml
@@ -41,9 +41,9 @@ jobs:
       with:
         ref: ${{ env.branch }}
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-            python-version: '3.11'
+            python-version: '3.12'
             cache: 'pip' # caching pip stuff
     - name: Install Swirl
       run: ./install.sh
@@ -65,7 +65,7 @@ jobs:
         echo "${{ env.branch }}" > ./artifacts/branch.txt
         echo "${{ env.original_run_id }}" > ./artifacts/run_id.txt
     - name: Re-upload branch and run_id for subsequent workflows
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: branch-info-${{ github.run_id }}
         path: |
@@ -73,7 +73,7 @@ jobs:
           ./artifacts/run_id.txt
     - name: Upload log files
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: log-files
         path: |
