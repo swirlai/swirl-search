@@ -46,6 +46,7 @@ class MappingResultProcessor(ResultProcessor):
 
 
     def process(self):
+
         list_results = []
         provider_query_term_results = []
         # result_block = ""
@@ -277,7 +278,7 @@ class MappingResultProcessor(ResultProcessor):
             if result_number > self.provider.results_per_query:
                 # self.warning("Truncating extra results, found & retrieved may be incorrect")
                 break
-            # unique list of terms from highlights
+            # unique list of terms from highligts
         # end for
 
         fb = result_processor_feedback_provider_query_terms(provider_query_term_results)
@@ -285,5 +286,181 @@ class MappingResultProcessor(ResultProcessor):
             list_results.append(fb)
 
         self.processed_results = list_results
+        self.modified = len(self.processed_results)
+        return self.modified
+
+#############################################
+
+from swirl.data_profiler import *
+from swirl.processors.utils import get_tag
+
+class AutomaticPayloadMapperResultProcessor(ResultProcessor):
+
+    type="AutomaticPayloadMapperResultProcessor"
+
+    def process(self):
+
+        # Assumptions: no data has been mapped, most fields are empty, payload is populated
+        # Goal: find fields in payload that are suitable for Swirl schema, and copy them
+
+        if not self.results:
+            return 0
+                
+        result_profile = profile_data(self.results)
+        if 'str' in result_profile:
+            if 'title' in result_profile['str']:
+                if result_profile['str']['title']['Population %'] > 0:
+                    self.warning(f"Field title is unexpectedly populated {result_profile['str']['title']['Population %']}")
+            if 'body' in result_profile['str']:
+                if result_profile['str']['body']['Population %'] > 0:
+                    self.warning(f"Field body is unexpectedly populated {result_profile['str']['title']['Population %']}")
+        if 'dict' in result_profile:
+            if 'payload' in result_profile['dict']:
+                if result_profile['dict']['payload']['Population %'] < 80.0:
+                    self.warning(f"Field payload is unexpectedly unpopulated {result_profile['dict']['payload']['Population %']}")
+
+        list_payloads = [d['payload'] for d in self.results if 'payload' in d]
+        payload_profile = profile_data(list_payloads)
+        if not payload_profile:
+            self.warning("Payload profile is unexpectedly empty")
+            return 0
+
+        to_body = to_title = to_date = to_url = to_author = None
+
+        MAX_TITLE_LEN = get_tag('MAX_TITLE_LEN', self.provider_tags)
+        if not MAX_TITLE_LEN:
+            MAX_TITLE_LEN = 100
+        TITLE_MEDIAN_LEN = get_tag('TITLE_MEDIAN_LEN', self.provider_tags)
+        if not TITLE_MEDIAN_LEN:
+            TITLE_MEDIAN_LEN = 50
+
+        ###########################
+        # find fields
+           
+        # find title/body
+        if 'str' in payload_profile:  
+            if len(payload_profile['str']) > 0:
+                if len(payload_profile['str']) == 1:
+                    # only 1 str
+                    (field, profile), = payload_profile['str'].items()
+                    if 'Max' in profile:
+                        if profile['Max'] < MAX_TITLE_LEN:
+                            to_title = field
+                        else:
+                            to_body = field
+                    else:
+                        # log error
+                        pass
+                else:
+                    # 2 or more str
+                    to_title = find_closest_median_most_populated_field(payload_profile['str'],TITLE_MEDIAN_LEN)
+                    to_body = find_longest_most_populated_field(payload_profile['str'])
+                    if to_title == to_body:
+                        # find another choice for body
+                        str_fields = list_by_population_desc(payload_profile['str'])
+                        for f in str_fields:
+                            if not f == to_title:
+                                to_body = f
+                                break
+                        to_body = None
+
+        if not to_title:
+            if 'int' in payload_profile:
+                int_fields = list_by_population_desc(payload_profile['int'])
+                if int_fields:
+                    to_title = int_fields[0]
+
+        if not to_title:
+            if 'float' in payload_profile:
+                float_fields = list_by_population_desc(payload_profile['float'])
+                if float_fields:
+                    to_title = float_fields[0]
+            
+        # date
+        if 'date' in payload_profile:
+            date_list = list_by_population_desc(payload_profile['date'])
+            if date_list:
+                to_date = date_list[0]
+
+        # url
+        if 'url' in payload_profile:
+            to_url = list_by_population_desc(payload_profile['url'])
+            if to_url:
+                to_url = to_url[0]
+                    
+        automapped_fields = []
+        if to_title:
+            automapped_fields.append(to_title)
+        if to_body:
+            automapped_fields.append(to_body)
+        if to_url:
+            automapped_fields.append(to_url)
+        if to_date:
+            automapped_fields.append(to_date)
+        if to_author:
+            automapped_fields.append(to_author)
+
+        field_scan_list = filter_elements_case_insensitive(self.results[0]['payload'].keys(),self.results[0].keys())
+
+        ###########################
+        # auto map
+        
+        automapped_results = []
+        for item in self.results:
+            # check for name matches, first, never overwriting
+            # note data_profiler detects date using field name, but only for candidacy
+            for k in item:
+                if k == 'payload':
+                    continue
+                if k in item['payload']:
+                    if not item['k']:
+                        if type(item['payload'][k]) == str:
+                            item['k'] = item['payload'][k]
+                            automapped_fields.append(k)
+                            self.warning("copying payload field {k}")
+                for f in field_scan_list:
+                    if f.startswith(k) or f.endswith(k):
+                        if not item['k']:
+                            if type(item['payload'][f]) == str:
+                                item['k'] = item['payload'][f]
+                                automapped_fields.append(f)
+                                self.warning("copying payload field {f}")
+                                
+            # copy automapped fields, never overwriting
+            if to_title:
+                if not item['title']:
+                    item['title'] = str(to_title) + ": " + str(item['payload'][to_title])
+            if to_body:
+                if not item['body']:
+                    item['body'] = str(to_body) + ": " + str(item['payload'][to_body])
+            if to_url:
+                if not item['url']:
+                    item['url'] = str(item['payload'][to_url])
+            if to_date:
+                 item['date_published'] = date_str_to_timestamp(item['payload'][to_date])
+                    
+            # remove automapped_fields from item['payload']
+            # to do: this might have to be adjusted depending on what works above
+            if 'payload' in item:
+                for field in automapped_fields:
+                    del item['payload'][field]
+
+            ###########################
+            # filter the payload, remove objects etc
+                    
+            clean_payload = {}
+            for k in item['payload']:
+                if type(item['payload'][k]) in [str, int, float]:
+                    clean_payload[k] = item['payload'][k]
+                if type(item['payload'][k]) == list:
+                    if type(item['payload'][k][0]) in [str, int, float]:
+                        clean_payload[k] = item['payload'][k]
+            if clean_payload:
+                item['payload'] = clean_payload
+
+            # save finished item
+            automapped_results.append(item)
+
+        self.processed_results = automapped_results
         self.modified = len(self.processed_results)
         return self.modified

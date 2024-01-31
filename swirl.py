@@ -24,7 +24,7 @@ from swirl.utils import get_page_fetcher_or_none, is_running_celery_redis
 from swirl.services import SWIRL_SERVICES_DEBUG, SWIRL_SERVICES_DEBUG_DICT, SERVICES, SERVICES_DICT
 
 SWIRL_CORE_SERVICES = ['django', 'celery-worker']
-SWIRL_VERSION_CHECK_URL = 'https://updatecheck.swirl.today/'
+SWIRL_VERSION_CHECK_URL = 'http://updatecheck.swirl.today/'
 
 COMMAND_LIST = [ 'help', 'start', 'debug', 'start_sleep', 'stop', 'restart', 'migrate', 'setup', 'status', 'watch', 'logs' ]
 
