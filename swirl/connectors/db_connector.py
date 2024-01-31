@@ -144,15 +144,17 @@ class DBConnector(Connector):
         for row in rows:
             dict_row = {}
             n_field = 0
-            for field in column_names:
-                # to handle None columns e.g. Snowflake
-                if row[n_field]:
-                    dict_row[field] = row[n_field]
-                else:
-                    dict_row[field] = ''
-                n_field = n_field + 1
-            # end for
-            trimmed_rows.append(dict_row)
+            if self.column_names:
+                for field in column_names:
+                    # to handle None columns e.g. Snowflake
+                    if row[n_field]:
+                        dict_row[field] = row[n_field]
+                    else:
+                        dict_row[field] = ''
+                    n_field = n_field + 1
+                trimmed_rows.append(dict_row)
+            else:
+                trimmed_rows.append(dict(row))
         # end for
         retrieved = len(trimmed_rows)
         if retrieved == 0:

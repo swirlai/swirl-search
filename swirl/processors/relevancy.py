@@ -54,10 +54,11 @@ class CosineRelevancyResultProcessor(ResultProcessor):
         list_query_lens = []
         swrel_logger = SwirlRelevancyLogger(self.request_id, self.provider.name +'_'+ str(self.provider.id))
         swrel_logger.start_pass_1()
-
+        self.modified = 0
 
         if not self.results:
-            return
+            return self.modified
+
         parsed_query = parse_query(self.query_string, self.result_processor_json_feedback)
         if len(parsed_query.query_stemmed_target_list) != len(parsed_query.query_target_list):
             self.error(f"parsed query [un]stemmed mismatch : {parsed_query.query_stemmed_target_list} != {parsed_query.query_target_list}")
@@ -299,7 +300,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
 
         # end for result in results.json_results:
 
-        # Note the length here before we had the feedback below
+        # Note the length here beforewe had the feedback below
         self.modified = len(self.results)
 
         # Add list_query_lens to result processor feedback
@@ -312,7 +313,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
         return self.modified
 
 #############################################
-    
+
 class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
     type = 'CosineRelevancyPostResultProcessor'
@@ -478,27 +479,25 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
 
         self.results_updated = int(updated)
         swrel_logger.complete_pass_2()
-        if self.results_updated == None:
-            return 0
-        else:
-            return self.results_updated
+
+        return self.results_updated
 
 #############################################
-    
+
 class DropIrrelevantPostResultProcessor(PostResultProcessor):
 
     type = 'DropIrrelevantPostResultProcessor'
 
     def process(self):
-        
+
         modified = 0
 
         for results in self.results:
             if not results.json_results:
                 continue
             relevant_results = []
-            for item in results.json_results:  
-                # to do: override from tag   
+            for item in results.json_results:
+                # to do: override from tag
                 if 'swirl_score' in item:
                     if item['swirl_score'] > settings.MIN_SWIRL_SCORE:
                         relevant_results.append(item)
@@ -511,4 +510,3 @@ class DropIrrelevantPostResultProcessor(PostResultProcessor):
             results.save()
 
         return modified
-
