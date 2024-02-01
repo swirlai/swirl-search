@@ -107,7 +107,7 @@ class MappingResultProcessor(ResultProcessor):
                         try:
                             template_list = re.findall(r'\{.*?\}', source_key)
                         except re_error as err:
-                            self.error(f"re: {err} in re.findall(r\'\{{.*?\}}\'): {source_key}")
+                            self.error(f"re: {err} while finding all in source key : {source_key}")
                             return []
                         # end try
                     else:
