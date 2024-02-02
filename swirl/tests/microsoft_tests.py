@@ -511,7 +511,7 @@ class MicrosoftOutlookMessagesDatesort(MicrosoftAPITestCase):
         result = self._run_search()
         mock_send_request.assert_called_with('https://graph.microsoft.com/beta/search/query', params=None,
                                              query={'requests': [{'entityTypes': ['message'], 'query': {'queryString': '(test) AND (NOT contenttype:folder)'}, 'orderby': 'createdDateTime desc'}]},
-                                             headers={'Authorization': 'Bearer access_token'})
+                                             headers={'Authorization': 'Bearer access_token'}, verify=True)
 
 class MicrosoftOutlookMessagesDatesortWithQueryMapping(MicrosoftAPITestCase):
 
@@ -583,4 +583,4 @@ class MicrosoftOutlookMessagesDatesortWithQueryMapping(MicrosoftAPITestCase):
         result = self._run_search()
         mock_send_request.assert_called_with('https://graph.microsoft.com/beta/search/query', params=None,
                                             query={'requests': [{'entityTypes': ['message'], 'query': {'queryString': '(test) AND (NOT contenttype:folder)'}, 'orderby': 'my_custom_datesort desc'}]},
-                                            headers={'Authorization': 'Bearer access_token'})
+                                            headers={'Authorization': 'Bearer access_token'}, verify=True)

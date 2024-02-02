@@ -19,7 +19,7 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 from swirl.connectors.utils import bind_query_mappings
-from swirl.connectors.oes_common import OpenElasticCommon
+from swirl.connectors.verify_ssl_common import VerifyCertsCommon
 import json
 
 from opensearchpy import OpenSearch as opensearch
@@ -28,7 +28,7 @@ from opensearchpy.exceptions import AuthenticationException, AuthorizationExcept
 ########################################
 ########################################
 
-class OpenSearch(OpenElasticCommon):
+class OpenSearch(VerifyCertsCommon):
 
     type = "OpenSearch"
 
