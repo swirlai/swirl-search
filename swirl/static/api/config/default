@@ -112,12 +112,12 @@
     "auth": {
       "clientId": "",
       "authority": "https://login.microsoftonline.com/",
-      "redirectUri": "http://:/galaxy/microsoft-callback"
+      "redirectUri": "http://localhost:8000/galaxy/microsoft-callback"
     }
   },
   "oauthConfig": {
     "issuer": "https://login.microsoftonline.com/common/v2.0",
-    "redirectUri": "http://:/galaxy/oidc-callback",
+    "redirectUri": "http://localhost:8000/galaxy/oidc-callback",
     "clientId": "<app-id>",
     "scope": "openid email",
     "responseType": "code",
@@ -129,7 +129,7 @@
     "skipIssuerCheck": true
   },
   "webSocketConfig": {
-    "url": "ws://:/chatgpt-data",
+    "url": "ws://localhost:8000/chatgpt-data",
     "timeout": 60000,
     "timeoutText": "Timeout: No response from Generative AI."
   },
