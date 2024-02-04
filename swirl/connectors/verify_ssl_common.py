@@ -1,8 +1,9 @@
 from swirl.connectors.connector import Connector
 
-class OpenElasticCommon(Connector):
+class VerifyCertsCommon(Connector):
 
-    """ Code common to both open search and elastic connectors"""
+    """Common to connectors that want to verify or turn off verification of certs"""
+    """Extracts username, password and whether to verify certs and a path to the certs"""
 
     def __init__(self, provider_id, search_id, update, request_id=''):
         super().__init__(provider_id, search_id, update, request_id)
@@ -15,7 +16,7 @@ class OpenElasticCommon(Connector):
         self.error("invalid credentials: {self.provider.credentials}")
         self.status = "ERR_INVALID_CREDENTIALS"
 
-    def get_creds(self):
+    def get_creds(self, def_verify_certs=False):
 
         if not self.provider.credentials:
             self.error("no credentials: {self.provider.credentials}")
@@ -26,14 +27,22 @@ class OpenElasticCommon(Connector):
         uname=''
         pw=''
         ca_certs = ''
-        verify_certs=False
+        bearer = ''
+        verify_certs=def_verify_certs
         for cre in cred_list:
             if ':' in cre:
                 (uname,pw) = cre.split(':')
                 if not (uname and pw):
                     self.log_invalid_credentials()
                     break
+            elif cre.startswith('bearer='):
+                # handle this speacial becauase tokens have '=' sign in them
+                bearer = cre[len('bearer='):]
+                if not bearer:
+                    self.log_invalid_credentials()
+                    break
             elif '=' in cre:
+                # handle k=v type params
                 (k,v) = cre.split('=')
                 if not (k and v):
                     self.log_invalid_credentials()
@@ -49,4 +58,4 @@ class OpenElasticCommon(Connector):
                 self.log_invalid_credentials()
                 break
 
-        return uname,pw,verify_certs,ca_certs
+        return uname, pw, verify_certs, ca_certs, bearer

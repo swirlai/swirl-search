@@ -3,6 +3,7 @@
 @contact:    sid@swirl.today
 '''
 
+import os
 from sys import path
 from os import environ
 from datetime import datetime
@@ -37,13 +38,14 @@ from swirl.connectors.mappings import *
 from swirl.connectors.utils import bind_query_mappings
 
 from swirl.connectors.connector import Connector
+from swirl.connectors.verify_ssl_common import VerifyCertsCommon
 
 import xmltodict
 
 ########################################
 ########################################
 
-class Requests(Connector):
+class Requests(VerifyCertsCommon):
 
     type = "Requests"
 
@@ -190,10 +192,14 @@ class Requests(Connector):
                     else:
                         if self.provider.credentials.startswith('bearer='):
                             # populate with bearer token
+                            (username,password,verify_certs,ca_certs,bearer)=self.get_creds(def_verify_certs=True)
                             headers = {
-                                "Authorization": f"Bearer {self.provider.credentials.split('bearer=')[1]}"
+                                "Authorization": f"Bearer {bearer}"
                             }
-                            response = self.send_request(page_query, headers=self._put_configured_headers(headers), query=self.query_string_to_provider)
+                            if ca_certs and os.path.exists(ca_certs):
+                                response = self.send_request(page_query, headers=self._put_configured_headers(headers), query=self.query_string_to_provider, verify=ca_certs)
+                            else:
+                                response = self.send_request(page_query, headers=self._put_configured_headers(headers), query=self.query_string_to_provider, verify=verify_certs)
                         elif self.provider.credentials.startswith('X-Api-Key='):
                             headers = {
                                 "X-Api-Key": f"{self.provider.credentials.split('X-Api-Key=')[1]}"
@@ -221,7 +227,7 @@ class Requests(Connector):
                 self.error(f"request.{self.get_method()} returned: {response.status_code} {response.reason} from: {self.provider.name} for: {page_query}")
                 return
             # end if
-   
+
             # normalize the response
             content_type = response.headers['Content-Type']
             json_data = None
@@ -250,7 +256,7 @@ class Requests(Connector):
                 except ValueError as err:
                     logger.warning(f"Error parsing response as JSON: {err}")
             # end if
-                    
+
             mapped_response = {}
             if not json_data:
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")

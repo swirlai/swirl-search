@@ -18,7 +18,7 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 from swirl.connectors.utils import bind_query_mappings
-from swirl.connectors.oes_common import OpenElasticCommon
+from swirl.connectors.verify_ssl_common import VerifyCertsCommon
 
 from elasticsearch import Elasticsearch
 from elasticsearch import *
@@ -29,7 +29,7 @@ import ast
 ########################################
 ########################################
 
-class Elastic(OpenElasticCommon):
+class Elastic(VerifyCertsCommon):
 
     type = "Elastic"
 
