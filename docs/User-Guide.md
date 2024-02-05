@@ -418,9 +418,7 @@ The optional `http_request_headers` field is available to all SearchProviders fo
 
 ## Result Processors
 
-In Release 2.5, important updates were made that affect the SearchProvider `result_processors` configuration.
-
-1. Relevancy processing was split into two stages to improve performance
+In Release 2.5, important updates were made that affect the SearchProvider `result_processors` configuration.  Relevancy processing was split into two stages to improve performance
 * The revised `CosineRelevancyPostResultProcessor` must be added *last* in the `Search.post_result_processors` list.
 * Please review the JSON in the `SearchProviders/` directory and update existing configurations to match.
 
@@ -439,7 +437,7 @@ INFO     search.py: invoking processor: CosineRelevancyPostResultProcessor
 2023-07-31 16:31:39,268 ERROR    CosineRelevancyPostResultProcessor_2051: Error: Dictionary of result lengths is empty. Was CosineRelevancyResultProcessor included in Search Providers Processor configuration?
 ```
 
-2. The `DateFindingResultProcessor` was added to the default Google PSE SearchProvider JSON. It finds a date in a large percentage of results that otherwise wouldn't have one, and copies the date to the `date_published` field. Existing PSE SearchProvider configurations should be updated to include it:
+Also, the `DateFindingResultProcessor` was added to the default Google PSE SearchProvider JSON. It finds a date in a large percentage of results that otherwise wouldn't have one, and copies the date to the `date_published` field. Existing PSE SearchProvider configurations should be updated to include it:
 
 ``` json
 "result_processors": [
@@ -449,7 +447,9 @@ INFO     search.py: invoking processor: CosineRelevancyPostResultProcessor
         ],
 ```
 
-Swirl Release 3.2.0 includes a new `RequireQueryStringInTitleResultProcessor`. This processor may be installed after the `MappingResultProcessor`. It drops result items that don't include the user's query in the title. It is recommended for use with noisy services like LinkedIn via Google PSE.
+Swirl Release 3.2.0 includes two new Result Processors:
+* The `RequireQueryStringInTitleResultProcessor` drops result items that don't include the user's query in the title. It is recommended for use with noisy services like LinkedIn via Google PSE and must be installed after the `MappingResultProcessor`.
+* The `AutomaticPayloadMapperResultProcessor` profiles response data to find good strings for Swirl's `title`, `body`, and `date_published` fields. It is intended for SearchProviders that would otherwise have few (or no) good result_mappings options. It should be place after the `MappingResultProcessor`, and the `result_mappings` field should be blank.
 
 ## Authentication & Credentials
 

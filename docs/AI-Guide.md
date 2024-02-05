@@ -18,18 +18,24 @@ Swirl supports Real Time [Retrieval Augmented Generation (RAG)](index.md#what-is
 
 ## Intended Audience
 
-This guide details how to configure and tune Swirl (v. 3.0 or newer) to perform RAG. It is intended for use by developers and/or system administrators with the ability to configure the system to connect to services like OpenAI's ChatGPT.
+This guide details how to configure and tune Swirl (v. 3.0 or newer) to perform RAG. It is intended for use by developers and/or system administrators with the ability to configure the system to connect to services like OpenAI's ChatGPT and Azure's OpenAI.
 
 # Setting up RAG
 
-* Install Swirl 3.0 as noted in the [Quick Start Guide](Quick-Start.md#local-installation), including the latest version of the Galaxy UI.
+* Install Swirl as noted in the [Quick Start Guide](Quick-Start.md#local-installation), including the latest version of the Galaxy UI.
 
-* Add an OpenAI API key to the `.env` file:
+* Add either your OpenAI API key or your Azure OpenAI API credentials to the `.env` file:
 
 ```
 OPENAI_API_KEY='your-key-here'
 ```
 *Check out [OpenAI's YouTube video](https://youtu.be/nafDyRsVnXU?si=YpvyaRvhX65vtBrb) if you don't have an OpenAI API Key.*
+
+```
+AZURE_OPENAI_KEY=<your-key>
+AZURE_OPENAI_ENDPOINT=<your-azure-openai-endpoint-url>
+AZURE_MODEL=<your-azure-openai-model>
+```
 
 * When installing for PRODUCTION use, change the following line in `static/api/config/default` from:
 
@@ -64,7 +70,7 @@ OPENAI_API_KEY='your-key-here'
 Adjust the `timeout` value if necessary. Change the `User-Agent` string as needed, and/or authorize it to fetch pages from internal applications.
 
 {: .highlight }
-The source must allow content to be fetched and not simply displayed on the source's website for RAG processing to take that content into account.
+The source must allow content to be fetched and not simply displayed on the source's website for RAG processing to utilize that content.
 
 * Restart Swirl:
 
@@ -81,7 +87,7 @@ python swirl.py restart
 * If you wish to manually select the results to RAG with, click the "Select Items" switch to make the shopping cart appear. Results that Swirl thinks should be used in RAG will be pre-checked. Check or uncheck results, and optionally sort and/or filter them.
 ![Galaxy with RAG results selected](images/swirl_rag_pulmonary_2.png)
 
-* Click the "Generate AI Response" switch. A spinner will appear. The RAG response will appear in 5-15 seconds :slightly_smiling_face: depending on a variety of factors.
+* Click the "Generate AI Response" switch. A spinner will appear. The RAG response will appear several seconds later depending on a variety of factors. :slightly_smiling_face:
 ![Galaxy with human directed RAG AI insight](images/swirl_rag_pulmonary_3.png)
 
 * Verify the RAG insight you received by reviewing the citations at the end RAG response. 
@@ -93,6 +99,8 @@ To cancel a RAG process, click the "Generate AI Summary" toggle off.
 Swirl's RAG processing utilizes only the *first 10 results* that are selected either automatically or manually using the "Select Items" option.
 
 ## Notes
+
+* As of Swirl 3.2.0, both the OpenAI API and the Azure OpenAI API are now supported.
 
 * As of Swirl 3.1.0, page fetch configurations are present for the [European PMC](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/europe_pmc.json) SearchProvider and four of the [Google PSE](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google_pse.json) SearchProviders.
 
