@@ -62,19 +62,17 @@ docker compose up
 After a few minutes, the following or similar should appear:
 
 ``` shell
-redis-1  | 1:C 13 Dec 2023 19:55:56.338 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
-redis-1  | 1:C 13 Dec 2023 19:55:56.338 * Redis version=7.2.3, bits=64, commit=00000000, modified=0, pid=1, just started
-redis-1  | 1:C 13 Dec 2023 19:55:56.338 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
-redis-1  | 1:M 13 Dec 2023 19:55:56.339 * monotonic clock: POSIX clock_gettime
-redis-1  | 1:M 13 Dec 2023 19:55:56.340 * Running mode=standalone, port=6379.
-redis-1  | 1:M 13 Dec 2023 19:55:56.340 * Server initialized
-redis-1  | 1:M 13 Dec 2023 19:55:56.341 * Ready to accept connections tcp
-app-1    | __S_W_I_R_L__3_._1_._0__________________________________________________________
+redis-1  | 1:C 05 Feb 2024 22:03:51.503 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+redis-1  | 1:C 05 Feb 2024 22:03:51.503 * Redis version=7.2.4, bits=64, commit=00000000, modified=0, pid=1, just started
+redis-1  | 1:C 05 Feb 2024 22:03:51.503 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+redis-1  | 1:M 05 Feb 2024 22:03:51.504 * monotonic clock: POSIX clock_gettime
+redis-1  | 1:M 05 Feb 2024 22:03:51.504 * Running mode=standalone, port=6379.
+redis-1  | 1:M 05 Feb 2024 22:03:51.505 * Server initialized
+redis-1  | 1:M 05 Feb 2024 22:03:51.505 * Ready to accept connections tcp
+app-1    | __S_W_I_R_L__3_._2_._0__________________________________________________________
 app-1    | 
 app-1    | Setting Up Swirl:
 app-1    | Checking Migrations:
-app-1    | No changes detected
-app-1    | 
 app-1    | 
 app-1    | Migrating:
 app-1    | 
@@ -87,29 +85,28 @@ app-1    |
 app-1    | Collecting Statics:
 app-1    | 
 app-1    | 
-app-1    | 245 static files copied to '/app/static'.
+app-1    | 246 static files copied to '/app/static'.
 app-1    | 
 app-1    | Ok
 app-1    | Command successful!
-app-1    | __S_W_I_R_L__3_._1_._0__________________________________________________________
+app-1    | __S_W_I_R_L__3_._2_._0__________________________________________________________
 app-1    | 
 app-1    | Warning: logs directory does not exist, creating it
 app-1    | ParseResult(scheme='redis', netloc='redis:6379', path='/0', params='', query='', fragment='') checked.
 app-1    | ParseResult(scheme='redis', netloc='redis:6379', path='/0', params='', query='', fragment='') checked.
-app-1    | Start: celery-worker -> celery -A swirl_server worker --loglevel INFO ... Ok, pid: 46
-app-1    | Start: celery-beats -> celery -A swirl_server beat --scheduler django_celery_beat.schedulers:DatabaseScheduler ... Ok, pid: 67
+app-1    | Start: celery-worker -> celery -A swirl_server worker --loglevel INFO ... Ok, pid: 50
+app-1    | Start: celery-beats -> celery -A swirl_server beat --scheduler django_celery_beat.schedulers:DatabaseScheduler ... Ok, pid: 72
 app-1    | Updating .swirl... Ok
 app-1    | 
 app-1    |   PID TTY          TIME CMD
-app-1    |    46 ?        00:00:05 celery
-app-1    |    67 ?        00:00:04 celery
+app-1    |    50 ?        00:00:03 celery
 app-1    | 
-app-1    | You're using version 3.1.0 of Swirl, the current version.
+app-1    | You're using version 3.2.0 of Swirl, the current version.
 app-1    | Command successful!
-app-1    | 2023-12-13 14:56:26,655 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
-app-1    | 2023-12-13 14:56:26,655 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
-app-1    | 2023-12-13 14:56:26,656 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
-app-1    | 2023-12-13 14:56:26,656 INFO     Listening on TCP address 0.0.0.0:8000
+app-1    | 2024-02-05 17:04:14,131 INFO     Starting server at tcp:port=8000:interface=0.0.0.0
+app-1    | 2024-02-05 17:04:14,131 INFO     HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+app-1    | 2024-02-05 17:04:14,131 INFO     Configuring endpoint tcp:port=8000:interface=0.0.0.0
+app-1    | 2024-02-05 17:04:14,132 INFO     Listening on TCP address 0.0.0.0:8000
 ```
 
 * Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy>)
@@ -148,7 +145,7 @@ As of version 2.6.0, Swirl's start-up process no longer starts `redis`.  You mus
 
 ### MacOS
 
-* Python 3.11.x with `pip`
+* Python 3.12.x (or latest stable) with `pip`
     * If necessary, modify the system PATH so that Python runs when you type `python` at the Terminal (not `python3`)
     * [venv](https://docs.python.org/3/library/venv.html) (*optional*)
     * [pyenv](https://github.com/pyenv/pyenv) (*optional*)
@@ -163,20 +160,14 @@ brew install jq
 ```
 * Redis must be running
 
-{: .warning }
-Swirl has not yet been validated on Python 3.12.x as some required packages have not yet completed their own 3.12.x upgrades.
-
 ### Linux
 
-* Python 3.11.x with `pip`
+* Python 3.12.x (or latest stable) with `pip`
 * Redis and jq installed:
 ``` shell
 sudo apt install jq redis-server -y
 ```
 * Redis must be running
-
-{: .warning }
-Swirl has not yet been validated on Python 3.12.x as some required packages have not yet completed their own 3.12.x upgrades.
 
 ### Windows
 
@@ -242,6 +233,12 @@ python swirl.py setup
 
 {: .warning }
 To install the Galaxy UI, you must have the latest [Docker app](https://docs.docker.com/get-docker/) for MacOS or Linux installed and running locally.
+
+* To enable Swirl's Real-Time Retrieval Augmented Generation (RAG) on your `localhost`, run the following commands from the Console before installing the Galaxy UI:
+``` shell
+export MSAL_CB_PORT=8000
+export MSAL_HOST=localhost
+```
 
 * To install Galaxy, execute the following command the Console (with the Docker app running):
 
