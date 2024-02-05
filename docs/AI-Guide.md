@@ -26,20 +26,20 @@ This guide details how to configure and tune Swirl (v. 3.0 or newer) to perform 
 
 2. Add an OpenAI API key to the `.env` file:
 ```
-OPENAI_API_KEY=your-key-here
+OPENAI_API_KEY='your-key-here'
 ```
 *Check out [OpenAI's YouTube video](https://youtu.be/nafDyRsVnXU?si=YpvyaRvhX65vtBrb) if you don't have an OpenAI API Key.*
 
 3. When installing for PRODUCTION use, change the following line in `static/api/config/default` from:
 ```
 "webSocketConfig": {
-    "url": "ws://localhost:8000/chatgpt-data"
+    "url": "ws://<yourhost>:<your-port>/chatgpt-data"
   }
 ``` 
 ...to...
 ```
 "webSocketConfig": {
-    "url": "wss://localhost:8000/chatgpt-data"
+    "url": "wss://<yourhost>:<your-port>/chatgpt-data"
   }
 ```
 *This default `ws:` can be used locally but should NEVER be done in production since it is not secure!*
@@ -54,7 +54,9 @@ OPENAI_API_KEY=your-key-here
         "timeout": 10
 }, 
 ```
-Adjust the `timeout` value if necessary. Change the `User-Agent` string as needed, and/or authorize it to fetch pages from internal applications.  As of Swirl 3.1.0, page fetch configurations are present for the [European PMC](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/europe_pmc.json) SearchProvider and four of the [Google PSE](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google_pse.json) SearchProviders.
+Adjust the `timeout` value if necessary. Change the `User-Agent` string as needed, and/or authorize it to fetch pages from internal applications.
+{: .highlight }
+The source must allow content to be fetched and not simply displayed on the source's website for RAG processing to take that content into account.
 
 5. Restart Swirl: 
 ```
@@ -83,13 +85,15 @@ Swirl's RAG processing utilizes only the *first 10 results* that are selected ei
 
 ## Notes
 
+* As of Swirl 3.1.0, page fetch configurations are present for the [European PMC](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/europe_pmc.json) SearchProvider and four of the [Google PSE](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google_pse.json) SearchProviders.
+
 * As of Swirl 3.1.0, RAG processing is now available through a single API call, e.g. `?qs=metasearch&rag=true`.  See the [Developer Guide](https://docs.swirl.today/Developer-Guide.html#get-synchronous-results-with-the-qs-url-parameter) for more details about the `?qs=` parameter.
 
-* As of Swirl 3.1.0, configurations for a default timeout value (30 seconds) and the text to display when the timeout is exceeded were added to RAG processing.  These options are available in the `static/api/config/default` file.
+* As of Swirl 3.1.0, configurations for a default timeout value (60 seconds) and the text to display when the timeout is exceeded were added to RAG processing.  These options are available in the `static/api/config/default` file.
 ```
 "webSocketConfig": {
     "url": "ws://localhost:8000/chatgpt-data",
-    "timeout": 30000,
+    "timeout": 60000,
     "timeoutText": "Timeout: No response from Generative AI."
   }
 ```
