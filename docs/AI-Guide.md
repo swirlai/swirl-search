@@ -22,29 +22,35 @@ This guide details how to configure and tune Swirl (v. 3.0 or newer) to perform 
 
 # Setting up RAG
 
-1. Install Swirl 3.0 as noted in the [Quick Start Guide](Quick-Start.md#local-installation), including the latest version of the Galaxy UI.
+* Install Swirl 3.0 as noted in the [Quick Start Guide](Quick-Start.md#local-installation), including the latest version of the Galaxy UI.
 
-2. Add an OpenAI API key to the `.env` file:
+* Add an OpenAI API key to the `.env` file:
+
 ```
 OPENAI_API_KEY='your-key-here'
 ```
 *Check out [OpenAI's YouTube video](https://youtu.be/nafDyRsVnXU?si=YpvyaRvhX65vtBrb) if you don't have an OpenAI API Key.*
 
-3. When installing for PRODUCTION use, change the following line in `static/api/config/default` from:
+* When installing for PRODUCTION use, change the following line in `static/api/config/default` from:
+
 ```
 "webSocketConfig": {
     "url": "ws://<yourhost>:<your-port>/chatgpt-data"
   }
 ``` 
+
 ...to...
+
 ```
 "webSocketConfig": {
     "url": "wss://<yourhost>:<your-port>/chatgpt-data"
   }
 ```
-*This default `ws:` can be used locally but should NEVER be done in production since it is not secure!*
 
-4. Add the following configuration to the `page_fetch_config_json` parameter of each SearchProvider you wish to have participate in RAG:
+*The default `ws:` prefix can be used locally but should NEVER be used in production as it is not secure!*
+
+* Add the following configuration to the `page_fetch_config_json` parameter of each SearchProvider you wish to have participate in RAG:
+
 ```
 "page_fetch_config_json": {
         "cache": "false",
@@ -54,28 +60,31 @@ OPENAI_API_KEY='your-key-here'
         "timeout": 10
 }, 
 ```
+
 Adjust the `timeout` value if necessary. Change the `User-Agent` string as needed, and/or authorize it to fetch pages from internal applications.
+
 {: .highlight }
 The source must allow content to be fetched and not simply displayed on the source's website for RAG processing to take that content into account.
 
-5. Restart Swirl: 
+* Restart Swirl:
+
 ```
 python swirl.py restart
 ```
 
-6. Go to the Galaxy UI ([http://localhost:8000/galaxy/](http://localhost:8000/galaxy/)). The "Generate AI Response" switch should be "off" as shown:
+* Go to the Galaxy UI ([http://localhost:8000/galaxy/](http://localhost:8000/galaxy/)). The "Generate AI Response" switch should be "off" as shown:
 ![Galaxy with RAG Generate AI Response switch off](images/swirl_rag_switch_off.png)
 
-7. Run a search. Results appear quickly after you press the "Search" button ([http://localhost:8000/galaxy/?q=epmc:future+of+ai+care](http://localhost:8000/galaxy/?q=epmc:future+of+ai+care)):
+* Run a search. Results appear quickly after you press the "Search" button ([http://localhost:8000/galaxy/?q=epmc:future+of+ai+care](http://localhost:8000/galaxy/?q=epmc:future+of+ai+care)):
 ![Galaxy with RAG results ready for selection](images/swirl_rag_pulmonary_1.png)
 
-8. If you wish to manually select the results to RAG with, click the "Select Items" switch to make the shopping cart appear. Results that Swirl thinks should be used in RAG will be pre-checked. Check or uncheck results, and optionally sort and/or filter them.
+* If you wish to manually select the results to RAG with, click the "Select Items" switch to make the shopping cart appear. Results that Swirl thinks should be used in RAG will be pre-checked. Check or uncheck results, and optionally sort and/or filter them.
 ![Galaxy with RAG results selected](images/swirl_rag_pulmonary_2.png)
 
-9. Click the "Generate AI Response" switch. A spinner will appear. The RAG response will appear in 5-15 seconds :slightly_smiling_face: depending on a variety of factors.
+* Click the "Generate AI Response" switch. A spinner will appear. The RAG response will appear in 5-15 seconds :slightly_smiling_face: depending on a variety of factors.
 ![Galaxy with human directed RAG AI insight](images/swirl_rag_pulmonary_3.png)
 
-10. Verify the RAG insight you received by reviewing the citations at the end RAG response. 
+* Verify the RAG insight you received by reviewing the citations at the end RAG response. 
 
 {: .highlight }
 To cancel a RAG process, click the "Generate AI Summary" toggle off.
@@ -90,6 +99,7 @@ Swirl's RAG processing utilizes only the *first 10 results* that are selected ei
 * As of Swirl 3.1.0, RAG processing is now available through a single API call, e.g. `?qs=metasearch&rag=true`.  See the [Developer Guide](https://docs.swirl.today/Developer-Guide.html#get-synchronous-results-with-the-qs-url-parameter) for more details about the `?qs=` parameter.
 
 * As of Swirl 3.1.0, configurations for a default timeout value (60 seconds) and the text to display when the timeout is exceeded were added to RAG processing.  These options are available in the `static/api/config/default` file.
+
 ```
 "webSocketConfig": {
     "url": "ws://localhost:8000/chatgpt-data",
