@@ -978,7 +978,8 @@ This table describes the query processors included in Swirl:
 | AdaptiveQueryProcessor | Rewrites queries based on the `query_mappings` for a given SearchProvider | Should not be used as `pre_query_processor` |
 | ChatGPTQueryProcessor | This query processor asks ChatGPT to rewrite queries based on a configurable prompt. For example it can rewrite queries to be fuzzier, broader, more specific, boolean, or in another language. | Experimental |
 | GenericQueryProcessor | Removes special characters from the query |  |
-| SpellcheckQueryProcessor | Uses [TextBlob](https://textblob.readthedocs.io/en/dev/quickstart.html#spelling-correction) to predict and fix spelling errors in `query_string` | Best deployed in a `SearchProvider.query_processor` for sources that need it; not recommended with Google PSEs |
+| SpellcheckQueryProcessor | Uses [TextBlob](https://textblob.readthedocs.io/en/dev/quickstart.html#spelling-correction) to predict and fix spelling errors in `query_string` | Best deployed in a `SearchProvider.query_processor` for sources that need it; not recommended with Google PSEs | 
+| NoModQueryProcessor |  Only removes leading SearchProvider Tags and does not modify the query terms in any way. | It is intended for repositories that allow non-search characters (such as brackets). |
 
 ## Result Processors
 
@@ -993,6 +994,8 @@ The following table lists the Result Processors included with Swirl:
 | LenLimitingResultProcessor | Checks if the `title` and `body` responses from a source exceed a configurable length (set in `swirl_server/settings.py`: `SWIRL_MAX_FIELD_LEN = 512`), truncates anything after that value, and adds an ellipsis ("..."). If the `body` field has been truncated, the processor reports the entire response in a new `body_full` field in the Payload. The default truncation length for can be overridden for a specific SearchProvider using a new Tag value (e.g. `max_length:256`). | Recommended for sources that consistently return lengthy title or body fields; should follow the `MappingResultProcessor`. |
 | CleanTextResultProcessor | Removes non-alphanumeric characters from the source response. It should be considered for lengthy responses where URLs or other HTML or Markdown syntax appear in results. | Should be installed before the `LenLimitingResultProcessor` when both are used. |
 | DateFinderResultProcessor | Looks for a date in any a number of formats in the body field of each result item. Should it find one, and the `date_published` for that item is `'unknown'`, it replaces `date_published` with the date extracted from the body, and notes this in the `result.messages`. | This processor can detect the following date formats:<br/> `06/01/23`<br/>`06/01/2023`<br/>`06-01-23`<br/>`06-01-2023`<br/>`jun 1, 2023`<br/>`june 1, 2023` |
+| AutomaticPayloadMapperResultProcessor | Profiles response data to find good strings for Swirl's `title`, `body`, and `date_published` fields. It is intended for SearchProviders that would otherwise have few (or no) good `result_mappings` options. | It should be place after the `MappingResultProcessor`, and the `result_mappings` field should be blank. | 
+| RequireQueryStringInTitleResultProcessor | Drops results that do not contain the `query_string_to_provider` in the result `title` field. | It should be added after the `MappingResultProcessor` and is now included by default in the "LinkedIn - Google PSE" SearchProvider. | 
 
 ## Post Result Processors
 
@@ -1040,10 +1043,17 @@ In Swirl 2.5, result processing was separated into two passes. The `SearchProvid
 ``` json
     "result_processors": [
         "MappingResultProcessor",
-        "DateFinderResultProcessor",
+        "DateFinderResultProcessor",s
         "CosineRelevancyResultProcessor"
     ],
 ```
+
+### `DropIrrelevantPostResultProcessor`
+
+Available in Swirl 3.2.0, the `DropIrrelevantPostResultProcessor` drops results with `swirl_score < settings.MIN_SWIRL_SCORE` (which is set to 500 by default) and results with no `swirl_score`.  This processor is available for use but not enabled by default.
+
+{: .highlight }
+The Galaxy UI will not display the correct number of results if this ResultProcessor is deployed. This will be addressed in a future release.
 
 # Mixers
 
