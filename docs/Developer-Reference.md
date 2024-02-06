@@ -279,7 +279,7 @@ The included [BigQuery SearchProvider](https://github.com/swirlai/swirl-search/b
         "MappingResultProcessor",	
         "CosineRelevancyResultProcessor"
     ],
-    "result_mappings": "title='{company}',body='{company} raised ${raisedamt} series {round} on {fundeddate}. The company is located in {city} {state} and has {numemps} employees.',url=permalink,date_published=fundeddate,NO_PAYLOAD",
+    "result_mappings": "title='{company}',body='{company} raised ${raisedamt} series {round} on {fundeddate}. The company is located in {city} {state} and has {numemps} employees.',url=id,date_published=fundeddate,NO_PAYLOAD",
     "credentials": "/path/to/bigquery/token.json",
     "tags": [
         "Company",
@@ -394,7 +394,7 @@ Here is an example of a SearchProvider to connect to ElasticCloud using the `clo
         "CosineRelevancyResultProcessor"
     ],
     "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
-    "credentials": "(\"elastic\", \"elastic-password\")",
+    "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,username:password",
     "tags": [
         "Enron",
         "Elastic",
@@ -411,7 +411,7 @@ This is the default OpenSearch SearchProvider that connects to a local instance 
     "active": false,
     "default": false,
     "connector": "OpenSearch",
-    "url": "http://localhost:9200/",
+    "url": "https://localhost:9200/",
     "query_template": "{\"query\":{\"query_string\":{\"query\":\"{query_string}\",\"default_field\":\"{default_field}\",\"default_operator\":\"and\"}}}",
     "query_processors": [
         "AdaptiveQueryProcessor"
@@ -422,7 +422,7 @@ This is the default OpenSearch SearchProvider that connects to a local instance 
         "CosineRelevancyResultProcessor"
     ],
     "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
-    "credentials": "'admin','password'",
+    "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,username:password",
     "tags": [
         "Enron",
         "OpenSearch",
@@ -881,7 +881,7 @@ The included [Free Company Records](https://github.com/swirlai/swirl-search/blob
     "authenticator": "",
     "connector": "Snowflake",
     "url": "<snowflake-instance-address>",
-    "query_template": "SELECT {fields} FROM {table} WHERE {field1} ILIKE '%{query_string}%';",
+    "query_template": "SELECT {fields} FROM {table} WHERE {field1} ILIKE '%{query_string}%' AND NULLIF(TRIM(founded), '') IS NOT NULL ORDER BY TRY_TO_NUMBER(REGEXP_REPLACE(SPLIT_PART(size, '-', 1), '[^0-9]', '')) DESC;",
     "post_query_template": {},
     "http_request_headers": {},
     "page_fetch_config_json": {},
@@ -1198,7 +1198,7 @@ This data set consists of 500,000+ emails from 150 employees of the former Enron
 
 ### Loading into Elastic or OpenSearch
 
-* Download the enron email data set: https://www.cs.cmu.edu/~enron/
+* Download the Enron email data set.
 
 * Unzip and untar the download and place the `email.csv` file in your swirl-home directory
 
@@ -1262,22 +1262,7 @@ Results should appear in the right-hand pane:
     },
     "max_score" : 1.0,
     "hits" : [
-      {
-        "_index" : ".kibana_92668751_admin_1",
-        "_id" : "config:2.4.1",
-        "_score" : 1.0,
-        "_source" : {
-          "config" : {
-            "buildNum" : 4665
-          },
-          "type" : "config",
-          "references" : [ ],
-          "migrationVersion" : {
-            "config" : "7.9.0"
-          },
-          "updated_at" : "2023-01-18T02:36:57.349Z"
-        }
-      },
+      ...
       {
         "_index" : "email",
         "_id" : "c13MwoUBmlIzd81ioZ7H",
@@ -1290,5 +1275,5 @@ Results should appear in the right-hand pane:
           "subject" : "Investment Structure",
           "content" : """---------------------- Forwarded by 
           
-    ...etc...
+    ...
 ```

@@ -69,6 +69,8 @@ AZURE_MODEL=<your-azure-openai-model>
 
 Adjust the `timeout` value if necessary. Change the `User-Agent` string as needed, and/or authorize it to fetch pages from internal applications.
 
+As of Swirl 3.2.0, the default AI Summary timeout value can now be overridden with a URL parameter in the Galaxy UI. For example: `http://localhost:8000/galaxy/?q=gig%20economics&rag=true&rag_timeout=90000`
+
 {: .highlight }
 The source must allow content to be fetched and not simply displayed on the source's website for RAG processing to utilize that content.
 
