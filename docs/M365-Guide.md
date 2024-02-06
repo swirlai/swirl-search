@@ -244,6 +244,9 @@ To:
 
 # Authenticate to Microsoft
 
+{: .highlight }
+As of Swirl 3.2.0, when signing in to Swirl via Microsoft OIDC, users are now automatically authorized to any active M365 SearchProviders.
+
 To verify that the Swirl-M365 integration is working, open the Galaxy UI: <http://localhost:8000> (or <http://localhost:8000/galaxy/>)
 
 Click on the profile icon at the top right and then click the Microsoft toggle to activate it. Depending on how the above configuration was done, M365 may require authentication and/or granting of access. After that, the toggle next to the Microsoft logo will light up, indicating a successful connection.

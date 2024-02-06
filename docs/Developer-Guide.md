@@ -158,6 +158,8 @@ The `qs=` parameter can also be used with the [providers](#specify-searchprovide
 
 As of Swirl 3.1.0, RAG processing is now available through a single API call using `qs=`, e.g. `?qs=metasearch&rag=true`.
 
+As of Swirl 3.2.0, the default AI Summary timeout value can also be overridden with a URL parameter in the Galaxy UI. For example: `http://localhost:8000/galaxy/?q=gig%20economics&rag=true&rag_timeout=90000`
+
 Note that `&page=` is NOT supported with `qs=`; to access the second page of results use the `next_page` property from the `info.results` structure.
 
 ``` json

@@ -62,6 +62,8 @@ Swirl presents results sorted by relevancy by default. To sort by `Date` or to s
 #### Notes
 * Swirl hides results that don't have a `date_published` value when sorting by `Date`.
 * As of version 2.5, the `DateFindingResultProcessor` was added to the Google PSE SearchProvider JSON. It finds a date in a large percentage of results that otherwise wouldn't have one, and copies the date to the `date_published` field.
+* As of Swirl 3.2.0, the Galaxy UI highlghts results with a `swirl_score` above a configurable threshold with a star in the results list. The `swirl_score` configuration is available in `theminimumSwirlScore` entry of `static/api/config/default`, and the default value is `100`.
+![Galaxy UI with stars](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/3_2_0-Galaxy-star.png)
 
 ## Paging Through Results
 
@@ -205,7 +207,7 @@ SearchProviders are the essential element of Swirl. They make it quick and easy 
 SearchProviders are JSON objects. Swirl's distribution comes preloaded with a variety of configurations for sources like Elastic, Solr, PostgreSQL, BigQuery, NLResearch.com, Miro.com, Atlassian, and more.
 
 {: .highlight }
-Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
+Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.  The EuropePMC SearchProvider is also enabled by default, and no credentials are required for its use.
 
 [SearchProvider Example JSON](https://github.com/swirlai/swirl-search/tree/main/SearchProviders)
 
@@ -233,11 +235,13 @@ Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up 
 | http_post_with_auth.json | Generic HTTP POST query with basic authentication | Requires url, credentials |
 | hubspot.json | Searches the HubSpot CRM for Companies, Contacts, and Deals | Requires a bearer token | 
 | internet_archive.json | Searches the [Internet Archive Library](https://archive.org/) of items | No authorization required |
+| littlesis.json | Searches the free [LittleSis.org](https://littlesis.org/) database of "who-knows-who at the heights of business and government" | No authorization required | 
 | microsoft.json | Searches M365 Outlook Messages, Calendar Events, OneDrive Files, SharePoint Sites, and Teams Chat | See the [M365 Guide](M365-Guide.md) for details |
 | miro.json | [Miro.com](https://miro.com) drawing service  | Requires a bearer token |
 | movies_mongodb.json | Searches the [Mongodb Atlas](https://www.mongodb.com/) `sample_mflix` collection, `movies` sample table | Requires database username and password, plus Atlas cluster URL |
-| newsdata_io.json | Newsdata.io internet news source | Requires username and password<br/>archive provider also included |
+| newsdata_io.json | Newsdata.io internet news source | Requires username and password<br/>archive provider also included | 
 | nlresearch.json | NLResearch.com is a premium and internet content search engine from [Northern Light](https://northernlight.com/) | Requires username and password |
+| open_sanctions.json | Searches the [OpenSanctions.org](https://www.opensanctions.org/) database of sanctions targets and persons of interest | Requires and OpenSanctions API key | 
 | opensearch.json  | OpenSearch 2.x | [Developer Guide](Developer-Reference.md#elastic--opensearch) |
 | oracle.json | Tested against [Oracle](https://www.oracle.com/) 23c Free (and presumably supporting earlier versions) | Requires Oracle username and password |
 | preloaded.json | All preloaded SearchProviders | Defaults in the Swirl distribution |
@@ -274,6 +278,8 @@ Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up 
     * The EuropePMC SearchProvider is preloaded, set to active status, and configured to participate in Retrieval Augmented Generation (RAG) by default.
 
 * As of Release 3.1.0, Swirl includes SearchProviders for [Asana](https://asana.com/) Tasks, [Atlassian Trello](https://trello.com/) Cards, [Internet Archive Library](https://archive.org/) items, [Mongodb Atlas](https://www.mongodb.com/), [Oracle](https://www.oracle.com/) (WIP), and [Snowflake](https://www.snowflake.com/en/).
+
+* As of Release 3.2.0, Swirl includes SearchProviders for [LittleSis.org](https://littlesis.org/) and [OpenSanctions.org](https://www.opensanctions.org/) entity searching.
 
 ## Activating
 

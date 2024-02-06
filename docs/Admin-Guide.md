@@ -180,8 +180,6 @@ Swirl uses the following configuration items, defined in the [`swirl_server/sett
 | CELERY_BEATS_SCHEDULE | Defines the schedule for the [Search Expiration Service](#search-expiration-service) and [Search Subscriber Service](#search-subscriber-service) | See the linked sections. |
 | SWIRL_DEFAULT_QUERY_LANGUAGE | Determines which stopword dictionary is loaded | `SWIRL_DEFAULT_QUERY_LANGUAGE = 'english'` | 
 | SWIRL_TIMEOUT | The number of seconds to wait until declaring federation complete, and terminating any connectors that haven't responded | `SWIRL_TIMEOUT = 10` |
-| SWIRL_Q_WAIT | The number of seconds to wait before redirecting to the Result Mixer after using the [q= parameter](Developer-Guide.md#create-a-search-object-with-the-q-url-parameter) | `SWIRL_Q_WAIT = 7` |
-| SWIRL_RERUN_WAIT | The number of seconds to wait before redirecting to the Result Mixer when [re-running a search](Developer-Guide.md#re-run-a-search) | `SWIRL_RERUN_WAIT = 8` |
 | SWIRL_SUBSCRIBE_WAIT | The number of seconds to wait before timing out and reporting an error when [updating a search](Developer-Guide.md#update-a-search) | `SWIRL_SUBSCRIBE_WAIT = 20` |
 | SWIRL_DEDUPE_FIELD | The field to use when [detecting and removing duplicates](Developer-Guide.md#detect-and-remove-duplicate-results) with the `DedupeByFieldPostResultProcessor` | `SWIRL_DEDUPE_FIELD = 'url'` |
 | SWIRL_DEDUPE_SIMILARITY_MINIMUM | The minimum similarity score that constitutes a duplicate, when [detecting and removing duplicates](Developer-Guide.md#detect-and-remove-duplicate-results) with the `DedupeBySimilarityPostResultProcessor` | `SWIRL_DEDUPE_SIMILARITY_MINIMUM = 0.95` |
