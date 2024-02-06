@@ -214,9 +214,10 @@ class RAGPostResultProcessor(PostResultProcessor):
             result.save()
             return 0
 
+        client_model=self.client.get_model()
         try:
             completions_new = self.client.openai_client.chat.completions.create(
-                model=self.client.get_model(),
+                model=client_model,
                 messages=[
                     {"role": "system", "content": rag_prompt.get_role_system_guide_text()},
                     {"role": "user", "content": new_prompt_text},
@@ -238,8 +239,9 @@ class RAGPostResultProcessor(PostResultProcessor):
                 result.save()
                 return 0
 
-        logger.info(f'RAGTITLE: {self.search.query_string_processed}')
-        logger.info(f'RAGBODY: {model_response}')
+        logger.info(f'RAG-TITLE: {self.search.query_string_processed}')
+        logger.info(f'RAG-BODY: {model_response}')
+        logger.info(f'RAG-MODEL: {client_model}')
 
         logger.info("RAG Saving result object")
         rag_result = create_result_dictionary()
@@ -247,7 +249,7 @@ class RAGPostResultProcessor(PostResultProcessor):
         rag_result['title'] = self.search.query_string_processed,
         rag_result['body'] = model_response,
         rag_result['author'] = 'ChatGPT'
-        rag_result['searchprovider'] = 'ChatGPT'
+        rag_result['searchprovider'] = f'ChatGPT-{client_model}'
         rag_result['searchprovider_rank'] = 1
         if settings.SWIRL_DEFAULT_RESULT_BLOCK:
             rag_result['result_block'] = getattr(settings, 'SWIRL_DEFAULT_RESULT_BLOCK', 'ai_summary')
