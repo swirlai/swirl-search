@@ -214,7 +214,7 @@ class RAGPostResultProcessor(PostResultProcessor):
             result.save()
             return 0
 
-        client_model=self.client.get_model(),
+        client_model=self.client.get_model()
         try:
             completions_new = self.client.openai_client.chat.completions.create(
                 model=client_model,
