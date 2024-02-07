@@ -90,6 +90,23 @@ class Connector:
 
     ########################################
 
+    def _do_trace(self):
+        try:
+            con_trace = getattr(settings,'SWIRL_CONNECTOR_TRACE')
+            return con_trace and con_trace == self.type
+        except Exception as err:
+            logger.warning(f"{err} while getting trace options")
+            return False
+
+    def _trace_message(self, message):
+        if not self._do_trace():
+            logger.debug(f"{self.type} : {message}")
+            return
+        try:
+            logger.info(f"CTRACE : {self.type} : {message}")
+        except Exception as err:
+            logger.warning(f"{err} while logging connection trace")
+
     def message(self, message):
         self.messages.append(f'[{datetime.now()}] {message}')
 
