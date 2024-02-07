@@ -31,6 +31,7 @@ from swirl.connectors.requests import Requests
 
 class RequestsPost(Requests):
 
+
     type = "RequestsPost"
 
     def __init__(self, provider_id, search_id, update, request_id=''):
@@ -39,7 +40,7 @@ class RequestsPost(Requests):
     ########################################
 
     def validate_query(self, session=None):
-        logger.debug(f"{self}: https post request validate_query() returning true")
+        self._trace_message(f"{self}: https post request validate_query() returning true")
         try:
             json_object = json.loads(json.dumps(self.provider.post_query_template))
         except ValueError as e:
@@ -70,5 +71,5 @@ class RequestsPost(Requests):
         else:
             post_json=query
 
-        logger.debug(f"post_json_str:{post_json_str} query:{query} post_json:{post_json}")
+        self._trace_message(f"post_json_str:{post_json_str} query:{query} post_json:{post_json}")
         return requests.post(url, params=params, json=post_json, **kwargs)
