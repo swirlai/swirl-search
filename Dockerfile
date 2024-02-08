@@ -16,6 +16,7 @@ RUN apt-get install apt-file -y
 RUN apt-file update
 RUN apt-get install -y python3-dev build-essential
 RUN apt-get install -y procps
+RUN apt-get install -y libpq-dev
 
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir --upgrade grpcio

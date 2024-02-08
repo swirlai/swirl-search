@@ -34,3 +34,4 @@ drf-yasg
 pymongo
 snowflake-connector-python
 oracledb
+psycopg2
