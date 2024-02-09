@@ -85,9 +85,12 @@ class OpenSearch(VerifyCertsCommon):
 
         client = None
         if self.provider.credentials:
-            (username,password,verify_certs,ca_certs)=self.get_creds()
+            bearer = None
+            (username,password,verify_certs,ca_certs,bearer)=self.get_creds()
             if self.status in ("ERR_INVALID_CREDENTIALS", "ERR_NO_CREDENTIALS"):
                 return
+            if bearer:
+                self.warning(f"Warning: bearer token specified but not supported")
 
             auth = (username, password)
             # ca_certs_path = '/full/path/to/root-ca.pem' # Provide a CA bundle if you use intermediate CAs with your root CA.
