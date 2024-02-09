@@ -102,9 +102,9 @@ class Elastic(VerifyCertsCommon):
                 es = Elasticsearch(basic_auth=tuple(auth),hosts=url,verify_certs=verify_certs,ca_certs=ca_certs)
             else:
                 if auth:
-                    es = Elasticsearch(basic_auth=tuple(auth),hosts=url,verify_certs=False)
+                    es = Elasticsearch(basic_auth=tuple(auth),hosts=url)
                 else:
-                    es = Elasticsearch(hosts=url,verify_certs=False)
+                    es = Elasticsearch(hosts=url)
 
         except NameError as err:
             self.error(f'NameError: {err}')
