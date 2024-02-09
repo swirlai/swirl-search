@@ -3,7 +3,8 @@
 @contact:    sid@swirl.today
 '''
 
-import logging as logger
+import logging
+logger = logging.getLogger('swirl')
 
 from django.conf import settings
 

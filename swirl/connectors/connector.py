@@ -139,16 +139,19 @@ class Connector:
                 v = self.validate_query(session)
                 if v:
                     self.execute_search(session)
+                    logger.debug(f"{self}: found: {self.found}, len_response: {len(self.response)}, len_results: {len(self.results)}")
                     if self.status not in ['FEDERATING', 'READY']:
                         self.error(f"execute_search() failed, status {self.status}")
                         return False
                     if self.status in ['FEDERATING', 'READY']:
                         self.normalize_response()
+                        logger.debug(f"{self}: found: {self.found}, len_response: {len(self.response)}, results: {self.results}, len_results: {len(self.results)}")
                     if self.status not in ['FEDERATING', 'READY']:
                         self.error(f"normalize_response() failed, status {self.status}")
                         return False
                     else:
                         self.process_results()
+                        logger.debug(f"{self}: found: {self.found}, len_response: {len(self.response)}, results: {self.results}, len_results: {len(self.results)}")
                     if self.status == 'READY':
                         res = self.save_results()
                         if res:
@@ -345,7 +348,7 @@ class Connector:
                                                             result_processor_json_feedback=self.result_processor_json_feedback)
                 modified = proc.process()
                 self.results = proc.get_results()
-                logger.info(f'provider : {self.provider.name} processor: {processor} modified : {modified}')
+                logger.debug(f'provider : {self.provider.name} processor: {processor} modified : {modified}')
                 ## Check if this processor generated feed back and if so, remember it and merge it in to the exsiting
                 if self.results and 'result_processor_feedback' in self.results[-1]:
                     self.result_processor_json_feedback =  self.results.pop(-1)

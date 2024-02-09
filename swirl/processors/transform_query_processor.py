@@ -2,8 +2,9 @@
 @author:     Nicodemus
 @contact:    dave@swirl.today
 '''
-import logging as logger
-logger.basicConfig(level=logger.INFO)
+
+from celery.utils.log import get_task_logger
+logger = get_task_logger(__name__)
 
 from abc import ABCMeta, abstractmethod
 

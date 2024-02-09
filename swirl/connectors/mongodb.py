@@ -18,9 +18,7 @@ environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from celery.utils.log import get_task_logger
-from logging import DEBUG
 logger = get_task_logger(__name__)
-# logger.setLevel(DEBUG)
 
 from swirl.connectors.connector import Connector
 from swirl.processors.utils import get_tag

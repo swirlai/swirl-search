@@ -90,7 +90,7 @@ class RAGPostResultProcessor(PostResultProcessor):
         try:
             rag_result = Result.objects.get(search_id=search_id, searchprovider='ChatGPT')
             if rag_result:
-                logger.info(f'RAG: previous RAG result was deleted')
+                logger.debug(f'RAG: previous RAG result was deleted')
                 rag_result.delete()
         except:
             pass
@@ -113,12 +113,12 @@ class RAGPostResultProcessor(PostResultProcessor):
                             rag_item_list.append(item)
                             item['provider_id'] = result.provider_id
                     elif 'swirl_score' in item:
+                        # to do: parameterize 
                         if item['swirl_score'] > 50.0:
                             rag_item_list.append(item)
                             item['provider_id'] = result.provider_id
 
         if not rag_item_list:
-            self.warning("RAG No content found!")
             result = Result.objects.create(owner=self.search.owner, search_id=self.search, provider_id=5, searchprovider='ChatGPT', query_string_to_provider=self.search.query_string_processed.strip(), query_to_provider='None', status='READY', retrieved=1, found=1, json_results=[], time=0.0)
             result.save()
             return 0
@@ -194,7 +194,7 @@ class RAGPostResultProcessor(PostResultProcessor):
                             warn =  f"RAG Chunk not added : {rag_prompt.get_last_chunk_status()}"
                             self._log_n_store_warn(url=url, warn=warn, buffer=fetch_prompt_errors)
                             fetch_prompt_errors[url] = warn
-                        logger.info(f'RAG : max_tokens:{max_tokens} num_tokens {rag_prompt.get_num_tokens()} is_full:{rag_prompt.is_full()}')
+                        logger.debug(f'RAG : max_tokens:{max_tokens} num_tokens {rag_prompt.get_num_tokens()} is_full:{rag_prompt.is_full()}')
                         if is_full:
                             break
                     else:
@@ -202,7 +202,7 @@ class RAGPostResultProcessor(PostResultProcessor):
                         self._log_n_store_warn(url=url,warn=warn,buffer=fetch_prompt_errors)
 
         new_prompt_text = rag_prompt.get_promp_text()
-        logger.info(f"\nRAG Prompt:\n\t{new_prompt_text}")
+        logger.debug(f"\nRAG Prompt:\n\t{new_prompt_text}")
 
         if len(new_prompt_text) < 5:
             self.warning(f"RAG too short after trying {MAX_TO_CONSIDER} items, trying fallback")
@@ -225,13 +225,13 @@ class RAGPostResultProcessor(PostResultProcessor):
                 temperature=0
             )
             model_response = completions_new.choices[0].message.content
-            logger.info(f'RAG: fetch_prompt_errors follow:')
+            self._log_n_store_warn(f'RAG: fetch_prompt_errors follow:')
             for (k,v) in fetch_prompt_errors.items():
-                logger.info(f'RAG:\t url:{k} problem:{v}')
+                self._log_n_store_warn(f'RAG:\t url:{k} problem:{v}')
         except Exception as err:
             if DO_MESSAGE_MOCK_ON_ERROR:
                 logger.error(f"error : {err} while creating CGPT response")
-                logger.info(f'Returning mock message instead : {MESSAGE_MOCK_ON_ERROR}')
+                logger.debug(f'Returning mock message instead : {MESSAGE_MOCK_ON_ERROR}')
                 model_response = MESSAGE_MOCK_ON_ERROR
             else:
                 logger.error(f"error : {err} while creating CGPT response")
@@ -239,11 +239,11 @@ class RAGPostResultProcessor(PostResultProcessor):
                 result.save()
                 return 0
 
-        logger.info(f'RAG-TITLE: {self.search.query_string_processed}')
-        logger.info(f'RAG-BODY: {model_response}')
-        logger.info(f'RAG-MODEL: {client_model}')
+        logger.debug(f'RAG-TITLE: {self.search.query_string_processed}')
+        logger.debug(f'RAG-BODY: {model_response}')
+        logger.debug(f'RAG-MODEL: {client_model}')
+        logger.debug("RAG Saving result object")
 
-        logger.info("RAG Saving result object")
         rag_result = create_result_dictionary()
         rag_result['date_published'] = str(datetime.now())
         rag_result['title'] = self.search.query_string_processed,
@@ -259,14 +259,14 @@ class RAGPostResultProcessor(PostResultProcessor):
         result.save()
         return result
 
-
     def process(self, should_return=True):
         # to do: remove foo:etc
+        logger.warning("Foo1")
         self.client = None
         try :
             logger.debug('RAG allocating client')
             self.client = OpenAIClient(usage=AI_RAG_USE)
-            logger.debug(f'RAG allocacate client complete {self.client}')
+            logger.debug(f'RAG allocate client complete {self.client}')
         except ValueError as err:
             logger.warning(f"RAG : {err} allocating openAI client")
             logger.warning(err)

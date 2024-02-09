@@ -21,9 +21,8 @@ environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 from django.conf import settings
 
-from celery.utils.log import get_task_logger
-from logging import DEBUG
-logger = get_task_logger(__name__)
+import logging
+logger = logging.getLogger('swirl')
 
 from natsort import natsorted
 

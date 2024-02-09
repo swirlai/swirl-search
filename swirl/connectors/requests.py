@@ -31,7 +31,6 @@ from jsonpath_ng.exceptions import JsonPathParserError
 from http import HTTPStatus
 
 from celery.utils.log import get_task_logger
-from logging import DEBUG, INFO, WARNING
 logger = get_task_logger(__name__)
 
 from swirl.connectors.mappings import *

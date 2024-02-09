@@ -16,7 +16,6 @@ django.setup()
 from django.conf import settings
 
 from celery.utils.log import get_task_logger
-from logging import DEBUG, INFO, WARNING
 logger = get_task_logger(__name__)
 
 from swirl.connectors.mappings import *

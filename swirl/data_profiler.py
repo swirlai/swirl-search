@@ -3,7 +3,8 @@
 @contact:    sid@swirl.today
 '''
 
-import logging as logger
+import logging
+logger = logging.getLogger('swirl')
 
 from typing import List, Dict, Any
 import statistics
@@ -80,7 +81,6 @@ def profile_data(data: List[Dict[str, Any]]) -> Dict[str, Dict[str, Dict[str, An
             else:
                 result[data_type][field] = calculate_statistics(values)
 
-    logger.debug(f"Aggregated data: {result}")
     return result
 
 def find_longest_most_populated_field(profile_type):

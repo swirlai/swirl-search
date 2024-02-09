@@ -7,6 +7,9 @@ from datetime import datetime
 
 import re
 
+from celery.utils.log import get_task_logger
+logger = get_task_logger(__name__)
+
 from django.conf import settings
 
 from swirl.processors.processor import *

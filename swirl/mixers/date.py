@@ -19,6 +19,9 @@ from operator import itemgetter
 
 from django.urls import reverse
 
+import logging
+logger = logging.getLogger('swirl')
+
 from swirl.mixers.mixer import Mixer
 from swirl.mixers.utils import * 
 

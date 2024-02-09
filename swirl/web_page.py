@@ -11,6 +11,7 @@ from readability import Document
 from bs4 import BeautifulSoup
 from urllib.parse import quote, urlparse
 
+# TO DO: is this correct? This is usually used in celery
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 

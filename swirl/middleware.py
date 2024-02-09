@@ -9,7 +9,8 @@ from django.core.exceptions import ObjectDoesNotExist
 import json
 import yaml
 import jwt
-import logging as logger
+import logging
+logger = logging.getLogger('swirl')
 
 
 class TokenMiddleware:

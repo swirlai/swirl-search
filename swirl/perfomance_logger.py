@@ -3,7 +3,8 @@ import time
 import uuid
 from django.conf import settings
 
-logger = logging.getLogger(__name__)
+import logging
+logger = logging.getLogger('swirl')
 
 class SwirlQueryRequestLogger:
     def __init__(self, query, providers, start_time=None, request_id=None):

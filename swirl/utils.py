@@ -5,7 +5,6 @@
 
 import os
 import re
-import logging as logger
 import json
 from pathlib import Path
 import uuid
@@ -19,6 +18,9 @@ from django.contrib.auth import get_user_model
 from swirl.web_page import PageFetcherFactory
 from urllib.parse import urlparse, quote
 
+# TO DO: is this correct?
+import logging
+logger = logging.getLogger('swirl')
 
 SWIRL_MACHINE_AGENT   = {'User-Agent': 'SwirlMachineServer/1.0 (+http://swirl.today)'}
 SWIRL_CONTAINER_AGENT = {'User-Agent': 'SwirlContainer/1.0 (+http://swirl.today)'}

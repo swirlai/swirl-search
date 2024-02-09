@@ -3,10 +3,9 @@
 @contact:    sid@swirl.today
 '''
 import json as stdjson
-import logging
+
 from celery.utils.log import get_task_logger
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger()
+logger = get_task_logger(__name__)
 
 from datetime import datetime
 from jsonpath_ng import parse
@@ -310,14 +309,14 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
         if 'str' in result_profile:
             if 'title' in result_profile['str']:
                 if result_profile['str']['title']['Population %'] > 0:
-                    self.warning(f"Field title is unexpectedly populated {result_profile['str']['title']['Population %']}")
+                    logger.debug(f"title is unexpectedly populated {result_profile['str']['title']['Population %']}")
             if 'body' in result_profile['str']:
                 if result_profile['str']['body']['Population %'] > 0:
-                    self.warning(f"Field body is unexpectedly populated {result_profile['str']['title']['Population %']}")
+                    logger.debug(f"body is unexpectedly populated {result_profile['str']['title']['Population %']}")
         if 'dict' in result_profile:
             if 'payload' in result_profile['dict']:
                 if result_profile['dict']['payload']['Population %'] < 80.0:
-                    self.warning(f"Field payload is unexpectedly unpopulated {result_profile['dict']['payload']['Population %']}")
+                    logger.debug(f"payload is unexpectedly unpopulated {result_profile['dict']['payload']['Population %']}")
 
         list_payloads = [d['payload'] for d in self.results if 'payload' in d]
         payload_profile = profile_data(list_payloads)
