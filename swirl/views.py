@@ -5,8 +5,10 @@
 
 from swirl.mixers import *
 import time
-import logging as logger
 from datetime import datetime
+
+import logging
+logger = logging.getLogger('swirl')
 
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User, Group

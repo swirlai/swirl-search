@@ -3,9 +3,8 @@
 @contact:    sid@swirl.today
 '''
 
-import logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger()
+from celery.utils.log import get_task_logger
+logger = get_task_logger(__name__)
 
 from django.conf import settings
 

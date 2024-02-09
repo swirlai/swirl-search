@@ -8,10 +8,9 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 from celery.signals import after_setup_logger
+from django.conf import settings
 import logging
 import ssl
-
-logging.basicConfig(level=logging.INFO)
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
@@ -55,5 +54,15 @@ def debug_task(self):
 
 @after_setup_logger.connect
 def setup_loggers(logger, *args, **kwargs):
-    print('Setting logger level to INFO')
-    logger.setLevel(logging.INFO)
+    logger.warning(f"Setting log level: {settings.LOG_LEVEL}")
+    if settings.LOG_LEVEL == 'INFO':
+        logger.setLevel(logging.INFO)
+    elif settings.LOG_LEVEL == 'WARNING':
+        logger.setLevel(logging.WARNING)
+    elif settings.LOG_LEVEL == 'ERROR':
+        logger.setLevel(logging.ERROR)
+    elif settings.LOG_LEVEL == 'DEBUG':
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.warning(f"Invalid LOG_LEVEL specified: {settings.LOG_LEVEL}, assuming INFO")
+        logger.setLevel(logging.INFO)

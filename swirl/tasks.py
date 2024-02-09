@@ -7,12 +7,13 @@ from sys import path
 from os import environ
 
 from celery.utils.log import get_task_logger
+logger = get_task_logger(__name__)
+
 from celery import shared_task
 from celery.schedules import crontab
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from swirl.models import OauthToken
-
 
 import django
 
@@ -21,7 +22,6 @@ path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
-logger = get_task_logger(__name__)
 module_name = 'tasks.py'
 
 from swirl.connectors import *

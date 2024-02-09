@@ -15,8 +15,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User, Group
 from django.conf import settings
 
-from celery.utils.log import get_task_logger
 from celery.result import allow_join_result
+
+# TO DO: is this right? I think yes bc search is usually run from a celery task, but this might be problematic if it isn't
+from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 from swirl.models import Search, SearchProvider, Result
