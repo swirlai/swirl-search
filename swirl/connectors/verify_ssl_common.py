@@ -13,15 +13,10 @@ class VerifyCertsCommon(Connector):
         return s.strip().lower() in ['true', '1', 'yes', 'y']
 
     def log_invalid_credentials(self):
-        self.error("invalid credentials: {self.provider.credentials}")
+        self.error(f"invalid credentials: {self.provider.credentials}")
         self.status = "ERR_INVALID_CREDENTIALS"
 
     def get_creds(self, def_verify_certs=False):
-
-        if not self.provider.credentials:
-            self.error("no credentials: {self.provider.credentials}")
-            self.status = "ERR_NO_CREDENTIALS"
-            return
 
         cred_list = self.provider.credentials.split(',')
         uname=''
@@ -29,6 +24,10 @@ class VerifyCertsCommon(Connector):
         ca_certs = ''
         bearer = ''
         verify_certs=def_verify_certs
+
+        if not self.provider.credentials:
+            return uname, pw, verify_certs, ca_certs, bearer
+
         for cre in cred_list:
             if ':' in cre:
                 (uname,pw) = cre.split(':')
