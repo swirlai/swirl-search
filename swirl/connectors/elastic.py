@@ -76,10 +76,12 @@ class Elastic(VerifyCertsCommon):
         logger.debug(f"{self}: execute_search()")
 
         auth = None
-        (username,password,verify_certs,ca_certs)=self.get_creds()
+        bearer = None
+        (username,password,verify_certs,ca_certs,bearer)=self.get_creds()
         if self.status in ("ERR_INVALID_CREDENTIALS", "ERR_NO_CREDENTIALS"):
             return
-
+        if bearer:
+            self.warning(f"bearer token specified but not supported")
         auth = (username, password)
 
         url = None
@@ -96,15 +98,20 @@ class Elastic(VerifyCertsCommon):
             return
 
         try:
-            es = Elasticsearch(basic_auth=tuple(auth),
-                            hosts=url,
-                            verify_certs=verify_certs,
-                            ca_certs=ca_certs
-                            )
+            if verify_certs:
+                es = Elasticsearch(basic_auth=tuple(auth),hosts=url,verify_certs=verify_certs,ca_certs=ca_certs)
+            else:
+                if auth:
+                    es = Elasticsearch(basic_auth=tuple(auth),hosts=url,verify_certs=False)
+                else:
+                    es = Elasticsearch(hosts=url,verify_certs=False)
+
         except NameError as err:
             self.error(f'NameError: {err}')
         except TypeError as err:
             self.error(f'TypeError: {err}')
+        except Exception as err:
+            self.error(f"Exception: {err}")
 
         # extract index (str)
         index_name_pattern = r"index='([^']+)'"
