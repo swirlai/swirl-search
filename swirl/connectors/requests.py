@@ -363,7 +363,6 @@ class Requests(VerifyCertsCommon):
                             for match in matches:
                                 mapped_responses.append(match)
                         else:
-                            self.error("FAFKDLF")
                             self.error(f'control mapping RESULT matched {len(matches)}, expected {self.provider.results_per_query}')
                             return
                     else:
