@@ -35,3 +35,5 @@ pymongo
 snowflake-connector-python
 oracledb
 psycopg2
+transformers
+torch

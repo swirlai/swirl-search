@@ -1,7 +1,6 @@
 '''
 @author:     Sid Probstein
 @contact:    sid@swirl.today
-@version:    Swirl 1.3
 '''
 
 from sys import path
