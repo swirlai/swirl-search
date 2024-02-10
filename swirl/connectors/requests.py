@@ -318,8 +318,6 @@ class Requests(VerifyCertsCommon):
                 return
             # process the results
 
-            self.error("WTF!")
-
             if 'RESULTS' in mapped_response:
                 if not mapped_response['RESULTS']:
                     mapped_response['RESULTS'] = json_data
