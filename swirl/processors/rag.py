@@ -225,9 +225,9 @@ class RAGPostResultProcessor(PostResultProcessor):
                 temperature=0
             )
             model_response = completions_new.choices[0].message.content
-            self._log_n_store_warn(f'RAG: fetch_prompt_errors follow:')
+            logger.warning(f'RAG: fetch_prompt_errors follow:')
             for (k,v) in fetch_prompt_errors.items():
-                self._log_n_store_warn(f'RAG:\t url:{k} problem:{v}')
+                logger.warning(f'RAG:\t url:{k} problem:{v}')
         except Exception as err:
             if DO_MESSAGE_MOCK_ON_ERROR:
                 logger.error(f"error : {err} while creating CGPT response")
