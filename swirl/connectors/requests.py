@@ -303,13 +303,18 @@ class Requests(VerifyCertsCommon):
                 found = int(mapped_response['FOUND'])
                 self.found = found
             # check for 0 response
-            is_empty_list = 'RESULTS' in mapped_response and type(mapped_response['RESULTS']) == list and len(mapped_response['RESULTS']) == 0
+            is_empty_list = False
+            if 'RESULTS' in mapped_response:
+                is_empty_list = 'RESULTS' in mapped_response and type(mapped_response['RESULTS']) == list and len(mapped_response['RESULTS']) == 0
+            else:
+                is_empty_list = True
             if found == 0 or retrieved == 0 or is_empty_list:
                 # no results, not an error
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.retrieved = 0
                 self.found = 0
                 self.status = 'READY'
+                self.response = []
                 return
             # process the results
 
@@ -365,8 +370,11 @@ class Requests(VerifyCertsCommon):
                         pass
             else:
                 # no RESULT key specified
-                for res in mapped_response['RESULTS']:
-                    mapped_responses.append(res)
+                if mapped_response:
+                    for res in mapped_response['RESULTS']:
+                        mapped_responses.append(res)
+                else:
+                    self.error("NO RESULT KEY")
             # check retrieved
             if not mapped_responses:
                 self.error(f"no results extracted from response! found:{found}")
@@ -374,12 +382,18 @@ class Requests(VerifyCertsCommon):
                     found = retrieved = 0
                 # end if
             if retrieved == -1:
-                retrieved = len(mapped_responses)
-                self.retrieved = retrieved
+                if mapped_responses:
+                    retrieved = len(mapped_responses)
+                    self.retrieved = retrieved
+                else:
+                    self.error(f"NORESULTS")
             if found == -1:
                 # for now, assume the source delivered what it found
-                found = len(mapped_responses)
-                self.found = found
+                if mapped_responses:
+                    found = len(mapped_responses)
+                    self.found = found
+                else:
+                    self.error(f"NORESULTS")
             # check for 0 delivered results (different from above)
             if found == 0 or retrieved == 0:
                 # no results, not an error
@@ -394,7 +408,7 @@ class Requests(VerifyCertsCommon):
 
             start = start + 10 # get only as many pages as required to satisfy provider results_per_query setting, in increments of 10
 
-            time.sleep(1)
+            time.sleep(0.1)
 
         # end for
 
