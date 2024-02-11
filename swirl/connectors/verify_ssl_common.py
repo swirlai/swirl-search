@@ -1,5 +1,8 @@
 from swirl.connectors.connector import Connector
 
+from celery.utils.log import get_task_logger
+logger = get_task_logger(__name__)
+
 class VerifyCertsCommon(Connector):
 
     """Common to connectors that want to verify or turn off verification of certs"""
@@ -19,6 +22,7 @@ class VerifyCertsCommon(Connector):
     def get_creds(self, def_verify_certs=False):
 
         cred_list = self.provider.credentials.split(',')
+
         uname=''
         pw=''
         ca_certs = ''
@@ -29,15 +33,15 @@ class VerifyCertsCommon(Connector):
             return uname, pw, verify_certs, ca_certs, bearer
 
         for cre in cred_list:
-            if ':' in cre:
-                (uname,pw) = cre.split(':')
-                if not (uname and pw):
-                    self.log_invalid_credentials()
-                    break
-            elif cre.startswith('bearer='):
+            if cre.startswith('bearer='):
                 # handle this speacial becauase tokens have '=' sign in them
                 bearer = cre[len('bearer='):]
                 if not bearer:
+                    self.log_invalid_credentials()
+                    break
+            elif ':' in cre:
+                (uname,pw) = cre.split(':')
+                if not (uname and pw):
                     self.log_invalid_credentials()
                     break
             elif '=' in cre:

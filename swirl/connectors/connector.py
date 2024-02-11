@@ -54,7 +54,7 @@ class Connector:
         self.query_mappings = {}
         self.response_mappings = {}
         self.result_mappings = {}
-        self.response = None
+        self.response = []
         self.found = -1
         self.retrieved = -1
         self.results = []
@@ -265,8 +265,13 @@ class Connector:
         Transform the response from the provider into a json (list) and store as self.results
         '''
 
-        logger.debug(f"{self}: normalize_response({self.provider.name}")
-        if not self.response or len(self.response) == 0:
+        if not self.response:
+            # no results, not an error
+            self.retrieved = 0
+            self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
+            self.status = 'READY'
+            return         
+        if len(self.response) == 0:
             # no results, not an error
             self.retrieved = 0
             self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
