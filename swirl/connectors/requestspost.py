@@ -74,5 +74,4 @@ class RequestsPost(Requests):
             post_json=query
 
         self._trace_message(f"post_json_str:{post_json_str} query:{query} post_json:{post_json}")
-        self.response = []
         return requests.post(url, params=params, json=post_json, **kwargs)
