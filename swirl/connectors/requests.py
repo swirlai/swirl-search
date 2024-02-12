@@ -303,7 +303,14 @@ class Requests(VerifyCertsCommon):
                 found = int(mapped_response['FOUND'])
                 self.found = found
             # check for 0 response
-            is_empty_list = 'RESULTS' in mapped_response and type(mapped_response['RESULTS']) == list and len(mapped_response['RESULTS']) == 0
+            is_empty_list = False
+            if 'RESULTS' in mapped_response:
+                is_empty_list = 'RESULTS' in mapped_response and type(mapped_response['RESULTS']) == list and len(mapped_response['RESULTS']) == 0
+            else:
+                if json_data:
+                    is_empty_list = False
+                else:
+                    is_empty_list = True
             if found == 0 or retrieved == 0 or is_empty_list:
                 # no results, not an error
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
@@ -365,8 +372,11 @@ class Requests(VerifyCertsCommon):
                         pass
             else:
                 # no RESULT key specified
-                for res in mapped_response['RESULTS']:
-                    mapped_responses.append(res)
+                if mapped_response:
+                    for res in mapped_response['RESULTS']:
+                        mapped_responses.append(res)
+                else:
+                    self.error("Unexpected missing mapped_response 1")
             # check retrieved
             if not mapped_responses:
                 self.error(f"no results extracted from response! found:{found}")
@@ -374,12 +384,18 @@ class Requests(VerifyCertsCommon):
                     found = retrieved = 0
                 # end if
             if retrieved == -1:
-                retrieved = len(mapped_responses)
-                self.retrieved = retrieved
+                if mapped_responses:
+                    retrieved = len(mapped_responses)
+                    self.retrieved = retrieved
+                else:
+                    self.error(f"Unexpected missing mapped_response 2")
             if found == -1:
                 # for now, assume the source delivered what it found
-                found = len(mapped_responses)
-                self.found = found
+                if mapped_responses:
+                    found = len(mapped_responses)
+                    self.found = found
+                else:
+                    self.error(f"Unexpected missing mapped_response 3")
             # check for 0 delivered results (different from above)
             if found == 0 or retrieved == 0:
                 # no results, not an error
