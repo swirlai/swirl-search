@@ -26,7 +26,12 @@ jobs:
       run: |
         df -h
         du -sh *
-    - name: builder bootstrap
+    - name: Docker Cleanup
+      run: |
+        docker system prune -af
+        docker volume prune -f
+        docker builder prune -f
+    - name: Builder Bootstrap
       run: docker buildx create --name devBuilder --use --bootstrap
     - name: Build the Docker image
       run: docker buildx build -t swirlai/swirl-search:develop --platform linux/amd64,linux/arm64 --push .
