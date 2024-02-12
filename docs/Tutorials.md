@@ -1,7 +1,7 @@
 ---
 layout: default
-title: Tutorial 1
-nav_order: 8
+title: Tutorial - Extending Swirl
+nav_order: 7
 ---
 <details markdown="block">
   <summary>
@@ -12,15 +12,15 @@ nav_order: 8
 {:toc}
 </details>
 
-# Tutorial 1: Extending Swirl
+# Tutorial: Extending Swirl
 
-The following tutorial is intended for a python developer who wants to extend Swirl by adding SearchProviders, Connectors and Processors. Please note this guide assumes use of Swirl 3.x or later.
+## Intended Audience
 
-<br/>
+The following tutorial is intended for a Python developer who wants to extend Swirl by adding SearchProviders, Connectors and Processors. Please note this guide assumes use of Swirl 3.x or later.
 
 ## Assumptions
 
-* Latest python, 3.11 or later, installed locally
+* Python 3.12.1 (or latest stable) installed locally
 * Redis installed and running
 * Swirl installed locally (not in Docker) and running
 
@@ -35,95 +35,66 @@ Service: celery-worker...RUNNING, pid:34734
 34720 ttys000    0:05.04 /Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python /Library/Frameworks/Python.framework/Versions/3.12/bin/daphne -b 0.0.0.0 -p 8000 swirl_server.asgi:application
 34734 ttys000    0:06.67 /Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python /Library/Frameworks/Python.framework/Versions/3.12/bin/celery -A swirl_server worker
 ```
-<br/>
 
-# Background: The Swirl Search Workflow
+## Background: The Swirl Search Workflow
 
 In a nutshell:
 
 * User creates a query - example: [http://localhost:8000/swirl/search/?q=ai](http://localhost:8000/swirl/search/?q=ai)
 * Pre-query processing - example: [SpellcheckQueryProcessor](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/spellcheck_query.py)
 
-<br/>
-
 {: .highlight }
 Each Search Provider executes in parallel
-
-<br/>
 
 * Query processing - example: [AdaptiveQueryProcessor](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/adaptive.py)
 * Connector - example: [RequestsGet](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requestsget.py)
 * Result processing - example: [MappingResultsProcessor](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/mapping.py)
 
-<br/>
-
 {: .highlight }
 Parallel processing ends here
-
-<br/>
 
 * Post-result processing - example: [CosineRelevancyPostResultProcessor](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/relevancy.py)
 * Ranked-results available via mixer - example: [http://localhost:8000/swirl/results/?search_id=1](http://localhost:8000/swirl/results/?search_id=1)
 
-For more information, consult the [Developer Guide Workflow Overview](Developer-Guide.md#workflow).
-
-<br/>
+For more information, consult the [Developer Guide, Workflow Overview](Developer-Guide.md#workflow).
 
 # Creating a SearchProvider
 
-A SearchProvider is a configuration of a Connector. So, to connect to a given source, first, verify that it supports a Connector you already have. (See the next tutorial for information on creating new Connectors.)
+A SearchProvider is a configuration of a Connector. To connect to a given source, first verify that it supports a Connector that Swirl already has. (See the next tutorial for information on creating new Connectors.)
 
-For example, if trying to query a website using a URL like `https://host.com/?q=my+query+here` that returns JSON or XML, create a new SearchProvider configuring the RequestsGet connector as follows:
+For example, if trying to query a website using a URL like `https://host.com/?q=my+query+here` that returns JSON or XML, create a new SearchProvider configuring the `RequestsGet` Connector as follows:
 
 * Copy any of the [Google PSE SearchProviders](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google_pse.json)
 
-Modify the `url` and `query_template` to construct the query URL. Using the above example:
-
+* Modify the `url` and `query_template` to construct the query URL. Using the above example:
 ```
 {
-        "url": "https://my-host.com/",
-        "query_template": "{url}?q={query_string}",
+    "url": "https://my-host.com/",
+    "query_template": "{url}?q={query_string}",
 }
 ```
+To learn more about query and URL parameters, refer to the [User Guide, Using SearchProviders](User-Guide.html#using-searchproviders) section.
 
-To learn more about query and URL parameters, refer to the [Developer Guide](./Developer-Guide.md).
-
-* If the website offers the ability to page through results, or sort results by date (as well as relevancy), use the `PAGE=` and `DATE_SORT` query mappings to add support for these features through Swirl.
-
-For example:
-
+* If the website offers the ability to page through results, or sort results by date (as well as relevancy), use the `PAGE=` and `DATE_SORT=` query mappings to add support for these features through Swirl.  For example:
 ```
 TO DO 
 ```
-
-For more information refer to the [User Guide, Query Mappings section:](https://github.com/swirlai/swirl-search/wiki/2.-User-Guide#query-mappings)
+For more information, refer to the [User Guide, Query Mappings](User-Guide.html#query-mappings) section.
 
 * Open the query URL in a browser and look through the JSON response. 
+If using Visual Studio Code, right-click on the pasted JSON and select `Format Document` to make it easier to read.
 
-If using Visual Studio Code, right-click on the pasted JSON and select `Format Document`` to make it easier to read.
-
-* Identify the results list, and number of results found and retrieved. Put these JSON paths in the response_mappings. Then, identify the JSON paths to use to extract the Swirl default fields `title`, `body`, `url`, `date_published` and `author` from each item in the result lists in the result_mappings, with the Swirl field name on the left, and the source JSON path on the right. 
-
-For example:
-
+* Identify the results list, and number of results found and retrieved. Put these JSON paths in the `response_mappings`. Then, identify the JSON paths to use to extract the Swirl default fields `title`, `body`, `url`, `date_published` and `author` from each item in the result list and add those to in the `result_mappings`, with the Swirl field name on the left, and the source JSON path on the right.  For example:
 ```
-        "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
-        "result_mappings": "url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
-
+"response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
+"result_mappings": "url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
 ```
 
-* Add credentials as required for the service. 
+* Add credentials as required for the service.  The format to use depends on the type of credential. Details are here: [User Guide, Authentication & Credentials](User-Guide.html#authentication--credentials) section.
 
-The format to use depends on the type of credential. Details are here: [User Guide Credentials Section](https://github.com/swirlai/swirl-search/wiki/2.-User-Guide#authentication--credentials) 
-
-* Add a suitable tag that can be used to describe the source or what it knows about. 
-
-Spaces are not permitted; good tags are clear and obvious when used in a query, like `company:tesla` or `news:openai`.
-
-For more about tags, see: [Organizing SearchProviders](https://github.com/swirlai/swirl-search/wiki/2.-User-Guide#organizing-searchproviders-with-active-default-and-tags)
+* Add a suitable tag that can be used to describe the source or what it knows about.  Spaces are not permitted; good tags are clear and obvious when used in a query, like `company:tesla` or `news:openai`. For more about tags, see: [Organizing SearchProviders with Active, Default and Tags](User-Guide.html#organizing-searchproviders-with-active-default-and-tags)
 
 * Review the finished SearchProvider:
-
 ```
 {
         "name": "My New SearchProvider",
@@ -147,11 +118,9 @@ For more about tags, see: [Organizing SearchProviders](https://github.com/swirla
     }
 ```
 
-* Go to Swirl `localhost:8000/swirl/searchproviders/`, logging in if necessary. Put the form at the bottom of the page into RAW mode, and paste the SearchProvider in. Then hit POST. The SearchProvider will reload. 
+* Go to Swirl `localhost:8000/swirl/searchproviders/`, logging in if necessary. Put the form at the bottom of the page into `Raw data` mode, and paste the SearchProvider into the box. Click the `POST` button to add it. The SearchProvider page will reload. 
 
-* Go to Galaxy `localhost:8000/galaxy/` and run a search using the tag you created earlier. Results should again appear in roughly the same period of time.
-
-<br/>
+* Go to the Galaxy UI at `localhost:8000/galaxy/` and run a search using the Tag you created for the new SearchProvider. Results should again appear in roughly the same period of time.
 
 # Creating a Connector
 
