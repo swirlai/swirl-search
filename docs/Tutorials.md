@@ -124,18 +124,19 @@ If using Visual Studio Code, right-click on the pasted JSON and select `Format D
 
 # Creating a Connector
 
-In Swirl, Connectors are responsible for loading a SearchProvider, then constructing and transmitting queries to a particular type of service, then saving the response - typically a result list. 
+Swirl Connectors are responsible for loading a SearchProvider, constructing and transmitting queries to a particular type of service, then saving the response - typically a result list. 
 
-:info: Consider using your favorite coding AI to generate a Connector by passing it the Connector base classes, and information about the API you are trying to query. 
+{: .highlight }
+Consider using your favorite coding AI to generate a Connector by passing it the Connector base classes, and information about the API you are trying to query. 
 
-:info: If you are trying to send an HTTP/S request to an endpoint that returns JSON or XML, you don't need to create a Connector. Instead, [Create a SearchProvider](#creating-a-searchprovider) that configures the RequestsGet connector included with Swirl. 
+{: .highlight }
+If you are trying to send an HTTP/S request to an endpoint that returns JSON or XML, you don't need to create a Connector. Instead, [Create a SearchProvider](#creating-a-searchprovider) that configures the RequestsGet connector included with Swirl. 
 
 To create a new Connector:
 
-* Create a new file, e.g. `swirl/connectors/my_connector.py`
+* Create a new Connector file, e.g. `swirl/connectors/my_connector.py`
 
-* Copy the style of the `ChatGPT` connector as a starting point, or `BigQuery` it targeting a database.
-
+* Copy the style of the `ChatGPT` connector as a starting point, or `BigQuery` if targeting a database.
 ```
 class MyConnector(Connector):
 
@@ -144,17 +145,14 @@ class MyConnector(Connector):
         super().__init__(provider_id, search_id, update, request_id)
 ```
 
-In the __init__ class, load and persist anything that will be needed when connecting and querying the service. Use the ChatGPT Connector as a guide. 
+* In the `__init__` class, load and persist anything that will be needed when connecting and querying the service.
 
-* Import the python package(s) to connect to the service. The ChatGPT connector uses the openai package, for example:
-
+* Import the Python package(s) to connect to the service. The ChatGPT connector uses the `openai` package, for example:
 ```
 import openai
 ```
 
-* Modify the execute_search method to connect to the service. 
-
-As you can see from the ChatGPT Connector, it first loads the OpenAI credentials, then constructs a prompt, sends the prompt via `openai.ChatCompletion.create()`, then stores the response. 
+* Modify the `execute_search` method to connect to the service. As you can see from the ChatGPT Connector, it first loads the OpenAI credentials, then constructs a prompt, sends the prompt via `openai.ChatCompletion.create()`, then stores the response. 
 
 ```
     def execute_search(self, session=None):
@@ -209,10 +207,9 @@ As you can see from the ChatGPT Connector, it first loads the OpenAI credentials
 
 ```
 
-ChatGPT depends on the OpenAI API key, which is provided to Swirl via the .env file. To follow this pattern, create new values in .env then modify `swirl_server/settings.py`` to load them as Django settings, and set a reasonable default.
+* ChatGPT depends on the OpenAI API key, which is provided to Swirl via the `.env` file. To follow this pattern, create new values in `.env` then modify `swirl_server/settings.py` to load them as Django settings, and set a reasonable default.
 
 * Modify the `normalize_response()` method to store the raw response. This is literally no more (or less) than writing the result objects out as a python list and storing that in `self.results`:
-
 ```
     def normalize_response(self):
 
@@ -230,42 +227,36 @@ ChatGPT depends on the OpenAI API key, which is provided to Swirl via the .env f
         return
 ```
 
-There's no need to do this if self.response is already a python list.
+{: .highlight }
+There's no need to do this if `self.response` is already a Python list.
 
 * Add the new Connector to `swirl/connectors/__init__.py`
-
 ```
 from swirl.connectors.my_connector import MyConnector
 ```
 
 * Restart Swirl
-
 ```
 % python swirl.py restart core
 ```
 
-* Create a SearchProvider to configure the new Connector, then add it to the Swirl installation as noted in the [Create a SearchProvider tutorial](#creating-a-searchprovider). 
+* Create a SearchProvider to configure the new Connector, then add it to the Swirl installation as noted in the [Creating a SearchProvider](#creating-a-searchprovider) section above.  Don't forget a useful Tag so that you can easily target the new connector when ready to test.
 
-Don't forget a useful tag so you can easily target the new connector when ready to test.
-
-To learn more about developing Connectors, refer to the [Developer Guide](Developer-Guide.md#develop-new-connectors).
-
-<br/>
+To learn more about developing Connectors, refer to the [Developer Guide, Developing New Connectors](Developer-Guide.md#develop-new-connectors) section.
 
 # Creating a QueryProcessor
 
-A QueryProcessor is a stage executed either during Pre-Query or Query Processing. The difference between these is that the result of Pre-Query processing is applied to all SearchProviders, and Query Processing is executed by each individual SearchProviders. 
+A QueryProcessor is a stage executed either during Pre-Query or Query Processing. The difference between these is that the result of Pre-Query processing is applied to all SearchProviders, and Query Processing is executed by each individual SearchProvider. 
 
 In both cases, the goal is to modify the query sent to some group of SearchProviders. 
 
-Note: if you just want to rewrite the query using lookup tables or regular expressions, consider  [using `QueryTransformations` instead](https://github.com/swirlai/swirl-search/wiki/5.-Developer-Guide#using-query-transformations)
+Note: if you just want to rewrite the query using lookup tables or regular expressions, consider [using `QueryTransformations` instead](Developer-Guide.html#query-transformation-rules).
 
 To create a new QueryProcessor:
 
 * Create a new module like `swirl/processors/my_query_processor.py`. You can also add your new class to an existing module like `swirl/processors/Generic.py`.
 
 * Copy the `GenericQueryProcessor` class as a starting point, and rename it:
-
 ```
 class MyQueryProcessor(QueryProcessor):
 
@@ -276,17 +267,14 @@ class MyQueryProcessor(QueryProcessor):
         return self.query_string + ' modified'
 ```
 
-A common use case for a new QueryProcessor is to use some function or external service to rewrite the query. Here's an example of how to do the former. 
-
-Given some function in package MyPackage...
-
+* A common use case for a new QueryProcessor is to use some function or external service to rewrite the query. Here's an example of how to do the former. Given some function in package MyPackage:
 ```
 def my_query_modification_function(query):
     # implementation
     return modified_query
 ```
 
-Create a new QueryProcessor that imports the function:
+* Create a new QueryProcessor that imports the function:
 
 ```
 from MyPackage import my_query_modification_function
@@ -301,19 +289,16 @@ class MyQueryProcessor(QueryProcessor):
             return self.query_string
 ```
 
-Save the new QueryProcessor.
+* Save the new QueryProcessor.
 
-* If you created a new module, add it to `swirl/processors/__init__.py`
-
+* If you created a new module, add it to `swirl/processors/__init__.py`.  This can be skipped if you added the new QueryProcessor to an existing module.
 ```
 from swirl.processors.my_processor import *
 ```
 
-This can be skipped if you added the new QueryProcessor to an existing module.
-
 * Add the new Processor to the appropriate `swirl.models` CHOICES block. 
 
-For pre-query processing, add it to the `Search` object here:
+* For Pre-Query processing, add it to the `Search` object; this is required for security reasons:
 
 ```
     PRE_QUERY_PROCESSOR_CHOICES = [
@@ -321,17 +306,15 @@ For pre-query processing, add it to the `Search` object here:
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor'),
         ('MyQueryProcessor','MyQueryProcessor')
     ]
-
 ```
 
-This is required for security reasons. To make the new Processor a default for new Search objects, add it to the return list in this block:
-
+* To make the new Processor a default for new Search objects, add it to the return list in this block:
 ```
 def getSearchPreQueryProcessorsDefault():
     return []
 ```
 
-For query processing in one or more SearchProviders, add it here:
+* For Query processing in one or more SearchProviders, add it here:
 
 ```
     QUERY_PROCESSOR_CHOICES = [
@@ -342,8 +325,7 @@ For query processing in one or more SearchProviders, add it here:
 
 ```
 
-To make the new Processor a default for new SearchProvider objects, add it to the return list in this block:
-
+* To make the new Processor a default for new SearchProvider objects, add it to the return list in this block:
 ```
 def getSearchProviderQueryProcessorsDefault():
     return ["AdaptiveQueryProcessor"]
@@ -370,28 +352,22 @@ def getSearchProviderQueryProcessorsDefault():
 ```
 
 * Restart Swirl
-
 ```
 % python swirl.py restart core
 ```
 
-* Go to Galaxy `http://localhost:8000/galaxy/`
+* Go to the Galaxy UI (`http://localhost:8000/galaxy/`) and run a search; if using a query processor be sure to [target that SearchProvider with a tag](User-Guide.html#using-tags-to-target-searchproviders). 
 
-Run a search; if using a query processor be sure to [target that SearchProvider with a tag](https://docs.swirl.today/User-Guide.html#using-tags-to-target-searchproviders). 
-
-For example if you added a QueryProcessor to a SearchProvider query_processing pipeline with tag "news", the query would be `http://localhost:8000/swirl/search/?q=news:some+query` instead.Results should appear in a just a few seconds. In the `messages` block a message indicating that the new QueryProcessor rewrote the query should appear:
-
+For example if you added a QueryProcessor to a SearchProvider `query_processing` pipeline with a Tag of "news", the query would be `http://localhost:8000/swirl/search/?q=news:some+query` instead. Results should appear in a just a few seconds. In the `messages` block, a message indicating that the new QueryProcessor rewrote the query should appear:
 ```
 MyQueryProcessor rewrote <Some-Connector> query to: <modified-query> 
 ```
-
-<br/>
 
 # Creating a ResultProcessor
 
 A ResultProcessor is a stage executed by each SearchProvider, after the Connector has retrieved results. ResultProcessors operate on results and transform them as needed for downstream consumption or presentation.
 
-The GenericResultProcessor and MappingResultProcessor stages are intended to normalize JSON results. GenericResultProcessor searches for exact matches to the Swirl schema (as noted in the SearchProvider example) and copies them over. MappingResultProcessor applies result_mappings to normalize the results, again as shown in the SearchProvider example above. In general adding stages after these is a good idea, unless the SearchProvider is expected to respond in a Swirl schema format.
+The `GenericResultProcessor` and `MappingResultProcessor` stages are intended to normalize JSON results. `GenericResultProcessor` searches for exact matches to the Swirl schema (as noted in the SearchProvider example) and copies them over. `MappingResultProcessor` applies `result_mappings` to normalize the results, again as shown in the SearchProvider example above. In general, adding stages *after* these is a good idea, unless the SearchProvider is expected to respond in a Swirl schema format.
 
 To create a new ResultProcessor:
 
@@ -399,12 +375,9 @@ To create a new ResultProcessor:
 
 * Copy the `GenericResultProcessor` class as a starting point, and rename it. 
 
-* Implement the `process()` method. This is the only one required. 
+* Implement the `process()` method. This is the only one required. `Process()` operates on `self.results`, which will contain all the results from a given SearchProvider, in Python list format. Modify items in the result list, and report the number updated.
 
-Process() operates on `self.results`, which will contain all the results from a given SearchProvider, in python list format. Modify items in the result list, and report the number updated.
-
-For example, here is a process() method that adds a field 'my_field1' to each result item, with the value "test":
-
+* For example, here is a `process()` method that adds a field 'my_field1' to each result item, with the value "test":
 ```
     def process(self):
 
@@ -427,16 +400,12 @@ For example, here is a process() method that adds a field 'my_field1' to each re
         return self.modified
 ```
 
-Save the module.
-
-* Add the new module to `swirl/processors/__init__.py`
-
+* Save the new module and add it to `swirl/processors/__init__.py`
 ```
 from swirl.processors.my_processor import MyResultProcessor
 ```
 
-* Add the new module to the following swirl.models CHOICES block:
-
+* Add the new module to the following swirl.models CHOICES block (this is required for security reasons.)
 ```
     RESULT_PROCESSOR_CHOICES = [
         ('GenericResultProcessor', 'GenericResultProcessor'),
@@ -454,17 +423,13 @@ from swirl.processors.my_processor import MyResultProcessor
     ]
 ```
 
-This is required for security reasons. 
-
-To make the new ResultProcessor a default for new SearchProvider objects, add it to the return list in this block:
-
+* To make the new ResultProcessor a default for new SearchProvider objects, add it to the return list in this block:
 ```
 def getSearchProviderResultProcessorsDefault():
     return ["MappingResultProcessor","DateFinderResultProcessor","CosineRelevancyResultProcessor"]
 ```
 
 * Add the new module to at least one `SearchProvider.result_processing` pipeline:
-
 ```
         "result_processors": [
             "MappingResultProcessor",
@@ -475,26 +440,18 @@ def getSearchProviderResultProcessorsDefault():
 ```
 
 * Restart Swirl
-
 ```
 % python swirl.py restart core
 ```
 
-* Go to Galaxy `http://localhost:8000/galaxy/`
+* Go to the Galaxy UI (`http://localhost:8000/galaxy/`) and run a search; be sure to target at least one SearchProvider that has the new ResultProcessor. For example if you added a ResultProcessor to a SearchProvider `result_processing` pipeline with the Tag "news", the query would need to be `http://localhost:8000/swirl/search/?q=news:some+query` instead of the above.
 
-Run a search; be sure to target at least one SearchProvider that has the new ResultProcessor. 
-
-For example if you added a ResultProcessor to a SearchProvider result_processing pipeline with tag "news", the query would need to be `http://localhost:8000/swirl/search/?q=news:some+query` instead of the above.
-
-Results should appear in a just a few seconds. In the `messages` block a message indicating that the new ResultProcessor updated a number of results should appear, and the content should be modified as expected.
-
+* Results should appear in a just a few seconds. In the `messages` block a message indicating that the new ResultProcessor updated a number of results should appear, and the content should be modified as expected.
 ```
 MyResultProcessor updated 5 results from: MyConnector",
 ```
 
 To learn more about writing Processors, refer to the [Developer Guide](Developer-Guide.md#develop-new-processors)
-
-<br/>
 
 # Creating a PostResultProcessor
 
