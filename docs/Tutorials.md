@@ -209,7 +209,7 @@ import openai
 
 * ChatGPT depends on the OpenAI API key, which is provided to Swirl via the `.env` file. To follow this pattern, create new values in `.env` then modify `swirl_server/settings.py` to load them as Django settings, and set a reasonable default.
 
-* Modify the `normalize_response()` method to store the raw response. This is literally no more (or less) than writing the result objects out as a python list and storing that in `self.results`:
+* Modify the `normalize_response()` method to store the raw response. This is literally no more (or less) than writing the result objects out as a Python list and storing that in `self.results`:
 ```
     def normalize_response(self):
 
@@ -298,7 +298,7 @@ from swirl.processors.my_processor import *
 
 * Add the new Processor to the appropriate `swirl.models` CHOICES block. 
 
-* For Pre-Query processing, add it to the `Search` object; this is required for security reasons:
+* For Pre-Query processing, add it to the `Search` object (this is required for security reasons):
 
 ```
     PRE_QUERY_PROCESSOR_CHOICES = [
@@ -462,7 +462,6 @@ To create a new ResultProcessor:
 * Create a new module like `swirl/processors/my_post_result_processor.py`
 
 * Copy the template below as a starting point, and rename it:
-
 ```
 class MyPostResultProcessor(PostResultProcessor):
 
@@ -490,16 +489,14 @@ class MyPostResultProcessor(PostResultProcessor):
         return self.results_updated
 ```
 
-Modify the `process()` method, operating on the items and saving each result set as shown. 
+* Modify the `process()` method operating on the items and saving each result set as shown. 
 
 * Add the new module to `swirl/processors/__init__.py`
-
 ```
 from swirl.processors.my_post_result_processor import MyPostResultProcessor
 ```
 
-* Add the new module to the following `swirl.models` CHOICES block:
-
+* Add the new module to the following `swirl.models` CHOICES block (this is required for security reasons. ):
 ```
     POST_RESULT_PROCESSOR_CHOICES = [
         ('CosineRelevancyPostResultProcessor', 'CosineRelevancyPostResultProcessor'),
@@ -510,17 +507,13 @@ from swirl.processors.my_post_result_processor import MyPostResultProcessor
     ]
 ```
 
-This is required for security reasons. 
-
-To make the new ResultProcessor a default for new SearchProvider objects, add it to the return list in this block:
-
+* To make the new ResultProcessor a default for new SearchProvider objects, add it to the return list in this block:
 ```
 def getSearchPostResultProcessorsDefault():
     return ["DedupeByFieldPostResultProcessor","CosineRelevancyPostResultProcessor,"MyPostResultProcessor"]
 ```
 
 * Add the new module to a `Search.post_result_processing` pipeline:
-
 ```
   {
         "query_string": "news:ai",
@@ -534,19 +527,13 @@ def getSearchPostResultProcessorsDefault():
 ```
 
 * Restart Swirl
-
 ```
 % python swirl.py restart core
 ```
 
-* Go to Galaxy `http://localhost:8000/galaxy/`
+* Go to the Galaxy UI (`http://localhost:8000/galaxy/`) and run a search; be sure to target at least one SearchProvider that has the new PostResultProcessor. For example if you added a PostResultProcessor to a Search `post_result_processing` pipeline with the Tag "news", the query would need to be `http://localhost:8000/swirl/search/?q=news:some+query` instead of the above.
 
-Run a search; be sure to target at least one SearchProvider that has the new PostResultProcessor. 
-
-For example if you added a PostResultProcessor to a Search `post_result_processing` pipeline with tag "news", the query would need to be `http://localhost:8000/swirl/search/?q=news:some+query` instead of the above.
-
-Results should appear in a just a few seconds. In the `messages` block a message indicating that the new PostResultProcessor updated a number of results should appear, and the content should be modified as expected.
-
+* Results should appear in a just a few seconds. In the `messages` block a message indicating that the new PostResultProcessor updated a number of results should appear, and the content should be modified as expected.
 ```
 MyPostResultProcessor updated 10 results from: MySearchProvider
 ```
