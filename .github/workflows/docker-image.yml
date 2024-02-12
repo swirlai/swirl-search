@@ -27,7 +27,7 @@ jobs:
     - name: builder bootstrap
       run: docker buildx create --name devBuilder --use --bootstrap
     - name: Build the Docker image
-      run: docker buildx build -t swirlai/swirl-search:develop --platform linux/amd64,linux/arm64 --push .
+      run: docker buildx build -t swirlai/swirl-search:develop --platform linux/amd64,linux/arm64
     - name: Update repo description
       uses: peter-evans/dockerhub-description@v4
       with:
