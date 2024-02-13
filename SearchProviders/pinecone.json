@@ -1,6 +1,6 @@
 {
     "name": "PineconeDB",
-    "active": true,
+    "active": false,
     "default": false,
     "authenticator": "",
     "connector": "PineconeDB",
