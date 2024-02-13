@@ -12,13 +12,13 @@ nav_order: 9
 {:toc}
 </details>
 
-# AI Retrieval Augmented Generation (RAG) Guide
+# AI Retrieval Augmented Generation (RAG)
 
 Swirl supports Real Time [Retrieval Augmented Generation (RAG)](index.md#what-is-retrieval-augmented-generation-rag-does-swirl-support-it) out of the box, using existing search engines, databases and enterprise services. 
 
 ## Intended Audience
 
-This guide details how to configure and tune Swirl (v. 3.0 or newer) to perform RAG. It is intended for use by developers and/or system administrators with the ability to configure the system to connect to services like OpenAI's ChatGPT and Azure's OpenAI.
+This guide details how to configure and tune Swirl (v. 3.0 or newer) to query Generative AI, swap the vector models used for relevancy ranking and perform RAG. It is intended for use by developers and/or system administrators with the ability to configure the system to connect to these types of services.
 
 # Setting up RAG
 
@@ -102,8 +102,6 @@ Swirl's RAG processing utilizes only the *first 10 results* that are selected ei
 
 ## Notes
 
-* As of Swirl 3.2.0, both the OpenAI API and the Azure OpenAI API are now supported.
-
 * As of Swirl 3.1.0, page fetch configurations are present for the [European PMC](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/europe_pmc.json) SearchProvider and four of the [Google PSE](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google_pse.json) SearchProviders.
 
 * As of Swirl 3.1.0, RAG processing is now available through a single API call, e.g. `?qs=metasearch&rag=true`.  See the [Developer Guide](https://docs.swirl.today/Developer-Guide.html#get-synchronous-results-with-the-qs-url-parameter) for more details about the `?qs=` parameter.
@@ -121,3 +119,131 @@ Swirl's RAG processing utilizes only the *first 10 results* that are selected ei
 * RAG processing with public web data can be problematic due to difficulties extracting article content; for those seeking a solution for public data please [contact Swirl](mailto:hello@swirl.today).
 
 * The community edition of Swirl is intended to RAG with sources you can fetch without authenticating. If you need to perform RAG with content from enterprise services like Microsoft 365, ServiceNow, Salesforce, Atlassian with OAUTH2 and SSO, please [contact us for information about Swirl Enterprise](mailto:hello@swirl.today) - which supports all of that, and more, out of the box.
+
+# Configuring AI Providers
+
+Swirl 3.3 adds the ability to configure the following:
+
+* Choice of Generative AI for query processing, direct question answering as a Connector, and RAG as noted above
+* Choice of Embeddings for the reader LLM
+* Selection of the model to use for each
+
+## Managing AI Providers
+
+To access the AI Provider management endpoint go here: 
+
+### [localhost:8000/swirl/aiproviders/](localhost:8000/swirl/aiproviders/)
+
+Login with the admin account. You will see a list of preloaded providers. 
+
+![Swirl AI Provider List](images/swirl_aiprovider_list.png)
+
+Each AI Provider has the following metadata:
+
+* name
+* active: must be `true` for the AI Provider to be used
+* api_key
+* model: the name of the model to use from the AI Provider
+* config: a dictionary of additional configuration items; see the `Azure/OpenAI GPT-3.5 Turbo` provider for examples
+* tags: a list of AI operations the provider supports - see next section for options
+* defaults: a list of AI operations for which the provider is the default
+
+There are four main operations an AI Provider can execute for Swirl. The table below lists each one and the default when Swirl is initially installed:
+
+| Operation | Default Provider | Notes | 
+| --------- | ---------------- | ----- | 
+| Reader    | spaCy EN | |
+| Connector | Azure/OpenAI 3.5 Turbo | |
+| Query     | Azure/OpenAI 3.5 Turbo | |
+| RAG       | Open AI GPT-4 | |
+
+## Adding API Keys
+
+To add your API keys to any provider, add the `id` to the URL. For example:
+
+### [localhost:8000/swirl/aiproviders/1/](localhost:8000/swirl/aiproviders/1/)
+
+![Swirl AI Provider Edit](images/swirl_aiprovider_edit.png)
+
+Edit the provider using the `Raw data` form at the bottom of the page. Press the `PUT` button when finished. (Do not click `Patch`.)
+
+Note that some providers like Azure/OpenAI require additional configuration parameters. 
+
+## Setting the Default AI Provider
+
+To make an AI Provider default for one or more AI operations:
+
+* Add the AI operation to the `default` field
+* Remove the AI operation from any other AI Provider `default` field
+
+For example, to change from Azure/OpenAI GPT-3.5 to OpenAI GPT-4 for the Connector operation, change the Azure/OpenAI provider to:
+
+```
+    {
+        "name": "Azure/OpenAI GPT-3.5 Turbo",
+        "owner": "admin",
+        "shared": true,
+        "date_created": "2024-02-11T23:57:15.775575-05:00",
+        "date_updated": "2024-02-12T00:09:45.306365-05:00",
+        "active": true,
+        "api_key": "ab40e632e04f46f68935771b817d17fb",
+        "model": "azure/gpt-35-turbo",
+        "config": {
+            "api_base": "https://swirltest-openai.openai.azure.com",
+            "api_version": "2023-10-01-preview"
+        },
+        "tags": [
+            "query",
+            "connector",
+            "rag"
+        ],
+        "defaults": [
+            "query"
+        ]
+    }
+```
+
+Then, change the OpenAI GPT-4 provider to:
+
+```
+{
+        "name": "OpenAI GPT-4",
+        "owner": "admin",
+        "shared": true,
+        "date_created": "2024-02-11T23:57:17.718852-05:00",
+        "date_updated": "2024-02-12T00:11:03.846594-05:00",
+        "active": true,
+        "api_key": "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",
+        "model": "gpt-4",
+        "config": {
+            "max_tokens": 3000
+        },
+        "tags": [
+            "query",
+            "connector",
+            "rag"
+        ],
+        "defaults": [
+            "connector", 
+            "rag"
+        ]
+    }
+```
+
+### Provider Selection Criteria
+
+When Swirl executes one of the four AI operations, it selects the AI Provider to use as follows:
+
+* The first AI Provider that is active, has the operation in it's tag list, and has the operation in the default list
+
+* The first AI Provider that is active, has the operation in it's tag list
+
+Swirl will warn if multiple AI Providers are configured for the same role. It always takes the first provider. 
+
+## Token Management
+
+The `max_tokens` config parameter can be used to set the maximum number of tokens to be sent to this AI Provider. Swirl's RAG workflow will account for this automatically.
+
+## Provider-Specific Support
+
+Swirl uses the `LiteLLM` package to manage connectivity to AI Providers. The following links provide more information on each of the provider specific configurations: [https://docs.litellm.ai/docs/providers](https://docs.litellm.ai/docs/providers) 
