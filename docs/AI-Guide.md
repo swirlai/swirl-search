@@ -186,7 +186,7 @@ For example, to change from Azure/OpenAI GPT-3.5 to OpenAI GPT-4 for the Connect
         "date_created": "2024-02-11T23:57:15.775575-05:00",
         "date_updated": "2024-02-12T00:09:45.306365-05:00",
         "active": true,
-        "api_key": "ab40e632e04f46f68935771b817d17fb",
+        "api_key": "<your-azure-openai-api-key>,
         "model": "azure/gpt-35-turbo",
         "config": {
             "api_base": "https://swirltest-openai.openai.azure.com",
@@ -213,7 +213,7 @@ Then, change the OpenAI GPT-4 provider to:
         "date_created": "2024-02-11T23:57:17.718852-05:00",
         "date_updated": "2024-02-12T00:11:03.846594-05:00",
         "active": true,
-        "api_key": "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",
+        "api_key": "<your-openai-api-key>",
         "model": "gpt-4",
         "config": {
             "max_tokens": 3000
