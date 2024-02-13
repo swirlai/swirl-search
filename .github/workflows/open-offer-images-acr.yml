@@ -25,9 +25,9 @@ jobs:
 
     - name: pull and tag SWO
       run: |
-        docker pull swirlai/swirl-search:develop
-        docker tag swirlai/swirl-search:develop dnswo90.azurecr.io/swirl:${{ env.SWR_VERSION }}
-        docker tag swirlai/swirl-search:develop dnswo90.azurecr.io/swirl:latest
+        docker pull swirlai/swirl-search:latest
+        docker tag swirlai/swirl-search:latest dnswo90.azurecr.io/swirl:${{ env.SWR_VERSION }}
+        docker tag swirlai/swirl-search:latest dnswo90.azurecr.io/swirl:latest
 
     - name: login to acr swirl open and push
       run: |
