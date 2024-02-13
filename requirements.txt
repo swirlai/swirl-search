@@ -86,6 +86,7 @@ ply==3.11
 preshed==3.0.9
 prompt-toolkit==3.0.43
 protobuf==4.25.2
+psycopg2==2.9.9
 pyahocorasick==2.0.0
 pyasn1==0.5.1
 pyasn1-modules==0.3.0
