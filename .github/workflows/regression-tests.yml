@@ -29,7 +29,7 @@ jobs:
       run: python swirl.py setup
     - name: Start Swirl
       run: python swirl.py start
-    
+
     - name: Checkout the QA Repo
       uses: actions/checkout@v4
       with:
@@ -39,6 +39,7 @@ jobs:
     - name: Run Regression Tests
       working-directory: ./path/to/directory
       run: |
+        pip install -r --no-cache-dir requirements.txt
         behave --no-capture --verbose
 
     - name: Upload log files
