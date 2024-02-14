@@ -51,8 +51,6 @@ class Elastic(VerifyCertsCommon):
         sort_field = ""
         if 'sort_by_date' in self.query_mappings:
             sort_field = self.query_mappings['sort_by_date']
-        else:
-            self.error(f"sort_by_date mapping is missing '='")
         # end if
 
         elastic_query = ""
