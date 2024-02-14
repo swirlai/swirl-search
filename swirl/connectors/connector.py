@@ -46,6 +46,7 @@ class Connector:
         self.search_id = search_id
         self.update = update
         self.status = 'INIT'
+        self.auth = True
         self.provider = None
         self.search = None
         self.query_string_to_provider = ""
@@ -138,20 +139,20 @@ class Connector:
                 self.construct_query()
                 v = self.validate_query(session)
                 if v:
+                    if not self.auth:
+                        self.status = 'NO_AUTH'
+                        return False
                     self.execute_search(session)
-                    logger.debug(f"{self}: found: {self.found}, len_response: {len(self.response)}, len_results: {len(self.results)}")
                     if self.status not in ['FEDERATING', 'READY']:
                         self.error(f"execute_search() failed, status {self.status}")
                         return False
                     if self.status in ['FEDERATING', 'READY']:
                         self.normalize_response()
-                        logger.debug(f"{self}: found: {self.found}, len_response: {len(self.response)}, results: {self.results}, len_results: {len(self.results)}")
                     if self.status not in ['FEDERATING', 'READY']:
                         self.error(f"normalize_response() failed, status {self.status}")
                         return False
                     else:
                         self.process_results()
-                        logger.debug(f"{self}: found: {self.found}, len_response: {len(self.response)}, results: {self.results}, len_results: {len(self.results)}")
                     if self.status == 'READY':
                         res = self.save_results()
                         if res:
@@ -162,6 +163,7 @@ class Connector:
                         self.error(f"process_results() failed, status {self.status}")
                         return False
                 else:
+                    self.status = 'ERR_VALIDATE_QUERY'
                     self.error(f'validate_query() failed: {v}')
                     return False
                 # end if
