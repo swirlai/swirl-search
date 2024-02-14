@@ -39,7 +39,7 @@ jobs:
     - name: Run Regression Tests
       working-directory: ./path/to/directory
       run: |
-        pip install -r --no-cache-dir requirements.txt
+        pip install -r requirements.txt --no-cache-dir
         behave --no-capture --verbose
 
     - name: Upload log files
