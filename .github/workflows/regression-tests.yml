@@ -37,7 +37,7 @@ jobs:
         token: ${{ secrets.QA_TEST_REPO_TOKEN }} # Make sure this token has the correct permissions
         path: swirl-search-qa
     - name: Run Regression Tests
-      working-directory: ./path/to/directory
+      working-directory: ./swirl-search-qa
       run: |
         pip install -r requirements.txt --no-cache-dir
         behave --no-capture --verbose
