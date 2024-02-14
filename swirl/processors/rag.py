@@ -260,8 +260,6 @@ class RAGPostResultProcessor(PostResultProcessor):
         return result
 
     def process(self, should_return=True):
-        # to do: remove foo:etc
-        logger.warning("Foo1")
         self.client = None
         try :
             logger.debug('RAG allocating client')
