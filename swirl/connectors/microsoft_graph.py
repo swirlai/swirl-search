@@ -35,11 +35,8 @@ class M365(RequestsGet):
         self.authenticator = Microsoft()
 
     def validate_query(self, session):
-        is_valid_token = self.authenticator.is_authenticated(session)
-        if is_valid_token:
-            return super().validate_query(session)
-        logger.error("M365 access token is not valid or missing")
-        return False
+        self.auth = self.authenticator.is_authenticated(session)
+        return super().validate_query(session)
 
     def execute_search(self, session):
         self.provider.credentials = f"bearer={session['microsoft_access_token']}"
@@ -58,11 +55,8 @@ class M365Post(RequestsPost):
         self.authenticator = Microsoft()
 
     def validate_query(self, session):
-        is_valid_token = self.authenticator.is_authenticated(session)
-        if is_valid_token:
-            return super().validate_query(session)
-        logger.error("M365 access token is not valid or missing")
-        return False
+        self.auth = self.authenticator.is_authenticated(session)
+        return super().validate_query(session)
 
     def execute_search(self, session):
         self.provider.credentials = f"bearer={session['microsoft_access_token']}"
