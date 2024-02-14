@@ -1,5 +1,8 @@
 FROM python:3.12.1-slim-bookworm
 
+# Upgrade pip to the specified version or higher
+RUN pip install --no-cache-dir --upgrade 'pip>=23.3'
+
 # try to upgrade to a more recent version of openssl
 RUN apt-get update
 RUN apt-get -y upgrade openssl
@@ -13,6 +16,7 @@ RUN apt-get install apt-file -y
 RUN apt-file update
 RUN apt-get install -y python3-dev build-essential
 RUN apt-get install -y procps
+RUN apt-get install -y libpq-dev
 
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir --upgrade grpcio
