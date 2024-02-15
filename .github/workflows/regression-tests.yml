@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout the code
+    - name: Checkout the Swirl Code
       uses: actions/checkout@v4
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -21,7 +21,7 @@ jobs:
       run: ./install.sh
     - name: Update apt
       run: sudo apt -o Acquire::Retries=3 update
-    - name: Upgrade Ubuntu to latest patches
+    - name: Upgrade Ubuntu to Latest Patches
       run: sudo apt upgrade -y
     - name: Install redis-server
       run: sudo apt install -y redis-server
@@ -34,13 +34,14 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: 'swirlai/swirl-search-qa'
-        token: ${{ secrets.QA_TEST_REPO_TOKEN }} # Make sure this token has the correct permissions
+        token: ${{ secrets.QA_TEST_REPO_TOKEN }} # Classic style token with only the repo-level permissions
         path: swirl-search-qa
+    - name: Install the Testing Requirements
+      working-directory: ./swirl-search-qa
+      run: pip install -r requirements.txt --no-cache-dir
     - name: Run Regression Tests
       working-directory: ./swirl-search-qa
-      run: |
-        pip install -r requirements.txt --no-cache-dir
-        behave --no-capture --verbose
+      run: behave --no-capture --verbose
 
     - name: Upload log files
       if: always()
