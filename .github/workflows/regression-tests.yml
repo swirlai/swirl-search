@@ -34,6 +34,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: 'swirlai/swirl-search-qa'
+        ref: 'regression-workflows'
         token: ${{ secrets.QA_TEST_REPO_TOKEN }} # Classic style token with only the repo-level permissions
         path: swirl-search-qa
     - name: Install the Testing Requirements
