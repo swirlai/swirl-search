@@ -402,6 +402,13 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
         field_scan_list = filter_elements_case_insensitive(self.results[0]['payload'].keys(),self.results[0].keys())
 
         ###########################
+
+        handle_dataset = False
+        if 'DATASET' in self.provider.result_mappings:
+            dataset = []
+            handle_dataset = True
+
+        ###########################
         # auto map
 
         automapped_results = []
@@ -441,8 +448,10 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
             # remove automapped_fields from item['payload']
             # to do: this might have to be adjusted depending on what works above
             if 'payload' in item:
-                for field in automapped_fields:
-                    del item['payload'][field]
+                if not handle_dataset:
+                    # if handling dataset, leave in payload
+                    for field in automapped_fields:
+                        del item['payload'][field]
 
             ###########################
             # filter the payload, remove objects etc
@@ -457,9 +466,31 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
             if clean_payload:
                 item['payload'] = clean_payload
 
-            # save finished item
-            automapped_results.append(item)
+            if handle_dataset:
+                if len(automapped_results) == 0:
+                    # first item, store it
+                    item_1 = item
+                    # fix the title
+                    item_1['title'] = self.query_string
+                    k_list = []
+                    for k in clean_payload:
+                        k_list.append(k)
+                    dataset.append(k_list)
+                v_list = []
+                for k in clean_payload:
+                    v_list.append(clean_payload[k])
+                dataset.append(v_list)
+            else:
+                # save finished item normally
+                automapped_results.append(item)
 
+        if handle_dataset:
+            if item_1 and dataset:
+                if 'payload' in item_1:
+                    item_1['payload']['dataset'] = dataset
+                self.processed_results = [item_1]
+                return 1
+            
         self.processed_results = automapped_results
         self.modified = len(self.processed_results)
         return self.modified
