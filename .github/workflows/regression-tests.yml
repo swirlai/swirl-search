@@ -35,7 +35,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Run Regression Tests
-      run: docker run --net=host swirlai/swirl-search-qa:automated-tests sh -c "behave --no-capture --verbose"
+      run: docker run --net=host -w /app swirlai/swirl-search-qa:automated-tests sh -c "behave --no-capture --verbose"
     - name: Upload log files
       if: always()
       uses: actions/upload-artifact@v4
