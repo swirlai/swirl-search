@@ -455,7 +455,7 @@ Also, the `DateFindingResultProcessor` was added to the default Google PSE Searc
 
 Swirl Release 3.2.0 includes two new Result Processors:
 * The `RequireQueryStringInTitleResultProcessor` drops result items that don't include the user's query in the title. It is recommended for use with noisy services like LinkedIn via Google PSE and must be installed after the `MappingResultProcessor`.
-* The `AutomaticPayloadMapperResultProcessor` profiles response data to find good strings for Swirl's `title`, `body`, and `date_published` fields. It is intended for SearchProviders that would otherwise have few (or no) good result_mappings options. It should be place after the `MappingResultProcessor`, and the `result_mappings` field should be blank.
+* The `AutomaticPayloadMapperResultProcessor` profiles response data to find good strings for Swirl's `title`, `body`, and `date_published` fields. It is intended for SearchProviders that would otherwise have few (or no) good result_mappings options. It should be place after the `MappingResultProcessor`, and the `result_mappings` field should be blank. Specify `DATASET` in the `result_mappings` to have Swirl organize a columnar response into a single result, with the columns in the payload.
 
 ## Authentication & Credentials
 
