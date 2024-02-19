@@ -38,3 +38,5 @@ psycopg2
 transformers
 torch
 pinecone-client
+pandas
+
