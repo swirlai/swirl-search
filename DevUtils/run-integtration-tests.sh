@@ -34,13 +34,12 @@ if [ ! -e ".swirl" ]; then
 
 fi
 
-docker pull swirlai/swirl-search:latest-integrated-api
+docker pull swirlai/swirl-testing:latest-integrated-api
 
-docker run -e SWIRL_TEST_HOST=host.docker.internal --net=host -t swirlai/swirl-search:latest-integrated-api sh -c "behave --tags=integrated_api"
+docker run -e SWIRL_TEST_HOST=host.docker.internal --net=host -t swirlai/swirl-testing:latest-integrated-api sh -c "behave --tags=integrated_api"
 
 echo $PROG "integration tests succeeded"
 if [ -e ".swirl" ]; then
         echo $PROG "stopping Swirl"
     python swirl.py stop
 fi
-
