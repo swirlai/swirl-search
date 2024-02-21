@@ -34,7 +34,7 @@ drf-yasg
 pymongo
 snowflake-connector-python
 oracledb
-psycopg2
+psycopg2-binary
 transformers
 torch
 pinecone-client
