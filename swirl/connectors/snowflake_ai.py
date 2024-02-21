@@ -46,11 +46,11 @@ class SnowflakeAI(Connector):
             if ':' in self.provider.url:
                 connlist = self.provider.url.split(':')
                 if len(connlist) == 5:
-                    account = credlist[0]
-                    region = credlist[1]
-                    role = credlist[2]
-                    warehouse = credlist[3]
-                    schema = credlist[4]
+                    account = connlist[0]
+                    region = connlist[1]
+                    role = connlist[2]
+                    warehouse = connlist[3]
+                    schema = connlist[4]
                 else:
                     self.warning("Invalid connection parameters, should be: account:region:role:warehouse:schema")
                     self.status = "ERR_INVALID_CONN"
