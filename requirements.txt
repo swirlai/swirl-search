@@ -39,4 +39,3 @@ transformers
 torch
 pinecone-client
 pandas
-
