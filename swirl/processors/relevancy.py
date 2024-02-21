@@ -59,7 +59,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
 
         parsed_query = parse_query(self.query_string, self.result_processor_json_feedback)
         if len(parsed_query.query_stemmed_target_list) != len(parsed_query.query_target_list):
-            self.error(f"parsed query [un]stemmed mismatch : {parsed_query.query_stemmed_target_list} != {parsed_query.query_target_list}")
+            pass # self.info(f"parsed query [un]stemmed mismatch : {parsed_query.query_stemmed_target_list} != {parsed_query.query_target_list}")
 
         list_query_lens.append(len(parsed_query.query_list))
         for item in self.results:
@@ -138,7 +138,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                     result_field_stemmed = stem_string(result_field)
                     result_field_stemmed_list = result_field_stemmed.strip().split()
                     if len(result_field_list) != len(result_field_stemmed_list):
-                        self.error(f"result field [un]stemmed mismatch : {result_field_list} != {result_field_stemmed_list}")
+                        pass # (f"result field [un]stemmed mismatch : {result_field_list} != {result_field_stemmed_list}")
                     # NOT test
                     for t in parsed_query.not_list:
                         if t.lower() in (result_field.lower() for result_field in result_field_list):

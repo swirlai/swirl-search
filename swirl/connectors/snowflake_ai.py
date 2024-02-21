@@ -25,6 +25,7 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 from swirl.connectors.connector import Connector
+from swirl.processors.utils import clean_string_keep_punct
 
 ########################################
 ########################################
@@ -74,7 +75,7 @@ class SnowflakeAI(Connector):
             self.warning("No credentials!")
             self.status = "ERR_NO_CRED"
             return
-
+        
         logger.info(f"{self}: connecting...")
         try:
             # Create a new connection
@@ -152,6 +153,8 @@ class SnowflakeAI(Connector):
         body = ""
         url = ""
 
+        logger.warning(f"SnowflakeAI: Response: {self.response}")
+
         # extract URL at end
         if 'http' in self.response:
             url = self.response[self.response.find('http'):self.response.find('"', self.response.find('http')+1)]
@@ -167,6 +170,10 @@ class SnowflakeAI(Connector):
         if body:
             body = ' '.join(filter(None, body.split(' ')))
             body = body.replace('\n', ' ')
+            # remove anything unexpected
+            body = clean_string_keep_punct(body)
+
+        logger.warning(f"SnowflakeAI: Body: {body}")
 
         self.results = [
                 {
