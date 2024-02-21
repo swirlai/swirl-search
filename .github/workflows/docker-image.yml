@@ -34,8 +34,6 @@ jobs:
         docker system prune -af
         docker volume prune -f
         docker builder prune -f
-    - name: Pull Preview UI Image
-      run: docker pull swirlai/spyglass:preview
     - name: Builder Bootstrap
       run: docker buildx create --name devBuilder --use --bootstrap
     - name: Build the Docker Image
