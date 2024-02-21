@@ -46,7 +46,7 @@ COPY --from=swirlai/spyglass:preview /usr/src/spyglass/ui/config-swirl-demo.db.j
 
 ADD ./swirl_server /app/swirl_server
 ADD ./SearchProviders /app/SearchProviders
-ADD ./scripts /app/scripts
+ADD ./DevUtils /app/DevUtils
 ADD ./Data /app/Data
 ADD ./swirl.py /app/swirl.py
 ADD ./swirl_load.py /app/swirl_load.py
