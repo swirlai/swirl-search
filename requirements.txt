@@ -28,12 +28,12 @@ confection==0.1.4
 constantly==23.10.4
 coreapi==2.3.3
 coreschema==0.0.4
-cryptography==42.0.2
+cryptography==41.0.7
 cssselect==1.2.0
 cymem==2.0.8
 daphne==4.0.0
 distro==1.9.0
-Django==5.0.2
+Django==5.0.1
 django-celery-beat==2.1.0
 django-environ==0.11.2
 django-rest-swagger==2.2.0
