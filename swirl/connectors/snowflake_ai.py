@@ -15,6 +15,7 @@ import snowflake.connector
 import pandas as pd
 
 import django
+import json
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
@@ -105,7 +106,7 @@ class SnowflakeAI(Connector):
             logger.info(f"{self}: converting results to frame...")
             dataFrame=pd.DataFrame(data)
             logger.info(f"{self}: converting results to json...")
-            json_data = dataFrame.to_json()
+            json_data = json.loads(dataFrame.to_json())
         except ProgrammingError as err:
             self.error(f"{err} querying {self.type}")
             self.status = 'ERR'
