@@ -16,20 +16,20 @@ nav_order: 3
 
 ## Intended Audience
 
-This guide is intended for developers, data scientists, program managers, or anyone who wants to use Swirl, including searching and customizing SearchProviders. 
+This guide is intended for developers, data scientists, program managers, or anyone who wants to use Swirl, including searching and customizing SearchProviders.
 
 For background information on Swirl, please review the [Swirl Overview](index.md).
 
 # Terminology
 
-| Word | Explanation | 
+| Word | Explanation |
 | ---------- | ---------- |
 | SearchProvider | An object defining a searchable source. It includes metadata identifying the type of connector used to search the source and more. |
 | Search | 	An object defining a query that a user or system desires to run. It includes the `query_string` with the actual text and metadata. Most of the metadata is optional.|
 | Query | Search engines distinguish between the act of searching and the terms used for searching, which are usually referred to as a query. Swirl follows this convention whenever possible but may refer to a search as a query at times. |
 | Subscribe | 	An important property of Search objects. When set to `true`, Swirl periodically reruns the search, specifying a date sort to get newer data, and removing duplicates from results.|
 | Connector | A Swirl module that can connect to, and query, a particular type of data source. Connectors are a wrapper around some existing Python package such as `request.get` or `elasticsearch`.|
-| Relevancy Ranking | An estimation of the relative value of a given search engine result to the user's query, as compared to all others - to put it simply. For more information: [https://en.wikipedia.org/wiki/Relevance_(information_retrieval)](https://en.wikipedia.org/wiki/Relevance_(information_retrieval)) | 
+| Relevancy Ranking | An estimation of the relative value of a given search engine result to the user's query, as compared to all others - to put it simply. For more information: [https://en.wikipedia.org/wiki/Relevance_(information_retrieval)](https://en.wikipedia.org/wiki/Relevance_(information_retrieval)) |
 
 # Running a Search
 
@@ -49,7 +49,7 @@ If the search page appears, click `Log Out` at the top, right. The Swirl login p
 
 ![Swirl Results Source Facet](images/swirl_results_source-galaxy_dark.png)
 
-Swirl returns the best results from all available sources by default. To filter results by one or more sources, check one or more of the `Source` boxes as shown above. Results are instantly filtered to just those sources. 
+Swirl returns the best results from all available sources by default. To filter results by one or more sources, check one or more of the `Source` boxes as shown above. Results are instantly filtered to just those sources.
 
 Click `Clear All` to return to viewing all results.
 
@@ -79,9 +79,9 @@ Click the Swirl logo (top left of the page) at any time to reset the Galaxy sear
 
 The following table summarizes the current Swirl search syntax options:
 
-| Syntax | Handling | Notes | 
+| Syntax | Handling | Notes |
 | ---------- | ---------- | ---------- |
-| AND, OR       | Passed down to all SearchProviders | Swirl does not verify compliance | 
+| AND, OR       | Passed down to all SearchProviders | Swirl does not verify compliance |
 | NOT, -term    | Passed down to configured SearchProviders and rewritten if necessary; removed from the query for providers that don't support `NOT` or `-term` | Swirl verifies compliance; and also down-weights and flags responses that included NOT-ed terms |
 | tag:term | Passes `term` to the SearchProviders configured with it in their `tags` field. The untagged portion of the query is discarded. If `tag:` begins the query, then only providers with that Tag are searched. | Example: `electric vehicle company:tesla`<br/>Only the term `tesla` will go to SearchProviders with the `company` Tag, so long as they are active.<br/>Example: `company:facebook`<br/>The query `facebook` will only go to SearchProviders with the `company` Tag. |
 
@@ -212,17 +212,16 @@ Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up 
 [SearchProvider Example JSON](https://github.com/swirlai/swirl-search/tree/main/SearchProviders)
 
 | SearchProvider | Description | Notes |
-| ---------- | ---------- | ---------- | 
+| ---------- | ---------- | ---------- |
 | arxiv.json | Searches the [arXiv.org](https://arxiv.org/) repository of scientific papers | No authorization required |
 | asana.json | Searches Tasks in [Asana](https://asana.com/) | Requires an Asana personal access token |
 | atlassian.json | Searches Atlassian [Confluence Cloud](https://www.atlassian.com/software/confluence), [Jira Cloud](https://www.atlassian.com/software/jira), and [Trello](https://trello.com/) Cards. | Requires a bearer token and/or Trello API key; Confluence searches the [CQL `text~` content](https://developer.atlassian.com/server/confluence/performing-text-searches-using-cql/) and Jira searches the [JQL `text~` content](https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-searching-in-jira-cloud/#Advancedsearching-textPerformingtextsearches) |
 | blockchain-bitcoin.json | Searches [Blockchain.com](https://www.blockchain.com/) for specific Bitcoin Addresses (wallets) and Transactions IDs (hashes) | Requires a Blockchain.com API key |
 | chatgpt.json | ChatGPT AI chatbot | Requires an OpenAI API key |
-| company_snowflake.json | Searches the [Snowflake](https://www.snowflake.com/en/) `FreeCompanyResearch` dataset | Requires a Snowflake username and password |
 | crunchbase.json | Searches organizations via the [Crunchbase](https://www.crunchbase.com/) basic API | Requires a Crunchbase.com API key |
 | document_db.json | SQLite3 document database | [documents_db.csv](https://github.com/swirlai/swirl-search/tree/main/Data/documents_db.csv) |
 | elastic_cloud.json | elasticsearch, cloud version | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) Requires cloud_id, credentials |
-| elasticsearch.json | elasticsearch, local install | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) Requires host, port, credentials | 
+| elasticsearch.json | elasticsearch, local install | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) Requires host, port, credentials |
 | europe_pmc.json | Searches the [EuropePMC.org](https://europepmc.org/) repository of life-sciences literature | No authorization required |
 | funding_db_bigquery.json | BigQuery funding database  | [Funding Dataset](Developer-Reference.md#funding-data-set) |
 | funding_db_postgres.json  | PostgreSQL funding database | [Funding Dataset](Developer-Reference.md#funding-data-set) |
@@ -231,17 +230,17 @@ Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up 
 | google_news.json | Searches the [Google News](https://news.google.com/) feed | No authorization required |
 | google_pse.json | Five Google Programmable Search Engines (PSE) | Includes shared Swirl credentials; may return a 429 error if overused |
 | hacker_news.json | Queries a [searchable version](https://hn.algolia.com/) of the Hacker News feeds | No authorization required |
-| http_get_with_auth.json | Generic HTTP GET query with basic authentication | Requires url, credentials | 
+| http_get_with_auth.json | Generic HTTP GET query with basic authentication | Requires url, credentials |
 | http_post_with_auth.json | Generic HTTP POST query with basic authentication | Requires url, credentials |
-| hubspot.json | Searches the HubSpot CRM for Companies, Contacts, and Deals | Requires a bearer token | 
+| hubspot.json | Searches the HubSpot CRM for Companies, Contacts, and Deals | Requires a bearer token |
 | internet_archive.json | Searches the [Internet Archive Library](https://archive.org/) of items | No authorization required |
-| littlesis.json | Searches the free [LittleSis.org](https://littlesis.org/) database of "who-knows-who at the heights of business and government" | No authorization required | 
+| littlesis.json | Searches the free [LittleSis.org](https://littlesis.org/) database of "who-knows-who at the heights of business and government" | No authorization required |
 | microsoft.json | Searches M365 Outlook Messages, Calendar Events, OneDrive Files, SharePoint Sites, and Teams Chat | See the [M365 Guide](M365-Guide.md) for details |
 | miro.json | [Miro.com](https://miro.com) drawing service  | Requires a bearer token |
 | movies_mongodb.json | Searches the [Mongodb Atlas](https://www.mongodb.com/) `sample_mflix` collection, `movies` sample table | Requires database username and password, plus Atlas cluster URL |
-| newsdata_io.json | Newsdata.io internet news source | Requires username and password<br/>archive provider also included | 
+| newsdata_io.json | Newsdata.io internet news source | Requires username and password<br/>archive provider also included |
 | nlresearch.json | NLResearch.com is a premium and internet content search engine from [Northern Light](https://northernlight.com/) | Requires username and password |
-| open_sanctions.json | Searches the [OpenSanctions.org](https://www.opensanctions.org/) database of sanctions targets and persons of interest | Requires and OpenSanctions API key | 
+| open_sanctions.json | Searches the [OpenSanctions.org](https://www.opensanctions.org/) database of sanctions targets and persons of interest | Requires and OpenSanctions API key |
 | opensearch.json  | OpenSearch 2.x | [Developer Guide](Developer-Reference.md#elastic--opensearch) |
 | oracle.json | Tested against [Oracle](https://www.oracle.com/) 23c Free (and presumably supporting earlier versions) | Requires Oracle username and password |
 | preloaded.json | All preloaded SearchProviders | Defaults in the Swirl distribution |
@@ -277,7 +276,7 @@ Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up 
     * A new Google PSE SearchProvider that targets the [new Swirl documentation website](https://docs.swirl.today/) is included and enabled by default.
     * The EuropePMC SearchProvider is preloaded, set to active status, and configured to participate in Retrieval Augmented Generation (RAG) by default.
 
-* As of Release 3.1.0, Swirl includes SearchProviders for [Asana](https://asana.com/) Tasks, [Atlassian Trello](https://trello.com/) Cards, [Internet Archive Library](https://archive.org/) items, [Mongodb Atlas](https://www.mongodb.com/), [Oracle](https://www.oracle.com/) (WIP), and [Snowflake](https://www.snowflake.com/en/).
+* As of Release 3.1.0, Swirl includes SearchProviders for [Asana](https://asana.com/) Tasks, [Atlassian Trello](https://trello.com/) Cards, [Internet Archive Library](https://archive.org/) items, [Mongodb Atlas](https://www.mongodb.com/), [Oracle](https://www.oracle.com/) (WIP).
 
 * As of Release 3.2.0, Swirl includes SearchProviders for [LittleSis.org](https://littlesis.org/) and [OpenSanctions.org](https://www.opensanctions.org/) entity searching.
 
@@ -308,7 +307,7 @@ If you have the raw JSON of SearchProvider, install it by copying/pasting into t
 3. Paste one SearchProvider's JSON at a time into the form and press the `POST` button
 4. Swirl will respond with the finished SearchProvider
 
-As of Swirl 3.2.0, you can copy/paste lists of SearchProviders into the endpoint, and Swirl will load them all. 
+As of Swirl 3.2.0, you can copy/paste lists of SearchProviders into the endpoint, and Swirl will load them all.
 
 ## Bulk Loading
 
@@ -327,7 +326,7 @@ python swirl_load.py SearchProviders/provider-name.json -u admin -p your-admin-p
 
 ## Editing
 
-Edit any SearchProvider by adding the `id` to the end of the `/swirl/searchproviders` URL. 
+Edit any SearchProvider by adding the `id` to the end of the `/swirl/searchproviders` URL.
 
 For example: `http://localhost:8000/swirl/searchproviders/1/`
 
@@ -336,7 +335,7 @@ For example: `http://localhost:8000/swirl/searchproviders/1/`
 From here, you can use the form at the bottom of the page to:
 
 * DELETE this SearchProvider, forever
-* Edit the configuration of the SearchProvider and `PUT` the changes 
+* Edit the configuration of the SearchProvider and `PUT` the changes
 
 ## Query Templating
 
@@ -346,7 +345,7 @@ Most SearchProviders require a `query_template`. This is usually bound to `query
     "query_template": "{'$text': {'$search': '{query_string}'}}",
 ```
 
-This format is not actually JSON, but rather a string. The single quotes are required, so that the JSON can use double quotes. 
+This format is not actually JSON, but rather a string. The single quotes are required, so that the JSON can use double quotes.
 
 As of Swirl 3.2.0, MongoDB all use the new `query_template_json` field, which stores the template as JSON. For example, here is the new MongoDB `query_template_json`:
 
@@ -372,18 +371,18 @@ The suggestion is that SearchProviders who are good for most any search be left 
 
 ## Query Mappings
 
-SearchProvider `query_mappings` are key/value pairs that define how to query a given SearchProvider. 
+SearchProvider `query_mappings` are key/value pairs that define how to query a given SearchProvider.
 
 They include field mappings and configurations that Swirl's processors (like the `AdaptiveQueryProcessor`) use to align the query with each SearchProvider's capabilities.
 
 The following table summarizes the current `query_mappings` options:
 
-| Mapping Format | Meaning | Example | 
+| Mapping Format | Meaning | Example |
 | ---------- | ---------- | ---------- |
 | key = value | Replace `key` with `value` if the `key` is enclosed in braces in the `provider.query_template`. |  ```"query_template": "{url}?cx={cx}&key={key}&q={query_string}","query_mappings": "cx=google-pse-key"``` |
-| DATE_SORT=url-snippet | This identifies the string to insert into the URL for this SearchProvider if date sorting is specified in the search object. | `"query_mappings": "DATE_SORT=sort=date"` | 
-| RELEVANCY_SORT=url-snippet | This identifies the string to insert into the URL for this SearchProvider if relevancy sorting is specified in the search object. | `"query_mappings": "RELEANCY_SORT=sort=relevancy"` | 
-| PAGE=url-snippet | This identifies the string to insert into the URL for this SearchProvider for paging support. The specification should include either Swirl variable `RESULT_INDEX` or `RESULT_PAGE` which will be the result number (e.g. 11) or page number (e.g. 2) | `"query_mappings": "PAGE=start=RESULT_INDEX"` | 
+| DATE_SORT=url-snippet | This identifies the string to insert into the URL for this SearchProvider if date sorting is specified in the search object. | `"query_mappings": "DATE_SORT=sort=date"` |
+| RELEVANCY_SORT=url-snippet | This identifies the string to insert into the URL for this SearchProvider if relevancy sorting is specified in the search object. | `"query_mappings": "RELEANCY_SORT=sort=relevancy"` |
+| PAGE=url-snippet | This identifies the string to insert into the URL for this SearchProvider for paging support. The specification should include either Swirl variable `RESULT_INDEX` or `RESULT_PAGE` which will be the result number (e.g. 11) or page number (e.g. 2) | `"query_mappings": "PAGE=start=RESULT_INDEX"` |
 | NOT=True | If present, this SearchProvider supports simple, single NOT operators | elon musk NOT twitter |
 | NOT_CHAR=- | If present, this SearchProvider supports `-term` NOT operators | elon musk -twitter |
 
@@ -400,7 +399,7 @@ For `query_mappings`, keys that appear in the `query_template` wrapped in braces
     "query_mappings": "cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX",
 ```
 
-At federation time, this becomes the following URL: 
+At federation time, this becomes the following URL:
 
 ``` shell
     https://www.googleapis.com/customsearch/v1?cx=0c38029ddd002c006&q=some_query_string
@@ -463,7 +462,7 @@ The `credentials` property stores any required authentication information for th
 
 ### key=value format
 
-This credential is bound to the URL that is used to execute searches. 
+This credential is bound to the URL that is used to execute searches.
 
 For example, from a Google PSE:
 
@@ -492,7 +491,7 @@ X-Api-Keys are supported by the `RequestsGet` and `RequestsPost` connectors. The
 
 ### HTTPBasicAuth, HTTPDigestAuth, HTTPProxyAuth
 
-These methods are supported by the `RequestsGet`, `ElasticSearch` and `OpenSearch` connectors. 
+These methods are supported by the `RequestsGet`, `ElasticSearch` and `OpenSearch` connectors.
 
 For example, from the [Solr with Auth SearchProvider](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/solr_with_auth.json):
 
@@ -516,7 +515,7 @@ Here is the `response_mappings` from a Google PSE:
 
 The following table summarizes the `response_mappings` options:
 
-| Mapping | Source_JSONPath | Required? | Example | 
+| Mapping | Source_JSONPath | Required? | Example |
 | ---------- | ---------- | ---------- | ---------- |
 | FOUND | Number of results for a given query, for this SearchProvider, e.g. 1,413<br/>Same as `RETRIEVED` if not specified | No | `searchInformation.totalResults=FOUND` |
 | RETRIEVED | Number of results returned for a given query, for this SearchProvider, e.g. 10<br/>Length of the `RESULTS` list (see below) if not specified | No | `queries.request[0].count=RETRIEVED` |
@@ -568,7 +567,7 @@ Swirl will automatically convert this format to a JSON array of dicts, with the 
 
 ### Multiple Mappings
 
-As of version 1.6, Swirl can map multiple SearchProvider fields to a single Swirl field, aggregating multiple responses in the PAYLOAD field as necessary. 
+As of version 1.6, Swirl can map multiple SearchProvider fields to a single Swirl field, aggregating multiple responses in the PAYLOAD field as necessary.
 
 For example:
 
@@ -602,8 +601,8 @@ If only one field, `content` or `description`, are populated for a response, the
 
 The following table explains the `result_mappings` options:
 
-| Mapping Format | Meaning | Example | 
-| ---------- | ---------- | ---------- | 
+| Mapping Format | Meaning | Example |
+| ---------- | ---------- | ---------- |
 | swirl_key = source_key | This maps a key from the source provider's result list to Swirl's result list. The `source_key` may be a JSON path. | `body=_source.email` |
 | swirl_key = source_key1\|source_key2\|source_keyN | This maps multiple keys from the source provider's result list to Swirl's result list; as [noted above](#multiple-mappings) the first populated field is mapped and the rest are copied to the PAYLOAD | `body=content\|description,...` |
 | swirl_key='template {variable} etc' | This allows any number of source provider result fields to be turned into a string that is then copied to a Swirl field (like `body`) or the PAYLOAD. Commas (,) are not supported in the string at this time. | `'{x}: {y}'=title` |
@@ -612,7 +611,7 @@ The following table explains the `result_mappings` options:
 | sw_btcconvert | An optional directive which will convert the provided Satoshi value to Bitcoin; it can be used anyplace in the template such as `result_mappings` | `sw_btcconvert(<fee>)` |
 | NO_PAYLOAD | By default, Swirl copies all result keys from the SearchProvider to the PAYLOAD. If `NO_PAYLOAD` is specified, Swirl copies only the explicitly mapped fields.| `NO_PAYLOAD` |
 | FILE_SYSTEM | If specified, Swirl will assume that this SearchProvider is a file system and weight matches against the `body` higher. | `FILE_SYSTEM` |
-| LC_URL | If specified, Swirl will convert the `url` field to lower case. | `LC_URL` | 
+| LC_URL | If specified, Swirl will convert the `url` field to lower case. | `LC_URL` |
 | BLOCK | As of Release 3.1.0, this feature is used exclusively by Swirl's RAG processing; that output appears in this `info` block of the Result object. | `BLOCK=ai_summary` |
 
 #### Date Published Display
@@ -636,7 +635,7 @@ The `json_result` schema for each result in the Result list is defined by the `c
 
 [Result mixers](Developer-Reference.md#mixers-1) further manipulate and re-organize the data from multiple results.
 
-The Result schema can be seen in [`swirl/models.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) 
+The Result schema can be seen in [`swirl/models.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py)
 
 ## PAYLOAD Field
 
