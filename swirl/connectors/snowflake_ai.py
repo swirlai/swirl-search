@@ -8,6 +8,8 @@ from os import environ
 
 from datetime import datetime
 
+import json
+
 import snowflake.connector
 from snowflake.connector import ProgrammingError
 
@@ -105,11 +107,10 @@ class SnowflakeAI(Connector):
             self.warning(f"Converting results to frame...")
             dataFrame=pd.DataFrame(data)
             self.warning(f"Converting results to json...")
-            json_data = dataFrame.to_json()
+            json_data = json.loads(dataFrame.to_json())
         except ProgrammingError as err:
             self.error(f"{err} querying {self.type}")
             self.status = 'ERR'
-            # to do: close?
             return
              
         if not json_data:
