@@ -75,8 +75,8 @@ class SnowflakeAI(Connector):
             self.warning("No credentials!")
             self.status = "ERR_NO_CRED"
             return
-        
-        logger.info(f"{self}: connecting...")
+
+        self.warning(f"connecting...")
         try:
             # Create a new connection
             ctx=snowflake.connector.connect(
@@ -89,7 +89,7 @@ class SnowflakeAI(Connector):
                 schema=schema,
             )
 
-            logger.info(f"{self}: getting cursor...")
+            self.warning(f"Getting cursor...")
             cs=ctx.cursor()
             Question = self.query_string_to_provider
             
@@ -97,14 +97,14 @@ class SnowflakeAI(Connector):
             select (NWA_REPORTING.ASK_QUESTION_MISHRC04_1(5,'''+"'"+Question+"'"+'''));
             '''
             
-            logger.info(f"{self}: querying...")
+            self.warning(f"Querying...")
             cs.execute(sql_query)
             
-            logger.info(f"{self}: fetching results...")
+            self.warning(f"Detching results...")
             data=cs.fetch_pandas_all()
-            logger.info(f"{self}: converting results to frame...")
+            self.warning(f"Converting results to frame...")
             dataFrame=pd.DataFrame(data)
-            logger.info(f"{self}: converting results to json...")
+            self.warning(f"Converting results to json...")
             json_data = dataFrame.to_json()
         except ProgrammingError as err:
             self.error(f"{err} querying {self.type}")
@@ -118,9 +118,12 @@ class SnowflakeAI(Connector):
             return
 
         response = None
+
+        self.warning("Extracting response key...")
         json_key = list(json_data.keys())[0]
         if json_key in json_data:
             if '0' in json_data[json_key]:
+                self.warning("Extracting response body...")
                 response = json_data[json_key]['0']
             else:
                 self.error(f"Unexpected response from Snowflake AI: {json_data[json_key]}")
@@ -148,24 +151,23 @@ class SnowflakeAI(Connector):
     def normalize_response(self):
 
         logger.debug(f"{self}: normalize_response()")
-        logger.info(f"{self}: normalizing...")
 
         body = ""
         url = ""
 
-        logger.warning(f"SnowflakeAI: Response: {self.response}")
+        self.warning(f"SnowflakeAI: Response: {self.response}")
+
+        body = self.response
 
         # extract URL at end
         if 'http' in self.response:
+            self.warning("SnowflakeAI: processing More Information")
             url = self.response[self.response.find('http'):self.response.find('"', self.response.find('http')+1)]
+            body = body[:body.find("More information :")]
         else:
             self.warning("No link detected in response")
 
-        # remove the URL and everything below \n\n
-        if '\n\n' in self.response:
-            # trim
-            body = self.response[:self.response.find('\n\n')]
-
+        self.warning("Cleaning response...")
         # remove spaces and \n's
         if body:
             body = ' '.join(filter(None, body.split(' ')))
@@ -173,7 +175,7 @@ class SnowflakeAI(Connector):
             # remove anything unexpected
             body = clean_string_keep_punct(body)
 
-        logger.warning(f"SnowflakeAI: Body: {body}")
+        self.warning(f"SnowflakeAI: Body: {body}")
 
         self.results = [
                 {
@@ -184,6 +186,8 @@ class SnowflakeAI(Connector):
                     'date_published': str(datetime.now())
                 }
         ]
+
+        self.warning("Results saved!")
 
         return
 
