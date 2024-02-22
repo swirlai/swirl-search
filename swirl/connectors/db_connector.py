@@ -120,7 +120,7 @@ class DBConnector(Connector):
             return False
 
         return True
-    
+
     ########################################
 
     def normalize_response(self):
@@ -136,7 +136,7 @@ class DBConnector(Connector):
         if not self.response:
             # assume the connector took care of it
             return
-        
+
         rows = self.response
 
         trimmed_rows = []
@@ -146,7 +146,7 @@ class DBConnector(Connector):
             n_field = 0
             if self.column_names:
                 for field in column_names:
-                    # to handle None columns e.g. Snowflake
+                    # to handle None columns
                     if row[n_field]:
                         dict_row[field] = row[n_field]
                     else:
@@ -168,4 +168,3 @@ class DBConnector(Connector):
         self.retrieved = retrieved
         self.results = trimmed_rows
         return
-
