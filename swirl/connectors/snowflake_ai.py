@@ -17,6 +17,7 @@ import snowflake.connector
 import pandas as pd
 
 import django
+import json
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
@@ -94,25 +95,25 @@ class SnowflakeAI(Connector):
             self.warning(f"Getting cursor...")
             cs=ctx.cursor()
             Question = self.query_string_to_provider
-            
+
             sql_query='''
             select (NWA_REPORTING.ASK_QUESTION_MISHRC04_1(5,'''+"'"+Question+"'"+'''));
             '''
-            
+
             self.warning(f"Querying...")
             cs.execute(sql_query)
-            
+
             self.warning(f"Detching results...")
             data=cs.fetch_pandas_all()
             self.warning(f"Converting results to frame...")
             dataFrame=pd.DataFrame(data)
-            self.warning(f"Converting results to json...")
+            logger.info(f"{self}: converting results to json...")
             json_data = json.loads(dataFrame.to_json())
         except ProgrammingError as err:
             self.error(f"{err} querying {self.type}")
             self.status = 'ERR'
             return
-             
+
         if not json_data:
             self.error("No json_data found!")
             self.status = "ERR_JSON_DATA"
@@ -146,7 +147,7 @@ class SnowflakeAI(Connector):
         self.retrieved = 1
         self.status = 'READY'
         return
-    
+
     ########################################
 
     def normalize_response(self):
@@ -191,5 +192,3 @@ class SnowflakeAI(Connector):
         self.warning("Results saved!")
 
         return
-
-

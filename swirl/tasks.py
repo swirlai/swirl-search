@@ -153,7 +153,7 @@ def update_microsoft_token_task(headers):
         auth_header = headers['Authorization']
         auth_token = auth_header.split(' ')[1]
         token_obj = Token.objects.get(key=auth_token)
-        token = headers['Microsoft-Authorization']
+        token = headers['Authorizationmicrosoft']
         if token:
             try:
                 logger.debug(f"{module_name}: update_microsoft_token_task: User - {token_obj.user.username}")

@@ -1,0 +1,321 @@
+{
+	"info": {
+		"_postman_id": "c95e9c5d-7f1e-497d-8331-b827f3535aef",
+		"name": "Swirl",
+		"description": "<img src=\"https://swirl.today/wp-content/uploads/2023/07/swirl-company-logo-white-250x100-1-1.png\">\n\n# Swirl Documentation\n\nThank you for taking a look at Swirl! For more information, visit our documention site:\n\n- [Overview](https://docs.swirl.today/)\n- [Quick Start](https://docs.swirl.today/Quick-Start)\n- [User Guide](https://docs.swirl.today/User-Guide)\n- [Admin Guide](https://docs.swirl.today/Admin-Guide)\n- [M365 Guide](https://docs.swirl.today/M365-Guide)\n- [Developer Guide](https://docs.swirl.today/Developer-Guide)\n- [Developer Reference](https://docs.swirl.today/Developer-Reference)\n- [AI Guide](https://docs.swirl.today/AI-Guide)\n    \n\nFor more information, please visit:\n\n- [www.swirl.today](https://swirl.today)\n- [github.com/swirlai/swirl-search](https://github.com/swirlai/swirl-search)\n    \n\nFor support. please:\n\n- Join the [Swirl Community on Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) and visit the #support channel\n- Email: [support@swirl.today](mailto:support@swirl.today)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30951883",
+		"_collection_link": "https://winter-robot-24235.postman.co/workspace/My-Workspace~035521da-9255-4685-8e34-5b3c78679e48/collection/30951883-c95e9c5d-7f1e-497d-8331-b827f3535aef?action=share&creator=30951883&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "Create SearchProvider",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"name\": \"Swirl Documentation TEST - Google PSE\",\n        \"active\": false,\n        \"default\": true,\n        \"authenticator\": \"\",\n        \"connector\": \"RequestsGet\",\n        \"url\": \"https://www.googleapis.com/customsearch/v1\",\n        \"query_template\": \"{url}?cx={cx}&key={key}&q={query_string}\",\n        \"post_query_template\": {},\n        \"http_request_headers\": {},\n        \"page_fetch_config_json\": {\n            \"cache\": \"false\",\n            \"headers\": {\n                \"User-Agent\": \"Swirlbot/1.0 (+http://swirl.today)\"\n            },\n            \"timeout\": 10\n        },\n        \"query_processors\": [\n            \"AdaptiveQueryProcessor\"\n        ],\n        \"query_mappings\": \"cx=f047885d9696f447c,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-\",\n        \"result_grouping_field\": \"\",\n        \"result_processors\": [\n            \"MappingResultProcessor\",\n            \"DateFinderResultProcessor\",\n            \"CosineRelevancyResultProcessor\"\n        ],\n        \"response_mappings\": \"FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items\",\n        \"result_mappings\": \"title=title,url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD\",\n        \"results_per_query\": 10,\n        \"credentials\": \"key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA\",\n        \"eval_credentials\": \"\",\n        \"tags\": [\n            \"Swirl\",\n            \"Documentation\"\n        ]\n    }"
+				},
+				"url": {
+					"raw": "{{baseUrl}}swirl/searchproviders/",
+					"host": [
+						"{{baseUrl}}swirl"
+					],
+					"path": [
+						"searchproviders",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List SearchProviders",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}swirl/searchproviders/",
+					"host": [
+						"{{baseUrl}}swirl"
+					],
+					"path": [
+						"searchproviders",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List SearchProvider",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}swirl/searchproviders/1/",
+					"host": [
+						"{{baseUrl}}swirl"
+					],
+					"path": [
+						"searchproviders",
+						"1",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"query_string\": \"swirl metasearch\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}swirl/search/",
+					"host": [
+						"{{baseUrl}}swirl"
+					],
+					"path": [
+						"search",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Searches",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"query_string\": \"swirl metasearch\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}swirl/search/",
+					"host": [
+						"{{baseUrl}}swirl"
+					],
+					"path": [
+						"search",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Search",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"query_string\": \"swirl metasearch\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}swirl/search/1/",
+					"host": [
+						"{{baseUrl}}swirl"
+					],
+					"path": [
+						"search",
+						"1",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search QS",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}swirl/search/?qs=swirl+metasearch",
+					"host": [
+						"{{baseUrl}}swirl"
+					],
+					"path": [
+						"search",
+						""
+					],
+					"query": [
+						{
+							"key": "qs",
+							"value": "swirl+metasearch"
+						},
+						{
+							"key": "providers",
+							"value": "2,3",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Q",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}swirl/search/?q=swirl+metasearch",
+					"host": [
+						"{{baseUrl}}swirl"
+					],
+					"path": [
+						"search",
+						""
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "swirl+metasearch"
+						},
+						{
+							"key": "providers",
+							"value": "2,3",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Results by search_id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}swirl/results?search_id=1",
+					"host": [
+						"{{baseUrl}}swirl"
+					],
+					"path": [
+						"results"
+					],
+					"query": [
+						{
+							"key": "search_id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "password",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "admin",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8000/",
+			"type": "string"
+		}
+	]
+}
