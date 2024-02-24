@@ -1,8 +1,8 @@
-name: SmokeTests
+name: Smoke Tests
 
 on:
   workflow_run:
-    workflows: [UnitTests]
+    workflows: [Unit Tests]
     types:
       - completed
   # Allows you to run this workflow manually from the Actions tab

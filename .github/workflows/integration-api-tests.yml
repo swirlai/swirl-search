@@ -1,8 +1,8 @@
-name: IntegratedAPITests
+name: Integrated API Tests
 
 on:
   workflow_run:
-    workflows: [SmokeTests]
+    workflows: [Smoke Tests]
     types:
       - completed
   # Allows you to run this workflow manually from the Actions tab
@@ -58,7 +58,7 @@ jobs:
     - name: Start Swirl
       run: python swirl.py start
     - name: Run Integrated API Tests
-      run: docker run --net=host -t swirlai/swirl-search-qa:automated-tests:latest-integrated-api sh -c "behave --tags=integrated_api"
+      run: docker run --net=host -t swirlai/swirl-search-qa:automated-tests sh -c "behave --tags=integrated_api"
     - name: Ensure Artifacts Directory Exists and Write Branch and run_id Again
       run: |
         mkdir -p ./artifacts
