@@ -1,8 +1,8 @@
-name: Integrated API Tests
+name: IntegratedAPITests
 
 on:
   workflow_run:
-    workflows: [Smoke Tests]
+    workflows: [SmokeTests]
     types:
       - completed
   # Allows you to run this workflow manually from the Actions tab

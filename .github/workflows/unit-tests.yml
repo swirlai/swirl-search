@@ -1,4 +1,4 @@
-name: Unit Tests
+name: UnitTests
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
       run: ./install.sh
     - name: Install pytest Unit Tests
       run: ./install-test.sh
-    - name: Run pytest unit tests
+    - name: Run pytest Unit Tests
       run: pytest
     - name: Create Artifacts Directory
       run: mkdir -p artifacts
