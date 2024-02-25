@@ -1,8 +1,8 @@
-name: SmokeTests
+name: Smoke Tests
 
 on:
   workflow_run:
-    workflows: [UnitTests]
+    workflows: [Unit Tests]
     types:
       - completed
   # Allows you to run this workflow manually from the Actions tab
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Download branch and run_id artifacts
+    - name: Download Branch and run_id Artifacts
       uses: dawidd6/action-download-artifact@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -23,7 +23,7 @@ jobs:
         name: branch-info-${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || github.run_id }}
         path: ./artifacts
       continue-on-error: true # Allow the step to fail without stopping the workflow
-    - name: Determine branch for checkout
+    - name: Determine Branch for Checkout
       id: determine_branch
       run: |
         if [[ -f ./artifacts/branch.txt && -f ./artifacts/run_id.txt ]]; then
@@ -33,23 +33,23 @@ jobs:
           BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
           echo "branch=$BRANCH_NAME" >> $GITHUB_ENV
         fi
-    - name: Print branch to be checked out
+    - name: Print Branch to be Checked Out
       run: |
         echo "Branch to checkout: ${{ env.branch }}"
-    - name: Checkout the code
+    - name: Checkout the Code
       uses: actions/checkout@v4
       with:
         ref: ${{ env.branch }}
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-            python-version: '3.12'
+            python-version: '3.12.2'
             cache: 'pip' # caching pip stuff
     - name: Install Swirl
       run: ./install.sh
     - name: Update apt
       run: sudo apt -o Acquire::Retries=3 update
-    - name: Upgrade Ubuntu to latest patches
+    - name: Upgrade Ubuntu to Latest Patches
       run: sudo apt upgrade -y
     - name: Install redis-server
       run: sudo apt install -y redis-server
@@ -57,21 +57,21 @@ jobs:
       run: python swirl.py setup
     - name: Start Swirl
       run: python swirl.py start
-    - name: Run smoke tests
-      run: docker run --net=host -t swirlai/swirl-testing:latest-smoke-test sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
-    - name: Ensure artifacts directory exists and write branch and run_id again
+    - name: Run Smoke Tests
+      run: docker run --net=host -t swirlai/swirl-search-qa:automated-tests sh -c "behave --tags=docker_api_smoke"
+    - name: Ensure Artifacts Directory Exists and Write Branch and run_id Again
       run: |
         mkdir -p ./artifacts
         echo "${{ env.branch }}" > ./artifacts/branch.txt
         echo "${{ env.original_run_id }}" > ./artifacts/run_id.txt
-    - name: Re-upload branch and run_id for subsequent workflows
+    - name: Re-upload Branch and run_id for Subsequent Workflows
       uses: actions/upload-artifact@v4
       with:
         name: branch-info-${{ github.run_id }}
         path: |
           ./artifacts/branch.txt
           ./artifacts/run_id.txt
-    - name: Upload log files
+    - name: Upload Log Files
       if: always()
       uses: actions/upload-artifact@v4
       with:
