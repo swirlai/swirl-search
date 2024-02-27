@@ -1,4 +1,4 @@
-name: EXPERIMENT SpyglassDockerBuild
+name: Experimental Spyglass Docker Build
 
 on:
   # Allows you to run this workflow manually from the Actions tab
@@ -38,7 +38,7 @@ jobs:
       run: docker build --no-cache -t swirlai/spyglass:fork-x  -f Dockerfile.fork.spg .
     - name: Push the Docker Image
       run: docker push swirlai/spyglass:fork-x
-    - name: Upload log files
+    - name: Upload Log Files
       if: always()
       uses: actions/upload-artifact@v4
       with:
