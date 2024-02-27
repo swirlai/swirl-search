@@ -21,7 +21,7 @@ jobs:
     steps:
     - name: Checkout the Code
       uses: actions/checkout@v4
-    - name: Set up Python
+    - name: Set Up Python
       uses: actions/setup-python@v5
       with:
             python-version: '3.12.2'
