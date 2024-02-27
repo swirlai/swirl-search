@@ -1,0 +1,30 @@
+{
+    "name": "Free Company Records - Snowflake",
+    "active": false,
+    "default": false,
+    "authenticator": "",
+    "connector": "Snowflake",
+    "url": "<snowflake-instance-address>",
+    "query_template": "SELECT {fields} FROM {table} WHERE {field1} ILIKE '%{query_string}%' AND NULLIF(TRIM(founded), '') IS NOT NULL ORDER BY TRY_TO_NUMBER(REGEXP_REPLACE(SPLIT_PART(size, '-', 1), '[^0-9]', '')) DESC;",
+    "post_query_template": {},
+    "http_request_headers": {},
+    "page_fetch_config_json": {},
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "fields=*,sort_by_date=founded,table=FREECOMPANYDATASET,field1=name",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "title='{name}  ({founded})',body='{name} was founded in {founded} in {country}. It has {size} employees and operates in the {industry} industry.',url='https://{linkedin_url}',date_published=founded,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "<username>:<password>:FREE_COMPANY_DATASET:COMPUTE_WH",
+    "eval_credentials": "",
+    "tags": [
+        "Company",
+        "Snowflake"
+    ]
+}
