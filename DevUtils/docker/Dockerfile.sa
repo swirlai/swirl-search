@@ -17,6 +17,7 @@ ENV CELERY_RESULT_BACKEND redis://localhost:6379/0
 ENV OPENAI_API_KEY your_openai_api_key
 ENV MSAL_CB_PORT 8000
 ENV MSAL_HOST localhost
+ENV MSAL_APP_ID ''
 
 # Expose the port your app runs on
 EXPOSE 8000
