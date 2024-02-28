@@ -2,8 +2,13 @@
 name: QA WIP Tests
 
 on:
-  # Allows you to run this workflow manually from the Actions tab
+  # Allows you to run this workflow manually from the Actions tab and input the behave tag(s) to run
   workflow_dispatch:
+    inputs:
+      behave_tags:
+        description: 'Behave tags to run'
+        required: true
+        default: 'estest'  # Default tag if none specified
 
 jobs:
 
@@ -37,8 +42,8 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-    - name: Run the WIP Tests Suite  # Update the "behave --tags=<tag-name>" below to target a set of tagged WIP Scenarios
-      run: docker run --net=host -t swirlai/swirl-search-qa:wip-tests sh -c "behave --tags=integrated_ui"
+    - name: Run the WIP Tests Suite
+      run: docker run --net=host -t swirlai/swirl-search-qa:wip-tests sh -c "behave --tags=${{ github.event.inputs.behave_tags }}"
     - name: Upload Log Files
       if: always()
       uses: actions/upload-artifact@v4
