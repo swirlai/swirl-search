@@ -1,0 +1,25 @@
+# Start from the base image that can run your app
+FROM swirlai/swirl-search:develop
+
+# Install Redis
+RUN apt-get update && apt-get install -y redis-server
+
+
+# Copy a custom script that will start both Redis and your app
+COPY DevUtils/docker/sw-start-sa.sh /sw-start-sa.sh
+RUN chmod +x /sw-start-sa.sh
+
+# Set environment variables (if they are static)
+# If they need to be dynamic, you can pass them at runtime
+
+ENV CELERY_BROKER_URL redis://localhost:6379/0
+ENV CELERY_RESULT_BACKEND redis://localhost:6379/0
+ENV OPENAI_API_KEY your_openai_api_key
+ENV MSAL_CB_PORT 8000
+ENV MSAL_HOST localhost
+
+# Expose the port your app runs on
+EXPOSE 8000
+
+# Start script.di	
+CMD ["/sw-start-sa.sh"]
