@@ -1,0 +1,49 @@
+# Workflow for running WIP tests (the "wip-tests" Docker image) in the GitHub runners
+name: QA Suite
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set Up Python
+      uses: actions/setup-python@v5
+      with:
+            python-version: '3.12.2'
+            cache: 'pip' # caching pip stuff
+    - name: Install Chromium
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser
+    - name: Install Swirl
+      run: ./install.sh
+    - name: Update apt
+      run: sudo apt -o Acquire::Retries=3 update
+    - name: Upgrade Ubuntu to Latest Patches
+      run: sudo apt upgrade -y
+    - name: Install redis-server
+      run: sudo apt install -y redis-server
+    - name: Set Up Swirl
+      run: python swirl.py setup
+    - name: Start Swirl
+      run: python swirl.py start
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Run the WIP Tests Suite  # Update the "behave --tags=<tag-name>" below to target a set of tagged WIP Scenarios
+      run: docker run --net=host -t swirlai/swirl-search-qa:wip-tests sh -c "behave --tags=integrated_ui"
+    - name: Upload Log Files
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: log-files
+        path: |
+          logs/
+          /var/log/syslog*
