@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout the Code
+      uses: actions/checkout@v4
     - name: Set Up Python
       uses: actions/setup-python@v5
       with:
@@ -47,6 +49,7 @@ jobs:
     - name: Upload Log Files
       if: always()
       uses: actions/upload-artifact@v4
+
       with:
         name: log-files
         path: |
