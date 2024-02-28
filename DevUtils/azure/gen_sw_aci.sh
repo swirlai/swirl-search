@@ -14,7 +14,7 @@ sizemg=8
 read -p "$PROG Enter location (e.g. eastus): " location
 read -p "$PROG Enter 'o' for open souce or 'e' for enterprise: " dtype
 read -p "$PROG Enter application name: " dname
-7read -p "$PROG Enter your OpenAI Key ID: " openai_key
+read -p "$PROG Enter your OpenAI Key ID: " openai_key
 read -p "Enter your Azure Registered App ID: " app_id
 
 if [ "$dtype" = "e" ]; then
