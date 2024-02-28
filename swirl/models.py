@@ -82,7 +82,8 @@ class SearchProvider(models.Model):
         ('M365SharePointSites', 'M365 SharePoint Sites'),
         ('MicrosoftTeams', 'Microsoft Teams'),
         ('MongoDB', 'MongoDB'),
-        ('Oracle','Oracle')
+        ('Oracle','Oracle'),
+        ('Snowflake','Snowflake')
     ]
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)

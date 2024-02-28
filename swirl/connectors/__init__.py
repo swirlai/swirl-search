@@ -16,6 +16,7 @@ from swirl.connectors.microsoft_graph import M365OutlookCalendar
 from swirl.connectors.microsoft_graph import M365SharePointSites
 from swirl.connectors.microsoft_graph import MicrosoftTeams
 from swirl.connectors.mongodb import MongoDB
+from swirl.connectors.snowflake import Snowflake
 from swirl.connectors.oracle import Oracle
 
 # uncomment the line below to enable PostgreSQL
