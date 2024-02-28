@@ -1,5 +1,5 @@
 # Workflow for running WIP tests (the "wip-tests" Docker image) in the GitHub runners
-name: QA Suite
+name: QA WIP Tests
 
 on:
   # Allows you to run this workflow manually from the Actions tab
