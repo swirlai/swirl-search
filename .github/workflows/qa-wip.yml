@@ -53,8 +53,4 @@ jobs:
         path: |
           logs/
           /var/log/syslog*
-          screenshots/
-        if-no-files-found: warn
-        retention-days: 3
-
-    
+          screenshots/*.png
