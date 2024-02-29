@@ -1,7 +1,11 @@
 name: SA DockerBuild
 
 on:
-  # Allows manual run of this workflow from the Actions tab (on any branch)
+  workflow_run:
+    workflows: [Docker Build]
+    types:
+      - completed
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # For debugging
@@ -12,9 +16,35 @@ on:
 jobs:
 
   build:
+    if: (github.event_name == 'workflow_dispatch') || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
 
     steps:
+    - name: Download Branch and run_id Artifacts
+      uses: dawidd6/action-download-artifact@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        workflow: docker-image.yml
+        name: branch-info-${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || github.run_id }}
+        path: ./artifacts
+      continue-on-error: true # Allow the step to fail without stopping the workflow
+    - name: Determine Branch for Checkout
+      id: determine_branch
+      run: |
+        if [[ -f ./artifacts/branch.txt && -f ./artifacts/run_id.txt ]]; then
+          echo "branch=$(cat ./artifacts/branch.txt)" >> $GITHUB_ENV
+          echo "original_run_id=$(cat ./artifacts/run_id.txt)" >> $GITHUB_ENV
+        else
+          BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
+          echo "branch=$BRANCH_NAME" >> $GITHUB_ENV
+        fi
+    - name: Print Branch to be Checked Out
+      run: |
+        echo "Branch to checkout: ${{ env.branch }}"
+    - name: Checkout the Code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ env.branch }}
     - name: Checkout the code
       uses: actions/checkout@v4
     - name: Login to Docker Hub
