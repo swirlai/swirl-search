@@ -105,7 +105,7 @@ class SnowflakeAI(Connector):
             self.warning(f"Querying...")
             cs.execute(sql_query, timeout=self._swirl_timeout - 2 ) # quit a little earlier than the entire swirl search timeout
 
-            self.warning(f"Detching results...")
+            self.warning(f"Fetching results...")
             data=cs.fetch_pandas_all()
             self.warning(f"Converting results to frame...")
             dataFrame=pd.DataFrame(data)
