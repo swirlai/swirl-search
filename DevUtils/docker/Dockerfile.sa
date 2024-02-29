@@ -1,17 +1,26 @@
 # Start from the base image that can run your app
 FROM swirlai/swirl-search:latest
 
-# Install Redis
-RUN apt-get update && apt-get install -y redis-server
+# Install Nginx and Redis
+RUN apt-get update && \
+    apt-get install -y nginx redis-server openssl && \
+    rm -rf /var/lib/apt/lists/*
 
+# Generate a self-signed SSL certificate (For production, use a certificate from a trusted CA)
+RUN mkdir -p /etc/nginx/ssl && \
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt \
+    -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=localhost"
 
-# Copy a custom script that will start both Redis and your app
+# Copy the Nginx configuration
+COPY DevUtils/nginx/nginx.conf /etc/nginx/sites-available/default
+
+# Copy a custom script that will start Nginx, Redis, and your app
 COPY DevUtils/docker/sw-start-sa.sh /sw-start-sa.sh
 RUN chmod +x /sw-start-sa.sh
+COPY install.sh /install.sh
 
 # Set environment variables (if they are static)
-# If they need to be dynamic, you can pass them at runtime
-
 ENV CELERY_BROKER_URL redis://localhost:6379/0
 ENV CELERY_RESULT_BACKEND redis://localhost:6379/0
 ENV OPENAI_API_KEY your_openai_api_key
@@ -19,8 +28,8 @@ ENV MSAL_CB_PORT 8000
 ENV MSAL_HOST localhost
 ENV MSAL_APP_ID ''
 
-# Expose the port your app runs on
-EXPOSE 8000
+# Expose ports for HTTP and HTTPS
+EXPOSE 80 443
 
-# Start script.di	
+# Start script
 CMD ["/sw-start-sa.sh"]
