@@ -18,6 +18,7 @@ COPY DevUtils/nginx/nginx.conf /etc/nginx/sites-available/default
 # Copy a custom script that will start Nginx, Redis, and your app
 COPY DevUtils/docker/sw-start-sa.sh /sw-start-sa.sh
 RUN chmod +x /sw-start-sa.sh
+COPY install.sh /install.sh
 
 # Set environment variables (if they are static)
 ENV CELERY_BROKER_URL redis://localhost:6379/0

@@ -5,6 +5,12 @@ redis-server &
 
 service nginx start
 
+echo "$PROG Copying: .env.dist -> .env"
+cp .env.dist .env
+
+echo "$PROG Copying: db.sqlite3.dist -> db.sqlite3"
+cp db.sqlite3.dist db.sqlite3
+
 # Your original command to setup and start the application
 rm -fr ./.swirl && python swirl.py setup && mkdir -p static/api/config &&
 /usr/bin/jq ".default" ./config-swirl-demo.db.json | sed -e "s/<msal-app-id>/$MSAL_APP_ID/" \
