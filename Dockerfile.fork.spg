@@ -3,7 +3,7 @@
 FROM node:14.17.5 AS builder
 RUN git clone https://bitbucket.org/swirl-spyglass/spyglass.git /usr/src/spyglass
 WORKDIR /usr/src/spyglass/ui
-RUN git checkout chart-feature
+RUN git checkout chart-feature-edited
 RUN git pull
 RUN npm install -g npm@7.21.1
 RUN npm install
