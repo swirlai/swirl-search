@@ -49,6 +49,14 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y chromium-browser
+    - name: Install ChromeDriver
+      run: |
+        CHROMIUM_VERSION=$(chromium-browser --version | grep -oE "[0-9\.]{2,}" | cut -d'.' -f1-3)
+        CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROMIUM_VERSION")
+        curl -L -O "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
+        unzip chromedriver_linux64.zip
+        sudo mv chromedriver /usr/bin/chromedriver
+        sudo chmod +x /usr/bin/chromedriver
     - name: Install Swirl
       run: ./install.sh
     - name: Update apt
