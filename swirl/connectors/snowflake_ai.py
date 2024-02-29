@@ -112,9 +112,13 @@ class SnowflakeAI(Connector):
             logger.info(f"{self}: converting results to json...")
             json_data = json.loads(dataFrame.to_json())
         except ProgrammingError as err:
-            self.error(f"{err} querying {self.type}")
             self.status = 'ERR'
             return
+        except Exception as err:
+            logger.error(f'{err} while exceuting query')
+            pass # Let this fall through so it does what it always did for now.
+
+
 
         if not json_data:
             self.error("No json_data found!")
