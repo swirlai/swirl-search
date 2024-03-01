@@ -80,28 +80,6 @@ class SnowflakeAI(Connector):
             return
 
         ########################
-        # testing stub REMOVE ME
-        logger.warning(f"SnowflakeAI: account: {account}, region: {region}, role: {role}, warehouse: {warehouse}, schema: {schema}")
-        logger.warning(f"SnowflakeAI: username: {username}, password: {password}")
-        self.response = """
-Good question! The table that shows unshipped deliveries in UDH is "ECC_SALES_DELIVERIES" in the PGSUDH_CDM schema. You can use the following filters to retrieve unshipped deliveries:
-
-* MATERIAL_KEY in ('F000029835')
-* GOODS_ISSUE_DATE between '2023-07-01' and '2023-07-31'
-* GOODS_MOVEMENT_STATUS <> 'C'
-* ACT_QTY_DELIVERED > 0
-
-You can also use the "SIQ_LAP_EXPORT" or "SIQ_LAP_EXPORT_SNAPSHOT" table to connect to a supply plan in SIQ and perform calculations. However, it's not clear if subversions are loaded into UDH.
-
-Additionally, you can use Dataiku DSS, Alteryx or other tools to schedule and automate UDH queries, and send the output via email or drop the file in a shared folder. 
-
-More information :-https://teams.microsoft.com/l/message/19:0f3927a64c9d491d804ca117a0419797@thread.tacv2/1689949858780?tenantId=7a916015-20ae-4ad1-9170-eefd915e9272&groupId=afc7a998-5ac2-41db-9d44-307f96e78751&parentMessageId=1689949858780&teamName=PGS%20UDH%20Community&channelName=Ask%20the%20Community&createdTime=1689949858780
-"""
-        self.found = 1
-        self.retrieved = 1
-        self.status = 'READY'
-        return
-        ########################
 
         self.warning(f"connecting...")
         try:
@@ -125,18 +103,22 @@ More information :-https://teams.microsoft.com/l/message/19:0f3927a64c9d491d804c
             '''
 
             self.warning(f"Querying...")
-            cs.execute(sql_query)
+            cs.execute(sql_query, timeout=self._swirl_timeout - 2 ) # quit a little earlier than the entire swirl search timeout
 
-            self.warning(f"Detching results...")
+            self.warning(f"Fetching results...")
             data=cs.fetch_pandas_all()
             self.warning(f"Converting results to frame...")
             dataFrame=pd.DataFrame(data)
             logger.info(f"{self}: converting results to json...")
             json_data = json.loads(dataFrame.to_json())
         except ProgrammingError as err:
-            self.error(f"{err} querying {self.type}")
             self.status = 'ERR'
             return
+        except Exception as err:
+            logger.error(f'{err} while exceuting query')
+            pass # Let this fall through so it does what it always did for now.
+
+
 
         if not json_data:
             self.error("No json_data found!")

@@ -64,6 +64,7 @@ class Connector:
         self.start_time = None
         self.search_user = None
         self.request_id = request_id
+        self._swirl_timeout = getattr(settings,'SWIRL_TIMEOUT')
 
         # get the provider and query
         try:
@@ -272,7 +273,7 @@ class Connector:
             self.retrieved = 0
             self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
             self.status = 'READY'
-            return         
+            return
         if len(self.response) == 0:
             # no results, not an error
             self.retrieved = 0
