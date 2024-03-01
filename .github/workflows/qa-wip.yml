@@ -23,12 +23,8 @@ jobs:
       with:
             python-version: '3.12.2'
             cache: 'pip' # caching pip stuff
-    - name: Install Chrome
+    - name: Install Chromium
       uses: browser-actions/setup-chrome@v1
-    - name: Print the Installed Version
-      run: |
-        chrome --version
-        chromium --version
     - name: Install Swirl
       run: ./install.sh
     - name: Update apt
