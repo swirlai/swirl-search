@@ -23,10 +23,10 @@ jobs:
       with:
             python-version: '3.12.2'
             cache: 'pip' # caching pip stuff
-    - name: Install Chromium
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y chromium-browser
+    - name: Install Chrome
+      uses: browser-actions/setup-chrome@v1
+    - name: Print the Chrome Version
+      run: chrome --version
     - name: Install Swirl
       run: ./install.sh
     - name: Update apt
