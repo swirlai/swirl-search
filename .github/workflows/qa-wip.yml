@@ -25,11 +25,10 @@ jobs:
             cache: 'pip' # caching pip stuff
     - name: Install Chrome
       uses: browser-actions/setup-chrome@v1
-    - name: Print the Installed Version and Path
+    - name: Print the Installed Version
       run: |
         chrome --version
         chromium --version
-        ${{ setup-chrome.outputs.chrome-path }} --version
     - name: Install Swirl
       run: ./install.sh
     - name: Update apt
