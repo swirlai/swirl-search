@@ -51,10 +51,6 @@ jobs:
       run: |
         chromium --version
         which chromium
-    - name: Chromium Install Details
-      run: |
-        chromium --version
-        which chromium
     - name: Install Swirl
       run: ./install.sh
     - name: Update apt
