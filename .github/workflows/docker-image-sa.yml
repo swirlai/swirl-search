@@ -65,7 +65,7 @@ jobs:
     - name: Builder Bootstrap
       run: docker buildx create --name devBuilder --use --bootstrap
     - name: Build the Docker Image
-      run: docker buildx build -f DevUtils/docker/Dockerfile.sa --platform linux/amd64,linux/arm64 --tag swirlai/swirl-search:${{ env.branch }}-sa --push .
+      run: docker buildx build -f DevUtils/docker/Dockerfile.sa --platform linux/amd64,linux/arm64 --tag swirlai/swirl-search:latest-sa --push .
     - name: Upload log files
       if: always()
       uses: actions/upload-artifact@v4
