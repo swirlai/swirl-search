@@ -1,4 +1,4 @@
-name: UnitTests
+name: Unit Tests
 
 on:
   push:
@@ -19,38 +19,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout the code
+    - name: Checkout the Code
       uses: actions/checkout@v4
-    - name: Set up Python
+    - name: Set Up Python
       uses: actions/setup-python@v5
       with:
-            python-version: '3.12'
+            python-version: '3.12.2'
             cache: 'pip' # caching pip stuff
     - name: Install Swirl
       run: ./install.sh
-    - name: Install pytest unit tests
+    - name: Install pytest Unit Tests
       run: ./install-test.sh
-    - name: Run pytest unit tests
+    - name: Run pytest Unit Tests
       run: pytest
-    - name: Create artifacts directory
+    - name: Create Artifacts Directory
       run: mkdir -p artifacts
-    - name: Set branch name
+    - name: Set Branch Name
       id: extract_branch
       run: |
         BRANCH_NAME=$(echo $GITHUB_REF | cut -d "/" -f 3)
         echo "branch=$BRANCH_NAME" >> $GITHUB_ENV
-    - name: Write branch and run_id to file
+    - name: Write Branch and run_id to File
       run: |
         echo "${{ env.branch }}" > ./artifacts/branch.txt
         echo "${{ github.run_id }}" > ./artifacts/run_id.txt
-    - name: Upload branch and run_id files as artifact
+    - name: Upload Branch and run_id Files as Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: branch-info-${{ github.run_id }}
         path: |
           ./artifacts/branch.txt
           ./artifacts/run_id.txt
-    - name: Upload log files
+    - name: Upload Log Files
       if: always()
       uses: actions/upload-artifact@v4
       with:

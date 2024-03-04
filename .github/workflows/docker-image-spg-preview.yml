@@ -1,4 +1,4 @@
-name: PREVIEW Spyglass Docker Build
+name: Preview Spyglass Docker Build
 
 on:
   # Allows you to run this workflow manually from the Actions tab
@@ -37,7 +37,7 @@ jobs:
       run: docker build --no-cache -t swirlai/spyglass:preview  -f Dockerfile.develop.spg .
     - name: Push the Docker Image
       run: docker push swirlai/spyglass:preview
-    - name: Upload log files
+    - name: Upload Log Files
       if: always()
       uses: actions/upload-artifact@v4
       with:

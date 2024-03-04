@@ -1,0 +1,59 @@
+# Workflow for running WIP tests (the "wip-tests" Docker image) in the GitHub runners
+name: QA WIP Tests
+
+on:
+  # Allows you to run this workflow manually from the Actions tab and input the behave tag(s) to run
+  workflow_dispatch:
+    inputs:
+      behave_tags:
+        description: 'Behave tags to run'
+        required: true
+        default: 'estest'  # Default tag if none specified
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the Code
+      uses: actions/checkout@v4
+    - name: Set Up Python
+      uses: actions/setup-python@v5
+      with:
+            python-version: '3.12.2'
+            cache: 'pip' # caching pip stuff
+    - name: Install Chromium
+      uses: browser-actions/setup-chrome@v1
+    - name: Chromium Install Details
+      run: |
+        chromium --version
+        which chromium
+    - name: Install Swirl
+      run: ./install.sh
+    - name: Update apt
+      run: sudo apt -o Acquire::Retries=3 update
+    - name: Upgrade Ubuntu to Latest Patches
+      run: sudo apt upgrade -y
+    - name: Install redis-server
+      run: sudo apt install -y redis-server
+    - name: Set Up Swirl
+      run: python swirl.py setup
+    - name: Start Swirl
+      run: python swirl.py start
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Run the WIP Tests Suite
+      run: docker run --net=host -t swirlai/swirl-search-qa:wip-tests sh -c "behave --tags=${{ github.event.inputs.behave_tags }}"
+    - name: Upload Log Files
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-artifacts
+        path: |
+          logs/
+          /var/log/syslog*
+    
