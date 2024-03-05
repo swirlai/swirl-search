@@ -4,7 +4,7 @@
 '''
 
 import logging
-logger = logging.getLogger('swirl')
+logger = logging.getLogger(__name__)
 
 from typing import List, Dict, Any
 import statistics
@@ -28,7 +28,7 @@ def parse_date(value):
         return parser.parse(str(value))
     except (ValueError, TypeError):
         return None
-    
+
 def calculate_statistics(values):
     if all(isinstance(v, (int, float)) for v in values):
         return {
@@ -143,7 +143,7 @@ def find_most_populated_field(profile):
     return most_populated_type, most_populated_field
 
 def filter_elements_case_insensitive(a, b):
-    prefixes = set(key[0].lower() for key in b if key)  
+    prefixes = set(key[0].lower() for key in b if key)
     suffixes = set(key[-1].lower() for key in b if key)
     result = [element for element in a if element and (element[0].lower() in prefixes or element[-1].lower() in suffixes)]
     return result

@@ -20,7 +20,7 @@ from urllib.parse import urlparse, quote
 
 # TO DO: is this correct?
 import logging
-logger = logging.getLogger('swirl')
+logger = logging.getLogger(__name__)
 
 SWIRL_MACHINE_AGENT   = {'User-Agent': 'SwirlMachineServer/1.0 (+http://swirl.today)'}
 SWIRL_CONTAINER_AGENT = {'User-Agent': 'SwirlContainer/1.0 (+http://swirl.today)'}

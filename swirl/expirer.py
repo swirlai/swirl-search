@@ -6,7 +6,7 @@
 from sys import path
 from os import environ
 import logging
-logger = logging.getLogger('swirl')
+logger = logging.getLogger(__name__)
 
 from datetime import timedelta
 
@@ -15,7 +15,7 @@ from django.utils import timezone
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from swirl.models import Search
@@ -31,7 +31,7 @@ def expirer():
     This fires whenever a Celery Beat event arrives
     Remove searches that are past expiration date, if expiration is not 0
     '''
-    
+
     # security review for 1.7 - OK - system function
     searches = Search.objects.filter(retention__gt=0)
     for search in searches:

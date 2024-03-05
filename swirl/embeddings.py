@@ -4,7 +4,7 @@
 '''
 
 import logging
-logger = logging.getLogger('swirl')
+logger = logging.getLogger(__name__)
 
 from pinecone import Pinecone
 from transformers import AutoModel, AutoTokenizer

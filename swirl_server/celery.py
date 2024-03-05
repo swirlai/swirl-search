@@ -9,15 +9,13 @@ from celery import Celery
 from celery.schedules import crontab
 from celery.signals import after_setup_logger
 from django.conf import settings
-import logging
-import ssl
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 
 ### REDIS PROD TEST CONFIGURATION
-# app = Celery('swirl_server', 
-#              broker='rediss://localhost:16379/0', 
+# app = Celery('swirl_server',
+#              broker='rediss://localhost:16379/0',
 #              broker_use_ssl={'ssl_cert_reqs': ssl.CERT_REQUIRED,
 #                                       'ssl_ca_certs': '/Users/dkostenko/Tests/tests/tls/ca.crt',
 #                                       'ssl_certfile': '/Users/dkostenko/Tests/tests/tls/client.crt',
@@ -32,8 +30,14 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 
 ### REDIS DEV CONFIGURATION
 
-app = Celery('swirl_server', 
-             broker='redis://localhost:6379/0', 
+# Call setup_logging here if you want it to affect the whole Celery application
+from swirl_server.log_config import setup_logging
+print("Cerlery Early Logging set up...")
+setup_logging()
+print("Cerlery Early Logging set up done.")
+
+app = Celery('swirl_server',
+             broker='redis://localhost:6379/0',
              backend='redis://localhost:6379/0')
 
 ### RABBITMQ CONFIGURATION
@@ -52,17 +56,3 @@ app.autodiscover_tasks()
 def debug_task(self):
     print(f'Request: {self.request!r}')
 
-@after_setup_logger.connect
-def setup_loggers(logger, *args, **kwargs):
-    logger.warning(f"Setting log level: {settings.LOG_LEVEL}")
-    if settings.LOG_LEVEL == 'INFO':
-        logger.setLevel(logging.INFO)
-    elif settings.LOG_LEVEL == 'WARNING':
-        logger.setLevel(logging.WARNING)
-    elif settings.LOG_LEVEL == 'ERROR':
-        logger.setLevel(logging.ERROR)
-    elif settings.LOG_LEVEL == 'DEBUG':
-        logger.setLevel(logging.DEBUG)
-    else:
-        logger.warning(f"Invalid LOG_LEVEL specified: {settings.LOG_LEVEL}, assuming INFO")
-        logger.setLevel(logging.INFO)
