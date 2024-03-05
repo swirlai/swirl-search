@@ -5,7 +5,6 @@ on:
     workflows: [Docker Build]
     types:
       - completed
-    branches: [develop]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -66,7 +65,15 @@ jobs:
     - name: Builder Bootstrap
       run: docker buildx create --name devBuilder --use --bootstrap
     - name: Build the Docker Image
-      run: docker buildx build -f DevUtils/docker/Dockerfile.sa --platform linux/amd64,linux/arm64 --tag swirlai/swirl-search:develop-sa --push .
+      run: |
+        if [ "${{ env.branch }}" = "develop" ]; then
+          TAG="develop-sa"
+        elif [ "${{ env.branch }}" = "main" ]; then
+          TAG="latest-sa"
+        else
+          TAG="${{ env.branch }}-sa" # Assign the branch name to the image if not 'main' or 'develop'
+        fi
+        docker buildx build -f DevUtils/docker/Dockerfile.sa --platform linux/amd64,linux/arm64 --tag swirlai/swirl-search:$TAG --push .
     - name: Upload log files
       if: always()
       uses: actions/upload-artifact@v4
