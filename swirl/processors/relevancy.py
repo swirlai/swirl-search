@@ -11,7 +11,7 @@ from django.conf import settings
 
 # to do: detect language and load all stopwords? P1
 from swirl.nltk import sent_tokenize
-from swirl.processors.utils import *
+from swirl.processors.utils import capitalize, capitalize_search, clean_string, has_numeric, highlight_list, match_any, match_all, json_to_flat_string, parse_query, position_dict, remove_numeric, remove_tags, result_processor_feedback_empty_record, result_processor_feedback_merge_records, stem_string
 from swirl.spacy import nlp
 
 from swirl.processors.processor import PostResultProcessor, ResultProcessor
@@ -19,7 +19,7 @@ from swirl.processors.processor import PostResultProcessor, ResultProcessor
 from swirl.perfomance_logger import SwirlRelevancyLogger
 
 from celery.utils.log import get_task_logger
-log = get_task_logger(__name__)
+logger = get_task_logger(__name__)
 
 SWIRL_RELEVANCY_CONFIG = getattr(settings, 'SWIRL_RELEVANCY_CONFIG', {
     'title': {
