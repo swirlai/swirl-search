@@ -6,7 +6,7 @@
 from sys import path
 from os import environ
 import logging
-logger = logging.getLogger('swirl')
+logger = logging.getLogger(__name__)
 
 from datetime import timedelta
 

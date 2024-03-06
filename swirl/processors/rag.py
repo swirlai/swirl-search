@@ -113,7 +113,7 @@ class RAGPostResultProcessor(PostResultProcessor):
                             rag_item_list.append(item)
                             item['provider_id'] = result.provider_id
                     elif 'swirl_score' in item:
-                        # to do: parameterize 
+                        # to do: parameterize
                         if item['swirl_score'] > 50.0:
                             rag_item_list.append(item)
                             item['provider_id'] = result.provider_id

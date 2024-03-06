@@ -6,7 +6,7 @@ from swirl.processors import *
 import asyncio
 
 import logging
-logger = logging.getLogger('swirl')
+logger = logging.getLogger(__name__)
 
 instances = {}
 

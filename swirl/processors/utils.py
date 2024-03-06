@@ -533,7 +533,7 @@ def bigrams(list_terms):
 #############################################
 
 import logging
-logger = logging.getLogger('swirl')
+logger = logging.getLogger(__name__)
 
 def capitalize(list_lower, list_unknown):
 

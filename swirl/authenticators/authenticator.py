@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from datetime import datetime
 import logging
-logger = logging.getLogger('swirl')
+logger = logging.getLogger(__name__)
 
 class Authenticator:
 

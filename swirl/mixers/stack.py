@@ -11,11 +11,11 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 import logging
-logger = logging.getLogger('swirl')
+logger = logging.getLogger(__name__)
 
 from operator import itemgetter
 
@@ -28,7 +28,7 @@ from swirl.mixers.mixer import Mixer
 class StackNMixer(Mixer):
 
     type = "StackNMixer"
-    
+
     def order(self):
 
         # sort the json_results by score
@@ -73,7 +73,7 @@ class StackNMixer(Mixer):
                     break
             # end for
             if len(stacked_results) == last_len:
-                # no more results 
+                # no more results
                 self.warning(f'results exhausted')
                 break
             else:
@@ -84,7 +84,7 @@ class StackNMixer(Mixer):
 
         self.mixed_results = stacked_results
 
-#############################################    
+#############################################
 
 class RoundRobinMixer(StackNMixer):
     type = "RoundRobinMixer"

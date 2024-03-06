@@ -19,7 +19,7 @@ from swirl.processors.processor import PostResultProcessor, ResultProcessor
 from swirl.perfomance_logger import SwirlRelevancyLogger
 
 from celery.utils.log import get_task_logger
-log = logging.getLogger()
+log = get_task_logger(__name__)
 
 SWIRL_RELEVANCY_CONFIG = getattr(settings, 'SWIRL_RELEVANCY_CONFIG', {
     'title': {

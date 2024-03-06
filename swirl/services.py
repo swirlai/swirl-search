@@ -4,7 +4,7 @@
 '''
 
 import logging
-logger = logging.getLogger('swirl')
+logger = logging.getLogger(__name__)
 
 module_name = 'services.py'
 

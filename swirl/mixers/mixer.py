@@ -22,7 +22,7 @@ django.setup()
 from django.conf import settings
 
 import logging
-logger = logging.getLogger('swirl')
+logger = logging.getLogger(__name__)
 
 from natsort import natsorted
 
