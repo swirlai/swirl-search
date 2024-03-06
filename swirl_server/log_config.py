@@ -38,7 +38,7 @@ def setup_logging(default_level=logging.INFO):
     for module in debug_modules:
         if module:  # Check for empty strings
             module = module.strip()
-            print(f'log_config settng DEBUG loggin in : {module}')
+            print(f'log_config setting DEBUG logging in : {module}')
             log_config['loggers'][module] = {
                 'level': 'DEBUG',
                 'handlers': ['console'],
