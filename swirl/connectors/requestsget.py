@@ -15,7 +15,6 @@ django.setup()
 
 import requests
 
-from swirl.connectors.mappings import *
 from swirl.connectors.utils import bind_query_mappings
 
 from swirl.connectors.requests import Requests
