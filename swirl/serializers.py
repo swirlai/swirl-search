@@ -47,7 +47,7 @@ class QueryTransformSerializer(serializers.ModelSerializer):
         model = QueryTransform
         fields = ['id', 'name','owner','shared','date_created','date_updated','qrx_type','config_content']
 
-class QueryTrasnformNoCredentialsSerializer(serializers.ModelSerializer):
+class QueryTransformNoCredentialsSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = QueryTransform
