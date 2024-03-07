@@ -18,7 +18,7 @@ environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from swirl.models import Result, Search
-from swirl.connectors.mappings import *
+from swirl.connectors.mappings import QUERY_MAPPING_VARIABLES
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)

@@ -4,23 +4,23 @@
 '''
 import json as stdjson
 
-from celery.utils.log import get_task_logger
-logger = get_task_logger(__name__)
 
 from datetime import datetime
 from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
-from swirl.processors.processor import *
+from swirl.processors.processor import ResultProcessor
 from swirl.processors.result_map_converter import ResultMapConverter
-
-from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format, date_str_to_timestamp, result_processor_feedback_provider_query_terms
+from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format, result_processor_feedback_provider_query_terms,date_str_to_timestamp
 from swirl.swirl_common import RESULT_MAPPING_COMMANDS
 
+from celery.utils.log import get_task_logger
+logger = get_task_logger(__name__)
+
+
 #############################################
 #############################################
 
-from dateutil import parser
 
 import re
 from re import error as re_error
@@ -45,6 +45,8 @@ class MappingResultProcessor(ResultProcessor):
 
 
     def process(self):
+
+        logger.debug(f'mapping processor called with logger name {logger.name}')
 
         list_results = []
         provider_query_term_results = []
@@ -290,7 +292,9 @@ class MappingResultProcessor(ResultProcessor):
 
 #############################################
 
-from swirl.data_profiler import *
+#############################################
+
+from swirl.data_profiler import profile_data, find_closest_median_most_populated_field, find_longest_most_populated_field, list_by_population_desc, filter_elements_case_insensitive
 from swirl.processors.utils import get_tag
 
 class AutomaticPayloadMapperResultProcessor(ResultProcessor):
@@ -490,7 +494,7 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
                     item_1['payload']['dataset'] = dataset
                 self.processed_results = [item_1]
                 return 1
-            
+
         self.processed_results = automapped_results
         self.modified = len(self.processed_results)
         return self.modified

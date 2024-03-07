@@ -13,9 +13,6 @@ path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
-from celery.utils.log import get_task_logger
-logger = get_task_logger(__name__)
-
 #############################################
 #############################################
 
