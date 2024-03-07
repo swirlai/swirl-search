@@ -37,7 +37,7 @@ import hmac
 from swirl.models import *
 from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, OauthToken
-from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTrasnformNoCredentialsSerializer
+from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
 
@@ -855,7 +855,7 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
         query_xfr = QueryTransform.objects.get(pk=pk)
 
         if not self.request.user == query_xfr.owner:
-            serializer = QueryTrasnformNoCredentialsSerializer(query_xfr)
+            serializer = QueryTransformNoCredentialsSerializer(query_xfr)
         else:
             serializer = QueryTransformSerializer(query_xfr)
 
