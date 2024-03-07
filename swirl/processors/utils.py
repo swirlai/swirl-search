@@ -814,4 +814,3 @@ def get_tag(tag_target, tag_list):
             return tag_value
 
     return None
-
