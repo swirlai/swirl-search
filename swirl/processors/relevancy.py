@@ -16,7 +16,7 @@ from swirl.spacy import nlp
 
 from swirl.processors.processor import PostResultProcessor, ResultProcessor
 
-from swirl.perfomance_logger import SwirlRelevancyLogger
+from swirl.performance_logger import SwirlRelevancyLogger
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -47,6 +47,9 @@ class CosineRelevancyResultProcessor(ResultProcessor):
         super().__init__(results, provider, query_string, request_id=request_id, **kwargs)
 
     def process(self):
+
+        logger.debug(f'{self}  processor called with logger name {logger.name}')
+
         RELEVANCY_CONFIG = SWIRL_RELEVANCY_CONFIG
         dict_result_lens = {}
         list_query_lens = []

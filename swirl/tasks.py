@@ -26,7 +26,7 @@ module_name = 'tasks.py'
 
 from swirl.connectors import *
 from swirl.models import SearchProvider
-from swirl.perfomance_logger import *
+from swirl.performance_logger import *
 from swirl.web_page import PageFetcherFactory
 from swirl.authenticators import SWIRL_AUTHENTICATORS_DISPATCH
 

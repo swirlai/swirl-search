@@ -12,7 +12,6 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 from swirl.connectors.utils import get_search_obj
-from swirl.connectors.mappings import *
 from swirl.connectors.utils import get_mappings_dict
 from swirl.connectors.requestsget import RequestsGet
 from swirl.connectors.requestspost import RequestsPost
