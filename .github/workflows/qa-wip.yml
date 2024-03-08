@@ -25,9 +25,9 @@ jobs:
             cache: 'pip' # caching pip stuff
     - name: Install Chromium
       uses: browser-actions/setup-chrome@v1
-    - name: Chromium Install Details
+    - name: Chromium Binary Details
       run: |
-        chromium --version
+        which chromedriver
         which chromium
     - name: Install Swirl
       run: ./install.sh
