@@ -19,7 +19,6 @@ from swirl.connectors.mongodb import MongoDB
 from swirl.connectors.snowflake import Snowflake
 from swirl.connectors.oracle import Oracle
 from swirl.connectors.pinecone import PineconeDB
-from swirl.connectors.snowflake_ai import SnowflakeAI
 
 # uncomment the line below to enable PostgreSQL
 # from swirl.connectors.postgresql import PostgreSQL

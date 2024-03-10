@@ -84,8 +84,7 @@ class SearchProvider(models.Model):
         ('MongoDB', 'MongoDB'),
         ('Oracle','Oracle'),
         ('Snowflake','Snowflake'),
-        ('PineconeDB','PineconeDB'),
-        ('SnowflakeAI','SnowflakeAI')
+        ('PineconeDB','PineconeDB')
     ]
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
