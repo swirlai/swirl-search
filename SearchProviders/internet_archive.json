@@ -1,8 +1,7 @@
 {
-    "name": "Internet Archive Items - Archive.org",
-    "active": false,
+    "name": "Internet Archive Items - archive.org",
+    "active": true,
     "default": false,
-    "authenticator": "",
     "connector": "RequestsGet",
     "url": "https://archive.org/services/search/v1/scrape?xvar=production&fields=*&count=100",
     "query_template": "{url}&q={query_string}",
@@ -26,8 +25,6 @@
     "credentials": "",
     "eval_credentials": "",
     "tags": [
-        "InternetArchive",
-        "Library",
-        "Items"
+        "InternetArchive"
     ]
 }

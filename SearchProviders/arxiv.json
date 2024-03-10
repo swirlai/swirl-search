@@ -1,8 +1,7 @@
 {
-    "name": "arXiv - ArXiv.org",
+    "name": "ArXiv - arxiv.org",
     "active": false,
     "default": false,
-    "authenticator": "",
     "connector": "RequestsGet",
     "url": "http://export.arxiv.org/api/query",
     "query_template": "{url}?search_query=all:{query_string}",
@@ -23,7 +22,7 @@
     "credentials": "",
     "eval_credentials": "",
     "tags": [
-        "arXiv",
-        "Development"
+        "arXiv", 
+        "STM"
     ]
 }
