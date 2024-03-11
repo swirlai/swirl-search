@@ -159,7 +159,7 @@
         ]
     },
     {
-        "name": "Internet Archive Items - Archive.org",
+        "name": "Internet Archive Items - archive.org",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
@@ -225,7 +225,7 @@
         ]
     },
     {
-        "name": "ArXiv - ArXiv.org",
+        "name": "ArXiv - arXiv.org",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
