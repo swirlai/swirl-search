@@ -1,5 +1,5 @@
 requests
-Django>=5.0.1
+Django>=5.0.3
 django_restframework
 django-celery-beat
 django-rest-swagger
