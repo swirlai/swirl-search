@@ -32,7 +32,6 @@ channels-redis
 tika
 drf-yasg
 pymongo
-snowflake-connector-python
 oracledb
 psycopg2-binary
 transformers
