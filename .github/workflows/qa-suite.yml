@@ -63,6 +63,8 @@ jobs:
       run: python swirl.py setup
     - name: Start Swirl
       run: python swirl.py start
+    - name: Check UI Availability
+      run: curl http://localhost:8000/galaxy/login
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
