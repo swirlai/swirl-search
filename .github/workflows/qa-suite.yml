@@ -69,7 +69,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Run the QA Suite
-      run: docker run --net=host -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=qa_suite,community"
+      run: docker run --net=host -e SWIRL_TEST_HOST=localhost -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=qa_suite,community"
     - name: Ensure Artifacts Directory Exists and Write Branch and run_id Again
       run: |
         mkdir -p ./artifacts
