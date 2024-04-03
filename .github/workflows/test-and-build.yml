@@ -5,7 +5,6 @@ on:
       branches:
         - main
         - develop
-        - ds1936-main # temporary addition to test the workflow
       paths-ignore:
         - .github/**
         - docs/**
