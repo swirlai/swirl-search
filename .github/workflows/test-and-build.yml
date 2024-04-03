@@ -1,0 +1,74 @@
+name: Swirl CI/CD Pipeline
+
+on:
+    push:
+      branches:
+        - main
+        - develop
+      paths-ignore:
+        - .github/**
+        - docs/**
+        - README.md
+    workflow_dispatch:
+
+jobs:
+    unit-tests:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout the Code
+              uses: actions/checkout@v4
+            - name: Set Up Python
+              uses: actions/setup-python@v5
+              with:
+                python-version: '3.12.1'
+                cache: 'pip'
+            - name: Install Swirl
+              run: ./install.sh
+            - name: Install the Unit Tests
+              run: ./install-test.sh
+            - name: Run the Unit Tests
+              run: pytest
+
+    qa-suite:
+        needs: unit-tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout the Code
+              uses: actions/checkout@v4
+            - name: Start Application Environment
+              run: docker-compose up -d
+            - name: Run the QA Suite
+              run: docker run --net=host -e SWIRL_TEST_HOST=localhost -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=qa_suite,community"
+            - name: Cleanup Application Environment
+              run: docker-compose down
+
+    build-and-push:
+        needs: qa-suite
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout the Code
+              uses: actions/checkout@v4
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                username: ${{ secrets.DOCKER_USERNAME }}
+                password: ${{ secrets.DOCKER_PASSWORD }}
+            - name: Build and Push Docker Image
+              run: |
+                BRANCH_NAME=${GITHUB_REF#refs/heads/}
+                docker buildx use devBuilder || docker buildx create --name devBuilder --use
+                docker buildx build -t swirlai/swirl-search:${BRANCH_NAME} --platform linux/amd64,linux/arm64 --push .
+            - name: Update the Docker Repo Description
+              uses: peter-evans/dockerhub-description@v4
+              with:
+                username: ${{ secrets.DOCKER_USERNAME_X }}
+                password: ${{ secrets.DOCKER_PASSWORD_X }}
+                repository: swirlai/swirl-search
+            - name: Upload Log Files
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                name: log-files
+                path: |
+                  logs/
+                  /var/log/syslog*       

@@ -51,16 +51,17 @@ jobs:
       run: |
         which chromedriver
         which chromium
-    - name: Install Swirl
-      run: ./install.sh
     - name: Update apt
       run: sudo apt -o Acquire::Retries=3 update
     - name: Upgrade Ubuntu to Latest Patches
       run: sudo apt upgrade -y
     - name: Install redis-server
       run: sudo apt install -y redis-server
+    - name: Install Swirl
+      run: ./install.sh
     - name: Set Up Swirl
       run: python swirl.py setup
+#   INSTALL GALAXY!!!
     - name: Start Swirl
       run: python swirl.py start
     - name: Check UI Availability
@@ -71,7 +72,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Run the QA Suite
-      run: docker run --net=host -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=qa_suite,community"
+      run: docker run --net=host -e SWIRL_TEST_HOST=localhost -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=qa_suite,community"
     - name: Ensure Artifacts Directory Exists and Write Branch and run_id Again
       run: |
         mkdir -p ./artifacts
