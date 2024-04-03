@@ -61,7 +61,6 @@ jobs:
       run: ./install.sh
     - name: Set Up Swirl
       run: python swirl.py setup
-#   INSTALL GALAXY!!!
     - name: Start Swirl
       run: python swirl.py start
     - name: Check UI Availability
