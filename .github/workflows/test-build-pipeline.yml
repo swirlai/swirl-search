@@ -62,7 +62,7 @@ jobs:
             - name: Cleanup Application Environment
               run: docker-compose down
 
-    build-and-push:
+    swirl-docker:
         needs: qa-suite
         runs-on: ubuntu-latest
         steps:
@@ -73,7 +73,7 @@ jobs:
               with:
                 username: ${{ secrets.DOCKER_USERNAME }}
                 password: ${{ secrets.DOCKER_PASSWORD }}
-            - name: Build and Push Docker Image
+            - name: Build and Push Swirl Docker Image
               run: |
                 BRANCH_NAME=${GITHUB_REF#refs/heads/}
                 TAG_NAME=$([ "$BRANCH_NAME" = "main" ] && echo "latest" || echo "$BRANCH_NAME")
@@ -85,6 +85,25 @@ jobs:
                 username: ${{ secrets.DOCKER_USERNAME_X }}
                 password: ${{ secrets.DOCKER_PASSWORD_X }}
                 repository: swirlai/swirl-search
+
+    standalone-docker:
+        needs: swirl-docker
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout the Code
+              uses: actions/checkout@v4
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                username: ${{ secrets.DOCKER_USERNAME }}
+                password: ${{ secrets.DOCKER_PASSWORD }}
+            - name: Build and Push Standalone Docker Image
+              run: |
+                BRANCH_NAME=${GITHUB_REF#refs/heads/}
+                TAG_SUFFIX="-sa"
+                TAG_NAME=$([ "$BRANCH_NAME" = "main" ] && echo "latest$TAG_SUFFIX" || echo "$BRANCH_NAME$TAG_SUFFIX")
+                docker buildx use devBuilder || docker buildx create --name devBuilder --use
+                docker buildx build -f DevUtils/docker/Dockerfile.sa --platform linux/amd64,linux/arm64 -t swirlai/swirl-search:${TAG_NAME} --push .
             - name: Upload Log Files
               if: always()
               uses: actions/upload-artifact@v4
@@ -92,4 +111,4 @@ jobs:
                 name: log-files
                 path: |
                   logs/
-                  /var/log/syslog*       
+                  /var/log/syslog*
