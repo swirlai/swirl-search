@@ -1,10 +1,10 @@
 name: QA Suite
 
 on:
-  workflow_run:
-    workflows: [Unit Tests]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: [Unit Tests]
+  #   types:
+  #     - completed
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 

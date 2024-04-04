@@ -3,10 +3,10 @@ name: Security Testing Build
 # Build a multi-arch docker image for testing security updates to Swirl
 
 on:
-  push:
-    # Trigger this workflow on pushes to the following branches
-    branches:
-      - security-testing
+  # push:
+  #   # Trigger this workflow on pushes to the following branches
+  #   branches:
+  #     - security-testing
   # Allows manual run of this workflow from the Actions tab (on any branch)
   workflow_dispatch:
 
