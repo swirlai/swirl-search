@@ -1,0 +1,48 @@
+# Workflow for running WIP Behave tests on the GitHub runners
+# Manual trigger only against the branch you've chosen
+# Enter the Behave tag name(s) you're testing with at the prompt
+# Do NOT include the '@', only the tag name(s) (e.g. "estest" not "@estest")
+
+name: Testing WIP
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      behave_tags:  # Input the Behave tag(s) to run
+        description: 'Behave tag(s) to run'
+        required: true
+        default: 'estest'  # Default tag if none specified
+
+jobs:
+    wip-tests:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout the Code
+              uses: actions/checkout@v4
+            - name: Start Application Environment
+              run: docker-compose up -d
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                username: ${{ secrets.DOCKER_USERNAME }}
+                password: ${{ secrets.DOCKER_PASSWORD }}
+            - name: Wait for Application to be Ready
+              run: |
+                echo "Waiting for the application to become ready..."
+                max_attempts=10
+                count=0
+                until curl --output /dev/null --silent --head --fail http://localhost:8000/galaxy/login; do
+                  count=$(($count+1))
+                  if [ $count -ge $max_attempts ]; then
+                    echo "Application did not become ready in time."
+                    exit 1
+                  fi
+                  printf '.'
+                  sleep 30
+                done
+                echo "Application is ready."    
+            - name: Run the QA Suite
+              run: docker run --net=host -e SWIRL_TEST_HOST=localhost -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=${{ github.event.inputs.behave_tags }}"
+            - name: Cleanup Application Environment
+              run: docker-compose down
