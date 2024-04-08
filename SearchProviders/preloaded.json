@@ -565,14 +565,7 @@
         "query_template": "{url}",
         "post_query_template": "{}",
         "http_request_headers": {},
-        "page_fetch_config_json": {
-            "cache": "false",
-            "content_url": "https://graph.microsoft.com/beta/me/messages/'{hitId}'",
-            "headers": {
-                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
-            },
-            "timeout": 10
-        },
+        "page_fetch_config_json": {},
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -603,15 +596,7 @@
         "query_template": "{url}",
         "post_query_template": "{}",
         "http_request_headers": {},
-        "page_fetch_config_json": {
-            "cache": "false",
-            "content_url": "https://graph.microsoft.com/beta/me/events/'{sw_strreplace(hitId,/,-)}'",
-            "headers": {
-                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)",
-                "Prefer": "outlook.timezone=\"Eastern Standard Time\""
-            },
-            "timeout": 30
-        },
+        "page_fetch_config_json": {},
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -642,23 +627,7 @@
         "query_template": "{url}",
         "post_query_template": "{}",
         "http_request_headers": {},
-        "page_fetch_config_json": {
-            "cache": "false",
-            "content_url": "https://graph.microsoft.com/v1.0/drives/'{resource.parentReference.driveId}'/items/'{resource.id}'/content",
-            "mimetype_url": "https://graph.microsoft.com/v1.0/drives/'{resource.parentReference.driveId}'/items/'{resource.id}'",
-            "mimetype_path": "'{file.mimeType}'",
-            "mimetype_whitelist": [
-                "application/pdf",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                "image/png",
-                "text/html"
-            ],
-            "headers": {
-                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
-            },
-            "timeout": 30
-        },
+        "page_fetch_config_json": {},
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -687,14 +656,7 @@
         "query_template": "{url}",
         "post_query_template": "{}",
         "http_request_headers": {},
-        "page_fetch_config_json": {
-            "cache": "false",
-            "content_url": "https://graph.microsoft.com/beta/sites/'{hitId}'/drives",
-            "headers": {
-                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
-            },
-            "timeout": 10
-        },
+        "page_fetch_config_json": {},
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
@@ -723,14 +685,7 @@
         "query_template": "{url}",
         "post_query_template": "{}",
         "http_request_headers": {},
-        "page_fetch_config_json": {
-            "cache": "false",
-            "content_url": "https://graph.microsoft.com/beta/chats/'{resource.chatId}'/messages",
-            "headers": {
-                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
-            },
-            "timeout": 10
-        },
+        "page_fetch_config_json": {},
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
