@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'celery',
     'django_celery_beat',
-    'rest_framework_swagger',
     'rest_framework.authtoken',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,14 +50,37 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'drf_yasg'
+    'drf_spectacular'
 ]
 
 ASGI_APPLICATION = 'swirl_server.routing.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+}
+
+#drf-spectacular settings
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Swirl API',
+    # 'DESCRIPTION': 'A detailed description of your project and the API.',
+    'VERSION': '2.1',  # Make sure to update this with each version change of your API
+    'SERVE_INCLUDE_SCHEMA': False,  # 'False' disables serving the schema with the UI
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'displayOperationId': False,
+        'defaultModelsExpandDepth': 1,
+        'defaultModelExpandDepth': 1,
+        'defaultModelRendering': 'example',
+        'displayRequestDuration': True,
+        'docExpansion': 'none',
+        'filter': True,
+        'operationsSorter': 'alpha',
+        'showExtensions': False,
+        'tagsSorter': 'alpha',
+        'validatorUrl': None,
+    },
 }
 
 MIDDLEWARE = [
