@@ -29,6 +29,9 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
+
 import csv
 import base64
 import hashlib
@@ -37,7 +40,7 @@ import hmac
 from swirl.models import *
 from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, OauthToken
-from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer
+from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, MicrosoftTokenUpdateResponseSerializer, OidcAuthResponseSerializer, StatusResponseSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
 
@@ -139,6 +142,7 @@ def error(request):
 ########################################
 
 class LoginView(APIView):
+    @extend_schema(request=LoginRequestSerializer, responses={200: AuthResponseSerializer})
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
@@ -150,6 +154,14 @@ class LoginView(APIView):
             return Response({'error': 'Invalid credentials'})
 
 class LogoutView(APIView):
+    serializer_class = None
+
+    @extend_schema(
+        responses={200: StatusResponseSerializer},
+        parameters=[
+            OpenApiParameter(name="Authorization", description="Authorization token", required=True, type=OpenApiTypes.STR, location=OpenApiParameter.HEADER),
+        ]
+    )
     def post(self, request):
         auth_header = request.headers['Authorization']
         token = auth_header.split(' ')[1]
@@ -160,6 +172,14 @@ class LogoutView(APIView):
         return Response({'status': 'OK'})
 
 class OidcAuthView(APIView):
+
+    @extend_schema(
+        request=None,  # No request body expected
+        responses={200: OidcAuthResponseSerializer},  # Documenting the response structure
+        parameters=[
+            OpenApiParameter(name="OIDC-Token", type=OpenApiTypes.STR, location=OpenApiParameter.HEADER, description="OIDC token for authentication")
+        ]
+    )
     def post(self, request):
         if 'OIDC-Token' in request.headers:
             header = request.headers['OIDC-Token']
@@ -187,6 +207,8 @@ class OidcAuthView(APIView):
 
 
 class UpdateMicrosoftToken(APIView):
+    serializer_class = MicrosoftTokenUpdateResponseSerializer
+
     def post(self, request):
         try:
             # just return succcess,don't call the task
