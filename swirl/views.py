@@ -40,7 +40,7 @@ import hmac
 from swirl.models import *
 from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, OauthToken
-from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, MicrosoftTokenUpdateResponseSerializer, OidcAuthResponseSerializer, StatusResponseSerializer
+from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, MicrosoftTokenUpdateResponseSerializer, OidcAuthResponseSerializer, StatusResponseSerializer, AuthResponseSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
 
