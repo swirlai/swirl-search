@@ -46,6 +46,7 @@ jobs:
               env:
                 QA_ADMIN_USER: ${{ secrets.QA_ADMIN_USER }}
                 QA_ADMIN_PW: ${{ secrets.QA_ADMIN_PW }}
-              run: docker run --net=host -e SWIRL_TEST_HOST=localhost -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=${{ github.event.inputs.behave_tags }}"
+              run: |
+                docker run --net=host -e SWIRL_TEST_HOST=localhost -e QA_ADMIN_USER="${{ env.QA_ADMIN_USER }}" -e QA_ADMIN_PW="${{ env.QA_ADMIN_PW }}" -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=qa_suite,community"
             - name: Cleanup Application Environment
               run: docker-compose down
