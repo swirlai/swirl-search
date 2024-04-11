@@ -43,6 +43,9 @@ jobs:
                 done
                 echo "Application is ready."    
             - name: Run the QA Suite
+              env:
+                QA_ADMIN_USER: ${{ secrets.QA_ADMIN_USER }}
+                QA_ADMIN_PW: ${{ secrets.QA_ADMIN_PW }}
               run: docker run --net=host -e SWIRL_TEST_HOST=localhost -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=${{ github.event.inputs.behave_tags }}"
             - name: Cleanup Application Environment
               run: docker-compose down
