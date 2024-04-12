@@ -57,8 +57,13 @@ jobs:
                   sleep 30
                 done
                 echo "Application is ready."    
+            - name: Create env File
+              run: |
+                echo "SWIRL_TEST_HOST=localhost" > .env
+                echo "QA_ADMIN_USER=${{ secrets.QA_ADMIN_USER }}" >> .env
+                echo "QA_ADMIN_PW=${{ secrets.QA_ADMIN_PW }}" >> .env
             - name: Run the QA Suite
-              run: docker run --net=host -e SWIRL_TEST_HOST=localhost -t swirlai/swirl-search-qa:automated-tests-develop sh -c "behave --tags=qa_suite,community"
+              run: docker run --net=host --env-file .env -t swirlai/swirl-search-qa:automated-tests-develop sh -c "behave --tags=qa_suite,community"
             - name: Cleanup Application Environment
               run: docker-compose down
 
