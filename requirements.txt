@@ -31,6 +31,7 @@ channels
 channels-redis
 tika
 pymongo
+snowflake-connector-python
 oracledb
 psycopg2-binary
 transformers
