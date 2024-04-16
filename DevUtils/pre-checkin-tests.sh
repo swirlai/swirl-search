@@ -42,9 +42,8 @@ if [ ! -e ".swirl" ]; then
 fi
 
 # make sure we always have the latest
-docker pull swirlai/swirl-search-qa:automated-tests
-
-docker run -e SWIRL_TEST_HOST=host.docker.internal --net=host -t swirlai/swirl-search-qa:automated-tests sh -c "behave --tags=docker_api_smoke"
+docker pull swirlai/swirl-search-qa:automated-tests-develop
+docker run --net=host --env-file .env.test.docker -t swirlai/swirl-search-qa:automated-tests-develop sh -c "behave --tags=docker_api_smoke"
 
 echo $PROG "smoke tests succeeded"
 if [ -e ".swirl" ]; then
