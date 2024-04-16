@@ -1,8 +1,7 @@
 requests
-Django>=5.0.1
+Django>=5.0.3
 django_restframework
 django-celery-beat
-django-rest-swagger
 Celery
 pika
 elasticsearch
@@ -25,12 +24,12 @@ PyJWT
 pyahocorasick
 redis
 xmltodict
+lxml==5.1.1
 readability-lxml
 tiktoken
 channels
 channels-redis
 tika
-drf-yasg
 pymongo
 oracledb
 psycopg2-binary
@@ -38,3 +37,4 @@ transformers
 torch
 pinecone-client
 pandas
+drf-spectacular

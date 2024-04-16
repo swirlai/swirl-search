@@ -52,3 +52,24 @@ class QueryTransformNoCredentialsSerializer(serializers.ModelSerializer):
     class Meta:
         model = QueryTransform
         fields = ['id', 'name','owner','shared', 'date_created','date_updated','qrx_type','config_content']
+
+###
+# Minimal Serializers for drf-spectacular OpenAPI documentation only
+class LoginRequestSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+class MicrosoftTokenUpdateResponseSerializer(serializers.Serializer):
+    user = serializers.CharField()
+    status = serializers.CharField()
+
+class OidcAuthResponseSerializer(serializers.Serializer):
+    user = serializers.CharField()
+    token = serializers.CharField()
+
+class AuthResponseSerializer(serializers.Serializer):
+    token = serializers.CharField()
+    user = serializers.CharField()
+
+class StatusResponseSerializer(serializers.Serializer):
+    status = serializers.CharField()

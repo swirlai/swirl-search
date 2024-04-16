@@ -32,9 +32,9 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 
 # Call setup_logging here if you want it to affect the whole Celery application
 from swirl_server.log_config import setup_logging
-print("Cerlery Early Logging set up...")
+print("Celery Early Logging set up...")
 setup_logging()
-print("Cerlery Early Logging set up done.")
+print("Celery Early Logging set up done.")
 
 app = Celery('swirl_server',
              broker='redis://localhost:6379/0',
@@ -55,4 +55,3 @@ app.autodiscover_tasks()
 @app.task(bind=True)
 def debug_task(self):
     print(f'Request: {self.request!r}')
-
