@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Swirl Overview
+title: SWIRL AI CONNECT OVERVIEW
 nav_order: 1
 ---
 <details markdown="block">
@@ -12,68 +12,68 @@ nav_order: 1
 {:toc}
 </details>
 
-# Swirl Overview
+# SWIRL AI CONNECT
 
-## What is Metasearch? Is it the same as Federated Search?
+## What is SWIRL AI CONNECT?
 
-[Metasearch](https://en.wikipedia.org/wiki/Federated_search) is a technical approach in which a search engine (or "broker") accepts a query from some user (or system), distributes the query to other search engines, waits for the responses, then returns a normalized, unified and ideally relevancy-ranked set of results.
+SWIRL AI CONNECT is infrastructure software that effortlessly integrates enterprise data platforms, applications and information services with any Generative AI - without copying, indexing and/or ingesting data. Our plug-and-play solution requires minimal IT involvement, allowing you to leverage your existing systems, whether in-house or external, with ease. SWIRL acts as a central hub, seamlessly connecting to your data sources to AI, and providing real-time insights without disrupting your current systems or workflows.
 
-![Swirl architecture diagram](images/swirl_arch_diagram.jpg)
+## How does it work?
 
-The metasearch approach differs from traditional [enterprise search engines](https://en.wikipedia.org/wiki/Enterprise_search) that process [copies of all the source data](https://en.wikipedia.org/wiki/Extract,_transform,_load) and [index it](https://en.wikipedia.org/wiki/Search_engine_indexing), which can be costly and time-consuming. 
+SWIRL AI CONNECT is enterprise infrastructure software, deployed in your private cloud. It provides a low/no-code, 7-step insight generation workflow for generating AI insights using internal data, without requiring you to extract, copy, index and maintain that data. With SWIRL AI CONNECT, data stays in place, and trustable, personalized insights are delivered to the user from the approved AI.
 
-Metasearch leaves the source data in place and relies on each source's own search engine to get access. This makes federated search less suited for deep navigation - across a large e-commerce or data set catalog, for example - but ideal for delivering cross-silo results with a fraction of the effort. It is also excellent for information enrichment, entity analysis (such as competitive, customer, industry or market intelligence) and integrating unstructured data for content curation, data science and machine learning applications.
+![SWIRL AI CONNECT Insight Pipeline](images/swirl_rag_pipeline.png)
 
-## What is Swirl?
+When a user requests an AI insight, SWIRL:
 
-[Swirl](https://github.com/swirlai/swirl-search) is a metasearch engine built on the Python/Django stack and released under the Apache 2.0 license in 2022.
+* Sends the insight out to relevant sources
+* Normalizes and unifies the results 
+* Re-ranks the united results using non-generative Reader LLM
+* Optionally, presents them to the user and allows them to adjust the result set
+* Fetches the full-text of the results, in real time
+* Identifies the most relevant portions of the documents and binding them to a prompt
+* Sends the prompt to the approved generative AI for insight generation
+* Returns a single set of insights with citations
 
- Swirl includes connectors to many popular systems including search engines, databases and other enterprise cloud services - anything with a query API.
+SWIRL AI CONNECT includes the Galaxy UI, but is API-first, and easy to to integrate.
 
-![Swirl Sources](images/swirl_source_no_m365-galaxy_dark.png)
+SWIRL AI CONNECT ENTERPRISE includes flexible, generic OAUTH2 and SSO, with auto-provisioning via OpenID Connect.
 
-Use Swirl's APIs to run searches and track their progress in real-time, then retrieve unified results re-ranked by Swirl's built-in cosine-vector similarity model based on [spaCy](https://spacy.io/), plus term and phrase boosts.
+## What is the SWIRL architecture & tech stack?
 
-![Swirl Results](images/swirl_results_no_m365-galaxy_dark.png)
+SWIRL uses the Python/Django/Celery stack, with Redis and PostgreSQL recommended for production deployments.
 
-Swirl provides a `swirl_score` and `swirl_rank` for each item, as well as the original source's ranking, so users can see instantly what was most relevant across all sources. 
+![SWIRL AI CONNECT Architecture diagram](images/swirl_arch_diagram.jpg)
 
-``` json
- "results": [
-        {
-            "swirl_rank": 1,
-            "swirl_score": 1020.4933333333332,
-            "searchprovider": "Enterprise Search Engines - Google PSE",
-            "searchprovider_rank": 1,
-            "title": "Swirl <em>Metasearch</em>: Home",
-            "url": "https://swirl.today/",
-            "body": "Swirl <em>Metasearch</em> connects data silos, returns AI-ranked results to a single experience and simplifies search deployments for applications.",
-            "date_published": "unknown",
-            "date_published_display": "",
-            "date_retrieved": "2023-07-10 17:19:00.331417",
-            "author": "swirl.today",
-           ...
-            },
-```
+## What systems can SWIRL AI CONNECT integrate with?
 
-Search developers can render Swirl's JSON results in any existing UI or framework without having to normalize the field names. Data scientists and engineers, search managers, analysts and implementers who have worked with Elastic or Solr will find it easy to add results from any source with a typical search API to their existing search infrastructure. 
+The following is a partial list of supported platforms, please [contact us](mailto:hello@swirl.today) for details.
 
-## What is Retrieval Augmented Generation (RAG)? Does Swirl support it?
+* Generative AIs: AWS Bedrock, Azure/OpenAI, Athropic, Cohere, Google, OpenAI...
+* Enterprise Apps: Collibra, Microsoft 365, ServiceNow, Salesforce, Snowflake, Thoughtspot...
+* Search Engines: Algolia, Elasticsearch, OpenSearch, Solr...
+* Databases: Google BigQuery, MongoDB, Oracle, Pinecone, PostgreSQL, Qdrant, Sqlite3...
+* Services: Blockchain.com, Generic Web, Google PSE, Miro, NLResearch.com, OpenSanctions...
 
-[Retrieval Augmented Generation (RAG)](https://research.ibm.com/blog/retrieval-augmented-generation-RAG) is a machine learning framework that combines the strengths of pre-trained language models with external information retrieval systems to generate more informed and contextually relevant outputs. 
+## What do SWIRL AI CONNECT insights look like?
 
-![Swirl RAG Overview](images/swirl_rag_overview.png)
-
-RAG operates in two step:
-
-1. Retrieve relevant documents based on the given input query
-
-2. Use these retrieved passages as additional context when prompting generative AI
+Here is an example:
 
 ![Swirl RAG AI Insight with results](images/swirl_rag_pulmonary_3.png)
 
-The results of RAG should always be an AI insight *plus* citations: the documents used in the prompt that create the insight, so the user can verify the results and, over time, learn to trust the RAG system.
+For more information please refer to the [AI Guide](AI-Guide).
 
-The benefit of RAG is that it allows models to pull in real-world information that wasn't present in their training data, thereby enhancing their capability to provide detailed and accurate answers. This approach bridges the gap between pure generation-based models and retrieval-based models, offering a hybrid solution that capitalizes on the strengths of both paradigms.
+## How do I connect SWIRL AI CONNECT to X?
 
-[Swirl](https://github.com/swirlai/swirl-search) supports RAG as of Release 3.0. Refer to the [AI Guide](AI-Guide) for more information.
+To connect SWIRL with an internal data source, you [create a SearchProvider record](./User-Guide.md#using-searchproviders).
+
+To integrate SWIRL with a generative AI, you create an AIProvider record, as described 
+[in the Enterprise Guide](./Enterprise-Guide.md#managing-ai-providers).
+
+## How can I learn more about SWIRL?
+
+* [Quick Start](./Quick-Start.md) - covers installation
+* [User Guide](./User-Guide.md) - details how to configure and use SWIRL
+* [AI Guide](./AI-Guide.md) - explains how to obtain basic AI Insights using RAG
+* [Enterprise Guide](./Enterprise-Guide.md) - explains how to configure SWIRL AI CONNECT ENTERPRISE
+* [Admin Guide](./Admin-Guide.md) - details how to manage SWIRL in production

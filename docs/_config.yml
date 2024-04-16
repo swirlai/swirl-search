@@ -1,5 +1,5 @@
 # Site settings
-title: Swirl Documentation
+title: SWIRL Documentation
 description: "One search box to find it all"
 repository: "swirlai/swirl-search"
 url: https://docs.swirl.today
@@ -22,17 +22,17 @@ enable_copy_code_button: true
 
 # External navigation links
 nav_external_links:
-  - title: Swirl on GitHub
+  - title: SWIRL on GitHub
     url: https://github.com/swirlai/swirl-search
     hide_icon: false # set to true to hide the external link icon - defaults to false
-  - title: Swirl.Today
-    url: https://swirl.today/
+  - title: SWIRL AI CONNECT
+    url: https://swirlaiconnect.com/
     hide_icon: false # set to true to hide the external link icon - defaults to false
 nav_external_links_new_tab: true # set to true to open all external links in new tabs
 
 # Aux links for the upper right navigation
 aux_links:
-  "Swirl on GitHub":
+  "SWIRL on GitHub":
     - "//github.com/swirlai/swirl-search"
 aux_links_new_tab: true # Makes Aux links open in a new tab. Default is false
 
