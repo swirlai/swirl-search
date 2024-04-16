@@ -14,68 +14,36 @@ nav_order: 10
 
 # SWIRL AI CONNECT Enterprise Guide
 
-Notice: this repository is commercially licensed. A valid license key is required for use. Please contact [hello@swirlsearch.com](mailto:hello@swirlsearch.com) for more information.
+{: .highlight }
+This repository is commercially licensed. A valid license key is required for use. Please contact [hello@swirlsearch.com](mailto:hello@swirlsearch.com) for more information.
 
 # System Requirements
 
-* Linux platform - Ubuntu, RHEL, OS/X - note Windows is not supported
+* Platform - Ubuntu, RHEL, or OS/X; Note: Windows is not supported
 * 8+ VCPU, 16+ GB of memory
 * At least 500 GB of free disk space
-* Python 3.11 or greater
+* Python 3.11 or newer
 * PostgreSQL 14 or later
 * SSL certificates installed and configured for Python
-* Network connectivity tested (see below) between Swirl and systems to be queried
+* Network connectivity tested (see below) between SWIRL and systems to be queried
 
 # Configuring SWIRL AI CONNECT ENTERPRISE
 
-## Changing the Galaxy Logo
-
-To change the logo in Swirl Galaxy (only) - assuming it is already installed:
-
-1. Prepare at least one logo file
-
-* png format
-* dimensions 818 x 214
-* At least 30 px whitespace around the margin of the logo
-* name ends with `_logo_highres_positive.png` or `_logo_highres_negative.png`
-
-2. Copy the logo file into the `enterprise/logo` folder in the swirl installation.
-
-3. Execute the following command:
-
-```
-python swirl.py logo
-```
-
-Swirl will ask you to confirm. When you do, it will copy the first two logos it finds that meet the requirements into the Galaxy configuration, reporting on progress:
-
-```
-Scanning folder: enterprise/logo
-Copying enterprise/logo/your_logo_highres_positive.png -> static/galaxy/logo_highres_positive.png ... Ok
-Copying enterprise/logo/your_logo_highres_negative.png -> static/galaxy/logo_highres_negative.png ... Ok
-Restart Swirl to see the updated logo(s)!
-```
-
-Restart swirl to see the new logos!
-
-<br/>
-
 ## Licensing
 
-Add the license provided by Swirl to the installation's `.env` file. It will be in the following format:
+Add the license provided by SWIRL to the installation's `.env` file. It will be in the following format:
 
 ```
 SWIRL_LICENSE={"owner": "<owner-name>", "expiration": "<expiration-date>", "key": "<public-key>"}
 ```
 
-A message will appear in the `logs/django.log` if the license is invalid. 
-Please [contact support](#support) if this happens.
+A message will appear in the `logs/django.log` if the license is invalid. Please [contact support](mailto:support@swirlsearch.com) if this happens.
 
 ## Database
 
-For POV's, Swirl Enterprise may be used with Sqlite3. Please [contact support](#support) for assistance.
+For POV's, SWIRL AI CONNECT ENTERPRISE may be used with Sqlite3. Please [contact support](#support) for assistance with this configuration option.
 
-For production, Swirl recommends PostgreSQL.
+For production, SWIRL recommends PostgreSQL.
 
 ### PostgreSQL
 
@@ -96,12 +64,9 @@ DATABASES = {
 
 For more information see: [Admin Guide - Configuring Django](https://docs.swirl.today/Admin-Guide.html#configuring-django)
 
-<br/>
-
 ## Configuring OpenID Connect
 
-If you will be using OpenID Connect to authenticate and auto-provision users, modify the following variables in the .env file:
-
+If you will be using OpenID Connect to authenticate and auto-provision users, modify the following variables in the instances's `.env` file:
 
 ```
 OIDC_RP_CLIENT_ID=''
@@ -119,11 +84,43 @@ OIDC_STORE_ID_TOKEN=''
 OIDC_AUTHENTICATION_CALLBACK_URL=''
 ```
 
-# Deploying SWIRL AI CONNECT
+## Changing the Galaxy Logo
+
+To change the logo in SWIRL Galaxy (only) - assuming it is already installed:
+
+1. Prepare at least one logo file (or one each for light and dark mode display)
+* Image file format:  png
+* Dimensions: 818 x 214
+* At least 30 px whitespace around the margin of the logo
+* File name ends with `_logo_highres_positive.png` or `_logo_highres_negative.png`
+
+2. Copy the logo file(s) into the `enterprise/logo` folder in the SWIRL installation.
+
+3. Execute the following command:
+
+```
+python swirl.py logo
+```
+
+SWIRL will ask you to confirm. When you do, it will copy the first two logos it finds that meet the requirements into the Galaxy configuration, reporting on progress:
+
+```
+Scanning folder: enterprise/logo
+Copying enterprise/logo/your_logo_highres_positive.png -> static/galaxy/logo_highres_positive.png ... Ok
+Copying enterprise/logo/your_logo_highres_negative.png -> static/galaxy/logo_highres_negative.png ... Ok
+Restart Swirl to see the updated logo(s)!
+```
+
+Restart SWIRL to see the new logos:
+```
+python swirl.py restart
+```
+
+# Deploying SWIRL AI CONNECT ENTERPRISE
 
 ## Connecting to Microsoft IDP
 
-If you will be using Microsoft as your IDP, place the following in the OS environment - not in the .env file:
+If you will be using Microsoft as your IDP, place the following in the OS environment - not in the `.env` file:
 
 ```
 export MSAL_CB_PORT=8000
@@ -132,59 +129,55 @@ export MSAL_HOST=localhost
 
 ## Connecting to M365
 
-To connect Swirl to your M365 tenant, follow instructions in the [Microsoft 365 Guide](https://docs.swirl.today/M365-Guide.html)
+To connect SWIRL to your M365 tenant, follow instructions in the [Microsoft 365 Guide](https://docs.swirl.today/M365-Guide.html)
 
 ## Connecting to Other Sources
 
-To connect Swirl to search engines, databases, enterprise applications and information services, follow instructions in the [User Guide - Using SearchProviders](https://docs.swirl.today/User-Guide.html#using-searchproviders)
+To connect SWIRL to search engines, databases, enterprise applications and information services, follow instructions in the [User Guide - Using SearchProviders](https://docs.swirl.today/User-Guide.html#using-searchproviders)
 
 ## Connecting to Enterprise AI
 
-Note: this guide applies only to SWIRL AI CONNECT ENTERPRISE.
+{: .highlight }
+The following applies only to SWIRL AI CONNECT ENTERPRISE.
 
 ### Roles for Generative AI
 
-There are four "roles" which LLM/GAI can play in Swirl:
+There are four "roles" which LLM/GAI can play in SWIRL:
 
 | Role | Description | Default | 
 | ------- | ----------- | -------- |
-| reader  | Providing embeddings for Swirl's Reader LLM to use when re-ranking search results | spaCy |
+| reader  | Providing embeddings for SWIRL's Reader LLM to use when re-ranking search results | spaCy |
 | query   | Provide completions for query transformations | OpenAI GPT-3.5 Turbo |
 | connector | Provide completions for direct questioning (not RAG) | OpenAI GPT-3.5 Turbo  | 
-| rag | Provide completions for Retrieval Augmented Generation (RAG) using data retrieved by Swirl | OpenAI GPT-4  |
+| rag | Provide completions for Retrieval Augmented Generation (RAG) using data retrieved by SWIRL | OpenAI GPT-4  |
 
 ### Managing AI Providers
 
-To view, edit, add or delete an AI provider, go to the `swirl/aiproviders` endpoint. For example if using the default local install:
-
-#### [http://localhost:8000/swirl/aiproviders](http://localhost:8000/swirl/aiproviders)
+To view, edit, add or delete an AI provider, go to the `swirl/aiproviders` endpoint. For example, if using the default local install: [http://localhost:8000/swirl/aiproviders](http://localhost:8000/swirl/aiproviders)
 
 ![SWIRL AI Providers](https://docs.swirl.today/images/swirl_aiproviders.png)
 
 ### Supported AI Providers
 
-Note that the links below will open in a new window. 
+SWIRL uses LiteLLM to support the most popular providers; however, it may not come preloaded with a AI Provider for every supported provider. Please [contact support](#support) for assistance in creating a suitable AI Provider for any LiteLLM supported endpoint.
 
-#### [Supported Embeddings](https://docs.litellm.ai/docs/embedding/supported_embedding)
+From LiteLLM.ai:
+* [List of Supported Embeddings](https://docs.litellm.ai/docs/embedding/supported_embedding)
 
-#### [Supported LLM/GAI](https://docs.litellm.ai/docs/providers)
+* [List of Supported LLM/GAI](https://docs.litellm.ai/docs/providers)
 
-Swirl uses LiteLLM to support the most popular providers; however, it may not come preloaded with a SearchProvider for every supported provider. Please [contact support](#support) for assistance in creating a suitable AI Provider for any LiteLLM supported endpoint.
+### Editing AI Providers
 
-### Editing
+Edit any AI Provider by adding the `id` value to the end of the `swirl/aiproviders` URL. For example: `http://localhost:8000/swirl/aiproviders/4/`
 
-Edit any AI Provider by adding the `id` to the end of the `/swirl/aiproviders` URL. 
-
-For example: `http://localhost:8000/swirl/aiproviders/4/`
-
-![SWIRL AIProvider - Azure/OpenAI GPT-4](https://docs.swirl.today/images/swirl_aiproviders_4.png)
+![SWIRL AIProvider - Azure/OpenAI GPT-4](./images/swirl_aiprovider_4.png)
 
 From here, use the form at the bottom of the page to:
 
-* DELETE this AI Provider, forever
-* Edit the configuration of the AI Provider and `PUT` the changes back
+* `DELETE` this AI Provider, forever
+* Edit the configuration of the AI Provider and `PUT` the changes
 
-### Activating
+### Activating AI Providers
 
 To activate a preloaded AI Provider, edit it as noted in the previous section.
 
@@ -216,14 +209,14 @@ For example, here is the preloaded OpenAI GPT-4 provider, which can be used for 
         "defaults": [
             "rag"
         ]
-    },
+    }
 ```
 
-### Defaults
+### AI Provider Defaults
 
 Use the `active` property to switch between providers for the same role function.
 
-For example, to switch back and forth between OpenAI GPT-4 and Azure/OpenAI GPT-4 for RAG, the Azure/Open AI GPT-4 provider would look like this:
+For example, to switch back and forth between OpenAI GPT-4 and Azure/OpenAI GPT-4 for RAG, the Azure/OpenAI GPT-4 provider would look like this:
 
 ``` json
 {
@@ -248,35 +241,33 @@ For example, to switch back and forth between OpenAI GPT-4 and Azure/OpenAI GPT-
         "defaults": [
             "rag"
         ]
-    },
+    }
 ```
 
 To switch to this provider, set `active` to `true` and hit the `PUT` button to update it.
 
-Then go to the OpenAI provider shown above (with `id` 16, above). Edit it, set `active` to `false` and hit the `PUT` button. Now the Azure/OpenAI provider will be active for rag, and OpenAI will be inactive. 
+Then go to the OpenAI provider shown above (with `id` 16, above). Edit it, set `active` to `false` and hit the `PUT` button. Now the Azure/OpenAI provider will be active for RAG, and OpenAI will be inactive. 
 
 Future versions will allow prioritization and fallback between providers. 
 
-### Copy/Paste Install
+### Copy/Paste Install of AI Providers
 
 If you have the raw JSON of an AI Provider, install it by copying/pasting into the form at the bottom of the AI Provider endpoint.
 
-1. Go to [http://localhost:8000/swirl/aiproviders/](http://localhost:8000/swirl/aiproviders/)
+1. Go to the endpoint: [http://localhost:8000/swirl/aiproviders/](http://localhost:8000/swirl/aiproviders/)
 2. Click the `Raw data` tab on the form at the bottom of the page
 3. Paste one AI Provider's JSON at a time into the form and press the `POST` button
-4. Swirl will respond with the finished AI Provider
+4. SWIRL will respond with the finished AI Provider
 
-### Bulk Loading
+### Bulk Loading of AI Providers
 
-Use the included [`swirl_load.py`](https://github.com/swirlai/swirl-search/blob/main/swirl_load.py) script to load AI Provider json instantly - including lists of providers.
+Use the included [`swirl_load.py`](https://github.com/swirlai/swirl-search/blob/main/swirl_load.py) script to load AI Provider JSON instantly - including lists of providers.
 
-<br/>
-
-## Using the Bearer Token Service to update AI Providers
+## Using the Bearer Token Service to Update AI Providers
 
 SWIRL AI CONNECT ENTERPRISE includes a Bearer Token Service that obtains new tokens on a configurable basis. 
 
-The BT service issues a POST to a configured IDP URL with a user id and secret, extracts a bearer_token from the response, then updates the `api_key` of the configured AI Provider. 
+The Bearer Token service issues a `POST` to a configured IDP URL with a user id and secret, extracts a `bearer_token` from the response, then updates the `api_key` of the configured AI Provider. 
 
 To configure this service:
 
@@ -288,7 +279,7 @@ BT_IDP_CLIENT_ID=''
 BT_IDP_CLIENT_SECRET=''
 ```
 
-* Modify the `BT_AIP` setting to be the `id` of the Swirl `AIProvider` to update. 
+* Modify the `BT_AIP` setting to be the `id` of the SWIRL `AIProvider` to update. 
 
 ```
 BT_AIP=9
@@ -300,7 +291,7 @@ If you need to update multiple providers, list them as a string, with commas:
 BT_AIP='9,10'
 ```
 
-* Modify the `CELERY_BEATS_SCHEDULE` setting to modify the schedule for the service. By default, it runs every 20 minutes, but you can change it to any legal crontab setting:
+* In the `swirl_server/settings.py` file, modify the `CELERY_BEATS_SCHEDULE` setting to set the schedule for this service. By default, it runs every 20 minutes, but you can change it to any legal crontab setting:
 
 ```
 CELERY_BEAT_SCHEDULE = {
@@ -322,11 +313,9 @@ python swirl.py start celery-beats
 
 * Terminate `python swirl.py logs` if running, and restart-it
 
-This will ensure you see messages from the celery-beats log. However, most of the BT service log output will be in `logs/celery-worker.log`.
+This will ensure you see messages from the `celery-beats` log. However, most of the BT service log output will be in `logs/celery-worker.log`.
 
-<br/>
-
-# Fetching Enterprise Content
+# Fetching Enterprise Content for RAG
 
 The SWIRL AI CONNECT ENTERPRISE Page Fetcher supports retrieval of results from sources that require authentication. The following sections explain how to configure specific SearchProviders for RAG.
 
@@ -396,38 +385,25 @@ If you prefer not to use Diffbot, the following configuration is recommended:
 
 ### Notes
 
-* The 'cache' parameter is set to `false` by default as of Release 3.0.
+* The `cache` parameter is set to "false" by default as of Release 3.0.
 
-* When the 'fallback' parameter is set to 'diffbot', the Page Fetcher uses the normal fetcher first and falls back to using Diffbot if that fails. The normal fetcher is much faster than Diffbot and if it returns useable content, there is no need to incur the cost of a Diffbot call.
+* When the `fallback` parameter is set to "diffbot", the Page Fetcher uses the normal fetcher first and falls back to using Diffbot if that fails. The normal fetcher is much faster than Diffbot, and if it returns useable content, there is no need to incur the cost of a Diffbot call.
 
 * The `headers` values are the headers sent with each page request.
 
-* The domain specific `timeout` values serve two contradictory purpose. Firstly, it allows a slow but useful website to return data (e.g. www.businesswire.com).  Secondly, it acccommodates sites that 'fail quickly' and should use Diffbot instead (e.g. www.linkedin.com).
+* The domain specific `timeout` values serve two contradictory purpose. Firstly, it allows a slow but useful website to return data (e.g. `www.businesswire.com`).  Secondly, it acccommodates sites that 'fail quickly' and should use Diffbot instead (e.g. `www.linkedin.com`).
 
 * Diffbot requires a paid account and associated API token.
 
-## Microsoft Outlook Calendar
+## M365 Configurations
 
-Add the following to the Microsoft Calendar SearchProvider configuration:
+{: .warning }
+Diffbot should not be used with Microsoft sources.
 
-```
-"page_fetch_config_json": {
-            "cache": "false",
-            "content_url": "https://graph.microsoft.com/v1.0/me/events/'{hitId}'",
-            "headers": {
-                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
-            },
-            "timeout": 30
-        },
-```
+{: .highlight }
+The field `content_url` is a template URL that uses information from the search result to build a URL that SWIRL then uses to fetch the actual content.
 
-### Notes
-
-* Diffbot should not be used with Microsoft sources.
-
-* The field `content_url` is a template URL that uses information from the search result to build a URL that Swirl then uses to fetch the actual content.
-
-## Microsoft Outlook Messages
+### Microsoft Outlook Messages
 
 Add the following to the Microsoft Outlook Messages SearchProvider configuration:
 
@@ -442,18 +418,35 @@ Add the following to the Microsoft Outlook Messages SearchProvider configuration
 
 ```
 
-## Microsoft OneDrive
+### Microsoft Calendar
+
+Add the following to the Microsoft Calendar SearchProvider configuration:
+
+```
+"page_fetch_config_json": {
+            "cache": "false",
+            "content_url": "https://graph.microsoft.com/v1.0/me/events/'{hitId}'",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "timeout": 30
+        },
+```
+
+### Microsoft OneDrive
 
 The following table summarizes the available configuration options for OneDrive:
 
-| Field | Description | Notes |
-| ----- | ----------- | ----- | 
-| content_url | the URL to fetch to get content of page, if different from URL mapped to Swirl `url`` field |  |
-| mimetype_url | the URL to fetch to get the mimetype of the content |  | 
-| mimetype_path | JSON path to a string in the fetched mimetype object |  |
-| mimetype_whitelist | List of mimetypes of content to be fetched |  |
+| Field | Description |
+| ----- | ----------- |
+| content_url | The URL to fetch to get content of page, if different from URL mapped to SWIRL `url`` field |
+| mimetype_url | The URL to fetch to get the mimetype of the content | 
+| mimetype_path | JSON path to a string in the fetched mimetype object |
+| mimetype_whitelist | List of mimetypes of content to be fetched |
 
-<br/>
+* The configuration below includes a list of mimetypes to be fetched, including `text/html`, PDF and Microsoft Office documents.
+
+* SWIRL will need a configured text extractor (*next below*) to RAG with binary mimetype content.
 
 ```
     "page_fetch_config_json": {
@@ -475,13 +468,35 @@ The following table summarizes the available configuration options for OneDrive:
         }
 ```
 
-### Notes
+### Microsoft SharePoint
 
-* The configuration above includes a list of mimetypes to be fetched, including `text/html`, PDF and Microsoft Office documents.
+Add the following to the Microsoft SharePoint SearchProvider configuration:
 
-* SWIRL will need a configured text extractor (*see below*) to RAG with binary mimetype content.
+```
+ "page_fetch_config_json": {
+            "cache": "false",
+            "content_url": "https://graph.microsoft.com/beta/sites/'{hitId}'/drives",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "timeout": 10
+        },
+```
 
-<br/>
+### Microsoft Teams Chat
+
+Add the following to the Microsoft Teams Chat SearchProvider configuration:
+
+```
+"page_fetch_config_json": {
+            "cache": "false",
+            "content_url": "https://graph.microsoft.com/beta/chats/'{resource.chatId}'/messages",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            },
+            "timeout": 10
+        },
+```
 
 ## Extracting Enterprise Content with Apache Tika
 
@@ -495,50 +510,21 @@ For local installations, run the following command from the Console:
 docker run -d -p 9998:9998 apache/tika
 ```
 
-To run Tika from another location, set the `TIKA_SERVER_ENDPOINT` to that URL in Swirl's `.env` file and restart Swirl.
+To run Tika from another location, set the `TIKA_SERVER_ENDPOINT` to that URL in SWIRL's `.env` file and restart SWIRL.
 
-## SearchProvider Configuration
+### SearchProvider Configuration
 
-The following configuration will utilize Tika to convert PDF, Microsoft Office, and other file formats returned from the Microsoft Graph API to text that can then be consumed by SWIRL for RAG processor. Expand the whitelist to include any [document type that Tika supports](https://tika.apache.org/1.10/formats.html).
-
-```
- "page_fetch_config_json": {
-            "cache": "false",
-            "content_url": "https://graph.microsoft.com/v1.0/drives/'{resource.parentReference.driveId}'/items/'{resource.id}'/content",
-            "mimetype_url": "https://graph.microsoft.com/v1.0/drives/'{resource.parentReference.driveId}'/items/'{resource.id}'",
-            "mimetype_path": "'{file.mimeType}'",
-            "mimetype_whitelist": [
-                "application/pdf",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                "image/png",
-                "text/html"
-            ],
-            "headers": {
-                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
-            },
-            "timeout": 30
-        }
-``` 
+See the Microsoft OneDrive section just above for a Page Fetcher configuration will utilize Tika to convert PDF, Microsoft Office, and other file formats returned from the Microsoft Graph API to text that can then be consumed by SWIRL for RAG processor. Expand the whitelist to include any [document type that Tika supports](https://tika.apache.org/1.10/formats.html).
 
 # Analyzing Enterprise Content
 
-To launch the text analyzer:
+SWIRL AI CONNECT ENTERPRISE includes an optional Text Analyzer summarization service that can optionally be plugged into RAG to enhance accuracy.  To launch the Text Analyzer locally, run the following command from the Console:
 
 ```
 docker run -p 7029:7029 -e SWIRL_TEXT_SERVICE_PORT=7029 swirlai/swirl-integrations:topic-text-matcher
 ```
 
-## Example `.env` file:
-
-```
-SWIRL_TEXT_SUMMARIZATION_URL='http://localhost:7029/'
-SWIRL_TEXT_SUMMARIZATION_TRUNCATION=True
-SWIRL_RAG_DISTRIBUTION_STRATEGY='RoundRobin'
-TIKA_SERVER_ENDPOINT='http://localhost:9998/'
-```
-
-## Configuration 
+## Configuration Options
 
 | Variable | Description | Example |
 | -------- | ----------- | ------- |
@@ -549,18 +535,24 @@ TIKA_SERVER_ENDPOINT='http://localhost:9998/'
 | SWIRL_RAG_MODEL | The string identifier of the ChatGPT model to use for RAG | `"gpt-4"` |
 | SWIRL_RAG_TOK_MAX | The maximum number of tokens to send to ChatGPT | `4K` |
 | SWIRL_RAG_MAX_TO_CONSIDER | The maximum number of results from a search to consider for RAG | `10` |
-| SWIRL_RAG_DISTRIBUTION_STRATEGY | May be one of the following:
-* Distributed - Adds documents from each SearchProvider in even increments until `SWIRL_MAX_TO_CONSIDER` is reached.
-* RoundRobin - Adds content in SearchProvider order, until `SWIRL_MAX_TO_CONSIDER` is reached.
-* Sorted - Adds content using Swirl Score > 50 |  |
+| SWIRL_RAG_DISTRIBUTION_STRATEGY | May be one of the following:  Distributed, RoundRobin, or Sorted | `RoundRobin` |
+
+## Example `.env` File:
+
+```
+SWIRL_TEXT_SUMMARIZATION_URL='http://localhost:7029/'
+SWIRL_TEXT_SUMMARIZATION_TRUNCATION=True
+SWIRL_RAG_DISTRIBUTION_STRATEGY='RoundRobin'
+TIKA_SERVER_ENDPOINT='http://localhost:9998/'
+```
 
 ### Notes
 
-* If using the `SWIRL_RAG_DISTRIBUTION_STRATEGY` option of `distributed`: when all SearchProviders have been consumed, and the number of documents has not reached `SWIRL_MAX_TO_CONSIDER`, Swirl backfills from the search result list starting at the document after the last one added from the first SearchProvider until `SWIRL_MAX_TO_CONSIDER` is reached.
+* If using the `SWIRL_RAG_DISTRIBUTION_STRATEGY` option of `distributed`: when all SearchProviders have been consumed, and the number of documents has not reached `SWIRL_MAX_TO_CONSIDER`, SWIRL backfills from the search result list starting at the document after the last one added from the first SearchProvider until `SWIRL_MAX_TO_CONSIDER` is reached.
 
 ## Text Summarization
 
-When the `SWIRL_TEXT_SUMMARIZATION_URL` value is set to the URL of the Topic Text Matcher, Swirl will send text to the Topic Matcher before further RAG processing. The Topic Matcher will then enable Swirl's RAG prompt to tag parts of the text that are more pertinent to the query before they are sent to ChatGPT. Here is an example of what the tagging looks like in a prompt:
+When the `SWIRL_TEXT_SUMMARIZATION_URL` value is set to the URL of the Text Analyzer, SWIRL will send text to that service before further RAG processing. The Text Analyzer will then enable SWIRL's RAG prompt to tag parts of the text that are more pertinent to the query before they are sent to ChatGPT. Here is an example of what the tagging looks like in a prompt:
 
 ```
 --- Content Details ---
@@ -575,9 +567,9 @@ Important: Text between <SW-IMPORTANT> and </SW-IMPORTANT> is most pertinent to 
 
 ## Text Truncation
 
-When this feature is enabled, text will not be added to the ChatGPT prompt unless it has at least one important section tagged as described above.  For this feature to be active, two conditions must be met:
+When this feature is enabled, text will _not_ be added to the ChatGPT prompt unless it has at least one important section tagged as described above.  For this feature to be active, two conditions must be met:
 
-1. `SWIRL_TEXT_SUMMARIZATION_URL` must be set to a valid URL.
+1. `SWIRL_TEXT_SUMMARIZATION_URL` must be set to a valid URL
 2. `SWIRL_TEXT_SUMMARIZATION_TRUNCATION` must be set to `true`
 
 When these conditions are met, entries like this appear in the RAG logs:
@@ -598,9 +590,9 @@ The distribution strategy controls how pages are chosen from the search results 
 
 ## Model Maximum Pages and Tokens
 
-Use the `SWIRL_RAG_MODEL` parameter to change the generative AI model Swirl RAG uses. Use the `SWIRL_RAG_MAX_TO_CONSIDER`, and `SWIRL_RAG_TOK_MAX` parameters to independently control the number of tokens that are used to compose the prompt sent to ChatGPT.
+Use the `SWIRL_RAG_MODEL` parameter to change the generative AI model SWIRL RAG uses. Use the `SWIRL_RAG_MAX_TO_CONSIDER`, and `SWIRL_RAG_TOK_MAX` parameters to independently control the number of tokens that are used to compose the prompt sent to ChatGPT.
 
 ### Notes
-* When modifying the model or the `SWIRL_RAG_TOK_MAX` value, be sure to keep the numbers below the maximums accepted by the model. Swirl uses model-specific encodings to count tokens but also adheres to the settings when deciding when to stop adding prompt text.
+* When modifying the model or the `SWIRL_RAG_TOK_MAX` value, be sure to keep the numbers below the maximums accepted by the model. SWIRL uses model-specific encodings to count tokens but also adheres to the settings when deciding when to stop adding prompt text.
 
 * The default `SWIRL_RAG_TOK_MAX` value is not set to the maximum because increasing token number can slow the response from ChatGPT.
