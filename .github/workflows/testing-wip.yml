@@ -47,6 +47,7 @@ jobs:
                 echo "SWIRL_TEST_HOST=localhost" > .env
                 echo "QA_ADMIN_USER=${{ secrets.QA_ADMIN_USER }}" >> .env
                 echo "QA_ADMIN_PW=${{ secrets.QA_ADMIN_PW }}" >> .env
+                echo "QA_OPENAI_KEY"=${{ secrets.QA_OPENAI_KEY }}" >> .env
             - name: Run the QA Suite
               run: docker run --net=host --env-file .env -t swirlai/swirl-search-qa:automated-tests-develop sh -c "behave --tags=${{ github.event.inputs.behave_tags }}"
             - name: Cleanup Application Environment
