@@ -6,7 +6,7 @@ on:
 
 jobs:
 
-  build:
+  qa-suite:
     runs-on: ubuntu-latest
 
     steps:
