@@ -961,11 +961,11 @@ class BrandingConfigurationViewSet(viewsets.ModelViewSet):
         if target == 'light' or target == 'dark':
             location = f'{settings.MEDIA_ROOT}logo_highres_{target}.png'
             image = open(location, 'rb')
-            logger.info(f'DNDEBUG : returning logo from image {location}')
+            logger.debug(f'returning logo from image {location}')
             return FileResponse(image, status=status.HTTP_200_OK)
         elif target == 'config':
             ## return not found and let the UI use its own defaults
-            logger.info(f'DNDEBUG : returning not found for {target}')
+            logger.debug(f'returning not found for {target}')
             return JsonResponse({}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response('Logo Object Not Found', status=status.HTTP_404_NOT_FOUND)
