@@ -49,6 +49,7 @@ ADD ./swirl_server /app/swirl_server
 ADD ./SearchProviders /app/SearchProviders
 ADD ./DevUtils /app/DevUtils
 ADD ./Data /app/Data
+ADD ./uploads /app/uploads
 ADD ./swirl.py /app/swirl.py
 ADD ./swirl_load.py /app/swirl_load.py
 ADD ./manage.py /app/manage.py

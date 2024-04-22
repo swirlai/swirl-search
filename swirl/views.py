@@ -12,10 +12,9 @@ logger = logging.getLogger(__name__)
 
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User, Group
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404, HttpResponseForbidden, FileResponse, JsonResponse
 from django.conf import settings
 from django.db import Error
-
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.core.mail import send_mail
@@ -947,3 +946,26 @@ def query_transform_form(request):
     else:
         form = QueryTransformForm
     return render(request, 'query_transform.html', {'form': form})
+
+class BrandingConfigurationViewSet(viewsets.ModelViewSet):
+    """
+    fetch logos unconditionally from the uploa
+    """
+    def list(self, request):
+
+        logger.debug(f"{module_name}: TRACE LIST permission on Branding")
+
+        target = request.GET.get('target', '')
+
+        # If the target parameter is light or dark, only serve the requested image
+        if target == 'light' or target == 'dark':
+            location = f'{settings.MEDIA_ROOT}logo_highres_{target}.png'
+            image = open(location, 'rb')
+            logger.debug(f'returning logo from image {location}')
+            return FileResponse(image, status=status.HTTP_200_OK)
+        elif target == 'config':
+            ## return not found and let the UI use its own defaults
+            logger.debug(f'returning not found for {target}')
+            return JsonResponse({}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response('Logo Object Not Found', status=status.HTTP_404_NOT_FOUND)
