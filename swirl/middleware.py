@@ -18,6 +18,10 @@ class TokenMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+
+        if(request.path == '/api/swirl/sapi/branding/'):
+            return self.get_response(request)
+
         if (request.path == '/swirl/login/' or request.path == '/swirl/oidc_authenticate/' or '/sapi/' not in request.path) and request.path != '/swirl/logout/':
             return self.get_response(request)
         if 'Authorization' not in request.headers:
@@ -73,13 +77,13 @@ class WebSocketTokenMiddleware(BaseMiddleware):
             logger.debug(f'WebSocketTokenMiddleware - Token exists')
             user = await self.get_user_from_token(token_key)
             if user:
-                logger.debug(f'WebSocketTokenMiddleware - Token is valid')     
+                logger.debug(f'WebSocketTokenMiddleware - Token is valid')
                 scope["user"] = user
                 print(user.username)
 
                 search_id = query_params.get("search_id", [""])[0]
                 if search_id:
-                    logger.debug(f'WebSocketTokenMiddleware - Search ID exists')     
+                    logger.debug(f'WebSocketTokenMiddleware - Search ID exists')
                     found = await self.get_search_by_id_and_user(search_id, user)
                     if found:
                         logger.debug(f'WebSocketTokenMiddleware - Search for current user {user} was found')
@@ -89,12 +93,12 @@ class WebSocketTokenMiddleware(BaseMiddleware):
                 else:
                     logger.debug(f'WebSocketTokenMiddleware - Search ID does not exist')
             else:
-                logger.debug(f'WebSocketTokenMiddleware - Token is not valid')     
+                logger.debug(f'WebSocketTokenMiddleware - Token is not valid')
         else:
-            logger.debug(f'WebSocketTokenMiddleware - Token does not exist')  
+            logger.debug(f'WebSocketTokenMiddleware - Token does not exist')
 
         return await super().__call__(scope, receive, send)
-    
+
 
     @database_sync_to_async
     def get_user_from_token(self, token_key):
@@ -102,14 +106,14 @@ class WebSocketTokenMiddleware(BaseMiddleware):
             return Token.objects.get(key=token_key).user
         except Token.DoesNotExist:
             return None
-        
+
     @database_sync_to_async
     def get_search_by_id_and_user(self, search_id, user):
         try:
             return Search.objects.filter(pk=search_id, owner=user).exists()
         except ObjectDoesNotExist:
             return None
-        
+
 class SwaggerMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response

@@ -18,11 +18,13 @@ router.register(r'searchproviders', views.SearchProviderViewSet, basename='searc
 router.register(r'querytransforms', views.QueryTransformViewSet, basename='querytransforms')
 router.register(r'search', views.SearchViewSet, basename='search')
 router.register(r'results', views.ResultViewSet, basename='results')
+router.register(r'branding', views.BrandingConfigurationViewSet, basename='branding')
 
 router.register(r'sapi/search', views.SearchViewSet, basename='galaxy-search')
 router.register(r'sapi/results', views.ResultViewSet, basename='galaxy-results')
 router.register(r'sapi/authenticators', views.AuthenticatorViewSet, basename='galaxy-authenticators')
 router.register(r'sapi/searchproviders', views.SearchProviderViewSet, basename='galaxy-searchproviders'),
+router.register(r'sapi/branding', views.BrandingConfigurationViewSet, basename='galaxy-branding')
 
 urlpatterns = [
     # drf-spectacular paths for API schema and documentation
@@ -46,7 +48,7 @@ urlpatterns = [
     path('authenticators.html', views.authenticators, name='authenticators'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('microsoft-callback', Microsoft().callback, name='microsoft_callback'),
-    
+
     path('login/', views.LoginView.as_view()),
     path('swirl-logout/', views.LogoutView.as_view()),
     path('oidc_authenticate/', views.OidcAuthView.as_view()),
