@@ -23,6 +23,9 @@ def main(argv):
     aparse.add_argument('-m', '--max', help="maximum number of rows to index", default=0)
     aparse.add_argument('-u', '--username', default='admin', help="the OpenSearch user, default 'admin'")
     aparse.add_argument('-p', '--password', help="the password for the OpenSearch user")
+    aparse.add_argument('-v', '--no-verify', help="don't verify certificates", default=False, action="store_true")
+    aparse.add_argument('-c', '--cacert', help="path to cert file", default=None)
+
     args = aparse.parse_args()
 
     if not os.path.exists(args.filespec):
@@ -37,8 +40,11 @@ def main(argv):
     parsed_url = urlparse(args.opensearch)
     host = parsed_url.hostname
     port = parsed_url.port
+    ca_certs = aparse.cacert
+    no_verify = aparse.no_verify
 
-    es = OpenSearch(http_auth=(args.username, args.password), hosts=[{'host': host, 'port': port}], use_ssl = True, verify_certs = False, ssl_assert_hostname = False, ssl_show_warn = False)
+    es = OpenSearch(http_auth=(args.username, args.password), hosts=[{'host': host, 'port': port}], use_ssl = True,
+                    verify_certs = (not no_verify), ca_certs=ca_certs, ssl_assert_hostname = False, ssl_show_warn = False)
 
     print("Indexing...")
 
@@ -87,7 +93,7 @@ def main(argv):
         if rows % 100 == 0:
             print(f"Indexed {rows} records so far...")
         if int(args.max) > 0:
-            if rows > args.max:
+            if rows > int(args.max):
                 break
     # end for
 
