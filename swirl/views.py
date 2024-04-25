@@ -48,6 +48,9 @@ module_name = 'views.py'
 from swirl.tasks import update_microsoft_token_task
 from swirl.search import search as run_search
 
+from drf_spectacular.utils import extend_schema
+
+
 SWIRL_EXPLAIN = getattr(settings, 'SWIRL_EXPLAIN', True)
 SWIRL_SUBSCRIBE_WAIT = getattr(settings, 'SWIRL_SUBSCRIBE_WAIT', 20)
 
@@ -947,10 +950,12 @@ def query_transform_form(request):
         form = QueryTransformForm
     return render(request, 'query_transform.html', {'form': form})
 
+@extend_schema(exclude=True)  # This excludes the entire viewset from documentation
 class BrandingConfigurationViewSet(viewsets.ModelViewSet):
     """
-    fetch logos unconditionally from the uploa
+    fetch logos unconditionally from the upload
     """
+
     def list(self, request):
 
         logger.debug(f"{module_name}: TRACE LIST permission on Branding")
@@ -965,7 +970,7 @@ class BrandingConfigurationViewSet(viewsets.ModelViewSet):
             return FileResponse(image, status=status.HTTP_200_OK)
         elif target == 'config':
             ## return not found and let the UI use its own defaults
-            logger.debug(f'returning not found for {target}')
-            return JsonResponse({}, status=status.HTTP_404_NOT_FOUND)
+            logger.debug(f'returning empty config {target}')
+            return JsonResponse({}, status=status.HTTP_200_OK)
         else:
             return Response('Logo Object Not Found', status=status.HTTP_404_NOT_FOUND)
