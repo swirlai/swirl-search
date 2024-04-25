@@ -24,7 +24,7 @@ PyJWT
 pyahocorasick
 redis
 xmltodict
-lxml==5.1.1
+lxml[html_clean]
 readability-lxml
 tiktoken
 channels
