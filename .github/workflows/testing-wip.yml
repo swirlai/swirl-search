@@ -53,6 +53,6 @@ jobs:
                 echo "QA_ADMIN_PW=${{ secrets.QA_ADMIN_PW }}" >> .env
                 echo "QA_OPENAI_KEY=${{ secrets.QA_OPENAI_KEY }}" >> .env
             - name: Run the QA Suite
-              run: docker run --net=host --env-file .env -t swirlai/swirl-search-qa:automated-tests-estest sh -c "behave --tags=${{ github.event.inputs.behave_tags }}"
+              run: docker run --net=host --env-file .env -t swirlai/swirl-search-qa:automated-tests-develop sh -c "behave --tags=${{ github.event.inputs.behave_tags }}"
             - name: Cleanup Application Environment
               run: docker-compose down
