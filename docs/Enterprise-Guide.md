@@ -596,3 +596,75 @@ Use the `SWIRL_RAG_MODEL` parameter to change the generative AI model SWIRL RAG 
 * When modifying the model or the `SWIRL_RAG_TOK_MAX` value, be sure to keep the numbers below the maximums accepted by the model. SWIRL uses model-specific encodings to count tokens but also adheres to the settings when deciding when to stop adding prompt text.
 
 * The default `SWIRL_RAG_TOK_MAX` value is not set to the maximum because increasing token number can slow the response from ChatGPT.
+
+# Managing Prompts
+
+## Default Prompt
+
+By default, the SWIRL system prompt is as follows:
+
+```
+{
+    "name": "default",
+    "shared": false,
+    "prompt": "Answer this query '{query}' given the following recent search results as background information. Do not mention that you are using the provided background information. Please list the sources at the end of your response. Ignore information that is off-topic or obviously conflicting, without warning about it. The results may include information for different entities with identical names, try to disambiguate them in your response. If you discover possible familiar relationships in the content, mention it as a possibility.",
+    "data": [],
+    "note": "Important: Text between {RAG_IMPORTANT_START_TAG} and {RAG_IMPORTANT_END_TAG} is most pertinent to the query.\n",
+    "footer": "\n\n\n\n--- Final Instructions ---\nIn your response do not assume people with vastly different work histories are the same person. If the query appears to be a proper name, focus on answering the question, 'Who is?' or 'What is?', as appropriate. If the query appears to be a question, then try to answer it. For the list of sources, use the HTML tags and format in the example below:\n\n<p>\n<br><b>Sources:</b>\n<br><i>example description 1</i> &nbsp;&nbsp;&nbsp; <b>example website or source name 1</b>\n<br><i>example description 2</i> &nbsp;&nbsp;&nbsp; <b>example website or source name 2</b>\n</p>\n\nEnclose your response in HTML tags <p></p> and insert a <br> HTML tag every two sentences.",
+    "tags": []
+}
+```
+
+This is designed to operate on search queries by providing summarization of the provided data and/or answering simple questions from it. 
+
+## Creating New Saved Prompts
+
+* Go to [localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)
+
+* Create a new prompt using the form at the bottom of the page, or by pasting in raw JSON and clicking the "POST" button.
+
+For example, to modify the default prompt so that the response is in pirate-speak:
+
+```
+    {
+        "name": "pirate",
+        "prompt": "Answer this query '{query}' given the following recent search results as background information. Do not mention that you are using the provided background information. Please list the sources at the end of your response. Ignore information that is off-topic or obviously conflicting, without warning about it. The results may include information for different entities with identical names, try to disambiguate them in your response. If you discover possible familiar relationships in the content, mention it as a possibility.",
+        "note": "Important: Text between {RAG_IMPORTANT_START_TAG} and {RAG_IMPORTANT_END_TAG} is most pertinent to the query.",
+        "footer": "--- Final Instructions ---\nIn your response, pretend you are a pirate comedian, but keep it clean!",
+        "tags": []
+    }
+```
+
+This should produce the following:
+
+![SWIRL Prompt Object](./images/swirl_prompt_form.png)
+
+## Specifying a Saved Prompt in a Query
+
+* Test the prompt using the prompt operator:
+
+```
+swirl ai connect prompt:pirate
+```
+
+The response should be in pirate-speak:
+
+![SWIRL RAG response in pirate speak](./images/swirl_prompt_pirate.png)
+
+## Understanding Saved Prompts
+
+SWIRL Prompts have three components:
+
+| Field | Description | Notes | 
+| ----- | ----------- | ----- | 
+| prompt | The main body of the prompt. Use {query} to denote the SWIRL query. | 
+| note | Additional information, attached after RAG data. | |
+| footer | Additional information, attached the note. | | 
+
+## Specifying The Prompt in a Query Processor
+
+It's easy to specify the prompt, guide and filter when using a Generative AI (GAI) to rewrite queries. 
+
+Refer to the Developer Guide to [GAI SearchProvider Tags](https://docs.swirl.today/Developer-Reference.html#chatgpt-query_mapping) for more information.
+
+
