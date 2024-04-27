@@ -655,16 +655,14 @@ The response should be in pirate-speak:
 
 SWIRL Prompts have three components:
 
-| Field | Description | Notes | 
-| ----- | ----------- | ----- | 
+| Field | Description |
+| ----- | ----------- |
 | prompt | The main body of the prompt. Use {query} to denote the SWIRL query. | 
-| note | Additional information, attached after RAG data. | |
-| footer | Additional information, attached the note. | | 
+| note | Text appended to RAG data chunks that are annotated by the [Text Analyzer](#text-summarization). |
+| footer | Additional information, attached after the prompt and RAG data. This is a good place to add formatting instructions. | 
 
-## Specifying The Prompt in a Query Processor
+## Specifying The Prompt in a Query Processor or Connector.
 
-It's easy to specify the prompt, guide and filter when using a Generative AI (GAI) to rewrite queries. 
+It's easy to specify the prompt, guide and filter when using a Generative AI (GAI) to rewrite queries, or directly answer questions.
 
 Refer to the Developer Guide to [GAI SearchProvider Tags](https://docs.swirl.today/Developer-Reference.html#chatgpt-query_mapping) for more information.
-
-
