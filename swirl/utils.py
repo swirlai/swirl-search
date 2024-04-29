@@ -295,3 +295,11 @@ def remove_file(filename):
 def make_dir_if_not_exist(dir_name):
     if not os.path.exists(dir_name):
         os.makedirs(dir_name)
+
+# Inclusion paths for drf-spectacular docs
+def include_api_paths(endpoints):
+    included_endpoints = []
+    for (path, path_regex, method, callback) in endpoints:
+        if path.startswith('/api/'):     # Keep only endpoints that start with '/api/'
+            included_endpoints.append((path, path_regex, method, callback))
+    return included_endpoints

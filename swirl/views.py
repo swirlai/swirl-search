@@ -39,7 +39,7 @@ import hmac
 from swirl.models import *
 from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, OauthToken
-from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, MicrosoftTokenUpdateResponseSerializer, OidcAuthResponseSerializer, StatusResponseSerializer, AuthResponseSerializer
+from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, StatusResponseSerializer, AuthResponseSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
 
@@ -47,9 +47,6 @@ module_name = 'views.py'
 
 from swirl.tasks import update_microsoft_token_task
 from swirl.search import search as run_search
-
-from drf_spectacular.utils import extend_schema
-
 
 SWIRL_EXPLAIN = getattr(settings, 'SWIRL_EXPLAIN', True)
 SWIRL_SUBSCRIBE_WAIT = getattr(settings, 'SWIRL_SUBSCRIBE_WAIT', 20)
@@ -173,15 +170,9 @@ class LogoutView(APIView):
             token.delete()
         return Response({'status': 'OK'})
 
+@extend_schema(exclude=True)  # This excludes the entire viewset from Swagger documentation
 class OidcAuthView(APIView):
 
-    @extend_schema(
-        request=None,  # No request body expected
-        responses={200: OidcAuthResponseSerializer},  # Documenting the response structure
-        parameters=[
-            OpenApiParameter(name="OIDC-Token", type=OpenApiTypes.STR, location=OpenApiParameter.HEADER, description="OIDC token for authentication")
-        ]
-    )
     def post(self, request):
         if 'OIDC-Token' in request.headers:
             header = request.headers['OIDC-Token']
@@ -207,13 +198,12 @@ class OidcAuthView(APIView):
         return HttpResponseForbidden()
 
 
-
+@extend_schema(exclude=True)  # This excludes the entire viewset from Swagger documentation
 class UpdateMicrosoftToken(APIView):
-    serializer_class = MicrosoftTokenUpdateResponseSerializer
 
     def post(self, request):
         try:
-            # just return succcess,don't call the task
+            # just return success, don't call the task
             # result = update_microsoft_token_task.delay(headers).get()
             result = { 'user': request.user.username, 'status': 'success' }
             return Response(result)
@@ -950,7 +940,7 @@ def query_transform_form(request):
         form = QueryTransformForm
     return render(request, 'query_transform.html', {'form': form})
 
-@extend_schema(exclude=True)  # This excludes the entire viewset from documentation
+@extend_schema(exclude=True)  # This excludes the entire viewset from Swagger documentation
 class BrandingConfigurationViewSet(viewsets.ModelViewSet):
     """
     fetch logos unconditionally from the upload

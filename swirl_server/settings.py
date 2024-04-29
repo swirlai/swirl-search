@@ -63,10 +63,13 @@ REST_FRAMEWORK = {
 
 #drf-spectacular settings
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Swirl API',
-    # 'DESCRIPTION': 'A detailed description of your project and the API.',
-    'VERSION': '2.1',  # Make sure to update this with each version change of your API
+    'TITLE': 'SWIRL API',
+    'DESCRIPTION': 'SWIRL AI CONNECT Enterprise Edition API',
+    'VERSION': '3.5.0',
     'SERVE_INCLUDE_SCHEMA': False,  # 'False' disables serving the schema with the UI
+    'PREPROCESSING_HOOKS': [
+        'swirl.utils.include_api_paths',
+    ],
     'SWAGGER_UI_SETTINGS': {
         'deepLinking': True,
         'displayOperationId': False,
