@@ -296,10 +296,18 @@ def make_dir_if_not_exist(dir_name):
     if not os.path.exists(dir_name):
         os.makedirs(dir_name)
 
-# Inclusion paths for drf-spectacular docs
-def include_api_paths(endpoints):
-    included_endpoints = []
+# Inclusion + exclusion paths for drf-spectacular docs
+def include_exclude_api_paths(endpoints):
+    # Define the base inclusion path
+    inclusion_prefix = '/api/'
+    # Define paths to exclude under the included paths
+    exclusion_prefixes = ['/api/swirl/sapi/']
+
+    filtered_endpoints = []
     for (path, path_regex, method, callback) in endpoints:
-        if path.startswith('/api/'):     # Keep only endpoints that start with '/api/'
-            included_endpoints.append((path, path_regex, method, callback))
-    return included_endpoints
+        # Check if the path starts with the inclusion prefix
+        if path.startswith(inclusion_prefix):
+            # Ensure the path does not start with any of the exclusion prefixes
+            if not any(path.startswith(ex) for ex in exclusion_prefixes):
+                filtered_endpoints.append((path, path_regex, method, callback))
+    return filtered_endpoints
