@@ -68,7 +68,7 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '3.5.0',
     'SERVE_INCLUDE_SCHEMA': False,  # 'False' disables serving the schema with the UI
     'PREPROCESSING_HOOKS': [
-        'swirl.utils.include_api_paths',
+        'swirl.utils.include_exclude_api_paths',
     ],
     'SWAGGER_UI_SETTINGS': {
         'deepLinking': True,
