@@ -661,8 +661,8 @@ SWIRL Prompts have three components:
 | note | Text appended to RAG data chunks that are annotated by the [Text Analyzer](#text-summarization). |
 | footer | Additional information, attached after the prompt and RAG data. This is a good place to add formatting instructions. | 
 
-## Specifying The Prompt in a Query Processor or Connector.
+## Specifying The Prompt in a Query Processor or Connector
 
-It's easy to specify the prompt, guide and filter when using a Generative AI (GAI) to rewrite queries, or directly answer questions.
+It's easy to specify the Prompt, guide and filter when using a Generative AI (GAI) to rewrite queries, or directly answer questions.
 
-Refer to the Developer Guide to [GAI SearchProvider Tags](https://docs.swirl.today/Developer-Reference.html#chatgpt-query_mapping) for more information.
+Refer to the [Connecting to Enterprise AI](#connecting-to-enterprise-ai) section above and also to the Developer Reference [GAI SearchProvider Tags](https://docs.swirl.today/Developer-Reference.html#chatgpt-query_mapping) section for more information.
