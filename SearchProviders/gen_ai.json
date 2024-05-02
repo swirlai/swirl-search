@@ -16,7 +16,7 @@
     "response_mappings": "",
     "result_mappings": "",
     "results_per_query": 10,
-    "credentials": "from default AIProvider for 'connector'",
+    "credentials": "<your-openai-API-key>",
     "tags": [
         "GenAI",
         "Question"
