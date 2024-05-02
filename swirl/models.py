@@ -68,6 +68,7 @@ class SearchProvider(models.Model):
     })
     CONNECTOR_CHOICES = [
         ('ChatGPT', 'ChatGPT Query String'),
+        ('GenAI', 'Generative AI'),
         ('RequestsGet', 'HTTP/GET returning JSON'),
         ('RequestsPost', 'HTTP/POST returning JSON'),
         ('Elastic', 'Elasticsearch Query String'),
@@ -94,6 +95,7 @@ class SearchProvider(models.Model):
     QUERY_PROCESSOR_CHOICES = [
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('TestQueryProcessor', 'TestQueryProcessor'),
+        ('GenAIQueryProcessor', 'GenAIQueryProcessor'),
         ('AdaptiveQueryProcessor', 'AdaptiveQueryProcessor'),
         ('NoModQueryProcessor', 'NoModQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor')
@@ -163,6 +165,7 @@ class Search(models.Model):
     time = models.FloatField(default=0.0)
     PRE_QUERY_PROCESSOR_CHOICES = [
         ('ChatGPTQueryProcessor', 'ChatGPTQueryProcessor'),
+        ('GenAIQueryProcessor', 'GenAIQueryProcessor'),
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('TestQueryProcessor', 'TestQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor')
