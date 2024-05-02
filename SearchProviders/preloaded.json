@@ -277,10 +277,10 @@
         ]
     },
     {
-        "name": "ChatGPT - OpenAI",
+        "name": "Generative AI",
         "active": false,
         "default": true,
-        "connector": "ChatGPT",
+        "connector": "GenAI",
         "url": "",
         "query_template": "",
         "query_processors": [
@@ -294,9 +294,9 @@
         "response_mappings": "",
         "result_mappings": "",
         "results_per_query": 10,
-        "credentials": "your-OpenAI-API-key-here",
+        "credentials": "<your-openai-API-key>",
         "tags": [
-            "ChatGPT",
+            "GenAI",
             "Question"
         ]
     },

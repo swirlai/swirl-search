@@ -10,7 +10,7 @@ from swirl.processors.dedupe import *
 from swirl.processors.relevancy import *
 from swirl.processors.rag import *
 from swirl.processors.spellcheck_query import *
-from swirl.processors.chatgpt_query import *
+from swirl.processors.gen_ai_query import *
 from swirl.processors.transform_query_processor import *
 from swirl.processors.date_finder import *
 from swirl.models import Search, SearchProvider

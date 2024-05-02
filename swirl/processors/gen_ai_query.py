@@ -34,10 +34,10 @@ def clean_reply(message):
         return message
     return message.replace('\n\n', '').replace('\"','')
 
-class ChatGPTQueryProcessor(QueryProcessor):
+class GenAIQueryProcessor(QueryProcessor):
 
 
-    type = 'ChatGPTQueryProcessor'
+    type = 'GenAIQueryProcessor'
 
     def __init__(self, query_string, query_mappings, tags):
         return super().__init__(query_string, query_mappings, tags)
