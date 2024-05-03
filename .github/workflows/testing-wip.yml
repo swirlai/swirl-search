@@ -64,10 +64,10 @@ jobs:
         run: docker-compose -f docker-compose-build.yml down
 
       - name: Upload Log Files
-          if: always()
-          uses: actions/upload-artifact@v4
-          with:
-            name: log-files
-            path: |
-              logs/
-              /var/log/syslog*
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: log-files
+          path: |
+            logs/
+            /var/log/syslog*
