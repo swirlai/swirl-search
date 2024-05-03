@@ -1,3 +1,8 @@
+# Workflow for running WIP Behave tests on the GitHub runners
+# Manual trigger only against the branch you've chosen
+# Enter the Behave tag name(s) you're testing with at the prompt
+# Do NOT include the '@', only the tag name(s) (e.g. "estest" not "@estest")
+
 name: Testing WIP
 
 on:
@@ -57,3 +62,12 @@ jobs:
 
       - name: Cleanup Application Environment
         run: docker-compose -f docker-compose-build.yml down
+
+      - name: Upload Log Files
+          if: always()
+          uses: actions/upload-artifact@v4
+          with:
+            name: log-files
+            path: |
+              logs/
+              /var/log/syslog*
