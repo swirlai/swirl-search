@@ -16,17 +16,15 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Setup the Environment File
+      - name: Create env File for Tests
         run: |
-          cat <<EOF > .env
-          SWIRL_TEST_HOST=localhost
-          MSAL_HOST=localhost
-          MSAL_CB_PORT=8000
-          MSAL_APP_ID=${{ secrets.QA_MSAL_APP_ID }}
-          MSAL_TENANT_ID=${{ secrets.QA_MSAL_TENANT_ID }}
-          QA_ADMIN_PW=${{ secrets.QA_ADMIN_PW }}
-          QA_OPENAI_KEY=${{ secrets.QA_OPENAI_KEY }}
-          EOF
+          echo "SWIRL_TEST_HOST=localhost" > .env
+          echo "MSAL_HOST=localhost" >> .env
+          echo "MSAL_CB_PORT=8000" > .env
+          echo "MSAL_APP_ID=${{ secrets.QA_MSAL_APP_ID }}" >> .env
+          echo "MSAL_TENANT_ID=${{ secrets.QA_MSAL_TENANT_ID }}" >> .env
+          echo "OPENAI_API_KEY=${{ secrets.QA_OPENAI_KEY }}" >> .env
+          echo "QA_ADMIN_PW=${{ secrets.QA_ADMIN_PW }}" >> .env
       - name: Build and Start Application
         run: docker-compose -f docker-compose-build.yml up --build -d
       - name: Wait for Application to be Ready
