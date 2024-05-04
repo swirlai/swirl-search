@@ -20,7 +20,7 @@ jobs:
         run: |
           echo "SWIRL_TEST_HOST=localhost" > .env
           echo "MSAL_HOST=localhost" >> .env
-          echo "MSAL_CB_PORT=8000" > .env
+          echo "MSAL_CB_PORT=8000" >> .env
           echo "MSAL_APP_ID=${{ secrets.QA_MSAL_APP_ID }}" >> .env
           echo "MSAL_TENANT_ID=${{ secrets.QA_MSAL_TENANT_ID }}" >> .env
           echo "OPENAI_API_KEY=${{ secrets.QA_OPENAI_KEY }}" >> .env
