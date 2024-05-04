@@ -15,13 +15,12 @@ services:
             -e "s/<msal-host>/$MSAL_HOST/" > static/api/config/default &&
         python swirl.py start celery-worker celery-beats &&
         daphne -b 0.0.0.0 -p 8000 swirl_server.asgi:application'
-
     environment:
-      - MSAL_CB_PORT=${MSAL_CB_PORT}
-      - MSAL_HOST=${MSAL_HOST}
-      - MSAL_APP_ID=${MSAL_APP_ID}
-      - MSAL_TENANT_ID=${MSAL_TENANT_ID}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      MSAL_CB_PORT: $MSAL_CB_PORT
+      MSAL_HOST: $MSAL_HOST
+      MSAL_APP_ID: $MSAL_APP_ID
+      MSAL_TENANT_ID: $MSAL_TENANT_ID
+      OPENAI_API_KEY: $OPENAI_API_KEY
     depends_on:
       - redis
 

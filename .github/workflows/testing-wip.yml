@@ -16,6 +16,14 @@ on:
 jobs:
   wip-tests:
     runs-on: ubuntu-latest
+    env:
+      MSAL_CB_PORT: 8000
+      MSAL_HOST: localhost
+      MSAL_APP_ID: ${{ secrets.QA_MSAL_APP_ID }}
+      MSAL_TENANT_ID: ${{ secrets.QA_MSAL_TENANT_ID }}
+      QA_ADMIN_PW: ${{ secrets.QA_ADMIN_PW }}
+      QA_OPENAI_KEY: ${{ secrets.QA_OPENAI_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     steps:
       - name: Checkout the Code
         uses: actions/checkout@v4
@@ -25,18 +33,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Setup the Environment File
-        run: |
-          cat <<EOF > .env
-          SWIRL_TEST_HOST=localhost
-          MSAL_HOST=localhost
-          MSAL_CB_PORT=8000
-          MSAL_APP_ID=${{ secrets.QA_MSAL_APP_ID }}
-          MSAL_TENANT_ID=${{ secrets.QA_MSAL_TENANT_ID }}
-          QA_ADMIN_PW=${{ secrets.QA_ADMIN_PW }}
-          QA_OPENAI_KEY=${{ secrets.QA_OPENAI_KEY }}
-          EOF
 
       - name: Build and Start Application
         run: docker-compose -f docker-compose-build.yml up --build -d
@@ -58,7 +54,7 @@ jobs:
           echo "Application is ready."
 
       - name: Run the QA Suite
-        run: docker run --net=host --env-file .env -t swirlai/swirl-search-qa:automated-tests-develop sh -c "behave --tags=${{ github.event.inputs.behave_tags }}"
+        run: docker run --net=host -t swirlai/swirl-search-qa:automated-tests-develop sh -c "behave --tags=${{ github.event.inputs.behave_tags }}"
 
       - name: Cleanup Application Environment
         run: docker-compose -f docker-compose-build.yml down
