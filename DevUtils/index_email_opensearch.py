@@ -40,8 +40,8 @@ def main(argv):
     parsed_url = urlparse(args.opensearch)
     host = parsed_url.hostname
     port = parsed_url.port
-    ca_certs = aparse.cacert
-    no_verify = aparse.no_verify
+    ca_certs = args.cacert
+    no_verify = args.no_verify
 
     es = OpenSearch(http_auth=(args.username, args.password), hosts=[{'host': host, 'port': port}], use_ssl = True,
                     verify_certs = (not no_verify), ca_certs=ca_certs, ssl_assert_hostname = False, ssl_show_warn = False)
@@ -88,7 +88,7 @@ def main(argv):
         # end for
         # create the content field
         email['content'] = body
-        res = es.index(index='email', body=email, refresh=True)
+        res = es.index(index=args.index, body=email, refresh=True)
         rows = rows + 1
         if rows % 100 == 0:
             print(f"Indexed {rows} records so far...")
