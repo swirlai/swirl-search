@@ -1,65 +1,68 @@
 <div align="center">
 
-[![Swirl](https://docs.swirl.today/images/transparent_header_3.png)](https://www.swirl.today)
+[![Swirl](https://docs.swirl.today/images/transparent_header_3.png)](https://www.swirlaiconnect.com)
 
-<h1>Swirl</h1>
+<h1>SWIRL AI Connect</h1>
 
-### Swirl is open source software that simultaneously searches multiple content sources and returns AI ranked results.
+### _Bring AI to the Data, not the Data to the AI._
+
+### SWIRL AI Connect is AI Infrastructure Software. We aim to build a safe, secure and robust AI Infrastructue for the enterprise.
 
 [Start Searching](#-try-swirl-now-in-docker) · [Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) · [Key Features ](#-key-features) · [Contribute](#-contributing-to-swirl) · [Documentation](#-documentation) · [Connectors](#-list-of-connectors)
-</div>
 
----
 
 <br/>
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=088395&logoColor=blue&style=flat-square)](https://opensource.org/license/apache-2-0/)
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat-square&color=8DDFCB&label=Release)](https://github.com/swirlai/swirl-search/releases)
+[![Website](https://img.shields.io/badge/Website-swirlaiconnect.com-00215E?style=flat-square)](https://www.swirlaiconnect.com)
+[![SWIRL Slack](https://img.shields.io/badge/Slack-SWIRL%20Community-0E21A0?logo=slack&style=flat-square)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
+
 [![Docker Build](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg?style=flat-square&branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml)
 [![Tests](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/smoke-tests.yml)
-[![Static Badge](https://img.shields.io/badge/Join%20Our%20Slack-0E21A0?logo=slack)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
-[![Website](https://img.shields.io/badge/Swirl.Today-241468)](https://www.swirl.today)
 
 </div>
 
-Swirl is open source software that simultaneously searches multiple content sources and returns AI ranked results. Prompt your choice of Generative AI using the top N results to get answers incorporating your own data.
 
-Swirl can connect to:
 
-* Databases (SQL, NoSQL, Google BigQuery)
-* Public data services (Google Programmable Search Engines, ArXiv.org, etc.)
-* Enterprise sources (Microsoft 365, Jira, Miro, etc.)
+**Get your AI up and running in minutes, not months.** SWIRL AI Connect is an open-source platform that simplifies AI infrastructure setup and empowers Retrieval Augmented Generation (RAG) without the complexity of additional tools.
 
-And generate insights with AI and LLMs like ChatGPT. Start discovering and generating the answers you need based on your data.
+### Why SWIRL AI Connect?
 
-Swirl is as simple as ABC: (a) Download YML, (b) Start in Docker, (c) Search with Swirl. From there, add credentials to preloaded SearchProviders to get results from more sources.
-
-## 🚀 Try Swirl with ChatGPT 
-
-![Swirl with ChatGPT as a configured AI Model](https://docs.swirl.today/images/Animation_1.gif)
-
-_Swirl with ChatGPT as a configured AI Model._
-
->**Note**
-> We need your help 🙏. Help us create more examples of things you can or want to do with Swirl. Join our [Slack Community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) to discuss and learn more. We'd be very happy to help you contribute 🤗!
+* **Instant AI:**  Deploy your AI solutions rapidly with built-in security controls (data compliance, firewall, granular access, etc.).
+* **RAG Made Easy:** Perform Retrieval Augmented Generation directly on your data, eliminating the need for vector databases, LangChain, or LlamaIndex.
+* **No Data Movement:** No ETL, re-indexing, or data movement. Work with your data where it lives.
+* **Boost Productivity:**  Enhance your team's efficiency by finding information faster and streamlining workflows.
 
 <br/>
 
+## SWIRL AI Connect Features
+
+![Features](SWIRL_AI_Connect_Features/Feature_1.png)
+![Features](SWIRL_AI_Connect_Features/Feature_2.png)
+
+## Based on SWIRL AI Connect
+
+![](SWIRL_AI_Connect_Features/Products_1.png)
+
 # 🔎 How Swirl Works
 
-Swirl adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, data siloes, etc. and uses Large Language Models to re-rank the unified results *without* extracting or indexing *anything*. 
+SWIRL AI Connect adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, data siloes, etc. and uses Reader LLMs to re-rank the unified results *without* extracting or indexing *anything*. 
 
-![Swirl Diagram](https://docs.swirl.today/images/Animation_2.gif)
+1. **Connect:**  Point SWIRL AI Connect to your data sources (databases, documents, etc.) adding in your auth/bearer token.
+2. **Query:** Ask questions or provide prompts in natural language.
+3. **Get Results:** SWIRL AI Connect combines powerful search with generative AI to deliver precise answers augmented by relevant context.
 
 <br/>
 
 # 🔌 List of Connectors
 
-<img src="https://docs.swirl.today/images/Connectors_2.png" height=60% width=70%/>
+![GitHub Connectors](SWIRL_AI_Connect_Features/GitHub_Connectors.png)
 
-➕ **For Enterprise Support on Connectors**  Contact the Swirl Team at: [support@swirl.today](mailto:support@swirl.today)  
+**Full list of connectors is available [here](https://swirlaiconnect.com/connectors)**.
 
-🚀 **Help Us Expand!** Want to see a new connector? [Contribute by adding a connector](#👩‍💻-contributing-to-swirl) and join our growing community of contributors. 
+**For Enterprise Support on Connectors**  Contact the Swirl Team at: [support@swirl.today](mailto:support@swirl.today)  
+
 
 <br/>
 
