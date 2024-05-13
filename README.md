@@ -36,6 +36,14 @@
 
 <br/>
 
+## SWIRL's Ranking in Action 
+
+<a href="https://www.youtube.com/watch?v=Ypn4XvSJfcQ" target="_blank">
+
+![SWIRL vs Google Ranking](SWIRL_AI_Connect_Features/SWIRL_ranking_img.png)
+
+</a>
+
 ## SWIRL AI Connect Features
 
 ![Features](SWIRL_AI_Connect_Features/Feature_1.png)
