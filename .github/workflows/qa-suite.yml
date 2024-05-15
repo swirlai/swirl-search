@@ -34,8 +34,6 @@ jobs:
         run: ./install.sh
       - name: Setup Swirl
         run: python swirl.py setup
-      - name: Setup Swirl admin User
-        run: DJANGO_SUPERUSER_PASSWORD=password python manage.py createsuperuser --email admin@example.com --username admin --noinput
       - name: Install the Galaxy UI Preview
         run: ./install-ui.sh -p
         env:
