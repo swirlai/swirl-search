@@ -41,6 +41,7 @@ jobs:
           MSAL_HOST: localhost
       - name: Start Swirl
         run: |
+          echo "OPENAI_API_KEY='${{ secrets.QA_OPENAI_KEY }}'" >> .env
           cat .env
           python swirl.py start
         env:
