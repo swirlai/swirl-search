@@ -137,3 +137,6 @@ swirl/migrations/
 \#*\#
 .\#*
 
+# jetbrains
+.idea
+.DS_Store
