@@ -1,0 +1,53 @@
+name: QA Suite
+
+on:
+  # Manual trigger only
+  workflow_dispatch:
+
+jobs:
+
+  qa-suite:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the Code
+        uses: actions/checkout@v4
+      - name: Start Application Environment
+        run: docker-compose up -d
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Wait for Application to be Ready
+        run: |
+          echo "Waiting for the application to become ready..."
+          max_attempts=10
+          count=0
+          until curl --output /dev/null --silent --head --fail http://localhost:8000/galaxy/login; do
+            count=$(($count+1))
+            if [ $count -ge $max_attempts ]; then
+              echo "Application did not become ready in time."
+              exit 1
+            fi
+            printf '.'
+            sleep 30
+          done
+          echo "Application is ready."    
+      - name: Create env File
+        run: |
+          echo "SWIRL_TEST_HOST=localhost" > .env
+          echo "QA_ADMIN_USER=${{ secrets.QA_ADMIN_USER }}" >> .env
+          echo "QA_ADMIN_PW=${{ secrets.QA_ADMIN_PW }}" >> .env
+      - name: Run the QA Suite
+        run: docker run --net=host --env-file .env -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=qa_suite,community"
+      - name: Cleanup Application Environment
+        run: docker-compose down
+      - name: Upload Log Files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: log-files
+          path: |
+            logs/
+            /var/log/syslog*

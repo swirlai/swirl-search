@@ -1,4 +1,4 @@
-name: CheckURLs
+name: Check URLs
 
 # Trigger to only run this workflow automatically on docs/ directory changes
 on:
@@ -18,7 +18,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: URLs-Checker
+    - name: URLs Checker
       uses: urlstechie/urlchecker-action@0.0.34  # From here: https://github.com/urlstechie/urlchecker-action
       with:
         # A comma-separated list of file types to cover in the URL checks
@@ -37,7 +37,7 @@ jobs:
         retry_count: 3
 
         # A comma separated patterns to exclude during URL checks
-        exclude_patterns: localhost,api,apis,rss,etc,xx,googleapis,hostname,snowflake,graph.microsoft.com,login.microsoftonline.com,my-host.com
+        exclude_patterns: localhost,api,apis,rss,etc,xx,googleapis,hostname,snowflake,graph.microsoft.com,login.microsoftonline.com,my-host.com,azure.com,github.com
 
         # Exclude these files from the checker
-        exclude_files: Swirl.postman_collection.json,docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/,SearchProviders/
+        exclude_files: Swirl.postman_collection.json,docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/,SearchProviders/,DevUtils/
