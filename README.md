@@ -1,6 +1,6 @@
 <div align="center">
 
-[![Swirl](https://docs.swirl.today/images/transparent_header_3.png)](https://www.swirlaiconnect.com)
+[![Swirl](docs/images/dark_header.png)](https://www.swirlaiconnect.com)
 
 <h1>SWIRL AI Connect</h1>
 
@@ -40,18 +40,18 @@
 
 <a href="https://www.youtube.com/watch?v=Ypn4XvSJfcQ" target="_blank">
 
-![SWIRL vs Google Ranking](SWIRL_AI_Connect_Features/SWIRL_ranking_img.png)
+![SWIRL vs Google Ranking](docs/images/SWIRL_ranking_img.png)
 
 </a>
 
 ## SWIRL AI Connect Features
 
-![Features](SWIRL_AI_Connect_Features/Feature_1.png)
-![Features](SWIRL_AI_Connect_Features/Feature_2.png)
+![Features](docs/images/Feature_1.png)
+![Features](docs/images/Feature_2.png)
 
 ## Based on SWIRL AI Connect
 
-![](SWIRL_AI_Connect_Features/Products_1.png)
+![](docs/images/Products_1.png)
 
 # 🔎 How Swirl Works
 
@@ -65,7 +65,7 @@ SWIRL AI Connect adapts and distributes user queries to anything with a search A
 
 # 🔌 List of Connectors
 
-![GitHub Connectors](SWIRL_AI_Connect_Features/GitHub_Connectors.png)
+![GitHub Connectors](docs/images/GitHub_Connectors.png)
 
 **Full list of connectors is available [here](https://swirlaiconnect.com/connectors)**.
 
