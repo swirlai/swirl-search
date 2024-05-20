@@ -4,11 +4,11 @@
 
 <h1>SWIRL AI Connect</h1>
 
-### _Bring AI to the Data, not the Data to the AI._
+#### Bring AI to the Data, not the Data to the AI.
 
-### SWIRL AI Connect is AI Infrastructure Software. We aim to build a safe, secure and robust AI Infrastructue for the enterprise.
+### SWIRL AI Connect is an open-source AI platform designed to simplify the setup of AI infrastructure. It supports powerful tools like Retrieval-Augmented Generation (RAG), Analytics, and Co-Pilot, enhancing decision-making capabilities with AI for businesses.
 
-[Start Searching](#-try-swirl-now-in-docker) · [Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) · [Key Features ](#-key-features) · [Contribute](#-contributing-to-swirl) · [Documentation](#-documentation) · [Connectors](#-list-of-connectors)
+[Start Searching](#-try-swirl-now-in-docker) · [Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) · [Key Features](#-key-features) · [Contribute](#-contributing-to-swirl) · [Documentation](#-documentation) · [Connectors](#-list-of-connectors)
 
 
 <br/>
@@ -19,24 +19,38 @@
 [![Website](https://img.shields.io/badge/Website-swirlaiconnect.com-00215E?style=flat-square)](https://www.swirlaiconnect.com)
 [![SWIRL Slack](https://img.shields.io/badge/Slack-SWIRL%20Community-0E21A0?logo=slack&style=flat-square)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 
-[![Docker Build](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg?style=flat-square&branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml)
+[![Test and Build Pipeline](https://github.com/swirlai/swirl-search/actions/workflows/test-build-pipeline.yml/badge.svg?style=flat-square&branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/test-build-pipeline.yml)
 
 </div>
 
 
 
-**Get your AI up and running in minutes, not months.** SWIRL AI Connect is an open-source platform that simplifies AI infrastructure setup and empowers Retrieval Augmented Generation (RAG) without the complexity of additional tools.
+**Get your AI up and running in minutes, not months.** SWIRL AI Connect is an open-source AI Connect platform that streamlines the integration of advanced AI technologies into business operations. It supports powerful features like Retrieval-Augmented Generation (RAG), Analytics, and Co-Pilot, enabling enhanced decision-making with AI and boosting enterprise AI transformation. 
+
+SWIRL operated without needing to move data into a vector database or undergo ETL processes. This approach not only enhances security but also speeds up the deployment. As a private cloud AI provider, SWIRL operates entirely within your private cloud infrastructure, running locally inside the firewall to ensure maximum data security and compliance. 
 
 ### Why SWIRL AI Connect?
 
-* **Instant AI:**  Deploy your AI solutions rapidly with built-in security controls (data compliance, firewall, granular access, etc.).
-* **RAG Made Easy:** Perform Retrieval Augmented Generation directly on your data, eliminating the need for vector databases, LangChain, or LlamaIndex.
-* **No Data Movement:** No ETL, re-indexing, or data movement. Work with your data where it lives.
-* **Boost Productivity:**  Enhance your team's efficiency by finding information faster and streamlining workflows.
+- **Instant AI Deployment:** Swiftly deploy AI-driven enterprise software within your private cloud environment. SWIRL AI Connect integrates seamlessly, offering built-in security measures like data compliance and firewall protections, ensuring secure AI connectivity and granular access control.
+  
+- **Easy and Fast Retrieval Augmented Generation(RAG):** SWIRL AI Connect simplifies the use of Retrieval-Augmented Generation (RAG). Our platform eliminates the need for external vector databases, LangChain, or LlamaIndex, making implementing AI RAG tools directly on your data easier.
+
+- **No Data Movement:** Operate directly on local data without the hassles of ETL processes, re-indexing, or data movement. SWIRL AI Connect enhances data security by allowing the data to remain in place and run securely inside your firewall.
+
+- **Boost Productivity with AI:** Enhance team efficiency and streamline workflows with advanced analytics and Co-Pilot features. SWIRL AI Connect helps you find information faster and make smarter decisions, accelerating enterprise AI transformation and boosting productivity.
+
+### SWIRL AI Connect enables you to perform Unified Search and bring in a secure AI Co-Pilot.
+
+**SWIRL Unified Search**: SWIRL Unified Search offers a secure and powerful integrated search solution that enables users to query across all enterprise data sources seamlessly. This scalable unified search platform is designed for large enterprises, startups, and small teams, allowing for comprehensive searches across cloud services, on-premise systems, and data silos without compromising security. By implementing SWIRL Unified Search, businesses can enhance productivity, improve data accessibility, and make more informed decisions by harnessing the full potential of their data landscape.
+
+**SWIRL AI Co-Pilot**: SWIRL AI Co-Pilot acts as an intelligent assistant, leveraging advanced AI to provide context-aware insights and support to business users. Securely integrated within your enterprise systems, SWIRL AI Co-Pilot helps streamline workflows, automate tasks, and deliver personalized recommendations, significantly boosting operational efficiency. Users benefit from real-time decision support, reduced manual workload, and a more intuitive interaction with their data, enabling them to focus on strategic activities that drive business growth.
 
 <br/>
 
-## SWIRL's Ranking in Action 
+## SWIRL's Ranking in Action
+
+SWIRL leverages the specific context of your enterprise data to deliver highly relevant search results tailored to business needs. While general search engines like Google offer broad capabilities, SWIRL excels in the precise and secure handling of enterprise-specific queries, providing actionable insights that enhance decision-making and business efficiency.
+
 
 <a href="https://www.youtube.com/watch?v=Ypn4XvSJfcQ" target="_blank">
 
@@ -46,20 +60,24 @@
 
 ## SWIRL AI Connect Features
 
-![Features](docs/images/Feature_1.png)
-![Features](docs/images/Feature_2.png)
+![Features 1](docs/images/Feature_1.png)
+![Features 2](docs/images/Feature_2.png)
 
 ## Based on SWIRL AI Connect
 
-![](docs/images/Products_1.png)
+![SWIRL AI Co-pilot and SWIRL DB](docs/images/Products_1.png)
+
+<br/>
 
 # 🔎 How Swirl Works
 
-SWIRL AI Connect adapts and distributes user queries to anything with a search API - search engines, databases, noSQL engines, cloud/SaaS services, data siloes, etc. and uses Reader LLMs to re-rank the unified results *without* extracting or indexing *anything*. 
+SWIRL AI Connect offers a straightforward no-code setup to easily integrate AI capabilities into your enterprise. It connects directly to various enterprise and data applications—like Teams, Snowflake, Databricks, and Google Drive—enabling you to search, fetch, and build an AI-based knowledge base. Utilize SWIRL’s Co-Pilot and Retrieval-Augmented Generation (RAG) to enhance productivity without the need for extracting or indexing any data.
 
-1. **Connect:**  Point SWIRL AI Connect to your data sources (databases, documents, etc.) adding in your auth/bearer token.
-2. **Query:** Ask questions or provide prompts in natural language.
-3. **Get Results:** SWIRL AI Connect combines powerful search with generative AI to deliver precise answers augmented by relevant context.
+1. Connect: Easily link SWIRL AI Connect to your data sources—be it databases, document stores, or cloud services. Simply add your authentication details to start.
+
+2. Query: Interact with SWIRL AI Connect using natural language. Ask questions or input commands to immediately harness the power of AI in your workflows.
+
+3. Get Results: Benefit from SWIRL AI Connect’s advanced search capabilities combined with generative AI. It quickly delivers accurate and contextually augmented responses by distributing queries across connected platforms that have a search API—ranging from search engines and databases to noSQL engines and SaaS services.
 
 <br/>
 
@@ -78,22 +96,23 @@ SWIRL AI Connect adapts and distributes user queries to anything with a search A
 
 ## Prerequisites
 
-* To run Swirl in Docker, you must have the latest [Docker app](https://docs.docker.com/get-docker/) for MacOS, Linux, or Windows installed and running locally.
+- To run Swirl in Docker, you must have the latest [Docker app](https://docs.docker.com/get-docker/) for MacOS, Linux, or Windows installed and running locally. You can also watch the [**video tutorial**](https://www.youtube.com/watch?v=OogRYkfSki8) to get started.
 
-* Windows users must also install and configure either the WSL 2 or the Hyper-V backend, as outlined in the  [System Requirements for installing Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/#system-requirements).
+- Windows users must also install and configure either the WSL 2 or the Hyper-V backend, as outlined in the  [System Requirements for installing Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/#system-requirements).
 
 ## Start Swirl in Docker
 
-> **Warning** 
+> **Warning**
 > Make sure the Docker app is running before proceeding!
 
-* Download the YML file: [https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml](https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml)
+- Download the YAML file: [https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml](https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml)
 
-```
+```bash
 curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
 ```
 
-* *Optional*: To enable Swirl's Real-Time Retrieval Augmented Generation (RAG) in Docker, run the following commands from the Console using a valid OpenAI API key:
+- *Optional*: To enable Swirl's Real-Time Retrieval Augmented Generation (RAG) in Docker, run the following commands from the Console using a valid OpenAI API key:
+  
 ``` shell
 export MSAL_CB_PORT=8000
 export MSAL_HOST=localhost
@@ -102,15 +121,15 @@ export OPENAI_API_KEY=‘<your-OpenAI-API-key>’
 
 :key: Check out [OpenAI's YouTube video](https://youtu.be/nafDyRsVnXU?si=YpvyaRvhX65vtBrb) if you don't have an OpenAI API Key.
 
-* In MacOS or Linux, run the following command from the Console:
+- In MacOS or Linux, run the following command from the Console:
 
-```
+```bash
 docker-compose pull && docker-compose up
 ```
 
-* In Windows, run the following command from PowerShell:
+- In Windows, run the following command from PowerShell:
 
-```
+```bash
 docker compose up
 ```
 
@@ -118,17 +137,17 @@ After a few minutes the following or similar should appear:
 
 <img src="https://docs.swirl.today/images/swirl_docker_1.png" height="70%" width="90%">
 
-* Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy>)
+- Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy>)
 
-* If the search page appears, click `Log Out` at the top, right. The Swirl login page will appear.
+- If the search page appears, click `Log Out` at the top, right. The Swirl login page will appear.
 
-* Enter the username `admin` and password `password`, then click `Login`.
+- Enter the username `admin` and password `password`, then click `Login`.
 
-* Enter a search in the search box and press the `Search` button. Ranked results appear in just a few seconds:
+- Enter a search in the search box and press the `Search` button. Ranked results appear in just a few seconds:
 
 <img src="https://docs.swirl.today/images/galaxy_ui_2.png" height="70%" weight="70%">
 
-* To view the raw JSON, open <http://localhost:8000/swirl/search/>
+- To view the raw JSON, open <http://localhost:8000/swirl/search/>
 
 The most recent Search object will be displayed at the top. Click on the `result_url` link to view the full JSON Response.
 
@@ -143,9 +162,19 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 ## Next Steps 👇
 
-* Check out the details of our [latest release](https://github.com/swirlai/swirl-search/releases)!
+- Check out the details of our [latest release](https://github.com/swirlai/swirl-search/releases)!
 
-* Head over to the [Quick Start Guide](https://docs.swirl.today/Quick-Start.html) and install Swirl locally!
+- Head over to the [Quick Start Guide](https://docs.swirl.today/Quick-Start.html) and install Swirl locally!
+
+## Video Tutorial
+
+Guide to Run SWIRL in Docker in 60 seconds.
+
+<a href="https://www.youtube.com/watch?v=Ypn4XvSJfcQ" target="_blank">
+
+<img src="docs/images/SWIRL_in_docker_guide.jpg" height="200px" width="400px"/>
+
+</a>
 
 <br/>
 
@@ -173,11 +202,12 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 <br/>
 
-# 👩‍💻 Contributing to Swirl 
+# 👩‍💻 Contributing to Swirl
 
-**Do you have a brilliant idea or improvement for Swirl?** We're all ears, and thrilled you're here to help!
+**Do you have a brilliant idea or improvement for SWIRL?** We're all ears, and thrilled you're here to help!
 
 🔗 **Get Started in 3 Easy Steps**:
+
 1. **Connect with Fellow Enthusiasts** - Jump into the [Swirl Slack Community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) and share your ideas. You'll find a welcoming group of Swirl enthusiasts and team members eager to assist and collaborate.
 2. **Branch It Out** - Always branch off from the `develop` branch with a descriptive name that encapsulates your idea or fix.
 3. **Start Your Contribution** - Ready to get your hands dirty? Make sure all contributions come through a GitHub pull request. We roughly follow the [Gitflow branching model](https://nvie.com/posts/a-successful-git-branching-model/), so all changes destined for the next release should be made to the `develop` branch.
@@ -204,10 +234,8 @@ For information about Swirl as a managed service, please [contact us](mailto:hel
 
 At Swirl, every user matters to us. Whether you're a beginner finding your way or an expert with feedback, we're here to support, listen, and help. Don't hesitate to reach out to us.
 
-* 🎉 **Join the Conversation:** Dive into our vibrant [Swirl Community on Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) - it's where all the magic happens!
+- **Join the SWIRL Community Slack:** Dive into our  [SWIRL Community on Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) - to discuss anything related to SWIRL.
 
-* 📧 **Direct Support:** For any questions, suggestions, or even a simple hello, drop us an email at [support@swirl.today](mailto:support@swirl.today). We cherish every message and promise to get back to you promptly!
+- **Direct Support:** For any questions, suggestions, or even a simple hello, drop us an email at [support@swirl.today](mailto:support@swirl.today). We cherish every message and promise to get back to you promptly!
 
-* 💼 **Request A Connector (Enterprise Support)** Want to see a new connector quickly and fast. Contact the Swirl Team at: [support@swirl.today](mailto:support@swirl.today)
-
-Remember, you're part of our family now. 🌍💙
+- **Request A Connector (Enterprise Support)** Want to see a new connector quickly and fast. Contact the Swirl Team at: [support@swirl.today](mailto:support@swirl.today)
