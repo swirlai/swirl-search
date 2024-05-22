@@ -34,9 +34,9 @@ if [ ! -e ".swirl" ]; then
 
 fi
 
-docker pull swirlai/swirl-search-qa:automated-tests
+docker pull swirlai/swirl-search-qa:automated-tests-master
 
-docker run -e SWIRL_TEST_HOST=host.docker.internal --net=host -t swirlai/swirl-search-qa:automated-tests sh -c "behave --tags=integrated_api"
+docker run -e SWIRL_TEST_HOST=host.docker.internal --net=host -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=integrated_api"
 
 echo $PROG "integration tests succeeded"
 if [ -e ".swirl" ]; then
