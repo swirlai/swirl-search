@@ -34,7 +34,7 @@ jobs:
         docker volume prune -f
         docker builder prune -f
     - name: Build the Docker image
-      run: docker build -t swirlai/spyglass:latest  -f Dockerfile.spg .
+      run: docker build --no-cache -t swirlai/spyglass:latest  -f Dockerfile.spg .
     - name: Push the Docker image
       run: docker push swirlai/spyglass
     - name: Upload Log Files
