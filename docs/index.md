@@ -1,6 +1,6 @@
 ---
 layout: default
-title: SWIRL AI CONNECT OVERVIEW
+title: SWIRL AI Connect Overview
 nav_order: 1
 ---
 <details markdown="block">
@@ -12,17 +12,17 @@ nav_order: 1
 {:toc}
 </details>
 
-# SWIRL AI CONNECT
+# SWIRL AI Connect
 
-## What is SWIRL AI CONNECT?
+## What is SWIRL AI Connect?
 
-SWIRL AI CONNECT is infrastructure software that effortlessly integrates enterprise data platforms, applications and information services with any Generative AI - without copying, indexing and/or ingesting data. Our plug-and-play solution requires minimal IT involvement, allowing you to leverage your existing systems, whether in-house or external, with ease. SWIRL acts as a central hub, seamlessly connecting to your data sources to AI, and providing real-time insights without disrupting your current systems or workflows.
+SWIRL AI Connect is infrastructure software that effortlessly integrates enterprise data platforms, applications and information services with any Generative AI - without copying, indexing and/or ingesting data. Our plug-and-play solution requires minimal IT involvement, allowing you to leverage your existing systems, whether in-house or external, with ease. SWIRL acts as a central hub, seamlessly connecting to your data sources to AI, and providing real-time insights without disrupting your current systems or workflows.
 
 ## How does it work?
 
-SWIRL AI CONNECT is enterprise infrastructure software, deployed in your private cloud. It provides a low/no-code, 7-step insight generation workflow for generating AI insights using internal data, without requiring you to extract, copy, index and maintain that data. With SWIRL AI CONNECT, data stays in place, and trustable, personalized insights are delivered to the user from the approved AI.
+SWIRL AI Connect is enterprise infrastructure software, deployed in your private cloud. It provides a low/no-code, 7-step insight generation workflow for generating AI insights using internal data, without requiring you to extract, copy, index and maintain that data. With SWIRL AI Connect, data stays in place, and trustable, personalized insights are delivered to the user from the approved AI.
 
-![SWIRL AI CONNECT Insight Pipeline](images/swirl_rag_pipeline.png)
+![SWIRL AI Connect Insight Pipeline](images/swirl_rag_pipeline.png)
 
 When a user requests an AI insight, SWIRL:
 
@@ -35,17 +35,17 @@ When a user requests an AI insight, SWIRL:
 * Sends the prompt to the approved generative AI for insight generation
 * Returns a single set of insights with citations
 
-SWIRL AI CONNECT includes the Galaxy UI, but is API-first, and easy to to integrate.
+SWIRL AI Connect includes the Galaxy UI, but is API-first, and easy to to integrate.
 
-SWIRL AI CONNECT ENTERPRISE includes flexible, generic OAUTH2 and SSO, with auto-provisioning via OpenID Connect.
+SWIRL AI Connect ENTERPRISE includes flexible, generic OAUTH2 and SSO, with auto-provisioning via OpenID Connect.
 
 ## What is the SWIRL architecture & tech stack?
 
 SWIRL uses the Python/Django/Celery stack, with Redis and PostgreSQL recommended for production deployments.
 
-![SWIRL AI CONNECT Architecture diagram](images/swirl_arch_diagram.jpg)
+![SWIRL AI Connect Architecture diagram](images/swirl_arch_diagram.jpg)
 
-## What systems can SWIRL AI CONNECT integrate with?
+## What systems can SWIRL AI Connect integrate with?
 
 The following is a partial list of supported platforms, please [contact us](mailto:hello@swirl.today) for details.
 
@@ -55,7 +55,7 @@ The following is a partial list of supported platforms, please [contact us](mail
 * Databases: Google BigQuery, MongoDB, Oracle, Pinecone, PostgreSQL, Qdrant, Sqlite3...
 * Services: Blockchain.com, Generic Web, Google PSE, Miro, NLResearch.com, OpenSanctions...
 
-## What do SWIRL AI CONNECT insights look like?
+## What do SWIRL AI Connect insights look like?
 
 Here is an example:
 
@@ -63,7 +63,7 @@ Here is an example:
 
 For more information please refer to the [AI Guide](AI-Guide).
 
-## How do I connect SWIRL AI CONNECT to X?
+## How do I connect SWIRL AI Connect to X?
 
 To connect SWIRL with an internal data source, you [create a SearchProvider record](./User-Guide.md#using-searchproviders).
 
@@ -72,8 +72,8 @@ To integrate SWIRL with a generative AI, you create an AIProvider record, as des
 
 ## How can I learn more about SWIRL?
 
-* [Quick Start](./Quick-Start.md) - covers installation
-* [User Guide](./User-Guide.md) - details how to configure and use SWIRL
-* [AI Guide](./AI-Guide.md) - explains how to obtain basic AI Insights using RAG
-* [Enterprise Guide](./Enterprise-Guide.md) - explains how to configure SWIRL AI CONNECT ENTERPRISE
-* [Admin Guide](./Admin-Guide.md) - details how to manage SWIRL in production
+* [Quick Start](./Quick-Start.md) - Covers installation
+* [User Guide](./User-Guide.md) - Details how to configure and use SWIRL
+* [AI Guide](./AI-Guide.md) - Explains how to obtain basic AI Insights using RAG
+* [Enterprise Guide](./Enterprise-Guide.md) - Explains how to configure SWIRL AI Connect Enterprise
+* [Admin Guide](./Admin-Guide.md) - Details how to manage SWIRL in production
