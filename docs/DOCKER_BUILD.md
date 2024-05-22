@@ -6,10 +6,10 @@ search_exclude: true
 sitemap: false
 ---
 
-# DOCKER BUILD for Swirl 
+# DOCKER BUILD for SWIRL
 
 {: .warning }
-The Docker version of Swirl does *not* retain any data or configuration when shut down!
+The Docker version of SWIRL does *not* retain any data or configuration when shut down!
 
 Please [contact support](mailto:support@swirl.today) for a Docker image suitable for production deployment. 
 
@@ -76,7 +76,7 @@ The Container ID in this example is `swirl-c-app-1`. It will be different if you
 
 Moments later, Docker desktop will reflect the running Container:
 
-![Swirl running in Docker](https://docs.swirl.today/images/swirl_docker.png)
+![SWIRL running in Docker](https://docs.swirl.today/images/swirl_docker.png)
 
 <br/>
 
@@ -112,8 +112,8 @@ The script will load all SearchProvider configurations in the specified file at 
 
 This should bring up the following, or similar:
 
-![Swirl SearchProviders, Google PSE - 1](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_sp_pse-1.png)
-![Swirl SearchProviders, Google PSE - 2](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_sp_pse-2.png)
+![SWIRL SearchProviders, Google PSE - 1](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_sp_pse-1.png)
+![SWIRL SearchProviders, Google PSE - 2](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_sp_pse-2.png)
 
 <br/>
 
@@ -123,18 +123,18 @@ This should bring up the following, or similar:
 
 After 5-7 seconds, this should bring up a unified, relevancy ranked result list:
 
-![Swirl Search Results, Google PSE](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_results_mixed_1.png)
+![SWIRL Search Results, Google PSE](https://raw.githubusercontent.com/wiki/swirlai/swirl-search/images/swirl_results_mixed_1.png)
 
-### Congratulations, Swirl Docker is installed!
+### Congratulations, SWIRL Docker is installed!
 
 <br/>
 
 ## Notes
 
 {: .warning }
-Swirl in Docker cannot use localhost to connect to local endpoints!
+SWIRL in Docker cannot use localhost to connect to local endpoints!
 
-For example: If you have solr running on localhost:8983, Swirl will be unable to contact it from inside the Docker container using that URL.
+For example: If you have solr running on localhost:8983, SWIRL will be unable to contact it from inside the Docker container using that URL.
 
 To configure such a source, get the hostname. On OS/X:
 

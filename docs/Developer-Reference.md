@@ -16,7 +16,7 @@ nav_order: 8
 
 ## Intended Audience
 
-This guide is intended to provide developers with detailed reference information about Swirl. Please refer to the [Developer Guide](Developer-Guide.md) for an overview of how to work with Swirl.
+This guide is intended to provide developers with detailed reference information about SWIRL. Please refer to the [Developer Guide](Developer-Guide.md) for an overview of how to work with SWIRL.
 
 # State Table
 
@@ -47,18 +47,18 @@ The following table describes in more detail all the steps in the federation pro
 | ---------- | ---------- |
 | NEW_SEARCH | The search object is to be executed immediately |
 | UPDATE_SEARCH | The search object is to be updated immediately |
-| PRE_PROCESSING | Swirl is performing pre-processing for this search |
-| PRE_QUERY_PROCESSING | Swirl is performing pre-query processing for this search |
-| FEDERATING | Swirl is provisioning Celery workers with Connectors and waiting for results |
-| FEDERATING_WAIT_n | Swirl has been waiting for the number of seconds indicated by `n` |
-| FULL_RESULTS | Swirl has received all results |
-| NO_RESULTS | Swirl received no results |
-| PARTIAL_RESULTS | Swirl has received results from some providers, but not all |
-| POST_RESULT_PROCESSING | Swirl is performing post-result processing |
-| PARTIAL_RESULTS_READY | Swirl has processed results from responding providers |
-| PARTIAL_UPDATE_READY | Swirl has processed updated results from responding providers  | 
-| FULL_RESULTS_READY | Swirl has processed results for all specified providers  | 
-| FULL_UPDATE_READY | Swirl has processed updated results for all specified providers | 
+| PRE_PROCESSING | SWIRL is performing pre-processing for this search |
+| PRE_QUERY_PROCESSING | SWIRL is performing pre-query processing for this search |
+| FEDERATING | SWIRL is provisioning Celery workers with Connectors and waiting for results |
+| FEDERATING_WAIT_n | SWIRL has been waiting for the number of seconds indicated by `n` |
+| FULL_RESULTS | SWIRL has received all results |
+| NO_RESULTS | SWIRL received no results |
+| PARTIAL_RESULTS | SWIRL has received results from some providers, but not all |
+| POST_RESULT_PROCESSING | SWIRL is performing post-result processing |
+| PARTIAL_RESULTS_READY | SWIRL has processed results from responding providers |
+| PARTIAL_UPDATE_READY | SWIRL has processed updated results from responding providers  |
+| FULL_RESULTS_READY | SWIRL has processed results for all specified providers  |
+| FULL_UPDATE_READY | SWIRL has processed updated results for all specified providers |
 
 ## Error States
 
@@ -67,7 +67,7 @@ The following table describes in more detail all the steps in the federation pro
 | ERR_DUPLICATE_RESULT_OBJECTS | More than one Result object was found; [contact support](#support) for assistance. |
 | ERR_NEED_PERMISSION | The Django User did not have sufficient permissions to perform the requested operation. More: [Permissioning Normal Users](Admin-Guide.md#permissioning-normal-users) | 
 | ERR_NO_ACTIVE_SEARCHPROVIDERS | Search failed because no specified SearchProviders were active |
-| ERR_NO_RESULTS | Swirl has not received results from any source |
+| ERR_NO_RESULTS | SWIRL has not received results from any source |
 | ERR_NO_SEARCHPROVIDERS | Search failed because no SearchProviders were specified |
 | ERR_RESULT_NOT_FOUND | A Result object that was expected to be found, was not; [contact support](#support) for assistance. |
 | ERR_RESULT_PROCESSING | An error occurred during Result processing - check the `logs/celery-worker.log` for details | 
@@ -128,7 +128,7 @@ As of version 2.5, the revised `CosineRelevancyResultProcessor` must be added *l
 
 Search objects are JSON dictionaries that define the searches some user or system desires to have run. They have unique IDs. They may be linked to by Result objects.
 
-The only required property is a `query_string` with the actual text to be searched. All other properties are optional when creating a Search object, and they will have default values shown below. As Swirl executes a search, asynchronously, it will update properties of the Search object like `status` and `result_url` in real-time.
+The only required property is a `query_string` with the actual text to be searched. All other properties are optional when creating a Search object, and they will have default values shown below. As SWIRL executes a search, asynchronously, it will update properties of the Search object like `status` and `result_url` in real-time.
 
 ## Properties
 
@@ -143,7 +143,7 @@ The only required property is a `query_string` with the actual text to be search
 | sort | The type of search to be run | relevancy (`date`) | 
 | results_requested | The number of results, overall, the user has requested | 10 (`25`) | 
 | searchprovider_list | A list of the SearchProviders to search for this query; an empty list, the default, searches all sources | [] (`[ "Enterprise Search Engines - Google PSE" ]`) |
-| subscribe | If `True`, Swirl will update this Search as per the Celery-Beats schedule | False (`True`) |
+| subscribe | If `True`, SWIRL will update this Search as per the Celery-Beats schedule | False (`True`) |
 | status | The execution status of this search (see below) | NEW_SEARCH (`FULL_RESULTS_READY`) |
 | pre_query_processors | A list of processors to apply to the query before federation starts | "" (`[ "SpellcheckQueryProcessor" ]`) |
 | post_result_processors | A list of result processors to apply to the results after federation is complete | "" (`[ "DedupeByFieldPostResultProcessor", "CosineRelevancyPostResultProcessor" ]`) |
@@ -152,7 +152,7 @@ The only required property is a `query_string` with the actual text to be search
 | messages | Messages from SearchProviders | "" (`Retrieved 1 of 1 results from: Document DB Search`) | 
 | result_mixer | The name of the Mixer object (see below) to use for ordering results | RoundRobinMixer (`Stack2Mixer`) | 
 | retention | The retention setting for this object; `0` = retain indefinitely; see [Search Expiration Service](Admin-Guide.md#search-expiration-service) for details | 0 (`2` for daily deletion) | 
-| tags | Parameter (string) that can be passed into a search and will be attached to the Search object that is stored in Swirl | "" (`{ "query_string": "knowledge management", "tags": ["max_length:50"] }`) | 
+| tags | Parameter (string) that can be passed into a search and will be attached to the Search object that is stored in SWIRL | "" (`{ "query_string": "knowledge management", "tags": ["max_length:50"] }`) |
 
 {: .highlight }
 There are some special Search tags that control query processing.  For example, the `SW_RESULT_PROCESSOR_SKIP` Search tag can be used to skip a processor for the Search it is specified for:  `SW_RESULT_PROCESSOR_SKIP:DedupeByFieldResultProcessor`
@@ -170,13 +170,13 @@ There are some special Search tags that control query processing.  For example, 
 
 # Result Objects
 
-A Result object is the normalized, re-ranked result for a single Search, from a single SearchProvider. They are created at the end of the federated search process in response to the creation of a Search object.  They are the only Swirl object that has a foreign key (`search.id`).
+A Result object is the normalized, re-ranked result for a single Search, from a single SearchProvider. They are created at the end of the federated search process in response to the creation of a Search object.  They are the only SWIRL object that has a foreign key (`search.id`).
 
 Only Connectors should create Result objects. 
 
 Developers are free to operate on individual Results as needed for their application. 
 
-However, the [goal of Swirl](index.md) (and federated search in general) is to provide unified results from all sources. Swirl uses Mixers to make this quick and easy.
+However, the [goal of SWIRL](index.md) (and federated search in general) is to provide unified results from all sources. SWIRL uses Mixers to make this quick and easy.
 
 ## Properties
 
@@ -194,7 +194,7 @@ However, the [goal of Swirl](index.md) (and federated search in general) is to p
 | result_processor_json_feedback | TBD | (*See a full result object*) |
 | messages | A list of any messages (strings) from the SearchProvider | `Retrieved 10 of 249 results from: OneDrive Files - Microsoft 365` |
 | status | The readiness of the result set | `READY` |
-| retrieved | The number of results Swirl retrieved from this SearchProvider for this query | `10` |
+| retrieved | The number of results SWIRL retrieved from this SearchProvider for this query | `10` |
 | found | The total number of results reported by the SearchProvider for this query | `2309` |
 | time | The time it took for the SearchProvider to create this result set, in seconds | `1.9` |
 | json_results | The normalized JSON results from this SearchProvider | (*See below*) | 
@@ -203,16 +203,16 @@ However, the [goal of Swirl](index.md) (and federated search in general) is to p
 
 | Field | Description | Example |
 | ---------- | ---------- | ---------- |
-| swirl_rank | Swirl's relevancy ranking for this result | `1` |
+| swirl_rank | SWIRL's relevancy ranking for this result | `1` |
 | swirl_score | A metric showing the relevancy of the result to the query. It is not meant to be meaningful as a number otherwise. It is only shown if [&explain=True](Developer-Guide.md#understand-the-explain-structure) is set. | `1890.6471312936828` |
 | searchprovider | The human-readable name for the SearchProvider | `"OneDrive Files - Microsoft 365"` |
 | searchprovider_rank | The SearchProvider's ranking of this result | `3`
 | title | The source-reported title for this result, with search term matches highlighted | `German car industry to invest in <em>electric</em> <em>vehicles</em> ...` |
-| url | The URL for this result; may be reported by the source and/or calculated by Swirl | `http://pwc.com/etc` |
+| url | The URL for this result; may be reported by the source and/or calculated by SWIRL | `http://pwc.com/etc` |
 | body | The source-reported result snippet(s), with search term matches highlighted | `<em>Technology</em> strategy encompasses a full set of Consulting capabilities ...` |
 | date_published | The source-reported time and date of publication of this result, when available (`unknown` if not). This is the field used by the [DateMixer](#mixers-1) | `unknown` |
 | date_published_display | Optional SearchProvider field for mapping a different publish date value for display purposes. | `... date_published=foo.bar.date1,date_published_display=foo.bar.date2 ...` |
-| date_retrieved | The time and date at which Swirl received this result from the source | `2022-02-20 03:45:03.207909` |
+| date_retrieved | The time and date at which SWIRL received this result from the source | `2022-02-20 03:45:03.207909` |
 | author | The source-reported author of this result, when available | `"CNN staff"` |
 | title_hit_highlights | TBD | TBD |
 | body_hit_highlights | TBD | TBD |
@@ -232,7 +232,7 @@ Note that PAYLOAD can be totally different from SearchProvider to SearchProvider
 
 # Connectors
 
-Connectors are objects responsible for searching a specific type of SearchProvider, retrieving the results and normalizing them to the Swirl format. This includes calling query and result processors.
+Connectors are objects responsible for searching a specific type of SearchProvider, retrieving the results and normalizing them to the SWIRL format. This includes calling query and result processors.
 
 Both [`connector.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/connector.py) and [`db_connectory.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/db_connector.py) are base classes from which other connector classes are derived.  While [`requests.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requests.py) is a wrapper called by `RequestsGet`.  Two utility functions, [`mappings.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/mappings.py) and [`utils.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/utils.py), can be used by other Connectors.
 
@@ -338,7 +338,7 @@ Question: Tell me about knowledge management software?
 ### ChatGPT SearchProvider Tags
 
 The following three Tags are available for use in the ChatGPT SearchProvider to help shape the Prompt or Default Role passed to ChatGPT along with the user's query.  To utilize these options:
-1. Add a valid OpenAI API Key to Swirl's `.env` file (found in the `swirl-home` directory), and then restart the Swirl for it to take effect.
+1. Add a valid OpenAI API Key to SWIRL's `.env` file (found in the `swirl-home` directory), and then restart the SWIRL for it to take effect.
 2. Add the `ChatGPTQueryProcessor` to the SearchProvider query_processors list:
 ``` json
     "query_processors": [
@@ -366,7 +366,7 @@ The following three Tags are available for use in the ChatGPT SearchProvider to 
 
 ### ChatGPT `query_mapping`
 
-The following `query_mapping` is also available for use in the ChatGPT SearchProvider to help shape the Default Role passed to ChatGPT along with the user's query. To utilize this `query_mapping`, add a valid OpenAI API Key to Swirl's `.env` file (found in the `swirl-home` directory) and then restart the Swirl for it to take effect.
+The following `query_mapping` is also available for use in the ChatGPT SearchProvider to help shape the Default Role passed to ChatGPT along with the user's query. To utilize this `query_mapping`, add a valid OpenAI API Key to SWIRL's `.env` file (found in the `swirl-home` directory) and then restart the SWIRL for it to take effect.
 
 * `CHAT_QUERY_REWRITE_GUIDE`:  Override the `system` role passed to ChatGPT.
 ``` shell
@@ -528,7 +528,7 @@ The MongoDB SearchProvider is configured with `MATCH_ALL` by default, which requ
 
 The [Oracle connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/oracle.py) use the `oracledb` package to connect to an Oracle instance.
 
-As of Swirl 3.1.0, the included [Free Public DB](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/oracle.json) SearchProvider has tested against 23c Free and presumably supports earlier versions.  This SearchProvider will be improved and preloaded in a future release.
+As of SWIRL 3.1.0, the included [Free Public DB](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/oracle.json) SearchProvider has tested against 23c Free and presumably supports earlier versions.  This SearchProvider will be improved and preloaded in a future release.
 
 ## PostgreSQL
 
@@ -536,7 +536,7 @@ The [PostgreSQL connector](https://github.com/swirlai/swirl-search/blob/main/swi
 
 ### Installing the PostgreSQL Driver
 
-To use PostgreSQL with Swirl:
+To use PostgreSQL with SWIRL:
 
 * Install [PostgreSQL](https://www.postgresql.org/) 
 * Modify the system PATH so that `pg_config` from the PostgreSQL distribution runs from the command line
@@ -564,13 +564,13 @@ pip install psycopg2
     ]
 ```
 
-* Run Swirl setup:
+* Run SWIRL setup:
 
 ``` shell
 python swirl.py setup
 ```
 
-* Restart Swirl:
+* Restart SWIRL:
 
 ``` shell
 python swirl.py restart
@@ -818,7 +818,7 @@ And here it is again, configured for SOLR with the [tech products example collec
 
 To adapt RequestsGet for your JSON response, just replace the JSONPaths on the right of the `FOUND`, `RETRIEVED`, and `RESULT` configurations in `response_mappings`, following the left-to-right format of `swirl_key=source-key`. If the response provides a dictionary wrapper around each result, use the RESULT path to extract it.
 
-From there, map results fields to Swirl's schema as described in the [User Guide, Result Mapping](User-Guide.md#result-mappings) section. Use the [PAYLOAD Field](User-Guide.md#payload-field) to store any extra content from SearchProviders that doesn't map to an existing Swirl field.
+From there, map results fields to SWIRL's schema as described in the [User Guide, Result Mapping](User-Guide.md#result-mappings) section. Use the [PAYLOAD Field](User-Guide.md#payload-field) to store any extra content from SearchProviders that doesn't map to an existing SWIRL field.
 
 Add additional required `key/value` parameters to the `url` - if they won't change from SearchProvider to SearchProvider - or by adding a mapping in the `query_template` and a default or guide value in the `query_mappings`. (See `{collection}` in the SOLR example above.)
 
@@ -943,9 +943,9 @@ Note: Putting a fixed SQL query in the `query_template` is perfectly acceptable.
 
 # Processing Pipelines
 
-![Swirl Processing Pipelines](images/processing_pipielines.png)
+![SWIRL Processing Pipelines](images/processing_pipielines.png)
 
-Processors are intended to be single purpose and executed in a sequence called a "pipeline". Pipelines are specified as JSON lists in their respective properties.  There are four processing pipelines in Swirl:
+Processors are intended to be single purpose and executed in a sequence called a "pipeline". Pipelines are specified as JSON lists in their respective properties.  There are four processing pipelines in SWIRL:
 * `Search.pre_query_processors`
 * `SearchProvider.query_processors`
 * `SearchProvider.result_processors`
@@ -971,7 +971,7 @@ Query Processors operate queries. The exact field they operate on depends on how
 | Search.pre_query_processors | `Search.query_string` | `Search.query_string_processed` | 
 | SearchProvider.query_processors | `Search.query_string_processed` | `<Connector>.query_string_to_provider` | 
 
-This table describes the query processors included in Swirl:
+This table describes the query processors included in SWIRL:
 
 | Processor | Description | Notes | 
 | ---------- | ---------- | ---------- | 
@@ -983,27 +983,27 @@ This table describes the query processors included in Swirl:
 
 ## Result Processors
 
-Result Processors transform source results into the Swirl format defined in [swirl/processors/utils.py](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/utils.py).
+Result Processors transform source results into the SWIRL format defined in [swirl/processors/utils.py](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/utils.py).
 
-The following table lists the Result Processors included with Swirl:
+The following table lists the Result Processors included with SWIRL:
 
 | Processor | Description | Notes | 
 | ---------- | ---------- | ---------- | 
-| GenericResultProcessor | Copies results from source format to Swirl format by exact match on name | Recommended for sources that don't need mapping |
-| MappingResultProcessor | Transforms results from source format to Swirl format, using `SearchProvider.result_mappings` | Default |
+| GenericResultProcessor | Copies results from source format to SWIRL format by exact match on name | Recommended for sources that don't need mapping |
+| MappingResultProcessor | Transforms results from source format to SWIRL format, using `SearchProvider.result_mappings` | Default |
 | LenLimitingResultProcessor | Checks if the `title` and `body` responses from a source exceed a configurable length (set in `swirl_server/settings.py`: `SWIRL_MAX_FIELD_LEN = 512`), truncates anything after that value, and adds an ellipsis ("..."). If the `body` field has been truncated, the processor reports the entire response in a new `body_full` field in the Payload. The default truncation length for can be overridden for a specific SearchProvider using a new Tag value (e.g. `max_length:256`). | Recommended for sources that consistently return lengthy title or body fields; should follow the `MappingResultProcessor`. |
 | CleanTextResultProcessor | Removes non-alphanumeric characters from the source response. It should be considered for lengthy responses where URLs or other HTML or Markdown syntax appear in results. | Should be installed before the `LenLimitingResultProcessor` when both are used. |
 | DateFinderResultProcessor | Looks for a date in any a number of formats in the body field of each result item. Should it find one, and the `date_published` for that item is `'unknown'`, it replaces `date_published` with the date extracted from the body, and notes this in the `result.messages`. | This processor can detect the following date formats:<br/> `06/01/23`<br/>`06/01/2023`<br/>`06-01-23`<br/>`06-01-2023`<br/>`jun 1, 2023`<br/>`june 1, 2023` |
-| AutomaticPayloadMapperResultProcessor | Profiles response data to find good strings for Swirl's `title`, `body`, and `date_published` fields. It is intended for SearchProviders that would otherwise have few (or no) good `result_mappings` options. | It should be place after the `MappingResultProcessor`. The `result_mappings` field should be blank, except for the optional DATASET directive, which will return only a single Swirl response for each provider response, with the original response in the `payload` field under the `dataset` key. | 
+| AutomaticPayloadMapperResultProcessor | Profiles response data to find good strings for SWIRL's `title`, `body`, and `date_published` fields. It is intended for SearchProviders that would otherwise have few (or no) good `result_mappings` options. | It should be place after the `MappingResultProcessor`. The `result_mappings` field should be blank, except for the optional DATASET directive, which will return only a single SWIRL response for each provider response, with the original response in the `payload` field under the `dataset` key. |
 | RequireQueryStringInTitleResultProcessor | Drops results that do not contain the `query_string_to_provider` in the result `title` field. | It should be added after the `MappingResultProcessor` and is now included by default in the "LinkedIn - Google PSE" SearchProvider. | 
 
 ## Post Result Processors
 
-`PostResultProcessors` operate only on processed result data and are saved to the Swirl database by each connector. They operate on Result objects.
+`PostResultProcessors` operate only on processed result data and are saved to the SWIRL database by each connector. They operate on Result objects.
 
 ### `CosineRelevancyPostResultProcessor`
 
-Swirl includes a cosine vector similarity relevancy model based on [spaCy](https://spacy.io/). The source code is found in: [swirl/processors/relevancy.py](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/relevancy.py)
+SWIRL includes a cosine vector similarity relevancy model based on [spaCy](https://spacy.io/). The source code is found in: [swirl/processors/relevancy.py](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/relevancy.py)
 
 The relevancy model is as follows:
 
@@ -1029,16 +1029,16 @@ The relevancy model is as follows:
 
 * Normalizes the query executed by this SearchProvider vs. all the other queries in the set - this is reflected in the `query_length_adjust` in the `explain` structure.
 
-The Swirl score is just that: a score. The higher a score is, the more contextually relevant the result is. Scores aren't comparable between queries or results. 
+The SWIRL score is just that: a score. The higher a score is, the more contextually relevant the result is. Scores aren't comparable between queries or results.
 
 *Tip: to translate a result score to a confidence score, take the #1 result as 1.0, and then divide subsequent results by the score for that result to calculate the confidence.*
 
-Swirl reports the `swirl_rank`, from 1 to N, where N is the total number of results. Swirl also includes the `searchprovider_rank`, which is the result rank assigned by the source. This makes it easy to compare what Swirl viewed as relevant compared to what each SearchProvider did.
+SWIRL reports the `swirl_rank`, from 1 to N, where N is the total number of results. SWIRL also includes the `searchprovider_rank`, which is the result rank assigned by the source. This makes it easy to compare what SWIRL viewed as relevant compared to what each SearchProvider did.
 
 In the event of a relevancy tie, the `date_published` and `search_provider` rank are used as additional sorts, to break it.
 
 {: .highlight }
-In Swirl 2.5, result processing was separated into two passes. The `SearchProvider.result_processors` runs first, followed by the `Search.post_result_processors` which adjusts length and finalizes.  As a result of this change, the revised `CosineRelevancyPostResultProcessor` must be added *last* in the `Search.post_result_processors` list. For example:
+In SWIRL 2.5, result processing was separated into two passes. The `SearchProvider.result_processors` runs first, followed by the `Search.post_result_processors` which adjusts length and finalizes.  As a result of this change, the revised `CosineRelevancyPostResultProcessor` must be added *last* in the `Search.post_result_processors` list. For example:
 
 ``` json
     "result_processors": [
@@ -1050,14 +1050,14 @@ In Swirl 2.5, result processing was separated into two passes. The `SearchProvid
 
 ### `DropIrrelevantPostResultProcessor`
 
-Available in Swirl 3.2.0, the `DropIrrelevantPostResultProcessor` drops results with `swirl_score < settings.MIN_SWIRL_SCORE` (which is set to 500 by default) and results with no `swirl_score`.  This processor is available for use but not enabled by default.
+Available in SWIRL 3.2.0, the `DropIrrelevantPostResultProcessor` drops results with `swirl_score < settings.MIN_SWIRL_SCORE` (which is set to 500 by default) and results with no `swirl_score`.  This processor is available for use but not enabled by default.
 
 {: .highlight }
 The Galaxy UI will not display the correct number of results if this ResultProcessor is deployed. This will be addressed in a future release.
 
 # Mixers
 
-The following table details the Result Mixers included with Swirl:
+The following table details the Result Mixers included with SWIRL:
 
 | Mixer | Description | Notes |
 | ---------- | ---------- | ---------- | 
@@ -1075,7 +1075,7 @@ The following table details the Result Mixers included with Swirl:
 
 If you want results sorted by `date_published`, descending, use the Date Mixer.
 
-![Swirl Results, Date Mixer](images/swirl_results_mixed_2_date_sort.png)
+![SWIRL Results, Date Mixer](images/swirl_results_mixed_2_date_sort.png)
 
 
 {: .highlight }
@@ -1101,7 +1101,7 @@ To invoke the mixer specified using the `result_mixer` property of the Search ob
 http://localhost:8000/swirl/results/?search_id=1
 ```
 
-If you use the Swirl defaults, a search will produce a JSON result that is relevancy ranked. 
+If you use the SWIRL defaults, a search will produce a JSON result that is relevancy ranked.
 
 To specify a different Mixer, add `&result_mixer=mixer-name` to the URL.
 
@@ -1123,7 +1123,7 @@ The following table describes the Mixer wrapper in more detail:
 
 ## Funding Data Set
 
-The TechCrunch Continental USA funding data set was taken from [Insurity SpatialKey](https://support.spatialkey.com/spatialkey-sample-csv-data/). It is included with Swirl in [Data/funding_db.csv](https://github.com/swirlai/swirl-search/blob/main/Data/funding_db.csv) 
+The TechCrunch Continental USA funding data set was taken from [Insurity SpatialKey](https://support.spatialkey.com/spatialkey-sample-csv-data/). It is included with SWIRL in [Data/funding_db.csv](https://github.com/swirlai/swirl-search/blob/main/Data/funding_db.csv)
 This file was processed with [scripts/fix_csv.py](https://github.com/swirlai/swirl-search/blob/main/scripts/fix_csv.py) prior to loading into SQLite3. 
 
 ### Loading into SQLite3 
@@ -1218,7 +1218,7 @@ To index the Enron data into Elastic, you must first update the load script with
 ca_certs = "<PATH-TO-CERT>"
 ```
 
-* Index the `emails.csv` from the Swirl directory:
+* Index the `emails.csv` from the SWIRL directory:
 
 For Elastic:
 ``` shell

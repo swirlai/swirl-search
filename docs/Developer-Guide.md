@@ -16,7 +16,7 @@ nav_order: 6
 
 ## Intended Audience
 
-This guide is intended to provide developers with an overview of Swirl and how to accomplish specific tasks with it. Please refer to the [Developer Reference](Developer-Reference.md) for lists of system states, system objects and properties, etc.
+This guide is intended to provide developers with an overview of SWIRL and how to accomplish specific tasks with it. Please refer to the [Developer Reference](Developer-Reference.md) for lists of system states, system objects and properties, etc.
 
 # Terminology
 
@@ -24,19 +24,19 @@ This guide is intended to provide developers with an overview of Swirl and how t
 | ---------- | ---------- |
 | SearchProvider | An object defining some searchable source. It includes metadata identifying the type of connector used to search the source and more. |
 | Search | An object defining a query that some user or system desires to have run. It includes the `query_string` with the actual text, and metadata. Most of the metadata is optional.|
-| Query | Search engines make a distinction between the act of searching and what goes into a search. The user's keywords or other search terms are usually referred to as a query. Swirl follows this convention whenever possible, but, at times, may refer to a search as a query. Sorry about that. |
-| Subscribe | An important property of Search objects. When set to `true`, Swirl will periodically re-run the search, specifying a date sort to get newer data, and removing duplicates from results.|
-| Connector | A Swirl module that can connect to, and query, a particular type of data source. Connectors are a wrapper around some existing Python package such as `request.get` or `elasticsearch`.|
-| Processors | A Swirl module that can process search (query) or result content in a source-specific or generic format. They transform whatever they accept in various ways - for example removing control characters from a search, or spell checking it, re-mapping source provider result formats to Swirl's own - and more. |
+| Query | Search engines make a distinction between the act of searching and what goes into a search. The user's keywords or other search terms are usually referred to as a query. SWIRL follows this convention whenever possible, but, at times, may refer to a search as a query. Sorry about that. |
+| Subscribe | An important property of Search objects. When set to `true`, SWIRL will periodically re-run the search, specifying a date sort to get newer data, and removing duplicates from results.|
+| Connector | A SWIRL module that can connect to, and query, a particular type of data source. Connectors are a wrapper around some existing Python package such as `request.get` or `elasticsearch`.|
+| Processors | A SWIRL module that can process search (query) or result content in a source-specific or generic format. They transform whatever they accept in various ways - for example removing control characters from a search, or spell checking it, re-mapping source provider result formats to SWIRL's own - and more. |
 | Pipelines | A process that executes pre-defined sequences of Processors. Each processor transforms whatever content it is asked to operate on. |
 | Result | An object defining results from one `SearchProvider` during the federated search process in response to the creation of a `Search` object. It includes metadata about the `SearchProvider`. Much of the metadata is optional.|
-| Mixer | A Swirl module that organizes results from multiple `SearchProviders` into a unified result set. It includes metadata from all `SearchProviders` as well as the Search itself.| 
+| Mixer | A SWIRL module that organizes results from multiple `SearchProviders` into a unified result set. It includes metadata from all `SearchProviders` as well as the Search itself.|
 | Relevancy Ranking | An estimation of the relative value of a given search engine result to the user's query, as compared to all others - to put it simply. For more information: [https://en.wikipedia.org/wiki/Relevance_(information_retrieval)](https://en.wikipedia.org/wiki/Relevance_(information_retrieval)) | 
 
 # Architecture
 
-![Swirl Federated Search Architecture -1](images/swirl_architecture-1.png)
-![Swirl Federated Search Architecture -2](images/swirl_architecture-2.png)
+![SWIRL Federated Search Architecture -1](images/swirl_architecture-1.png)
+![SWIRL Federated Search Architecture -2](images/swirl_architecture-2.png)
 
 # Workflow
 
@@ -44,7 +44,7 @@ This guide is intended to provide developers with an overview of Swirl and how t
 
     * This invokes the create method in [swirl/views.py](https://github.com/swirlai/swirl-search/blob/main/swirl/views.py). 
 
-    * Swirl responds with the `id` of the newly created Search object. The `view.py` module creates the object, then invokes [swirl/search.py](https://github.com/swirlai/swirl-search/blob/main/swirl/search.py) which manages the federation process from there.
+    * SWIRL responds with the `id` of the newly created Search object. The `view.py` module creates the object, then invokes [swirl/search.py](https://github.com/swirlai/swirl-search/blob/main/swirl/search.py) which manages the federation process from there.
 
 2. The search module [swirl/search.py](https://github.com/swirlai/swirl-search/blob/main/swirl/search.py):
 
@@ -88,7 +88,7 @@ This guide is intended to provide developers with an overview of Swirl and how t
 
 9. To continuously update results, set the `Search.subscribe` property to `true`.
 
-    * Swirl will periodically run each `Search` with `Search.subscribe`, setting `Search.sort` to `date`, merging and de-duplicating new results. 
+    * SWIRL will periodically run each `Search` with `Search.subscribe`, setting `Search.sort` to `date`, merging and de-duplicating new results. 
 
     * New result items can be retrieved by using the `Search.new_results_url` or selecting a `NewItem` mixer.
 
@@ -96,7 +96,7 @@ This guide is intended to provide developers with an overview of Swirl and how t
 
 ## Work with JSON Endpoints
 
- If using a browser with Swirl API endpoints, including the URLs in this guide, we recommend turning off any browser prefetch, to avoid creating multiple objects using Swirl's `?q=` and `?qs=` parameters. 
+ If using a browser with SWIRL API endpoints, including the URLs in this guide, we recommend turning off any browser prefetch, to avoid creating multiple objects using SWIRL's `?q=` and `?qs=` parameters.
 
 * [Turn off Chrome prediction service](https://www.ghacks.net/2019/04/23/missing-chromes-use-a-prediction-service-setting/)
 * [Turn off Safari prefetch](https://stackoverflow.com/questions/29214246/how-to-turn-off-safaris-prefetch-feature)
@@ -104,16 +104,16 @@ This guide is intended to provide developers with an overview of Swirl and how t
 ## Create a Search Object with the API
 
 1. Go to http://localhost:8000/swirl/search/
-![Swirl Search Form](images/swirl_search_empty.png)
+![SWIRL Search Form](images/swirl_search_empty.png)
 
 2. Go to the form at the bottom of the page
 3. Change the form to `Raw data` mode and clear any pre-built input
 4. Copy/paste an example from above
 5. Press the POST button
 
-Swirl will respond with the newly created Search Object, including the `id` for it:
+SWIRL will respond with the newly created Search Object, including the `id` for it:
 
-![Swirl Search Created - Google PSE Example](images/swirl_search_created.png)
+![SWIRL Search Created - Google PSE Example](images/swirl_search_created.png)
 
 {: .highlight }
 Note the `id` value down. It's required in the next step to get unified, relevancy ranked results.
@@ -124,10 +124,10 @@ To create a Search object and specify only a `query_string` and otherwise accept
 
 For example: [http://localhost:8000/swirl/search?q=knowledge+management](http://localhost:8000/swirl/search?q=knowledge+management)
 
-After a few seconds, Swirl will redirect you to the fully mixed results page:
+After a few seconds, SWIRL will redirect you to the fully mixed results page:
 
-![Swirl Results Header](images/swirl_results_mixed_1.png)
-![Swirl Results, Ranked by Cosine Vector Similarity](images/swirl_results_mixed_2.png)
+![SWIRL Results Header](images/swirl_results_mixed_1.png)
+![SWIRL Results, Ranked by Cosine Vector Similarity](images/swirl_results_mixed_2.png)
 
 There are some limitations to the `q=` interface:
 * You must URL encode your query; for text queries, this mostly means turning spaces into plus-signs. Use a free URL encoder for help with this: https://www.freeformatter.com/url-encoder.html 
@@ -156,9 +156,9 @@ For example: [http://localhost:8000/swirl/search?qs=knowledge+management](http:/
 
 The `qs=` parameter can also be used with the [providers](#specify-searchproviders-with-the-providers-url-parameter) and [result_mixer](Developer-Reference.md#mixers-1) parameters.
 
-As of Swirl 3.1.0, RAG processing is now available through a single API call using `qs=`, e.g. `?qs=metasearch&rag=true`.
+As of SWIRL 3.1.0, RAG processing is now available through a single API call using `qs=`, e.g. `?qs=metasearch&rag=true`.
 
-As of Swirl 3.2.0, the default AI Summary timeout value can also be overridden with a URL parameter in the Galaxy UI. For example: `http://localhost:8000/galaxy/?q=gig%20economics&rag=true&rag_timeout=90000`
+As of SWIRL 3.2.0, the default AI Summary timeout value can also be overridden with a URL parameter in the Galaxy UI. For example: `http://localhost:8000/galaxy/?q=gig%20economics&rag=true&rag_timeout=90000`
 
 Note that `&page=` is NOT supported with `qs=`; to access the second page of results use the `next_page` property from the `info.results` structure.
 
@@ -176,10 +176,10 @@ Note that `&page=` is NOT supported with `qs=`; to access the second page of res
 
 ## Request date-sorted results from one or more SearchProviders
 
-If `"sort": "date"` is specified in the Search object, Swirl connectors that support date sorting will request results in that order. By default Swirl will still relevancy rank these results, presenting a cross section of the freshest results from all providers.
+If `"sort": "date"` is specified in the Search object, SWIRL connectors that support date sorting will request results in that order. By default SWIRL will still relevancy rank these results, presenting a cross section of the freshest results from all providers.
 
-![Swirl Results Header, Sort/Date, Relevancy Mixer](images/swirl_results_mixed_1_date_sort.png)
-![Swirl Results, Sort/Date, Relevancy Mixer](images/swirl_results_mixed_2_date_sort.png)
+![SWIRL Results Header, Sort/Date, Relevancy Mixer](images/swirl_results_mixed_1_date_sort.png)
+![SWIRL Results, Sort/Date, Relevancy Mixer](images/swirl_results_mixed_2_date_sort.png)
 
 NOTES:
 * In Release 2.5, the `DateFindingResultProcessor` was added to the Google PSE SearchProvider JSON. It finds a date in a large percentage of results that otherwise wouldn't have one, and copies the date to the `date_published` field.
@@ -189,13 +189,13 @@ NOTES:
 
 Should a SearchProvider include a NOT'ted term in a result, a message is placed in the [Relevancy Explain](#understand-the-explain-structure). For example, here is an example result for the query `generative ai NOT chatgpt` which returned the term `chatgpt` anyway, failing to honor the NOT:
 
-![Swirl results with NOT detection](images/swirl_not_detection.png.png)
+![SWIRL results with NOT detection](images/swirl_not_detection.png.png)
 
 One way to address this is to make sure the [NOT query-mapping](User-Guide.md#query-mappings) is set correctly for that provider.
 
 ## Subscribe to a Search
 
-Search objects have a `subscribe` property. If set to `true`, Swirl will [update the Search](#update-a-search) every four hours, setting the `sort` property to `date` in order to favor new results.
+Search objects have a `subscribe` property. If set to `true`, SWIRL will [update the Search](#update-a-search) every four hours, setting the `sort` property to `date` in order to favor new results.
 
 For example:
 
@@ -231,7 +231,7 @@ For example:
 
 The `post_result_processors` specification above includes [detecting and removing duplicates](#detect-and-remove-duplicate-results) by exact match on a specified field. 
 
-Swirl will set the `status` to "FULL_UPDATE_READY" when finished updating. New results will have a field `new` which will be set to 1. Use the `new_result_url` to retrieve only the new results via the `ResultNewItemsMixer` or `DateNewItemsMixer`, depending on the `sort` specified.
+SWIRL will set the `status` to "FULL_UPDATE_READY" when finished updating. New results will have a field `new` which will be set to 1. Use the `new_result_url` to retrieve only the new results via the `ResultNewItemsMixer` or `DateNewItemsMixer`, depending on the `sort` specified.
 
 ``` json
 {
@@ -276,15 +276,15 @@ Use the [NewItems Mixers](Developer-Reference.md#mixers-1) to view only new resu
 {: .warning }
 To subscribe to a Search that contains any Microsoft SearchProviders, follow these steps _BEFORE_ setting the `subscribe` field to `true` on the Search object.
 
-* Enter this URL into a browser to open the Swirl homepage: http://localhost:8000/swirl/
+* Enter this URL into a browser to open the SWIRL homepage: http://localhost:8000/swirl/
 
-![Swirl homepage](images/swirl_frontpage.png)
+![SWIRL homepage](images/swirl_frontpage.png)
 
 * Click on `Admin`
 
 * Log in as the user who _owns_ the Search object you want to subscribe
 
-* Return to the Swirl homepage, and then click `Authenticators`
+* Return to the SWIRL homepage, and then click `Authenticators`
 
 {: .highlight }
 If you don't see the Microsoft option on this page, make sure that at least one M365 SearchProvider enabled (`"active": true`) before proceeding to the next step.
@@ -294,11 +294,11 @@ If you don't see the Microsoft option on this page, make sure that at least one 
 
 * Log in to your Microsoft account, if prompted to do so
 
-* Return to the Swirl Search object and set `"subscribe": true` on that Search
+* Return to the SWIRL Search object and set `"subscribe": true` on that Search
 
 ## Detect and Remove Duplicate Results
 
-Swirl includes two `PostResultProcessors` that can detect and remove duplicates.
+SWIRL includes two `PostResultProcessors` that can detect and remove duplicates.
 
 | Processor | Description | Notes |
 | ---------- | ---------- | ---------- |
@@ -311,7 +311,7 @@ The `DedupeByFieldResultProcessor` in included in the default `Search.post_resul
 
 You can edit any Search by adding the `id` to the end of the /swirl/search URL. For example: http://localhost:8000/swirl/search/1/
 
-![Swirl Edit Search - Google PSE Example](images/swirl_search_edit.png)
+![SWIRL Edit Search - Google PSE Example](images/swirl_search_edit.png)
 
 From here, you can use the form to:
 
@@ -328,7 +328,7 @@ The re-run option is available to handle failed searches, partial results, chang
 | ---------- | ---------- | ---------- |
 | Re-run | Discards any previous results and re-runs the Search | http://localhost:8000/swirl/search?rerun=1 |
 
-This URs is provided by Swirl in every mixed result set, in the `info.search` block of the response.
+This URL is provided by SWIRL in every mixed result set, in the `info.search` block of the response.
 
 ## Update a Search
 
@@ -338,7 +338,7 @@ To re-run a Search, but add new results to the previous ones, run an update:
 http://localhost:8000/swirl/search/?update=<search-id>
 ```
 
-The update will change the `Search.sort` to "date" prior to running, to favor new results. Swirl will also de-duplicate results using the `url` field, by default. As the update proceeds, Swirl will update the Search and Result message fields as appropriate, along with the result counts.
+The update will change the `Search.sort` to "date" prior to running, to favor new results. SWIRL will also de-duplicate results using the `url` field, by default. As the update proceeds, SWIRL will update the Search and Result message fields as appropriate, along with the result counts.
 
 Use the [`RelevancyNewItemsMixer` and `DateNewItemsMixer`](Developer-Reference.md#mixers-1) to retrieve new, updated results.
 
@@ -359,13 +359,13 @@ Use Spellcheck cautiously as it tends to cause a lack of results from sources th
 
 ## Adjust Relevancy for a Single SearchProvider
 
-Swirl 3.2.0 includes a new `RequireQueryStringInTitleResultProcessor`. If installed after the `MappingResultProcessor` it will drop results that don't include the user's query in the title. 
+SWIRL 3.2.0 includes a new `RequireQueryStringInTitleResultProcessor`. If installed after the `MappingResultProcessor` it will drop results that don't include the user's query in the title.
 
-This processor is intended for use with sources like LinkedIn that frequently return related profiles that mention a person, but aren't about them. (Swirl will normally rank these results poorly, but this will eliminate them entirely.)
+This processor is intended for use with sources like LinkedIn that frequently return related profiles that mention a person, but aren't about them. (SWIRL will normally rank these results poorly, but this will eliminate them entirely.)
 
 ## Expire Search Objects
 
-If your Swirl installation is using the [Search Expiration Service](Admin-Guide.md#search-expiration-service), users can specify the retention setting for each Search. 
+If your SWIRL installation is using the [Search Expiration Service](Admin-Guide.md#search-expiration-service), users can specify the retention setting for each Search.
 
 The following table describes the `Search.retention` field:
 
@@ -397,24 +397,24 @@ Mixers operate only on saved Results - not live/raw federated data - and can be 
 
 To retrieve the unified results for a Search, add `?search_id=` and the `id` of the Search to the Result API endpoint. For example: [http://localhost:8000/swirl/results?search_id=1](http://localhost:8000/swirl/results?search_id=1)
 
-Swirl will respond with results organized by the `result_mixer` specified in the Search object.
+SWIRL will respond with results organized by the `result_mixer` specified in the Search object.
 
-![Swirl Results Header](images/swirl_results_mixed_1.png)
-![Swirl Results, Ranked by Cosine Vector Similarity](images/swirl_results_mixed_2.png)
+![SWIRL Results Header](images/swirl_results_mixed_1.png)
+![SWIRL Results, Ranked by Cosine Vector Similarity](images/swirl_results_mixed_2.png)
 
 Specify a different Mixer on-the-fly by adding the URL parameter `result_mixer`. For example: [http://localhost:8000/swirl/results?search_id=1&result_mixer=Stack1Mixer](http://localhost:8000/swirl/results?search_id=1&result_mixer=Stack1Mixer)
 
 ## Page Through Results
 
-Swirl by default requests at least 10 results per SearchProvider, and stores them in its local SQLite3 database. To page through results, add a page parameter to the Results URL. For example:
+SWIRL by default requests at least 10 results per SearchProvider, and stores them in its local SQLite3 database. To page through results, add a page parameter to the Results URL. For example:
 
 For example: [http://localhost:8000/swirl/results?search_id=1&page=2](http://localhost:8000/swirl/results?search_id=1&page=2)
 
-If you need more mixed results, increase the `results_per_query` value in the SearchProvider configuration. A setting of 20 or 50 or 100 will ensure that you have lots of results to page through with the mixer. Since Swirl will only page through saved Results, re-run the query with a higher `results_per_query` value in each SearchProvider to get more results.
+If you need more mixed results, increase the `results_per_query` value in the SearchProvider configuration. A setting of 20 or 50 or 100 will ensure that you have lots of results to page through with the mixer. Since SWIRL will only page through saved Results, re-run the query with a higher `results_per_query` value in each SearchProvider to get more results.
 
 ## Get Search Times
 
-Swirl reports each source's search time in the relevant `info` block of the response:
+SWIRL reports each source's search time in the relevant `info` block of the response:
 
 ``` json
         "info": "Enterprise Search (web/Google PSE)": {
@@ -443,7 +443,7 @@ The federation time includes query, response, connection, querying, response, re
 
 ## Configure Pipelines
 
-In Swirl 2.5, result processing was separated into two passes. The `SearchProvider.result_processors` runs first, followed by the `Search.post_result_processors` which adjusts length and finalizes.  Example `result_processors` configuration from a Google PSE SearchProvider:
+In SWIRL 2.5, result processing was separated into two passes. The `SearchProvider.result_processors` runs first, followed by the `Search.post_result_processors` which adjusts length and finalizes.  Example `result_processors` configuration from a Google PSE SearchProvider:
 
 ``` json
     "result_processors": [
@@ -465,7 +465,7 @@ result_mixer = models.CharField(max_length=200, default='RelevancyMixer', choice
 
 ## Configure Relevancy Field Weights
 
-To configure the weights for individual Swirl fields, modify the `RELEVANCY_CONFIG` dictionary in the [swirl_server/settings.py](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py) file.
+To configure the weights for individual SWIRL fields, modify the `RELEVANCY_CONFIG` dictionary in the [swirl_server/settings.py](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py) file.
 
 The defaults are:
 
@@ -477,13 +477,13 @@ The defaults are:
 
 ## Configure Stopwords Language
 
-As of version 1.6, Swirl is configured to load English stopwords only. To change this, modify `SWIRL_DEFAULT_QUERY_LANGUAGE` in [swirl_settings/settings.py](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py) and change it to another [NLTK stopword language](https://stackoverflow.com/questions/54573853/nltk-available-languages-for-stopwords).
+As of version 1.6, SWIRL is configured to load English stopwords only. To change this, modify `SWIRL_DEFAULT_QUERY_LANGUAGE` in [swirl_settings/settings.py](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py) and change it to another [NLTK stopword language](https://stackoverflow.com/questions/54573853/nltk-available-languages-for-stopwords).
 
 ## Understand the Explain Structure
 
 The [CosineRelevancyProcessor](Developer-Reference.md#cosinerelevancypostresultprocessor) outputs a JSON structure that explains the `swirl_score` for each result. It is displayed by default; to hide it add `&explain=False` to any mixer URL.
 
-![Swirl Result with Explain](images/swirl_result_individual.png)
+![SWIRL Result with Explain](images/swirl_result_individual.png)
 
 The following table explains the meaning of each match:
 
@@ -564,13 +564,13 @@ The following table explains each stage executed by each Connector:
 | construct_query | Assembles the final form query for the source | |
 | validate_query | Attempts to verify that the query should produce results, if there are any, and is free of syntax errors | Returns False if the `query_to_provider`` is not valid |
 | execute_search | Connects to the defined SearchProvider, issues the query, and stores the response |  |
-| normalize_response | Transforms the SearchProvider response into a JSON result set that Swirl can use |  |
-| process_results | Calls the specified processor to transform the JSON results into the Swirl result format |  |
+| normalize_response | Transforms the SearchProvider response into a JSON result set that SWIRL can use |  |
+| process_results | Calls the specified processor to transform the JSON results into the SWIRL result format |  |
 | save_results | Stores the normalized results in the Django database | |
 
 A connector is expected to override `execute_search` and `normalize_response`, at minimum. For more information, review the [Connector base class](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/connector.py).
 
-The `"eval_credentials": "",` option can be used to set a credential variable in the session and then utilize it in the SearchProvider configuration.  For example, if you set `session['my-connector-token']`, Swirl will take that variable and replace it with the `{credentials}` string in the SearchProvider.
+The `"eval_credentials": "",` option can be used to set a credential variable in the session and then utilize it in the SearchProvider configuration.  For example, if you set `session['my-connector-token']`, SWIRL will take that variable and replace it with the `{credentials}` string in the SearchProvider.
 
 ``` shell
 {
@@ -670,12 +670,12 @@ Notes:
 # Retrieval Augmented Generation Web Socket API
 
 ## WebSocket Interaction Protocol for UI Developers 
-Available as of Swirl 3.0:  This section outlines the protocol for WebSocket interactions with the Swirl server.
+Available as of SWIRL 3.0:  This section outlines the protocol for WebSocket interactions with the SWIRL server.
 
 1. Initialize the WebSocket
 - **Action:** Create a WebSocket connection.
 - **Parameters:**
-        * `searchId`: Swirl unique identifier of a search
+        * `searchId`: SWIRL unique identifier of a search
         * `ragItems`: Optional array of integer that identify an individual search result in the search result of the search.
 - **Behavior:** Initializes a new WebSocket connection. Send the initial information (like `searchId` and `ragItems`) to the server. This setup is required before any data exchange can happen. **NOTE:** Necessary authentication should be handled before attempting to establish a WebSocket connection. This might involve sending a token or other credentials.
 
@@ -708,7 +708,7 @@ Available as of Swirl 3.0:  This section outlines the protocol for WebSocket int
 # Using Query Transformations
 
 ## Query Transformation Rules
-As of Swirl 2.0, developers can apply a set of transformation rules to a query using the new Query Transformation feature.
+As of SWIRL 2.0, developers can apply a set of transformation rules to a query using the new Query Transformation feature.
 
 The rules can be applied for all sources (`pre-query`) or to individual sources (`query`). There are three transformation types:
 
@@ -716,7 +716,7 @@ The rules can be applied for all sources (`pre-query`) or to individual sources 
 * Synonym - Replace a term with an OR of the original term and the synonyms
 * Synonym Bag - Replace a term with an OR of all synonyms
 
-Rules for the three types of supported transformations are expressed in terms of CSVs that are uploaded to Swirl.
+Rules for the three types of supported transformations are expressed in terms of CSVs that are uploaded to SWIRL.
 
 ### Replace/Rewrite
 * Column 1 - A semi-colon separated list of patterns to replace. Limited use of wild cards is supported: non-leading star character.
@@ -796,7 +796,7 @@ Example results:
 | My new notebook is slow | My new (notebook OR personal computer OR laptop OR pc) is slow |
 
 ### Uploading a Query Transformation CSV
-Go to the Swirl homepage and make sure you're logged in as an `admin` user.
+Go to the SWIRL homepage and make sure you're logged in as an `admin` user.
 
 Select the `Upload Query Transform CSV` option:<br/>
 ![Upload CSV option](images/query-transform-1.png)
@@ -824,7 +824,7 @@ Adding a pre-query processor can be done in one of two ways:
 /api/swirl/search/search?q=notebook&pre_query_processor=TestQueryTransform.synonym
 ```
 
-* The Swirl Search Object's `pre_query_processors` field can be updated to include the reference to the query transform. See the User Guide for details on [creating a search object with the API](#create-a-search-object-with-the-api): 
+* The SWIRL Search Object's `pre_query_processors` field can be updated to include the reference to the query transform. See the User Guide for details on [creating a search object with the API](#create-a-search-object-with-the-api).
 
 ### Query Processing
 
@@ -858,20 +858,20 @@ Update the Search Provider's `query_processors` field to include the reference. 
   }
 ```
 
-## Integrate Source Synonyms Into Swirl Relevancy
+## Integrate Source Synonyms Into SWIRL Relevancy
 
-As of Swirl 1.10, you can use hit highlight extraction to integrate a SearchProvider's synonym hits into Swirl's relevancy processing.
+As of SWIRL 1.10, you can use hit highlight extraction to integrate a SearchProvider's synonym hits into SWIRL's relevancy processing.
 
-Data source synonym configuration can compromise the accuracy of Swirl's relevancy scoring because the relevancy `PostResultProcessor` isn't aware of terms used to retrieve documents that were not part of the original query. As of Release 1.10, Swirl can surface any terms used by the SearchProvider to match documents in the results returned by that source.
+Data source synonym configuration can compromise the accuracy of SWIRL's relevancy scoring because the relevancy `PostResultProcessor` isn't aware of terms used to retrieve documents that were not part of the original query. As of Release 1.10, SWIRL can surface any terms used by the SearchProvider to match documents in the results returned by that source.
 
-The following SearchProviders may be configured with synonym support at the source and require this additional configuration in Swirl:
+The following SearchProviders may be configured with synonym support at the source and require this additional configuration in SWIRL:
 * OpenSearch
 * Elastic
 * Solr
 
 ### Configuration
 
-* Update the default SearchProvider configuration to add hit highlighting to the source fields that are mapped to Swirl's `title` and `body` fields.
+* Update the default SearchProvider configuration to add hit highlighting to the source fields that are mapped to SWIRL's `title` and `body` fields.
 
 Exactly how to do this will vary based on the original search engine and the use case, but to enable highlighting on every field, add the following to the `query_template` field of the SearchProvider:
 
@@ -883,7 +883,7 @@ Exactly how to do this will vary based on the original search engine and the use
 
 Consult the documentation for the original search engine for other way this could be accomplished.
 
-* In the `results_mapping` field of the SearchProvider, assign the Swirl fields `body_hit_highlights` and `title_hit_highlights` to the JSON reference in which the source's hit highlighting resides.
+* In the `results_mapping` field of the SearchProvider, assign the SWIRL fields `body_hit_highlights` and `title_hit_highlights` to the JSON reference in which the source's hit highlighting resides.
 
 For example, for the following result:
 
@@ -922,7 +922,7 @@ The above configuration would be reflected in the `info` section of the Results 
 
 ![Synonym Relevancy - 3](images/syn-rel-3.png)
 
-In this example, the query term was "notebook".  Within the `results_processor_json_feedback` field of the `info` block, there is a JSON structure called `results_processor_feedback.query.provider_query_terms` that contains a list of query terms.  One of these terms is "notebook" while the other is "laptop". This is because the source search engine is configured to use the word "laptop" as a synonym for "notebook". Hits for *both terms* were returned in the hit highlighting and extracted by the Swirl relevancy `PostResultProcessor`.
+In this example, the query term was "notebook".  Within the `results_processor_json_feedback` field of the `info` block, there is a JSON structure called `results_processor_feedback.query.provider_query_terms` that contains a list of query terms.  One of these terms is "notebook" while the other is "laptop". This is because the source search engine is configured to use the word "laptop" as a synonym for "notebook". Hits for *both terms* were returned in the hit highlighting and extracted by the SWIRL relevancy `PostResultProcessor`.
 
 Note that the complete content of the SearchProvider's hit highlighting is available for each result in both the `body_hit_highlights` and `title_hit_highlights` fields should a use case require it.
 
@@ -957,7 +957,7 @@ Some NOT query examples:
     "query_string": "generative ai NOT chatgpt"
 }
 ```
-Swirl may rewrite these queries depending on the SearchProvider `query_mappings`. See [Search Syntax](User-Guide.md#search-syntax) for more information.
+SWIRL may rewrite these queries depending on the SearchProvider `query_mappings`. See [Search Syntax](User-Guide.md#search-syntax) for more information.
 
 To turn on date sort:
 

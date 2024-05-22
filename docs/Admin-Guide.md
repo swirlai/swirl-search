@@ -16,13 +16,13 @@ nav_order: 4
 
 ## Intended Audience
 
-This guide is intended for developers and system administrators who want to harden/configure Swirl for production use.
+This guide is intended for developers and system administrators who want to harden/configure SWIRL for production use.
 
 # Installation
 
-## Configuring the Swirl Environment
+## Configuring the SWIRL Environment
 
-New in version 1.8, Swirl uses `django-environ` to load important values such as hostname from a file called `.env`.
+New in version 1.8, SWIRL uses `django-environ` to load important values such as hostname from a file called `.env`.
 
 The file `.env.dist` contains expected defaults. If no `.env` file is created, then the `install.sh` script copy this file to `.env` prior to startup.
 
@@ -43,13 +43,13 @@ MICROSOFT_REDIRECT_URI=''
 OPENAI_API_KEY=
 ```
 
-To configure a Swirl server to listen on a particular port, hostname, via HTTPS, etc., modify the `.env` file and then restart Swirl. There should never be a `.env` file in the Swirl repo, and when updating Swirl to a new version, no migration of these settings should be needed. They remain in `.env`.
+To configure a SWIRL server to listen on a particular port, hostname, via HTTPS, etc., modify the `.env` file and then restart SWIRL. There should never be a `.env` file in the SWIRL repo, and when updating SWIRL to a new version, no migration of these settings should be needed. They remain in `.env`.
 
-The `SWIRL_EXPLAIN` item determines if Swirl will show the [explain structure](Developer-Guide.md#understand-the-explain-structure) or not.
+The `SWIRL_EXPLAIN` item determines if SWIRL will show the [explain structure](Developer-Guide.md#understand-the-explain-structure) or not.
 
-The `SECRET_KEY` is actually a [salt](https://en.wikipedia.org/wiki/Salt_(cryptography)) used by Django. Swirl recommends [generating a new one](https://docs.djangoproject.com/en/4.1/topics/signing/) for production use.
+The `SECRET_KEY` is actually a [salt](https://en.wikipedia.org/wiki/Salt_(cryptography)) used by Django. SWIRL recommends [generating a new one](https://docs.djangoproject.com/en/4.1/topics/signing/) for production use.
 
-## Creating a Swirl Super User
+## Creating a SWIRL Super User
 
 To start over with a new database, delete or rename the `db.sqlite3` file. Then run this command:
 
@@ -86,7 +86,7 @@ http://localhost:8000/admin/
 
 ## Permissioning Normal Users
 
-There are four permissions -- `add`, `change`, `delete`, and `view` -- for each of the core Swirl objects: `SearchProviders`, `Search`, `Result`, and `Query Transform`.
+There are four permissions -- `add`, `change`, `delete`, and `view` -- for each of the core SWIRL objects: `SearchProviders`, `Search`, `Result`, and `Query Transform`.
 
 ![Django Admin - Permissions](images/django_admin_console_permissions.png)
 
@@ -109,21 +109,21 @@ SearchProvider, Search, Result, and Query Transform objects are owned by, and pr
 
 ## Shared SearchProviders and Query Transformations
 
-Swirl supports shared SearchProviders (v. 1.7) and Query Transformations (v. 2.0). These defaults to "false" for all Users, except the Django Super User (`admin`) which defaults to "true". This makes it easy to add users without having to duplicate SearchProviders or Query Transformations. 
+SWIRL supports shared SearchProviders (v. 1.7) and Query Transformations (v. 2.0). These defaults to "false" for all Users, except the Django Super User (`admin`) which defaults to "true". This makes it easy to add users without having to duplicate SearchProviders or Query Transformations. 
   
 For installations with a large number of users, create groups with the desired permissions first, then assign each User to the appropriate group.
 
-# Deploying Swirl for Production Use
+# Deploying SWIRL for Production Use
 
-The Swirl application is designed to be deployed behind a reverse-proxy. There are many reasons for this:
+The SWIRL application is designed to be deployed behind a reverse-proxy. There are many reasons for this:
 
-* Scalability: a reverse-proxy allows for the horizontal scaling of Swirl. By deploying multiple Swirl application VMs behind a reverse-proxy, the incoming connection demands can be handled by the reverse-proxy then disseminated to a pool of backend Swirl servers. If demand for Swirl increases, additional VMs can be provisioned on-demand. These VMs can also be turned down when the traffic drops below certain thresholds to save on hosting costs.
+* Scalability: a reverse-proxy allows for the horizontal scaling of SWIRL. By deploying multiple SWIRL application VMs behind a reverse-proxy, the incoming connection demands can be handled by the reverse-proxy then disseminated to a pool of backend SWIRL servers. If demand for SWIRL increases, additional VMs can be provisioned on-demand. These VMs can also be turned down when the traffic drops below certain thresholds to save on hosting costs.
 
-* Security: Offloading the SSL/TLS overhead to a dedicated public endpoint such as a reverse-proxy alleviates the CPU load on the application server that serves up Swirl.
+* Security: Offloading the SSL/TLS overhead to a dedicated public endpoint such as a reverse-proxy alleviates the CPU load on the application server that serves up SWIRL.
 
-* Performance: Using a reverse-proxy separates the task of serving up static content from the application server. This makes it possible to deploy Swirl with a content delivery network (CDN) which places static content close to the end user for a faster Swirl experience.
+* Performance: Using a reverse-proxy separates the task of serving up static content from the application server. This makes it possible to deploy SWIRL with a content delivery network (CDN) which places static content close to the end user for a faster SWIRL experience.
 
-* Availability: a reverse-proxy adds resiliency to any setup by spreading traffic across a backend pool of Swirl servers. The reverse-proxy monitors the pool of available backend servers and detects and removes failed servers from a pool of available ones.
+* Availability: a reverse-proxy adds resiliency to any setup by spreading traffic across a backend pool of SWIRL servers. The reverse-proxy monitors the pool of available backend servers and detects and removes failed servers from a pool of available ones.
 
 Popular reverse-proxy projects/products include [HA Proxy](https://www.haproxy.org/), [Nginx](https://nginx.org/en/), [Azure Application Gateway](https://azure.microsoft.com/en-us/products/application-gateway) and [AWS Application Load Balancer](https://aws.amazon.com/elasticloadbalancing/application-load-balancer/). 
 
@@ -131,9 +131,9 @@ Popular reverse-proxy projects/products include [HA Proxy](https://www.haproxy.o
 
 # Hardware Sizing
 
-As of Swirl 2.5, the federation process is CPU-bound. To maximize core utilization, allocate four (4) times the number of Celery workers. 
+As of SWIRL 2.5, the federation process is CPU-bound. To maximize core utilization, allocate four (4) times the number of Celery workers. 
 
-Swirl can be run continuously with minimal latency so long as:
+SWIRL can be run continuously with minimal latency so long as:
 
 ```
 (num_searches * num_searchproviders) <= num_cores
@@ -141,7 +141,7 @@ Swirl can be run continuously with minimal latency so long as:
 
 [Contact support](#support) to discuss this topic anytime.
 
-# Upgrading Swirl
+# Upgrading SWIRL
 
 {: .warning }
 Please [contact support](#support) for instructions on upgrading Docker containers!
@@ -156,12 +156,12 @@ git pull
 ./install.sh
 ```
 
-3. Setup Swirl:
+3. Setup SWIRL:
 ``` shell
 python swirl.py setup
 ```
 
-4. Restart Swirl core, if running:
+4. Restart SWIRL core, if running:
 ``` shell
 python swirl.py restart core
 ```
@@ -169,11 +169,11 @@ python swirl.py restart core
 {: .highlight }
 Consult the [release notes](https://github.com/swirlai/swirl-search/releases) for more information on each release.
 
-# Configuring Swirl
+# Configuring SWIRL
 
-New in Swirl 1.8: `SWIRL_EXPLAIN` is now configured as an environment variable.
+New in SWIRL 1.8: `SWIRL_EXPLAIN` is now configured as an environment variable.
 
-Swirl uses the following configuration items, defined in the [`swirl_server/settings.py`](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py):
+SWIRL uses the following configuration items, defined in the [`swirl_server/settings.py`](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py):
 
 | Configuration Item | Explanation | Example |
 | ---------- | ---------- | ---------- |
@@ -208,7 +208,7 @@ Note that all configuration names must be UPPER_CASE per the [django settings co
 
 # Search Expiration Service
 
-The [Expirer](https://github.com/swirlai/swirl-search/blob/main/swirl/expirer.py) service can automatically delete Search and their associated (linked) Result objects after a specified period of time - to ensure Swirl doesn't retain everything ever searched. 
+The [Expirer](https://github.com/swirlai/swirl-search/blob/main/swirl/expirer.py) service can automatically delete Search and their associated (linked) Result objects after a specified period of time - to ensure SWIRL doesn't retain everything ever searched.
 
 By default, this service runs every hour. The frequency is defined in the [Django settings](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py):
 
@@ -230,11 +230,11 @@ http://localhost:8000/admin/django_celery_beat/crontabschedule/
 ![Django console crontab page](images/django_admin_console_crontab.png)
 
 {: .warning }
-If you change the `crontab` entry in the database and don't change the `CELERY_BEAT_SCHEDULE` as well, that schedule will be restored if/when you restart Swirl.
+If you change the `crontab` entry in the database and don't change the `CELERY_BEAT_SCHEDULE` as well, that schedule will be restored if/when you restart SWIRL.
 
 # Search Subscriber Service
 
-When one or more Search objects [have the subscribe property set to True](Developer-Guide.md#subscribe-to-a-search), Swirl will periodically [update that Search](Developer-Guide.md#update-a-search).
+When one or more Search objects [have the subscribe property set to True](Developer-Guide.md#subscribe-to-a-search), SWIRL will periodically [update that Search](Developer-Guide.md#update-a-search).
 
 By default, the Subscriber service runs every four hours. The frequency is defined in the [Django settings](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py):
 
@@ -257,16 +257,16 @@ http://localhost:8000/admin/django_celery_beat/crontabschedule/
 ![Django console crontab page](images/django_admin_console_crontab.png)
 
 {: .warning }
-If you change the `crontab` entry in the database and don't change the `CELERY_BEAT_SCHEDULE` as well, that schedule will be restored if/when you restart Swirl.
+If you change the `crontab` entry in the database and don't change the `CELERY_BEAT_SCHEDULE` as well, that schedule will be restored if/when you restart SWIRL.
 
 # Service Startup & Daemonization
 
 ## Using `swirl.py`
 
-For normal operations, use `swirl.py` to start, stop or restart services. It is located in Swirl's install directory (along with `manage.py`).
+For normal operations, use `swirl.py` to start, stop or restart services. It is located in SWIRL's install directory (along with `manage.py`).
 
 {: .warning }
-Swirl's control scripts were updated in version 2.5!
+SWIRL's control scripts were updated in version 2.5!
 
 * A `default` key was added to the services list, including `debug`, in `swirl/services.py`
 * The `celery-beats` service was set to `default: False`
@@ -290,13 +290,13 @@ One or more services may be specified, e.g.:
 python swirl.py start celery-beats
 ```
 
-* To check the status of Swirl:
+* To check the status of SWIRL:
 
 ``` shell
 python swirl.py status
 ```
 
-Swirl will report the current running services, and their pids:
+SWIRL will report the current running services, and their pids:
 
 ``` shell
 __S_W_I_R_L__2_._6______________________________________________________________
@@ -416,12 +416,12 @@ The exact incantations to start the services varies by Operating System. The fol
 
 ## Mac OS/X or Linux
 
-Run each command shown below in a separate terminal window, in the directory where you installed Swirl, e.g. `swirl-search`, in the order specified below.
+Run each command shown below in a separate terminal window, in the directory where you installed SWIRL, e.g. `swirl-search`, in the order specified below.
 
 *Don't* run these commands in the `swirl_server` subdirectory!  They won't work there. If you aren't sure, check that `manage.py` is present in your current directory.
 
 {: .warning }
-As of Release 2.6, Swirl's start-up process no longer starts `redis`. You must now have `redis` installed and running before starting Swirl.
+As of Release 2.6, SWIRL's start-up process no longer starts `redis`. You must now have `redis` installed and running before starting SWIRL.
 
 1. Setup Django
 ```  shell
@@ -439,7 +439,7 @@ daphne swirl_server.asgi:application
 ```
 When Django is running [the front page should load...](http://localhost:8000/swirl/)
 <br/>
-![Swirl Front Page](images/swirl_frontpage.png)
+![SWIRL Front Page](images/swirl_frontpage.png)
 
 3. Start Celery Worker
 ``` shell
@@ -493,10 +493,10 @@ Django has a built-in shell for managing the database. You can run it in the `sw
 python manage.py flush
 ```
 
-All Swirl objects will be deleted, once you confirm.
+All SWIRL objects will be deleted, once you confirm.
 
 {: .warning }
-You must create a new [Swirl Super User](#creating-a-swirl-super-user) after doing this. 
+You must create a new [SWIRL Super User](#creating-a-swirl-super-user) after doing this.
 
 ## `sqlite-web`
 
@@ -529,7 +529,7 @@ For more information: [https://docs.djangoproject.com/en/4.0/topics/migrations/]
     * Then, repeat this process
 
 {: .warning }
-Don't forget to [create a Swirl Super User](#creating-a-swirl-super-user) after flushing the database!
+Don't forget to [create a SWIRL Super User](#creating-a-swirl-super-user) after flushing the database!
 
 # Configuring Django
 
@@ -547,7 +547,7 @@ PROTOCOL = 'http'
 ```
 
 {: .highlight }
-The FQDN that Swirl should listen on must be the first entry in the `ALLOWED_HOST` list.
+The FQDN that SWIRL should listen on must be the first entry in the `ALLOWED_HOST` list.
 
 * Time Zone
 
@@ -625,7 +625,7 @@ CONNECTOR_CHOICES = [
 
 # Configuring Celery & Redis
 
-Celery is used to execute a Swirl federated search. It uses Redis as a result back-end for asynchronous operation. Both of these systems must be configured correctly.
+Celery is used to execute a SWIRL federated search. It uses Redis as a result back-end for asynchronous operation. Both of these systems must be configured correctly.
 
 {: .warning }
 Celery is configured in at least three locations. They must be the same! 
@@ -683,7 +683,7 @@ To change the one that is in the repo:
 python -c "import secrets; print(secrets.token_urlsafe())"
 ```
 
-## Swirl User & Group Support
+## SWIRL User & Group Support
 
 You can use Django's built-in authentication support, which adds User and Group objects, or implement your own. The following sections detail how to access these.
 
@@ -707,7 +707,7 @@ For more information, see: [User authentication in Django](https://docs.djangopr
 
 ## Log Information
 
-All Swirl services write log files in the `logs/` folder under `swirl-search`. 
+All SWIRL services write log files in the `logs/` folder under `swirl-search`.
 
 Here's what to expect in each:
 
@@ -718,7 +718,7 @@ Here's what to expect in each:
 | logs/celery-worker.log | Contains the log of Celery tasks | Very involved in federation, look for detailed information regarding errors in `search.status` or partial results |
 | logs/celery-beats.log | Contains the log of the celery-beats service, which is only used by the Search Expiration and Subscription Services | Look here for issues with subscription or expiration not working | 
 
-From the Swirl root directory, try running:
+From the SWIRL root directory, try running:
 
 ``` shell
 python swirl.py logs/
@@ -726,17 +726,17 @@ python swirl.py logs/
 
 This will show you the collected, latest output of all logs, continuously.
 
-As of version 2.5, Swirl now outputs a single log entry with each request at the default log level INFO:
+As of version 2.5, SWIRL now outputs a single log entry with each request at the default log level INFO:
 
 ``` shell
 2023-08-02 10:49:09,466 INFO     admin search 452 FULL_RESULTS_READY 32 2.2
 ```
 
-Detailed logging is available in Debug mode: restart Swirl with the `--debug` flag to enable (or edit the `settings.py` file as outlined below).
+Detailed logging is available in Debug mode: restart SWIRL with the `--debug` flag to enable (or edit the `settings.py` file as outlined below).
 
 ## Debug Mode
 
-By default, Swirl ships in production mode. To put Django into DEBUG mode, modify [`swirl_server/settings.py`](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py), changing:
+By default, SWIRL ships in production mode. To put Django into DEBUG mode, modify [`swirl_server/settings.py`](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py), changing:
 
 ``` shell
 DEBUG = False

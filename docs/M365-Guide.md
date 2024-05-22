@@ -16,16 +16,16 @@ nav_order: 5
 
 ## Intended Audience
 
-This guide details how to integrate Swirl (v. 2.0 or newer) with an existing Microsoft 365 (M365) tenant. It is intended for use by M365 Administrators with authority to add a new App Registration in their Azure Portal and optionally grant permissions for various APIs as noted below on behalf of users who wish to use Swirl to query their personal M365 content.
+This guide details how to integrate SWIRL (v. 2.0 or newer) with an existing Microsoft 365 (M365) tenant. It is intended for use by M365 Administrators with authority to add a new App Registration in their Azure Portal and optionally grant permissions for various APIs as noted below on behalf of users who wish to use SWIRL to query their personal M365 content.
 
 # Register a New App in Azure Portal
 
-To connect a Swirl installation to an M365 tenant, a new App must be registered and configured in the Azure Portal.
+To connect a SWIRL installation to an M365 tenant, a new App must be registered and configured in the Azure Portal.
 
 After the new App is configured, you can use it to authenticate users with OIDC and allow them to search their personal M365 content using OAUTH2 permissions consent.
 
 ## Before You Begin
-You will need the following information about your Swirl deployment:
+You will need the following information about your SWIRL deployment:
 
 * `swirl-host`
 * `swirl-port` (if it is something other than the default)
@@ -49,7 +49,7 @@ In order to use OIDC and OAUTH2, your deployment must be using `https`, the only
 ![Azure New Registration](images/Azure_new_registration.png)
 
 * On the "Register an application" page:
-  * In the `Name` section, enter a name for the App (e.g.,`Swirl App`)
+  * In the `Name` section, enter a name for the App (e.g.,`SWIRL App`)
   * Under "Supported account types", select the following option: `Accounts in this organizational directory only (MSFT only - Single tenant)`
   * Add "Redirect URI" for a Web application:
     * Platform: `Web`
@@ -128,7 +128,7 @@ Select `Yes` when prompted to approve this action:
 {: .warning }
 Once the secret is created, copy the value shown on the screen right away!  It will be obscured from this point forward when returning to this menu.
 
-# Configure OIDC and OAUTH2 in the Swirl Client and Server
+# Configure OIDC and OAUTH2 in the SWIRL Client and Server
 
 In the configuration examples in the following sections you can find the `<application-id>`, `<tenant-id>`, `<secrete-value>`, `<server-authentication-callback-url>`, `<client-authentication-callback-url>`, `<client-authorization-callback-url>` in the App registration that created in the previous section, below are screenshots indicating the location of each:
 
@@ -141,7 +141,7 @@ In the configuration examples in the following sections you can find the `<appli
 * Callback Urls
 ![Azure Secret Value](images/Show_Callback_Urls.png)
 
-Edit the Swirl `.env` file (or `.env.docker` if running in Docker) as shown in the example below.
+Edit the SWIRL `.env` file (or `.env.docker` if running in Docker) as shown in the example below.
 
 {: .highlight }
 The `.env` file is created after running `install.sh` for local installations, and it is always present in Docker.
@@ -191,7 +191,7 @@ Edit the client configuration file named `static/api/config/default` created whe
   }
 ```
 
-After adding these variables to `.env` or `.env.docker`, restart Swirl:
+After adding these variables to `.env` or `.env.docker`, restart SWIRL:
 
 ``` shell
 python swirl.py restart
@@ -199,7 +199,7 @@ python swirl.py restart
 
 # Activate the Microsoft 365 SearchProviders
 
-The Swirl distribution includes pre-configured SearchProviders for Outlook Email, Calendar Events, OneDrive Files, SharePoint Sites, and Teams Chat.
+The SWIRL distribution includes pre-configured SearchProviders for Outlook Email, Calendar Events, OneDrive Files, SharePoint Sites, and Teams Chat.
 
 {: .warning }
 The local Teams app must already be open when clicking a Teams Chat result link in order for Teams to take you to the correct chat. 
@@ -216,7 +216,7 @@ In version 3.0.0, the OneDrive SearchProvider was updated to omit folders as res
 
 * Find each Microsoft 365 SearchProvider that you wish to activate. There are separate providers for each of the M365 Office apps. Edit the SearchProvider by adding the `id` of the provider you wish to edit to the URL. For example, to edit the provider with an id of `16`, go to: `http://localhost:8000/swirl/searchproviders/16/`
 
-![Swirl SearchProvider](images/swirl_sp_m365.png)
+![SWIRL SearchProvider](images/swirl_sp_m365.png)
 
 * Select the `Raw data` tab on the form at the bottom of the page. Then edit the form, changing the `active` property from `false` to `true`:
 
@@ -245,25 +245,25 @@ To:
 # Authenticate to Microsoft
 
 {: .highlight }
-As of Swirl 3.2.0, when signing in to Swirl via Microsoft OIDC, users are now automatically authorized to any active M365 SearchProviders.
+As of SWIRL 3.2.0, when signing in to SWIRL via Microsoft OIDC, users are now automatically authorized to any active M365 SearchProviders.
 
-To verify that the Swirl-M365 integration is working, open the Galaxy UI: <http://localhost:8000> (or <http://localhost:8000/galaxy/>)
+To verify that the SWIRL-M365 integration is working, open the Galaxy UI: <http://localhost:8000> (or <http://localhost:8000/galaxy/>)
 
 Click on the profile icon at the top right and then click the Microsoft toggle to activate it. Depending on how the above configuration was done, M365 may require authentication and/or granting of access. After that, the toggle next to the Microsoft logo will light up, indicating a successful connection.
 
-![Swirl Search box Auth](images/swirl_searchbox_auth-galaxy_dark.png)
+![SWIRL Search box Auth](images/swirl_searchbox_auth-galaxy_dark.png)
 
 Now, enter a search in the UI: `metasearch`
 
 Assuming any document in your M365 contains the word `metasearch`, results should appear in just a few seconds:
 
-![Swirl Results Auth](images/swirl_results_auth-galaxy_dark.png)
+![SWIRL Results Auth](images/swirl_results_auth-galaxy_dark.png)
 
 {: .warning }
 If the toggle does not light up after authenticating with Microsoft, please [contact support](#support). The [related documentation](#related-documentation) below may also be useful.
 
 # Related Documentation
 
-* [Tutorial: Register an app with Azure Active Directory](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/walkthrough-register-app-azure-active-directory) (*Note that some steps do not apply to the Swirl App*)
+* [Tutorial: Register an app with Azure Active Directory](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/walkthrough-register-app-azure-active-directory) (*Note that some steps do not apply to the SWIRL App*)
 
 * [Configure how users consent to applications](https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/configure-user-consent?pivots=portal#risk-based-step-up-consent)

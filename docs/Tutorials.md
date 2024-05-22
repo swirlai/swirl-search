@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Tutorial - Extending Swirl
+title: Tutorial - Extending SWIRL
 nav_order: 7
 ---
 <details markdown="block">
@@ -12,17 +12,17 @@ nav_order: 7
 {:toc}
 </details>
 
-# Tutorial: Extending Swirl
+# Tutorial: Extending SWIRL
 
 ## Intended Audience
 
-The following tutorial is intended for a Python developer who wants to extend Swirl by adding SearchProviders, Connectors and Processors. Please note this guide assumes use of Swirl 3.x or later.
+The following tutorial is intended for a Python developer who wants to extend SWIRL by adding SearchProviders, Connectors and Processors. Please note this guide assumes use of SWIRL 3.x or later.
 
 ## Assumptions
 
 * Python 3.12.1 (or latest stable) installed locally
 * Redis installed and running
-* Swirl installed locally (not in Docker) and running
+* SWIRL installed locally (not in Docker) and running
 
 ```
 % python swirl.py status
@@ -36,7 +36,7 @@ Service: celery-worker...RUNNING, pid:34734
 34734 ttys000    0:06.67 /Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python /Library/Frameworks/Python.framework/Versions/3.12/bin/celery -A swirl_server worker
 ```
 
-## Background: The Swirl Search Workflow
+## Background: The SWIRL Search Workflow
 
 In a nutshell:
 
@@ -60,7 +60,7 @@ For more information, consult the [Developer Guide, Workflow Overview](Developer
 
 # Creating a SearchProvider
 
-A SearchProvider is a configuration of a Connector. To connect to a given source, first verify that it supports a Connector that Swirl already has. (See the next tutorial for information on creating new Connectors.)
+A SearchProvider is a configuration of a Connector. To connect to a given source, first verify that it supports a Connector that SWIRL already has. (See the next tutorial for information on creating new Connectors.)
 
 For example, if trying to query a website using a URL like `https://host.com/?q=my+query+here` that returns JSON or XML, create a new SearchProvider configuring the `RequestsGet` Connector as follows:
 
@@ -75,7 +75,7 @@ For example, if trying to query a website using a URL like `https://host.com/?q=
 ```
 To learn more about query and URL parameters, refer to the [User Guide, Using SearchProviders](User-Guide.html#using-searchproviders) section.
 
-* If the website offers the ability to page through results, or sort results by date (as well as relevancy), use the `PAGE=` and `DATE_SORT=` query mappings to add support for these features through Swirl.  For example:
+* If the website offers the ability to page through results, or sort results by date (as well as relevancy), use the `PAGE=` and `DATE_SORT=` query mappings to add support for these features through SWIRL.  For example:
 ```
 TO DO 
 ```
@@ -84,7 +84,7 @@ For more information, refer to the [User Guide, Query Mappings](User-Guide.html#
 * Open the query URL in a browser and look through the JSON response. 
 If using Visual Studio Code, right-click on the pasted JSON and select `Format Document` to make it easier to read.
 
-* Identify the results list, and number of results found and retrieved. Put these JSON paths in the `response_mappings`. Then, identify the JSON paths to use to extract the Swirl default fields `title`, `body`, `url`, `date_published` and `author` from each item in the result list and add those to in the `result_mappings`, with the Swirl field name on the left, and the source JSON path on the right.  For example:
+* Identify the results list, and number of results found and retrieved. Put these JSON paths in the `response_mappings`. Then, identify the JSON paths to use to extract the SWIRL default fields `title`, `body`, `url`, `date_published` and `author` from each item in the result list and add those to in the `result_mappings`, with the SWIRL field name on the left, and the source JSON path on the right.  For example:
 ```
 "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
 "result_mappings": "url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
@@ -118,19 +118,19 @@ If using Visual Studio Code, right-click on the pasted JSON and select `Format D
     }
 ```
 
-* Go to Swirl `localhost:8000/swirl/searchproviders/`, logging in if necessary. Put the form at the bottom of the page into `Raw data` mode, and paste the SearchProvider into the box. Click the `POST` button to add it. The SearchProvider page will reload. 
+* Go to SWIRL `localhost:8000/swirl/searchproviders/`, logging in if necessary. Put the form at the bottom of the page into `Raw data` mode, and paste the SearchProvider into the box. Click the `POST` button to add it. The SearchProvider page will reload.
 
 * Go to the Galaxy UI at `localhost:8000/galaxy/` and run a search using the Tag you created for the new SearchProvider. Results should again appear in roughly the same period of time.
 
 # Creating a Connector
 
-Swirl Connectors are responsible for loading a SearchProvider, constructing and transmitting queries to a particular type of service, then saving the response - typically a result list. 
+SWIRL Connectors are responsible for loading a SearchProvider, constructing and transmitting queries to a particular type of service, then saving the response - typically a result list.
 
 {: .highlight }
 Consider using your favorite coding AI to generate a Connector by passing it the Connector base classes, and information about the API you are trying to query. 
 
 {: .highlight }
-If you are trying to send an HTTP/S request to an endpoint that returns JSON or XML, you don't need to create a Connector. Instead, [Create a SearchProvider](#creating-a-searchprovider) that configures the RequestsGet connector included with Swirl. 
+If you are trying to send an HTTP/S request to an endpoint that returns JSON or XML, you don't need to create a Connector. Instead, [Create a SearchProvider](#creating-a-searchprovider) that configures the RequestsGet connector included with SWIRL.
 
 To create a new Connector:
 
@@ -207,7 +207,7 @@ import openai
 
 ```
 
-* ChatGPT depends on the OpenAI API key, which is provided to Swirl via the `.env` file. To follow this pattern, create new values in `.env` then modify `swirl_server/settings.py` to load them as Django settings, and set a reasonable default.
+* ChatGPT depends on the OpenAI API key, which is provided to SWIRL via the `.env` file. To follow this pattern, create new values in `.env` then modify `swirl_server/settings.py` to load them as Django settings, and set a reasonable default.
 
 * Modify the `normalize_response()` method to store the raw response. This is literally no more (or less) than writing the result objects out as a Python list and storing that in `self.results`:
 ```
@@ -235,12 +235,12 @@ There's no need to do this if `self.response` is already a Python list.
 from swirl.connectors.my_connector import MyConnector
 ```
 
-* Restart Swirl
+* Restart SWIRL
 ```
 % python swirl.py restart core
 ```
 
-* Create a SearchProvider to configure the new Connector, then add it to the Swirl installation as noted in the [Creating a SearchProvider](#creating-a-searchprovider) section above.  Don't forget a useful Tag so that you can easily target the new connector when ready to test.
+* Create a SearchProvider to configure the new Connector, then add it to the SWIRL installation as noted in the [Creating a SearchProvider](#creating-a-searchprovider) section above.  Don't forget a useful Tag so that you can easily target the new connector when ready to test.
 
 To learn more about developing Connectors, refer to the [Developer Guide, Developing New Connectors](Developer-Guide.md#develop-new-connectors) section.
 
@@ -351,7 +351,7 @@ def getSearchProviderQueryProcessorsDefault():
   }
 ```
 
-* Restart Swirl
+* Restart SWIRL
 ```
 % python swirl.py restart core
 ```
@@ -367,7 +367,7 @@ MyQueryProcessor rewrote <Some-Connector> query to: <modified-query>
 
 A ResultProcessor is a stage executed by each SearchProvider, after the Connector has retrieved results. ResultProcessors operate on results and transform them as needed for downstream consumption or presentation.
 
-The `GenericResultProcessor` and `MappingResultProcessor` stages are intended to normalize JSON results. `GenericResultProcessor` searches for exact matches to the Swirl schema (as noted in the SearchProvider example) and copies them over. `MappingResultProcessor` applies `result_mappings` to normalize the results, again as shown in the SearchProvider example above. In general, adding stages *after* these is a good idea, unless the SearchProvider is expected to respond in a Swirl schema format.
+The `GenericResultProcessor` and `MappingResultProcessor` stages are intended to normalize JSON results. `GenericResultProcessor` searches for exact matches to the SWIRL schema (as noted in the SearchProvider example) and copies them over. `MappingResultProcessor` applies `result_mappings` to normalize the results, again as shown in the SearchProvider example above. In general, adding stages *after* these is a good idea, unless the SearchProvider is expected to respond in a SWIRL schema format.
 
 To create a new ResultProcessor:
 
@@ -439,7 +439,7 @@ def getSearchProviderResultProcessorsDefault():
          ...etc...
 ```
 
-* Restart Swirl
+* Restart SWIRL
 ```
 % python swirl.py restart core
 ```
@@ -526,7 +526,7 @@ def getSearchPostResultProcessorsDefault():
     }
 ```
 
-* Restart Swirl
+* Restart SWIRL
 ```
 % python swirl.py restart core
 ```

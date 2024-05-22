@@ -59,7 +59,7 @@ The following is a partial list of supported platforms, please [contact us](mail
 
 Here is an example:
 
-![Swirl RAG AI Insight with results](images/swirl_rag_pulmonary_3.png)
+![SWIRL RAG AI Insight with results](images/swirl_rag_pulmonary_3.png)
 
 For more information please refer to the [AI Guide](AI-Guide).
 
