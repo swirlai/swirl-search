@@ -1,7 +1,8 @@
 from django.conf import settings
 
-import logging
 import os
+
+import logging
 logger = logging.getLogger(__name__)
 
 MODEL_3 = "gpt-3.5-turbo"

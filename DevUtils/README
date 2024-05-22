@@ -1,0 +1,31 @@
+# Running Tests in the Swirl Project
+------------------------------------
+
+This README provides instructions on how to run tests for the Swirl project.
+
+## Installation
+---------------
+
+Before running the tests, ensure that all test dependencies are installed.
+To install the required dependencies, execute the following command in your
+terminal:
+
+pip install -r requirements-test.txt
+
+
+## Running Pre-Checkin Tests
+----------------------------
+
+It's recommended to run the pre-checkin tests before submitting a pull request.
+
+Execute the pre-checkin test script with the following command:
+
+./DevUtils/pre-checkin-tests.sh
+
+
+## Additional API tests
+-----------------------
+
+To run addiational API tests, execute the test script:
+
+./DevUtils/run-integtration-tests.sh

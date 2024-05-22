@@ -13,7 +13,7 @@ from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from swirl.processors.adaptive import *
-from swirl.processors.chatgpt_query import *
+from swirl.processors.gen_ai_query import *
 from swirl.processors.transform_query_processor import *
 from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list, match_all, tokenize_word_list
 from swirl.processors.result_map_converter import ResultMapConverter
@@ -589,7 +589,7 @@ def test_cgptqp_1():
         mock_swirlai_client.get_model = mock.MagicMock()
         mock_swirlai_client.get_model.return_value = 'fake-model'
         mock_swirlai_client.openai_client = client_instance
-        cgptqp = ChatGPTQueryProcessor(
+        cgptqp = GenAIQueryProcessor(
             tc,
             '',
             ["PROMPT:Write a more precise query of similar length to this : {query_string}",]
@@ -620,7 +620,7 @@ def test_cgptqp_2():
         mock_swirlai_client.get_model = mock.MagicMock()
         mock_swirlai_client.get_model.return_value = 'fake-model'
         mock_swirlai_client.openai_client = client_instance
-        cgptqp = ChatGPTQueryProcessor(tc,
+        cgptqp = GenAIQueryProcessor(tc,
             '',
             ["PROMPT:Write a more precise query of similar length to this : {query_string}",
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator"]
@@ -648,7 +648,7 @@ def test_cgptqp_3():
         mock_swirlai_client.get_model = mock.MagicMock()
         mock_swirlai_client.get_model.return_value = 'fake-model'
         mock_swirlai_client.openai_client = client_instance
-        cgptqp = ChatGPTQueryProcessor(tc,
+        cgptqp = GenAIQueryProcessor(tc,
             '',
             ["CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
              "CHAT_QUERY_REWRITE_GUIDE:You are a malevolent dictator"]
@@ -677,7 +677,7 @@ def test_cgptqp_4():
         mock_swirlai_client.get_model.return_value = 'fake-model'
         mock_swirlai_client.openai_client = client_instance
 
-        cgptqp = ChatGPTQueryProcessor(tc,
+        cgptqp = GenAIQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
              "CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
@@ -708,7 +708,7 @@ def test_cgptqp_5():
         mock_swirlai_client.get_model.return_value = 'fake-model'
         mock_swirlai_client.openai_client = client_instance
 
-        cgptqp = ChatGPTQueryProcessor(tc,
+        cgptqp = GenAIQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
              "CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
@@ -741,7 +741,7 @@ def test_cgptqp_6():
         mock_swirlai_client.get_model.return_value = 'fake-model'
         mock_swirlai_client.openai_client = client_instance
 
-        cgptqp = ChatGPTQueryProcessor(tc,
+        cgptqp = GenAIQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
              "CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",
@@ -774,7 +774,7 @@ def test_cgptqp_7():
         mock_swirlai_client.get_model.return_value = 'fake-model'
         mock_swirlai_client.openai_client = client_instance
 
-        cgptqp = ChatGPTQueryProcessor(tc,
+        cgptqp = GenAIQueryProcessor(tc,
             '',
             ["PROMPT:This should be used: {query_string}",
              "CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}",

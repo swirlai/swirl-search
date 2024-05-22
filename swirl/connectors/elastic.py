@@ -18,7 +18,7 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 from swirl.connectors.utils import bind_query_mappings
-from swirl.connectors.oes_common import OpenElasticCommon
+from swirl.connectors.verify_ssl_common import VerifyCertsCommon
 
 from elasticsearch import Elasticsearch
 from elasticsearch import *
@@ -29,7 +29,7 @@ import ast
 ########################################
 ########################################
 
-class Elastic(OpenElasticCommon):
+class Elastic(VerifyCertsCommon):
 
     type = "Elastic"
 
@@ -51,8 +51,6 @@ class Elastic(OpenElasticCommon):
         sort_field = ""
         if 'sort_by_date' in self.query_mappings:
             sort_field = self.query_mappings['sort_by_date']
-        else:
-            self.error(f"sort_by_date mapping is missing '='")
         # end if
 
         elastic_query = ""
@@ -76,10 +74,12 @@ class Elastic(OpenElasticCommon):
         logger.debug(f"{self}: execute_search()")
 
         auth = None
-        (username,password,verify_certs,ca_certs)=self.get_creds()
+        bearer = None
+        (username,password,verify_certs,ca_certs,bearer)=self.get_creds()
         if self.status in ("ERR_INVALID_CREDENTIALS", "ERR_NO_CREDENTIALS"):
             return
-
+        if bearer:
+            self.warning(f"bearer token specified but not supported")
         auth = (username, password)
 
         url = None
@@ -96,15 +96,20 @@ class Elastic(OpenElasticCommon):
             return
 
         try:
-            es = Elasticsearch(basic_auth=tuple(auth),
-                            hosts=url,
-                            verify_certs=verify_certs,
-                            ca_certs=ca_certs
-                            )
+            if verify_certs:
+                es = Elasticsearch(basic_auth=tuple(auth),hosts=url,verify_certs=verify_certs,ca_certs=ca_certs)
+            else:
+                if auth:
+                    es = Elasticsearch(basic_auth=tuple(auth),hosts=url)
+                else:
+                    es = Elasticsearch(hosts=url)
+
         except NameError as err:
             self.error(f'NameError: {err}')
         except TypeError as err:
             self.error(f'TypeError: {err}')
+        except Exception as err:
+            self.error(f"Exception: {err}")
 
         # extract index (str)
         index_name_pattern = r"index='([^']+)'"

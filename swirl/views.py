@@ -5,15 +5,16 @@
 
 from swirl.mixers import *
 import time
-import logging as logger
 from datetime import datetime
+
+import logging
+logger = logging.getLogger(__name__)
 
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User, Group
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404, HttpResponseForbidden, FileResponse, JsonResponse
 from django.conf import settings
 from django.db import Error
-
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.core.mail import send_mail
@@ -27,6 +28,9 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
+
 import csv
 import base64
 import hashlib
@@ -35,7 +39,7 @@ import hmac
 from swirl.models import *
 from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, OauthToken
-from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTrasnformNoCredentialsSerializer
+from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, StatusResponseSerializer, AuthResponseSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
 
@@ -137,6 +141,7 @@ def error(request):
 ########################################
 
 class LoginView(APIView):
+    @extend_schema(request=LoginRequestSerializer, responses={200: AuthResponseSerializer})
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
@@ -148,6 +153,14 @@ class LoginView(APIView):
             return Response({'error': 'Invalid credentials'})
 
 class LogoutView(APIView):
+    serializer_class = None
+
+    @extend_schema(
+        responses={200: StatusResponseSerializer},
+        parameters=[
+            OpenApiParameter(name="Authorization", description="Authorization token", required=True, type=OpenApiTypes.STR, location=OpenApiParameter.HEADER),
+        ]
+    )
     def post(self, request):
         auth_header = request.headers['Authorization']
         token = auth_header.split(' ')[1]
@@ -157,7 +170,9 @@ class LogoutView(APIView):
             token.delete()
         return Response({'status': 'OK'})
 
+@extend_schema(exclude=True)  # This excludes the entire viewset from Swagger documentation
 class OidcAuthView(APIView):
+
     def post(self, request):
         if 'OIDC-Token' in request.headers:
             header = request.headers['OIDC-Token']
@@ -183,11 +198,12 @@ class OidcAuthView(APIView):
         return HttpResponseForbidden()
 
 
-
+@extend_schema(exclude=True)  # This excludes the entire viewset from Swagger documentation
 class UpdateMicrosoftToken(APIView):
+
     def post(self, request):
         try:
-            # just return succcess,don't call the task
+            # just return success, don't call the task
             # result = update_microsoft_token_task.delay(headers).get()
             result = { 'user': request.user.username, 'status': 'success' }
             return Response(result)
@@ -853,7 +869,7 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
         query_xfr = QueryTransform.objects.get(pk=pk)
 
         if not self.request.user == query_xfr.owner:
-            serializer = QueryTrasnformNoCredentialsSerializer(query_xfr)
+            serializer = QueryTransformNoCredentialsSerializer(query_xfr)
         else:
             serializer = QueryTransformSerializer(query_xfr)
 
@@ -923,3 +939,28 @@ def query_transform_form(request):
     else:
         form = QueryTransformForm
     return render(request, 'query_transform.html', {'form': form})
+
+@extend_schema(exclude=True)  # This excludes the entire viewset from Swagger documentation
+class BrandingConfigurationViewSet(viewsets.ModelViewSet):
+    """
+    fetch logos unconditionally from the upload
+    """
+
+    def list(self, request):
+
+        logger.debug(f"{module_name}: TRACE LIST permission on Branding")
+
+        target = request.GET.get('target', '')
+
+        # If the target parameter is light or dark, only serve the requested image
+        if target == 'light' or target == 'dark':
+            location = f'{settings.MEDIA_ROOT}logo_highres_{target}.png'
+            image = open(location, 'rb')
+            logger.debug(f'returning logo from image {location}')
+            return FileResponse(image, status=status.HTTP_200_OK)
+        elif target == 'config':
+            ## return not found and let the UI use its own defaults
+            logger.debug(f'returning empty config {target}')
+            return JsonResponse({}, status=status.HTTP_200_OK)
+        else:
+            return Response('Logo Object Not Found', status=status.HTTP_404_NOT_FOUND)

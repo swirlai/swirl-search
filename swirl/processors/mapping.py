@@ -3,25 +3,24 @@
 @contact:    sid@swirl.today
 '''
 import json as stdjson
-import logging
-from celery.utils.log import get_task_logger
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger()
+
 
 from datetime import datetime
 from jsonpath_ng import parse
 from jsonpath_ng.exceptions import JsonPathParserError
 
-from swirl.processors.processor import *
+from swirl.processors.processor import ResultProcessor
 from swirl.processors.result_map_converter import ResultMapConverter
-
-from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format, date_str_to_timestamp, result_processor_feedback_provider_query_terms
+from swirl.processors.utils import create_result_dictionary, extract_text_from_tags, str_safe_format, result_processor_feedback_provider_query_terms,date_str_to_timestamp
 from swirl.swirl_common import RESULT_MAPPING_COMMANDS
 
+from celery.utils.log import get_task_logger
+logger = get_task_logger(__name__)
+
+
 #############################################
 #############################################
 
-from dateutil import parser
 
 import re
 from re import error as re_error
@@ -46,6 +45,8 @@ class MappingResultProcessor(ResultProcessor):
 
 
     def process(self):
+
+        logger.debug(f'mapping processor called with logger name {logger.name}')
 
         list_results = []
         provider_query_term_results = []
@@ -291,7 +292,9 @@ class MappingResultProcessor(ResultProcessor):
 
 #############################################
 
-from swirl.data_profiler import *
+#############################################
+
+from swirl.data_profiler import profile_data, find_closest_median_most_populated_field, find_longest_most_populated_field, list_by_population_desc, filter_elements_case_insensitive
 from swirl.processors.utils import get_tag
 
 class AutomaticPayloadMapperResultProcessor(ResultProcessor):
@@ -310,14 +313,14 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
         if 'str' in result_profile:
             if 'title' in result_profile['str']:
                 if result_profile['str']['title']['Population %'] > 0:
-                    self.warning(f"Field title is unexpectedly populated {result_profile['str']['title']['Population %']}")
+                    logger.debug(f"title is unexpectedly populated {result_profile['str']['title']['Population %']}")
             if 'body' in result_profile['str']:
                 if result_profile['str']['body']['Population %'] > 0:
-                    self.warning(f"Field body is unexpectedly populated {result_profile['str']['title']['Population %']}")
+                    logger.debug(f"body is unexpectedly populated {result_profile['str']['title']['Population %']}")
         if 'dict' in result_profile:
             if 'payload' in result_profile['dict']:
                 if result_profile['dict']['payload']['Population %'] < 80.0:
-                    self.warning(f"Field payload is unexpectedly unpopulated {result_profile['dict']['payload']['Population %']}")
+                    logger.debug(f"payload is unexpectedly unpopulated {result_profile['dict']['payload']['Population %']}")
 
         list_payloads = [d['payload'] for d in self.results if 'payload' in d]
         payload_profile = profile_data(list_payloads)
@@ -403,6 +406,13 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
         field_scan_list = filter_elements_case_insensitive(self.results[0]['payload'].keys(),self.results[0].keys())
 
         ###########################
+
+        handle_dataset = False
+        if 'DATASET' in self.provider.result_mappings:
+            dataset = []
+            handle_dataset = True
+
+        ###########################
         # auto map
 
         automapped_results = []
@@ -442,8 +452,10 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
             # remove automapped_fields from item['payload']
             # to do: this might have to be adjusted depending on what works above
             if 'payload' in item:
-                for field in automapped_fields:
-                    del item['payload'][field]
+                if not handle_dataset:
+                    # if handling dataset, leave in payload
+                    for field in automapped_fields:
+                        del item['payload'][field]
 
             ###########################
             # filter the payload, remove objects etc
@@ -458,8 +470,30 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
             if clean_payload:
                 item['payload'] = clean_payload
 
-            # save finished item
-            automapped_results.append(item)
+            if handle_dataset:
+                if len(automapped_results) == 0:
+                    # first item, store it
+                    item_1 = item
+                    # fix the title
+                    item_1['title'] = self.query_string
+                    k_list = []
+                    for k in clean_payload:
+                        k_list.append(k)
+                    dataset.append(k_list)
+                v_list = []
+                for k in clean_payload:
+                    v_list.append(clean_payload[k])
+                dataset.append(v_list)
+            else:
+                # save finished item normally
+                automapped_results.append(item)
+
+        if handle_dataset:
+            if item_1 and dataset:
+                if 'payload' in item_1:
+                    item_1['payload']['dataset'] = dataset
+                self.processed_results = [item_1]
+                return 1
 
         self.processed_results = automapped_results
         self.modified = len(self.processed_results)

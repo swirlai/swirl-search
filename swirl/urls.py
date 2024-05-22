@@ -9,8 +9,7 @@ from django.urls import include, path
 from rest_framework import routers, permissions
 from . import views
 from swirl.authenticators import Microsoft
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -19,25 +18,19 @@ router.register(r'searchproviders', views.SearchProviderViewSet, basename='searc
 router.register(r'querytransforms', views.QueryTransformViewSet, basename='querytransforms')
 router.register(r'search', views.SearchViewSet, basename='search')
 router.register(r'results', views.ResultViewSet, basename='results')
+router.register(r'branding', views.BrandingConfigurationViewSet, basename='branding')
 
 router.register(r'sapi/search', views.SearchViewSet, basename='galaxy-search')
 router.register(r'sapi/results', views.ResultViewSet, basename='galaxy-results')
 router.register(r'sapi/authenticators', views.AuthenticatorViewSet, basename='galaxy-authenticators')
 router.register(r'sapi/searchproviders', views.SearchProviderViewSet, basename='galaxy-searchproviders'),
-
-schema_view = get_schema_view(
-    openapi.Info(
-        title="Swirl Swagger",
-        default_version="v1",
-        description="Swirl API descriptions",
-    ),
-    public=True,
-    permission_classes=(permissions.AllowAny,),
-)
+router.register(r'sapi/branding', views.BrandingConfigurationViewSet, basename='galaxy-branding')
 
 urlpatterns = [
-    path('swagger/', schema_view.with_ui(cache_timeout=0),
-         name='schema-swagger-ui'),
+    # drf-spectacular paths for API schema and documentation
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+
     path('query_transform_form/', views.query_transform_form, name='query_transform_form'),
 
     # this appears to be necessary to access the view from a pytest API unit test
@@ -55,7 +48,7 @@ urlpatterns = [
     path('authenticators.html', views.authenticators, name='authenticators'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('microsoft-callback', Microsoft().callback, name='microsoft_callback'),
-    
+
     path('login/', views.LoginView.as_view()),
     path('swirl-logout/', views.LogoutView.as_view()),
     path('oidc_authenticate/', views.OidcAuthView.as_view()),

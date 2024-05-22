@@ -32,7 +32,7 @@ DEBUG = False
 # PUT the FQDN first in the list below
 ALLOWED_HOSTS = list(env('ALLOWED_HOSTS').split(','))
 HOSTNAME = ALLOWED_HOSTS[0]
-PROTOCOL = env('PROTOCOL')
+PROTOCOL = env('PROTOCOL',default='http')
 
 # Application definition
 
@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'celery',
     'django_celery_beat',
-    'rest_framework_swagger',
     'rest_framework.authtoken',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,14 +50,40 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'drf_yasg'
+    'drf_spectacular'
 ]
 
 ASGI_APPLICATION = 'swirl_server.routing.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+}
+
+#drf-spectacular settings
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'SWIRL API',
+    'DESCRIPTION': 'SWIRL AI CONNECT Enterprise Edition API',
+    'VERSION': '3.5.0',
+    'SERVE_INCLUDE_SCHEMA': False,  # 'False' disables serving the schema with the UI
+    'PREPROCESSING_HOOKS': [
+        'swirl.utils.include_exclude_api_paths',
+    ],
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'displayOperationId': False,
+        'defaultModelsExpandDepth': 1,
+        'defaultModelExpandDepth': 1,
+        'defaultModelRendering': 'example',
+        'displayRequestDuration': True,
+        'docExpansion': 'none',
+        'filter': True,
+        'operationsSorter': 'alpha',
+        'showExtensions': False,
+        'tagsSorter': 'alpha',
+        'validatorUrl': None,
+    },
 }
 
 MIDDLEWARE = [
@@ -184,7 +209,6 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 
-
 CELERY_TASK_ALWAYS_EAGER = False
 
 CELERY_WORKER_CANCEL_LONG_RUNNING_TASKS_ON_CONNECTION_LOSS = False
@@ -222,6 +246,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'your_sendgrid_username'
 EMAIL_HOST_PASSWORD = 'your_sendgrid_password'
 
+
+
 #####################################
 # SWIRL SEARCH
 
@@ -233,7 +259,7 @@ SWIRL_DEDUPE_FIELD = 'url'
 SWIRL_DEDUPE_SIMILARITY_MINIMUM = 0.95
 SWIRL_DEDUPE_SIMILARITY_FIELDS = ['title', 'body']
 
-SWIRL_EXPLAIN = bool(env('SWIRL_EXPLAIN'))
+SWIRL_EXPLAIN = bool(os.getenv('SWIRL_EXPLAIN', 'True') == 'True')
 
 SWIRL_RELEVANCY_CONFIG = {
     'title': {
@@ -288,9 +314,9 @@ SWIRL_QUERY_MODEL_DEF = CGPT_MODEL_3
 SWIRL_REWRITE_MODEL = env.get_value('SWIRL_REWRITE_MODEL', default=SWIRL_REWRITE_MODEL_DEF)
 SWIRL_QUERY_MODEL = env.get_value('SWIRL_QUERY_MODEL', default=SWIRL_QUERY_MODEL_DEF)
 
-MICROSOFT_CLIENT_ID= env('MICROSOFT_CLIENT_ID')
-MICROSOFT_CLIENT_SECRET = env('MICROSOFT_CLIENT_SECRET')
-MICROSOFT_REDIRECT_URI = env('MICROSOFT_REDIRECT_URI')
+MICROSOFT_CLIENT_ID= env('MICROSOFT_CLIENT_ID', default='')
+MICROSOFT_CLIENT_SECRET = env('MICROSOFT_CLIENT_SECRET', default='')
+MICROSOFT_REDIRECT_URI = env('MICROSOFT_REDIRECT_URI',default='')
 
 CSRF_TRUSTED_ORIGINS = list(env('CSRF_TRUSTED_ORIGINS').split(','))
 

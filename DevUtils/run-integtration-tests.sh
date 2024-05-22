@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 # Usage:
-#   pre-checkin-tests.sh [<options>]
+#   run-integration-tests.sh [<options>]
 #
-# Run unit tests and smoke tests
+# Run integrated API tests
 # Options:
 #   -h, --help           Display this help message
 
@@ -25,28 +25,20 @@ PROG=`basename $0`
 
 set -e
 
-# Unit tests
-
-echo $PROG "running pytest unit tests"
-pytest
-echo $PROG "unit tests succeeded"
-
-## Smoke tests
 
 export ALLOWED_HOSTS=localhost,host.docker.internal
-echo $PROG "running smoke tests"
+echo $PROG "running integration tests"
 if [ ! -e ".swirl" ]; then
     echo $PROG "starting Swirl"
     python swirl.py start
 
 fi
 
-# make sure we always have the latest
-docker pull swirlai/swirl-testing:latest-smoke-test
+docker pull swirlai/swirl-search-qa:automated-tests
 
-docker run -e SWIRL_TEST_HOST=host.docker.internal --net=host -t swirlai/swirl-testing:latest-smoke-test sh -c "behave **/docker_container/*.feature --tags=docker_api_smoke"
+docker run -e SWIRL_TEST_HOST=host.docker.internal --net=host -t swirlai/swirl-search-qa:automated-tests sh -c "behave --tags=integrated_api"
 
-echo $PROG "smoke tests succeeded"
+echo $PROG "integration tests succeeded"
 if [ -e ".swirl" ]; then
         echo $PROG "stopping Swirl"
     python swirl.py stop

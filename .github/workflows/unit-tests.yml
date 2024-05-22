@@ -15,7 +15,7 @@ jobs:
       - name: Set Up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12.1'
+          python-version: '3.12.2'
           cache: 'pip'
       - name: Install Swirl
         run: ./install.sh
