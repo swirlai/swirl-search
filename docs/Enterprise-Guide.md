@@ -108,7 +108,7 @@ SWIRL will ask you to confirm. When you do, it will copy the first two logos it 
 Scanning folder: enterprise/logo
 Copying enterprise/logo/your_logo_highres_positive.png -> static/galaxy/logo_highres_positive.png ... Ok
 Copying enterprise/logo/your_logo_highres_negative.png -> static/galaxy/logo_highres_negative.png ... Ok
-Restart Swirl to see the updated logo(s)!
+Restart SWIRL to see the updated logo(s)!
 ```
 
 Restart SWIRL to see the new logos:

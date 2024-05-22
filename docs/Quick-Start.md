@@ -16,17 +16,17 @@ nav_order: 2
 
 ## Intended Audience
 
-This guide is intended for anyone who wants to download and install Swirl. 
+This guide is intended for anyone who wants to download and install SWIRL.
 
 # Docker Installation
 
 ## Prerequisites
 
-* To run Swirl in Docker, you must have the latest [Docker app](https://docs.docker.com/get-docker/) for MacOS, Linux, or Windows installed and running locally.
+* To run SWIRL in Docker, you must have the latest [Docker app](https://docs.docker.com/get-docker/) for MacOS, Linux, or Windows installed and running locally.
 
 * Windows users must first install and configure either the WSL 2 or the Hyper-V backend, as outlined in the  [System Requirements for installing Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/#system-requirements).
 
-## Start Swirl in Docker
+## Start SWIRL in Docker
 
 {: .warning }
 Make sure the Docker app is running before proceeding!
@@ -37,7 +37,7 @@ Make sure the Docker app is running before proceeding!
 curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
 ```
 
-* *Optional*: To enable Swirl's Real-Time Retrieval Augmented Generation (RAG) in Docker, run the following commands from the Console using a valid OpenAI API key:
+* *Optional*: To enable SWIRL's Real-Time Retrieval Augmented Generation (RAG) in Docker, run the following commands from the Console using a valid OpenAI API key:
 ``` shell
 export MSAL_CB_PORT=8000
 export MSAL_HOST=localhost
@@ -111,15 +111,15 @@ app-1    | 2024-02-05 17:04:14,132 INFO     Listening on TCP address 0.0.0.0:800
 
 * Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy>)
 
-If the search page appears, click `Log Out` at the top, right. The Swirl login page will appear:
+If the search page appears, click `Log Out` at the top, right. The SWIRL login page will appear:
 
-![Swirl Login](images/swirl_login-galaxy_dark.png)
+![SWIRL Login](images/swirl_login-galaxy_dark.png)
 
 * Enter the username `admin` and password `password`, then click `Login`.
 
 * Enter a search in the search box and press the `Search` button. Ranked results appear in just a few seconds:
 
-![Swirl Results No M365](images/swirl_results_no_m365-galaxy_dark.png)
+![SWIRL Results No M365](images/swirl_results_no_m365-galaxy_dark.png)
 
 * To view the raw JSON, open <http://localhost:8000/swirl/search/>
 
@@ -128,20 +128,20 @@ The most recent Search object will be displayed at the top. Click on the `result
 ## Notes
 
 {: .warning }
-The Docker version of Swirl does *not* retain any data or configuration when shut down!
+The Docker version of SWIRL does *not* retain any data or configuration when shut down!
 
 {: .highlight }
-Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
+SWIRL includes five (5) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the SWIRL Community.
 
 {: .highlight }
-Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
+Using SWIRL with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
 
 # Local Installation
 
 ## Prerequisites
 
 {: .warning }
-As of version 2.6.0, Swirl's start-up process no longer starts `redis`.  You must now have `redis` installed *and running* before starting Swirl.
+As of version 2.6.0, SWIRL's start-up process no longer starts `redis`.  You must now have `redis` installed *and running* before starting SWIRL.
 
 ### MacOS
 
@@ -172,11 +172,11 @@ sudo apt install jq redis-server -y
 ### Windows
 
 {: .warning }
-Swirl is *not* supported for local installation or production use on Windows!
+SWIRL is *not* supported for local installation or production use on Windows!
 
 ### PostgreSQL (optional)
 
-If you wish to use PostgreSQL as a data source or as the Swirl back-end database:
+If you wish to use PostgreSQL as a data source or as the SWIRL back-end database:
 
 1. Install [PostgreSQL](https://www.postgresql.org/)
 
@@ -187,7 +187,7 @@ If you wish to use PostgreSQL as a data source or as the Swirl back-end database
 pip install psycopg2
 ```
 
-## Install Swirl
+## Install SWIRL
 
 * Clone the repo:
 
@@ -196,13 +196,13 @@ git clone https://github.com/swirlai/swirl-search
 cd swirl-search
 ```
 
-* To install Swirl on MacOS, execute this command from the Console:
+* To install SWIRL on MacOS, execute this command from the Console:
 
 ``` shell
 ./install.sh
 ```
 
-* To install Swirl on Linux, execute this command from the Console:
+* To install SWIRL on Linux, execute this command from the Console:
 
 ``` shell
 apt-get update --allow-insecure-repositories -y && apt-get install apt-file -y && apt-file update && apt-get install -y python3-dev build-essential
@@ -221,9 +221,9 @@ python -m nltk.downloader punkt
 {: .warning }
 Issues with certifications on OS/X? See: [urllib and "SSL: CERTIFICATE_VERIFY_FAILED" Error](https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error/42334357#42334357)
 
-## Setup Swirl
+## Setup SWIRL
 
-* Execute the following command from the Console to setup Swirl:
+* Execute the following command from the Console to setup SWIRL:
 
 ``` shell
 python swirl.py setup
@@ -234,7 +234,7 @@ python swirl.py setup
 {: .warning }
 To install the Galaxy UI, you must have the latest [Docker app](https://docs.docker.com/get-docker/) for MacOS or Linux installed and running locally.
 
-* To enable Swirl's Real-Time Retrieval Augmented Generation (RAG) on your `localhost`, run the following commands from the Console before installing the Galaxy UI:
+* To enable SWIRL's Real-Time Retrieval Augmented Generation (RAG) on your `localhost`, run the following commands from the Console before installing the Galaxy UI:
 ``` shell
 export MSAL_CB_PORT=8000
 export MSAL_HOST=localhost
@@ -249,43 +249,43 @@ export MSAL_HOST=localhost
 {: .highlight }
 The Galaxy UI components should be installed only *after* running the `./install.sh` and `python swirl.py setup` commands.
 
-## Start Swirl
+## Start SWIRL
 
-* Execute the following command from the Console to start Swirl:
+* Execute the following command from the Console to start SWIRL:
 
 ``` shell
 python swirl.py start
 ```
 
-## Open the Swirl Homepage (Django)
+## Open the SWIRL Homepage (Django)
 
 * Enter this URL into a browser: <http://localhost:8000/swirl/>
 
 The following page should appear:
 
-![Swirl Homepage](images/swirl_frontpage.png)
+![SWIRL Homepage](images/swirl_frontpage.png)
 
 ## Open the Galaxy UI
 
 * Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy/>)
 
-If the search page appears, click `Log Out` at the top, right. The Swirl login page will appear:
+If the search page appears, click `Log Out` at the top, right. The SWIRL login page will appear:
 
-![Swirl Login](images/swirl_login-galaxy_dark.png)
+![SWIRL Login](images/swirl_login-galaxy_dark.png)
 
 * Enter the username `admin` and password `password`, then click `Login`.
 
 * Enter a search in the search box and press the `Search` button. Ranked results appear in just a few seconds:
 
-![Swirl Results](images/swirl_results_no_m365-galaxy_dark.png)
+![SWIRL Results](images/swirl_results_no_m365-galaxy_dark.png)
 
 ## Notes
 
 {: .warning }
-Removing Swirl's `static/` content will also remove the Galaxy UI files! You will need to re-install Galaxy if you have removed Swirl's `static/` directory and then run either `python manage.py collectstatic` or `python swirl.py setup`.
+Removing SWIRL's `static/` content will also remove the Galaxy UI files! You will need to re-install Galaxy if you have removed SWIRL's `static/` directory and then run either `python manage.py collectstatic` or `python swirl.py setup`.
 
 {: .highlight }
-Swirl includes five (5) Google Programmable Search Engines (PSEs), complete with shared credentials, to get you up and running right away. These credentials are shared with the Swirl Community.
+SWIRL includes five (5) Google Programmable Search Engines (PSEs), complete with shared credentials, to get you up and running right away. These credentials are shared with the SWIRL Community.
 
 {: .highlight }
-Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
+Using SWIRL with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
