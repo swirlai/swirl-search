@@ -4,9 +4,6 @@ FROM python:3.12.2-slim-bookworm
 # Upgrade pip to the specified version or higher
 RUN pip install --no-cache-dir --upgrade 'pip>=23.3'
 
-# Upgrade pip to the specified version or higher
-RUN pip install --no-cache-dir --upgrade 'pip>=23.3'
-
 # try to upgrade to a more recent version of openssl
 RUN apt-get update
 RUN apt-get -y upgrade openssl
