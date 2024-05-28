@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 # Usage:
-#   pre-checkin-tests.sh [<options>]
+#   run-integration-tests.sh [<options>]
 #
-# Run unit tests and smoke integration tests
+# Run integrated API tests
 # Options:
 #   -h, --help           Display this help message
 
@@ -34,13 +34,12 @@ if [ ! -e ".swirl" ]; then
 
 fi
 
-docker pull swirlai/swirl-search:latest-integrated-api
+docker pull swirlai/swirl-search-qa:automated-tests-master
 
-docker run -e SWIRL_TEST_HOST=host.docker.internal --net=host -t swirlai/swirl-search:latest-integrated-api sh -c "behave --tags=integrated_api"
+docker run -e SWIRL_TEST_HOST=host.docker.internal --net=host -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=integrated_api"
 
 echo $PROG "integration tests succeeded"
 if [ -e ".swirl" ]; then
         echo $PROG "stopping Swirl"
     python swirl.py stop
 fi
-

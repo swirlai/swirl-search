@@ -23,6 +23,9 @@ def main(argv):
     parser.add_argument('-m', '--max', help="maximum number of rows to index", default=0)
     parser.add_argument('-u', '--username', default='elastic', help="the elastic user, default 'elastic'")
     parser.add_argument('-p', '--password', help="the password for the elastic user")
+    parser.add_argument('-v', '--no-verify', help="don't verify certificates", default=False, action="store_true")
+    parser.add_argument('-c', '--cacert', help="path to cert file", default=None)
+
     args = parser.parse_args()
 
     if not os.path.exists(args.filespec):
@@ -34,10 +37,12 @@ def main(argv):
     f = open(args.filespec, 'r')
     csvr = csv.reader(f, quoting=csv.QUOTE_ALL)
     # Insert path to Elastic cert below
-    ca_certs = "<PATH-TO-CERT>"
+    ca_certs = args.cacert
+    no_verify = args.no_verify
+
     es = Elasticsearch(basic_auth=tuple((args.username, args.password)),
                        hosts=args.elasticsearch,
-                       verify_certs=True,
+                       verify_certs=(not no_verify),
                        ca_certs=ca_certs
                        )
     print("Indexing...")
@@ -87,7 +92,7 @@ def main(argv):
         if rows % 100 == 0:
             print(f"Indexed {rows} records so far...")
         if int(args.max) > 0:
-            if rows > args.max:
+            if rows > int(args.max):
                 break
     # end for
 

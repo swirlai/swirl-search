@@ -1,4 +1,4 @@
-name: Docker + SA Docker Builds
+name: Docker Build and Push
 
 on:
   # Manual trigger only
@@ -7,51 +7,32 @@ on:
 jobs:
 
   swirl-docker:
-    runs-on: ubuntu-latest
-    steps:
-        - name: Checkout the Code
-          uses: actions/checkout@v4
-        - name: Login to Docker Hub
-          uses: docker/login-action@v3
-          with:
-            username: ${{ secrets.DOCKER_USERNAME }}
-            password: ${{ secrets.DOCKER_PASSWORD }}
-        - name: Build and Push Swirl Docker Image
-          run: |
-            BRANCH_NAME=${GITHUB_REF#refs/heads/}
-            TAG_NAME=$([ "$BRANCH_NAME" = "main" ] && echo "latest" || echo "$BRANCH_NAME")
-            docker buildx use devBuilder || docker buildx create --name devBuilder --use
-            docker buildx build -t swirlai/swirl-search:$TAG_NAME --platform linux/amd64,linux/arm64 --push .
-        - name: Update the Docker Repo Description
-          uses: peter-evans/dockerhub-description@v4
-          with:
-            username: ${{ secrets.DOCKER_USERNAME_X }}
-            password: ${{ secrets.DOCKER_PASSWORD_X }}
-            repository: swirlai/swirl-search
-
-  standalone-docker:
-    needs: swirl-docker
-    runs-on: ubuntu-latest
-    steps:
-        - name: Checkout the Code
-          uses: actions/checkout@v4
-        - name: Login to Docker Hub
-          uses: docker/login-action@v3
-          with:
-            username: ${{ secrets.DOCKER_USERNAME }}
-            password: ${{ secrets.DOCKER_PASSWORD }}
-        - name: Build and Push Standalone Docker Image
-          run: |
-            BRANCH_NAME=${GITHUB_REF#refs/heads/}
-            TAG_SUFFIX="-sa"
-            TAG_NAME=$([ "$BRANCH_NAME" = "main" ] && echo "latest$TAG_SUFFIX" || echo "$BRANCH_NAME$TAG_SUFFIX")
-            docker buildx use devBuilder || docker buildx create --name devBuilder --use
-            docker buildx build -f DevUtils/docker/Dockerfile.sa --platform linux/amd64,linux/arm64 -t swirlai/swirl-search:${TAG_NAME} --push .
-        - name: Upload Log Files
-          if: always()
-          uses: actions/upload-artifact@v4
-          with:
-            name: log-files
-            path: |
-              logs/
-              /var/log/syslog*
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout the Code
+            uses: actions/checkout@v4
+          - name: Login to Docker Hub
+            uses: docker/login-action@v3
+            with:
+              username: ${{ secrets.DOCKER_USERNAME }}
+              password: ${{ secrets.DOCKER_PASSWORD }}
+          - name: Build and Push Swirl Docker Image
+            run: |
+              BRANCH_NAME=${GITHUB_REF#refs/heads/}
+              TAG_NAME=$([ "$BRANCH_NAME" = "main" ] && echo "latest" || echo "$BRANCH_NAME")
+              docker buildx use devBuilder || docker buildx create --name devBuilder --use
+              docker buildx build -t swirlai/swirl-search:$TAG_NAME --platform linux/amd64,linux/arm64 --push .
+          - name: Update the Docker Repo Description
+            uses: peter-evans/dockerhub-description@v4
+            with:
+              username: ${{ secrets.DOCKER_USERNAME_X }}
+              password: ${{ secrets.DOCKER_PASSWORD_X }}
+              repository: swirlai/swirl-search
+          - name: Upload Log Files
+            if: always()
+            uses: actions/upload-artifact@v4
+            with:
+              name: log-files
+              path: |
+                logs/
+                /var/log/syslog*

@@ -12,16 +12,19 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
+
+import logging
+logger = logging.getLogger(__name__)
 
 from operator import itemgetter
 
 from swirl.mixers.mixer import Mixer
-from swirl.mixers.utils import * 
+from swirl.mixers.utils import *
 
-#############################################    
-#############################################    
+#############################################
+#############################################
 
 class RelevancyMixer(Mixer):
 
@@ -32,7 +35,7 @@ class RelevancyMixer(Mixer):
         # sort by score
         self.mixed_results = sorted(sorted(sorted(self.all_results, key=itemgetter('searchprovider_rank')), key=itemgetter('date_published'), reverse=True), key=itemgetter('swirl_score'), reverse=True)
 
-#############################################    
+#############################################
 
 class RelevancyNewItemsMixer(Mixer):
 
@@ -69,4 +72,3 @@ class RelevancyNewItemsMixer(Mixer):
 
         # sort by score
         self.mixed_results = sorted(sorted(sorted(self.new_results, key=itemgetter('searchprovider_rank')), key=itemgetter('date_published'), reverse=True), key=itemgetter('swirl_score'), reverse=True)
-

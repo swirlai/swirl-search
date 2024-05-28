@@ -7,12 +7,13 @@ from sys import path
 from os import environ
 
 from celery.utils.log import get_task_logger
+logger = get_task_logger(__name__)
+
 from celery import shared_task
 from celery.schedules import crontab
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from swirl.models import OauthToken
-
 
 import django
 
@@ -21,12 +22,11 @@ path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
-logger = get_task_logger(__name__)
 module_name = 'tasks.py'
 
 from swirl.connectors import *
 from swirl.models import SearchProvider
-from swirl.perfomance_logger import *
+from swirl.performance_logger import *
 from swirl.web_page import PageFetcherFactory
 from swirl.authenticators import SWIRL_AUTHENTICATORS_DISPATCH
 
@@ -153,7 +153,7 @@ def update_microsoft_token_task(headers):
         auth_header = headers['Authorization']
         auth_token = auth_header.split(' ')[1]
         token_obj = Token.objects.get(key=auth_token)
-        token = headers['Microsoft-Authorization']
+        token = headers['Authorizationmicrosoft']
         if token:
             try:
                 logger.debug(f"{module_name}: update_microsoft_token_task: User - {token_obj.user.username}")

@@ -7,6 +7,9 @@ from swirl.processors.processor import *
 from django.conf import settings
 from swirl.spacy import nlp
 
+from celery.utils.log import get_task_logger
+logger = get_task_logger(__name__)
+
 #############################################
 #############################################
 

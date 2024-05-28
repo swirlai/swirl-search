@@ -1,0 +1,23 @@
+ {
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Attach to Django",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 7029
+            }
+        },
+        {
+            "name": "Attach to Celery",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 7030
+            }
+        }
+    ]
+}

@@ -74,6 +74,7 @@ if [ -n "$source_dir" ]; then
 								     -e "s/<msal-port>/$MSAL_CB_PORT/" \
 								     -e "s/<msal-host>/$MSAL_HOST/" \
 								     > $target_dir/api/config/default
+    jq '.microsoftGalaxyOauth = "'true'"' $target_dir/api/config/default > ./temp_$$ && mv ./temp_$$ $target_dir/api/config/default; rm -rf ./temp_$$
 	exit 0
     else
 	echo $PROG "ERROR : source_dir:$source_dir does not exist or is not a directory"
@@ -120,6 +121,7 @@ jq '.default' $work_dir/config-swirl-demo.db.json | sed -e "s/<msal-app-id>/$MSA
 -e "s/<msal-port>/$MSAL_CB_PORT/" \
 -e "s/<msal-host>/$MSAL_HOST/" \
 > $target_dir/api/config/default
+jq '.microsoftGalaxyOauth = "'true'"' $target_dir/api/config/default > ./temp_$$ && mv ./temp_$$ $target_dir/api/config/default; rm -rf ./temp_$$
 rm -rf $work_dir
 echo $PROG : "Completed normally"
 exit 0
