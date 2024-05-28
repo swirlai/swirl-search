@@ -614,6 +614,7 @@ The following table explains the `result_mappings` options:
 | FILE_SYSTEM | If specified, SWIRL will assume that this SearchProvider is a file system and weight matches against the `body` higher. | `FILE_SYSTEM` |
 | LC_URL | If specified, SWIRL will convert the `url` field to lower case. | `LC_URL` | 
 | BLOCK | As of Release 3.1.0, this feature is used exclusively by SWIRL's RAG processing; that output appears in this `info` block of the Result object. | `BLOCK=ai_summary` |
+| DATASET | When specified as the only result_mapping parameter, SWIRL organizes a columnar response into a single result, with the columns in the PAYLOAD field | `DATASET` |
 
 #### Date Published Display
 
