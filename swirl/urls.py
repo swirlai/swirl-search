@@ -9,6 +9,7 @@ from django.urls import include, path
 from rest_framework import routers, permissions
 from . import views
 from swirl.authenticators import Microsoft
+from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 router = routers.DefaultRouter()
@@ -48,7 +49,7 @@ urlpatterns = [
     path('authenticators.html', views.authenticators, name='authenticators'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('microsoft-callback', Microsoft().callback, name='microsoft_callback'),
-
+    path('password_reset/', TemplateView.as_view(template_name="no_feature_password.html"), name="password_reset"),
     path('login/', views.LoginView.as_view()),
     path('swirl-logout/', views.LogoutView.as_view()),
     path('oidc_authenticate/', views.OidcAuthView.as_view()),
