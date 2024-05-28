@@ -21,9 +21,8 @@ environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 from django.conf import settings
 
-from celery.utils.log import get_task_logger
-from logging import DEBUG
-logger = get_task_logger(__name__)
+import logging
+logger = logging.getLogger(__name__)
 
 from natsort import natsorted
 
@@ -84,15 +83,18 @@ class Mixer:
         self.mix_wrapper = {}
         self.mix_wrapper['messages'] = [ SWIRL_BANNER_TEXT ]
         self.mix_wrapper['info'] = {}
+        self.mix_wrapper['info']['results'] = {}
         self.mix_wrapper['results'] = None
 
         scheme, hostname, port = get_url_details(self.request)
         messages = []
+        self.mix_wrapper['info']['results']['found_total'] = 0
         for result in self.results:
             for message in result.messages:
                 messages.append(message)
             self.mix_wrapper['info'][result.searchprovider] = {}
             self.mix_wrapper['info'][result.searchprovider]['found'] = result.found
+            self.mix_wrapper['info']['results']['found_total'] += result.found
             self.mix_wrapper['info'][result.searchprovider]['retrieved'] = result.retrieved
             self.mix_wrapper['info'][result.searchprovider]['filter_url'] = f'{scheme}://{hostname}:{port}/swirl/results/?search_id={self.search.id}&provider={result.provider_id}'
             self.mix_wrapper['info'][result.searchprovider]['query_string_to_provider'] = result.query_string_to_provider
@@ -129,7 +131,6 @@ class Mixer:
 
         self.found = len(self.all_results)
 
-        self.mix_wrapper['info']['results'] = {}
         self.mix_wrapper['info']['results']['retrieved_total'] = self.found
         # set the order in the dict
         self.mix_wrapper['info']['results']['retrieved'] = 0

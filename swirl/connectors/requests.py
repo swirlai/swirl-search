@@ -3,6 +3,7 @@
 @contact:    sid@swirl.today
 '''
 
+import os
 from sys import path
 from os import environ
 from datetime import datetime
@@ -30,20 +31,20 @@ from jsonpath_ng.exceptions import JsonPathParserError
 from http import HTTPStatus
 
 from celery.utils.log import get_task_logger
-from logging import DEBUG, INFO, WARNING
 logger = get_task_logger(__name__)
 
-from swirl.connectors.mappings import *
+from swirl.connectors.mappings import RESPONSE_MAPPING_KEYS
 from swirl.connectors.utils import bind_query_mappings
 
 from swirl.connectors.connector import Connector
+from swirl.connectors.verify_ssl_common import VerifyCertsCommon
 
 import xmltodict
 
 ########################################
 ########################################
 
-class Requests(Connector):
+class Requests(VerifyCertsCommon):
 
     type = "Requests"
 
@@ -190,10 +191,14 @@ class Requests(Connector):
                     else:
                         if self.provider.credentials.startswith('bearer='):
                             # populate with bearer token
+                            (username,password,verify_certs,ca_certs,bearer)=self.get_creds(def_verify_certs=True)
                             headers = {
-                                "Authorization": f"Bearer {self.provider.credentials.split('bearer=')[1]}"
+                                "Authorization": f"Bearer {bearer}"
                             }
-                            response = self.send_request(page_query, headers=self._put_configured_headers(headers), query=self.query_string_to_provider)
+                            if ca_certs and os.path.exists(ca_certs):
+                                response = self.send_request(page_query, headers=self._put_configured_headers(headers), query=self.query_string_to_provider, verify=ca_certs)
+                            else:
+                                response = self.send_request(page_query, headers=self._put_configured_headers(headers), query=self.query_string_to_provider, verify=verify_certs)
                         elif self.provider.credentials.startswith('X-Api-Key='):
                             headers = {
                                 "X-Api-Key": f"{self.provider.credentials.split('X-Api-Key=')[1]}"
@@ -221,7 +226,7 @@ class Requests(Connector):
                 self.error(f"request.{self.get_method()} returned: {response.status_code} {response.reason} from: {self.provider.name} for: {page_query}")
                 return
             # end if
-   
+
             # normalize the response
             content_type = response.headers['Content-Type']
             json_data = None
@@ -250,7 +255,7 @@ class Requests(Connector):
                 except ValueError as err:
                     logger.warning(f"Error parsing response as JSON: {err}")
             # end if
-                    
+
             mapped_response = {}
             if not json_data:
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
@@ -298,7 +303,14 @@ class Requests(Connector):
                 found = int(mapped_response['FOUND'])
                 self.found = found
             # check for 0 response
-            is_empty_list = 'RESULTS' in mapped_response and type(mapped_response['RESULTS']) == list and len(mapped_response['RESULTS']) == 0
+            is_empty_list = False
+            if 'RESULTS' in mapped_response:
+                is_empty_list = 'RESULTS' in mapped_response and type(mapped_response['RESULTS']) == list and len(mapped_response['RESULTS']) == 0
+            else:
+                if json_data:
+                    is_empty_list = False
+                else:
+                    is_empty_list = True
             if found == 0 or retrieved == 0 or is_empty_list:
                 # no results, not an error
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
@@ -360,8 +372,11 @@ class Requests(Connector):
                         pass
             else:
                 # no RESULT key specified
-                for res in mapped_response['RESULTS']:
-                    mapped_responses.append(res)
+                if mapped_response:
+                    for res in mapped_response['RESULTS']:
+                        mapped_responses.append(res)
+                else:
+                    self.error("Unexpected missing mapped_response 1")
             # check retrieved
             if not mapped_responses:
                 self.error(f"no results extracted from response! found:{found}")
@@ -369,12 +384,18 @@ class Requests(Connector):
                     found = retrieved = 0
                 # end if
             if retrieved == -1:
-                retrieved = len(mapped_responses)
-                self.retrieved = retrieved
+                if mapped_responses:
+                    retrieved = len(mapped_responses)
+                    self.retrieved = retrieved
+                else:
+                    self.error(f"Unexpected missing mapped_response 2")
             if found == -1:
                 # for now, assume the source delivered what it found
-                found = len(mapped_responses)
-                self.found = found
+                if mapped_responses:
+                    found = len(mapped_responses)
+                    self.found = found
+                else:
+                    self.error(f"Unexpected missing mapped_response 3")
             # check for 0 delivered results (different from above)
             if found == 0 or retrieved == 0:
                 # no results, not an error

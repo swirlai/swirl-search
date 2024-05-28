@@ -5,8 +5,9 @@
 
 from sys import path
 from os import environ
-import logging as logger
-logger.basicConfig(level=logger.INFO)
+import logging
+logger = logging.getLogger(__name__)
+
 from datetime import timedelta
 
 import django

@@ -47,8 +47,21 @@ class QueryTransformSerializer(serializers.ModelSerializer):
         model = QueryTransform
         fields = ['id', 'name','owner','shared','date_created','date_updated','qrx_type','config_content']
 
-class QueryTrasnformNoCredentialsSerializer(serializers.ModelSerializer):
+class QueryTransformNoCredentialsSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = QueryTransform
         fields = ['id', 'name','owner','shared', 'date_created','date_updated','qrx_type','config_content']
+
+###
+# Minimal Serializers for drf-spectacular OpenAPI documentation only
+class LoginRequestSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+class AuthResponseSerializer(serializers.Serializer):
+    token = serializers.CharField()
+    user = serializers.CharField()
+
+class StatusResponseSerializer(serializers.Serializer):
+    status = serializers.CharField()

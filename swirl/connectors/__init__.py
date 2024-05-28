@@ -9,7 +9,7 @@ from swirl.connectors.sqlite3 import Sqlite3
 from swirl.connectors.elastic import Elastic
 from swirl.connectors.opensearch import OpenSearch
 from swirl.connectors.bigquery import BigQuery
-from swirl.connectors.chatgpt import ChatGPT
+from swirl.connectors.gen_ai import GenAI
 from swirl.connectors.microsoft_graph import M365OutlookMessages
 from swirl.connectors.microsoft_graph import M365OneDrive
 from swirl.connectors.microsoft_graph import M365OutlookCalendar
@@ -18,6 +18,7 @@ from swirl.connectors.microsoft_graph import MicrosoftTeams
 from swirl.connectors.mongodb import MongoDB
 from swirl.connectors.snowflake import Snowflake
 from swirl.connectors.oracle import Oracle
+from swirl.connectors.pinecone import PineconeDB
 
 # uncomment the line below to enable PostgreSQL
 # from swirl.connectors.postgresql import PostgreSQL

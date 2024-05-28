@@ -1,0 +1,32 @@
+{
+    "name": "PineconeDB",
+    "active": false,
+    "default": false,
+    "authenticator": "",
+    "connector": "PineconeDB",
+    "url": "<index-name>",
+    "query_template": "",
+    "query_template_json": {},
+    "post_query_template": {},
+    "http_request_headers": {},
+    "page_fetch_config_json": {},
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "AutomaticPayloadMapperResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "",
+    "results_per_query": 10,
+    "credentials": "<pinecone-api-key>",
+    "eval_credentials": "",
+    "tags": [
+        "Pinecone",
+        "model:<your-embedding-model>"
+    ]
+}

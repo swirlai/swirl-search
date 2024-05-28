@@ -23,13 +23,13 @@ python swirl/banner.py
 echo ""
 
 echo "$PROG Installing dependencies:"
-pip install -r requirements.txt
+pip install --upgrade --no-cache-dir -r requirements.txt
 
 echo "$PROG Checking for ${lang_model_name_dash}"
 found_model=$(pip list 2>/dev/null | grep ${lang_model_name_dash} | awk '{print $1}')
 if [ "x$found_model" = "x$lang_model_name_dash" ]; then
     echo "$PROG Found $lang_model_name , checking freshness...."
-    # Check the version of the model and the software vesion of the spacy. If
+    # Check the version of the model and the software version of the spacy. If
     # the software version is not in the range of the model software version,then
     # down load the latest model.
     model_sw_version=$(python -m spacy info ${lang_model_name} | grep '^spacy_version' | awk '{print $2}')

@@ -46,6 +46,7 @@ class Connector:
         self.search_id = search_id
         self.update = update
         self.status = 'INIT'
+        self.auth = True
         self.provider = None
         self.search = None
         self.query_string_to_provider = ""
@@ -54,7 +55,7 @@ class Connector:
         self.query_mappings = {}
         self.response_mappings = {}
         self.result_mappings = {}
-        self.response = None
+        self.response = []
         self.found = -1
         self.retrieved = -1
         self.results = []
@@ -63,6 +64,7 @@ class Connector:
         self.start_time = None
         self.search_user = None
         self.request_id = request_id
+        self._swirl_timeout = getattr(settings,'SWIRL_TIMEOUT')
 
         # get the provider and query
         try:
@@ -121,6 +123,9 @@ class Connector:
                 self.construct_query()
                 v = self.validate_query(session)
                 if v:
+                    if not self.auth:
+                        self.status = 'NO_AUTH'
+                        return False
                     self.execute_search(session)
                     if self.status not in ['FEDERATING', 'READY']:
                         self.error(f"execute_search() failed, status {self.status}")
@@ -142,6 +147,7 @@ class Connector:
                         self.error(f"process_results() failed, status {self.status}")
                         return False
                 else:
+                    self.status = 'ERR_VALIDATE_QUERY'
                     self.error(f'validate_query() failed: {v}')
                     return False
                 # end if
@@ -245,8 +251,13 @@ class Connector:
         Transform the response from the provider into a json (list) and store as self.results
         '''
 
-        logger.debug(f"{self}: normalize_response({self.provider.name}")
-        if not self.response or len(self.response) == 0:
+        if not self.response:
+            # no results, not an error
+            self.retrieved = 0
+            self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
+            self.status = 'READY'
+            return
+        if len(self.response) == 0:
             # no results, not an error
             self.retrieved = 0
             self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
@@ -328,7 +339,7 @@ class Connector:
                                                             result_processor_json_feedback=self.result_processor_json_feedback)
                 modified = proc.process()
                 self.results = proc.get_results()
-                logger.info(f'provider : {self.provider.name} processor: {processor} modified : {modified}')
+                logger.debug(f'provider : {self.provider.name} processor: {processor} modified : {modified}')
                 ## Check if this processor generated feed back and if so, remember it and merge it in to the exsiting
                 if self.results and 'result_processor_feedback' in self.results[-1]:
                     self.result_processor_json_feedback =  self.results.pop(-1)

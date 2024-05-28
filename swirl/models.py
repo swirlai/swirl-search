@@ -68,6 +68,7 @@ class SearchProvider(models.Model):
     })
     CONNECTOR_CHOICES = [
         ('ChatGPT', 'ChatGPT Query String'),
+        ('GenAI', 'Generative AI'),
         ('RequestsGet', 'HTTP/GET returning JSON'),
         ('RequestsPost', 'HTTP/POST returning JSON'),
         ('Elastic', 'Elasticsearch Query String'),
@@ -83,7 +84,8 @@ class SearchProvider(models.Model):
         ('MicrosoftTeams', 'Microsoft Teams'),
         ('MongoDB', 'MongoDB'),
         ('Oracle','Oracle'),
-        ('Snowflake','Snowflake')
+        ('Snowflake','Snowflake'),
+        ('PineconeDB','PineconeDB')
     ]
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
@@ -93,6 +95,7 @@ class SearchProvider(models.Model):
     QUERY_PROCESSOR_CHOICES = [
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('TestQueryProcessor', 'TestQueryProcessor'),
+        ('GenAIQueryProcessor', 'GenAIQueryProcessor'),
         ('AdaptiveQueryProcessor', 'AdaptiveQueryProcessor'),
         ('NoModQueryProcessor', 'NoModQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor')
@@ -162,6 +165,7 @@ class Search(models.Model):
     time = models.FloatField(default=0.0)
     PRE_QUERY_PROCESSOR_CHOICES = [
         ('ChatGPTQueryProcessor', 'ChatGPTQueryProcessor'),
+        ('GenAIQueryProcessor', 'GenAIQueryProcessor'),
         ('GenericQueryProcessor', 'GenericQueryProcessor'),
         ('TestQueryProcessor', 'TestQueryProcessor'),
         ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor')

@@ -5,7 +5,6 @@
 
 import os
 import re
-import logging as logger
 import json
 from pathlib import Path
 import uuid
@@ -19,6 +18,9 @@ from django.contrib.auth import get_user_model
 from swirl.web_page import PageFetcherFactory
 from urllib.parse import urlparse, quote
 
+# TO DO: is this correct?
+import logging
+logger = logging.getLogger(__name__)
 
 SWIRL_MACHINE_AGENT   = {'User-Agent': 'SwirlMachineServer/1.0 (+http://swirl.today)'}
 SWIRL_CONTAINER_AGENT = {'User-Agent': 'SwirlContainer/1.0 (+http://swirl.today)'}
@@ -293,3 +295,19 @@ def remove_file(filename):
 def make_dir_if_not_exist(dir_name):
     if not os.path.exists(dir_name):
         os.makedirs(dir_name)
+
+# Inclusion + exclusion paths for drf-spectacular docs
+def include_exclude_api_paths(endpoints):
+    # Define the base inclusion path
+    inclusion_prefix = '/api/'
+    # Define paths to exclude under the included paths
+    exclusion_prefixes = ['/api/swirl/sapi/']
+
+    filtered_endpoints = []
+    for (path, path_regex, method, callback) in endpoints:
+        # Check if the path starts with the inclusion prefix
+        if path.startswith(inclusion_prefix):
+            # Ensure the path does not start with any of the exclusion prefixes
+            if not any(path.startswith(ex) for ex in exclusion_prefixes):
+                filtered_endpoints.append((path, path_regex, method, callback))
+    return filtered_endpoints

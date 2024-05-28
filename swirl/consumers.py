@@ -5,6 +5,9 @@ from swirl.models import Result, Search
 from swirl.processors import *
 import asyncio
 
+import logging
+logger = logging.getLogger(__name__)
+
 instances = {}
 
 class Consumer(AsyncWebsocketConsumer):

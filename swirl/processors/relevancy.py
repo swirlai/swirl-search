@@ -11,17 +11,15 @@ from django.conf import settings
 
 # to do: detect language and load all stopwords? P1
 from swirl.nltk import sent_tokenize
-from swirl.processors.utils import *
+from swirl.processors.utils import capitalize, capitalize_search, clean_string, has_numeric, highlight_list, match_any, match_all, json_to_flat_string, parse_query, position_dict, remove_numeric, remove_tags, result_processor_feedback_empty_record, result_processor_feedback_merge_records, stem_string
 from swirl.spacy import nlp
 
 from swirl.processors.processor import PostResultProcessor, ResultProcessor
 
-from swirl.perfomance_logger import SwirlRelevancyLogger
+from swirl.performance_logger import SwirlRelevancyLogger
 
-import logging
 from celery.utils.log import get_task_logger
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger()
+logger = get_task_logger(__name__)
 
 SWIRL_RELEVANCY_CONFIG = getattr(settings, 'SWIRL_RELEVANCY_CONFIG', {
     'title': {
@@ -49,6 +47,9 @@ class CosineRelevancyResultProcessor(ResultProcessor):
         super().__init__(results, provider, query_string, request_id=request_id, **kwargs)
 
     def process(self):
+
+        logger.debug(f'{self}  processor called with logger name {logger.name}')
+
         RELEVANCY_CONFIG = SWIRL_RELEVANCY_CONFIG
         dict_result_lens = {}
         list_query_lens = []
@@ -61,7 +62,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
 
         parsed_query = parse_query(self.query_string, self.result_processor_json_feedback)
         if len(parsed_query.query_stemmed_target_list) != len(parsed_query.query_target_list):
-            self.error(f"parsed query [un]stemmed mismatch : {parsed_query.query_stemmed_target_list} != {parsed_query.query_target_list}")
+            pass # self.info(f"parsed query [un]stemmed mismatch : {parsed_query.query_stemmed_target_list} != {parsed_query.query_target_list}")
 
         list_query_lens.append(len(parsed_query.query_list))
         for item in self.results:
@@ -140,7 +141,7 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                     result_field_stemmed = stem_string(result_field)
                     result_field_stemmed_list = result_field_stemmed.strip().split()
                     if len(result_field_list) != len(result_field_stemmed_list):
-                        self.error(f"result field [un]stemmed mismatch : {result_field_list} != {result_field_stemmed_list}")
+                        pass # (f"result field [un]stemmed mismatch : {result_field_list} != {result_field_stemmed_list}")
                     # NOT test
                     for t in parsed_query.not_list:
                         if t.lower() in (result_field.lower() for result_field in result_field_list):

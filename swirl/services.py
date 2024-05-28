@@ -3,7 +3,8 @@
 @contact:    sid@swirl.today
 '''
 
-import logging as logger
+import logging
+logger = logging.getLogger(__name__)
 
 module_name = 'services.py'
 
@@ -26,7 +27,7 @@ SWIRL_SERVICES = [
     },
     {
         'name': 'celery-worker',
-        'path': 'celery -A swirl_server worker --loglevel INFO',
+        'path': 'celery -A swirl_server worker',
         'default': True,
         'retired': False
     },

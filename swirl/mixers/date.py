@@ -12,18 +12,21 @@ from datetime import datetime
 
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
-environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings') 
+environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
 from operator import itemgetter
 
 from django.urls import reverse
 
-from swirl.mixers.mixer import Mixer
-from swirl.mixers.utils import * 
+import logging
+logger = logging.getLogger(__name__)
 
-#############################################    
-#############################################    
+from swirl.mixers.mixer import Mixer
+from swirl.mixers.utils import *
+
+#############################################
+#############################################
 
 class DateMixer(Mixer):
 
@@ -46,7 +49,7 @@ class DateMixer(Mixer):
 
         self.mixed_results = sorted(dated_results, key=itemgetter('date_published'), reverse=True)
 
-#############################################    
+#############################################
 
 class DateNewItemsMixer(Mixer):
 
@@ -93,4 +96,3 @@ class DateNewItemsMixer(Mixer):
             self.mix_wrapper['messages'].append(f"[{datetime.now()}] DateNewItemsMixer hid {len(self.all_results) - int(self.found)} old results")
 
         self.mixed_results = sorted(dated_results, key=itemgetter('date_published'), reverse=True)
-

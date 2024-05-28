@@ -4,7 +4,6 @@
 '''
 
 from celery.utils.log import get_task_logger
-from logging import DEBUG
 logger = get_task_logger(__name__)
 
 from swirl.processors.processor import *

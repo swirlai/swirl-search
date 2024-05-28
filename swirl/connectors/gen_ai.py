@@ -16,10 +16,8 @@ django.setup()
 from django.conf import settings
 
 from celery.utils.log import get_task_logger
-from logging import DEBUG, INFO, WARNING
 logger = get_task_logger(__name__)
 
-from swirl.connectors.mappings import *
 from swirl.connectors.connector import Connector
 
 from datetime import datetime
@@ -36,14 +34,13 @@ MODEL = MODEL_3
 
 MODEL_DEFAULT_SYSTEM_GUIDE = "You are a helpful assistant, keeping your response brief and to the point."
 
-class ChatGPT(Connector):
+class GenAI(Connector):
 
-    type = "ChatGPT"
+    type = "GenAIGPT"
 
     def __init__(self, provider_id, search_id, update, request_id=''):
         self.system_guide = MODEL_DEFAULT_SYSTEM_GUIDE
         super().__init__(provider_id, search_id, update, request_id)
-
 
     def execute_search(self, session=None):
 
@@ -88,22 +85,13 @@ class ChatGPT(Connector):
         message = completions.choices[0].message.content
         self.found = 1
         self.retrieved = 1
-        self.response = message.replace("\n\n", "")
-
-        return
-
-    ########################################
-
-    def normalize_response(self):
-
-        logger.debug(f"{self}: normalize_response()")
-
-        self.results = [
+        self.response = [
                 {
                 'title': self.query_string_to_provider,
-                'body': f'{self.response}',
-                'author': 'CHATGPT',
-                'date_published': str(datetime.now())
+                'body': f'{message.replace("\n\n", "")}',
+                'author': f'{llm.get_provider().model}',
+                'date_published': str(datetime.now()),
+                'model': f'{llm.get_provider().model}'
             }
         ]
 
