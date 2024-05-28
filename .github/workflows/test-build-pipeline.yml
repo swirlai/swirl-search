@@ -60,7 +60,7 @@ jobs:
         - name: Setup Swirl
           run: python swirl.py setup
         - name: Install the Latest Galaxy UI
-          run: ./install-ui.sh -p
+          run: ./install-ui.sh
           env:
             MSAL_CB_PORT: 8000
             MSAL_HOST: localhost
