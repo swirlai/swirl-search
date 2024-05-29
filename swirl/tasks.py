@@ -17,6 +17,7 @@ from swirl.models import OauthToken
 
 import django
 
+from swirl.processors.utils import remove_tags
 from swirl.utils import swirl_setdir
 path.append(swirl_setdir()) # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
@@ -80,6 +81,10 @@ def page_fetcher_task(searchprovider, swirl_score, url, provider_id, body, user_
 
         return ret_options
 
+    def format_result_as_page(body, url=""):
+        logger.debug(f"AG building page from result body : {body}")
+        return [f"body : {remove_tags(body)}"], url, "Search Result", body, url, {}
+
     logger.info(f"RAG {searchprovider} score: {swirl_score}")
     # try to fetch the item
     fetch_url = url
@@ -89,6 +94,9 @@ def page_fetcher_task(searchprovider, swirl_score, url, provider_id, body, user_
         pf = PageFetcherFactory.alloc_page_fetcher(url=fetch_url, options=pf_options)
 
         if not (pf and (page := pf.get_page())):
+            if body:
+                logger.warning(f"RAG No page fetcher and fallback to summary")
+                return format_result_as_page(body=body, url=url)
             return (False,)
 
         text_for_query = page.get_text_for_query(user_query)
@@ -99,7 +107,9 @@ def page_fetcher_task(searchprovider, swirl_score, url, provider_id, body, user_
         json = json if isinstance(json, dict) else {}
         return text_for_query, response_url, document_type, body, url, json
     else:
-        logger.warning("RAG No url in item, continueing")
+        logger.warning("RAG No url in item, continuing")
+        if body:
+            return format_result_as_page(body=body, url=url)
         return (False,)
 
 ##################################################
