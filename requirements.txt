@@ -1,5 +1,5 @@
 requests
-Django>=5.0.3
+Django>=5.0
 django_restframework
 django-celery-beat
 Celery
