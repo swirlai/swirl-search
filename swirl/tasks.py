@@ -85,6 +85,8 @@ def page_fetcher_task(searchprovider, swirl_score, url, provider_id, body, user_
         logger.debug(f"AG building page from result body : {body}")
         return [f"body : {remove_tags(body)}"], url, "Search Result", body, url, {}
 
+
+    always_fallback_to_summary = getattr(settings, 'SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY')
     logger.info(f"RAG {searchprovider} score: {swirl_score}")
     # try to fetch the item
     fetch_url = url
@@ -94,7 +96,7 @@ def page_fetcher_task(searchprovider, swirl_score, url, provider_id, body, user_
         pf = PageFetcherFactory.alloc_page_fetcher(url=fetch_url, options=pf_options)
 
         if not (pf and (page := pf.get_page())):
-            if body:
+            if always_fallback_to_summary:
                 logger.warning(f"RAG No page fetcher and fallback to summary")
                 return format_result_as_page(body=body, url=url)
             return (False,)
