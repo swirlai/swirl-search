@@ -82,7 +82,7 @@ def page_fetcher_task(searchprovider, swirl_score, url, provider_id, body, user_
         return ret_options
 
     def format_result_as_page(body, url=""):
-        logger.debug(f"AG building page from result body : {body}")
+        logger.debug(f"RAG building page from result body : {body}")
         return [f"body : {remove_tags(body)}"], url, "Search Result", body, url, {}
 
 
