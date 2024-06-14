@@ -83,7 +83,7 @@ def page_fetcher_task(searchprovider, swirl_score, url, provider_id, body, user_
 
     def format_result_as_page(body, url=""):
         logger.debug(f"RAG building page from result body : {body}")
-        return [f"body : {remove_tags(body)}"], url, "Search Result", body, url, {}
+        return f"body : {remove_tags(body)}", url, "Search Result", body, url, {}
 
 
     always_fallback_to_summary = getattr(settings, 'SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY')
