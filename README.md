@@ -8,10 +8,9 @@
 
 #### Bring AI to the Data, not the Data to the AI
 
-### SWIRL AI Connect is an open-source AI platform designed to simplify the setup of AI infrastructure. It supports powerful tools like Retrieval-Augmented Generation (RAG), Analytics, and Co-Pilot, enhancing decision-making capabilities with AI for businesses.
+### SWIRL AI Connect is advanced AI infrastructure software. It supports enhanced Retrieval Augmented Generation (RAG) capabilities, powerful analytics, and SWIRL Co-Pilot. SWIRL harnesses AI for business, enabling organizations to make better decisions and take more effective and timely actions.
 
 [Start Searching](#-try-swirl-now-in-docker) · [Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) · [Key Features](#-key-features) · [Contribute](#-contributing-to-swirl) · [Documentation](#-documentation) · [Connectors](#-list-of-connectors)
-
 
 <br/>
 
