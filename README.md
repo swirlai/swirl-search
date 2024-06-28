@@ -1,15 +1,16 @@
 <div align="center">
 
+[![Whitepaper](docs/images/Whitepaper-Banner.png)](https://swirlaiconnect.com/whitepaper/ai-to-grow-business-2024-06)
+
 [![Swirl](docs/images/dark_header.png)](https://www.swirlaiconnect.com)
 
 <h1>SWIRL AI Connect</h1>
 
-#### Bring AI to the Data, not the Data to the AI.
+#### Bring AI to the Data, not the Data to the AI
 
-### SWIRL AI Connect is an open-source AI platform designed to simplify the setup of AI infrastructure. It supports powerful tools like Retrieval-Augmented Generation (RAG), Analytics, and Co-Pilot, enhancing decision-making capabilities with AI for businesses.
+### SWIRL AI Connect is advanced AI infrastructure software. It supports enhanced Retrieval Augmented Generation (RAG) capabilities, powerful analytics, and SWIRL Co-Pilot. SWIRL harnesses AI for business, enabling organizations to make better decisions and take more effective and timely actions.
 
 [Start Searching](#-try-swirl-now-in-docker) · [Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) · [Key Features](#-key-features) · [Contribute](#-contributing-to-swirl) · [Documentation](#-documentation) · [Connectors](#-list-of-connectors)
-
 
 <br/>
 
@@ -67,7 +68,13 @@ SWIRL leverages the specific context of your enterprise data to deliver highly r
 
 ![SWIRL AI Co-pilot and SWIRL DB](docs/images/Products_1.png)
 
-<br/>
+## Schedule Your [Free Demo](https://swirlaiconnect.com/schedule-a-demo) of SWIRL Co-Pilot
+
+[![SWIRL Co-Pilot](docs/images/Co-Pilot_Book_a_demo.png)](https://swirlaiconnect.com/schedule-a-demo)
+
+---
+
+[![Bringing AI to the Data Newsletter](docs/images/Newsletter_CTA.png)](https://www.linkedin.com/newsletters/7201909550860427264/)
 
 # 🔎 How Swirl Works
 
