@@ -1,6 +1,6 @@
 <div align="center">
 
-[![Whitepaper](docs/images/Whitepaper-Banner.png)](https://www.swirlaiconnect.com/whitepaper/using-ai-to-grow-your-business-2024-06)
+[![Whitepaper](docs/images/Whitepaper-Banner.png)](https://swirlaiconnect.com/whitepaper/ai-to-grow-business-2024-06)
 
 [![Swirl](docs/images/dark_header.png)](https://www.swirlaiconnect.com)
 
