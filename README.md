@@ -28,7 +28,11 @@
 
 **Get your AI up and running in minutes, not months.** SWIRL AI Connect is an open-source AI Connect platform that streamlines the integration of advanced AI technologies into business operations. It supports powerful features like Retrieval-Augmented Generation (RAG), Analytics, and Co-Pilot, enabling enhanced decision-making with AI and boosting enterprise AI transformation. 
 
-SWIRL operated without needing to move data into a vector database or undergo ETL processes. This approach not only enhances security but also speeds up the deployment. As a private cloud AI provider, SWIRL operates entirely within your private cloud infrastructure, running locally inside the firewall to ensure maximum data security and compliance. 
+SWIRL operated without needing to move data into a vector database or undergo ETL processes. This approach not only enhances security but also speeds up the deployment. As a private cloud AI provider, SWIRL operates entirely within your private cloud infrastructure, running locally inside the firewall to ensure maximum data security and compliance.
+
+[![Bringing AI to the Data Newsletter](docs/images/Newsletter_CTA.png)](https://www.linkedin.com/newsletters/7201909550860427264/)
+
+[![Join SWIRL Community Slack](docs/images/Slack_CTA.png)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 
 ### Why SWIRL AI Connect?
 
@@ -44,9 +48,12 @@ SWIRL operated without needing to move data into a vector database or undergo ET
 
 **SWIRL Unified Search**: SWIRL Unified Search offers a secure and powerful integrated search solution that enables users to query across all enterprise data sources seamlessly. This scalable unified search platform is designed for large enterprises, startups, and small teams, allowing for comprehensive searches across cloud services, on-premise systems, and data silos without compromising security. By implementing SWIRL Unified Search, businesses can enhance productivity, improve data accessibility, and make more informed decisions by harnessing the full potential of their data landscape.
 
-**SWIRL AI Co-Pilot**: SWIRL AI Co-Pilot acts as an intelligent assistant, leveraging advanced AI to provide context-aware insights and support to business users. Securely integrated within your enterprise systems, SWIRL AI Co-Pilot helps streamline workflows, automate tasks, and deliver personalized recommendations, significantly boosting operational efficiency. Users benefit from real-time decision support, reduced manual workload, and a more intuitive interaction with their data, enabling them to focus on strategic activities that drive business growth.
+**SWIRL Co-Pilot**: SWIRL Co-Pilot acts as an intelligent assistant, leveraging advanced AI to provide context-aware insights and support to business users. Securely integrated within your enterprise systems, SWIRL Co-Pilot helps streamline workflows, automate tasks, and deliver personalized recommendations, significantly boosting operational efficiency. Users benefit from real-time decision support, reduced manual workload, and a more intuitive interaction with their data, enabling them to focus on strategic activities that drive business growth.
 
-<br/>
+## Schedule Your [Free Demo](https://swirlaiconnect.com/schedule-a-demo) of SWIRL Co-Pilot
+
+[![SWIRL Co-Pilot](docs/images/Co-Pilot_Book_a_demo.png)](https://swirlaiconnect.com/schedule-a-demo)
+
 
 ## SWIRL's Ranking in Action
 
@@ -67,14 +74,6 @@ SWIRL leverages the specific context of your enterprise data to deliver highly r
 ## Based on SWIRL AI Connect
 
 ![SWIRL AI Co-pilot and SWIRL DB](docs/images/Products_1.png)
-
-## Schedule Your [Free Demo](https://swirlaiconnect.com/schedule-a-demo) of SWIRL Co-Pilot
-
-[![SWIRL Co-Pilot](docs/images/Co-Pilot_Book_a_demo.png)](https://swirlaiconnect.com/schedule-a-demo)
-
----
-
-[![Bringing AI to the Data Newsletter](docs/images/Newsletter_CTA.png)](https://www.linkedin.com/newsletters/7201909550860427264/)
 
 # 🔎 How Swirl Works
 
