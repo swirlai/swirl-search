@@ -155,3 +155,4 @@ weasel==0.3.4
 whitenoise==6.6.0
 xmltodict==0.13.0
 zope.interface==6.4.post0
+qdrant-client==1.10.0
