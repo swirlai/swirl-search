@@ -85,10 +85,11 @@ class GenAI(Connector):
         message = completions.choices[0].message.content
         self.found = 1
         self.retrieved = 1
+        msg = message.replace("\n\n", "")
         self.response = [
                 {
                 'title': self.query_string_to_provider,
-                'body': f'{message.replace("\n\n", "")}',
+                'body': f'{msg}',
                 'author': f'{llm.get_provider().model}',
                 'date_published': str(datetime.now()),
                 'model': f'{llm.get_provider().model}'

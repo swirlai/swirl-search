@@ -8,6 +8,7 @@ from swirl.connectors.requestspost import RequestsPost
 from swirl.connectors.sqlite3 import Sqlite3
 from swirl.connectors.elastic import Elastic
 from swirl.connectors.opensearch import OpenSearch
+from swirl.connectors.qdrant import QdrantDB
 from swirl.connectors.bigquery import BigQuery
 from swirl.connectors.gen_ai import GenAI
 from swirl.connectors.microsoft_graph import M365OutlookMessages

@@ -73,6 +73,7 @@ class SearchProvider(models.Model):
         ('RequestsPost', 'HTTP/POST returning JSON'),
         ('Elastic', 'Elasticsearch Query String'),
         ('OpenSearch', 'OpenSearch Query String'),
+        ('QdrantDB', 'QdrantDB'),
         # Uncomment the line below to enable PostgreSQL
         # ('PostgreSQL', 'PostgreSQL'),
         ('BigQuery', 'Google BigQuery'),
@@ -85,7 +86,7 @@ class SearchProvider(models.Model):
         ('MongoDB', 'MongoDB'),
         ('Oracle','Oracle'),
         ('Snowflake','Snowflake'),
-        ('PineconeDB','PineconeDB')
+        ('PineconeDB','PineconeDB'),
     ]
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
