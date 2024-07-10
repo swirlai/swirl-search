@@ -64,8 +64,8 @@ REST_FRAMEWORK = {
 #drf-spectacular settings
 SPECTACULAR_SETTINGS = {
     'TITLE': 'SWIRL API',
-    'DESCRIPTION': 'SWIRL AI Connect API',
-    'VERSION': '3.5.0',
+    'DESCRIPTION': 'SWIRL AI Connect Community Edition API',
+    'VERSION': '3.6',
     'SERVE_INCLUDE_SCHEMA': False,  # 'False' disables serving the schema with the UI
     'PREPROCESSING_HOOKS': [
         'swirl.utils.include_exclude_api_paths',
@@ -313,6 +313,9 @@ SWIRL_QUERY_MODEL_DEF = CGPT_MODEL_3
 
 SWIRL_REWRITE_MODEL = env.get_value('SWIRL_REWRITE_MODEL', default=SWIRL_REWRITE_MODEL_DEF)
 SWIRL_QUERY_MODEL = env.get_value('SWIRL_QUERY_MODEL', default=SWIRL_QUERY_MODEL_DEF)
+
+SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY_DEF=True
+SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY=env.bool('SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY',default=SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY_DEF)
 
 MICROSOFT_CLIENT_ID= env('MICROSOFT_CLIENT_ID', default='')
 MICROSOFT_CLIENT_SECRET = env('MICROSOFT_CLIENT_SECRET', default='')
