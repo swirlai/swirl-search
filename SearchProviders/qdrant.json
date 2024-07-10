@@ -1,0 +1,31 @@
+{
+    "name": "QdrantDB",
+    "active": false,
+    "default": false,
+    "authenticator": "",
+    "connector": "QdrantDB",
+    "url": "qdrant_url-collection_name",
+    "query_template": "",
+    "query_template_json": {},
+    "post_query_template": {},
+    "http_request_headers": {},
+    "page_fetch_config_json": {},
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "AutomaticPayloadMapperResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "",
+    "results_per_query": 10,
+    "credentials": "<qdrant-api-key>",
+    "eval_credentials": "",
+    "tags": [
+        "Qdrant"
+    ]
+}

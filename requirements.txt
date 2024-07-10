@@ -39,3 +39,4 @@ torch
 pinecone-client
 pandas
 drf-spectacular
+qdrant-client==1.10.0

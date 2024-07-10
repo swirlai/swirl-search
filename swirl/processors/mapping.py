@@ -423,16 +423,16 @@ class AutomaticPayloadMapperResultProcessor(ResultProcessor):
                 if k == 'payload':
                     continue
                 if k in item['payload']:
-                    if not item['k']:
+                    if not item[k]:
                         if type(item['payload'][k]) == str:
-                            item['k'] = item['payload'][k]
+                            item[k] = item['payload'][k]
                             automapped_fields.append(k)
                             self.warning("copying payload field {k}")
                 for f in field_scan_list:
                     if f.startswith(k) or f.endswith(k):
-                        if not item['k']:
+                        if not item[k]:
                             if type(item['payload'][f]) == str:
-                                item['k'] = item['payload'][f]
+                                item[k] = item['payload'][f]
                                 automapped_fields.append(f)
                                 self.warning("copying payload field {f}")
 
