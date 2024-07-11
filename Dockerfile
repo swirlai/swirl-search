@@ -1,8 +1,8 @@
 # Use an official Python runtime as a parent image
-FROM python:3.12.2-slim-bookworm
+FROM python:3.12.4-slim-bookworm
 
 # Upgrade pip to the specified version or higher
-RUN pip install --no-cache-dir --upgrade 'pip>=23.3'
+RUN pip install --no-cache-dir --upgrade 'pip>=24.0'
 
 # try to upgrade to a more recent version of openssl
 RUN apt-get update
