@@ -72,7 +72,7 @@ def find_substrings(string1, string2):
 #############################################
 #############################################
 
-from swirl.processors.utils import clean_string_keep_punct
+from swirl.processors.utils import clean_string_keep_punct, remove_tags
 from swirl.bs4 import bs
 from readability import Document
 from swirl.processors.utils import create_result_dictionary
@@ -101,6 +101,10 @@ class RAGPostResultProcessor(PostResultProcessor):
 
     def stop_processing(self):
         self.stop_background_thread = True
+
+    def format_result_as_page(self, body, reason):
+        logger.debug(f"post-fetch building page from result reason : {reason} body : {body}")
+        return f"body : {remove_tags(body)}"
 
     def background_process(self):
         rag_item_list = []
@@ -174,7 +178,7 @@ class RAGPostResultProcessor(PostResultProcessor):
         results = result_group.get(interval=0.05, timeout=120)
         if self.stop_background_thread:
             return 0
-        for result in results:
+        for nth_result, result in enumerate(results):
             if result[0] == False:
                 continue
             else:
@@ -191,15 +195,22 @@ class RAGPostResultProcessor(PostResultProcessor):
                         # is_full = rag_prompt.put_chunk(new_content, url=url, type=document_type, filter_file_type=(not content_url))
                         is_full = rag_prompt.put_chunk(new_content, url=url, type=document_type, filter_file_type=True)
                         if not rag_prompt.is_last_chunk_added():
-                            warn =  f"RAG Chunk not added : {rag_prompt.get_last_chunk_status()}"
-                            self._log_n_store_warn(url=url, warn=warn, buffer=fetch_prompt_errors)
-                            fetch_prompt_errors[url] = warn
+                            summary_page_text = self.format_result_as_page(chosen_rag[nth_result]['body'], rag_prompt.get_last_chunk_status())
+                            is_full = rag_prompt.put_chunk(summary_page_text, url=url, type=document_type, filter_file_type=True)
+                            if not rag_prompt.is_last_chunk_added():
+                                warn =  f"RAG Chunk not added : {rag_prompt.get_last_chunk_status()}"
+                                self._log_n_store_warn(url=url, warn=warn, buffer=fetch_prompt_errors)
+                                fetch_prompt_errors[url] = warn
+
                         logger.debug(f'RAG : max_tokens:{max_tokens} num_tokens {rag_prompt.get_num_tokens()} is_full:{rag_prompt.is_full()}')
                         if is_full:
                             break
                     else:
-                        warn = f'RAG No content found in {url} max_tokens:{max_tokens} num_tokens {rag_prompt.get_num_tokens()} is_full:{rag_prompt.is_full()} JSON:{json}'
-                        self._log_n_store_warn(url=url,warn=warn,buffer=fetch_prompt_errors)
+                        summary_page_text = self.format_result_as_page(chosen_rag[nth_result]['body'], "NO CONTENT")
+                        is_full = rag_prompt.put_chunk(summary_page_text, url=url, type=document_type, filter_file_type=True)
+                        if not rag_prompt.is_last_chunk_added():
+                            warn = f'RAG No content found in {url} max_tokens:{max_tokens} num_tokens {rag_prompt.get_num_tokens()} is_full:{rag_prompt.is_full()} JSON:{json}'
+                            self._log_n_store_warn(url=url,warn=warn,buffer=fetch_prompt_errors)
 
         new_prompt_text = rag_prompt.get_promp_text()
         logger.debug(f"\nRAG Prompt:\n\t{new_prompt_text}")
