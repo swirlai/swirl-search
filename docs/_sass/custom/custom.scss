@@ -14,14 +14,10 @@ a.site-title.lh-tight {
     font-weight: lighter;
 }
 
-// Nav separator styles
+// Make the separator links non-clickable and invisible
 a[href^="/separator"] {
     pointer-events: none;
     cursor: default;
     text-decoration: none;
-    color: #000; /* Adjust color as needed */
+    color: transparent; /* Make text color transparent, just in case */
   }
-  .nav-separator {
-    border-bottom: 1px solid #ddd;
-    margin: 10px 0;
-  }  
