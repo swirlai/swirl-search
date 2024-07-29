@@ -1,7 +1,7 @@
 ---
 layout: default
-title: Microsoft365 Guide
-nav_order: 5
+title: Microsoft 365 Guide
+nav_order: 8
 ---
 <details markdown="block">
   <summary>

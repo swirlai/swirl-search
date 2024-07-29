@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Developer Guide
-nav_order: 6
+nav_order: 11
 ---
 <details markdown="block">
   <summary>
@@ -16,6 +16,25 @@ TO BE RELOCATED:
 * As of version 2.5, the `DateFindingResultProcessor` was added to the Google PSE SearchProvider JSON. It finds a date in a large percentage of results that otherwise wouldn't have one, and copies the date to the `date_published` field.
 * As of SWIRL 3.2, the Galaxy UI highlghts results with a `swirl_score` above a configurable threshold with a star in the results list. The `swirl_score` configuration is available in `theminimumSwirlScore` entry of `static/api/config/default`, and the default value is `100`.
 ![Galaxy UI with stars](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/3_2_0-Galaxy-star.png)
+
+TO BE RELOCATED:
+
+Also, the `DateFindingResultProcessor` was added to the default Google PSE SearchProvider JSON. It finds a date in a large percentage of results that otherwise wouldn't have one, and copies the date to the `date_published` field. Existing PSE SearchProvider configurations should be updated to include it:
+
+``` json
+"result_processors": [
+            "MappingResultProcessor",
+            "DateFinderResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+```
+
+TBD: move to Developer Guide?
+
+SWIRL Release 3.2.0 includes two new Result Processors:
+* The `RequireQueryStringInTitleResultProcessor` drops result items that don't include the user's query in the title. It is recommended for use with noisy services like LinkedIn via Google PSE and must be installed after the `MappingResultProcessor`.
+* The `AutomaticPayloadMapperResultProcessor` profiles response data to find good strings for SWIRL's `title`, `body`, and `date_published` fields. It is intended for SearchProviders that would otherwise have few (or no) good result_mappings options. It should be place after the `MappingResultProcessor`, and the `result_mappings` field should be blank. Specify `DATASET` in the `result_mappings` to have SWIRL organize a columnar response into a single result, with the columns in the payload.
+
 
 
 # Developer Guide

@@ -106,3 +106,12 @@ exclude:
 # Kramdown settings
 kramdown:
   smart_quotes: [apos, apos, quot, quot]
+
+# Plugins
+plugins:
+  - jekyll-sass-converter
+
+# Just the Docs settings
+just_the_docs:
+  # other settings...
+  auxiliary_stylesheets: ["_sass/custom/custom.scss"]

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Tutorial - Extending SWIRL
+title: Contributions
 nav_order: 13
 ---
 <details markdown="block">

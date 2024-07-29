@@ -1,8 +1,3 @@
----
-layout: default
-title: Quick Start Guide
-nav_order: 2
----
 <details markdown="block">
   <summary>
     Table of Contents

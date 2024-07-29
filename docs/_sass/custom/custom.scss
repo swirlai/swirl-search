@@ -13,3 +13,9 @@ a.site-title.lh-tight {
     color: goldenrod;
     font-weight: lighter;
 }
+/* Style the separator */
+.nav-separator::after {
+    content: "";
+    display: inline-block;
+    width: 20px; /* Adjust the width as needed */
+}

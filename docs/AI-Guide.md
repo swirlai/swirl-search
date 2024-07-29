@@ -1,7 +1,7 @@
 ---
 layout: default
 title: AI Guide
-nav_order: 9
+nav_order: 7
 ---
 <details markdown="block">
   <summary>

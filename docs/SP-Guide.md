@@ -1,7 +1,7 @@
 ---
 layout: default
 title: SearchProvider Guide
-nav_order: 3
+nav_order: 4
 ---
 <details markdown="block">
   <summary>
@@ -211,43 +211,18 @@ The optional `http_request_headers` field is available to all SearchProviders fo
 
 ## Result Processors
 
-TBD: rewrite below
-
-In Release 2.5, important updates were made that affect the SearchProvider `result_processors` configuration.  Relevancy processing was split into two stages to improve performance
-
-* The revised `CosineRelevancyPostResultProcessor` must be added *last* in the `Search.post_result_processors` list.
-* Please review the JSON in the `SearchProviders/` directory and update existing configurations to match.
+Each SearchProvider can define any desired ResultProcessing pipeline. A typical configuration looks like this:
 
 ``` json
 "result_processors": [
             "MappingResultProcessor",
-            "LenLimitingResultProcessor",
             "CosineRelevancyResultProcessor"
         ],
 ```
 
-* This following of Error message in the SWIRL logs indicates that one or more SearchProviders have not been updated:
+If Relevancy Ranking is desired, the `CosineRelevancyResultProcessor` must be last in the SearchProvider `result_processors` list AND the `CosineRelevancyPostResultProcessor` must be in the `Search.post_result_processors` default method, which is located in `swirl/models.py`. TBD Refer to the TBD Guide for more information.
 
-``` shell
-INFO     search.py: invoking processor: CosineRelevancyPostResultProcessor
-2023-07-31 16:31:39,268 ERROR    CosineRelevancyPostResultProcessor_2051: Error: Dictionary of result lengths is empty. Was CosineRelevancyResultProcessor included in Search Providers Processor configuration?
-```
-
-Also, the `DateFindingResultProcessor` was added to the default Google PSE SearchProvider JSON. It finds a date in a large percentage of results that otherwise wouldn't have one, and copies the date to the `date_published` field. Existing PSE SearchProvider configurations should be updated to include it:
-
-``` json
-"result_processors": [
-            "MappingResultProcessor",
-            "DateFinderResultProcessor",
-            "CosineRelevancyResultProcessor"
-        ],
-```
-
-TBD: move to Developer Guide?
-
-SWIRL Release 3.2.0 includes two new Result Processors:
-* The `RequireQueryStringInTitleResultProcessor` drops result items that don't include the user's query in the title. It is recommended for use with noisy services like LinkedIn via Google PSE and must be installed after the `MappingResultProcessor`.
-* The `AutomaticPayloadMapperResultProcessor` profiles response data to find good strings for SWIRL's `title`, `body`, and `date_published` fields. It is intended for SearchProviders that would otherwise have few (or no) good result_mappings options. It should be place after the `MappingResultProcessor`, and the `result_mappings` field should be blank. Specify `DATASET` in the `result_mappings` to have SWIRL organize a columnar response into a single result, with the columns in the payload.
+SWIRL comes with a number of other ResultProcessors that may be useful. TBD Refer to the Developer Guide for more information. 
 
 ## Authentication & Credentials
 
