@@ -22,9 +22,21 @@ SWIRL's no-code approach requires minimal IT involvement, leveraging your existi
 
 SWIRL provides the full benefit of AI - personalized, secure and real-time - without disrupting your current systems or security systems. 
 
-## How does SWIRL work?
+## How does SWIRL Re-Ranking work?
 
-SWIRL AI Connect is an AI-powered [metasearch engine](https://en.wikipedia.org/wiki/Metasearch_engine). It combines a no-code approach to query a huge range of systems. SWIRL's  built-in Reader LLM, which can be use most any embeddings, re-ranks results from responding sources so the user doesn't have to. 
+SWIRL AI Connect is an AI-powered [metasearch engine](https://en.wikipedia.org/wiki/Metasearch_engine). SWIRL's unique Reader LLM, which can be use most any embeddings, re-ranks results from responding sources so the user doesn't have to. 
+
+The re-ranking process is roughly the following:
+* Vectorize the user's query (or parts of it)
+* Send the text of the user's query and/or the vector, to each source requested (or default)
+* Asynchronously gather the results from each source
+* Normalize the results from each source using jsonpath (or xpath)
+* Vectorize each result snippet (or parts of it)
+* Re-rank the results by aggregating the similarity, frequency and position, and adjusting for other factors like length variation, freshness, etc 
+
+The [Xethub study](https://about.xethub.com/blog/you-dont-need-a-vector-database) and [explained by Simson Garfinkel here](https://www.linkedin.com/pulse/vector-databases-rag-simson-garfinkel-hzule/) showed that re-ranking so-called "naive" search engines like those that use the BM25 algorithm for retrieval, outperforms moving the data into a vector database for many common NLP tasks such as question answering.
+
+## How does SWIRL Retrieval Augmented Generation (RAG) work?
 
 SWIRL AI Connect also includes state-of-the-art cross-silo [Retrieval Augmented Generation (RAG)](https://en.wikipedia.org/wiki/Retrieval-augmented_generation):
 
@@ -37,13 +49,22 @@ When a user requests an AI insight, SWIRL:
 * Re-ranks the united results using non-generative Reader LLM
 * Optionally, presents them to the user and allows them to adjust the result set
 * Fetches the full-text of the results, in real time
-* Identifies the most relevant portions of the documents and binding them to a prompt
+* Identifies the most relevant portions of the documents and binding them to a prompt using real-time vector analysis similar to the re-ranking described above
 * Sends the prompt to the approved generative AI for insight generation
 * Returns a single set of insights with citations
 
 SWIRL AI Connect includes the Galaxy UI, but includes fully Swagger'd APIs and is easy to integrate with most any front-end or system.
 
 SWIRL AI Connect ENTERPRISE includes flexible, generic OAUTH2 and SSO, with auto-provisioning via OpenID Connect.
+
+## What do SWIRL AI Connect insights look like?
+
+Here is an example:
+
+![SWIRL RAG AI Insight with results](images/swirl_rag_pulmonary_3.png)
+
+TBD
+For more information please refer to the [AI Guide](AI-Guide).
 
 ## What is SWIRL AI Co-Pilot? 
 
@@ -70,6 +91,8 @@ SWIRL AI Connect Enterprise includes:
 
 * Support for Single Sign On (SSO) with various IDPs (e.g. Ping Federate) and autoprovisioning via OpenID Connect. (The Community version only supports M365.)
 
+* Support for generating AI insights from 1,500 different file formats, including tables and txt in images 
+
 * Authentication support for the PageFetcher
 
 * Configurable prompts, including role, user, group and on-the-fly selection
@@ -80,31 +103,41 @@ SWIRL AI Co-Pilot is only available in Enterprise edition, and is not open sourc
 
 Pricing for SWIRL Enterprise is here: [https://swirlaiconnect.com/pricing](https://swirlaiconnect.com/pricing)
 
-## What is the SWIRL architecture & tech stack?
+## When should I use SWIRL AI Connect, Community Edition?
 
-SWIRL uses the Python/Django/Celery/Redis stack, with PostgreSQL recommended for production deployments.
+Use SWIRL AI Connect, Community Edition, if you have one or more repositories that you want to search and RAG against without authenticating and/or indexing it into yet-another repository and/or writing more code.
 
-![SWIRL AI Connect Architecture diagram](images/swirl_arch_diagram.jpg)
+You can freely re-distribute SWIRL AI Connect, Community Edition, under the [Apache 2.0 License](TBD).
+
+## When should I use SWIRL AI Connect, Enterprise Edition? 
+
+Use the Enterprise Edition of SWIRL AI Connect when you have:
+
+* Repositories that require Single Sign On (SSO) and/or OAUTH2
+* Content that requires text extraction, and/or authenticated page fetching
+* The need to RAG from long documents, complex tables, or text from images
+* Need to use GAI/LLMs other than OpenAI/Azure OpenAI
 
 ## What systems can SWIRL AI Connect integrate with?
 
 The full list is here: [https://swirlaiconnect.com/connectors](https://swirlaiconnect.com/connectors)
 
-## What do SWIRL AI Connect insights look like?
-
-Here is an example:
-
-![SWIRL RAG AI Insight with results](images/swirl_rag_pulmonary_3.png)
-
-TBD
-For more information please refer to the [AI Guide](AI-Guide).
-
 ## How do I connect SWIRL AI Connect to some new source?
 
 To connect SWIRL with an internal data source, you [create a SearchProvider record](./User-Guide.md#using-searchproviders).
 
-To integrate SWIRL with a generative AI, you create an AIProvider record, as described 
+To integrate SWIRL Enterprise with a generative AI, you create an AIProvider record, as described 
 [in the Enterprise Guide](./Enterprise-Guide.md#managing-ai-providers).
+
+## What is the SWIRL Architecture & Technology Stack
+
+SWIRL products use the Python/Django/Celery/Redis stack, with PostgreSQL recommended for production deployments.
+
+![SWIRL AI Connect Architecture diagram](images/swirl_arch_diagram.jpg)
+
+## How is SWIRL usually deployed?
+
+SWIRL is usually deployed via Docker. SWIRL Enterprise products are delivered as Kubernetes images. SWIRL offers hosting for many applications. Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for more information.
 
 ## How can I learn more about SWIRL?
 
