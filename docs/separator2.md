@@ -2,6 +2,8 @@
 layout: default
 title: ""
 nav_order: 15
-custom_class: nav-separator
-permalink: "#"
+class: "nav-separator"
+permalink: "/separator2/"
+search_exclude: true
+sitemap: false
 ---

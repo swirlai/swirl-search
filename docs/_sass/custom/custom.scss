@@ -13,9 +13,15 @@ a.site-title.lh-tight {
     color: goldenrod;
     font-weight: lighter;
 }
-/* Style the separator */
-.nav-separator::after {
-    content: "";
-    display: inline-block;
-    width: 20px; /* Adjust the width as needed */
-}
+
+// Nav separator styles
+a[href^="/separator"] {
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+    color: #000; /* Adjust color as needed */
+  }
+  .nav-separator {
+    border-bottom: 1px solid #ddd;
+    margin: 10px 0;
+  }  
