@@ -57,15 +57,17 @@ This command will start all the services used by Swirl. It will take a few minut
 {: .warning }
 Do not hit ^C or stop Docker in this window, otherwise SWIRL will be shut down.
 
+After a few minutes, the output will look like this, or similar:
+![SWIRL Enterprise Docker successful startups](images/swirl_enterprise_docker_started.png)
+
 * Launch another command line interface, and run the following command to check the status of the running containers:
 
 ```
 docker ps
 ```
 
-The output should look like this:
-
-![SWIRL Enterprise Docker Started](./images/swirl_enterprise_docker_started.png)
+The output should look like this, or similar:
+![SWIRL Enterprise Docker ps command](images/swirl_docker_ps.png)
 
 * Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy>)
 
