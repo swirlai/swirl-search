@@ -114,7 +114,7 @@ If the search page appears, click `Log Out` at the top, right. The SWIRL login p
 
 ![SWIRL Results No M365](images/swirl_results_no_m365-galaxy_dark.png)
 
-* Click the `Generate AI Insight` button to RAG using the most relevant results, if you have specified an OpenAI key as noted earlier.
+* Click the `Generate AI Insight` button to RAG using the most relevant results, if you have specified an OpenAI key as TBD link: noted earlier.
 
 ![SWIRL Results with RAG](images/swirl_rag_pulmonary_1.png)
 
@@ -131,7 +131,7 @@ The most recent Search object will be displayed at the top. Click on the `result
 ## Notes
 
 {: .warning }
-The Docker version of SWIRL does *not* retain any data or configuration when shut down!
+The Docker version of SWIRL AI Connect Community Edition does *not* retain any data or configuration when shut down!
 
 {: .highlight }
 SWIRL includes SearchProviders for Google Web (via their Programmable Search Engine offering), Arxiv.org, European PMC, Google News and SWIRL Documentation to get you up and running right away. The credentials for the Google Cloud API are shared with the SWIRL Community.
