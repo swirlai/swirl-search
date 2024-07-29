@@ -2,6 +2,7 @@
 layout: default
 title: SWIRL Overview
 nav_order: 1
+permalink: "/"
 ---
 <details markdown="block">
   <summary>
@@ -34,7 +35,7 @@ The re-ranking process is roughly the following:
 * Vectorize each result snippet (or parts of it)
 * Re-rank the results by aggregating the similarity, frequency and position, and adjusting for other factors like length variation, freshness, etc 
 
-The [Xethub study](https://about.xethub.com/blog/you-dont-need-a-vector-database) and [explained by Simson Garfinkel here](https://www.linkedin.com/pulse/vector-databases-rag-simson-garfinkel-hzule/) showed that re-ranking so-called "naive" search engines like those that use the BM25 algorithm for retrieval, outperforms moving the data into a vector database for many common NLP tasks such as question answering.
+The [Xethub study](https://about.xethub.com/blog/you-dont-need-a-vector-database) as [explained by Simson Garfinkel](https://www.linkedin.com/pulse/vector-databases-rag-simson-garfinkel-hzule/) showed that re-ranking so-called "naive" search engines like those that use the BM25 algorithm for retrieval, outperforms moving the data into a vector database for many common NLP tasks such as question answering.
 
 ## How does SWIRL Retrieval Augmented Generation (RAG) work?
 
@@ -129,6 +130,10 @@ To connect SWIRL with an internal data source, you [create a SearchProvider reco
 To integrate SWIRL Enterprise with a generative AI, you create an AIProvider record, as described 
 [in the Enterprise Guide](./Enterprise-Guide.md#managing-ai-providers).
 
+## Why don't you use GitHub Issues?
+
+We prefer to use [our free Slack channel](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) for support.
+
 ## What is the SWIRL Architecture & Technology Stack
 
 SWIRL products use the Python/Django/Celery/Redis stack, with PostgreSQL recommended for production deployments.
@@ -137,13 +142,8 @@ SWIRL products use the Python/Django/Celery/Redis stack, with PostgreSQL recomme
 
 ## How is SWIRL usually deployed?
 
-SWIRL is usually deployed via Docker. SWIRL Enterprise products are delivered as Kubernetes images. SWIRL offers hosting for many applications. Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for more information.
+SWIRL is usually deployed via Docker. SWIRL Enterprise products are delivered as Kubernetes images. 
 
-## How can I learn more about SWIRL?
+## Does SWIRL offer hosting? How can I learn more? 
 
-TBD
-* [Quick Start](./Quick-Start.md) - Covers installation
-* [User Guide](./User-Guide.md) - Details how to configure and use SWIRL
-* [AI Guide](./AI-Guide.md) - Explains how to obtain basic AI Insights using RAG
-* [Enterprise Guide](./Enterprise-Guide.md) - Explains how to configure SWIRL AI Connect Enterprise
-* [Admin Guide](./Admin-Guide.md) - Details how to manage SWIRL in production
+Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for information about hosted services.

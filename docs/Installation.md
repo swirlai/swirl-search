@@ -1,3 +1,8 @@
+---
+layout: default
+title: Installation
+nav_order: 12
+---
 <details markdown="block">
   <summary>
     Table of Contents
@@ -7,7 +12,7 @@
 {:toc}
 </details>
 
-# Local Installation
+# Installation Guide
 
 {: .warning }
 This version applies to the Community Edition of SWIRL!

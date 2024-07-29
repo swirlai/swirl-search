@@ -1,7 +1,7 @@
 ---
 layout: default
-title: Quick Start - Community
-nav_order: 2
+title: Quick Start - Enterprise
+nav_order: 3
 ---
 <details markdown="block">
   <summary>
@@ -15,30 +15,20 @@ nav_order: 2
 # Quick Start Guide
 
 {: .warning }
-This version applies to the Community Edition of SWIRL!
+This version applies to the Enterprise Edition of SWIRL! A valid license key is required.
 
 * To run SWIRL in Docker, you must have the latest [Docker app](https://docs.docker.com/get-docker/) for MacOS, Linux, or Windows installed and running locally.
+
+* You must be logged in to a valid Docker Hub by opening the command-line interface (CLI) and executing the following command, replacing <docker-username> and <docker-password> with your Docker Hub credentials.
+
+``` shell
+docker login --username <docker-username> --password <docker-password>
+```
 
 * Windows users must first install and configure either the WSL 2 or the Hyper-V backend, as outlined in the  [System Requirements for installing Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/#system-requirements).
 
 {: .warning }
 Make sure the Docker app is running before proceeding!
-
-* Download [https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml](https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml)
-
-``` shell
-curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
-```
-
-* *IMPORTANT*: To use SWIRL's Real-Time Retrieval Augmented Generation (RAG) in Docker, run the following commands from the Console using a valid OpenAI API key:
-``` shell
-export MSAL_CB_PORT=8000
-export MSAL_HOST=localhost
-export OPENAI_API_KEY='<your-OpenAI-API-key>'
-```
-
-{: .highlight }
-Check out [OpenAI's YouTube video](https://youtu.be/nafDyRsVnXU?si=YpvyaRvhX65vtBrb) if you don't have an OpenAI API Key.
 
 * On MacOS or Linux, run the following command from the Console:
 
@@ -114,6 +104,7 @@ If the search page appears, click `Log Out` at the top, right. The SWIRL login p
 
 ![SWIRL Results No M365](images/swirl_results_no_m365-galaxy_dark.png)
 
+
 * Click the `Generate AI Insight` button to RAG using the most relevant results, if you have specified an OpenAI key as noted earlier.
 
 ![SWIRL Results with RAG](images/swirl_rag_pulmonary_1.png)
@@ -134,7 +125,7 @@ The most recent Search object will be displayed at the top. Click on the `result
 The Docker version of SWIRL does *not* retain any data or configuration when shut down!
 
 {: .highlight }
-SWIRL includes SearchProviders for Google Web (via their Programmable Search Engine offering), Arxiv.org, European PMC, Google News and SWIRL Documentation to get you up and running right away. The credentials for the Google Cloud API are shared with the SWIRL Community.
+SWIRL includes five (5) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the SWIRL Community.
 
 {: .highlight }
 Using SWIRL with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).

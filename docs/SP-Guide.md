@@ -1,7 +1,7 @@
 ---
 layout: default
 title: SearchProvider Guide
-nav_order: 4
+nav_order: 5
 ---
 <details markdown="block">
   <summary>
@@ -16,9 +16,6 @@ nav_order: 4
 
 {: .warning }
 This guide applies to all editions of SWIRL!
-
-{: .warning }
-Please refer to the [Enterprise User Guide](TBD) for documentation on features specific to that edition.
 
 SearchProviders are the essential element of SWIRL. They make it quick and easy to connect SWIRL to sources without writing any code.
 
