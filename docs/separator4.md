@@ -1,8 +1,8 @@
 ---
 layout: default
-title: "Reference"
-nav_order: 10
-permalink: /separator1/
+title: "About SWIRL"
+nav_order: 20
+permalink: /separator4/
 search_exclude: true
 sitemap: false
 ---

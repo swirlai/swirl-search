@@ -1,8 +1,8 @@
 ---
 layout: default
-title: "About SWIRL"
-nav_order: 20
-permalink: /separator2/
+title: "Developer"
+nav_order: 15
+permalink: /separator3/
 search_exclude: true
 sitemap: false
 ---
