@@ -1,8 +1,8 @@
 ---
 layout: default
-title: "Developer"
-nav_order: 15
-permalink: /separator2/
+title: "Reference"
+nav_order: 10
+permalink: /separator1/
 search_exclude: true
 sitemap: false
 ---

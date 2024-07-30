@@ -1,7 +1,7 @@
 ---
 layout: default
-title: AI Guide
-nav_order: 8
+title: RAG Configuration
+nav_order: 5
 ---
 <details markdown="block">
   <summary>
@@ -12,13 +12,12 @@ nav_order: 8
 {:toc}
 </details>
 
-# AI Retrieval Augmented Generation (RAG) Guide
+# Retrieval Augmented Generation (RAG) Configuration - Community Edition
 
-SWIRL supports Real Time [Retrieval Augmented Generation (RAG)](index.md#what-is-retrieval-augmented-generation-rag-does-swirl-support-it) out of the box, using existing search engines, databases and enterprise services.
+{: .warning }
+This version applies to the Community Edition of SWIRL!
 
-## Intended Audience
-
-This guide details how to configure and tune SWIRL (v. 3.0 or newer) to perform RAG. It is intended for use by developers and/or system administrators with the ability to configure the system to connect to services like OpenAI's ChatGPT and Azure's OpenAI.
+SWIRL supports Real Time [Retrieval Augmented Generation (RAG)](index.md#what-is-retrieval-augmented-generation-rag-does-swirl-support-it) out of the box, using result snippets and/or the full text of fetched result pages. 
 
 # Setting up RAG
 
@@ -102,13 +101,15 @@ SWIRL's RAG processing utilizes only the *first 10 results* that are selected ei
 
 ## Notes
 
-* As of SWIRL 3.2.0, both the OpenAI API and the Azure OpenAI API are now supported.
+TBD integrate these/turn into sections
 
-* As of SWIRL 3.1.0, page fetch configurations are present for the [European PMC](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/europe_pmc.json) SearchProvider and four of the [Google PSE](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google_pse.json) SearchProviders.
+* SWIRL AI Connect Community Edition supports RAG with OpenAI API and the Azure OpenAI. Other GAI/LLMs are supported only in the [Enterprise Edition](TBD).
 
-* As of SWIRL 3.1.0, RAG processing is now available through a single API call, e.g. `?qs=metasearch&rag=true`.  See the [Developer Guide](https://docs.swirl.today/Developer-Guide.html#get-synchronous-results-with-the-qs-url-parameter) for more details about the `?qs=` parameter.
+* Page fetch configurations are present for the [European PMC](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/europe_pmc.json) SearchProvider and four of the [Google PSE](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google_pse.json) SearchProviders - TBD list them
 
-* As of SWIRL 3.1.0, configurations for a default timeout value (60 seconds) and the text to display when the timeout is exceeded were added to RAG processing.  These options are available in the `static/api/config/default` file.
+* RAG processing is now available through a single API call, e.g. `?qs=metasearch&rag=true`.  See the [Developer Guide](https://docs.swirl.today/Developer-Guide.html#get-synchronous-results-with-the-qs-url-parameter) for more details about the `?qs=` parameter.
+
+* The default timeout value (60 seconds) and the text to display when the timeout is exceeded were added to RAG processing.  These options are available in the `static/api/config/default` file.
 
 ```
 "webSocketConfig": {

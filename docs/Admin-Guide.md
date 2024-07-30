@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Admin Guide
-nav_order: 7
+nav_order: 11
 ---
 <details markdown="block">
   <summary>
@@ -12,13 +12,17 @@ nav_order: 7
 {:toc}
 </details>
 
-# Admin Guide
+# Admin Guide 
 
-## Intended Audience
+{: .warning }
+This version applies to both editions of SWIRL!
 
-This guide is intended for developers and system administrators who want to harden/configure SWIRL for production use.
+# Local Installation
 
-# Installation
+TBD
+
+
+# Configuring SWIRL
 
 ## Configuring the SWIRL Environment
 

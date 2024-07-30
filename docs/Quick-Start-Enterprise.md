@@ -1,7 +1,7 @@
 ---
 layout: default
-title: Quick Start - Enterprise
-nav_order: 3
+title: Quick Start
+nav_order: 7
 ---
 <details markdown="block">
   <summary>
@@ -12,7 +12,7 @@ nav_order: 3
 {:toc}
 </details>
 
-# Quick Start Guide
+# Quick Start Guide - Enterprise Edition
 
 {: .warning }
 This version applies to the Enterprise Edition of SWIRL! A valid license key is required.

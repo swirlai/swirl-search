@@ -1,7 +1,7 @@
 ---
 layout: default
-title: Quick Start - Community
-nav_order: 2
+title: Quick Start
+nav_order: 3
 ---
 <details markdown="block">
   <summary>
@@ -12,7 +12,7 @@ nav_order: 2
 {:toc}
 </details>
 
-# Quick Start Guide
+# Quick Start Guide - Community Edition
 
 {: .warning }
 This version applies to the Community Edition of SWIRL!

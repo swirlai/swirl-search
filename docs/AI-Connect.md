@@ -1,7 +1,7 @@
 ---
 layout: default
-title: Enterprise Guide
-nav_order: 10
+title: AI Connect Guide
+nav_order: 9
 ---
 <details markdown="block">
   <summary>
@@ -12,22 +12,9 @@ nav_order: 10
 {:toc}
 </details>
 
-# SWIRL AI CONNECT Enterprise Guide
+# AI Connect Guide - Enterprise Edition
 
-{: .highlight }
-This repository is commercially licensed. A valid license key is required for use. Please contact [hello@swirlsearch.com](mailto:hello@swirlsearch.com) for more information.
-
-# System Requirements
-
-* Platform - Ubuntu, RHEL, or OS/X; Note: Windows is not supported
-* 8+ VCPU, 16+ GB of memory
-* At least 500 GB of free disk space
-* Python 3.11 or newer
-* PostgreSQL 14 or later
-* SSL certificates installed and configured for Python
-* Network connectivity tested (see below) between SWIRL and systems to be queried
-
-# Configuring SWIRL AI CONNECT ENTERPRISE
+# Configuring Swirl AI Connect Enterprise Edition
 
 ## Licensing
 
@@ -64,7 +51,7 @@ DATABASES = {
 
 For more information see: [Admin Guide - Configuring Django](https://docs.swirl.today/Admin-Guide.html#configuring-django)
 
-## Configuring OpenID Connect
+## OpenID Connect
 
 If you will be using OpenID Connect to authenticate and auto-provision users, modify the following variables in the instances's `.env` file:
 
@@ -116,7 +103,7 @@ Restart SWIRL to see the new logos:
 python swirl.py restart
 ```
 
-# Deploying SWIRL AI CONNECT ENTERPRISE
+# Deploying Swirl AI Connect Enterprise Edition
 
 ## Connecting to Microsoft IDP
 

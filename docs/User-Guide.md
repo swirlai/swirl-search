@@ -12,20 +12,17 @@ nav_order: 4
 {:toc}
 </details>
 
-# User Guide
+# User Guide - Community Edition
 
 {: .warning }
-This guide applies to all editions of SWIRL!
-
-{: .warning }
-Please refer to the [Enterprise User Guide](TBD) for documentation on features specific to that edition.
+This version applies to the Community Edition of SWIRL!
 
 # Glossary
 
 | Word | Explanation | 
 | ---------- | ---------- |
-| AIProvider | A configuration of a Generative AI or LLM. It includes metadata identifying the type of model used, API key, and more. |
 | Connector | A SWIRL module that can query a particular type of data source. |
+| Page Fetcher | A SWIRL module that can obtain a copy of a specific document. The Enterprise edition can authenticate while fetching. |
 | Query | Search engines distinguish between the act of searching and the terms used for searching, which are referred to as a `query`. SWIRL follows this convention whenever possible. |
 | Search | 	A SWIRL object that defies some search to be run, on behalf of some user. It includes the `query_string` with the actual text of the query, and associated metadata. |
 | SearchProvider | A configuration of a Connector, intended to allow SWIRL to query some endpoint via it's API. It includes metadata such as credentials. |
@@ -195,5 +192,8 @@ SWIRL highlights occurrences of query terms in the `title`, `body` and `author` 
 ``` json
     "body": "<em>Performance</em> <em>management</em> is the process of setting goals and expectations for employees and then tracking and measuring their progress. This can be done through regular one-on-one meetings, <em>performance</em> reviews, and other feedback mechanisms.",
 ```
-As of version 1.1, SWIRL can also integrate source synonym configurations into relevancy calculations with corresponding hit highlighting.  See the Developer Guide [Integrate Source Synonyms Into SWIRL Relevancy](Developer-Guide.md#integrate-source-synonyms-into-swirl-relevancy)
+
+## Integrating with Source Synonyms
+
+SWIRL can also integrate source synonym configurations into relevancy calculations with corresponding hit highlighting.  See the Developer Guide [Integrate Source Synonyms Into SWIRL Relevancy](Developer-Guide.md#integrate-source-synonyms-into-swirl-relevancy)
 section for details.

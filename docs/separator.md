@@ -1,7 +1,7 @@
 ---
 layout: default
-title: "Administration"
-nav_order: 6
+title: "Community"
+nav_order: 2
 permalink: /separator/
 search_exclude: true
 sitemap: false
