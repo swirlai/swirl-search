@@ -58,7 +58,7 @@ This command will start all the services used by Swirl. It will take a few minut
 Do not hit ^C or stop Docker in this window, otherwise SWIRL will be shut down.
 
 After a few minutes, the output will look like this, or similar:
-![SWIRL Enterprise Docker successful startups](images/swirl_enterprise_docker_started.png)
+![SWIRL Enterprise Docker successful startup](images/swirl_enterprise_docker_started.png)
 
 * Launch another command line interface, and run the following command to check the status of the running containers:
 
@@ -91,7 +91,7 @@ These functions will not work “out of the box” without activation.
 
 Review the pre-loaded providers. Then edit a pre-loaded provider by adding the id of the provider to the URL. For example: http://localhost:8000/swirl/aiproviders/16/: 
 
-![](TBD)
+![SWIRL AI Provider](images/swirl_aip_1.png)
 
 For an AI provider to perform either RAG or chat functions, as shown above, it must:
 •	Have the “active” property set to “true”
@@ -118,7 +118,7 @@ Be sure to verify that RAG is working before attempting to use Co-Pilot.
 
 * Direct the co-pilot to search for something of interest, and you should get a RAG result as part of the conversation, including citations:
 
-![](TBD)
+![SWIRL Co-Pilot Conversation with RAG Result](images/swirl_copilot_chat_rag.png)
  
 * SWIRL ships with admin/password pre-configured as noted. This may cause a warning to appear if using Galaxy with the Google Chrome browser.  
 
@@ -127,12 +127,15 @@ To change the password, follow instructions here: https://docs.swirl.today/Admin
 * When finished working with SWIRL, stop the containers using one of these methods:
 
 1.	Via Docker Desktop: 
-![](TBD)
+![Shutdown SWIRL with Docker Desktop](images/shutdown_docker.png)
 
-2.	Press CTRL-C in the terminal window where Docker Compose is running, or execute docker-compose stop from a different terminal:
-![](TBD)
+2.	Press CTRL-C in the terminal window where Docker Compose is running:
+![Shutdown SWIRL with Control-C](images/shutdown_ctl_c.png)
 
- These will both preserve the SWIRL database. 
+3. Execute docker-compose stop from a different terminal:
+![Shutdown SWIRL with docker compose in a different window](images/shutdown_compose.png)
+
+ These will all preserve the SWIRL database. If you don't care about preserving the database, you can hit CTRL-C twice to stop SWIRL instantly, losing all configuration and data in the process.
 
 # Optional Steps
 
@@ -156,24 +159,25 @@ To connect the SWIRL installation Microsoft 365, be aware of the pre-requisites:
 
 This process takes approximately one hour, assuming sufficient privileges are available. Please follow the guide here: https://docs.swirl.today/M365-Guide.html 
 
-Feel free to [contact SWIRL]() for support.
+Feel free to [contact SWIRL](TBD) for support.
  
 *  To persist configuration changes outside docker: 
 
 1.	Identify the name of your swirl docker container, it will contain the term ‘app’ - for example:
-![](TBD)
+![SWIRL docker container app name](images/persist_1.png)
 
 2.	Copy the env file outside of your docker and into the directory in which the docker compose is running:
+![SWIRL container env](images/persist_env1.png)
  
 3.	Stop the containers:
-![](TBD)
+![SWIRL containers stop](images/persist_stop.png)
  
 4.	Edit the docker-compose as follows:
 Before:
-![](TBD)
+![SWIRL container config before](images/persist_before.png)
  
 After: 
-![](TBD)
+![SWIRL container config after](images/persist_after.png)
 
 5. Restart Swirl 
 
