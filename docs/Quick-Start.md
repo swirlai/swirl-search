@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Quick Start - Community
-nav_order: 2
+nav_order: 3
 ---
 <details markdown="block">
   <summary>

@@ -19,7 +19,7 @@ a[href^="/separator"] {
     pointer-events: none;
     cursor: default;
     text-decoration: none;
-    // color: transparent; /* Make text color transparent, just in case */
     color: goldenrod;
-    margin-top: 15px;
+    font-weight: bold;
+    margin-top: 10px;
   }

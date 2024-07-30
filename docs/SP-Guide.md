@@ -1,7 +1,7 @@
 ---
 layout: default
 title: SearchProvider Guide
-nav_order: 5
+nav_order: 6
 ---
 <details markdown="block">
   <summary>

@@ -1,7 +1,7 @@
 ---
 layout: default
-title: "SWIRL Developers"
-nav_order: 11
+title: "SWIRL Administrators"
+nav_order: 7
 permalink: /separator1/
 search_exclude: true
 sitemap: false

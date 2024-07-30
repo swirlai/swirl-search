@@ -1,7 +1,7 @@
 ---
 layout: default
-title: "SWIRL Administrators"
-nav_order: 6
+title: "Getting Started"
+nav_order: 2
 permalink: /separator/
 search_exclude: true
 sitemap: false
