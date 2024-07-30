@@ -1,8 +1,8 @@
 ---
 layout: default
-title: "Get Started"
-nav_order: 2
-permalink: /separator/
+title: "Administration"
+nav_order: 6
+permalink: /separator1/
 search_exclude: true
 sitemap: false
 ---

@@ -1,8 +1,8 @@
 ---
 layout: default
-title: "Administration"
-nav_order: 7
-permalink: /separator1/
+title: "Development"
+nav_order: 11
+permalink: /separator2/
 search_exclude: true
 sitemap: false
 ---

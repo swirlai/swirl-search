@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Quick Start - Enterprise
-nav_order: 4
+nav_order: 3
 ---
 <details markdown="block">
   <summary>

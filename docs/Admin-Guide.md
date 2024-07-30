@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Admin Guide
-nav_order: 8
+nav_order: 7
 ---
 <details markdown="block">
   <summary>

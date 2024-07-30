@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Enterprise Guide
-nav_order: 11
+nav_order: 10
 ---
 <details markdown="block">
   <summary>
