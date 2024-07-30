@@ -14,7 +14,7 @@ a.site-title.lh-tight {
     font-weight: lighter;
 }
 
-// Make the separator links non-clickable and invisible
+// Make the separators into non-clickable section headers
 a[href^="/separator"] {
     pointer-events: none;
     cursor: default;
