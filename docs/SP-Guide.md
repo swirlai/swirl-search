@@ -81,7 +81,7 @@ to
 
 Click the `PUT` button to save the change. You can use the `HTML Form` at the bottom of the page for convenience.
 
-![picture of the SearchProvider endpoint HTML form](TBD)
+![picture of the SearchProvider endpoint HTML form]()
 
 ## Copy/Paste Install
 
@@ -217,7 +217,7 @@ Each SearchProvider can define any desired ResultProcessing pipeline. A typical 
         ],
 ```
 
-If Relevancy Ranking is desired, the `CosineRelevancyResultProcessor` must be last in the SearchProvider `result_processors` list AND the `CosineRelevancyPostResultProcessor` must be in the `Search.post_result_processors` default method, which is located in `swirl/models.py`. TBD Refer to the TBD Guide for more information.
+If Relevancy Ranking is desired, the `CosineRelevancyResultProcessor` must be last in the SearchProvider `result_processors` list AND the `CosineRelevancyPostResultProcessor` must be in the `Search.post_result_processors` default method, which is located in `swirl/models.py`. Refer to the TBD Guide for more information.
 
 SWIRL comes with a number of other ResultProcessors that may be useful. TBD Refer to the Developer Guide for more information. 
 

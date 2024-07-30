@@ -45,15 +45,15 @@ If you receive a warning about the password being compromised or in a recent dat
 
 *If your organizations SSO page appears*:
 
-![TBD SSO page](TBD)
+![SSO page]()
 
 Login as usual. 
 
 Regardless of the method you use, you should be redirected to the AI Co-Pilot:
 
-![](TBD)
+![Co-Pilot page]()
 
-If you encounter an error message, [contact support](TBD).
+If you encounter an error message, [contact support](mailto:support@swirl.today).
 
 # Starting a Conversation
 
@@ -61,13 +61,13 @@ If you encounter an error message, [contact support](TBD).
 
 A good first thing to try is `What sources do I have access to?`
 
-![](TBD)
+![Co-Pilot sources question]()
 
 The Co-Pilot should reply within 5 seconds:
 
-![](TBD)
+![Co-Pilot sources]()
 
-If it doesn't, consult the [Troubleshooting Guide](TBD)
+If it doesn't, consult the [Troubleshooting Guide]()
 
 * Converse with the Co-Pilot with the goal of finding some information. For example:
 
@@ -75,7 +75,7 @@ If it doesn't, consult the [Troubleshooting Guide](TBD)
 Tell me about the history of
 ```
 
-![](TBD)
+![Co-Pilot history question]()
 
 
 

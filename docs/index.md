@@ -79,10 +79,9 @@ SWIRL AI Co-Pilot educates the designated GAI/LLM about the user and what they h
 
 Here is an example:
 
-![TBD](TBD)
+![Co-Pilot image]()
 
-TBD
-For more information please refer to the [TBD](TBD).
+For more information please refer to the TBD-Guide.
 
 ## What is included in SWIRL Enterprise?
 
@@ -108,7 +107,7 @@ Pricing for SWIRL Enterprise is here: [https://swirlaiconnect.com/pricing](https
 
 Use SWIRL AI Connect, Community Edition, if you have one or more repositories that you want to search and RAG against without authenticating and/or indexing it into yet-another repository and/or writing more code.
 
-You can freely re-distribute SWIRL AI Connect, Community Edition, under the [Apache 2.0 License](TBD).
+You can freely re-distribute SWIRL AI Connect, Community Edition, under the [Apache 2.0 License](https://github.com/swirlai/swirl-search/blob/main/LICENSE).
 
 ## When should I use SWIRL AI Connect, Enterprise Edition? 
 

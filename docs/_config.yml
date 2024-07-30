@@ -1,8 +1,8 @@
 # Site settings
 title: SWIRL Documentation
-description: "Empowering Data and AI: Infrastructure for Complex Demands"
+description: "Powerful Real-Time AI Infrastructure Software"
 repository: "swirlai/swirl-search"
-url: https://docs.swirl.today
+url: https://docs.swirlaiconnect.com
 baseurl: "" # the subpath of your site, e.g. /blog
 
 # Set a path/url to a logo that will be displayed instead of the title
