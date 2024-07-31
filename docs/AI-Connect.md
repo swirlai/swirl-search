@@ -14,7 +14,7 @@ nav_order: 9
 
 # AI Connect Guide - Enterprise Edition
 
-# Configuring Swirl AI Connect Enterprise Edition
+# Configuring Swirl AI Connect, Enterprise Edition
 
 ## Licensing
 
@@ -28,7 +28,7 @@ A message will appear in the `logs/django.log` if the license is invalid. Please
 
 ## Database
 
-For POV's, SWIRL AI CONNECT ENTERPRISE may be used with Sqlite3. Please [contact support](#support) for assistance with this configuration option.
+For POV's, SWIRL AI Connect, Enterprise Edition, may be used with Sqlite3. Please [contact support](#support) for assistance with this configuration option.
 
 For production, SWIRL recommends PostgreSQL.
 
@@ -103,7 +103,7 @@ Restart SWIRL to see the new logos:
 python swirl.py restart
 ```
 
-# Deploying Swirl AI Connect Enterprise Edition
+# Connecting Swirl AI Connect, Enterprise Edition
 
 ## Connecting to Microsoft IDP
 
@@ -124,12 +124,9 @@ To connect SWIRL to search engines, databases, enterprise applications and infor
 
 ## Connecting to Enterprise AI
 
-{: .highlight }
-The following applies only to SWIRL AI CONNECT ENTERPRISE.
+### Roles for Generative AI/Large Language Models
 
-### Roles for Generative AI
-
-There are four "roles" which LLM/GAI can play in SWIRL:
+There are four "roles" which GAI/LLMs can take in SWIRL:
 
 | Role | Description | Default | 
 | ------- | ----------- | -------- |
@@ -223,10 +220,12 @@ For example, to switch back and forth between OpenAI GPT-4 and Azure/OpenAI GPT-
         "tags": [
             "query",
             "connector",
-            "rag"
+            "rag",
+            "chat"
         ],
         "defaults": [
-            "rag"
+            "rag",
+            "chat"
         ]
     }
 ```
@@ -252,7 +251,7 @@ Use the included [`swirl_load.py`](https://github.com/swirlai/swirl-search/blob/
 
 ## Using the Bearer Token Service to Update AI Providers
 
-SWIRL AI CONNECT ENTERPRISE includes a Bearer Token Service that obtains new tokens on a configurable basis. 
+SWIRL AI Connect, Enterprise Edition, includes a Bearer Token Service that obtains new tokens on a configurable basis. 
 
 The Bearer Token service issues a `POST` to a configured IDP URL with a user id and secret, extracts a `bearer_token` from the response, then updates the `api_key` of the configured AI Provider. 
 
@@ -304,7 +303,9 @@ This will ensure you see messages from the `celery-beats` log. However, most of 
 
 # Fetching Enterprise Content for RAG
 
-The SWIRL AI CONNECT ENTERPRISE Page Fetcher supports retrieval of results from sources that require authentication. The following sections explain how to configure specific SearchProviders for RAG.
+The SWIRL AI Connect, Enterprise Edition, includes a Page Fetcher that can retrieve results from sources that require authentication. 
+
+The following sections explain how to configure specific SearchProviders for RAG.
 
 ## Google PSE SearchProviders
 
@@ -505,7 +506,7 @@ See the Microsoft OneDrive section just above for a Page Fetcher configuration w
 
 # Analyzing Enterprise Content
 
-SWIRL AI CONNECT ENTERPRISE includes an optional Text Analyzer summarization service that can optionally be plugged into RAG to enhance accuracy.  To launch the Text Analyzer locally, run the following command from the Console:
+SWIRL AI Connect, Enterprise Edition, includes an optional Text Analyzer summarization service that can optionally be plugged into RAG to enhance accuracy.  To launch the Text Analyzer locally, run the following command from the Console:
 
 ```
 docker run -p 7029:7029 -e SWIRL_TEXT_SERVICE_PORT=7029 swirlai/swirl-integrations:topic-text-matcher
