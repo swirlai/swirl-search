@@ -15,18 +15,13 @@ nav_order: 11
 # Admin Guide 
 
 {: .warning }
-This version applies to both editions of SWIRL!
+This version applies to all editions of SWIRL!
 
-# Local Installation
+# Configuring SWIRL AI Connect
 
-TBD
+## Configuring the Environment
 
-
-# Configuring SWIRL
-
-## Configuring the SWIRL Environment
-
-New in version 1.8, SWIRL uses `django-environ` to load important values such as hostname from a file called `.env`.
+SWIRL uses `django-environ` to load important values such as hostname from a file called `.env`.
 
 The file `.env.dist` contains expected defaults. If no `.env` file is created, then the `install.sh` script copy this file to `.env` prior to startup.
 
@@ -67,7 +62,7 @@ This will create a new, blank database. To create a Super User, run the followin
 python manage.py createsuperuser --email admin@example.com --username admin
 ```
 
-## Changing a Super User Password
+## Changing the Super User Password
 
 If you already have an `admin` user, you can change the password with this command:
 
@@ -80,7 +75,7 @@ For more information see: [django-admin and manage.py](https://docs.djangoprojec
 
 ## Adding Normal Users
 
-Use the Django Admin UI to add users:
+You may use the Django Admin UI to add users:
 
 ```
 http://localhost:8000/admin/
@@ -88,7 +83,11 @@ http://localhost:8000/admin/
 
 ![Django Admin - Users](images/django_admin_console_user.png)
 
+TBD: note about OpenID Connect provisioning
+
 ## Permissioning Normal Users
+
+TBD review/update
 
 There are four permissions -- `add`, `change`, `delete`, and `view` -- for each of the core SWIRL objects: `SearchProviders`, `Search`, `Result`, and `Query Transform`.
 
@@ -135,7 +134,7 @@ Popular reverse-proxy projects/products include [HA Proxy](https://www.haproxy.o
 
 # Hardware Sizing
 
-As of SWIRL 2.5, the federation process is CPU-bound. To maximize core utilization, allocate four (4) times the number of Celery workers. 
+TBD update!! Make sure not duplicated with install?
 
 SWIRL can be run continuously with minimal latency so long as:
 
@@ -146,6 +145,8 @@ SWIRL can be run continuously with minimal latency so long as:
 [Contact support](#support) to discuss this topic anytime.
 
 # Upgrading SWIRL
+
+TBD review
 
 {: .warning }
 Please [contact support](#support) for instructions on upgrading Docker containers!
@@ -165,17 +166,15 @@ git pull
 python swirl.py setup
 ```
 
-4. Restart SWIRL core, if running:
+4. Restart SWIRL:
 ``` shell
-python swirl.py restart core
+python swirl.py restart
 ```
 
 {: .highlight }
 Consult the [release notes](https://github.com/swirlai/swirl-search/releases) for more information on each release.
 
 # Configuring SWIRL
-
-New in SWIRL 1.8: `SWIRL_EXPLAIN` is now configured as an environment variable.
 
 SWIRL uses the following configuration items, defined in the [`swirl_server/settings.py`](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py):
 
@@ -191,8 +190,11 @@ SWIRL uses the following configuration items, defined in the [`swirl_server/sett
 | SWIRL_RELEVANCY_CONFIG | Defines the relevancy score weights for important fields | See below |
 | SWIRL_MAX_MATCHES | Configures the maximum number of matches for any given result, before being cut-off. This helps protect against favoring very long articles. | `SWIRL_MAX_MATCHES = 5` |
 | SWIRL_MIN_SIMILARITY | Configures the minimum threshold at which a query hit in a result will be scored. Lower values will increase recall but lower precision. | `SWIRL_MIN_SIMILARITY = 0.54` |
+| SWIRL_EXPLAIN | Configures the delivery of relevancy explain structures, in Mixed responses | `SWIRL_EXPLAIN = false` | 
 
 ### Example SWIRL_RELEVANCY_CONFIG
+
+TBD make sure this is still the default
 
 ``` shell
 SWIRL_RELEVANCY_CONFIG = {
@@ -269,19 +271,6 @@ If you change the `crontab` entry in the database and don't change the `CELERY_B
 
 For normal operations, use `swirl.py` to start, stop or restart services. It is located in SWIRL's install directory (along with `manage.py`).
 
-{: .warning }
-SWIRL's control scripts were updated in version 2.5!
-
-* A `default` key was added to the services list, including `debug`, in `swirl/services.py`
-* The `celery-beats` service was set to `default: False`
-* swirl.py was modified to load only services with default: True
-
-To use the subscribe or expiration features, `celery-beats` must be started (and stopped) separately:
-
-``` shell
-python swirl.py start celery-beats
-```
-
 * To start services:
 
 ``` shell
@@ -302,6 +291,7 @@ python swirl.py status
 
 SWIRL will report the current running services, and their pids:
 
+TBD: update below
 ``` shell
 __S_W_I_R_L__2_._6______________________________________________________________
 
@@ -339,6 +329,7 @@ python swirl.py restart celery-worker consumer
 python swirl.py help
 ```
 
+TBD: replace with a debug section (in Troubleshooting guide)
 * To run in DEBUG mode:
 
 ``` shell
@@ -349,9 +340,13 @@ This will switch from running Daphne to the built-in Django webserver (`runserve
 
 ## Customizing
 
-The services invoked by `swirl.py` are defined in [swirl/services.py](https://github.com/swirlai/swirl-search/blob/main/swirl/services.py). See the previous section for changes to the services definitions in version 2.5.
+The services invoked by `swirl.py` are defined in [swirl/services.py](https://github.com/swirlai/swirl-search/blob/main/swirl/services.py). 
+
+TBD: add more details
 
 ## Troubleshooting
+
+TBD: move to a new guide
 
 Note that `swirl.py` writes the list of services and their associated pids to a file: `.swirl`
 
@@ -416,6 +411,8 @@ Note that `swirl.py` starts the services in the order specified, but terminates 
 
 # Manually Starting Services
 
+TBD: review and update or remove all below
+
 The exact incantations to start the services varies by Operating System. The following sections present them along with the expected output.
 
 ## Mac OS/X or Linux
@@ -458,6 +455,8 @@ celery -A swirl_server beat -l INFO --scheduler django_celery_beat.schedulers:Da
 ```
 
 # Managing Django Users
+
+TBD review and consider removing, link to Django doc?
 
 ## Django Admin
 
@@ -515,6 +514,8 @@ sqlite_web --host 0.0.0.0 my_database.db    # run it on the lan
 Don't forget to give it the path to `db.sqlite3` in `swirl-search` when you invoke it.
 
 # Database Migration
+
+TBD: update with latest on migration support
 
 If you change most anything in `swirl/models.py`, you will have to perform a database migration. Detailing this process is beyond the scope of this document. For the most part, all you have to do is:
 
@@ -629,7 +630,9 @@ CONNECTOR_CHOICES = [
 
 # Configuring Celery & Redis
 
-Celery is used to execute a SWIRL federated search. It uses Redis as a result back-end for asynchronous operation. Both of these systems must be configured correctly.
+TBD: Dmitriy review
+
+Celery is used to execute a SWIRL metasearch. It uses Redis as a result back-end for asynchronous operation. Both of these systems must be configured correctly.
 
 {: .warning }
 Celery is configured in at least three locations. They must be the same! 
@@ -687,7 +690,11 @@ To change the one that is in the repo:
 python -c "import secrets; print(secrets.token_urlsafe())"
 ```
 
+TBD: read more
+
 ## SWIRL User & Group Support
+
+TBD: review/update or remove
 
 You can use Django's built-in authentication support, which adds User and Group objects, or implement your own. The following sections detail how to access these.
 
@@ -730,7 +737,7 @@ python swirl.py logs/
 
 This will show you the collected, latest output of all logs, continuously.
 
-As of version 2.5, SWIRL now outputs a single log entry with each request at the default log level INFO:
+SWIRL outputs a single log entry with each request at the default log level INFO:
 
 ``` shell
 2023-08-02 10:49:09,466 INFO     admin search 452 FULL_RESULTS_READY 32 2.2
@@ -739,6 +746,8 @@ As of version 2.5, SWIRL now outputs a single log entry with each request at the
 Detailed logging is available in Debug mode: restart SWIRL with the `--debug` flag to enable (or edit the `settings.py` file as outlined below).
 
 ## Debug Mode
+
+TBD: update with trace support
 
 By default, SWIRL ships in production mode. To put Django into DEBUG mode, modify [`swirl_server/settings.py`](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py), changing:
 

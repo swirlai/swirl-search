@@ -14,4 +14,12 @@ nav_order: 12
 
 # Installation Guides - All Editions
 
-TBD link to the two sub installation guides and others
+The following guides provide detailed information on how to install SWIRL. 
+
+## Local Installation
+
+* [SWIRL AI Connect, Community Edition](./Installation-Community.html)
+
+## Docker Installation
+
+* [SWIRL AI Connect, Enterprise Edition](./Quick-Start-Enterprise.html)
