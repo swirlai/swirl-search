@@ -14,6 +14,9 @@ nav_order: 10
 
 # AI Co-Pilot Guide - Enterprise Edition
 
+{: .warning }
+This document applies only to SWIRL AI Co-Pilot, Enterprise Edition. 
+
 # Configuring SWIRL AI Co-Pilot, Enterprise Edition
 
 ## Roles for Generative AI/Large Language Models
@@ -87,7 +90,8 @@ Please refer to the AI Connect, Enterprise Edition, section on [Connecting to En
 
 SWIRL Co-Pilot expects the following from GAI/LLMs that provide chat functionality:
 
-* Support for receiving the chat history in each message, in reverse chronological order, i.e. the [OpenAI Chat Completions format TBD]()
+* Support for receiving the chat history in each message, in reverse chronological order, i.e. the format used by the [OpenAI Chat Completions API](https://platform.openai.com/docs/guides/chat-completions/getting-started)
 
-* Prompt support of at least 3k tokens per message TBD
+* Prompt support of at least 3k tokens per message, with 6k+ preferred
 
+* Currently, we recommend OpenAI GPT-4 (all variants including 'o'), Anthropic Claude 3 or Google Gemini Pro/Ultra. But there are many incredible models, and any of them that support the chat history (noted above) may work. Please [let us know](#support) what works, and doesn't work!

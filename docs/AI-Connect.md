@@ -14,6 +14,9 @@ nav_order: 9
 
 # AI Connect Guide - Enterprise Edition
 
+{: .warning }
+This document applies only to SWIRL AI Connect, Enterprise Edition. [Switch to the AI Connect, Community Edition guide](RAG-Guide.html)
+
 # Configuring Swirl AI Connect, Enterprise Edition
 
 ## Licensing
@@ -84,9 +87,76 @@ export MSAL_HOST=localhost
 
 To connect SWIRL to your M365 tenant, follow instructions in the [Microsoft 365 Guide](https://docs.swirl.today/M365-Guide.html)
 
-## Connecting to other authentication providers
+## Connecting to other Authentication Systems
 
-TBD: contact support
+To connect SWIRL to an Identity Provider (IDP) or Single Sign On (SSO) authority it is necessary to configure an Authenticator object. 
+
+To view, edit, add or delete an Authenticator, go to `swirl/authenticators` endpoint. 
+
+For example, if using the default local install: [http://localhost:8000/swirl/aiproviders](http://localhost:8000/swirl/aiproviders)
+
+### Overview
+
+Authenticators have the following fields:
+
+| Field | Description |
+| ----- | ----------- |
+| idp | The name of the authenticator object, which will also be the URL |
+| name | The name of the authenticator, which will be displayed to the user |
+| active | Boolean; if false, the Authenticator is not available, and no authentication switch will appear in Galaxy UI |
+| callback_path | The URL, relative to SWIRL, where the IDP should redirect with the user's tokens | 
+| client_id | The id of the shared secret | 
+| client_secret | The shared secret | 
+| app_uri | The location of the SWIRL application | 
+| auth_uri | The location of the authentication system | 
+| token_uri | The location from which SWIRL should obtain authentication token(s) | 
+| user_data_url | The URL to the user's profile, if needed | 
+| user_data_params | A list of data parameters required from the profile, if needed | 
+| user_data_headers | A list of headers required for requesting the user's tokens, such as "Authorization" | 
+| user_data_method | The method to use when requesting the user's profile | 
+| initiate_auth_close_flow_params | A list of parameters for CAS2 and other custom authentication flows | 
+| exchange_code_params | A list of parameters for exchange during custom flow exection | 
+| is_code_challenge | A boolean setting determing if the exchange code parameters should be sent with every request; defaults to True | 
+| scopes | A listing of the authorization scopes to be requested | 
+| should_expire | A boolean setting determining if the token will need refreshing; defaults to True | 
+| use_basic_auth | A boolean setting to use basic auth instead of SSO for this authenticator | 
+
+### M365
+
+SWIRL comes preloaded with an Authenticator for Microsoft. 
+
+```
+    "idp": "Microsoft",
+    "name": "Microsoft",
+    "active": false,
+    "callback_path": "/swirl/callback/microsoft-callback",
+    "client_id": "<your-client-id>",
+    "client_secret": "<your-client-secret>",
+    "app_uri": "http://localhost:8000",
+    "auth_uri": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+    "token_uri": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+    "user_data_url": "https://graph.microsoft.com/v1.0/me",
+    "user_data_params": {
+        "$select": "displayName,mail,userPrincipalName"
+    },
+    "user_data_headers": {
+        "Authorization": "Bearer {access_token}"
+    },
+    "user_data_method": "GET",
+    "initiate_auth_code_flow_params": {},
+    "exchange_code_params": {},
+    "is_code_challenge": true,
+    "scopes": "User.Read Mail.Read Files.Read.All Calendars.Read Sites.Read.All Chat.Read offline_access",
+    "should_expire": true,
+    "use_basic_auth": true
+}
+```
+
+To activate this authenticator, a new SWIRL app has to be registered in Azure. Refer to the [M365 Guide](M365-Guide.html) for detailed information.
+
+### Other Authenticators
+
+Please [contact support](#support) to obtain Authenticators for any other systems - including Elastic, OpenSearch, CAS2, Salesforce, ServiceNow, Okta, Auth0 and Ping Federate.
 
 ## Changing the Galaxy Logo
 
@@ -395,7 +465,7 @@ Use the `SWIRL_RAG_MODEL` parameter to change the generative AI model SWIRL RAG 
 
 The SWIRL AI Connect, Enterprise Edition, includes a Page Fetcher that can retrieve results from sources that require authentication. 
 
-TBD: refer to the page fetcher in RAG diagram
+![SWIRL AI Connect Insight Pipeline](images/swirl_rag_pipeline.png)
 
 The Page Fetcher will authenticate using the user's token, or whatever else is configured for that source. 
 
@@ -610,7 +680,7 @@ docker run -p 7029:7029 -e SWIRL_TEXT_SERVICE_PORT=7029 swirlai/swirl-integratio
 
 ## Configuration Options
 
-Note that some of these configuration options are from the RAG section. TBD review/resolve
+The following options are available to customize the Reader LLM. Note that some of them are actually RAG settings.
 
 | Variable | Description | Example |
 | -------- | ----------- | ------- |

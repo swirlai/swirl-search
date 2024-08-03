@@ -81,7 +81,7 @@ If the search page appears, click `Log Out` at the top, right. The SWIRL login p
 
 ![SWIRL Results No M365](images/swirl_results_no_m365-galaxy_dark.png)
 
-If they don’t appear, or an error occurs, please [contact support](TBD) before proceeding.
+If they don’t appear, or an error occurs, please [contact support](#support).
 
 {: .warning }
 To use the Generate AI insights button (to RAG on the most relevant results) or use the AI Co-Pilot (http://localhost:8000/galaxy/chat) feature, at least one AI Provider must be activated. 
@@ -159,7 +159,7 @@ To connect the SWIRL installation Microsoft 365, be aware of the pre-requisites:
 
 This process takes approximately one hour, assuming sufficient privileges are available. Please follow the guide here: https://docs.swirl.today/M365-Guide.html 
 
-Feel free to [contact SWIRL](TBD) for support.
+For additional support on M365 integration, please [contact SWIRL](#support).
  
 *  To persist configuration changes outside docker: 
 

@@ -15,20 +15,17 @@ nav_exclude: true
 # Installation Guide - Community Edition
 
 {: .warning }
-This version applies to the Community  versions of SWIRL!
+This document applies only to SWIRL AI Connect, Community Edition. 
 
 {: .warning }
-SWIRL's start-up process no longer starts `redis`.  You must now have `redis` installed *and running* before starting SWIRL.
+SWIRL's start-up process no longer starts `redis`.  You must now have `redis` installed *and running* before starting SWIRL. Refer to [Install Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) for more information.
 
 # System Requirements
 
-* Platform - Ubuntu, RHEL, or OS/X; Note: Windows is not supported for local installation
+* Platform - Ubuntu, RHEL, or OS/X; Microsfot Windows is *not* supported for local installation due to Celery support
 * 8+ VCPU, 16+ GB of memory
 * At least 500 GB of free disk space
 * Python 3.11 or newer
-* PostgreSQL 14 or later
-* SSL certificates installed and configured for Python
-* Network connectivity tested (see below) between SWIRL and systems to be queried
 
 ## MacOS
 
@@ -45,7 +42,6 @@ SWIRL's start-up process no longer starts `redis`.  You must now have `redis` in
 ``` shell
 brew install jq
 ```
-* Redis must be running
 
 ## Linux
 
@@ -54,12 +50,6 @@ brew install jq
 ``` shell
 sudo apt install jq redis-server -y
 ```
-* Redis must be running
-
-## Windows
-
-{: .warning }
-SWIRL is *not* supported for local installation or production use on Windows!
 
 ## PostgreSQL (optional)
 
@@ -116,16 +106,21 @@ Issues with certifications on OS/X? See: [urllib and "SSL: CERTIFICATE_VERIFY_FA
 python swirl.py setup
 ```
 
-## Install the Galaxy UI
-
-{: .warning }
-To install the Galaxy UI, you must have the latest [Docker app](https://docs.docker.com/get-docker/) for MacOS or Linux installed and running locally.
+## Setup RAG
 
 * To enable SWIRL's Real-Time Retrieval Augmented Generation (RAG) on your `localhost`, run the following commands from the Console before installing the Galaxy UI:
 ``` shell
 export MSAL_CB_PORT=8000
 export MSAL_HOST=localhost
 ```
+
+For more information, refer to the [RAG Configuration guide](RAG-Guide.html).
+
+## Install the Galaxy UI
+
+{: .warning }
+To install the Galaxy UI, you must have the latest [Docker app](https://docs.docker.com/get-docker/) for MacOS or Linux installed and running locally.
+
 
 * To install Galaxy, execute the following command the Console (with the Docker app running):
 
@@ -144,7 +139,7 @@ The Galaxy UI components should be installed only *after* running the `./install
 python swirl.py start
 ```
 
-## Open the SWIRL Homepage (Django)
+## Open the SWIRL Homepage
 
 * Enter this URL into a browser: <http://localhost:8000/swirl/>
 
@@ -178,15 +173,4 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 ![SWIRL JSON response](images/swirl_results_mixed_1.png)
 
-* Read the [SWIRL User Guide](./User-Guide.md) for additional information.
-
-## Notes
-
-{: .warning }
-Removing SWIRL's `static/` content will also remove the Galaxy UI files! You will need to re-install Galaxy if you have removed SWIRL's `static/` directory and then run either `python manage.py collectstatic` or `python swirl.py setup`.
-
-{: .highlight }
-SWIRL includes five (5) Google Programmable Search Engines (PSEs), complete with shared credentials, to get you up and running right away. These credentials are shared with the SWIRL Community.
-
-{: .highlight }
-Using SWIRL with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
+* Read the [SWIRL User Guide](User-Guide.html) for additional information.
