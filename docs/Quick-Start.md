@@ -114,7 +114,10 @@ If the search page appears, click `Log Out` at the top, right. The SWIRL login p
 
 ![SWIRL Results No M365](images/swirl_results_no_m365-galaxy_dark.png)
 
-* Click the `Generate AI Insight` button to RAG using the most relevant results, if you have specified an OpenAI key as TBD link: noted earlier.
+* Click the `Generate AI Insight` button to RAG using the most relevant results. 
+
+{: .warning }
+As noted above, you must have setup OpenAI or Azure/OpenAI prior to executing this step.
 
 ![SWIRL Results with RAG](images/swirl_rag_pulmonary_1.png)
 
@@ -128,13 +131,24 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 * Read the [SWIRL User Guide](./User-Guide.md) for additional information.
 
-## Notes
+* To shut down SWIRL:
+
+1.	Via Docker Desktop: 
+![Shutdown SWIRL with Docker Desktop](images/shutdown_docker.png)
+
+2.	Press CTRL-C in the terminal window where Docker Compose is running:
+![Shutdown SWIRL with Control-C](images/shutdown_ctl_c.png)
+
+3. Execute docker-compose stop from a different terminal:
+![Shutdown SWIRL with docker compose in a different window](images/shutdown_compose.png)
 
 {: .warning }
-The Docker version of SWIRL AI Connect Community Edition does *not* retain any data or configuration when shut down!
+The Docker version of SWIRL AI Connect Community Edition does *not* retain any data or configuration when shut down. 
+
+## Notes
 
 {: .highlight }
-SWIRL includes SearchProviders for Google Web (via their Programmable Search Engine offering), Arxiv.org, European PMC, Google News and SWIRL Documentation to get you up and running right away. The credentials for the Google Cloud API are shared with the SWIRL Community.
+SWIRL includes SearchProviders for Google Web (via their Programmable Search Engine offering), Arxiv.org, European PMC, Google News and SWIRL Documentation to get you up and running right away. The credentials for the Google Cloud API are shared with the SWIRL Community for this purpose.
 
 {: .highlight }
-Using SWIRL with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or [contact us](mailto:hello@swirl.today).
+Using SWIRL with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or contact support as noted below. 

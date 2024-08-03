@@ -17,15 +17,13 @@ permalink: "/"
 
 ## What is SWIRL AI Connect?
 
-SWIRL AI Connect is infrastructure software, deployed in your own environment, that connects most any Generative AI/LLM to enterprise data platforms, applications and information services *without copying*, indexing and/or ingesting data. 
+SWIRL AI Connect is infrastructure software that connects most any Generative AI/LLM to enterprise data platforms, applications and information services *without copying*, indexing and/or ingesting data. 
 
-SWIRL's no-code approach requires minimal IT involvement, leveraging your existing systems. SWIRL can also use your AI/LLMs to summarize data, answer questions, generate charts from structured data sets - and much more - without moving your data, trusting a third party, or deploying an expensive new repository.
+Installed in your own environment, or optionally hosted by SWIRL, our no-code, no-copying approach requires minimal IT involvement, generating personalized, AI insight from existing systems and applications. 
 
-SWIRL provides the full benefit of AI - personalized, secure and real-time - without disrupting your current systems or security systems. 
+## How does SWIRL AI Connect Provide Insight without Copying and Ingesting and Indexing Data?
 
-## How does SWIRL Re-Ranking work?
-
-SWIRL AI Connect is an AI-powered [metasearch engine](https://en.wikipedia.org/wiki/Metasearch_engine). SWIRL's unique Reader LLM, which can be use most any embeddings, re-ranks results from responding sources so the user doesn't have to. 
+SWIRL AI Connect is an AI-powered [metasearch engine](https://en.wikipedia.org/wiki/Metasearch_engine) that sends user requests to all the endpoints, APIs and other interfaces they're authorized to see - asynchronously, in a few seconds. SWIRL's unique Reader LLM re-ranks results from responding sources so the user doesn't have to. The Reader LLM can use the embeddings from most any model.
 
 The re-ranking process is roughly the following:
 * Vectorize the user's query (or parts of it)
@@ -35,11 +33,9 @@ The re-ranking process is roughly the following:
 * Vectorize each result snippet (or parts of it)
 * Re-rank the results by aggregating the similarity, frequency and position, and adjusting for other factors like length variation, freshness, etc 
 
-The [Xethub study](https://about.xethub.com/blog/you-dont-need-a-vector-database) as [explained by Simson Garfinkel](https://www.linkedin.com/pulse/vector-databases-rag-simson-garfinkel-hzule/) showed that re-ranking so-called "naive" search engines like those that use the BM25 algorithm for retrieval, outperforms moving the data into a vector database for many common NLP tasks such as question answering.
+The [Xethub study](https://about.xethub.com/blog/you-dont-need-a-vector-database) as [explained by Simson Garfinkel](https://www.linkedin.com/pulse/vector-databases-rag-simson-garfinkel-hzule/) showed that re-ranking so-called "naive" search engines like those that use the BM25 algorithm for retrieval, outperforms moving the data into a vector database for many common NLP tasks such as question answering. 
 
-## How does SWIRL Retrieval Augmented Generation (RAG) work?
-
-SWIRL AI Connect also includes state-of-the-art cross-silo [Retrieval Augmented Generation (RAG)](https://en.wikipedia.org/wiki/Retrieval-augmented_generation):
+SWIRL AI Connect also includes state-of-the-art cross-silo [Retrieval Augmented Generation (RAG)](https://en.wikipedia.org/wiki/Retrieval-augmented_generation) for generating AI insights like summarization, question answering and visualization of relevant result sets. 
 
 ![SWIRL AI Connect Insight Pipeline](images/swirl_rag_pipeline.png)
 
@@ -64,8 +60,18 @@ Here is an example:
 
 ![SWIRL RAG AI Insight with results](images/swirl_rag_pulmonary_3.png)
 
-TBD
-For more information please refer to the [AI Guide](AI-Guide).
+For more information please refer to the [AI Connect Guide](AI-Connect.html).
+
+## What systems can SWIRL AI Connect integrate with?
+
+The full list is here: [https://swirlaiconnect.com/connectors](https://swirlaiconnect.com/connectors)
+
+## How do I connect SWIRL AI Connect to some new source?
+
+To connect SWIRL with an internal data source, you [create a SearchProvider record](./User-Guide.md#using-searchproviders).
+
+To integrate SWIRL Enterprise with a generative AI, you create an AIProvider record, as described 
+[in the Enterprise Guide](./Enterprise-Guide.md#managing-ai-providers).
 
 ## What is SWIRL AI Co-Pilot? 
 
@@ -79,11 +85,11 @@ SWIRL AI Co-Pilot educates the designated GAI/LLM about the user and what they h
 
 Here is an example:
 
-![Co-Pilot image]()
+![SWIRL Co-Pilot image](images/swirl_copilot_chat_rag.png)
 
-For more information please refer to the TBD-Guide.
+For more information please refer to the [AI Co-Pilot Guide](AI-Co-Pilot.md).
 
-## What is included in SWIRL Enterprise?
+## What is included in SWIRL Enterprise Products?
 
 SWIRL AI Connect Enterprise includes:
 
@@ -99,15 +105,15 @@ SWIRL AI Connect Enterprise includes:
 
 SWIRL AI Co-Pilot is only available in Enterprise edition, and is not open source. Co-Pilot requires SWIRL AI Connect.
 
-## How much does SWIRL Enterprise cost?
+## How much do SWIRL Enterprise Products cost?
 
 Pricing for SWIRL Enterprise is here: [https://swirlaiconnect.com/pricing](https://swirlaiconnect.com/pricing)
 
 ## When should I use SWIRL AI Connect, Community Edition?
 
-Use SWIRL AI Connect, Community Edition, if you have one or more repositories that you want to search and RAG against without authenticating and/or indexing it into yet-another repository and/or writing more code.
+Use SWIRL AI Connect, Community Edition, if you have one or more repositories that you want to search and RAG against the full text *without* authenticating and/or indexing it into yet-another repository and/or writing more code.
 
-You can freely re-distribute SWIRL AI Connect, Community Edition, under the [Apache 2.0 License](https://github.com/swirlai/swirl-search/blob/main/LICENSE).
+Note that you may freely re-distribute solutions that incorporate SWIRL AI Connect, Community Edition, under the [Apache 2.0 License](https://github.com/swirlai/swirl-search/blob/main/LICENSE).
 
 ## When should I use SWIRL AI Connect, Enterprise Edition? 
 
@@ -118,20 +124,9 @@ Use the Enterprise Edition of SWIRL AI Connect when you have:
 * The need to RAG from long documents, complex tables, or text from images
 * Need to use GAI/LLMs other than OpenAI/Azure OpenAI
 
-## What systems can SWIRL AI Connect integrate with?
-
-The full list is here: [https://swirlaiconnect.com/connectors](https://swirlaiconnect.com/connectors)
-
-## How do I connect SWIRL AI Connect to some new source?
-
-To connect SWIRL with an internal data source, you [create a SearchProvider record](./User-Guide.md#using-searchproviders).
-
-To integrate SWIRL Enterprise with a generative AI, you create an AIProvider record, as described 
-[in the Enterprise Guide](./Enterprise-Guide.md#managing-ai-providers).
-
 ## Why don't you use GitHub Issues?
 
-We prefer to use [our free Slack channel](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) for support.
+We prefer to use [our free Slack channel](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) for support. 
 
 ## What is the SWIRL Architecture & Technology Stack
 
@@ -145,4 +140,4 @@ SWIRL is usually deployed via Docker. SWIRL Enterprise products are delivered as
 
 ## Does SWIRL offer hosting? How can I learn more? 
 
-Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for information about hosted services.
+Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for information about hosted SWIRL. 
