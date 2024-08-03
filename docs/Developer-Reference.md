@@ -14,6 +14,9 @@ nav_order: 18
 
 # Developer Reference
 
+{: .warning }
+This document applies to all SWIRL Editions. 
+
 # State Table
 
 The following table describes in more detail all the steps in the federation process, with the associated `status` and other important state information.

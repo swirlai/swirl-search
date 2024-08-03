@@ -14,6 +14,9 @@ nav_order: 17
 
 # Developer Guide
 
+{: .warning }
+This document applies to all SWIRL Editions. 
+
 # Glossary
 
 | Word | Explanation | 
