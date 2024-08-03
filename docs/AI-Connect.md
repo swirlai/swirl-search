@@ -441,6 +441,10 @@ Refer to the [Connecting to Enterprise AI](#connecting-to-enterprise-ai) section
 
 # Optimizing RAG
 
+## Using Summaries
+
+Set `SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY` to True to cause SWIRL to use the result summaries for RAG. This is the best option for any source you can't fetch pages from due to authentication issues.
+
 ## Distribution Strategy
 
 The distribution strategy controls how pages are chosen from the search results by source. It is controlled by setting `SWIRL_RAG_DISTRIBUTION_STRATEGY` as follows:

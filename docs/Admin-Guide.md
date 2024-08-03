@@ -73,6 +73,22 @@ python manage.py changepassword admin
 If you select a password that is too simple, Django will object. 
 For more information see: [django-admin and manage.py](https://docs.djangoproject.com/en/4.0/ref/django-admin/)
 
+### Using the Django Admin
+
+To use the Django Admin to change the Super User Password:
+
+1. Go to the SWIRL homepage. For example [http://localhost:8000/swirl](http://localhost:8000/swirl)
+
+2. Click the `CHANGE PASSWORD` link at the top left:
+
+![Django Admin Change Password](images/try-it-adm-pwd-3.png)
+
+3. This should bring up the password change screen:
+
+![Django Admin Change Password](images/try-it-adm-pwd-4.png)
+
+Don't forget to click `CHANGE MY PASSWORD` at the end.
+
 ## Adding Normal Users
 
 You may use the Django Admin UI to add users:
@@ -203,6 +219,10 @@ Note that all configuration names must be UPPER_CASE per the [django settings co
 
 The [Expirer](https://github.com/swirlai/swirl-search/blob/main/swirl/expirer.py) service can automatically delete Search and their associated (linked) Result objects after a specified period of time - to ensure SWIRL doesn't retain everything ever searched.
 
+## Service Frequency
+
+Although you may specify various expiration settings for SWIRL Search and associated Result objects, the service to expire them runs on a regular schedule. 
+
 By default, this service runs every hour. The frequency is defined in the [Django settings](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py):
 
 ``` shell
@@ -221,6 +241,9 @@ Temporary changes can also be made via the Django Console here:
 http://localhost:8000/admin/django_celery_beat/crontabschedule/ 
 ```
 ![Django console crontab page](images/django_admin_console_crontab.png)
+
+{: .warning }
+SWIRL AI Connect, Enterprise Edition, supports a 5 minute service expiration schedule. Please [contact support](#support) for more information.
 
 {: .warning }
 If you change the `crontab` entry in the database and don't change the `CELERY_BEAT_SCHEDULE` as well, that schedule will be restored if/when you restart SWIRL.

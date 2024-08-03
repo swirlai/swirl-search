@@ -50,6 +50,10 @@ If you receive a warning about the password being compromised or in a recent dat
 
 Note that SWIRL Community will only retrieve a single set of results as configured in each SearchProvider. Fetching additional pages, on demand, is planned for a future release.
 
+The Galaxy UI highlghts results with a `swirl_score` above a configurable minimum score with a star in the results list. 
+
+![Galaxy UI with stars](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/3_2_0-Galaxy-star.png)
+
 ## Filtering Results by Source
 
 ![SWIRL Results Source Facet](images/swirl_results_source-galaxy_dark.png)
