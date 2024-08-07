@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Tutorial - Extending SWIRL
-nav_order: 7
+nav_order: 19
 ---
 <details markdown="block">
   <summary>
@@ -13,28 +13,6 @@ nav_order: 7
 </details>
 
 # Tutorial: Extending SWIRL
-
-## Intended Audience
-
-The following tutorial is intended for a Python developer who wants to extend SWIRL by adding SearchProviders, Connectors and Processors. Please note this guide assumes use of SWIRL 3.x or later.
-
-## Assumptions
-
-* Python 3.12.1 (or latest stable) installed locally
-* Redis installed and running
-* SWIRL installed locally (not in Docker) and running
-
-```
-% python swirl.py status
-__S_W_I_R_L__3_._3_._0__________________________________________________________
-
-Service: django...RUNNING, pid:34720
-Service: celery-worker...RUNNING, pid:34734
-
-  PID TTY           TIME CMD
-34720 ttys000    0:05.04 /Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python /Library/Frameworks/Python.framework/Versions/3.12/bin/daphne -b 0.0.0.0 -p 8000 swirl_server.asgi:application
-34734 ttys000    0:06.67 /Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python /Library/Frameworks/Python.framework/Versions/3.12/bin/celery -A swirl_server worker
-```
 
 ## Background: The SWIRL Search Workflow
 
@@ -237,7 +215,7 @@ from swirl.connectors.my_connector import MyConnector
 
 * Restart SWIRL
 ```
-% python swirl.py restart core
+% python swirl.py restart
 ```
 
 * Create a SearchProvider to configure the new Connector, then add it to the SWIRL installation as noted in the [Creating a SearchProvider](#creating-a-searchprovider) section above.  Don't forget a useful Tag so that you can easily target the new connector when ready to test.
@@ -353,7 +331,7 @@ def getSearchProviderQueryProcessorsDefault():
 
 * Restart SWIRL
 ```
-% python swirl.py restart core
+% python swirl.py restart
 ```
 
 * Go to the Galaxy UI (`http://localhost:8000/galaxy/`) and run a search; if using a query processor be sure to [target that SearchProvider with a tag](User-Guide.html#using-tags-to-target-searchproviders). 
@@ -441,7 +419,7 @@ def getSearchProviderResultProcessorsDefault():
 
 * Restart SWIRL
 ```
-% python swirl.py restart core
+% python swirl.py restart
 ```
 
 * Go to the Galaxy UI (`http://localhost:8000/galaxy/`) and run a search; be sure to target at least one SearchProvider that has the new ResultProcessor. For example if you added a ResultProcessor to a SearchProvider `result_processing` pipeline with the Tag "news", the query would need to be `http://localhost:8000/swirl/search/?q=news:some+query` instead of the above.
@@ -528,7 +506,7 @@ def getSearchPostResultProcessorsDefault():
 
 * Restart SWIRL
 ```
-% python swirl.py restart core
+% python swirl.py restart
 ```
 
 * Go to the Galaxy UI (`http://localhost:8000/galaxy/`) and run a search; be sure to target at least one SearchProvider that has the new PostResultProcessor. For example if you added a PostResultProcessor to a Search `post_result_processing` pipeline with the Tag "news", the query would need to be `http://localhost:8000/swirl/search/?q=news:some+query` instead of the above.

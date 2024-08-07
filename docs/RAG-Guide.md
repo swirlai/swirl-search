@@ -1,7 +1,7 @@
 ---
 layout: default
-title: AI Guide
-nav_order: 9
+title: RAG Configuration
+nav_order: 5
 ---
 <details markdown="block">
   <summary>
@@ -12,13 +12,12 @@ nav_order: 9
 {:toc}
 </details>
 
-# AI Retrieval Augmented Generation (RAG) Guide
+# Retrieval Augmented Generation (RAG) Configuration - Community Edition
 
-SWIRL supports Real Time [Retrieval Augmented Generation (RAG)](index.md#what-is-retrieval-augmented-generation-rag-does-swirl-support-it) out of the box, using existing search engines, databases and enterprise services.
+{: .warning }
+This document applies only to the SWIRL AI Connect, Community Edition. [Switch to the AI Connect, Enterprise Edition guide](AI-Connect.html)
 
-## Intended Audience
-
-This guide details how to configure and tune SWIRL (v. 3.0 or newer) to perform RAG. It is intended for use by developers and/or system administrators with the ability to configure the system to connect to services like OpenAI's ChatGPT and Azure's OpenAI.
+SWIRL supports Real Time [Retrieval Augmented Generation (RAG)](index.md#what-is-retrieval-augmented-generation-rag-does-swirl-support-it) out of the box, using result snippets and/or the full text of fetched result pages. 
 
 # Setting up RAG
 
@@ -36,6 +35,9 @@ AZURE_OPENAI_KEY=<your-key>
 AZURE_OPENAI_ENDPOINT=<your-azure-openai-endpoint-url>
 AZURE_MODEL=<your-azure-openai-model>
 ```
+
+{: .warning }
+SWIRL AI Connect Community Edition supports RAG only against OpenAI and Azure/OpenAI. The [Enterprise Edition](AI-Connect.html#connecting-to-generative-ai-gai-and-large-language-models-llms)supports many more. 
 
 * When installing for PRODUCTION use, change the following line in `static/api/config/default` from:
 
@@ -69,10 +71,7 @@ AZURE_MODEL=<your-azure-openai-model>
 
 Adjust the `timeout` value if necessary. Change the `User-Agent` string as needed, and/or authorize it to fetch pages from internal applications.
 
-As of SWIRL 3.2.0, the default AI Summary timeout value can now be overridden with a URL parameter in the Galaxy UI. For example: `http://localhost:8000/galaxy/?q=gig%20economics&rag=true&rag_timeout=90000`
-
-{: .highlight }
-The source must allow content to be fetched and not simply displayed on the source's website for RAG processing to utilize that content.
+You can also override the default timeout value with a URL parameter in the Galaxy UI. For example: `http://localhost:8000/galaxy/?q=gig%20economics&rag=true&rag_timeout=90000`
 
 * Restart SWIRL:
 
@@ -102,13 +101,23 @@ SWIRL's RAG processing utilizes only the *first 10 results* that are selected ei
 
 ## Notes
 
-* As of SWIRL 3.2.0, both the OpenAI API and the Azure OpenAI API are now supported.
+* The RAG process is as follows:
 
-* As of SWIRL 3.1.0, page fetch configurations are present for the [European PMC](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/europe_pmc.json) SearchProvider and four of the [Google PSE](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google_pse.json) SearchProviders.
+![SWIRL AI Connect Insight Pipeline](images/swirl_rag_pipeline.png)
 
-* As of SWIRL 3.1.0, RAG processing is now available through a single API call, e.g. `?qs=metasearch&rag=true`.  See the [Developer Guide](https://docs.swirl.today/Developer-Guide.html#get-synchronous-results-with-the-qs-url-parameter) for more details about the `?qs=` parameter.
+* The community edition of SWIRL is intended to RAG with sources you can fetch without authenticating. If you need to perform RAG with content from enterprise services like Microsoft 365, ServiceNow, Salesforce, Atlassian with OAUTH2 and SSO, please [contact us for information about SWIRL Enterprise](mailto:hello@swirl.today) - which supports all of that, and more, out of the box.
 
-* As of SWIRL 3.1.0, configurations for a default timeout value (60 seconds) and the text to display when the timeout is exceeded were added to RAG processing.  These options are available in the `static/api/config/default` file.
+* RAG Page fetch configurations are preloaded for the following SearchProviders:
+
+* [European PMC](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/europe_pmc.json) 
+* [Google Web](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google.json)
+* [Google News](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google.json)
+* [LinkedIn](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google.json)
+* [SWIRL Documentation](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google.json)
+
+* RAG processing is available through a single API call, e.g. `?qs=metasearch&rag=true`.  See the [Developer Guide](https://docs.swirl.today/Developer-Guide.html#get-synchronous-results-with-the-qs-url-parameter) for more details about the `?qs=` parameter.
+
+* The default timeout value (60 seconds) and the text to display when the timeout is exceeded cab be configured in the `static/api/config/default` file.
 
 ```
 "webSocketConfig": {
@@ -117,7 +126,3 @@ SWIRL's RAG processing utilizes only the *first 10 results* that are selected ei
     "timeoutText": "Timeout: No response from Generative AI."
   }
 ```
-
-* RAG processing with public web data can be problematic due to difficulties extracting article content; for those seeking a solution for public data please [contact SWIRL](mailto:hello@swirl.today).
-
-* The community edition of SWIRL is intended to RAG with sources you can fetch without authenticating. If you need to perform RAG with content from enterprise services like Microsoft 365, ServiceNow, Salesforce, Atlassian with OAUTH2 and SSO, please [contact us for information about SWIRL Enterprise](mailto:hello@swirl.today) - which supports all of that, and more, out of the box.

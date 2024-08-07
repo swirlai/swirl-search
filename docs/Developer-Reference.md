@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Developer Reference
-nav_order: 8
+nav_order: 18
 ---
 <details markdown="block">
   <summary>
@@ -14,9 +14,8 @@ nav_order: 8
 
 # Developer Reference
 
-## Intended Audience
-
-This guide is intended to provide developers with detailed reference information about SWIRL. Please refer to the [Developer Guide](Developer-Guide.md) for an overview of how to work with SWIRL.
+{: .warning }
+This document applies to all SWIRL Editions. 
 
 # State Table
 
@@ -115,7 +114,7 @@ A SearchProvider defines some searchable source. It includes metadata identifyin
 | tags | List of strings that organize SearchProviders into groups. | "" (`"News", "EnterpriseSearch"`) |
 
 {: .warning }
-As of version 2.5, the revised `CosineRelevancyResultProcessor` must be added *last* to the list of `result_processors`.
+The `CosineRelevancyResultProcessor` must be after the `MappingResultProcessor` in the default list of `result_processors`.
 
 ## APIs
 
@@ -191,7 +190,7 @@ However, the [goal of SWIRL](index.md) (and federated search in general) is to p
 | query_to_provider | The exact query sent to the SearchProvider | `https://www.googleapis.com/customsearch/v1?cx=google-search-engine-id&key=google-json-api-key&q=strategy` |
 | query_processors | The names of the Processors, specified in the SearchProvider, that processed the query | `"AdaptiveQueryProcessor"` |
 | result_processors | The names of the Processors, specified in the SearchProvider, that normalized the results | `"MappingResultProcessor","CosineRelevancyResultProcessor"` |
-| result_processor_json_feedback | TBD | (*See a full result object*) |
+| result_processor_json_feedback | A list of processors that responded | (*See a full result object*) |
 | messages | A list of any messages (strings) from the SearchProvider | `Retrieved 10 of 249 results from: OneDrive Files - Microsoft 365` |
 | status | The readiness of the result set | `READY` |
 | retrieved | The number of results SWIRL retrieved from this SearchProvider for this query | `10` |
@@ -214,8 +213,8 @@ However, the [goal of SWIRL](index.md) (and federated search in general) is to p
 | date_published_display | Optional SearchProvider field for mapping a different publish date value for display purposes. | `... date_published=foo.bar.date1,date_published_display=foo.bar.date2 ...` |
 | date_retrieved | The time and date at which SWIRL received this result from the source | `2022-02-20 03:45:03.207909` |
 | author | The source-reported author of this result, when available | `"CNN staff"` |
-| title_hit_highlights | TBD | TBD |
-| body_hit_highlights | TBD | TBD |
+| title_hit_highlights | A list of highlights found in title |  |
+| body_hit_highlights | A list of highlights found in the body |  |
 | payload | A dictionary of all remaining keys in the SearchProvider's response | `{}` |
 | explain | A dictionary containing (a) the matching word stems, (b) similarity scores for each match in each field, (c) length adjustments and other metadata, (d) `hits` information. It is only shown if [&explain=True](Developer-Guide.md#understand-the-explain-structure) is set. | `{}` |
 
@@ -528,7 +527,7 @@ The MongoDB SearchProvider is configured with `MATCH_ALL` by default, which requ
 
 The [Oracle connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/oracle.py) use the `oracledb` package to connect to an Oracle instance.
 
-As of SWIRL 3.1.0, the included [Free Public DB](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/oracle.json) SearchProvider has tested against 23c Free and presumably supports earlier versions.  This SearchProvider will be improved and preloaded in a future release.
+The included [Free Public DB](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/oracle.json) SearchProvider has tested against 23c Free and presumably supports earlier versions. 
 
 ## PostgreSQL
 

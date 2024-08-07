@@ -13,3 +13,14 @@ a.site-title.lh-tight {
     color: goldenrod;
     font-weight: lighter;
 }
+
+// Make the separators into non-clickable section headers
+a[href^="/separator"] {
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+    color: goldenrod;
+    font-weight: bold;
+    font-size: larger;
+    margin-top: 15px;
+  }

@@ -1,7 +1,7 @@
 ---
 layout: default
-title: Enterprise Guide
-nav_order: 10
+title: AI Connect Guide
+nav_order: 9
 ---
 <details markdown="block">
   <summary>
@@ -12,22 +12,12 @@ nav_order: 10
 {:toc}
 </details>
 
-# SWIRL AI CONNECT Enterprise Guide
+# AI Connect Guide - Enterprise Edition
 
-{: .highlight }
-This repository is commercially licensed. A valid license key is required for use. Please contact [hello@swirlsearch.com](mailto:hello@swirlsearch.com) for more information.
+{: .warning }
+This document applies only to SWIRL AI Connect, Enterprise Edition. [Switch to the AI Connect, Community Edition guide](RAG-Guide.html)
 
-# System Requirements
-
-* Platform - Ubuntu, RHEL, or OS/X; Note: Windows is not supported
-* 8+ VCPU, 16+ GB of memory
-* At least 500 GB of free disk space
-* Python 3.11 or newer
-* PostgreSQL 14 or later
-* SSL certificates installed and configured for Python
-* Network connectivity tested (see below) between SWIRL and systems to be queried
-
-# Configuring SWIRL AI CONNECT ENTERPRISE
+# Configuring Swirl AI Connect, Enterprise Edition
 
 ## Licensing
 
@@ -41,7 +31,7 @@ A message will appear in the `logs/django.log` if the license is invalid. Please
 
 ## Database
 
-For POV's, SWIRL AI CONNECT ENTERPRISE may be used with Sqlite3. Please [contact support](#support) for assistance with this configuration option.
+For POV's, SWIRL AI Connect, Enterprise Edition, may be used with Sqlite3. Please [contact support](#support) for assistance with this configuration option.
 
 For production, SWIRL recommends PostgreSQL.
 
@@ -64,7 +54,7 @@ DATABASES = {
 
 For more information see: [Admin Guide - Configuring Django](https://docs.swirl.today/Admin-Guide.html#configuring-django)
 
-## Configuring OpenID Connect
+## OpenID Connect
 
 If you will be using OpenID Connect to authenticate and auto-provision users, modify the following variables in the instances's `.env` file:
 
@@ -83,6 +73,90 @@ OIDC_STORE_ACCESS_TOKEN=''
 OIDC_STORE_ID_TOKEN=''
 OIDC_AUTHENTICATION_CALLBACK_URL=''
 ```
+
+## Connecting to Microsoft IDP
+
+If you will be using Microsoft as your IDP, place the following in the OS environment - not in the `.env` file:
+
+```
+export MSAL_CB_PORT=8000
+export MSAL_HOST=localhost
+```
+
+## Connecting to M365
+
+To connect SWIRL to your M365 tenant, follow instructions in the [Microsoft 365 Guide](https://docs.swirl.today/M365-Guide.html)
+
+## Connecting to other Authentication Systems
+
+To connect SWIRL to an Identity Provider (IDP) or Single Sign On (SSO) authority it is necessary to configure an Authenticator object. 
+
+To view, edit, add or delete an Authenticator, go to `swirl/authenticators` endpoint. 
+
+For example, if using the default local install: [http://localhost:8000/swirl/aiproviders](http://localhost:8000/swirl/aiproviders)
+
+### Overview
+
+Authenticators have the following fields:
+
+| Field | Description |
+| ----- | ----------- |
+| idp | The name of the authenticator object, which will also be the URL |
+| name | The name of the authenticator, which will be displayed to the user |
+| active | Boolean; if false, the Authenticator is not available, and no authentication switch will appear in Galaxy UI |
+| callback_path | The URL, relative to SWIRL, where the IDP should redirect with the user's tokens | 
+| client_id | The id of the shared secret | 
+| client_secret | The shared secret | 
+| app_uri | The location of the SWIRL application | 
+| auth_uri | The location of the authentication system | 
+| token_uri | The location from which SWIRL should obtain authentication token(s) | 
+| user_data_url | The URL to the user's profile, if needed | 
+| user_data_params | A list of data parameters required from the profile, if needed | 
+| user_data_headers | A list of headers required for requesting the user's tokens, such as "Authorization" | 
+| user_data_method | The method to use when requesting the user's profile | 
+| initiate_auth_close_flow_params | A list of parameters for CAS2 and other custom authentication flows | 
+| exchange_code_params | A list of parameters for exchange during custom flow exection | 
+| is_code_challenge | A boolean setting determing if the exchange code parameters should be sent with every request; defaults to True | 
+| scopes | A listing of the authorization scopes to be requested | 
+| should_expire | A boolean setting determining if the token will need refreshing; defaults to True | 
+| use_basic_auth | A boolean setting to use basic auth instead of SSO for this authenticator | 
+
+### M365
+
+SWIRL comes preloaded with an Authenticator for Microsoft. 
+
+```
+    "idp": "Microsoft",
+    "name": "Microsoft",
+    "active": false,
+    "callback_path": "/swirl/callback/microsoft-callback",
+    "client_id": "<your-client-id>",
+    "client_secret": "<your-client-secret>",
+    "app_uri": "http://localhost:8000",
+    "auth_uri": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+    "token_uri": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+    "user_data_url": "https://graph.microsoft.com/v1.0/me",
+    "user_data_params": {
+        "$select": "displayName,mail,userPrincipalName"
+    },
+    "user_data_headers": {
+        "Authorization": "Bearer {access_token}"
+    },
+    "user_data_method": "GET",
+    "initiate_auth_code_flow_params": {},
+    "exchange_code_params": {},
+    "is_code_challenge": true,
+    "scopes": "User.Read Mail.Read Files.Read.All Calendars.Read Sites.Read.All Chat.Read offline_access",
+    "should_expire": true,
+    "use_basic_auth": true
+}
+```
+
+To activate this authenticator, a new SWIRL app has to be registered in Azure. Refer to the [M365 Guide](M365-Guide.html) for detailed information.
+
+### Other Authenticators
+
+Please [contact support](#support) to obtain Authenticators for any other systems - including Elastic, OpenSearch, CAS2, Salesforce, ServiceNow, Okta, Auth0 and Ping Federate.
 
 ## Changing the Galaxy Logo
 
@@ -116,33 +190,11 @@ Restart SWIRL to see the new logos:
 python swirl.py restart
 ```
 
-# Deploying SWIRL AI CONNECT ENTERPRISE
+# Connecting to Generative AI (GAI) and Large Language Models (LLMs)
 
-## Connecting to Microsoft IDP
+## Roles for Generative AI/Large Language Models
 
-If you will be using Microsoft as your IDP, place the following in the OS environment - not in the `.env` file:
-
-```
-export MSAL_CB_PORT=8000
-export MSAL_HOST=localhost
-```
-
-## Connecting to M365
-
-To connect SWIRL to your M365 tenant, follow instructions in the [Microsoft 365 Guide](https://docs.swirl.today/M365-Guide.html)
-
-## Connecting to Other Sources
-
-To connect SWIRL to search engines, databases, enterprise applications and information services, follow instructions in the [User Guide - Using SearchProviders](https://docs.swirl.today/User-Guide.html#using-searchproviders)
-
-## Connecting to Enterprise AI
-
-{: .highlight }
-The following applies only to SWIRL AI CONNECT ENTERPRISE.
-
-### Roles for Generative AI
-
-There are four "roles" which LLM/GAI can play in SWIRL:
+There are four "roles" which GAI/LLMs can take in SWIRL:
 
 | Role | Description | Default | 
 | ------- | ----------- | -------- |
@@ -151,13 +203,13 @@ There are four "roles" which LLM/GAI can play in SWIRL:
 | connector | Provide completions for direct questioning (not RAG) | OpenAI GPT-3.5 Turbo  | 
 | rag | Provide completions for Retrieval Augmented Generation (RAG) using data retrieved by SWIRL | OpenAI GPT-4  |
 
-### Managing AI Providers
+## Managing AI Providers
 
 To view, edit, add or delete an AI provider, go to the `swirl/aiproviders` endpoint. For example, if using the default local install: [http://localhost:8000/swirl/aiproviders](http://localhost:8000/swirl/aiproviders)
 
 ![SWIRL AI Providers](https://docs.swirl.today/images/swirl_aiproviders.png)
 
-### Supported AI Providers
+## Supported AI Providers
 
 SWIRL uses LiteLLM to support the most popular providers; however, it may not come preloaded with a AI Provider for every supported provider. Please [contact support](#support) for assistance in creating a suitable AI Provider for any LiteLLM supported endpoint.
 
@@ -166,7 +218,7 @@ From LiteLLM.ai:
 
 * [List of Supported LLM/GAI](https://docs.litellm.ai/docs/providers)
 
-### Editing AI Providers
+## Editing AI Providers
 
 Edit any AI Provider by adding the `id` value to the end of the `swirl/aiproviders` URL. For example: `http://localhost:8000/swirl/aiproviders/4/`
 
@@ -177,7 +229,7 @@ From here, use the form at the bottom of the page to:
 * `DELETE` this AI Provider, forever
 * Edit the configuration of the AI Provider and `PUT` the changes
 
-### Activating AI Providers
+## Activating AI Providers
 
 To activate a preloaded AI Provider, edit it as noted in the previous section.
 
@@ -212,7 +264,7 @@ For example, here is the preloaded OpenAI GPT-4 provider, which can be used for 
     }
 ```
 
-### AI Provider Defaults
+## AI Provider Defaults
 
 Use the `active` property to switch between providers for the same role function.
 
@@ -236,10 +288,12 @@ For example, to switch back and forth between OpenAI GPT-4 and Azure/OpenAI GPT-
         "tags": [
             "query",
             "connector",
-            "rag"
+            "rag",
+            "chat"
         ],
         "defaults": [
-            "rag"
+            "rag",
+            "chat"
         ]
     }
 ```
@@ -250,7 +304,7 @@ Then go to the OpenAI provider shown above (with `id` 16, above). Edit it, set `
 
 Future versions will allow prioritization and fallback between providers. 
 
-### Copy/Paste Install of AI Providers
+## Copy/Paste Install of AI Providers
 
 If you have the raw JSON of an AI Provider, install it by copying/pasting into the form at the bottom of the AI Provider endpoint.
 
@@ -265,7 +319,7 @@ Use the included [`swirl_load.py`](https://github.com/swirlai/swirl-search/blob/
 
 ## Using the Bearer Token Service to Update AI Providers
 
-SWIRL AI CONNECT ENTERPRISE includes a Bearer Token Service that obtains new tokens on a configurable basis. 
+SWIRL AI Connect, Enterprise Edition, includes a Bearer Token Service that obtains new tokens on a configurable basis. 
 
 The Bearer Token service issues a `POST` to a configured IDP URL with a user id and secret, extracts a `bearer_token` from the response, then updates the `api_key` of the configured AI Provider. 
 
@@ -315,9 +369,111 @@ python swirl.py start celery-beats
 
 This will ensure you see messages from the `celery-beats` log. However, most of the BT service log output will be in `logs/celery-worker.log`.
 
-# Fetching Enterprise Content for RAG
+# Managing Prompts
 
-The SWIRL AI CONNECT ENTERPRISE Page Fetcher supports retrieval of results from sources that require authentication. The following sections explain how to configure specific SearchProviders for RAG.
+## Default Prompt
+
+By default, the SWIRL system prompt is as follows:
+
+```
+{
+    "name": "default",
+    "shared": false,
+    "prompt": "Answer this query '{query}' given the following recent search results as background information. Do not mention that you are using the provided background information. Please list the sources at the end of your response. Ignore information that is off-topic or obviously conflicting, without warning about it. The results may include information for different entities with identical names, try to disambiguate them in your response. If you discover possible familiar relationships in the content, mention it as a possibility.",
+    "data": [],
+    "note": "Important: Text between {RAG_IMPORTANT_START_TAG} and {RAG_IMPORTANT_END_TAG} is most pertinent to the query.\n",
+    "footer": "\n\n\n\n--- Final Instructions ---\nIn your response do not assume people with vastly different work histories are the same person. If the query appears to be a proper name, focus on answering the question, 'Who is?' or 'What is?', as appropriate. If the query appears to be a question, then try to answer it. For the list of sources, use the HTML tags and format in the example below:\n\n<p>\n<br><b>Sources:</b>\n<br><i>example description 1</i> &nbsp;&nbsp;&nbsp; <b>example website or source name 1</b>\n<br><i>example description 2</i> &nbsp;&nbsp;&nbsp; <b>example website or source name 2</b>\n</p>\n\nEnclose your response in HTML tags <p></p> and insert a <br> HTML tag every two sentences.",
+    "tags": []
+}
+```
+
+This is designed to operate on search queries by providing summarization of the provided data and/or answering simple questions from it. 
+
+## Creating New Saved Prompts
+
+* Go to [localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)
+
+* Create a new prompt using the form at the bottom of the page, or by pasting in raw JSON and clicking the "POST" button.
+
+For example, to modify the default prompt so that the response is in pirate-speak:
+
+```
+    {
+        "name": "pirate",
+        "prompt": "Answer this query '{query}' given the following recent search results as background information. Do not mention that you are using the provided background information. Please list the sources at the end of your response. Ignore information that is off-topic or obviously conflicting, without warning about it. The results may include information for different entities with identical names, try to disambiguate them in your response. If you discover possible familiar relationships in the content, mention it as a possibility.",
+        "note": "Important: Text between {RAG_IMPORTANT_START_TAG} and {RAG_IMPORTANT_END_TAG} is most pertinent to the query.",
+        "footer": "--- Final Instructions ---\nIn your response, pretend you are a pirate comedian, but keep it clean!",
+        "tags": []
+    }
+```
+
+This should produce the following:
+
+![SWIRL Prompt Object](./images/swirl_prompt_form.png)
+
+## Specifying a Saved Prompt in a Query
+
+* Test the prompt using the prompt operator:
+
+```
+swirl ai connect prompt:pirate
+```
+
+The response should be in pirate-speak:
+
+![SWIRL RAG response in pirate speak](./images/swirl_prompt_pirate.png)
+
+## Understanding Saved Prompts
+
+SWIRL Prompts have three components:
+
+| Field | Description |
+| ----- | ----------- |
+| prompt | The main body of the prompt. Use {query} to denote the SWIRL query. | 
+| note | Text appended to RAG data chunks that are annotated by the [Text Analyzer](#text-summarization). |
+| footer | Additional information, attached after the prompt and RAG data. This is a good place to add formatting instructions. | 
+
+## Specifying The Prompt in a Query Processor or Connector
+
+It's easy to specify the Prompt, guide and filter when using a Generative AI (GAI) to rewrite queries, or directly answer questions.
+
+Refer to the [Connecting to Enterprise AI](#connecting-to-enterprise-ai) section above and also to the Developer Reference [GAI SearchProvider Tags](https://docs.swirl.today/Developer-Reference.html#chatgpt-query_mapping) section for more information.
+
+# Optimizing RAG
+
+## Using Summaries
+
+Set `SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY` to True to cause SWIRL to use the result summaries for RAG. This is the best option for any source you can't fetch pages from due to authentication issues.
+
+## Distribution Strategy
+
+The distribution strategy controls how pages are chosen from the search results by source. It is controlled by setting `SWIRL_RAG_DISTRIBUTION_STRATEGY` as follows:
+
+* `Distributed` - Keep the sort order and add pages evenly per source. For example, if you had two sources then 5 of each would be added to the list of pages to fetch and would be added to the prompt until the limit of tokens is reached. The sort order is maintained and the `swirl_score` value is not used.
+* `RoundRobin` - Pages are added round robin by source, using the sort order within the source and without regard to `swirl_score` value.
+* `Sorted` - Pages are added in the order of `swirl_score` value, and only pages with a `swirl_score` value greater than 50 are used.
+
+`Sorted` is the default.
+
+## Model Maximum Pages and Tokens
+
+Use the `SWIRL_RAG_MODEL` parameter to change the generative AI model SWIRL RAG uses. Use the `SWIRL_RAG_MAX_TO_CONSIDER`, and `SWIRL_RAG_TOK_MAX` parameters to independently control the number of tokens that are used to compose the prompt sent to ChatGPT.
+
+## Notes
+
+* When modifying the model or the `SWIRL_RAG_TOK_MAX` value, be sure to keep the numbers below the maximums accepted by the model. SWIRL uses model-specific encodings to count tokens but also adheres to the settings when deciding when to stop adding prompt text.
+
+* The default `SWIRL_RAG_TOK_MAX` value is not set to the maximum because increasing token number can slow the response from ChatGPT.
+
+# Configuring the Authenticating Page Fetcher to RAG with Enterprise Content
+
+The SWIRL AI Connect, Enterprise Edition, includes a Page Fetcher that can retrieve results from sources that require authentication. 
+
+![SWIRL AI Connect Insight Pipeline](images/swirl_rag_pipeline.png)
+
+The Page Fetcher will authenticate using the user's token, or whatever else is configured for that source. 
+
+The following sections explain how to configure Page Fetching for specific SearchProviders:
 
 ## Google PSE SearchProviders
 
@@ -516,15 +672,19 @@ To run Tika from another location, set the `TIKA_SERVER_ENDPOINT` to that URL in
 
 See the Microsoft OneDrive section just above for a Page Fetcher configuration will utilize Tika to convert PDF, Microsoft Office, and other file formats returned from the Microsoft Graph API to text that can then be consumed by SWIRL for RAG processor. Expand the whitelist to include any [document type that Tika supports](https://tika.apache.org/1.10/formats.html).
 
-# Analyzing Enterprise Content
+# Configuring Passage Detection using Reader LLM
 
-SWIRL AI CONNECT ENTERPRISE includes an optional Text Analyzer summarization service that can optionally be plugged into RAG to enhance accuracy.  To launch the Text Analyzer locally, run the following command from the Console:
+SWIRL AI Connect, Enterprise Edition, includes a passage detection feature in the Reader LLM that can be plugged into RAG to enhance accuracy.  
+
+To launch it locally, run the following command from the Console:
 
 ```
 docker run -p 7029:7029 -e SWIRL_TEXT_SERVICE_PORT=7029 swirlai/swirl-integrations:topic-text-matcher
 ```
 
 ## Configuration Options
+
+The following options are available to customize the Reader LLM. Note that some of them are actually RAG settings.
 
 | Variable | Description | Example |
 | -------- | ----------- | ------- |
@@ -537,6 +697,8 @@ docker run -p 7029:7029 -e SWIRL_TEXT_SERVICE_PORT=7029 swirlai/swirl-integratio
 | SWIRL_RAG_MAX_TO_CONSIDER | The maximum number of results from a search to consider for RAG | `10` |
 | SWIRL_RAG_DISTRIBUTION_STRATEGY | May be one of the following:  Distributed, RoundRobin, or Sorted | `RoundRobin` |
 
+* If using the `SWIRL_RAG_DISTRIBUTION_STRATEGY` option of `distributed`: when all SearchProviders have been consumed, and the number of documents has not reached `SWIRL_MAX_TO_CONSIDER`, SWIRL backfills from the search result list starting at the document after the last one added from the first SearchProvider until `SWIRL_MAX_TO_CONSIDER` is reached.
+
 ## Example `.env` File:
 
 ```
@@ -545,10 +707,6 @@ SWIRL_TEXT_SUMMARIZATION_TRUNCATION=True
 SWIRL_RAG_DISTRIBUTION_STRATEGY='RoundRobin'
 TIKA_SERVER_ENDPOINT='http://localhost:9998/'
 ```
-
-### Notes
-
-* If using the `SWIRL_RAG_DISTRIBUTION_STRATEGY` option of `distributed`: when all SearchProviders have been consumed, and the number of documents has not reached `SWIRL_MAX_TO_CONSIDER`, SWIRL backfills from the search result list starting at the document after the last one added from the first SearchProvider until `SWIRL_MAX_TO_CONSIDER` is reached.
 
 ## Text Summarization
 
@@ -577,92 +735,3 @@ When these conditions are met, entries like this appear in the RAG logs:
 ```
 2023-10-19 09:34:01,828 INFO     RAG: url:https://www.wendoverart.com/wtfh0301 problem:RAG Chunk not added for 'Swirl' : SUMMARIZATION TRUNCATION
 ```
-
-## RAG Distribution Strategy
-
-The distribution strategy controls how pages are chosen from the search results by source. It is controlled by setting `SWIRL_RAG_DISTRIBUTION_STRATEGY` as follows:
-
-* `Distributed` - Keep the sort order and add pages evenly per source. For example, if you had two sources then 5 of each would be added to the list of pages to fetch and would be added to the prompt until the limit of tokens is reached. The sort order is maintained and the `swirl_score` value is not used.
-* `RoundRobin` - Pages are added round robin by source, using the sort order within the source and without regard to `swirl_score` value.
-* `Sorted` - Pages are added in the order of `swirl_score` value, and only pages with a `swirl_score` value greater than 50 are used.
-
-`Sorted` is the default.
-
-## Model Maximum Pages and Tokens
-
-Use the `SWIRL_RAG_MODEL` parameter to change the generative AI model SWIRL RAG uses. Use the `SWIRL_RAG_MAX_TO_CONSIDER`, and `SWIRL_RAG_TOK_MAX` parameters to independently control the number of tokens that are used to compose the prompt sent to ChatGPT.
-
-### Notes
-* When modifying the model or the `SWIRL_RAG_TOK_MAX` value, be sure to keep the numbers below the maximums accepted by the model. SWIRL uses model-specific encodings to count tokens but also adheres to the settings when deciding when to stop adding prompt text.
-
-* The default `SWIRL_RAG_TOK_MAX` value is not set to the maximum because increasing token number can slow the response from ChatGPT.
-
-# Managing Prompts
-
-## Default Prompt
-
-By default, the SWIRL system prompt is as follows:
-
-```
-{
-    "name": "default",
-    "shared": false,
-    "prompt": "Answer this query '{query}' given the following recent search results as background information. Do not mention that you are using the provided background information. Please list the sources at the end of your response. Ignore information that is off-topic or obviously conflicting, without warning about it. The results may include information for different entities with identical names, try to disambiguate them in your response. If you discover possible familiar relationships in the content, mention it as a possibility.",
-    "data": [],
-    "note": "Important: Text between {RAG_IMPORTANT_START_TAG} and {RAG_IMPORTANT_END_TAG} is most pertinent to the query.\n",
-    "footer": "\n\n\n\n--- Final Instructions ---\nIn your response do not assume people with vastly different work histories are the same person. If the query appears to be a proper name, focus on answering the question, 'Who is?' or 'What is?', as appropriate. If the query appears to be a question, then try to answer it. For the list of sources, use the HTML tags and format in the example below:\n\n<p>\n<br><b>Sources:</b>\n<br><i>example description 1</i> &nbsp;&nbsp;&nbsp; <b>example website or source name 1</b>\n<br><i>example description 2</i> &nbsp;&nbsp;&nbsp; <b>example website or source name 2</b>\n</p>\n\nEnclose your response in HTML tags <p></p> and insert a <br> HTML tag every two sentences.",
-    "tags": []
-}
-```
-
-This is designed to operate on search queries by providing summarization of the provided data and/or answering simple questions from it. 
-
-## Creating New Saved Prompts
-
-* Go to [localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)
-
-* Create a new prompt using the form at the bottom of the page, or by pasting in raw JSON and clicking the "POST" button.
-
-For example, to modify the default prompt so that the response is in pirate-speak:
-
-```
-    {
-        "name": "pirate",
-        "prompt": "Answer this query '{query}' given the following recent search results as background information. Do not mention that you are using the provided background information. Please list the sources at the end of your response. Ignore information that is off-topic or obviously conflicting, without warning about it. The results may include information for different entities with identical names, try to disambiguate them in your response. If you discover possible familiar relationships in the content, mention it as a possibility.",
-        "note": "Important: Text between {RAG_IMPORTANT_START_TAG} and {RAG_IMPORTANT_END_TAG} is most pertinent to the query.",
-        "footer": "--- Final Instructions ---\nIn your response, pretend you are a pirate comedian, but keep it clean!",
-        "tags": []
-    }
-```
-
-This should produce the following:
-
-![SWIRL Prompt Object](./images/swirl_prompt_form.png)
-
-## Specifying a Saved Prompt in a Query
-
-* Test the prompt using the prompt operator:
-
-```
-swirl ai connect prompt:pirate
-```
-
-The response should be in pirate-speak:
-
-![SWIRL RAG response in pirate speak](./images/swirl_prompt_pirate.png)
-
-## Understanding Saved Prompts
-
-SWIRL Prompts have three components:
-
-| Field | Description |
-| ----- | ----------- |
-| prompt | The main body of the prompt. Use {query} to denote the SWIRL query. | 
-| note | Text appended to RAG data chunks that are annotated by the [Text Analyzer](#text-summarization). |
-| footer | Additional information, attached after the prompt and RAG data. This is a good place to add formatting instructions. | 
-
-## Specifying The Prompt in a Query Processor or Connector
-
-It's easy to specify the Prompt, guide and filter when using a Generative AI (GAI) to rewrite queries, or directly answer questions.
-
-Refer to the [Connecting to Enterprise AI](#connecting-to-enterprise-ai) section above and also to the Developer Reference [GAI SearchProvider Tags](https://docs.swirl.today/Developer-Reference.html#chatgpt-query_mapping) section for more information.

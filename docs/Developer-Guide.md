@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Developer Guide
-nav_order: 6
+nav_order: 17
 ---
 <details markdown="block">
   <summary>
@@ -14,11 +14,10 @@ nav_order: 6
 
 # Developer Guide
 
-## Intended Audience
+{: .warning }
+This document applies to all SWIRL Editions. 
 
-This guide is intended to provide developers with an overview of SWIRL and how to accomplish specific tasks with it. Please refer to the [Developer Reference](Developer-Reference.md) for lists of system states, system objects and properties, etc.
-
-# Terminology
+# Glossary
 
 | Word | Explanation | 
 | ---------- | ---------- |
@@ -136,7 +135,7 @@ There are some limitations to the `q=` interface:
 
 ## Specify SearchProviders with the "providers=" URL Parameter
 
-As of version 1.6, the `providers=` URL parameter is now supported. It accepts a list of SearchProvider Tags, or just a single one. For example:
+The `providers=` URL parameter accepts a list of SearchProvider Tags, or just a single one. For example:
 
 ```
 http://localhost:8000/swirl/search/?q=knowledge+management&providers=maritime
@@ -156,9 +155,9 @@ For example: [http://localhost:8000/swirl/search?qs=knowledge+management](http:/
 
 The `qs=` parameter can also be used with the [providers](#specify-searchproviders-with-the-providers-url-parameter) and [result_mixer](Developer-Reference.md#mixers-1) parameters.
 
-As of SWIRL 3.1.0, RAG processing is now available through a single API call using `qs=`, e.g. `?qs=metasearch&rag=true`.
+RAG processing is available through a single API call using `qs=`, e.g. `?qs=metasearch&rag=true`.
 
-As of SWIRL 3.2.0, the default AI Summary timeout value can also be overridden with a URL parameter in the Galaxy UI. For example: `http://localhost:8000/galaxy/?q=gig%20economics&rag=true&rag_timeout=90000`
+The default AI Summary timeout value can be overridden with a URL parameter in the Galaxy UI. For example: `http://localhost:8000/galaxy/?q=gig%20economics&rag=true&rag_timeout=90000`
 
 Note that `&page=` is NOT supported with `qs=`; to access the second page of results use the `next_page` property from the `info.results` structure.
 
@@ -181,9 +180,19 @@ If `"sort": "date"` is specified in the Search object, SWIRL connectors that sup
 ![SWIRL Results Header, Sort/Date, Relevancy Mixer](images/swirl_results_mixed_1_date_sort.png)
 ![SWIRL Results, Sort/Date, Relevancy Mixer](images/swirl_results_mixed_2_date_sort.png)
 
-NOTES:
-* In Release 2.5, the `DateFindingResultProcessor` was added to the Google PSE SearchProvider JSON. It finds a date in a large percentage of results that otherwise wouldn't have one, and copies the date to the `date_published` field.
-* Some sources simply won't report a date published, but still send a different response.
+Note that some sources simply won't report a date published. The [DateFindingResultProcessor](#find-dates-in-bodytitle-responses) can be used to detect dates in body or other fields, and copy them to the date_published field.
+
+## Use an LLM to Rewrite the User's Query
+
+SWIRL AI Connect, Community Edition, supports this using the ChatGPTQueryProcessor. Install it in the SearchProvider.query_processors list, as described here: [Developer Reference, Query Processors](Developer-Reference.html#query-processors).
+
+## Adjusting the swirl_score that causes Galaxy UI to star results
+
+The `swirl_score` configuration is available in `theminimumSwirlScore` entry of `static/api/config/default`. 
+
+The default value is `100`. Higher values will produce fewer starred results.
+
+![Galaxy UI with stars](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/3_2_0-Galaxy-star.png)
 
 ## Handle NOTted queries
 
@@ -357,11 +366,29 @@ If you want to apply spellcheck to a single SearchProvider, put it in that Searc
 {: .warning }
 Use Spellcheck cautiously as it tends to cause a lack of results from sources that have sparse indexes and limited or no fuzzy search.
 
-## Adjust Relevancy for a Single SearchProvider
+## Improve Relevancy for a Single SearchProvider
 
-SWIRL 3.2.0 includes a new `RequireQueryStringInTitleResultProcessor`. If installed after the `MappingResultProcessor` it will drop results that don't include the user's query in the title.
+The `RequireQueryStringInTitleResultProcessor`, i=f installed after the `MappingResultProcessor`, will drop results that don't include the user's query in the title. 
 
 This processor is intended for use with sources like LinkedIn that frequently return related profiles that mention a person, but aren't about them. (SWIRL will normally rank these results poorly, but this will eliminate them entirely.)
+
+## Find Dates in Body/Title Responses
+
+The `DateFindingResultProcessor` finds a date in a large percentage of results that otherwise wouldn't have one, and copies it to the `date_published` field.
+
+Add it to the SearchProvider.result_processors list to have it process results from that provider. Add it to the Search.post_result_processors list to attempt this on all results. 
+
+## Automatically Map Results Using Profiling
+
+The `AutomaticPayloadMapperResultProcessor` profiles response data to find good strings for SWIRL's `title`, `body`, and `date_published` fields. 
+
+It is intended for SearchProviders that would otherwise have few (or no) good result_mappings options. It should be place after the `MappingResultProcessor`, and the `result_mappings` field should be blank. 
+
+## Visualize Structured Data Results
+
+Specify `DATASET` in the `result_mappings` to have SWIRL organize a columnar response into a single result, with the columns in the payload.
+
+![Galaxy UI with Chart Generated from Thoughtspot Dataset Result](images/3_5_0-Chart_UI.png)
 
 ## Expire Search Objects
 
@@ -477,7 +504,7 @@ The defaults are:
 
 ## Configure Stopwords Language
 
-As of version 1.6, SWIRL is configured to load English stopwords only. To change this, modify `SWIRL_DEFAULT_QUERY_LANGUAGE` in [swirl_settings/settings.py](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py) and change it to another [NLTK stopword language](https://stackoverflow.com/questions/54573853/nltk-available-languages-for-stopwords).
+SWIRL is configured to load English stopwords only. To change this, modify `SWIRL_DEFAULT_QUERY_LANGUAGE` in [swirl_settings/settings.py](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py) and change it to another [NLTK stopword language](https://stackoverflow.com/questions/54573853/nltk-available-languages-for-stopwords).
 
 ## Understand the Explain Structure
 
@@ -670,7 +697,8 @@ Notes:
 # Retrieval Augmented Generation Web Socket API
 
 ## WebSocket Interaction Protocol for UI Developers 
-Available as of SWIRL 3.0:  This section outlines the protocol for WebSocket interactions with the SWIRL server.
+
+This section outlines the protocol for WebSocket interactions with the SWIRL server.
 
 1. Initialize the WebSocket
 - **Action:** Create a WebSocket connection.
@@ -708,7 +736,8 @@ Available as of SWIRL 3.0:  This section outlines the protocol for WebSocket int
 # Using Query Transformations
 
 ## Query Transformation Rules
-As of SWIRL 2.0, developers can apply a set of transformation rules to a query using the new Query Transformation feature.
+
+Developers can apply a set of transformation rules to a query using the new Query Transformation feature.
 
 The rules can be applied for all sources (`pre-query`) or to individual sources (`query`). There are three transformation types:
 
@@ -860,9 +889,9 @@ Update the Search Provider's `query_processors` field to include the reference. 
 
 ## Integrate Source Synonyms Into SWIRL Relevancy
 
-As of SWIRL 1.10, you can use hit highlight extraction to integrate a SearchProvider's synonym hits into SWIRL's relevancy processing.
+SWIRL cna use hit highlight extraction to integrate a SearchProvider's synonym feedback into SWIRL's relevancy processing.
 
-Data source synonym configuration can compromise the accuracy of SWIRL's relevancy scoring because the relevancy `PostResultProcessor` isn't aware of terms used to retrieve documents that were not part of the original query. As of Release 1.10, SWIRL can surface any terms used by the SearchProvider to match documents in the results returned by that source.
+Data source synonym configuration can compromise the accuracy of SWIRL's relevancy scoring because the relevancy `PostResultProcessor` isn't aware of terms used to retrieve documents that were not part of the original query. SWIRL can surface any terms used by the SearchProvider to match documents in the results returned by that source.
 
 The following SearchProviders may be configured with synonym support at the source and require this additional configuration in SWIRL:
 * OpenSearch

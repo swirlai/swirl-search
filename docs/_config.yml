@@ -1,6 +1,6 @@
 # Site settings
 title: SWIRL Documentation
-description: "Empowering Data and AI: Infrastructure for Complex Demands"
+description: "Powerful Real-Time AI Infrastructure Software"
 repository: "swirlai/swirl-search"
 url: https://docs.swirlaiconnect.com
 baseurl: "" # the subpath of your site, e.g. /blog
@@ -106,3 +106,12 @@ exclude:
 # Kramdown settings
 kramdown:
   smart_quotes: [apos, apos, quot, quot]
+
+# Plugins
+plugins:
+  - jekyll-sass-converter
+
+# Just the Docs settings
+just_the_docs:
+  # other settings...
+  auxiliary_stylesheets: ["_sass/custom/custom.scss"]
