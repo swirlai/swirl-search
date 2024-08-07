@@ -115,8 +115,8 @@ Authenticators have the following fields:
 | user_data_headers | A list of headers required for requesting the user's tokens, such as "Authorization" | 
 | user_data_method | The method to use when requesting the user's profile | 
 | initiate_auth_close_flow_params | A list of parameters for CAS2 and other custom authentication flows | 
-| exchange_code_params | A list of parameters for exchange during custom flow exection | 
-| is_code_challenge | A boolean setting determing if the exchange code parameters should be sent with every request; defaults to True | 
+| exchange_code_params | A list of parameters for exchange during custom flow execution | 
+| is_code_challenge | A boolean setting determining if the exchange code parameters should be sent with every request; defaults to True | 
 | scopes | A listing of the authorization scopes to be requested | 
 | should_expire | A boolean setting determining if the token will need refreshing; defaults to True | 
 | use_basic_auth | A boolean setting to use basic auth instead of SSO for this authenticator | 

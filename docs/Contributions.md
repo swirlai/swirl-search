@@ -20,14 +20,14 @@ The following table identifies the major classes of contributions, and the expec
 
 ## SearchProviders / Connectors
 
-We greatfully accept SPs/Connector PRs, so long as they can be tested without expense. These contributions are excellent for new to intermediate developers, and should take 1 day to 1 week with most time determined by the time to stand up a test server...
+We gratefully accept SPs/Connector PRs, so long as they can be tested without expense. These contributions are excellent for new to intermediate developers, and should take 1 day to 1 week with most time determined by the time to stand up a test server.
 
 Candidates include:
 
 * Notion (service)
 * MarqoDB (vector DB)
 * ChromaDB (vector DB)
-* RaptorDB (vetor DB)
+* RaptorDB (vector DB)
 * MySQL (relational DB)
 * SQLAlchemy (relational DB package)
 
@@ -43,7 +43,7 @@ These tasks should take 1-2 weeks for an intermediate to advanced developer.
 
 ## Testing & Documentation
 
-SWIRL has an extensive automated testing system, and a decent amount of documentation. We greatfully welcome contributions in these areas, which can be very minimal effort (such as documentation updates) to quite complex. Please [contact us](#support) for more information.
+SWIRL has an extensive automated testing system, and a decent amount of documentation. We gratefully welcome contributions in these areas, which can be very minimal effort (such as documentation updates) to quite complex. Please [contact us](#support) for more information.
 
 ## Guidelines for Submissions
 
