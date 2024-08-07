@@ -889,7 +889,7 @@ Update the Search Provider's `query_processors` field to include the reference. 
 
 ## Integrate Source Synonyms Into SWIRL Relevancy
 
-SWIRL cna use hit highlight extraction to integrate a SearchProvider's synonym feedback into SWIRL's relevancy processing.
+SWIRL can use hit highlight extraction to integrate a SearchProvider's synonym feedback into SWIRL's relevancy processing.
 
 Data source synonym configuration can compromise the accuracy of SWIRL's relevancy scoring because the relevancy `PostResultProcessor` isn't aware of terms used to retrieve documents that were not part of the original query. SWIRL can surface any terms used by the SearchProvider to match documents in the results returned by that source.
 

@@ -177,7 +177,7 @@ A direct hit on a funding record is likely to rank in the top 10 results, depend
         }
 ```
 
-The other SearhProviders will respond to the full query `electric vehicle tesla`. 
+The other SearchProviders will respond to the full query `electric vehicle tesla`. 
 
 SearchProviders do not need to have the `default` property set to `true` for Tsags to work. So long as they have `active` set to `true`, then using the Tag in a query will cause SWIRL to invoke it.
 
