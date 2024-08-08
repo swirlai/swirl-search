@@ -34,7 +34,7 @@ Parallel processing ends here
 * Post-result processing - example: [CosineRelevancyPostResultProcessor](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/relevancy.py)
 * Ranked-results available via mixer - example: [http://localhost:8000/swirl/results/?search_id=1](http://localhost:8000/swirl/results/?search_id=1)
 
-For more information, consult the [Developer Guide, Workflow Overview](Developer-Guide.md#workflow).
+For more information, consult the [Developer Guide, Workflow Overview](Developer-Guide.html#workflow).
 
 # Creating a SearchProvider
 
@@ -220,7 +220,7 @@ from swirl.connectors.my_connector import MyConnector
 
 * Create a SearchProvider to configure the new Connector, then add it to the SWIRL installation as noted in the [Creating a SearchProvider](#creating-a-searchprovider) section above.  Don't forget a useful Tag so that you can easily target the new connector when ready to test.
 
-To learn more about developing Connectors, refer to the [Developer Guide, Developing New Connectors](Developer-Guide.md#develop-new-connectors) section.
+To learn more about developing Connectors, refer to the [Developer Guide, Developing New Connectors](Developer-Guide.html#develop-new-connectors) section.
 
 # Creating a QueryProcessor
 
@@ -429,7 +429,7 @@ def getSearchProviderResultProcessorsDefault():
 MyResultProcessor updated 5 results from: MyConnector",
 ```
 
-To learn more about writing Processors, refer to the [Developer Guide](Developer-Guide.md#develop-new-processors)
+To learn more about writing Processors, refer to the [Developer Guide](Developer-Guide.html#develop-new-processors)
 
 # Creating a PostResultProcessor
 
@@ -516,5 +516,5 @@ def getSearchPostResultProcessorsDefault():
 MyPostResultProcessor updated 10 results from: MySearchProvider
 ```
 
-To learn more about writing Processors, refer to the [Developer Guide](Developer-Guide.md#develop-new-processors)
+To learn more about writing Processors, refer to the [Developer Guide](Developer-Guide.html#develop-new-processors)
 

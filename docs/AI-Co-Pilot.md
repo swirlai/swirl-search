@@ -84,7 +84,7 @@ Assuming the AI provider is correctly configured, you should be able to load the
 
 ![SWIRL Co-Pilot](images/swirl_copilot_chat_rag.png)
 
-Please refer to the AI Connect, Enterprise Edition, section on [Connecting to Enteprise AI](./AI-Connect.md#connecting-to-enterprise-ai) for more information on configuring AI Providers.
+Please refer to the AI Connect, Enterprise Edition, section on [Connecting to Enteprise AI](AI-Connect.html#connecting-to-enterprise-ai) for more information on configuring AI Providers.
 
 ## GAI/LLM Requirements
 

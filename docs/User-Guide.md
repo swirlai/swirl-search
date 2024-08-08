@@ -29,7 +29,7 @@ This version applies to the Community Edition of SWIRL!
 | Subscribe | An important property of Search objects. When set to `true`, SWIRL periodically reruns the search, specifying a date sort to get newer data, and removing duplicates from results. Currently users are expected to poll for updates, but future releases will support a call-back when new results are available, as well as support for automatic regeneration of AI Insights. |
 | Relevancy Ranking | A scoring system that ranks the relevancy of a given search engine result to the user's query, as compared to all others. For more information: [https://en.wikipedia.org/wiki/Relevance_(information_retrieval)](https://en.wikipedia.org/wiki/Relevance_(information_retrieval)) | 
 
-Please refer to the [SWIRL AI Connect Overview](index.md) for more information.
+Please refer to the [SWIRL AI Connect Overview](index.html) for more information.
 
 # Running a Search
 
@@ -42,7 +42,7 @@ The SWIRL login page will appear:
 * Enter username `admin` and password `password`, then click `Login`.
 
 {: .warning }
-If you receive a warning about the password being compromised or in a recent data breach, you can safely ignore it by clicking `Ok`, and then [changing the super user password](Admin-Guide.md#changing-a-super-user-password).
+If you receive a warning about the password being compromised or in a recent data breach, you can safely ignore it by clicking `Ok`, and then [changing the super user password](Admin-Guide.html#changing-a-super-user-password).
 
 * Enter some search terms in the search box and press the `Search` button. Re-ranked results will appear in just a few seconds:
 
@@ -187,7 +187,7 @@ For more details, refer to the [Organizing SearchProviders with Active, Default 
 
 SWIRL returns a unified result set consisting of results from all responding SearchProviders, matched by stemmed word form, and re-ranked using a cosine vector similarity relevancy model based on [spaCy](https://spacy.io/) and normalized by query and token length. It also incorporates the original `searchprovider_rank`.
 
-For more details please consult the Developer Guide [Configure Relevancy Field Weights](Developer-Guide.md#configure-relevancy-field-weights) and [Understand the Explain Structure](Developer-Guide.md#understand-the-explain-structure) sections.
+For more details please consult the Developer Guide [Configure Relevancy Field Weights](Developer-Guide.html#configure-relevancy-field-weights) and [Understand the Explain Structure](Developer-Guide.html#understand-the-explain-structure) sections.
 
 ## Hit Highlighting
 
@@ -199,5 +199,5 @@ SWIRL highlights occurrences of query terms in the `title`, `body` and `author` 
 
 ## Integrating with Source Synonyms
 
-SWIRL can also integrate source synonym configurations into relevancy calculations with corresponding hit highlighting.  See the Developer Guide [Integrate Source Synonyms Into SWIRL Relevancy](Developer-Guide.md#integrate-source-synonyms-into-swirl-relevancy)
+SWIRL can also integrate source synonym configurations into relevancy calculations with corresponding hit highlighting.  See the Developer Guide [Integrate Source Synonyms Into SWIRL Relevancy](Developer-Guide.html#integrate-source-synonyms-into-swirl-relevancy)
 section for details.

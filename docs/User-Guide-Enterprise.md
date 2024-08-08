@@ -43,7 +43,7 @@ TBD: link to the Overview about Co-Pilot
 Enter username `admin` and password `password`, then click `Login`.
 
 {: .warning }
-If you receive a warning about the password being compromised or in a recent data breach, you [Change the super user password](Admin-Guide.md#changing-a-super-user-password).
+If you receive a warning about the password being compromised or in a recent data breach, you [Change the super user password](Admin-Guide.html#changing-a-super-user-password).
 
 ## SSO Login
 
