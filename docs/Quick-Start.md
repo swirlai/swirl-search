@@ -129,7 +129,7 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 ![SWIRL JSON response](images/swirl_results_mixed_1.png)
 
-* Read the [SWIRL User Guide](./User-Guide.md) for additional information.
+* Read the [SWIRL User Guide](./User-Guide.html) for additional information.
 
 * To shut down SWIRL:
 
@@ -151,4 +151,4 @@ The Docker version of SWIRL AI Connect Community Edition does *not* retain any d
 SWIRL includes SearchProviders for Google Web (via their Programmable Search Engine offering), Arxiv.org, European PMC, Google News and SWIRL Documentation to get you up and running right away. The credentials for the Google Cloud API are shared with the SWIRL Community for this purpose.
 
 {: .highlight }
-Using SWIRL with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.md) or contact support as noted below. 
+Using SWIRL with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.html) or contact support as noted below. 

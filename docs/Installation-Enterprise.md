@@ -166,4 +166,4 @@ The most recent Search object will be displayed at the top. Click on the `result
 
 ![SWIRL JSON response](images/swirl_results_mixed_1.png)
 
-* Read the [SWIRL Enterprise User Guide](User-Guide-Enterprise.md) for additional information.
+* Read the [SWIRL Enterprise User Guide](User-Guide-Enterprise.html) for additional information.

@@ -36,12 +36,12 @@ SWIRL includes a Google's Programmable Search Engines SearchProvider with live c
 | company_snowflake.json | Searches the [Snowflake](https://www.snowflake.com/en/) `FreeCompanyResearch` dataset | Requires a Snowflake username and password |
 | crunchbase.json | Searches organizations via the [Crunchbase](https://www.crunchbase.com/) basic API | Requires a Crunchbase.com API key |
 | document_db.json | SQLite3 document database | [documents_db.csv](https://github.com/swirlai/swirl-search/tree/main/Data/documents_db.csv) |
-| elastic_cloud.json | elasticsearch, cloud version | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) Requires cloud_id, credentials |
-| elasticsearch.json | elasticsearch, local install | [Enron Email Dataset](Developer-Reference.md#enron-email-data-set) Requires host, port, credentials | 
+| elastic_cloud.json | elasticsearch, cloud version | [Enron Email Dataset](Developer-Reference.html#enron-email-data-set) Requires cloud_id, credentials |
+| elasticsearch.json | elasticsearch, local install | [Enron Email Dataset](Developer-Reference.html#enron-email-data-set) Requires host, port, credentials | 
 | europe_pmc.json | Searches the [EuropePMC.org](https://europepmc.org/) repository of life-sciences literature | No authorization required |
-| funding_db_bigquery.json | BigQuery funding database  | [Funding Dataset](Developer-Reference.md#funding-data-set) |
-| funding_db_postgres.json  | PostgreSQL funding database | [Funding Dataset](Developer-Reference.md#funding-data-set) |
-| funding_db_sqlite3.json  | SQLite3 funding database  | [Funding Dataset](Developer-Reference.md#funding-data-set) |
+| funding_db_bigquery.json | BigQuery funding database  | [Funding Dataset](Developer-Reference.html#funding-data-set) |
+| funding_db_postgres.json  | PostgreSQL funding database | [Funding Dataset](Developer-Reference.html#funding-data-set) |
+| funding_db_sqlite3.json  | SQLite3 funding database  | [Funding Dataset](Developer-Reference.html#funding-data-set) |
 | github.json | Searches public repositories for Code, Commits, Issues, and Pull Requests | Requires a bearer token |
 | google_news.json | Searches the [Google News](https://news.google.com/) feed | No authorization required |
 | google_pse.json | Five Google Programmable Search Engines (PSE) | Includes shared SWIRL credentials; may return a 429 error if overused |
@@ -51,13 +51,13 @@ SWIRL includes a Google's Programmable Search Engines SearchProvider with live c
 | hubspot.json | Searches the HubSpot CRM for Companies, Contacts, and Deals | Requires creation of a "Private Apps" API token by the Super Admin with [these scopes](images/HubSpot-scopes.png), and referencing the HubSpot Org ID in `result_mappings` field `url` value.  | 
 | internet_archive.json | Searches the [Internet Archive Library](https://archive.org/) of items | No authorization required |
 | littlesis.json | Searches the free [LittleSis.org](https://littlesis.org/) database of "who-knows-who at the heights of business and government" | No authorization required | 
-| microsoft.json | Searches M365 Outlook Messages, Calendar Events, OneDrive Files, SharePoint Sites, and Teams Chat | See the [M365 Guide](M365-Guide.md) for details |
+| microsoft.json | Searches M365 Outlook Messages, Calendar Events, OneDrive Files, SharePoint Sites, and Teams Chat | See the [M365 Guide](M365-Guide.html) for details |
 | miro.json | [Miro.com](https://miro.com) drawing service  | Requires a bearer token |
 | movies_mongodb.json | Searches the [Mongodb Atlas](https://www.mongodb.com/) `sample_mflix` collection, `movies` sample table | Requires database username and password, plus Atlas cluster URL |
 | newsdata_io.json | Newsdata.io internet news source | Requires username and password<br/>archive provider also included | 
 | nlresearch.json | NLResearch.com is a premium and internet content search engine from [Northern Light](https://northernlight.com/) | Requires username and password |
 | open_sanctions.json | Searches the [OpenSanctions.org](https://www.opensanctions.org/) database of sanctions targets and persons of interest | Requires and OpenSanctions API key | 
-| opensearch.json  | OpenSearch 2.x | [Developer Guide](Developer-Reference.md#elastic--opensearch) |
+| opensearch.json  | OpenSearch 2.x | [Developer Guide](Developer-Reference.html#elastic--opensearch) |
 | oracle.json | Tested against [Oracle](https://www.oracle.com/) 23c Free (and presumably supporting earlier versions) | Requires Oracle username and password |
 | preloaded.json | All preloaded SearchProviders | Defaults in the SWIRL distribution |
 | servicenow.json | Searches the Knowledge and Service Catalog centers of ServiceNow | Requires username and password |
@@ -150,7 +150,7 @@ Three properties of SearchProviders are intended to allow expressive querying by
 | ---------- | ---------- |
 | Active | True/False setting that specifies if the SearchProvider is to receive Search queries or not. If `false`, the SearchProvider will not be queried, even if specified in a `searchprovider_list` |
 | Default | True/False setting that specifies if the SearchProvider is to be queried for searches that don't specify a `searchprovider_list`. If `false`, the SearchProvider must be specified in the `searchprovider_list` |
-| Tags | List of strings that organize providers into groups. Tags can be specified in combination with SearchProvider names and/or ids in `Search.searchprovider_list`, in the `providers=` [URL parameter](Developer-Guide.md#create-a-search-object-with-the-q-url-parameter), or in a query in the form `tag:term` |
+| Tags | List of strings that organize providers into groups. Tags can be specified in combination with SearchProvider names and/or ids in `Search.searchprovider_list`, in the `providers=` [URL parameter](Developer-Guide.html#create-a-search-object-with-the-q-url-parameter), or in a query in the form `tag:term` |
 
 The suggestion is that SearchProviders who are good for most any search be left with `Default` set to `True`. Providers specific to a topic should have `Default` set to `False` and then `"Tags": [ "topic1", "topic2" ]` etc. When creating a search this ensures that the best providers for general querying are used when no `searchprovider_list` is specified. When the user desires to target a specific SearchProvider set, any combination of Tags or SearchProvider `name` and `id` values may be used freely.
 
@@ -192,7 +192,7 @@ At federation time, this becomes the following URL:
 
 The `url` field is configured per SearchProvider. Any key/value pairs that never change for that SearchProvider should be put there.
 
-The `query_string` is provided by SWIRL as described in the [Developer Guide](Developer-Guide.md#workflow)
+The `query_string` is provided by SWIRL as described in the [Developer Guide](Developer-Guide.html#workflow)
 
 ### HTTP Request Headers
 
@@ -266,7 +266,7 @@ For example, from the [Solr with Auth SearchProvider](https://github.com/swirlai
 
 ### Other Credentials
 
-Consult the Developer Guide for details on how to [Develop New Connector](Developer-Guide.md#develop-new-connectors).
+Consult the Developer Guide for details on how to [Develop New Connector](Developer-Guide.html#develop-new-connectors).
 
 ## Response Mappings
 
@@ -399,7 +399,7 @@ Results objects will reflect both date values:
 
 The `json_result` schema for each result in the Result list is defined by the `create_result_dictionary()` function in [`swirl/processors/utils.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/processors/utils.py).
 
-[Result mixers](Developer-Reference.md#mixers-1) further manipulate and re-organize the data from multiple results.
+[Result mixers](Developer-Reference.html#mixers-1) further manipulate and re-organize the data from multiple results.
 
 The Result schema can be seen in [`swirl/models.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) 
 

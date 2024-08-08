@@ -17,11 +17,11 @@ nav_order: 5
 {: .warning }
 This document applies only to the SWIRL AI Connect, Community Edition. [Switch to the AI Connect, Enterprise Edition guide](AI-Connect.html)
 
-SWIRL supports Real Time [Retrieval Augmented Generation (RAG)](index.md#what-is-retrieval-augmented-generation-rag-does-swirl-support-it) out of the box, using result snippets and/or the full text of fetched result pages. 
+SWIRL supports Real Time [Retrieval Augmented Generation (RAG)](index.html#what-is-retrieval-augmented-generation-rag-does-swirl-support-it) out of the box, using result snippets and/or the full text of fetched result pages. 
 
 # Setting up RAG
 
-* Install SWIRL as noted in the [Quick Start Guide](Quick-Start.md#local-installation), including the latest version of the Galaxy UI.
+* Install SWIRL as noted in the [Quick Start Guide](Quick-Start.html#local-installation), including the latest version of the Galaxy UI.
 
 * Add either your OpenAI API key or your Azure OpenAI API credentials to the `.env` file:
 
