@@ -225,6 +225,8 @@ class CleanTextResultProcessor(ResultProcessor):
 
 #############################################
 
+from swirl.processors.utils import match_all, remove_tags
+
 class RequireQueryStringInTitleResultProcessor(ResultProcessor):
 
     type="RequireQueryStringInTitleResultProcessor"
@@ -239,7 +241,7 @@ class RequireQueryStringInTitleResultProcessor(ResultProcessor):
 
         for item in self.results:
             if 'title' in item:
-                if self.query_string.lower() in item['title'].lower():
+                if match_all(remove_non_alphanumeric(remove_tags(self.query_string)).lower().split(),remove_non_alphanumeric(remove_tags(item['title'])).lower().split()):
                     self.processed_results.append(item)
                 else:
                     self.modified = self.modified - 1
