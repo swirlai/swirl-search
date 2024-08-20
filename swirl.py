@@ -38,7 +38,7 @@ def get_swirl_version():
     try:
         page = get_page_fetcher_or_none(url=url).get_page()
         version_text = page.get_text_strip_html()
-        match = re.search(r'(\d+\.\d+(?:\.\d+)?)', version_text)
+        match = re.search(r'(\d+\.\d+(?:\.\d+){0,2})', version_text)
         if match:
             version = match.group(1)
     except Exception as err:
@@ -146,7 +146,7 @@ def start(service_list):
     if not is_running_celery_redis():
            print(f"Error: Celery requires redis, settings.CELERY_BROKER_URL:{settings.CELERY_BROKER_URL}\n"
                  f"settings.CELERY_RESULT_BACKEND:{settings.CELERY_RESULT_BACKEND} but it does not appear to be running,\n"
-                 "please consult the admin guide at https://docs.swirl.today/Admin-Guide#installation.")
+                 "please consult the admin guide at https://docs.swirlaiconnect.com/Admin-Guide.html.")
            return False
 
     # start service_list

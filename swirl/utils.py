@@ -22,8 +22,8 @@ from urllib.parse import urlparse, quote
 import logging
 logger = logging.getLogger(__name__)
 
-SWIRL_MACHINE_AGENT   = {'User-Agent': 'SwirlMachineServer/1.0 (+http://swirl.today)'}
-SWIRL_CONTAINER_AGENT = {'User-Agent': 'SwirlContainer/1.0 (+http://swirl.today)'}
+SWIRL_MACHINE_AGENT   = {'User-Agent': 'SwirlMachineServer/1.0 (+http://swirlaiconnect.com)'}
+SWIRL_CONTAINER_AGENT = {'User-Agent': 'SwirlContainer/1.0 (+http://swirlaiconnect.com)'}
 
 
 ##################################################

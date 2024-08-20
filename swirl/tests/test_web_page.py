@@ -77,7 +77,7 @@ class PostSearchProviderTestCase(TestCase):
         self.assert_page_fetch_default_options(pf, do_cache=False)
 
         ## set values in the headers
-        test_user_agent = 'Testbot/1.0 (+http://swirl.today)'
+        test_user_agent = 'Testbot/1.0 (+http://swirlaiconnect.com)'
         test_header_val = "bar-value"
         pf = PageFetcherFactory.alloc_page_fetcher(url=test_url,
                                                    options= {
@@ -115,7 +115,7 @@ class PostSearchProviderTestCase(TestCase):
 
         ## set all
         test_timeout = 22
-        test_user_agent = 'Testbot/1.0 (+http://swirl.today)'
+        test_user_agent = 'Testbot/1.0 (+http://swirlaiconnect.com)'
         test_header_val = 'bar-value'
         pf = PageFetcherFactory.alloc_page_fetcher(url=test_url,
                                                    options= {
