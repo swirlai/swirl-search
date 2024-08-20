@@ -243,7 +243,7 @@ The following table describes the included source Connectors:
 | Connector | Description | Inputs |
 | ---------- | ---------- | ---------- |
 | BigQuery | Searches Google BigQuery | `query_template`, `credentials` (project JSON token file) |
-| ChatGPT | Asks OpenAI ChatGPT | `credentials` |
+| GenAI | Asks LLM questions for direct answer | `credentials` |
 | Elastic | Searches Elasticsearch | `url` or `cloud_id`, `query_template`, `index_name`, `credentials` |
 | Microsoft Graph | Uses the Microsoft Graph API to search M365 content | `credentials` |
 | Mongodb | Searches a Mongodb Atlas search index | `mongo_uri`, `database_name`, `collection_name`, `credentials` |
@@ -290,23 +290,21 @@ The included [BigQuery SearchProvider](https://github.com/swirlai/swirl-search/b
 
 More information: [BigQuery Documentation](https://cloud.google.com/bigquery/docs)
 
-## ChatGPT
+## GenAI
 
-{: .highlight }
-For Release 2.5.1, both the ChatGPT [`Connector`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/chatgpt.py) and [`QueryProcessor`](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/chatgpt_query.py) were updated to use the [`ChatCompletion`](https://platform.openai.com/docs/api-reference/chat) method which supports the latest  GPT models, including `GPT-4`, and a much greater range of interactivity. The ChatGPT SearchProvider now queries the `GPT-3.5-Turbo` model by default.
 
-The [ChatGPT Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/chatgpt.py) makes use of the OpenAI APIs. It will return at most one result.
+The [GenAI Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/gen_ai.py) makes use of the OpenAI chat completion API. It will return at most one result.
 
-ChatGPT responses usually rank highly since they are written on-the-fly in response to the user's query, reflect the terminology associated with that query, and are titled for the query.
+LLM responses usually rank highly since they are written on-the-fly in response to the user's query, reflect the terminology associated with that query, and are titled for the query.
 
-The included [SearchProvider](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/chatgpt.json) is pre-configured with a "Tell me about: ..." prompt.  The [`ChatGPTQueryProcessor`](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/chatgpt_query.py) also contains other query options for ChatGPT.
+The included [SearchProvider](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/gen_ai.json) is pre-configured with a "Tell me about: ..." prompt.  The [`GenAIQueryProcessor`](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/gen_ai_query.py) also contains other query options for using LLMs that follow the OpenAI standard.
 
 ``` json
 {
-    "name": "ChatGPT - OpenAI",
+    "name": "GenAI - OpenAI",
     "active": false,
     "default": true,
-    "connector": "ChatGPT",
+    "connector": "GenAI",
     "url": "",
     "query_template": "",
     "query_processors": [
@@ -322,27 +320,27 @@ The included [SearchProvider](https://github.com/swirlai/swirl-search/blob/main/
     "results_per_query": 10,
     "credentials": "your-openai-API-key-here",
     "tags": [
-        "ChatGPT",
+        "GenAI",
         "Question"
     ]
 }
 ```
 
-The `Question` and `ChatGPT` SearchProvider Tags make it easy to target ChatGPT by starting a query with either of them. For example:
+The `Question` and `GenAI` SearchProvider Tags make it easy to target the LLM by starting a query with either of them. For example:
 
 ``` shell
 Question: Tell me about knowledge management software?
 ```
 
-### ChatGPT SearchProvider Tags
+### GenAI SearchProvider Tags
 
-The following three Tags are available for use in the ChatGPT SearchProvider to help shape the Prompt or Default Role passed to ChatGPT along with the user's query.  To utilize these options:
+The following three Tags are available for use in the GenAI SearchProvider to help shape the Prompt or Default Role passed to GenAI along with the user's query.  To utilize these options:
 1. Add a valid OpenAI API Key to SWIRL's `.env` file (found in the `swirl-home` directory), and then restart the SWIRL for it to take effect.
-2. Add the `ChatGPTQueryProcessor` to the SearchProvider query_processors list:
+2. Add the `GenAIQueryProcessor` to the SearchProvider query_processors list:
 ``` json
     "query_processors": [
         "AdaptiveQueryProcessor",
-        "ChatGPTQueryProcessor"
+        "GenAIQueryProcessor"
     ],
 ```
 
@@ -353,24 +351,28 @@ The following three Tags are available for use in the ChatGPT SearchProvider to 
 "CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}"
 ```
 
-* `CHAT_QUERY_REWRITE_GUIDE`:  Override the `system` role passed to ChatGPT.
+* `CHAT_QUERY_REWRITE_GUIDE`:  Override the `system` role passed to the LLM.
 ``` json
 "CHAT_QUERY_REWRITE_GUIDE:You are a helpful assistant that responds like a pirate captain"
 ```
 
-* `CHAT_QUERY_DO_FILTER`: Turn on or off the default internal filter of ChatGPT responses. 
+* `CHAT_QUERY_DO_FILTER`: Turn on or off the default internal filter of LLM responses. 
 ``` json
 "CHAT_QUERY_DO_FILTER:false"
 ```
 
-### ChatGPT `query_mapping`
+### GenAI `query_mapping`
 
-The following `query_mapping` is also available for use in the ChatGPT SearchProvider to help shape the Default Role passed to ChatGPT along with the user's query. To utilize this `query_mapping`, add a valid OpenAI API Key to SWIRL's `.env` file (found in the `swirl-home` directory) and then restart the SWIRL for it to take effect.
+The following `query_mapping` is also available for use in the GenAI SearchProvider to help shape the Default Role passed to GenAI along with the user's query. To utilize this `query_mapping`, add a valid OpenAI API Key to SWIRL's `.env` file (found in the `swirl-home` directory) and then restart the SWIRL for it to take effect.
 
-* `CHAT_QUERY_REWRITE_GUIDE`:  Override the `system` role passed to ChatGPT.
+* `CHAT_QUERY_REWRITE_GUIDE`:  Override the `system` role passed to GenAI.
 ``` shell
 "query_mappings": "PROMPT='Tell me about: {query_to_provider}',CHAT_QUERY_REWRITE_GUIDE='You are a helpful assistant that responds like a pirate captain'",
 ```
+
+### Other GAI/LLMs
+
+The Community Edition of SWIRL supports OpenAI and Azure/OpenAI for LLMs. The [Enterprise Edition supports additional platforns](https://swirlaiconnect.com/connectors). Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for more information. 
 
 ## Elastic & OpenSearch
 
@@ -975,7 +977,7 @@ This table describes the query processors included in SWIRL:
 | Processor | Description | Notes | 
 | ---------- | ---------- | ---------- | 
 | AdaptiveQueryProcessor | Rewrites queries based on the `query_mappings` for a given SearchProvider | Should not be used as `pre_query_processor` |
-| ChatGPTQueryProcessor | This query processor asks ChatGPT to rewrite queries based on a configurable prompt. For example it can rewrite queries to be fuzzier, broader, more specific, boolean, or in another language. | Experimental |
+| GenAIQueryProcessor | This query processor asks an LLM to rewrite queries based on a configurable prompt. For example it can rewrite queries to be fuzzier, broader, more specific, boolean, or in another language. | Experimental |
 | GenericQueryProcessor | Removes special characters from the query |  |
 | SpellcheckQueryProcessor | Uses [TextBlob](https://textblob.readthedocs.io/en/dev/quickstart.html#spelling-correction) to predict and fix spelling errors in `query_string` | Best deployed in a `SearchProvider.query_processor` for sources that need it; not recommended with Google PSEs | 
 | NoModQueryProcessor |  Only removes leading SearchProvider Tags and does not modify the query terms in any way. | It is intended for repositories that allow non-search characters (such as brackets). |
