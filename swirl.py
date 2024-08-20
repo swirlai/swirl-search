@@ -38,7 +38,7 @@ def get_swirl_version():
     try:
         page = get_page_fetcher_or_none(url=url).get_page()
         version_text = page.get_text_strip_html()
-        match = re.search(r'(\d+\.\d+(?:\.\d+)?)', version_text)
+        match = re.search(r'(\d+\.\d+(?:\.\d+){0,2})', version_text)
         if match:
             version = match.group(1)
     except Exception as err:
