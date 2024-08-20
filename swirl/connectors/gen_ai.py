@@ -90,9 +90,9 @@ class GenAI(Connector):
                 {
                 'title': self.query_string_to_provider,
                 'body': f'{msg}',
-                'author': f'{llm.get_provider().model}',
+                'author': f'GenAI',
                 'date_published': str(datetime.now()),
-                'model': f'{llm.get_provider().model}'
+                'model': f'Unknown Model'
             }
         ]
 
