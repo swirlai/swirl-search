@@ -36,7 +36,7 @@ from swirl.authenticators import SWIRL_AUTHENTICATORS_DISPATCH
 DEV_FETCH_OPTIONS = {
     "cache": "false",
     "headers": {
-        "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+        "User-Agent": "Swirlbot/1.0 (+http://swirlaiconnect.com)"
     },
     "timeout": 10
 }
