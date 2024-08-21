@@ -71,7 +71,7 @@ The full list is here: [https://swirlaiconnect.com/connectors](https://swirlaico
 To connect SWIRL with an internal data source, you [create a SearchProvider record](./User-Guide.html#using-searchproviders).
 
 To integrate SWIRL Enterprise with a generative AI, you create an AIProvider record, as described 
-[in the Enterprise Guide](./Enterprise-Guide.html#managing-ai-providers).
+[in the AI Connect Guide](AI-Connect.html#connecting-to-generative-ai-gai-and-large-language-models-llms).
 
 ## What is SWIRL AI Co-Pilot? 
 

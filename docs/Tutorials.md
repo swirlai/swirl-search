@@ -42,7 +42,7 @@ A SearchProvider is a configuration of a Connector. To connect to a given source
 
 For example, if trying to query a website using a URL like `https://host.com/?q=my+query+here` that returns JSON or XML, create a new SearchProvider configuring the `RequestsGet` Connector as follows:
 
-* Copy any of the [Google PSE SearchProviders](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google_pse.json)
+* Copy any of the [Google PSE SearchProviders](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google.json)
 
 * Modify the `url` and `query_template` to construct the query URL. Using the above example:
 ```

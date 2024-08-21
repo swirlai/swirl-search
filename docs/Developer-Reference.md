@@ -1125,7 +1125,7 @@ The following table describes the Mixer wrapper in more detail:
 ## Funding Data Set
 
 The TechCrunch Continental USA funding data set was taken from [Insurity SpatialKey](https://support.spatialkey.com/spatialkey-sample-csv-data/). It is included with SWIRL in [Data/funding_db.csv](https://github.com/swirlai/swirl-search/blob/main/Data/funding_db.csv)
-This file was processed with [scripts/fix_csv.py](https://github.com/swirlai/swirl-search/blob/main/scripts/fix_csv.py) prior to loading into SQLite3. 
+This file was processed with [scripts/fix_csv.py](https://github.com/swirlai/swirl-search/blob/main/DevUtils/fix_csv.py) prior to loading into SQLite3. 
 
 ### Loading into SQLite3 
 
