@@ -107,7 +107,7 @@ A SearchProvider defines some searchable source. It includes metadata identifyin
 | result_grouping_field | Used with the `DedupeByFieldResultProcessor` result processor, this string defines the specific source field to use for duplicate suppression. | "" (`"resource.conversationId"`) |
 | result_processors | A list of processors to use to normalize results from this source | "CosineRelevancyResultProcessor" (`"MappingResultProcessor","CosineRelevancyResultProcessor"`) |
 | response_mappings | List of response keys and JSONPaths to transform this providers response into a JSON result set | "" (`"FOUND=searchInformation.totalResults, RETRIEVED=queries.request[0].count, RESULTS=items"`) |
-| result_mappings | List of keys, optionally with values; see [SP Guide, Result Mappings] (SP-Guide.html#result-mappings) for more information| "" (`"url=link,body=snippet,cacheId,NO_PAYLOAD"`) |
+| result_mappings | List of keys, optionally with values; see [SP Guide, Result Mappings](SP-Guide.html#result-mappings) for more information| "" (`"url=link,body=snippet,cacheId,NO_PAYLOAD"`) |
 | results_per_query | The number of results to request from this source for each query | 10 (`20`) |
 | credentials | The credentials to use for this source. Dependent on the source. | "" (`"key=your-google-json-api-key"`) |
 | eval_credentials | A credential variable set in the session and then be used in the SearchProvider. | "" (`"session["my-connector-token"]"`) |
