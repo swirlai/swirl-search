@@ -38,39 +38,47 @@ jobs:
           retry_count: 3
           exclude_patterns: localhost,api,apis,rss,etc,xx,googleapis,hostname,snowflake,graph.microsoft.com,login.microsoftonline.com,my-host.com,azure.com,github.com
           exclude_files: Swirl.postman_collection.json,docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/,SearchProviders/,DevUtils/
+          save: urlcheck_results.csv
 
-      - name: Save URL Check Output
+      - name: Generate Summary
         if: always()
         run: |
-          echo "${{ steps.url-checker.outputs.result }}" > urlcheck_output.txt
+          passed_count=0
+          excluded_count=0
+          failed_count=0
+          failed_urls=""
 
-      - name: URLs Checker Report
-        if: always()
-        id: create-summary
-        run: |
-          echo "## Broken Links Report" > summary.md
+          while IFS=, read -r url result filename; do
+            case $result in
+              passed)
+                ((passed_count++))
+                ;;
+              excluded)
+                ((excluded_count++))
+                ;;
+              failed)
+                ((failed_count++))
+                failed_urls+="$url, $filename\n"
+                ;;
+            esac
+          done < <(tail -n +2 urlcheck_results.csv)
+
+          echo "## URL Check Summary" > summary.md
           echo "" >> summary.md
-          grep -i "broken" urlcheck_output.txt >> summary.md || echo "No broken links found." >> summary.md
+          echo "Passed: $passed_count" >> summary.md
+          echo "Excluded: $excluded_count" >> summary.md
+          echo "Failed: $failed_count" >> summary.md
 
-      - name: Upload Summary and Raw File
+          if [ $failed_count -gt 0 ]; then
+            echo -e "\n### Failed URLs:" >> summary.md
+            echo -e "$failed_urls" >> summary.md
+          fi
+
+      - name: Upload Results
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: summary-and-raw
+          name: urlcheck-results
           path: |
+            urlcheck-results.csv
             summary.md
-            urlcheck_output.txt
-
-      - name: Post Comment with Summary
-        if: failure() && github.event_name == 'pull_request'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const fs = require('fs');
-            const summary = fs.readFileSync('summary.md', 'utf8');
-            github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: `### URL Check Summary\n\n${summary}`
-            });
