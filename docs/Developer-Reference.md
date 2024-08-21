@@ -107,7 +107,7 @@ A SearchProvider defines some searchable source. It includes metadata identifyin
 | result_grouping_field | Used with the `DedupeByFieldResultProcessor` result processor, this string defines the specific source field to use for duplicate suppression. | "" (`"resource.conversationId"`) |
 | result_processors | A list of processors to use to normalize results from this source | "CosineRelevancyResultProcessor" (`"MappingResultProcessor","CosineRelevancyResultProcessor"`) |
 | response_mappings | List of response keys and JSONPaths to transform this providers response into a JSON result set | "" (`"FOUND=searchInformation.totalResults, RETRIEVED=queries.request[0].count, RESULTS=items"`) |
-| result_mappings | List of keys, optionally with values; see [User Guide, Result Mappings](User-Guide.html#result-mapping-options) for notes on special keys | "" (`"url=link,body=snippet,cacheId,NO_PAYLOAD"`) |
+| result_mappings | List of keys, optionally with values; see [SP Guide, Result Mappings] (SP-Guide.html#result-mappings) for more information| "" (`"url=link,body=snippet,cacheId,NO_PAYLOAD"`) |
 | results_per_query | The number of results to request from this source for each query | 10 (`20`) |
 | credentials | The credentials to use for this source. Dependent on the source. | "" (`"key=your-google-json-api-key"`) |
 | eval_credentials | A credential variable set in the session and then be used in the SearchProvider. | "" (`"session["my-connector-token"]"`) |
@@ -236,7 +236,7 @@ Connectors are objects responsible for searching a specific type of SearchProvid
 Both [`connector.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/connector.py) and [`db_connectory.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/db_connector.py) are base classes from which other connector classes are derived.  While [`requests.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requests.py) is a wrapper called by `RequestsGet`.  Two utility functions, [`mappings.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/mappings.py) and [`utils.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/utils.py), can be used by other Connectors.
 
 {: .highlight }
-For Release 2.5.1, [`requests.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requests.py) was updated to handle XML responses from source APIs and convert them to JSON for mapping in SearchProvider configurations.
+Note that the [`requests.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requests.py) connector automatically converts XML responses to JSON for mapping in SearchProvider configurations.
 
 The following table describes the included source Connectors:
 
@@ -432,9 +432,11 @@ This is the default OpenSearch SearchProvider that connects to a local instance 
 }
 ```
 
-Note the use of JSONPaths in the `result_mappings`. This is essential for Elastic and OpenSearch since they embed results in a `_source` field unless otherwise configured. For more details consult the [User Guide, Result Mappings](User-Guide.html#result-mappings) section.
+Note the use of JSONPaths in the `result_mappings`. This is essential for Elastic and OpenSearch since they embed results in a `_source` field unless otherwise configured. 
 
-Use the [PAYLOAD Field](User-Guide.html#payload-field) to store extra content that doesn't map to an existing item.
+For more details consult the [SearchProvider Guide, Result Mappings](SP-Guide.html#result-mappings) section.
+
+Use the [Payload Field](SP-Guide.html#payload-field) to store extra content that doesn't map to an existing item.
 
 ## Microsoft Graph
 
@@ -819,7 +821,7 @@ And here it is again, configured for SOLR with the [tech products example collec
 
 To adapt RequestsGet for your JSON response, just replace the JSONPaths on the right of the `FOUND`, `RETRIEVED`, and `RESULT` configurations in `response_mappings`, following the left-to-right format of `swirl_key=source-key`. If the response provides a dictionary wrapper around each result, use the RESULT path to extract it.
 
-From there, map results fields to SWIRL's schema as described in the [User Guide, Result Mapping](User-Guide.html#result-mappings) section. Use the [PAYLOAD Field](User-Guide.html#payload-field) to store any extra content from SearchProviders that doesn't map to an existing SWIRL field.
+From there, map results fields to SWIRL's schema as described in the [SearchProvider Guide, Result Mapping](SP-Guide.html#result-mappings) section. Use the [PAYLOAD Field](SP-Guide.html#payload-field) to store any extra content from SearchProviders that doesn't map to an existing SWIRL field.
 
 Add additional required `key/value` parameters to the `url` - if they won't change from SearchProvider to SearchProvider - or by adding a mapping in the `query_template` and a default or guide value in the `query_mappings`. (See `{collection}` in the SOLR example above.)
 
@@ -1039,22 +1041,28 @@ SWIRL reports the `swirl_rank`, from 1 to N, where N is the total number of resu
 In the event of a relevancy tie, the `date_published` and `search_provider` rank are used as additional sorts, to break it.
 
 {: .highlight }
-In SWIRL 2.5, result processing was separated into two passes. The `SearchProvider.result_processors` runs first, followed by the `Search.post_result_processors` which adjusts length and finalizes.  As a result of this change, the revised `CosineRelevancyPostResultProcessor` must be added *last* in the `Search.post_result_processors` list. For example:
+Note that there are two steps to Relevancy ranking: 
+1. `SearchProvider.result_processors` processes the results from each configured SearchProvider, asynchronously
+2. `Search.post_result_processors` makes a final pass over the results, adjusting for length and finalizing the score for each item.  
+
+For this to work, the `CosineRelevancyPostResultProcessor` must be added in the `Search.post_result_processors` list. It should be after any result mappings, but before any other stages you add that depend on a finished `swirl_score`.
+
+For example:
 
 ``` json
     "result_processors": [
         "MappingResultProcessor",
-        "DateFinderResultProcessor",s
+        "DateFinderResultProcessor",
         "CosineRelevancyResultProcessor"
     ],
 ```
 
 ### `DropIrrelevantPostResultProcessor`
 
-Available in SWIRL 3.2.0, the `DropIrrelevantPostResultProcessor` drops results with `swirl_score < settings.MIN_SWIRL_SCORE` (which is set to 500 by default) and results with no `swirl_score`.  This processor is available for use but not enabled by default.
+The `DropIrrelevantPostResultProcessor` drops results with `swirl_score < settings.MIN_SWIRL_SCORE` (which is set to 500 by default) and results with no `swirl_score`.  This processor is available for use but not enabled by default.
 
 {: .highlight }
-The Galaxy UI will not display the correct number of results if this ResultProcessor is deployed. This will be addressed in a future release.
+The Galaxy UI will not display the correct number of results if this ResultProcessor is deployed. 
 
 # Mixers
 
@@ -1125,7 +1133,7 @@ The following table describes the Mixer wrapper in more detail:
 ## Funding Data Set
 
 The TechCrunch Continental USA funding data set was taken from [Insurity SpatialKey](https://support.spatialkey.com/spatialkey-sample-csv-data/). It is included with SWIRL in [Data/funding_db.csv](https://github.com/swirlai/swirl-search/blob/main/Data/funding_db.csv)
-This file was processed with [scripts/fix_csv.py](https://github.com/swirlai/swirl-search/blob/main/scripts/fix_csv.py) prior to loading into SQLite3. 
+This file was processed with [scripts/fix_csv.py](https://github.com/swirlai/swirl-search/blob/main/DevUtils/fix_csv.py) prior to loading into SQLite3. 
 
 ### Loading into SQLite3 
 
@@ -1146,7 +1154,7 @@ sqlite_web db.sqlite3
 6. Click `Import`.
 ![Sqlite loading funding dataset](images/sqlite_import_funding_2.png)
 
-7. Load the [Funding DB SQLite3](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_sqlite3.json) SearchProvider as [described in the User Guide, SearchProvider](User-Guide.html#using-searchproviders) section.
+7. Load the [Funding DB SQLite3](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_sqlite3.json) SearchProvider as [described in the SearchProvider Guide](SP-Guide.html#copypaste-install).
 
 ### Loading into PostgreSQL
 
@@ -1181,7 +1189,7 @@ CREATE UNIQUE INDEX funding_pkey ON funding(id int4_ops);
 COPY funding(permalink,company,numemps,category,city,state,fundeddate,raisedamt,raisedcurrency,round) FROM '/path/to/Data/funding_db.csv' DELIMITER ',' CSV HEADER;
 ```
 
-* Load the [Funding DB PostgreSQL](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_postgres.json) SearchProvider as [described in the User Guide, SearchProvider](User-Guide.html#using-searchproviders) section.
+* Load the [Funding DB PostgreSQL](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_postgres.json) SearchProvider as [described in the SearchProvider Guide, SearchProvider](SP-Guide.html#copypaste-install) section.
 
 ### Loading into BigQuery
 
@@ -1191,7 +1199,7 @@ COPY funding(permalink,company,numemps,category,city,state,fundeddate,raisedamt,
 
 * Load the CSV file into this table: [Loading CSV data into a table](https://cloud.google.com/bigquery/docs/loading-data-cloud-storage-csv#loading_csv_data_into_a_table)
 
-* Load the [Funding DB BigQuery](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_bigquery.json) SearchProvider as [described in the User Guide, SearchProvider](User-Guide.html#using-searchproviders) section.
+* Load the [Funding DB BigQuery](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_bigquery.json) SearchProvider as [described in the User Guide, SearchProvider](SP-Guide.html#copypaste-install) section.
 
 ## Enron Email Data Set
 

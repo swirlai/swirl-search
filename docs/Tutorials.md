@@ -42,7 +42,7 @@ A SearchProvider is a configuration of a Connector. To connect to a given source
 
 For example, if trying to query a website using a URL like `https://host.com/?q=my+query+here` that returns JSON or XML, create a new SearchProvider configuring the `RequestsGet` Connector as follows:
 
-* Copy any of the [Google PSE SearchProviders](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google_pse.json)
+* Copy any of the [Google PSE SearchProviders](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google.json)
 
 * Modify the `url` and `query_template` to construct the query URL. Using the above example:
 ```
@@ -51,13 +51,13 @@ For example, if trying to query a website using a URL like `https://host.com/?q=
     "query_template": "{url}?q={query_string}",
 }
 ```
-To learn more about query and URL parameters, refer to the [User Guide, Using SearchProviders](User-Guide.html#using-searchproviders) section.
+To learn more about query and URL parameters, refer to the [SearchProvider Guide](SP-Guide.html).
 
 * If the website offers the ability to page through results, or sort results by date (as well as relevancy), use the `PAGE=` and `DATE_SORT=` query mappings to add support for these features through SWIRL.  For example:
 ```
 TO DO 
 ```
-For more information, refer to the [User Guide, Query Mappings](User-Guide.html#query-mappings) section.
+For more information, refer to the [SearchProvider Guide, Query Mappings](SP-Guide.html#query-mappings) section.
 
 * Open the query URL in a browser and look through the JSON response. 
 If using Visual Studio Code, right-click on the pasted JSON and select `Format Document` to make it easier to read.
@@ -68,9 +68,9 @@ If using Visual Studio Code, right-click on the pasted JSON and select `Format D
 "result_mappings": "url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
 ```
 
-* Add credentials as required for the service.  The format to use depends on the type of credential. Details are here: [User Guide, Authentication & Credentials](User-Guide.html#authentication--credentials) section.
+* Add credentials as required for the service.  The format to use depends on the type of credential. Details are here: [User Guide, Authentication & Credentials](SP-Guide.html#authentication--credentials) section.
 
-* Add a suitable tag that can be used to describe the source or what it knows about.  Spaces are not permitted; good tags are clear and obvious when used in a query, like `company:tesla` or `news:openai`. For more about tags, see: [Organizing SearchProviders with Active, Default and Tags](User-Guide.html#organizing-searchproviders-with-active-default-and-tags)
+* Add a suitable tag that can be used to describe the source or what it knows about.  Spaces are not permitted; good tags are clear and obvious when used in a query, like `company:tesla` or `news:openai`. For more about tags, see: [Organizing SearchProviders with Active, Default and Tags](SP-Guide.html#organizing-searchproviders-with-active-default-and-tags)
 
 * Review the finished SearchProvider:
 ```
@@ -334,7 +334,7 @@ def getSearchProviderQueryProcessorsDefault():
 % python swirl.py restart
 ```
 
-* Go to the Galaxy UI (`http://localhost:8000/galaxy/`) and run a search; if using a query processor be sure to [target that SearchProvider with a tag](User-Guide.html#using-tags-to-target-searchproviders). 
+* Go to the Galaxy UI (`http://localhost:8000/galaxy/`) and run a search; if using a query processor be sure to [target that SearchProvider with a tag](SP-Guide.html#using-tags-to-target-searchproviders). 
 
 For example if you added a QueryProcessor to a SearchProvider `query_processing` pipeline with a Tag of "news", the query would be `http://localhost:8000/swirl/search/?q=news:some+query` instead. Results should appear in a just a few seconds. In the `messages` block, a message indicating that the new QueryProcessor rewrote the query should appear:
 ```
