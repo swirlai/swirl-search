@@ -53,7 +53,7 @@ jobs:
           path: summary.md
 
       - name: Post Comment with Summary
-        if: failure()
+        if: failure() && github.event_name == 'pull_request'
         uses: actions/github-script@v6
         with:
           script: |
