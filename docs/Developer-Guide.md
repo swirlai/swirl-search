@@ -444,7 +444,7 @@ If you need more mixed results, increase the `results_per_query` value in the Se
 SWIRL reports each source's search time in the relevant `info` block of the response:
 
 ``` json
-        "info": "Enterprise Search (web/Google PSE)": {
+        "info": "Web (Google PSE)": {
             "found": 8640,
             "retrieved": 10,
             ...
@@ -529,7 +529,7 @@ The structure also includes matching stems (`"stems"`), result and query length 
 ## Develop New Connectors
 
 {: .warning }
-To connect to a new endpoint for an existing Connector - like RequestsGet - create a new SearchProvider instead. The [Google PSE SearchProvider example JSON](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google_pse.json) shows how to use one connector to make hundreds of SearchProviders!
+To connect to a new endpoint for an existing Connector - like RequestsGet - create a new SearchProvider instead. The [Google PSE SearchProvider example JSON](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/google.json) shows how to use one connector to make hundreds of SearchProviders!
 
 To search against a new API where there is a high quality Python package and/or a unique data transport not already supported - then write a new Connector. 
 
@@ -863,7 +863,7 @@ Update the Search Provider's `query_processors` field to include the reference. 
 
 ``` json
 {
-    "name": "TEST Enterprise Search (web/Google PSE) with qxr query_processor",
+    "name": "TEST Web (Google PSE) with qxr query_processor",
     "active": "true",
     "default": "true",
     "connector": "RequestsGet",
