@@ -14,9 +14,7 @@ nav_order: 14
 
 # Microsoft 365 Guide
 
-## Intended Audience
-
-This guide details how to integrate SWIRL (v. 2.0 or newer) with an existing Microsoft 365 (M365) tenant. It is intended for use by M365 Administrators with authority to add a new App Registration in their Azure Portal and optionally grant permissions for various APIs as noted below on behalf of users who wish to use SWIRL to query their personal M365 content.
+This guide details how to integrate SWIRL with an existing Microsoft 365 (M365) tenant. It is intended for use by M365 Administrators with authority to add a new App Registration in their Azure Portal and optionally grant permissions for various APIs as noted below on behalf of users who wish to use SWIRL to query their personal M365 content.
 
 # Register a New App in Azure Portal
 
