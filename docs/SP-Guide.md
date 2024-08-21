@@ -291,6 +291,21 @@ The following table summarizes the `response_mappings` options:
 
 SearchProvider `result_mappings` determine how each source result set, in JSON format, is mapped to the SWIRL result schema. Each mapping is a JSONPath.
 
+### Default SWIRL Fields
+
+The following table details the default SWIRL fields:
+
+| Field Name | Description | 
+| ---------- | ----------- | 
+| author | The name of the author of the item; this is not reliable from the Web | 
+| body       | The body of content from the item found | 
+| date_published | The date the item was published; this is not reliable from the Web | 
+| date_retrieved | The date at which SWIRL retrieved the result item |
+| title      | The title of the item found | 
+| url        | The URL of the item found | 
+
+### Example
+
 Here is a `result_mapping` from a Google PSE:
 
 ``` json
@@ -300,10 +315,10 @@ Here is a `result_mapping` from a Google PSE:
 The mappings `url=link` and `body=snippet` map the SWIRL result fields to the corresponding Google PSE result fields.
 
 {: .highlight }
-For Release 2.5.1, [`requests.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requests.py) was updated to handle XML responses from source APIs and convert them to JSON for mapping in SearchProvider configurations.
+The [`requests.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requests.py) connector automatically translates XML responses to JSON for mapping in SearchProvider configurations.
 
 {: .highlight }
-For Release 3.2.0, [`requests.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requests.py) was updated to handle list-of-list responses from source APIs, where the first list element is the field names. For example:
+The [`requests.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requests.py) connector will automatically handle list-of-list responses from source APIs, where the first list element is the field names. For example:
 
 ```
 [
@@ -332,7 +347,7 @@ SWIRL will automatically convert this format to a JSON array of dicts, with the 
 
 ### Multiple Mappings
 
-As of version 1.6, SWIRL can map multiple SearchProvider fields to a single SWIRL field, aggregating multiple responses in the PAYLOAD field as necessary.
+SWIRL can map multiple SearchProvider fields to a single SWIRL field, aggregating multiple responses in the PAYLOAD field as necessary.
 
 For example:
 
@@ -377,7 +392,7 @@ The following table explains the `result_mappings` options:
 | NO_PAYLOAD | By default, SWIRL copies all result keys from the SearchProvider to the PAYLOAD. If `NO_PAYLOAD` is specified, SWIRL copies only the explicitly mapped fields.| `NO_PAYLOAD` |
 | FILE_SYSTEM | If specified, SWIRL will assume that this SearchProvider is a file system and weight matches against the `body` higher. | `FILE_SYSTEM` |
 | LC_URL | If specified, SWIRL will convert the `url` field to lower case. | `LC_URL` | 
-| BLOCK | As of Release 3.1.0, this feature is used exclusively by SWIRL's RAG processing; that output appears in this `info` block of the Result object. | `BLOCK=ai_summary` |
+| BLOCK | Used exclusively by SWIRL's RAG processing; that output appears in this `info` block of the Result object. | `BLOCK=ai_summary` |
 | DATASET | When specified as the only result_mapping parameter, SWIRL organizes a columnar response into a single result, with the columns in the PAYLOAD field | `DATASET` |
 
 #### Date Published Display

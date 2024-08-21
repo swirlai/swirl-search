@@ -200,7 +200,7 @@ Should a SearchProvider include a NOT'ted term in a result, a message is placed 
 
 ![SWIRL results with NOT detection](images/swirl_not_detection.png.png)
 
-One way to address this is to make sure the [NOT query-mapping](User-Guide.html#query-mappings) is set correctly for that provider.
+One way to address this is to make sure the [NOT query-mapping](SP-Guide.html#query-mappings) is set correctly for that provider.
 
 ## Subscribe to a Search
 
@@ -470,7 +470,9 @@ The federation time includes query, response, connection, querying, response, re
 
 ## Configure Pipelines
 
-In SWIRL 2.5, result processing was separated into two passes. The `SearchProvider.result_processors` runs first, followed by the `Search.post_result_processors` which adjusts length and finalizes.  Example `result_processors` configuration from a Google PSE SearchProvider:
+Result processing is executed in two passes. The `SearchProvider.result_processors` runs first, followed by the `Search.post_result_processors` which adjusts length and finalizes.  
+
+Example `result_processors` configuration from a Google PSE SearchProvider:
 
 ``` json
     "result_processors": [
