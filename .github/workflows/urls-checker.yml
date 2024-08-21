@@ -1,43 +1,67 @@
 name: Check URLs
 
-# Trigger to only run this workflow automatically on docs/ directory changes
 on:
   push:
     branches:
       - "main"
     paths:
       - "docs/**"
-
-  # Allows manual run of this workflow from the Actions tab (on any branch)
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - "docs/**"
   workflow_dispatch:
 
 jobs:
-  build:
+  check-urls:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: URLs Checker
-      uses: urlstechie/urlchecker-action@0.0.34  # From here: https://github.com/urlstechie/urlchecker-action
-      with:
-        # A comma-separated list of file types to cover in the URL checks
-        file_types: .md,.html,.yml,.conf,.txt,.py,.json,.sh,.ini,.spg
+      - name: URLs Checker
+        id: url-checker
+        uses: urlstechie/urlchecker-action@0.0.34
+        with:
+          file_types: .md,.html,.yml,.conf,.txt,.py,.json,.sh,.ini,.spg
+          print_all: false
+          verbose: true
+          timeout: 5
+          retry_count: 3
+          exclude_patterns: localhost,api,apis,rss,etc,xx,googleapis,hostname,snowflake,graph.microsoft.com,login.microsoftonline.com,my-host.com,azure.com,github.com
+          exclude_files: Swirl.postman_collection.json,docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/,SearchProviders/,DevUtils/
 
-        # Choose whether to include file with no URLs in the prints.
-        print_all: false
+      - name: Save URL Check Output
+        if: always()
+        run: |
+          echo "${{ steps.url-checker.outputs.result }}" > urlcheck_output.txt
 
-        # Choose whether to print a more verbose end summary with files and broken URLs
-        verbose: true
+      - name: URLs Checker Report
+        if: always()
+        id: create-summary
+        run: |
+          echo "## Broken Links Report" > summary.md
+          echo "" >> summary.md
+          grep -i "broken" urlcheck_output.txt >> summary.md || echo "No broken links found." >> summary.md
 
-        # The timeout seconds to provide to requests, defaults to 5 seconds
-        timeout: 5
+      - name: Upload Summary
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: summary-md
+          path: summary.md
 
-        # How many times to retry a failed request (each is logged, defaults to 1)
-        retry_count: 3
-
-        # A comma separated patterns to exclude during URL checks
-        exclude_patterns: localhost,api,apis,rss,etc,xx,googleapis,hostname,snowflake,graph.microsoft.com,login.microsoftonline.com,my-host.com,azure.com,github.com
-
-        # Exclude these files from the checker
-        exclude_files: Swirl.postman_collection.json,docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/,SearchProviders/,DevUtils/
+      - name: Post Comment with Summary
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('summary.md', 'utf8');
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `### URL Check Summary\n\n${summary}`
+            });
