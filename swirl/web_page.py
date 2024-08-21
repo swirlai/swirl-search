@@ -215,7 +215,7 @@ class PageFetcherOptions:
     @staticmethod
     def get_page_fetch_defaults():
         return  {
-            "headers":{'User-Agent': 'Swirlbot/1.0 (+http://swirl.today)'},
+            "headers":{'User-Agent': 'Swirlbot/1.0 (+http://swirlaiconnect.com)'},
             "timeout": WEB_PAGE_FETCHER_DEFAULT_TIMEOUT_SECONDS,
         }
 

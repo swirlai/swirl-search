@@ -10,7 +10,7 @@
     "page_fetch_config_json": {
         "cache": "false",
         "headers": {
-            "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
+            "User-Agent": "Swirlbot/1.0 (+http://swirlaiconnect.com)"
         },
         "timeout": 10
 },
