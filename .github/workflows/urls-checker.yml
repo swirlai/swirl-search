@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  check-urls:
     runs-on: ubuntu-latest
 
     steps:
@@ -41,3 +41,26 @@ jobs:
 
         # Exclude these files from the checker
         exclude_files: Swirl.postman_collection.json,docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/,SearchProviders/,DevUtils/
+      run: |
+        urlchecker-action > urlcheck_output.txt
+
+    - name: URLs Checker Report
+      id: create-summary
+      run: |
+        echo "## Broken Links Report" > summary.md
+        echo "" >> summary.md
+        grep -i "broken" urlcheck_output.txt >> summary.md || echo "No broken links found." >> summary.md
+
+    - name: Post Comment on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const summary = fs.readFileSync('summary.md', 'utf8');
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: summary
+          });
