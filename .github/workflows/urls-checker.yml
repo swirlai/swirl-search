@@ -17,8 +17,15 @@ jobs:
   check-urls:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      actions: write  # Ensure the workflow has permission to upload artifacts
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Print Environment Variables
+        run: env
 
       - name: URLs Checker
         id: url-checker
@@ -45,12 +52,14 @@ jobs:
           echo "" >> summary.md
           grep -i "broken" urlcheck_output.txt >> summary.md || echo "No broken links found." >> summary.md
 
-      - name: Upload Summary
+      - name: Upload Summary and Raw File
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: summary-md
-          path: summary.md
+          name: summary-and-raw
+          path: |
+            summary.md
+            urlcheck_output.txt
 
       - name: Post Comment with Summary
         if: failure() && github.event_name == 'pull_request'
