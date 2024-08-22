@@ -232,7 +232,7 @@ For information about Swirl as a managed service, please [contact us](mailto:hel
 
 # 📖 Documentation
 
-[Overview](https://docs.swirlaiconnect.com/) | [Quick Start](https://docs.swirlaiconnect.com/Quick-Start) | [User Guide](https://docs.swirlaiconnect.com/User-Guide) | [Admin Guide](https://docs.swirlaiconnect.com/Admin-Guide) | [M365 Guide](https://docs.swirlaiconnect.com/M365-Guide) | [Developer Guide](https://docs.swirlaiconnect.com/Developer-Guide) | [Developer Reference](https://docs.swirlaiconnect.com/Developer-Reference) | [AI Guide](https://docs.swirlaiconnect.com/AI-Guide)
+🔗 [SWIRL Documentation](https://docs.swirlaiconnect.com/)
 
 <br/>
 
