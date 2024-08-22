@@ -43,8 +43,8 @@ jobs:
       - name: Generate Summary
         if: always()
         run: |
-          echo "PWD $(pwd)"
-          echo "files: $(ls -lrt)"
+          echo "*** PWD $(pwd)"
+          echo "*** files: $(ls -lrt)"
           passed_count=0
           excluded_count=0
           failed_count=0
