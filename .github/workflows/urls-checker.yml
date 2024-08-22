@@ -1,0 +1,73 @@
+name: Check URLs
+
+on:
+  pull_request:
+    branches:
+      - "main"
+      - "develop"
+    paths:
+      - "docs/**"
+      - "README.md"
+
+  workflow_dispatch:
+
+jobs:
+  check-urls:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write  # Ensure the workflow has permission to write comments on pull requests
+
+    env:
+      URLCHECK_RESULTS: urlcheck_results.csv  # Define global variable
+      URLCHECK_SUMMARY: urlcheck_results_summary.md  # Define global variable
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Print Environment Variables
+        run: env
+
+      - name: URLs Checker
+        id: url-checker
+        uses: urlstechie/urlchecker-action@0.0.34
+        with:
+          file_types: .md,.html,.yml,.conf,.txt,.py,.json,.sh,.ini,.spg
+          print_all: false
+          verbose: true
+          timeout: 5
+          retry_count: 3
+          exclude_patterns: localhost,api,apis,rss,etc,xx,googleapis,hostname,snowflake,graph.microsoft.com,login.microsoftonline.com,my-host.com,azure.com,github.com
+          exclude_files: Swirl.postman_collection.json,docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/,SearchProviders/,DevUtils/
+          save: ${{ env.URLCHECK_RESULTS }}
+
+      - name: Generate Summary
+        if: always()
+        run: |
+          python .github/scripts/generate_broken_links_summary.py ${{ env.URLCHECK_RESULTS }}
+          echo "$(cat ${{ env.URLCHECK_SUMMARY }})" >> $GITHUB_STEP_SUMMARY
+          echo -e "\n" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Results
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: urlcheck-results
+          path:  ${{ env.URLCHECK_RESULTS }}
+
+      - name: Add comment to PR
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('${{ env.URLCHECK_SUMMARY }}', 'utf8');
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `### URL Check Summary\n\n${summary}`
+            });
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Ensure the correct GitHub token is used
