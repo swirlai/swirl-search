@@ -47,7 +47,12 @@ jobs:
           excluded_count=0
           failed_count=0
           failed_urls=""
-
+        
+          if [ ! -s urlcheck_results.csv ]; then
+            echo "urlcheck_results.csv is missing or empty"
+            exit 1
+          fi
+        
           while IFS=, read -r url result filename; do
             case $result in
               passed)
@@ -62,13 +67,16 @@ jobs:
                 ;;
             esac
           done < <(tail -n +2 urlcheck_results.csv)
-
+          echo "*** Passed: $passed_count"
+          echo "*** Excluded: $excluded_count"
+          echo "*** Failed: $failed_count"
+          echo "*** Generating summary.md"
           echo "## URL Check Summary" > summary.md
           echo "" >> summary.md
           echo "Passed: $passed_count" >> summary.md
           echo "Excluded: $excluded_count" >> summary.md
           echo "Failed: $failed_count" >> summary.md
-
+        
           if [ $failed_count -gt 0 ]; then
             echo -e "\n### Failed URLs:" >> summary.md
             echo -e "$failed_urls" >> summary.md
