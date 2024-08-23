@@ -148,3 +148,4 @@ In the SearchProvider configuration, replace localhost with the hostname:
 ```
 "url": "http://AgentCooper.local:8983/solr/{collection}/select?wt=json",
 ```
+
