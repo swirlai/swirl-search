@@ -1,43 +1,74 @@
 name: Check URLs
 
-# Trigger to only run this workflow automatically on docs/ directory changes
 on:
-  push:
+  pull_request:
     branches:
       - "main"
+      - "develop"
     paths:
       - "docs/**"
+      - "README.md"
 
-  # Allows manual run of this workflow from the Actions tab (on any branch)
   workflow_dispatch:
 
 jobs:
-  build:
+  check-urls:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      pull-requests: write  # Ensure the workflow has permission to write comments on pull requests
+
+    env:
+      URLCHECK_RESULTS: urlcheck_results.csv  # Define global variable
+      URLCHECK_SUMMARY: urlcheck_results_summary.md  # Define global variable
+
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: URLs Checker
-      uses: urlstechie/urlchecker-action@0.0.34  # From here: https://github.com/urlstechie/urlchecker-action
-      with:
-        # A comma-separated list of file types to cover in the URL checks
-        file_types: .md,.html,.yml,.conf,.txt,.py,.json,.sh,.ini,.spg
+      - name: Print Environment Variables
+        run: env
 
-        # Choose whether to include file with no URLs in the prints.
-        print_all: false
+      - name: URLs Checker
+        id: url-checker
+        uses: urlstechie/urlchecker-action@0.0.34
+        with:
+          file_types: .md,.html,.yml,.conf,.txt,.py,.json,.sh,.ini,.spg
+          print_all: false
+          verbose: true
+          timeout: 5
+          retry_count: 3
+          exclude_patterns: localhost,api,apis,rss,etc,xx,googleapis,hostname,snowflake,graph.microsoft.com,login.microsoftonline.com,my-host.com,azure.com,github.com
+          exclude_files: Swirl.postman_collection.json,docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/,SearchProviders/,DevUtils/
+          save: ${{ env.URLCHECK_RESULTS }}
 
-        # Choose whether to print a more verbose end summary with files and broken URLs
-        verbose: true
+      - name: Generate Summary
+        if: always()
+        run: |
+          python .github/scripts/generate_broken_links_summary.py ${{ env.URLCHECK_RESULTS }}
+          echo "$(cat ${{ env.URLCHECK_SUMMARY }})" >> $GITHUB_STEP_SUMMARY
+          echo -e "\n" >> $GITHUB_STEP_SUMMARY
 
-        # The timeout seconds to provide to requests, defaults to 5 seconds
-        timeout: 5
+      - name: Upload Results
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: urlcheck-results
+          path:  ${{ env.URLCHECK_RESULTS }}
 
-        # How many times to retry a failed request (each is logged, defaults to 1)
-        retry_count: 3
+      - name: Add comment to PR
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('${{ env.URLCHECK_SUMMARY }}', 'utf8');
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `### URL Check Summary\n\n${summary}`
+            });
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Ensure the correct GitHub token is used
 
-        # A comma separated patterns to exclude during URL checks
-        exclude_patterns: localhost,api,apis,rss,etc,xx,googleapis,hostname,snowflake,graph.microsoft.com,login.microsoftonline.com,my-host.com,azure.com,github.com
-
-        # Exclude these files from the checker
-        exclude_files: Swirl.postman_collection.json,docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/,SearchProviders/,DevUtils/
