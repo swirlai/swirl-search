@@ -158,6 +158,7 @@ The `qs=` parameter can also be used with the [providers](#specify-searchprovide
 RAG processing is available through a single API call using `qs=`, e.g. `?qs=metasearch&rag=true`.
 
 The default AI Summary timeout value can be overridden with a URL parameter in the Galaxy UI. For example: `http://localhost:8000/galaxy/?q=gig%20economics&rag=true&rag_timeout=90`
+
 {: .highlight }
 Starting with SWIRL 3.7.0, we specify `rag_timeout`in seconds
 

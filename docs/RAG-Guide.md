@@ -72,6 +72,7 @@ SWIRL AI Connect Community Edition supports RAG only against OpenAI and Azure/Op
 Adjust the `timeout` value if necessary. Change the `User-Agent` string as needed, and/or authorize it to fetch pages from internal applications.
 
 You can also override the default timeout value with a URL parameter in the Galaxy UI. For example: `http://localhost:8000/galaxy/?q=gig%20economics&rag=true&rag_timeout=90`
+
 {: .highlight }
 Starting with SWIRL 3.7.0, we specify `rag_timeout`in seconds
 
