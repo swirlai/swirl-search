@@ -29,6 +29,18 @@ class RagPrompt():
         self._last_chunk_status = RAG_PROMPT_CHUNK_OK
         self._model_encoding = tiktoken.encoding_for_model(model)
 
+        self._prompt_footer = (
+        f"\n\n\n\n--- Final Instructions ---\nIn your response do not assume people with vastly different work histories are the same person. "
+        f"If the query appears to be a proper name, focus on answering the question, 'Who is?' or 'What is?', as appropriate. "
+        f"If the query appears to be a question, then try to answer it. "
+        f"For the list of sources, use the HTML tags and format in the example below, do not generate duplicate entries, one entry per source.:\n"
+        f"\n<p>"
+        f"\n<br><b>Sources:</b>"
+        f"\n<br><i>example description 1</i> &nbsp;&nbsp;&nbsp; <b>example URL or source name 1</b>"
+        f"\n<br><i>example description 2</i> &nbsp;&nbsp;&nbsp; <b>example URL or source name 2</b>"
+        f"\n</p>"
+        f"\n\nEnclose your response in HTML tags <p></p> and insert a <br> HTML tag every two sentences."
+        )
 
     def get_num_tokens(self):
         return self._num_tokens
@@ -121,7 +133,7 @@ class RagPrompt():
 
     def get_promp_text(self):
         logger.info(f'{self} : max_tokens:{self._max_tokens} num_tokens {self.get_num_tokens()} is_full:{self.is_full()}')
-        return self._prompt_text
+        return self._prompt_text + self._prompt_footer
 
     def get_role_system_guide_text(self):
         return MODEL_DEFAULT_SYSTEM_GUIDE
