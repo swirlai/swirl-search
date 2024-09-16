@@ -964,7 +964,7 @@ def test_query_transform_viewset_crud(api_client, test_suser, test_suser_pw, qrx
     qrx_record_1['config_content'] = "# This is an update\n# column1, colum2\nmobiles; ombile; mo bile, mobile\ncheapest smartphones, cheap smartphone"
     purl = reverse('update', kwargs={'pk': 1})
     response = api_client.put(purl, data=qrx_record_1, format='json')
-    assert response.status_code == 201, 'Expected HTTP status code 201'
+    assert response.status_code == 200, 'Expected HTTP status code 200'
     response = api_client.get(reverse('querytransforms/list'))
     assert response.status_code == 200, 'Expected HTTP status code 200'
     assert len(response.json()) == 1, 'Expected 1 transform'
