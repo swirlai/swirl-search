@@ -113,7 +113,7 @@ class RAGPostResultProcessor(PostResultProcessor):
             if result.json_results:
                 for item in result.json_results:
                     if rag_query_items:
-                        if str(item['swirl_id']) in rag_query_items:
+                        if 'swirl_id' in item and str(item['swirl_id']) in rag_query_items:
                             rag_item_list.append(item)
                             item['provider_id'] = result.provider_id
                     elif 'swirl_score' in item:
