@@ -99,7 +99,8 @@ class SearchProvider(models.Model):
         ('GenAIQueryProcessor', 'GenAIQueryProcessor'),
         ('AdaptiveQueryProcessor', 'AdaptiveQueryProcessor'),
         ('NoModQueryProcessor', 'NoModQueryProcessor'),
-        ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor')
+        ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor'),
+        ('RemovePIIQueryProcessor', 'RemovePIIQueryProcessor'),
     ]
     query_processors = models.JSONField(default=getSearchProviderQueryProcessorsDefault, blank=True)
     query_mappings = models.CharField(max_length=2048, default=str, blank=True)
@@ -114,7 +115,8 @@ class SearchProvider(models.Model):
         ('CleanTextResultProcessor','CleanTextResultProcessor'),
         ('RequireQueryStringInTitleResultProcessor','RequireQueryStringInTitleResultProcessor'),
         ('AutomaticPayloadMapperResultProcessor', 'AutomaticPayloadMapperResultProcessor'),
-        ('CosineRelevancyResultProcessor','CosineRelevancyResultProcessor')
+        ('CosineRelevancyResultProcessor','CosineRelevancyResultProcessor'),
+        ('RemovePIIResultProcessor', 'RemovePIIResultProcessor'),
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
 
