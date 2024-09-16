@@ -14,7 +14,7 @@ spacy==3.7.5
 natsort
 django-environ
 statistics
-nltk==3.8.1
+nltk
 bs4
 google-cloud-bigquery
 opensearch-py

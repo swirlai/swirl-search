@@ -29,9 +29,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN apt-get install -y redis-server
 
 # install requirements
-RUN python -m spacy download en_core_web_lg
-RUN python -m nltk.downloader stopwords
-RUN python -m nltk.downloader punkt
+COPY ./download-nltk-resources.sh /app/
+RUN python -m spacy download en_core_web_lg && \
+    ./download-nltk-resources.sh
 
 # Copy Swirl App to container
 RUN mkdir /app
