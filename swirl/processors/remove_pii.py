@@ -19,9 +19,26 @@ anonymizer = AnonymizerEngine()
 
 #############################################
 
-def remove_pii(text: str) -> str:
+def redact_pii(text: str) -> str:
+    """
+    Redacts PII from the given text string using Presidio.
+
+    :param text: The input string (either query or result) to clean.
+    :return: The text with PII redacted.
+    """
+
+    return remove_pii(text, redact=True)
+
+def remove_pii(text: str, redact=False) -> str:
     """
     Removes PII from the given text string using Presidio.
+
+    This is confusing:
+
+    By default, Presidio redacts entities, replacing it with <entity-type>.
+    The Presidio "redact" option removes the PII entirely.
+
+    In SWIRL, remove means "remove the PII" and "redact" means "replace it with <entity-type>".
     
     :param text: The input string (either query or result) to clean.
     :return: The text with PII removed.
@@ -32,10 +49,11 @@ def remove_pii(text: str) -> str:
     if not pii_entities:
         return text
 
-    # operators = {"DEFAULT": OperatorConfig("replace", {"new_value": "<>"})}
     operators = {"DEFAULT": OperatorConfig("redact")}
+    if redact:
+        # if specified
+        operators = {"DEFAULT": OperatorConfig("replace")}
 
-    # Remove PII by anonymizing the identified entities
     anonymized_result = anonymizer.anonymize(
         text=text, 
         analyzer_results=pii_entities, 
@@ -90,6 +108,7 @@ class RemovePIIResultProcessor(ResultProcessor):
         :return: The number of modified results.
         """
         logger.debug(f"Processing {len(self.results)} results for PII removal.")
+        self.warning("FOO Remove PII from results...")
         
         modified = 0
         for result in self.results:
@@ -97,14 +116,18 @@ class RemovePIIResultProcessor(ResultProcessor):
             
             # Remove PII from 'title' and 'body' fields of each result
             if 'title' in result:
-                cleaned_title = remove_pii(result['title'])
+                self.warning("FOO Redacting title...")
+                cleaned_title = redact_pii(result['title'])
                 if cleaned_title != result['title']:
+                    self.warning("FOO Redacted title...: " + cleaned_title)
                     result['title'] = cleaned_title
                     pii_modified = True
 
             if 'body' in result:
-                cleaned_body = remove_pii(result['body'])
+                self.warning("FOO Redacting body...")
+                cleaned_body = redact_pii(result['body'])
                 if cleaned_body != result['body']:
+                    self.warning("FOO Redacted body...: " + cleaned_body)
                     result['body'] = cleaned_body
                     pii_modified = True
             
@@ -113,6 +136,7 @@ class RemovePIIResultProcessor(ResultProcessor):
 
         self.processed_results = self.results
         self.modified = modified
+        self.warning("FOO Modified: " + str(self.modified))
         logger.debug(f"PII removal complete. {self.modified} results modified.")
         
         return self.modified
