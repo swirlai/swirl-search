@@ -19,7 +19,7 @@ anonymizer = AnonymizerEngine()
 
 #############################################
 
-def redact_pii(text: str) -> str:
+def redact_pii(text: str, query_string=None) -> str:
     """
     Redacts PII from the given text string using Presidio.
 
@@ -27,9 +27,11 @@ def redact_pii(text: str) -> str:
     :return: The text with PII redacted.
     """
 
-    return remove_pii(text, redact=True)
+    return remove_pii(text, query_string, redact=True)
 
-def remove_pii(text: str, redact=False) -> str:
+from swirl.processors.utils import remove_tags, highlight_list
+
+def remove_pii(text: str, query_string=None, redact=False) -> str:
     """
     Removes PII from the given text string using Presidio.
 
@@ -43,6 +45,10 @@ def remove_pii(text: str, redact=False) -> str:
     :param text: The input string (either query or result) to clean.
     :return: The text with PII removed.
     """
+
+    # remove tags from the text
+    text = remove_tags(text)
+
     # Analyze the input text for PII entities
     pii_entities = analyzer.analyze(text=text, language='en')
     
@@ -60,7 +66,16 @@ def remove_pii(text: str, redact=False) -> str:
         operators=operators
     )
     
-    return anonymized_result.text
+    anonymized_text = anonymized_result.text
+
+    if redact:
+        anonymized_text = anonymized_text.replace('<', '[').replace('>', ']')
+
+    if query_string:
+        highlighted_anonymized_text = highlight_list(anonymized_text, query_string.split())
+        return highlighted_anonymized_text
+
+    return anonymized_text
 
 #############################################
 
@@ -117,7 +132,7 @@ class RemovePIIResultProcessor(ResultProcessor):
             # Remove PII from 'title' and 'body' fields of each result
             if 'title' in result:
                 self.warning("FOO Redacting title...")
-                cleaned_title = redact_pii(result['title'])
+                cleaned_title = redact_pii(result['title'], self.query_string)
                 if cleaned_title != result['title']:
                     self.warning("FOO Redacted title...: " + cleaned_title)
                     result['title'] = cleaned_title
@@ -125,7 +140,7 @@ class RemovePIIResultProcessor(ResultProcessor):
 
             if 'body' in result:
                 self.warning("FOO Redacting body...")
-                cleaned_body = redact_pii(result['body'])
+                cleaned_body = redact_pii(result['body'], self.query_string)
                 if cleaned_body != result['body']:
                     self.warning("FOO Redacted body...: " + cleaned_body)
                     result['body'] = cleaned_body
