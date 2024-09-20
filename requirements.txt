@@ -40,3 +40,5 @@ pinecone-client
 pandas
 drf-spectacular
 qdrant-client==1.10.0
+presidio-analyzer
+presidio-anonymizer
