@@ -2,7 +2,7 @@ requests
 Django>=5.0
 django_restframework
 django-celery-beat
-Celery
+Celery>=5.5.0b3
 pika
 elasticsearch
 jsonpath-ng
@@ -10,11 +10,11 @@ pyyaml
 whitenoise
 daphne
 textblob
-spacy
+spacy==3.7.5
 natsort
 django-environ
 statistics
-nltk==3.8.1
+nltk
 bs4
 google-cloud-bigquery
 opensearch-py
