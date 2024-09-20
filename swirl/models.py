@@ -116,7 +116,7 @@ class SearchProvider(models.Model):
         ('RequireQueryStringInTitleResultProcessor','RequireQueryStringInTitleResultProcessor'),
         ('AutomaticPayloadMapperResultProcessor', 'AutomaticPayloadMapperResultProcessor'),
         ('CosineRelevancyResultProcessor','CosineRelevancyResultProcessor'),
-        ('RemovePIIResultProcessor', 'RemovePIIResultProcessor'),
+        ('RedactPIIResultProcessor', 'RedactPIIResultProcessor'),
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
 

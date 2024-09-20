@@ -103,10 +103,11 @@ class RemovePIIQueryProcessor(QueryProcessor):
 
 #############################################
 
-class RemovePIIResultProcessor(ResultProcessor):
+class RedactPIIResultProcessor(ResultProcessor):
     """
     A SWIRL result processor that removes PII from the search results.
     Inherits from SWIRL's base ResultProcessor class.
+    Meant to be run after CosineResultProcessor.
     """
     
     type = "RemovePIIResultProcessor"
@@ -145,6 +146,17 @@ class RemovePIIResultProcessor(ResultProcessor):
                     self.warning("FOO Redacted body...: " + cleaned_body)
                     result['body'] = cleaned_body
                     pii_modified = True
+
+            if 'payload' in result:
+                for key in result['payload']:
+                    if type(result['payload'][key]) is not str:
+                        continue
+                    self.warning(f"FOO Redacting payload {key}...")
+                    cleaned_payload = redact_pii(result['payload'][key], self.query_string)
+                    if cleaned_payload != result['payload'][key]:
+                        self.warning("FOO Redacted payload...: " + cleaned_payload)
+                        result['payload'][key] = cleaned_payload
+                        pii_modified = True
             
             if pii_modified:
                 modified += 1
