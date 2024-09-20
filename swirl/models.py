@@ -147,7 +147,7 @@ def getSearchPreQueryProcessorsDefault():
     return []
 
 def getSearchPostResultProcessorsDefault():
-    return ["DedupeByFieldPostResultProcessor","CosineRelevancyPostResultProcessor"]
+    return ["DedupeByFieldPostResultProcessor","CosineRelevancyPostResultProcessor", "RedactPIIPostResultProcessor"]
 
 class Search(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -179,6 +179,7 @@ class Search(models.Model):
         ('DropIrrelevantPostResultProcessor','DropIrrelevantPostResultProcessor'),
         ('DedupeByFieldPostResultProcessor', 'DedupeByFieldPostResultProcessor'),
         ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor'),
+        ('RedactPIIPostResultProcessor', 'RedactPIIPostResultProcessor'),
     ]
     post_result_processors = models.JSONField(default=getSearchPostResultProcessorsDefault, blank=True)
     result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)
