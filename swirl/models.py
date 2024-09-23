@@ -147,7 +147,7 @@ def getSearchPreQueryProcessorsDefault():
     return []
 
 def getSearchPostResultProcessorsDefault():
-    return ["DedupeByFieldPostResultProcessor","CosineRelevancyPostResultProcessor", "RedactPIIPostResultProcessor"]
+    return ["DedupeByFieldPostResultProcessor","CosineRelevancyPostResultProcessor"]
 
 class Search(models.Model):
     id = models.BigAutoField(primary_key=True)
