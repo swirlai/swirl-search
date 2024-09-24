@@ -1,12 +1,28 @@
 name: Unit Tests
 
 on:
-  # Manual trigger only
+  pull_request:
+    # Run for all PRs to develop - means PR cannot merge until unit tests pass
+    branches:
+      - develop
+    # Skip non-code changes
+    paths-ignore:
+      - '.github/**'
+      - 'integrations/**'
+      - 'swirl-infra/**'
+      - 'docs/**'
+      - 'README.md'
+      - 'db.sqlite3.dist'
   workflow_dispatch:
 
-jobs:
+permissions:
+  contents: read
+  actions: read
+  checks: write
+  pull-requests: write
 
-  build:
+jobs:
+  unit-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +38,8 @@ jobs:
       - name: Install the Unit Tests
         run: ./install-test.sh
       - name: Run the Unit Tests
-        run: pytest
+        # generate a JUnit XML report for the test results
+        run: pytest --junitxml=reports/junit.xml --tb=short --ignore=integrations
       - name: Upload Log Files
         if: always()
         uses: actions/upload-artifact@v4
@@ -31,3 +48,9 @@ jobs:
           path: |
             logs/
             /var/log/syslog*
+
+      - name: Publish Unit Test Results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: reports/junit.xml
