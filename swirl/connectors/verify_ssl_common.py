@@ -34,7 +34,7 @@ class VerifyCertsCommon(Connector):
 
         for cre in cred_list:
             if cre.startswith('bearer='):
-                # handle this speacial becauase tokens have '=' sign in them
+                # handle this special becauase tokens have '=' sign in them
                 bearer = cre[len('bearer='):]
                 if not bearer:
                     self.log_invalid_credentials()
