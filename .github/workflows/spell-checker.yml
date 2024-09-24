@@ -2,7 +2,24 @@ name: Check Spelling
 
 # Only allow manual run of this workflow from the Actions tab
 on:
+  pull_request:
+    # Run for all PRs to develop - means PR cannot merge until unit tests pass
+    branches:
+      - develop
+      - main
+    # Skip non-code changes
+    paths-ignore:
+      - '.github/**'
+      - 'integrations/**'
+      - 'swirl-infra/**'
+      - 'db.sqlite3.dist'
   workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+  pull-requests: write
 
 jobs:
   build:
@@ -16,3 +33,9 @@ jobs:
       with:
         config: ./.github/workflows/typos.toml
         write_changes: true  # Writes changes on the Action's local checkout
+
+    - name: Capture Git Diff
+      run: |
+        git diff > diff_output.txt
+        echo "## Git Diff Output" >> $GITHUB_STEP_SUMMARY
+        cat diff_output.txt >> $GITHUB_STEP_SUMMARY
