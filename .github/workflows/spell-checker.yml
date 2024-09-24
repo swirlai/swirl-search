@@ -35,6 +35,7 @@ jobs:
         write_changes: true  # Writes changes on the Action's local checkout
 
     - name: Capture Git Diff
+      if: always()
       run: |
         git diff > diff_output.txt
         echo "## Git Diff Output" >> $GITHUB_STEP_SUMMARY
