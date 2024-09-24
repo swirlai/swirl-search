@@ -78,3 +78,4 @@ class SwirlRelevancyLogger:
         elapsed_time = time.time() - self.sim_start_time
         if self.log_sim:
             logger.debug(f'PLG_SIM|{self.request_id}|{round(elapsed_time,4)}|')
+
