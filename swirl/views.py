@@ -313,7 +313,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         # security review for 1.7 - OK, saved with owner
         serializer.save(owner=self.request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     ########################################
 
@@ -332,6 +332,8 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         searchprovider.delete()
         return Response('SearchProvider Object Deleted', status=status.HTTP_410_GONE)
 
+    def partial_update(self, request, pk=None):
+        return self.update(request, pk)
 
 ########################################
 ########################################
@@ -612,7 +614,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             # search_task.delay(search.id, Authenticator().get_session_data(request))
             logger.info(f"{request.user} search_put {search.id}")
             run_search(search.id, Authenticator().get_session_data(request), request=request)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     ########################################
 
@@ -631,6 +633,9 @@ class SearchViewSet(viewsets.ModelViewSet):
         search = Search.objects.get(pk=pk)
         search.delete()
         return Response('Search Object Deleted', status=status.HTTP_410_GONE)
+
+    def partial_update(self, request, pk=None):
+        return self.update(request, pk)
 
 ########################################
 ########################################
@@ -765,7 +770,7 @@ class ResultViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         # security review for 1.7 - OK, saved with owner
         serializer.save(owner=self.request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     ########################################
 
@@ -784,6 +789,9 @@ class ResultViewSet(viewsets.ModelViewSet):
         result = Result.objects.get(pk=pk)
         result.delete()
         return Response('Result Object Deleted!', status=status.HTTP_410_GONE)
+
+    def partial_update(self, request, pk=None):
+        return self.update(request, pk)
 
 ########################################
 ########################################
@@ -894,7 +902,7 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         # security review for 1.7 - OK, saved with owner
         serializer.save(owner=self.request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     ########################################
 
@@ -910,7 +918,10 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
 
         searchprovider = QueryTransform.objects.get(pk=pk)
         searchprovider.delete()
-        return Response('QueryTranformation Object Deleted', status=status.HTTP_410_GONE)
+        return Response('QueryTransformation Object Deleted', status=status.HTTP_410_GONE)
+
+    def partial_update(self, request, pk=None):
+        return self.update(request, pk)
 
 def query_transform_form(request):
     if request.method == 'POST':

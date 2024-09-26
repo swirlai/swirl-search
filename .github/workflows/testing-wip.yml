@@ -8,10 +8,14 @@ name: Testing WIP
 on:
   workflow_dispatch:
     inputs:
+      qa_image:  # Input the QA Repo image to use
+        description: 'QA Repo image to use'
+        required: true
+        default: 'automated-tests-master'  # Default image if none specified
       behave_tags:  # Input the Behave tag(s) to run
         description: 'Behave tag(s) to run'
         required: true
-        default: 'estest'  # Default tag if none specified
+        default: 'qa_suite,community'  # Default tag if none specified
 
 jobs:
   wip-tests:
@@ -37,7 +41,7 @@ jobs:
       - name: Set Up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12.4'
+          python-version: '3.12.5'
           cache: 'pip'
       - name: Install Swirl
         run: ./install.sh
@@ -65,7 +69,7 @@ jobs:
           echo "========"
           cat .env.qa
           echo "========"
-          docker run --net=host --env-file .env.qa -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=${{ github.event.inputs.behave_tags }}"
+          docker run --net=host --env-file .env.qa -t swirlai/swirl-search-qa:${{ github.event.inputs.qa_image }} sh -c "behave --tags=${{ github.event.inputs.behave_tags }}"
       - name: Upload Log Files
         if: always()
         uses: actions/upload-artifact@v4

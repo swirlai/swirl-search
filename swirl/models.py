@@ -99,7 +99,8 @@ class SearchProvider(models.Model):
         ('GenAIQueryProcessor', 'GenAIQueryProcessor'),
         ('AdaptiveQueryProcessor', 'AdaptiveQueryProcessor'),
         ('NoModQueryProcessor', 'NoModQueryProcessor'),
-        ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor')
+        ('SpellcheckQueryProcessor', 'SpellcheckQueryProcessor'),
+        ('RemovePIIQueryProcessor', 'RemovePIIQueryProcessor'),
     ]
     query_processors = models.JSONField(default=getSearchProviderQueryProcessorsDefault, blank=True)
     query_mappings = models.CharField(max_length=2048, default=str, blank=True)
@@ -114,7 +115,8 @@ class SearchProvider(models.Model):
         ('CleanTextResultProcessor','CleanTextResultProcessor'),
         ('RequireQueryStringInTitleResultProcessor','RequireQueryStringInTitleResultProcessor'),
         ('AutomaticPayloadMapperResultProcessor', 'AutomaticPayloadMapperResultProcessor'),
-        ('CosineRelevancyResultProcessor','CosineRelevancyResultProcessor')
+        ('CosineRelevancyResultProcessor','CosineRelevancyResultProcessor'),
+        ('RedactPIIResultProcessor', 'RedactPIIResultProcessor'),
     ]
     response_mappings = models.CharField(max_length=2048, default=str, blank=True)
 
@@ -177,6 +179,7 @@ class Search(models.Model):
         ('DropIrrelevantPostResultProcessor','DropIrrelevantPostResultProcessor'),
         ('DedupeByFieldPostResultProcessor', 'DedupeByFieldPostResultProcessor'),
         ('DedupeBySimilarityPostResultProcessor', 'DedupeBySimilarityPostResultProcessor'),
+        ('RedactPIIPostResultProcessor', 'RedactPIIPostResultProcessor'),
     ]
     post_result_processors = models.JSONField(default=getSearchPostResultProcessorsDefault, blank=True)
     result_url = models.CharField(max_length=2048, default='/swirl/results?search_id=%d&result_mixer=%s', blank=True)

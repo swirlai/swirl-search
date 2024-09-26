@@ -99,7 +99,6 @@ else
 fi
 
 echo "$PROG Downloading NLTK modules..."
-python -m nltk.downloader stopwords
-python -m nltk.downloader punkt
+./download-nltk-resources.sh
 
 echo "$PROG If no errors occurred, run python swirl.py setup"

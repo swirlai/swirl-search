@@ -1,10 +1,20 @@
 services:
   redis:
-    image: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   app:
     image: swirlai/swirl-search:latest
     ports:
       - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
     command: >
       sh -c 'rm -fr ./.swirl && python swirl.py setup && mkdir -p static/api/config &&
              /usr/bin/jq ".default" ./config-swirl-demo.db.json | sed -e "s/<msal-app-id>/$MSAL_APP_ID/" \
