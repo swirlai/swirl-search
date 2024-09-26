@@ -11,7 +11,7 @@ on:
       qa_image:  # Input the QA Repo image to use
         description: 'QA Repo image to use'
         required: true
-        default: 'automated-tests-develop'  # Default image if none specified
+        default: 'automated-tests-master'  # Default image if none specified
       behave_tags:  # Input the Behave tag(s) to run
         description: 'Behave tag(s) to run'
         required: true
