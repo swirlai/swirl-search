@@ -983,6 +983,7 @@ This table describes the query processors included in SWIRL:
 | GenericQueryProcessor | Removes special characters from the query |  |
 | SpellcheckQueryProcessor | Uses [TextBlob](https://textblob.readthedocs.io/en/dev/quickstart.html#spelling-correction) to predict and fix spelling errors in `query_string` | Best deployed in a `SearchProvider.query_processor` for sources that need it; not recommended with Google PSEs | 
 | NoModQueryProcessor |  Only removes leading SearchProvider Tags and does not modify the query terms in any way. | It is intended for repositories that allow non-search characters (such as brackets). |
+| RemovePIIQueryProcessor | Removes PII entities from the query. It does not replace them. | | 
 
 ## Result Processors
 
@@ -999,6 +1000,7 @@ The following table lists the Result Processors included with SWIRL:
 | DateFinderResultProcessor | Looks for a date in any a number of formats in the body field of each result item. Should it find one, and the `date_published` for that item is `'unknown'`, it replaces `date_published` with the date extracted from the body, and notes this in the `result.messages`. | This processor can detect the following date formats:<br/> `06/01/23`<br/>`06/01/2023`<br/>`06-01-23`<br/>`06-01-2023`<br/>`jun 1, 2023`<br/>`june 1, 2023` |
 | AutomaticPayloadMapperResultProcessor | Profiles response data to find good strings for SWIRL's `title`, `body`, and `date_published` fields. It is intended for SearchProviders that would otherwise have few (or no) good `result_mappings` options. | It should be place after the `MappingResultProcessor`. The `result_mappings` field should be blank, except for the optional DATASET directive, which will return only a single SWIRL response for each provider response, with the original response in the `payload` field under the `dataset` key. |
 | RequireQueryStringInTitleResultProcessor | Drops results that do not contain the `query_string_to_provider` in the result `title` field. | It should be added after the `MappingResultProcessor` and is now included by default in the "LinkedIn - Google PSE" SearchProvider. | 
+| RemovePIIResultProcessor | Redacts PII entries in all result fields for configured SearchProviders, including payload string fields, with a generic tag showing the entity type. For example "James T. Kirk" -> "<PERSON>". | This processor may be installed before or after the CosineRelevancyResultProcessor. If it runs before, query terms which are PII entities will not be used in relevancy ranking, since they will be redacted. More information: [https://microsoft.github.io/presidio/](https://microsoft.github.io/presidio/) |
 
 ## Post Result Processors
 
@@ -1063,6 +1065,10 @@ The `DropIrrelevantPostResultProcessor` drops results with `swirl_score < settin
 
 {: .highlight }
 The Galaxy UI will not display the correct number of results if this ResultProcessor is deployed. 
+
+### `RemovePIIPostResultProcessor`
+
+This processor is identical in most respects to the [RemovePIIResultProcessor](#result-processors), except that it operates on all results in a result set, not just a single SearchProvider. 
 
 # Mixers
 
