@@ -126,7 +126,7 @@ Use the Enterprise Edition of SWIRL AI Connect when you have:
 
 ## Why don't you use GitHub Issues?
 
-We prefer to use [our free Slack channel](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) for support. 
+We prefer to use [our free Slack channel](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA) for support.
 
 ## What is the SWIRL Architecture & Technology Stack
 
