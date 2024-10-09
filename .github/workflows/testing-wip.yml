@@ -66,8 +66,11 @@ jobs:
           echo "MSAL_CB_PORT=8000" >> .env.qa
           echo "QA_ADMIN_PW=${{ secrets.QA_ADMIN_PW }}" >> .env.qa
           echo "QA_OPENAI_KEY=${{ secrets.QA_OPENAI_KEY }}" >> .env.qa
+          echo "QA_NLR_USERNAME=${{ secrets.QA_NLR_USERNAME }}" >> .env.qa
+          echo "QA_NLR_PASSWORD=${{ secrets.QA_NLR_PASSWORD }}" >> .env.qa
           echo "QA_CRUNCHBASE_KEY=${{ secrets.QA_CRUNCHBASE_KEY }}" >> .env.qa
           echo "QA_BLOCKCHAIN_KEY=${{ secrets.QA_BLOCKCHAIN_KEY }}" >> .env.qa
+          echo "QA_YOUTRACK_TOKEN=${{ secrets.QA_YOUTRACK_TOKEN }}" >> .env.qa
           echo "========"
           cat .env.qa
           echo "========"
