@@ -71,6 +71,7 @@ jobs:
           echo "QA_CRUNCHBASE_KEY=${{ secrets.QA_CRUNCHBASE_KEY }}" >> .env.qa
           echo "QA_BLOCKCHAIN_KEY=${{ secrets.QA_BLOCKCHAIN_KEY }}" >> .env.qa
           echo "QA_YOUTRACK_TOKEN=${{ secrets.QA_YOUTRACK_TOKEN }}" >> .env.qa
+          echo "QA_GITHUB_TOKEN=${{ secrets.QA_GITHUB_TOKEN }}" >> .env.qa
           echo "========"
           cat .env.qa
           echo "========"
