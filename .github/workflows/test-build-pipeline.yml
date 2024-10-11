@@ -76,9 +76,6 @@ jobs:
             echo "$BIGQUERY_TOKEN_BASE64" | base64 --decode > "${{ github.workspace }}/token.json"
           env:
             BIGQUERY_TOKEN_BASE64: ${{ secrets.QA_BIGQUERY_TOKEN_BASE64 }}
-        - name: Export BigQuery token file path as env var
-          run: |
-            echo "BIGQUERY_TOKEN_PATH=${{ github.workspace }}/token.json" >> $GITHUB_ENV
         - name: Run the QA Suite
           run: |
             echo "SWIRL_TEST_HOST=localhost" > .env.qa
@@ -92,6 +89,7 @@ jobs:
             echo "QA_BLOCKCHAIN_KEY=${{ secrets.QA_BLOCKCHAIN_KEY }}" >> .env.qa
             echo "QA_YOUTRACK_TOKEN=${{ secrets.QA_YOUTRACK_TOKEN }}" >> .env.qa
             echo "QA_GITHUB_TOKEN=${{ secrets.QA_GITHUB_TOKEN }}" >> .env.qa
+            echo "BIGQUERY_TOKEN_PATH=${{ github.workspace }}/token.json" >> .env.qa
             echo "========"
             cat .env.qa
             echo "========"
