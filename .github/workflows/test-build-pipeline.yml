@@ -71,6 +71,14 @@ jobs:
             python swirl.py start
           env:
             ALLOWED_HOSTS: localhost,host.docker.internal
+        - name: Decode BigQuery token and create JSON file
+          run: |
+            echo "$BIGQUERY_TOKEN_BASE64" | base64 --decode > "${{ github.workspace }}/token.json"
+          env:
+            BIGQUERY_TOKEN_BASE64: ${{ secrets.QA_BIGQUERY_TOKEN_BASE64 }}
+        - name: Export BigQuery token file path as env var
+          run: |
+            echo "BIGQUERY_TOKEN_PATH=${{ github.workspace }}/token.json" >> $GITHUB_ENV
         - name: Run the QA Suite
           run: |
             echo "SWIRL_TEST_HOST=localhost" > .env.qa
