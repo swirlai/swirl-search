@@ -1,0 +1,31 @@
+{
+    "name": "Company Data - BigQuery",
+    "active": false,
+    "default": false,
+    "connector": "BigQuery",
+    "url": "",
+    "query_template": "select {fields} from `{table}` where search({field1}, '{query_string}') or search({field2}, '{query_string}') or search({field3}, '{query_string}');",
+    "query_template_json": {},
+    "post_query_template": {},
+    "http_request_headers": {},
+    "page_fetch_config_json": {},
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "fields=*,sort_by_date=year_founded,table=company_dataset.company,field1=name,field2=domain,field3=locality",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "title=name,body='{name} was founded in {year_founded} and serves the {industry} industry. The company is located in {locality} and has approximately {current_employee_estimate} employees. The registered domain for this organization is: {domain}',url='https://www.{linkedin_url}',NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "/path/to/bigquery/token.json",
+    "eval_credentials": "",
+    "tags": [
+        "Company",
+        "BigQuery",
+        "Internal"
+    ]
+}
