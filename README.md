@@ -50,9 +50,9 @@ SWIRL operated without needing to move data into a vector database or undergo ET
 
 **SWIRL Co-Pilot**: SWIRL Co-Pilot acts as an intelligent assistant, leveraging advanced AI to provide context-aware insights and support to business users. Securely integrated within your enterprise systems, SWIRL Co-Pilot helps streamline workflows, automate tasks, and deliver personalized recommendations, significantly boosting operational efficiency. Users benefit from real-time decision support, reduced manual workload, and a more intuitive interaction with their data, enabling them to focus on strategic activities that drive business growth.
 
-## Schedule Your [Free Demo](https://swirlaiconnect.com/schedule-a-demo) of SWIRL Co-Pilot
+## Schedule Your [Free Demo](https://swirlaiconnect.com/contact-us) of SWIRL Co-Pilot
 
-[![SWIRL Co-Pilot](docs/images/Co-Pilot_Book_a_demo.png)](https://swirlaiconnect.com/schedule-a-demo)
+[![SWIRL Co-Pilot](docs/images/Co-Pilot_Book_a_demo.png)](https://swirlaiconnect.com/contact-us)
 
 
 ## SWIRL's Ranking in Action
