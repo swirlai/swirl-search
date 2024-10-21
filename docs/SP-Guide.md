@@ -81,7 +81,7 @@ to
 
 Click the `PUT` button to save the change. You can use the `HTML Form` at the bottom of the page for convenience.
 
-![picture of the SearchProvider endpoint HTML form]()
+![picture of the SearchProvider endpoint HTML form](images/swirl_sp_html_form.png)
 
 ## Copy/Paste Install
 
