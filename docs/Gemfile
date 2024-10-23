@@ -2,7 +2,6 @@ source "https://rubygems.org"
 
 gem "jekyll", "~> 4.3.4" # installed by `gem jekyll`
 gem "jekyll-default-layout"
-gem "jekyll-sitemap"
 gem "jekyll-relative-links"
 gem "jemoji"
 gem "just-the-docs", "0.10.0"

@@ -85,8 +85,6 @@ GEM
       sass-embedded (~> 1.54)
     jekyll-seo-tag (2.8.0)
       jekyll (>= 3.8, < 5.0)
-    jekyll-sitemap (1.4.0)
-      jekyll (>= 3.7, < 5.0)
     jekyll-watch (2.2.1)
       listen (~> 3.0)
     jemoji (0.13.0)
@@ -179,7 +177,6 @@ DEPENDENCIES
   jekyll (~> 4.3.4)
   jekyll-default-layout
   jekyll-relative-links
-  jekyll-sitemap
   jemoji
   just-the-docs (= 0.10.0)
 
