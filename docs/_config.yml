@@ -85,7 +85,6 @@ markdown: kramdown
 theme: just-the-docs
 plugins:
   - jekyll-default-layout
-  - jekyll-sitemap
   - jekyll-relative-links
   - jemoji
 disable_disk_cache: true
