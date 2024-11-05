@@ -65,6 +65,7 @@ jobs:
           echo "QA_YOUTRACK_TOKEN=${{ secrets.QA_YOUTRACK_TOKEN }}" >> .env.qa
           echo "QA_GITHUB_TOKEN=${{ secrets.QA_GITHUB_TOKEN }}" >> .env.qa
           echo "BIGQUERY_TOKEN_PATH=${{ github.workspace }}/token.json" >> .env.qa
+          echo "QA_TRELLO_KEYS=${{ secrets.QA_TRELLO_KEYS }}" >> .env.qa
           echo "========"
           cat .env.qa
           echo "========"
