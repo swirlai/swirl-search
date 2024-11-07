@@ -578,8 +578,8 @@
         "query_mappings": "NOT=true,NOT_CHAR=-",
         "result_grouping_field": "conversationId",
         "result_processors": [
-            "MappingResultProcessor",
             "DedupeByFieldResultProcessor",
+            "MappingResultProcessor",
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
