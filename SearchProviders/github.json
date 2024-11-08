@@ -28,7 +28,7 @@
             "GitHub",
             "Code",
             "Internal",
-            "Development"
+            "Dev"
         ]
     },
     {
@@ -60,7 +60,7 @@
             "GitHub",
             "Issues",
             "Internal",
-            "Development"
+            "Dev"
         ]
     },
     {
@@ -92,7 +92,7 @@
             "GitHub",
             "PullRequests",
             "Internal",
-            "Development"
+            "Dev"
         ]
     },
     {
@@ -124,7 +124,7 @@
             "GitHub",
             "Commits",
             "Internal",
-            "Development"
+            "Dev"
         ]
     }
 ]
