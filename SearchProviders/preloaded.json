@@ -155,7 +155,8 @@
         "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "eval_credentials": "",
         "tags": [
-            "Swirl"
+            "Swirl",
+            "Dev"
         ]
     },
     {
@@ -480,7 +481,7 @@
         "tags": [
             "Articles",
             "YouTrack",
-            "Internal"
+            "Dev"
         ]
     },
     {
@@ -507,7 +508,7 @@
         "tags": [
             "Issues",
             "YouTrack",
-            "Internal"
+            "Dev"
         ]
     },
     {
@@ -533,7 +534,7 @@
         "tags": [
             "Confluence",
             "Atlassian",
-            "Internal"
+            "Dev"
         ]
     },
     {
@@ -559,7 +560,7 @@
         "tags": [
             "Jira",
             "Atlassian",
-            "Internal"
+            "Dev"
         ]
     },
     {
@@ -740,7 +741,7 @@
             "GitHub",
             "Code",
             "Internal",
-            "Development"
+            "Dev"
         ]
     },
     {
@@ -772,7 +773,7 @@
             "GitHub",
             "Issues",
             "Internal",
-            "Development"
+            "Dev"
         ]
     },
     {
@@ -804,7 +805,7 @@
             "GitHub",
             "PullRequests",
             "Internal",
-            "Development"
+            "Dev"
         ]
     },
     {
@@ -836,7 +837,7 @@
             "GitHub",
             "Commits",
             "Internal",
-            "Development"
+            "Dev"
         ]
     },
     {
@@ -967,7 +968,7 @@
         "tags": [
             "HackerNews",
             "Stories",
-            "Development"
+            "Dev"
         ]
     },
     {
@@ -996,7 +997,7 @@
         "tags": [
             "HackerNews",
             "Comments",
-            "Development"
+            "Dev"
         ]
     },
     {
