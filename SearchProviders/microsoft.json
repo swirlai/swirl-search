@@ -13,8 +13,8 @@
         "query_mappings": "NOT=true,NOT_CHAR=-",
         "result_grouping_field": "conversationId",
         "result_processors": [
-            "MappingResultProcessor",
             "DedupeByFieldResultProcessor",
+            "MappingResultProcessor",
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
@@ -75,7 +75,7 @@
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
-        "result_mappings": "title=resource.name,body='{resource.name} - {summary}',date_published=resource.createdDateTime,url=resource.webUrl,author=resource.createdBy.user.displayName,resource.lastModifiedBy.user.displayName,resource.lastModifiedDateTime,FILE_SYSTEM,NO_PAYLOAD",
+        "result_mappings": "title=resource.name,body='{resource.name} - {summary}',date_published=resource.createdDateTime,url=resource.webUrl,author=resource.createdBy.user.displayName,resource.lastModifiedBy.user.displayName,resource.lastModifiedDateTime,NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "",
         "eval_credentials": "",

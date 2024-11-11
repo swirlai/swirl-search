@@ -2,14 +2,8 @@ name: Check Spelling
 
 # Trigger to only run this workflow automatically on docs/ directory changes
 on:
-  push:
-    branches:
-      - "main"
-    paths:
-      - "docs/**"
-
   pull_request:
-    # Run for all PRs to develop - means PR cannot merge until unit tests pass
+    # Run for all PRs to develop or main - means PR cannot merge until unit tests pass
     branches:
       - develop
       - main
