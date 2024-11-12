@@ -67,9 +67,10 @@ class Elastic(VerifyCertsCommon):
             self.error(f"elastic_query unexpectedly blank")
 
         self.query_to_provider = elastic_query
+        logger.debug(f"Constructed query_to_provider: {self.query_to_provider}")
         return
 
-    def execute_search(self, session=None):
+    def execute_search(self, size, session=None):
 
         logger.debug(f"{self}: execute_search()")
 
@@ -129,10 +130,18 @@ class Elastic(VerifyCertsCommon):
         else:
             self.status = "ERR_NO_QUERY_SPECIFIED"
             return
+        
+        # Extract size (int) - Optional
+        size_pattern = r"size=(\d+)"
+        match = re.search(size_pattern, self.query_to_provider)
+        if match:
+            size = int(match.group(1))
+        else:
+            size = 10  # Default size if not specified
 
         response = None
         try:
-            response = es.search(index=index, query=query)
+            response = es.search(index=index, query=query, size=size)
         except ConnectionError as err:
             self.error(f"es.search reports: {err}")
         except NotFoundError:
