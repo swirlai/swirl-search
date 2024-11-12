@@ -423,7 +423,7 @@
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
-        "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
+        "result_mappings": "url='https://<your-opensearch-instance>/email/_doc/{_id}',date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,admin:admin",
         "tags": [
@@ -448,7 +448,7 @@
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
-        "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
+        "result_mappings": "url='https://<your-elastic-instance>/email/_doc/{_id}',date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,username:password",
         "tags": [
