@@ -12,6 +12,7 @@ def getSearchProviderQueryProcessorsDefault():
 def getSearchProviderResultProcessorsDefault():
     return ["MappingResultProcessor","DateFinderResultProcessor","CosineRelevancyResultProcessor"]
 
+MAX_QUERY_STRING_LENGTH = 2048
 class FlexibleChoiceField(models.CharField):
     """
     Allow choices and free text so we can have a user named and shared query transform
@@ -154,8 +155,8 @@ class Search(models.Model):
     owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    query_string = models.CharField(max_length=256, default=str)
-    query_string_processed = models.CharField(max_length=256, default=str, blank=True)
+    query_string = models.CharField(max_length=MAX_QUERY_STRING_LENGTH, default=str)
+    query_string_processed = models.CharField(max_length=MAX_QUERY_STRING_LENGTH, default=str, blank=True)
     SORT_CHOICES = [
         ('relevancy', 'relevancy'),
         ('date', 'date')
@@ -225,9 +226,9 @@ class Result(models.Model):
     search_id = models.ForeignKey(Search, on_delete=models.CASCADE)
     provider_id = models.IntegerField(default=0)
     searchprovider = models.CharField(max_length=50, default=str)
-    query_string_to_provider = models.CharField(max_length=256, default=str)
+    query_string_to_provider = models.CharField(max_length=MAX_QUERY_STRING_LENGTH, default=str)
     result_processor_json_feedback = models.JSONField(default=list)
-    query_to_provider = models.CharField(max_length=2048, default=str)
+    query_to_provider = models.CharField(max_length=MAX_QUERY_STRING_LENGTH, default=str)
     query_processors = models.JSONField(default=list, blank=True)
     result_processors = models.JSONField(default=list, blank=True)
     messages = models.JSONField(default=list, blank=True)

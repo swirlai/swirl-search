@@ -155,7 +155,8 @@
         "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
         "eval_credentials": "",
         "tags": [
-            "Swirl"
+            "Swirl",
+            "Dev"
         ]
     },
     {
@@ -326,28 +327,34 @@
         ]
     },
     {
-        "name": "Company Funding Records - BigQuery",
+        "name": "Company Data - BigQuery",
+        "description": "Searches info on 7 million companies worldwide ncluding Linkedin URL, company size, location, and number of employees. Search only with company name, domain or location. Supports many languages. Does not support NOT operator.",
         "active": false,
         "default": false,
         "connector": "BigQuery",
         "url": "",
-        "query_template": "select {fields} from `{table}` where search({field1}, '{query_string}') or search({field2}, '{query_string}');",
+        "query_template": "select {fields} from `{table}` where search({field1}, '{query_string}') or search({field2}, '{query_string}') or search({field3}, '{query_string}');",
+        "query_template_json": {},
+        "post_query_template": {},
+        "http_request_headers": {},
+        "page_fetch_config_json": {},
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
-        "query_mappings": "fields=*,sort_by_date=fundedDate,table=funding.funding,field1=company,field2=city",
+        "query_mappings": "fields=*,sort_by_date=year_founded,table=company_dataset.company,field1=name,field2=domain,field3=locality",
+        "result_grouping_field": "",
         "result_processors": [
             "MappingResultProcessor",
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
-        "result_mappings": "title='{company}',body='{company} raised ${raisedamt} series {round} on {fundeddate}. The company is located in {city} {state} and has {numemps} employees.',url=id,date_published=fundeddate,NO_PAYLOAD",
+        "result_mappings": "title=name,body='{name} was founded in {year_founded} and serves the {industry} industry. The company is located in {locality} and has approximately {current_employee_estimate} employees. The registered domain for this organization is: {domain}',url='https://www.{linkedin_url}',NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "/path/to/bigquery/token.json",
+        "eval_credentials": "",
         "tags": [
             "Company",
-            "BigQuery",
-            "Internal"
+            "BigQuery"
         ]
     },
     {
@@ -416,7 +423,7 @@
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
-        "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
+        "result_mappings": "url='https://<your-opensearch-instance>/email/_doc/{_id}',date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,admin:admin",
         "tags": [
@@ -441,7 +448,7 @@
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
-        "result_mappings": "url=_source.url,date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
+        "result_mappings": "url='https://<your-elastic-instance>/email/_doc/{_id}',date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,username:password",
         "tags": [
@@ -474,7 +481,7 @@
         "tags": [
             "Articles",
             "YouTrack",
-            "Internal"
+            "Dev"
         ]
     },
     {
@@ -501,7 +508,7 @@
         "tags": [
             "Issues",
             "YouTrack",
-            "Internal"
+            "Dev"
         ]
     },
     {
@@ -527,7 +534,7 @@
         "tags": [
             "Confluence",
             "Atlassian",
-            "Internal"
+            "Dev"
         ]
     },
     {
@@ -553,7 +560,7 @@
         "tags": [
             "Jira",
             "Atlassian",
-            "Internal"
+            "Dev"
         ]
     },
     {
@@ -572,8 +579,8 @@
         "query_mappings": "NOT=true,NOT_CHAR=-",
         "result_grouping_field": "conversationId",
         "result_processors": [
-            "MappingResultProcessor",
             "DedupeByFieldResultProcessor",
+            "MappingResultProcessor",
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
@@ -637,7 +644,7 @@
             "CosineRelevancyResultProcessor"
         ],
         "response_mappings": "",
-        "result_mappings": "title=resource.name,body='{resource.name} - {summary}',date_published=resource.createdDateTime,url=resource.webUrl,author=resource.createdBy.user.displayName,resource.lastModifiedBy.user.displayName,resource.lastModifiedDateTime,FILE_SYSTEM,NO_PAYLOAD",
+        "result_mappings": "title=resource.name,body='{resource.name} - {summary}',date_published=resource.createdDateTime,url=resource.webUrl,author=resource.createdBy.user.displayName,resource.lastModifiedBy.user.displayName,resource.lastModifiedDateTime,NO_PAYLOAD",
         "results_per_query": 10,
         "credentials": "",
         "eval_credentials": "",
@@ -734,7 +741,7 @@
             "GitHub",
             "Code",
             "Internal",
-            "Development"
+            "Dev"
         ]
     },
     {
@@ -766,7 +773,7 @@
             "GitHub",
             "Issues",
             "Internal",
-            "Development"
+            "Dev"
         ]
     },
     {
@@ -798,7 +805,7 @@
             "GitHub",
             "PullRequests",
             "Internal",
-            "Development"
+            "Dev"
         ]
     },
     {
@@ -830,7 +837,7 @@
             "GitHub",
             "Commits",
             "Internal",
-            "Development"
+            "Dev"
         ]
     },
     {
@@ -961,7 +968,7 @@
         "tags": [
             "HackerNews",
             "Stories",
-            "Development"
+            "Dev"
         ]
     },
     {
@@ -990,7 +997,7 @@
         "tags": [
             "HackerNews",
             "Comments",
-            "Development"
+            "Dev"
         ]
     },
     {
