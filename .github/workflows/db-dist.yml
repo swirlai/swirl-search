@@ -3,11 +3,6 @@ name: Generate New db.sqlite3.dist File
 on:
   workflow_dispatch:  # Allows manual triggering of the workflow
 
-# permissions:
-#   contents: write
-#   pull-requests: write
-#   actions: read
-
 jobs:
 
   db-dist:
