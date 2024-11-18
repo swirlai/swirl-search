@@ -28,11 +28,11 @@ jobs:
         with:
           python-version: '3.12.6'
           cache: 'pip'
-      - name: Delete the db.sqlite3 File
-        run: rm db.sqlite3
       - name: Install Swirl (with a timeout)
         run: ./install.sh
         timeout-minutes: 10
+      - name: Delete the db.sqlite3 File
+        run: rm db.sqlite3
       - name: Setup Swirl
         run: python swirl.py setup
       - name: Create the Superuser
