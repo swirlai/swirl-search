@@ -3,6 +3,10 @@ name: Generate New db.sqlite3.dist File
 on:
   workflow_dispatch:  # Allows manual triggering of the workflow
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
 
   db-dist:
@@ -28,11 +32,11 @@ jobs:
         with:
           python-version: '3.12.6'
           cache: 'pip'
-      - name: Delete the db.sqlite3 File
-        run: rm db.sqlite3
       - name: Install Swirl (with a timeout)
         run: ./install.sh
         timeout-minutes: 10
+      - name: Delete the db.sqlite3 File
+        run: rm db.sqlite3
       - name: Setup Swirl
         run: python swirl.py setup
       - name: Create the Superuser
@@ -47,7 +51,7 @@ jobs:
         run: cp db.sqlite3 db.sqlite3.dist
       - name: Create a Pull Request
         id: createpr
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           add-paths: db.sqlite3.dist
           branch: db_dist/autoupdate
