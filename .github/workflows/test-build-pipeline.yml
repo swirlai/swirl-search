@@ -9,6 +9,7 @@ on:
         - .github/**
         - docs/**
         - README.md
+        - db.sqlite3.dist
     workflow_dispatch:
 
 permissions:
