@@ -3,6 +3,9 @@ name: Generate New db.sqlite3.dist File
 on:
   workflow_dispatch:  # Allows manual triggering of the workflow
 
+permissions:
+  pull-requests: write
+
 jobs:
 
   db-dist:
@@ -47,7 +50,7 @@ jobs:
         run: cp db.sqlite3 db.sqlite3.dist
       - name: Create a Pull Request
         id: createpr
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           add-paths: db.sqlite3.dist
           branch: db_dist/autoupdate
