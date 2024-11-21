@@ -14,7 +14,7 @@ Ask question → Get answer with sources → Click through to source
 
 ![SWIRL One Drive RAG](docs/images/SWIRL_OneDrive_RAG.gif)
 
-Watch it on [Youtube]()
+Watch it on [Youtube](https://youtu.be/6cT25SD4cV4)
 
 <div align="center">
 
