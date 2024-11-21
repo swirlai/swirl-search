@@ -1,22 +1,29 @@
 <div align="center">
 
-[![Whitepaper](docs/images/Whitepaper-Banner.png)](https://swirlaiconnect.com/whitepaper/ai-to-grow-business-2024-06)
+[![SWIRL](docs/images/large_header.png)](https://www.swirlaiconnect.com)
 
-[![Swirl](docs/images/dark_header.png)](https://www.swirlaiconnect.com)
+<h1>SWIRL</h1>
 
-<h1>SWIRL AI Connect</h1>
+## Ask questions, get answers from your company's data - just connect your app with SWIRL
 
-#### Bring AI to the Data, not the Data to the AI
+### RAG with One Drive & Microsoft 365 in 60 seconds
 
-### SWIRL AI Connect is advanced AI infrastructure software. It supports enhanced Retrieval Augmented Generation (RAG) capabilities, powerful analytics, and SWIRL Co-Pilot. SWIRL harnesses AI for business, enabling organizations to make better decisions and take more effective and timely actions.
+Ask question → Get answer with sources → Click through to source
 
-[Start Searching](#-try-swirl-now-in-docker) · [Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA) · [Key Features](#-key-features) · [Contribute](#-contributing-to-swirl) · [Documentation](#-documentation) · [Connectors](#-list-of-connectors)
+![SWIRL One Drive RAG](docs/images/SWIRL_OneDrive_RAG.gif)
 
-<br/>
+Watch it on [Youtube]()
+
+<div align="center">
+
+[⚡ Quick Start](#-try-swirl-in-docker) · 
+[💬 Join Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA) · 
+[📚 Docs](docs.swirlaiconnect.com) · 
+[🔌 Connectors](swirlaiconnect.com/connectors) · 
+[🤝 Contribute](#contributing)
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=088395&logoColor=blue&style=flat-square)](https://opensource.org/license/apache-2-0/)
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat-square&color=8DDFCB&label=Release)](https://github.com/swirlai/swirl-search/releases)
-
 [![Website](https://img.shields.io/badge/Website-swirlaiconnect.com-00215E?style=flat-square)](https://www.swirlaiconnect.com)
 [![SWIRL Slack](https://img.shields.io/badge/Slack-SWIRL%20Community-0E21A0?logo=slack&style=flat-square)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA)
 
@@ -24,11 +31,6 @@
 
 </div>
 
-
-
-**Get your AI up and running in minutes, not months.** SWIRL AI Connect is an open-source AI Connect platform that streamlines the integration of advanced AI technologies into business operations. It supports powerful features like Retrieval-Augmented Generation (RAG), Analytics, and Co-Pilot, enabling enhanced decision-making with AI and boosting enterprise AI transformation. 
-
-SWIRL operated without needing to move data into a vector database or undergo ETL processes. This approach not only enhances security but also speeds up the deployment. As a private cloud AI provider, SWIRL operates entirely within your private cloud infrastructure, running locally inside the firewall to ensure maximum data security and compliance.
 
 [![Bringing AI to the Data Newsletter](docs/images/Newsletter_CTA.png)](https://www.linkedin.com/newsletters/7201909550860427264/)
 
