@@ -33,7 +33,6 @@ Watch it on [Youtube]()
 
 </div>
 
-
 [![Bringing AI to the Data Newsletter](docs/images/Newsletter_CTA.png)](https://www.linkedin.com/newsletters/7201909550860427264/)
 
 ## 🤔 Why SWIRL?
@@ -42,8 +41,8 @@ Watch it on [Youtube]()
 
 <table>
 <tr>
-<td width="50%" align="center">
-<h3>❌ Without SWIRL</h3>
+<td width="50%" >
+<h3 align="center">❌ Without SWIRL</h3>
 
 - Set up vector databases
 - Move data around
@@ -52,10 +51,8 @@ Watch it on [Youtube]()
 - Security headaches
 
 </td>
-
-<td width="50%" align="center">
-
-<h3>✅ With SWIRL</h3>
+<td width="50%" >
+<h3 align="center">✅ With SWIRL</h3>
 
 - One docker command
 - Data stays where it is
@@ -103,19 +100,9 @@ Build your own ChatGPT-like assistant that actually knows your business:
 <details>
 <summary>👀 See it in action</summary>
 
-[Insert quick GIF showing a real question → answer flow]
+![SWIRL Chat in Action](docs/images/SWIRL_Chat_Demo.gif)
 
 </details>
-
-### 🛠 Built For Developers, By Developers
-
-```python
-# It's really this simple:
-from swirl import Swirl
-
-swirl = Swirl()
-answer = swirl.ask("what's our API rate limit?")
-print(answer.with_sources())  # Shows answer with source links
 
 ## Schedule Your [Free Demo](https://swirlaiconnect.com/contact-us) of SWIRL Co-Pilot
 
@@ -124,8 +111,7 @@ print(answer.with_sources())  # Shows answer with source links
 
 ## SWIRL's Ranking in Action
 
-SWIRL leverages the specific context of your enterprise data to deliver highly relevant search results tailored to business needs. While general search engines like Google offer broad capabilities, SWIRL excels in the precise and secure handling of enterprise-specific queries, providing actionable insights that enhance decision-making and business efficiency.
-
+SWIRL doesn't just search - it understands your company's context. Instead of broad web results, you get precise answers from your private data, right where it lives.
 
 <a href="https://www.youtube.com/watch?v=Ypn4XvSJfcQ" target="_blank">
 
