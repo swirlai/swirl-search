@@ -20,7 +20,7 @@ Watch it on [Youtube](https://youtu.be/6cT25SD4cV4)
 
 <div align="center">
 
-[⚡ Quick Start](#-try-swirl-in-docker) · 
+[⚡ Quick Start](#-try-swirl-now-in-docker) · 
 [💬 Join Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA) · 
 [📚 Docs](docs.swirlaiconnect.com) · 
 [🔌 Connectors](swirlaiconnect.com/connectors) · 
