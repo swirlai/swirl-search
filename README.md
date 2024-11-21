@@ -44,19 +44,25 @@ Watch it on [Youtube]()
 <tr>
 <td width="50%" align="center">
 <h3>❌ Without SWIRL</h3>
+
 - Set up vector databases
 - Move data around
 - Complex ETL pipelines
 - Weeks of infrastructure work
 - Security headaches
+
 </td>
+
 <td width="50%" align="center">
+
 <h3>✅ With SWIRL</h3>
+
 - One docker command
 - Data stays where it is
 - No vector DB needed
 - 2-minute setup
 - Enterprise-grade security
+  
 </td>
 </tr>
 </table>
@@ -71,7 +77,8 @@ $ migrate-data
 $ configure-indexes
 
 # Just this:
-$ docker run swirlai/swirl
+$ curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
+```
 
 ### 💡 What Can You Build With SWIRL?
 
@@ -80,6 +87,7 @@ Transform how your team works with data:
 #### 🤖 AI Assistant for Your Data
 
 Build your own ChatGPT-like assistant that actually knows your business:
+
 - Get instant answers from your company knowledge
 - Let AI draft responses using your documentation
 - Connect to Slack, Drive, GitHub, and 100+ tools
