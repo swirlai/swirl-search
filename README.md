@@ -41,7 +41,7 @@ Watch it on [Youtube]()
 
 <table>
 <tr>
-<td width="50%" >
+<td width="70%" >
 <h3 align="center">❌ Without SWIRL</h3>
 
 - Set up vector databases
@@ -50,7 +50,7 @@ Watch it on [Youtube]()
 - Weeks of infrastructure work
 - Security headaches
 </td>
-<td width="50%" >
+<td width="70%" >
 <h3 align="center">✅ With SWIRL</h3>
 
 - One docker command
