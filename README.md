@@ -6,7 +6,7 @@
 
 <h1>SWIRL</h1>
 
-## Ask questions, get answers from your company's data - just connect your app with SWIRL
+## Give your team ChatGPT-level search without moving data to the cloud
 
 ### RAG with One Drive & Microsoft 365 in 60 seconds
 
@@ -15,6 +15,8 @@ Ask question → Get answer with sources → Click through to source
 ![SWIRL One Drive RAG](docs/images/SWIRL_OneDrive_RAG.gif)
 
 Watch it on [Youtube](https://youtu.be/6cT25SD4cV4)
+
+**Teams using SWIRL saves an average 7.5 hours of productive time per week.**
 
 <div align="center">
 
@@ -28,6 +30,8 @@ Watch it on [Youtube](https://youtu.be/6cT25SD4cV4)
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat-square&color=8DDFCB&label=Release)](https://github.com/swirlai/swirl-search/releases)
 [![Website](https://img.shields.io/badge/Website-swirlaiconnect.com-00215E?style=flat-square)](https://www.swirlaiconnect.com)
 [![SWIRL Slack](https://img.shields.io/badge/Slack-SWIRL%20Community-0E21A0?logo=slack&style=flat-square)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA)
+[![Time Saved](https://img.shields.io/badge/Hours%20Saved-10K%2B-brightgreen)]()
+[![GitHub Stars](https://img.shields.io/github/stars/swirlai/swirl-search?style=social)](https://github.com/swirlai/swirl-search/stargazers)
 
 [![Test and Build Pipeline](https://github.com/swirlai/swirl-search/actions/workflows/test-build-pipeline.yml/badge.svg?style=flat-square&branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/test-build-pipeline.yml)
 
@@ -78,23 +82,30 @@ $ curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compos
 
 ## 💡 What Can You Build With SWIRL?
 
-Transform how your team works with data:
+Real examples of what teams build with SWIRL:
+### 🔍 Knowledge Base Search
 
-### 🤖 AI Assistant for Your Data
+- Connect SharePoint, Confluence, & Drive
+- Get instant answers with source links
+- Keep sensitive data secure
 
-Build your own ChatGPT-like assistant that actually knows your business:
+### 🤖 Customer Support Assistant
 
-- Get instant answers from your company knowledge
-- Let AI draft responses using your documentation
-- Connect to Slack, Drive, GitHub, and 100+ tools
-- Keep everything secure within your infrastructure
+- Search across support docs & tickets
+- Draft responses using your content
+- Maintain consistent answers
 
-### 🎯 Real-World Examples:
+### 👩‍💻 Developer Assistant
 
-- **Customer Support**: "What's our refund policy for enterprise plans?"
-- **Developer Questions**: "Where's the code for the login feature?"
-- **Sales Enablement**: "Show me case studies for fintech clients"
-- **Team Knowledge**: "What was decided in last week's strategy meeting?"
+- Search GitHub, Jira, & documentation
+- Find code examples & solutions
+- Speed up development workflow
+
+### 🏢 Enterprise Search
+
+- Unified search across all tools
+- Results respect existing permissions
+- No data duplication needed
 
 ### 👀 See it in action
 
