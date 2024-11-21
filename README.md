@@ -2,6 +2,8 @@
 
 [![SWIRL](docs/images/large_header.png)](https://www.swirlaiconnect.com)
 
+</div>
+
 <h1>SWIRL</h1>
 
 ## Ask questions, get answers from your company's data - just connect your app with SWIRL
@@ -33,8 +35,6 @@ Watch it on [Youtube]()
 
 
 [![Bringing AI to the Data Newsletter](docs/images/Newsletter_CTA.png)](https://www.linkedin.com/newsletters/7201909550860427264/)
-
-[![Join SWIRL Community Slack](docs/images/Slack_CTA.png)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA)
 
 ### Why SWIRL AI Connect?
 
