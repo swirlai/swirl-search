@@ -49,7 +49,6 @@ Watch it on [Youtube]()
 - Complex ETL pipelines
 - Weeks of infrastructure work
 - Security headaches
-
 </td>
 <td width="50%" >
 <h3 align="center">✅ With SWIRL</h3>
@@ -59,14 +58,14 @@ Watch it on [Youtube]()
 - No vector DB needed
 - 2-minute setup
 - Enterprise-grade security
-  
 </td>
 </tr>
 </table>
 
-### 🚀 Built Different
+## 🚀 Built Different
 
-#### No Vector DB Drama
+### No Vector DB Drama
+
 ```bash
 # No need for:
 $ setup-vector-db
@@ -77,11 +76,11 @@ $ configure-indexes
 $ curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
 ```
 
-### 💡 What Can You Build With SWIRL?
+## 💡 What Can You Build With SWIRL?
 
 Transform how your team works with data:
 
-#### 🤖 AI Assistant for Your Data
+### 🤖 AI Assistant for Your Data
 
 Build your own ChatGPT-like assistant that actually knows your business:
 
@@ -90,24 +89,29 @@ Build your own ChatGPT-like assistant that actually knows your business:
 - Connect to Slack, Drive, GitHub, and 100+ tools
 - Keep everything secure within your infrastructure
 
-#### 🎯 Real-World Examples:
+### 🎯 Real-World Examples:
 
 - **Customer Support**: "What's our refund policy for enterprise plans?"
 - **Developer Questions**: "Where's the code for the login feature?"
 - **Sales Enablement**: "Show me case studies for fintech clients"
 - **Team Knowledge**: "What was decided in last week's strategy meeting?"
 
-<details>
-<summary>👀 See it in action</summary>
+### 👀 See it in action
 
 ![SWIRL Chat in Action](docs/images/SWIRL_Chat_Demo.gif)
 
-</details>
+## Schedule Your [Free Demo](https://swirlaiconnect.com/contact-us) of SWIRL Enterprise
 
-## Schedule Your [Free Demo](https://swirlaiconnect.com/contact-us) of SWIRL Co-Pilot
+**Try SWIRL Enterprise for free for 30 Days. Click on the banner to contact us.**
 
-[![SWIRL Co-Pilot](docs/images/Co-Pilot_Book_a_demo.png)](https://swirlaiconnect.com/contact-us)
+[![SWIRL Co-Pilot](docs/images/swirl_enterprise_demo.png)](https://swirlaiconnect.com/contact-us)
 
+### ⚡ Why Teams Choose SWIRL
+
+- 🔒 Your infrastructure, your control
+- 🚀 Deploy in minutes, not months
+- 🔌 100+ enterprise connectors
+- 🤖 AI that respects your security
 
 ## SWIRL's Ranking in Action
 
@@ -119,7 +123,7 @@ SWIRL doesn't just search - it understands your company's context. Instead of br
 
 </a>
 
-## SWIRL AI Connect Features
+## SWIRL Features
 
 ![Features 1](docs/images/Feature_1.png)
 ![Features 2](docs/images/Feature_2.png)
