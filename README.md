@@ -58,7 +58,7 @@ Watch it on [Youtube](https://youtu.be/6cT25SD4cV4)
 <h3 align="center">✅ With SWIRL</h3>
 
 - One docker command
-- Data stays where it is
+- Data stays in place
 - No vector DB needed
 - 2-minute setup
 - Enterprise-grade security
@@ -101,7 +101,7 @@ Real examples of what teams build with SWIRL:
 - Find code examples & solutions
 - Speed up development workflow
 
-### 🏢 Enterprise Search
+### 🏢 Unified Search
 
 - Unified search across all tools
 - Results respect existing permissions
