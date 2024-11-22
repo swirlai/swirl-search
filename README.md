@@ -1,64 +1,132 @@
 <div align="center">
 
-[![Whitepaper](docs/images/Whitepaper-Banner.png)](https://swirlaiconnect.com/whitepaper/ai-to-grow-business-2024-06)
+[![SWIRL](docs/images/large_header.png)](https://www.swirlaiconnect.com)
 
-[![Swirl](docs/images/dark_header.png)](https://www.swirlaiconnect.com)
+</div>
 
-<h1>SWIRL AI Connect</h1>
+<h1>SWIRL</h1>
 
-#### Bring AI to the Data, not the Data to the AI
+## Give your team ChatGPT-level search without moving data to the cloud
 
-### SWIRL AI Connect is advanced AI infrastructure software. It supports enhanced Retrieval Augmented Generation (RAG) capabilities, powerful analytics, and SWIRL Co-Pilot. SWIRL harnesses AI for business, enabling organizations to make better decisions and take more effective and timely actions.
+### RAG with One Drive & Microsoft 365 in 60 seconds
 
-[Start Searching](#-try-swirl-now-in-docker) · [Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA) · [Key Features](#-key-features) · [Contribute](#-contributing-to-swirl) · [Documentation](#-documentation) · [Connectors](#-list-of-connectors)
+Ask question → Get answer with sources → Click through to source
 
-<br/>
+![SWIRL One Drive RAG](docs/images/SWIRL_OneDrive_RAG.gif)
+
+Watch it on [Youtube](https://youtu.be/6cT25SD4cV4)
+
+**Teams using SWIRL saves an average 7.5 hours of productive time per week.**
+
+<div align="center">
+
+[⚡ Quick Start](#-try-swirl-now-in-docker) · 
+[💬 Join Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA) · 
+[📚 Docs](docs.swirlaiconnect.com) · 
+[🔌 Connectors](swirlaiconnect.com/connectors) · 
+[🤝 Contribute](#contributing)
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=088395&logoColor=blue&style=flat-square)](https://opensource.org/license/apache-2-0/)
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat-square&color=8DDFCB&label=Release)](https://github.com/swirlai/swirl-search/releases)
-
 [![Website](https://img.shields.io/badge/Website-swirlaiconnect.com-00215E?style=flat-square)](https://www.swirlaiconnect.com)
 [![SWIRL Slack](https://img.shields.io/badge/Slack-SWIRL%20Community-0E21A0?logo=slack&style=flat-square)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA)
+[![Time Saved](https://img.shields.io/badge/Hours%20Saved-10K%2B-brightgreen)]()
+[![GitHub Stars](https://img.shields.io/github/stars/swirlai/swirl-search?style=social)](https://github.com/swirlai/swirl-search/stargazers)
 
 [![Test and Build Pipeline](https://github.com/swirlai/swirl-search/actions/workflows/test-build-pipeline.yml/badge.svg?style=flat-square&branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/test-build-pipeline.yml)
 
 </div>
 
-
-
-**Get your AI up and running in minutes, not months.** SWIRL AI Connect is an open-source AI Connect platform that streamlines the integration of advanced AI technologies into business operations. It supports powerful features like Retrieval-Augmented Generation (RAG), Analytics, and Co-Pilot, enabling enhanced decision-making with AI and boosting enterprise AI transformation. 
-
-SWIRL operated without needing to move data into a vector database or undergo ETL processes. This approach not only enhances security but also speeds up the deployment. As a private cloud AI provider, SWIRL operates entirely within your private cloud infrastructure, running locally inside the firewall to ensure maximum data security and compliance.
-
 [![Bringing AI to the Data Newsletter](docs/images/Newsletter_CTA.png)](https://www.linkedin.com/newsletters/7201909550860427264/)
 
-[![Join SWIRL Community Slack](docs/images/Slack_CTA.png)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA)
+## 🤔 Why SWIRL?
 
-### Why SWIRL AI Connect?
+### Skip the Complexity, Keep the Power
 
-- **Instant AI Deployment:** Swiftly deploy AI-driven enterprise software within your private cloud environment. SWIRL AI Connect integrates seamlessly, offering built-in security measures like data compliance and firewall protections, ensuring secure AI connectivity and granular access control.
-  
-- **Easy and Fast Retrieval Augmented Generation(RAG):** SWIRL AI Connect simplifies the use of Retrieval-Augmented Generation (RAG). Our platform eliminates the need for external vector databases, LangChain, or LlamaIndex, making implementing AI RAG tools directly on your data easier.
+<table>
+<tr>
+<td>
+<h3 align="center">❌ Without SWIRL</h3>
 
-- **No Data Movement:** Operate directly on local data without the hassles of ETL processes, re-indexing, or data movement. SWIRL AI Connect enhances data security by allowing the data to remain in place and run securely inside your firewall.
+- Set up vector databases
+- Move data around
+- Complex ETL pipelines
+- Weeks of infrastructure work
+- Security headaches
+</td>
+<td>
+<h3 align="center">✅ With SWIRL</h3>
 
-- **Boost Productivity with AI:** Enhance team efficiency and streamline workflows with advanced analytics and Co-Pilot features. SWIRL AI Connect helps you find information faster and make smarter decisions, accelerating enterprise AI transformation and boosting productivity.
+- One docker command
+- Data stays where it is
+- No vector DB needed
+- 2-minute setup
+- Enterprise-grade security
+</td>
+</tr>
+</table>
 
-### SWIRL AI Connect enables you to perform Unified Search and bring in a secure AI Co-Pilot.
+## 🚀 Built Different
 
-**SWIRL Unified Search**: SWIRL Unified Search offers a secure and powerful integrated search solution that enables users to query across all enterprise data sources seamlessly. This scalable unified search platform is designed for large enterprises, startups, and small teams, allowing for comprehensive searches across cloud services, on-premise systems, and data silos without compromising security. By implementing SWIRL Unified Search, businesses can enhance productivity, improve data accessibility, and make more informed decisions by harnessing the full potential of their data landscape.
+### No Vector DB Drama
 
-**SWIRL Co-Pilot**: SWIRL Co-Pilot acts as an intelligent assistant, leveraging advanced AI to provide context-aware insights and support to business users. Securely integrated within your enterprise systems, SWIRL Co-Pilot helps streamline workflows, automate tasks, and deliver personalized recommendations, significantly boosting operational efficiency. Users benefit from real-time decision support, reduced manual workload, and a more intuitive interaction with their data, enabling them to focus on strategic activities that drive business growth.
+```bash
+# No need for:
+$ setup-vector-db
+$ migrate-data
+$ configure-indexes
 
-## Schedule Your [Free Demo](https://swirlaiconnect.com/contact-us) of SWIRL Co-Pilot
+# Just this:
+$ curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
+```
 
-[![SWIRL Co-Pilot](docs/images/Co-Pilot_Book_a_demo.png)](https://swirlaiconnect.com/contact-us)
+## 💡 What Can You Build With SWIRL?
 
+Real examples of what teams build with SWIRL:
+### 🔍 Knowledge Base Search
+
+- Connect SharePoint, Confluence, & Drive
+- Get instant answers with source links
+- Keep sensitive data secure
+
+### 🤖 Customer Support Assistant
+
+- Search across support docs & tickets
+- Draft responses using your content
+- Maintain consistent answers
+
+### 👩‍💻 Developer Assistant
+
+- Search GitHub, Jira, & documentation
+- Find code examples & solutions
+- Speed up development workflow
+
+### 🏢 Enterprise Search
+
+- Unified search across all tools
+- Results respect existing permissions
+- No data duplication needed
+
+### 👀 See it in action
+
+![SWIRL Chat in Action](docs/images/SWIRL_Chat_Demo.gif)
+
+## Schedule Your [Free Demo](https://swirlaiconnect.com/contact-us) of SWIRL Enterprise
+
+**Try SWIRL Enterprise for free for 30 Days. Click on the banner to contact us.**
+
+[![SWIRL Co-Pilot](docs/images/swirl_enterprise_demo.png)](https://swirlaiconnect.com/contact-us)
+
+### ⚡ Why Teams Choose SWIRL
+
+- 🔒 Your infrastructure, your control
+- 🚀 Deploy in minutes, not months
+- 🔌 100+ enterprise connectors
+- 🤖 AI that respects your security
 
 ## SWIRL's Ranking in Action
 
-SWIRL leverages the specific context of your enterprise data to deliver highly relevant search results tailored to business needs. While general search engines like Google offer broad capabilities, SWIRL excels in the precise and secure handling of enterprise-specific queries, providing actionable insights that enhance decision-making and business efficiency.
-
+SWIRL doesn't just search - it understands your company's context. Instead of broad web results, you get precise answers from your private data, right where it lives.
 
 <a href="https://www.youtube.com/watch?v=Ypn4XvSJfcQ" target="_blank">
 
@@ -66,35 +134,17 @@ SWIRL leverages the specific context of your enterprise data to deliver highly r
 
 </a>
 
-## SWIRL AI Connect Features
+## SWIRL Features
 
 ![Features 1](docs/images/Feature_1.png)
 ![Features 2](docs/images/Feature_2.png)
 
-## Based on SWIRL AI Connect
-
-![SWIRL AI Co-pilot and SWIRL DB](docs/images/Products_1.png)
-
-# 🔎 How Swirl Works
-
-SWIRL AI Connect offers a straightforward no-code setup to easily integrate AI capabilities into your enterprise. It connects directly to various enterprise and data applications—like Teams, Snowflake, Databricks, and Google Drive—enabling you to search, fetch, and build an AI-based knowledge base. Utilize SWIRL’s Co-Pilot and Retrieval-Augmented Generation (RAG) to enhance productivity without the need for extracting or indexing any data.
-
-1. Connect: Easily link SWIRL AI Connect to your data sources—be it databases, document stores, or cloud services. Simply add your authentication details to start.
-
-2. Query: Interact with SWIRL AI Connect using natural language. Ask questions or input commands to immediately harness the power of AI in your workflows.
-
-3. Get Results: Benefit from SWIRL AI Connect’s advanced search capabilities combined with generative AI. It quickly delivers accurate and contextually augmented responses by distributing queries across connected platforms that have a search API—ranging from search engines and databases to noSQL engines and SaaS services.
-
 <br/>
 
-# 🔌 List of Connectors
 
-![GitHub Connectors](docs/images/GitHub_Connectors.png)
+### **Full list of connectors is available [here](https://swirlaiconnect.com/connectors)**.
 
-**Full list of connectors is available [here](https://swirlaiconnect.com/connectors)**.
-
-**For Enterprise Support on Connectors**  Contact the Swirl Team at: [support@swirlaiconnect.com](mailto:support@swirlaiconnect.com)  
-
+**For Support on Connectors**  Contact the Swirl Team at: [support@swirlaiconnect.com](mailto:support@swirlaiconnect.com)  
 
 <br/>
 
