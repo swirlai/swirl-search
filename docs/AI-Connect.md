@@ -209,14 +209,16 @@ To view, edit, add or delete an AI provider, go to the `swirl/aiproviders` endpo
 
 ![SWIRL AI Providers](https://docs.swirl.today/images/swirl_aiproviders.png)
 
-## Supported AI Providers
+## Supported Generative AI's (GAIs) and Large Language Models (LLMs)
 
-SWIRL uses LiteLLM to support the most popular providers; however, it may not come preloaded with a AI Provider for every supported provider. Please [contact support](#support) for assistance in creating a suitable AI Provider for any LiteLLM supported endpoint.
+SWIRL uses LiteLLM and direct connections to support the most popular GAI/LLMs - including OpenAI, Azure/OpenAI, AWS/Bedrock, Google Gemini, Anthropic, Cohere, Llama, Hugging Face and many more. Fine-tuned, locally running models are fully supported. 
 
-From LiteLLM.ai:
-* [List of Supported Embeddings](https://docs.litellm.ai/docs/embedding/supported_embedding)
+Please [contact support](#support) for assistance with any of these, or any other GAI/LLM you may have. 
 
-* [List of Supported LLM/GAI](https://docs.litellm.ai/docs/providers)
+The following links present the models available through LiteLLM:
+
+* [Full list of Supported Embeddings](https://docs.litellm.ai/docs/embedding/supported_embedding)
+* [Full list of Supported GAI/LLMs](https://docs.litellm.ai/docs/providers)
 
 ## Editing AI Providers
 
