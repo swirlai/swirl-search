@@ -17,9 +17,9 @@ permalink: "/"
 
 ## What is SWIRL AI Connect?
 
-SWIRL AI Connect is infrastructure software that connects most any Generative AI/LLM to enterprise data platforms, applications and information services *without copying*, indexing and/or ingesting data. 
+SWIRL AI Connect is infrastructure software that connects most any Generative AI/LLM to enterprise data platforms, applications and information services *without copying*, indexing and/or ingesting data.
 
-Installed in your own environment, or optionally hosted by SWIRL, our no-code, no-copying approach requires minimal IT involvement, generating personalized, AI insight from existing systems and applications. 
+Installed in your own environment, or optionally hosted by SWIRL, our no-code, no-copying approach requires minimal IT involvement, generating personalized, AI insight from existing systems and applications.
 
 ## How does SWIRL AI Connect Provide Insight without Copying and Ingesting and Indexing Data?
 
@@ -31,18 +31,18 @@ The re-ranking process is roughly the following:
 * Asynchronously gather the results from each source
 * Normalize the results from each source using jsonpath (or xpath)
 * Vectorize each result snippet (or parts of it)
-* Re-rank the results by aggregating the similarity, frequency and position, and adjusting for other factors like length variation, freshness, etc 
+* Re-rank the results by aggregating the similarity, frequency and position, and adjusting for other factors like length variation, freshness, etc
 
 The [Xethub study](https://xethub.com/blog/you-dont-need-a-vector-database) as [explained by Simson Garfinkel](https://www.linkedin.com/pulse/vector-databases-rag-simson-garfinkel-hzule/) showed that re-ranking so-called "naive" search engines like those that use the BM25 algorithm for retrieval, outperforms moving the data into a vector database for many common NLP tasks such as question answering.
 
-SWIRL AI Connect also includes state-of-the-art cross-silo [Retrieval Augmented Generation (RAG)](https://en.wikipedia.org/wiki/Retrieval-augmented_generation) for generating AI insights like summarization, question answering and visualization of relevant result sets. 
+SWIRL AI Connect also includes state-of-the-art cross-silo [Retrieval Augmented Generation (RAG)](https://en.wikipedia.org/wiki/Retrieval-augmented_generation) for generating AI insights like summarization, question answering and visualization of relevant result sets.
 
 ![SWIRL AI Connect Insight Pipeline](images/swirl_rag_pipeline.png)
 
 When a user requests an AI insight, SWIRL:
 
 * Sends the insight out to relevant sources
-* Normalizes and unifies the results 
+* Normalizes and unifies the results
 * Re-ranks the united results using non-generative Reader LLM
 * Optionally, presents them to the user and allows them to adjust the result set
 * Fetches the full-text of the results, in real time
@@ -70,16 +70,16 @@ The full list is here: [https://swirlaiconnect.com/connectors](https://swirlaico
 
 To connect SWIRL with an internal data source, you [create a SearchProvider record](./SP-Guide.html#using-searchproviders).
 
-To integrate SWIRL Enterprise with a generative AI, you create an AIProvider record, as described 
+To integrate SWIRL Enterprise with a generative AI, you create an AIProvider record, as described
 [in the AI Connect Guide](AI-Connect.html#connecting-to-generative-ai-gai-and-large-language-models-llms).
 
-## What is SWIRL AI Co-Pilot? 
+## What is SWIRL AI Co-Pilot?
 
-SWIRL AI Co-Pilot turns any sufficiently capable Generative AI/LLM into an AI assistant that converses with users to determine what they are looking for and where they are most likely to find it. The Co-Pilot can search on the user's behalf and provide in-line RAG results whenever the conversation demands it. 
+SWIRL AI Co-Pilot turns any sufficiently capable Generative AI/LLM into an AI assistant that converses with users to determine what they are looking for and where they are most likely to find it. The Co-Pilot can search on the user's behalf and provide in-line RAG results whenever the conversation demands it.
 
 ## How does SWIRL AI Co-Pilot work?
 
-SWIRL AI Co-Pilot educates the designated GAI/LLM about the user and what they have access to via the integration with AI Connect. SWIRL manages the context and history for each chat, initiating RAG through AI Connect as directed by the user and Co-Pilot. The user can only see insight from data they are already authorized to see, and the Co-Pilot is privy only to each user's conversations and history when conversing with them. All access is controlled and provisioned via the existing sign on (SSO) system. 
+SWIRL AI Co-Pilot educates the designated GAI/LLM about the user and what they have access to via the integration with AI Connect. SWIRL manages the context and history for each chat, initiating RAG through AI Connect as directed by the user and Co-Pilot. The user can only see insight from data they are already authorized to see, and the Co-Pilot is privy only to each user's conversations and history when conversing with them. All access is controlled and provisioned via the existing sign on (SSO) system.
 
 ## What does a conversation with your data via SWIRL AI Co-Pilot look like?
 
@@ -97,7 +97,7 @@ SWIRL AI Connect Enterprise includes:
 
 * Support for Single Sign On (SSO) with various IDPs (e.g. Ping Federate) and autoprovisioning via OpenID Connect. (The Community version only supports M365.)
 
-* Support for generating AI insights from 1,500 different file formats, including tables and txt in images 
+* Support for generating AI insights from 1,500 different file formats, including tables and txt in images
 
 * Authentication support for the PageFetcher
 
@@ -115,7 +115,7 @@ Use SWIRL AI Connect, Community Edition, if you have one or more repositories th
 
 Note that you may freely re-distribute solutions that incorporate SWIRL AI Connect, Community Edition, under the [Apache 2.0 License](https://github.com/swirlai/swirl-search/blob/main/LICENSE).
 
-## When should I use SWIRL AI Connect, Enterprise Edition? 
+## When should I use SWIRL AI Connect, Enterprise Edition?
 
 Use the Enterprise Edition of SWIRL AI Connect when you have:
 
@@ -136,8 +136,76 @@ SWIRL products use the Python/Django/Celery/Redis stack, with PostgreSQL recomme
 
 ## How is SWIRL usually deployed?
 
-SWIRL is usually deployed via Docker. SWIRL Enterprise products are delivered as Kubernetes images. 
+SWIRL is usually deployed via Docker. SWIRL Enterprise products are delivered as Kubernetes images.
 
-## Does SWIRL offer hosting? How can I learn more? 
+## Does SWIRL offer hosting? How can I learn more?
 
-Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for information about hosted SWIRL. 
+Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for information about hosted SWIRL.
+
+<style>
+    #resizable-container {
+        position: fixed;
+        bottom: 0px;
+        right: 0px;
+        width: 300px;
+        height: 400px;
+        overflow: hidden;
+        border: 1px solid #ddd;
+        background: white;
+    }
+
+    #resize-handle {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 15px;
+        height: 15px;
+        background: gray;
+        cursor: nwse-resize;
+    }
+
+    iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+</style>
+
+<div id="resizable-container">
+    <div id="resize-handle"></div>
+    <iframe src="http://localhost:8000/galaxy/chat"></iframe>
+</div>
+
+<script>
+    const container = document.getElementById('resizable-container');
+    const handle = document.getElementById('resize-handle');
+
+    handle.addEventListener('mousedown', function (e) {
+        e.preventDefault();
+
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const startWidth = parseInt(document.defaultView.getComputedStyle(container).width, 10);
+        const startHeight = parseInt(document.defaultView.getComputedStyle(container).height, 10);
+        const startLeft = parseInt(document.defaultView.getComputedStyle(container).left, 10);
+        const startTop = parseInt(document.defaultView.getComputedStyle(container).top, 10);
+
+        function doDrag(e) {
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+
+            container.style.width = startWidth - deltaX + 'px';
+            container.style.height = startHeight - deltaY + 'px';
+            container.style.left = startLeft + deltaX + 'px';
+            container.style.top = startTop + deltaY + 'px';
+        }
+
+        function stopDrag() {
+            document.removeEventListener('mousemove', doDrag, false);
+            document.removeEventListener('mouseup', stopDrag, false);
+        }
+
+        document.addEventListener('mousemove', doDrag, false);
+        document.addEventListener('mouseup', stopDrag, false);
+    }, false);
+</script>
