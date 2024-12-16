@@ -169,43 +169,171 @@ Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for information about ho
         height: 100%;
         border: none;
     }
+
+    #error-message {
+        position: fixed;
+        bottom: 410px;
+        right: 0px;
+        color: red;
+        background: white;
+        border: 1px solid #ddd;
+        padding: 10px;
+        display: none;
+        z-index: 1000;
+    }
 </style>
 
 <div id="resizable-container">
     <div id="resize-handle"></div>
-    <iframe src="http://localhost:8000/galaxy/chat"></iframe>
+    <iframe id="chat-iframe"></iframe>
 </div>
 
+<div id="error-message">Login failed. Please check your credentials.</div>
+
+{% raw %}
 <script>
-    const container = document.getElementById('resizable-container');
-    const handle = document.getElementById('resize-handle');
+    console.log('DNDEBUG : Script loaded and started');
 
-    handle.addEventListener('mousedown', function (e) {
-        e.preventDefault();
+    let container, handle, chatIframe, errorMessage;
 
-        const startX = e.clientX;
-        const startY = e.clientY;
-        const startWidth = parseInt(document.defaultView.getComputedStyle(container).width, 10);
-        const startHeight = parseInt(document.defaultView.getComputedStyle(container).height, 10);
-        const startLeft = parseInt(document.defaultView.getComputedStyle(container).left, 10);
-        const startTop = parseInt(document.defaultView.getComputedStyle(container).top, 10);
+    try {
+        container = document.getElementById('resizable-container');
+        handle = document.getElementById('resize-handle');
+        chatIframe = document.getElementById('chat-iframe');
+        errorMessage = document.getElementById('error-message');
 
-        function doDrag(e) {
-            const deltaX = e.clientX - startX;
-            const deltaY = e.clientY - startY;
+        if (!container) console.error('Element #resizable-container not found');
+        if (!handle) console.error('Element #resize-handle not found');
+        if (!chatIframe) console.error('Element #chat-iframe not found');
+        if (!errorMessage) console.error('Element #error-message not found');
 
-            container.style.width = startWidth - deltaX + 'px';
-            container.style.height = startHeight - deltaY + 'px';
-            container.style.left = startLeft + deltaX + 'px';
-            container.style.top = startTop + deltaY + 'px';
-        }
+        console.log('DNDEBUG : Elements initialized');
+    } catch (error) {
+        console.error('Error during element initialization:', error);
+    }
 
-        function stopDrag() {
-            document.removeEventListener('mousemove', doDrag, false);
-            document.removeEventListener('mouseup', stopDrag, false);
-        }
+    function deleteCookie(name) {
+        document.cookie = `${name}=; Path=/; Domain=.swirl.today; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+    }
 
-        document.addEventListener('mousemove', doDrag, false);
-        document.addEventListener('mouseup', stopDrag, false);
-    }, false);
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+
+    function clearStorageAndCookies() {
+        console.log('Clearing cookies...');
+        deleteCookie('csrftoken');
+        console.log('Deleted csrftoken cookie.');
+    }
+
+    function loginAndLoadIframe() {
+        console.log('loginAndLoadIframe started');
+        clearStorageAndCookies();
+
+        console.log('Sending login request to backend API...');
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://chat.docs.swirlaiconnect.com/api/swirl/login/', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.withCredentials = true;
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    console.log('Login successful:', xhr.responseText);
+                    const data = JSON.parse(xhr.responseText);
+                    console.log('Token received:', data.token);
+
+                    const csrfToken = getCookie('csrftoken');
+                    console.log('CSRF token retrieved from cookie:', csrfToken);
+
+                    chatIframe.src = 'https://chat.docs.swirlaiconnect.com/galaxy/pre-chat';
+
+                    chatIframe.onload = function () {
+                        console.log('Iframe loaded. Waiting 3 seconds before sending postMessage for debugging...');
+                        setTimeout(() => {
+                            console.log('Attempting to send postMessage now...');
+                            const maxRetries = 10;
+                            let attempts = 0;
+
+                            const sendMessage = () => {
+                                if (attempts >= maxRetries) {
+                                    console.error('Failed to send postMessage after maximum retries.');
+                                    return;
+                                }
+
+                                try {
+                                    chatIframe.contentWindow.postMessage({
+                                        action: 'setLocalStorage',
+                                        payload: {
+                                            'swirl-token': data.token,
+                                            'swirl-ai-provider-status': 'true',
+                                            'swirl-chat-status': 'true',
+                                            'swirl-confidence-mixer-status': 'true',
+                                            'user': 'admin',
+                                            'csrftoken': csrfToken
+                                        }
+                                    }, 'https://chat.docs.swirlaiconnect.com');
+                                    console.log('Message posted to iframe.');
+                                } catch (error) {
+                                    console.warn('Failed to send postMessage, retrying...', error);
+                                    attempts++;
+                                    setTimeout(sendMessage, 500);
+                                }
+                            };
+                            sendMessage();
+                        }, 3000);
+                    };
+                    errorMessage.style.display = 'none';
+                } else {
+                    console.error('Login failed:', xhr.status, xhr.statusText);
+                    errorMessage.innerText = 'Login failed. Please check your credentials.';
+                    errorMessage.style.display = 'block';
+                }
+            }
+        };
+
+        const formData = `username=admin&password=password`;
+        xhr.send(formData);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('DNDEBUG : DOMContentLoaded fired');
+        loginAndLoadIframe();
+    });
+
+    if (handle) {
+        handle.addEventListener('mousedown', function (event) {
+            console.log('DNDEBUG Handling resize');
+            event.preventDefault();
+
+            const startX = event.clientX;
+            const startY = event.clientY;
+            const startWidth = parseInt(document.defaultView.getComputedStyle(container).width, 10);
+            const startHeight = parseInt(document.defaultView.getComputedStyle(container).height, 10);
+            const startLeft = parseInt(document.defaultView.getComputedStyle(container).left, 10);
+            const startTop = parseInt(document.defaultView.getComputedStyle(container).top, 10);
+
+            function doDrag(moveEvent) {
+                const deltaX = moveEvent.clientX - startX;
+                const deltaY = moveEvent.clientY - startY;
+
+                container.style.width = startWidth - deltaX + 'px';
+                container.style.height = startHeight - deltaY + 'px';
+                container.style.left = startLeft + deltaX + 'px';
+                container.style.top = startTop + deltaY + 'px';
+            }
+
+            function stopDrag() {
+                document.removeEventListener('mousemove', doDrag, false);
+                document.removeEventListener('mouseup', stopDrag, false);
+            }
+
+            document.addEventListener('mousemove', doDrag, false);
+            document.addEventListener('mouseup', stopDrag, false);
+        }, false);
+    }
 </script>
+{% endraw %}
