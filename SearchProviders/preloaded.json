@@ -327,7 +327,7 @@
         ]
     },
     {
-        "name": "Company Data - BigQuery",
+        "name": "Company Data - Google BigQuery",
         "description": "Searches info on 7 million companies worldwide ncluding Linkedin URL, company size, location, and number of employees. Search only with company name, domain or location. Supports many languages. Does not support NOT operator.",
         "active": false,
         "default": false,
