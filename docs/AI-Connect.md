@@ -158,38 +158,6 @@ To activate this authenticator, a new SWIRL app has to be registered in Azure. R
 
 Please [contact support](#support) to obtain Authenticators for any other systems - including Elastic, OpenSearch, CAS2, Salesforce, ServiceNow, Okta, Auth0 and Ping Federate.
 
-## Changing the Galaxy Logo
-
-To change the logo in SWIRL Galaxy (only) - assuming it is already installed:
-
-1. Prepare at least one logo file (or one each for light and dark mode display)
-* Image file format:  png
-* Dimensions: 818 x 214
-* At least 30 px whitespace around the margin of the logo
-* File name ends with `_logo_highres_positive.png` or `_logo_highres_negative.png`
-
-2. Copy the logo file(s) into the `enterprise/logo` folder in the SWIRL installation.
-
-3. Execute the following command:
-
-```
-python swirl.py logo
-```
-
-SWIRL will ask you to confirm. When you do, it will copy the first two logos it finds that meet the requirements into the Galaxy configuration, reporting on progress:
-
-```
-Scanning folder: enterprise/logo
-Copying enterprise/logo/your_logo_highres_positive.png -> static/galaxy/logo_highres_positive.png ... Ok
-Copying enterprise/logo/your_logo_highres_negative.png -> static/galaxy/logo_highres_negative.png ... Ok
-Restart SWIRL to see the updated logo(s)!
-```
-
-Restart SWIRL to see the new logos:
-```
-python swirl.py restart
-```
-
 # Connecting to Generative AI (GAI) and Large Language Models (LLMs)
 
 ## Roles for Generative AI/Large Language Models
