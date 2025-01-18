@@ -344,6 +344,48 @@ The services invoked by `swirl.py` are defined in [swirl/services.py](https://gi
 
 Modify the list to start celery-beats automatically.
 
+# Changing the Galaxy Logos and Branding
+
+To change the logo in SWIRL Galaxy, for both the search and chat pages, along with other control labels:
+
+* Go to [the SWIRL home page](http://localhost:8000/admin/)
+
+![SWIRL home page](./images/admin.png)
+
+* Click the "admin" link as shown. This will take you to the admin UI:
+
+![SWIRL admin UI](./images/admin_branding.png)
+
+* Click "Upload a Branding Configuration" as shown. This will take you to the Branding Configuration page:
+
+![SWIRL branding configuration](./images/branding_config.png)
+
+* Fill out the form. "Name" is required, in addition to at least one other item. To change the logo, upload a light mode image. 
+
+The following table describes the remaining options:
+
+| Item | Galaxy Location | Default | 
+| ---- | --------------- | ------- | 
+| Name | Not shown | N/A | 
+| Search button label | On the button | SEARCH |
+| Search bar placeholder | In the search box | What are you searching for today? |
+| AI Response label | Below the search box | Generate AI Response |  
+| Select items label | Below the paging control | Select Items | 
+
+* Click the "Submit" button to save the branding configuration.
+
+* Refresh your browser to see the changes in Galaxy.
+
+Note that this may launch a new RAG or chat session.
+
+### Logo File Requirements
+
+* Image file format: png
+* Dimensions: 818 x 214
+* At least 30 px whitespace around the margin of the logo
+
+Note also that only one branding configuration can be active at a time.
+
 # Managing Django Users
 
 ## Django Admin
