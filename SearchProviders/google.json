@@ -77,8 +77,8 @@
     },
     {
         "name": "LinkedIn - www.linkedin.com",
-        "active": true,
-        "default": true,
+        "active": false,
+        "default": false,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}+-post",
