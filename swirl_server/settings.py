@@ -63,9 +63,9 @@ REST_FRAMEWORK = {
 
 #drf-spectacular settings
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'SWIRL API',
-    'DESCRIPTION': 'SWIRL AI Connect Community Edition API',
-    'VERSION': '3.6',
+    'TITLE': 'SWIRL AI API',
+    'DESCRIPTION': 'SWIRL AI Community Edition API',
+    'VERSION': '4',
     'SERVE_INCLUDE_SCHEMA': False,  # 'False' disables serving the schema with the UI
     'PREPROCESSING_HOOKS': [
         'swirl.utils.include_exclude_api_paths',

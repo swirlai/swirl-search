@@ -80,8 +80,8 @@
     },
     {
         "name": "LinkedIn - www.linkedin.com",
-        "active": true,
-        "default": true,
+        "active": false,
+        "default": false,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}+-post",
@@ -327,7 +327,7 @@
         ]
     },
     {
-        "name": "Company Data - BigQuery",
+        "name": "Company Data - Google BigQuery",
         "description": "Searches info on 7 million companies worldwide ncluding Linkedin URL, company size, location, and number of employees. Search only with company name, domain or location. Supports many languages. Does not support NOT operator.",
         "active": false,
         "default": false,
