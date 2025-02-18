@@ -12,7 +12,7 @@
 
 Ask question → Get answer with sources → Click through to source
 
-![SWIRL One Drive RAG](docs/images/SWIRL_OneDrive_RAG.gif)
+![SWIRL One Drive RAG](docs/images/SWIRL_4_AI_Search.gif)
 
 Watch it on [Youtube](https://youtu.be/6cT25SD4cV4)
 
@@ -20,10 +20,10 @@ Watch it on [Youtube](https://youtu.be/6cT25SD4cV4)
 
 <div align="center">
 
-[⚡ Quick Start](#-try-swirl-now-in-docker) · 
-[💬 Join Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA) · 
-[📚 Docs](docs.swirlaiconnect.com) · 
-[🔌 Connectors](swirlaiconnect.com/connectors) · 
+[⚡ Quick Start](#-try-swirl-now-in-docker) ·
+[💬 Join Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA) ·
+[📚 Docs](docs.swirlaiconnect.com) ·
+[🔌 Connectors](swirlaiconnect.com/connectors) ·
 [🤝 Contribute](#contributing)
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=088395&logoColor=blue&style=flat-square)](https://opensource.org/license/apache-2-0/)
@@ -53,6 +53,7 @@ Watch it on [Youtube](https://youtu.be/6cT25SD4cV4)
 - Complex ETL pipelines
 - Weeks of infrastructure work
 - Security headaches
+
 </td>
 <td>
 <h3 align="center">✅ With SWIRL</h3>
@@ -62,6 +63,7 @@ Watch it on [Youtube](https://youtu.be/6cT25SD4cV4)
 - No vector DB needed
 - 2-minute setup
 - Enterprise-grade security
+
 </td>
 </tr>
 </table>
@@ -83,6 +85,7 @@ $ curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compos
 ## 💡 What Can You Build With SWIRL?
 
 Real examples of what teams build with SWIRL:
+
 ### 🔍 Knowledge Base Search
 
 - Connect SharePoint, Confluence, & Drive
@@ -109,7 +112,7 @@ Real examples of what teams build with SWIRL:
 
 ### 👀 See it in action
 
-![SWIRL Chat in Action](docs/images/SWIRL_Chat_Demo.gif)
+![SWIRL Chat in Action](docs/images/SWIRL_4_AI_Chat.gif)
 
 ## Schedule Your [Free Demo](https://swirlaiconnect.com/contact-us) of SWIRL Enterprise
 
@@ -136,13 +139,12 @@ SWIRL doesn't just search - it understands your company's context. Instead of br
 
 ## SWIRL Features
 
-![Features 1](docs/images/Feature_1.png)
-![Features 2](docs/images/Feature_2.png)
+![Features 1](docs/images/part_1.png)
+![Features 2](docs/images/part_2.png)
 
 <br/>
 
-
-### **Full list of connectors is available [here](https://swirlaiconnect.com/connectors)**.
+### **Full list of connectors is available [here](https://swirlaiconnect.com/connectors)**
 
 **For Support on Connectors**  Contact the Swirl Team at: [support@swirlaiconnect.com](mailto:support@swirlaiconnect.com)  
 
@@ -201,7 +203,7 @@ After a few minutes the following or similar should appear:
 
 - Enter a search in the search box and press the `Search` button. Ranked results appear in just a few seconds:
 
-<img src="https://docs.swirlaiconnect.com/images/galaxy_ui_2.png" height="70%" weight="70%">
+<img src="docs/images/SWIRL_4_Galaxy_UI.png" height="70%" weight="70%" style="border-radius: 10px;">
 
 - To view the raw JSON, open <http://localhost:8000/swirl/search/>
 
@@ -274,7 +276,7 @@ Guide to Run SWIRL in Docker in 60 seconds.
 
 <br/>
 
-# ☁ Use the Swirl Cloud 
+# ☁ Use the Swirl Cloud
 
 For information about Swirl as a managed service, please [contact us](mailto:hello@swirlaiconnect.com)!
 
@@ -286,7 +288,7 @@ For information about Swirl as a managed service, please [contact us](mailto:hel
 
 <br/>
 
-# 👷‍♂️ Need Help? We're Here for You!
+# 👷‍♂️ Need Help? We're Here for You
 
 At Swirl, every user matters to us. Whether you're a beginner finding your way or an expert with feedback, we're here to support, listen, and help. Don't hesitate to reach out to us.
 
