@@ -399,7 +399,9 @@ It is intended for SearchProviders that would otherwise have few (or no) good re
 
 Specify `DATASET` in the `result_mappings` to have SWIRL organize a columnar response into a single result, with the columns in the payload.
 
-![Galaxy UI with Chart Generated from Thoughtspot Dataset Result](images/3_5_0-Chart_UI.png)
+![Galaxy UI with Chart Generated from Thoughtspot Dataset Result](images/swirl_40_chart_display.png)
+
+`DATASET` is fully compatible with `result_mappings`, including `NO_PAYLOAD`. 
 
 ## Expire Search Objects
 
