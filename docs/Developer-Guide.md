@@ -403,6 +403,26 @@ Specify `DATASET` in the `result_mappings` to have SWIRL organize a columnar res
 
 `DATASET` is fully compatible with `result_mappings`, including `NO_PAYLOAD`. 
 
+SWIRL uses `chart.js` to visualize data sets. The following list explains how it selects the type of chart:
+
+* Field Analysis via checkSupported():
+This method examines the first row of the extracted data:
+It counts how many fields are numeric versus non‑numeric.
+
+* No Numeric Fields:
+A pseudo-count field `count` is added to simulate numeric data. Depending on how many fields are present, it will default to a bar or a stacked bar chart.
+
+* One Numeric Field:
+If there’s only one numeric field (and at least one string/discrete field), the component chooses a bar chart.
+
+* Two Numeric Fields:
+If exactly two numeric fields are present, the component checks the range (difference between maximum and minimum values) of each field. If both ranges are positive, a scatter chart is used; otherwise, it defaults to a bar chart.
+
+* Three or More Numeric Fields:
+With three or more numeric fields, the third field is used to size the bubbles. If the third field’s range is positive, the component chooses a bubble chart; if not, it defaults to a bar chart.
+
+Please [contact support](mailto:support@swirlaiconnect.com) if you need help with this feature.
+
 ## Expire Search Objects
 
 If your SWIRL installation is using the [Search Expiration Service](Admin-Guide.html#search-expiration-service), users can specify the retention setting for each Search.
