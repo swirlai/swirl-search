@@ -33,7 +33,7 @@ SWIRL 4.0 can write queries in SQL, Sparql and other dialects. Any knowledge ava
 
 ## How does SWIRL Provide Insight without Copying and Ingesting and Indexing Data?
 
-SWIRL AI Connect sends user queries to the configured, specific endpoints - APIs and other interfaces they're authorized to see - asynchronously. The response time wil be driven by the slowest responding source.
+SWIRL AI Connect sends user queries to the configured, specific endpoints - APIs and other interfaces they're authorized to see - asynchronously. The response time will be driven by the slowest responding source.
 
 SWIRL then re-ranks the results from responding sources so the user doesn't have to, using embeddings from the configured LLM.
 
