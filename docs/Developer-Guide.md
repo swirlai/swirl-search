@@ -34,8 +34,16 @@ This document applies to all SWIRL Editions.
 
 # Architecture
 
-![SWIRL Federated Search Architecture -1](images/swirl_architecture-1.png)
-![SWIRL Federated Search Architecture -2](images/swirl_architecture-2.png)
+## SWIRL AI Connect
+![SWIRL AI Connect Architecture](images/swirl_architecture_1.png)
+
+![SWIRL AI Connect Architecture Part 2](images/swirl_architecture_2.png)
+
+## SWIRL RAG Architecture
+![SWIRL RAG Architecture](images/swirl_architecture_3.png)
+
+## SWIRL AI Co-Pilot
+![SWIRL AI Co-Pilot Architecture](images/swirl_architecture_4.png)
 
 # Workflow
 
@@ -193,9 +201,9 @@ SWIRL AI Connect, Community Edition, supports this using the ChatGPTQueryProcess
 
 The `swirl_score` configuration is available in `theminimumSwirlScore` entry of `static/api/config/default`. 
 
-The default value is `100`. Higher values will produce fewer starred results.
+The default value is `100` for Community Edition. Higher values will produce fewer starred results.
 
-![Galaxy UI with stars](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/3_2_0-Galaxy-star.png)
+![SWIRL AI Connect 4.0 Results](images/swirl_40_results.png)
 
 ## Handle NOTted queries
 

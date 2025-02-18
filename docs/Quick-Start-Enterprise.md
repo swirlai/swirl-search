@@ -73,13 +73,13 @@ The output should look like this, or similar:
 
 If the search page appears, click `Log Out` at the top, right. The SWIRL login page will appear:
 
-![SWIRL Login](images/swirl_login-galaxy_dark.png)
+![SWIRL Login](images/swirl_40_login.png)
 
 * Enter the username `admin` and password `password`, then click `Login`.
 
 * Enter a search in the search box and press the `Search` button. Ranked results appear in just a few seconds:
 
-![SWIRL Results No M365](images/swirl_results_no_m365-galaxy_dark.png)
+![SWIRL Results No M365](images/swirl_40_results.png)
 
 If they don’t appear, or an error occurs, please [contact support](#support).
 
@@ -108,7 +108,7 @@ To use different AI providers for RAG and AI Co-Pilot, set the “defaults” li
 * When there is at least one active, default provider for RAG, you may click the “Generate AI Insights” button at the top of the AI Connect form. 
 
 For example:
-![SWIRL Results with RAG](images/swirl_rag_pulmonary_1.png)
+![SWIRL Results with RAG](images/swirl_40_community_rag.png)
 
 * To try the SWIRL AI Co-Pilot, navigate to: [http://localhost:8000/galaxy/chat](http://localhost:8000/galaxy/chat)
 
@@ -118,7 +118,7 @@ Be sure to verify that RAG is working before attempting to use Co-Pilot.
 
 * Direct the co-pilot to search for something of interest, and you should get a RAG result as part of the conversation, including citations:
 
-![SWIRL Co-Pilot Conversation with RAG Result](images/swirl_copilot_chat_rag.png)
+![SWIRL Co-Pilot Conversation with RAG Result](images/swirl_40_enterprise_assistant_rag.png)
  
 * SWIRL ships with admin/password pre-configured as noted. This may cause a warning to appear if using Galaxy with the Google Chrome browser.  
 

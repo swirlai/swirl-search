@@ -247,15 +247,12 @@ As of SWIRL 3.2.0, when signing in to SWIRL via Microsoft OIDC, users are now au
 
 To verify that the SWIRL-M365 integration is working, open the Galaxy UI: <http://localhost:8000> (or <http://localhost:8000/galaxy/>)
 
-Click on the profile icon at the top right and then click the Microsoft toggle to activate it. Depending on how the above configuration was done, M365 may require authentication and/or granting of access. After that, the toggle next to the Microsoft logo will light up, indicating a successful connection.
+Click on the profile icon at the top right and then click the Microsoft toggle to activate it. Depending on how the above configuration was done, M365 may require authentication and/or granting of access. After that, the toggle next to the Microsoft logo will light up, indicating a successful connection. You can then query any of the Microsoft sources:
 
-![SWIRL Search box Auth](images/swirl_searchbox_auth-galaxy_dark.png)
+![SWIRL Co-Pilot discussion](images/swirl_40_search_msft.png)
 
-Now, enter a search in the UI: `metasearch`
 
-Assuming any document in your M365 contains the word `metasearch`, results should appear in just a few seconds:
 
-![SWIRL Results Auth](images/swirl_results_auth-galaxy_dark.png)
 
 {: .warning }
 If the toggle does not light up after authenticating with Microsoft, please [contact support](#support). The [related documentation](#related-documentation) below may also be useful.
