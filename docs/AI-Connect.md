@@ -341,9 +341,12 @@ This will ensure you see messages from the `celery-beats` log. However, most of 
 
 # Managing Prompts
 
-## Default Prompt
+## Default Prompts
 
-You can view the default prompts from the SWIRL AI Connect page:
+{: .warning }
+If you edit a default system prompt, your changes will be lost the next time you update SWIRL.
+
+You can view the default prompts from the SWIRL AI Connect page: [localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)
 
 ## Creating New Saved Prompts
 
@@ -358,7 +361,7 @@ For example, to modify the default prompt so that the response is in pirate-spea
         "name": "pirate",
         ... etc ...
         "footer": "--- Final Instructions ---\nIn your response, pretend you are a pirate comedian, but keep it clean!",
-        "tags": []
+        "tags": [ "search-rag" ]
     }
 ```
 

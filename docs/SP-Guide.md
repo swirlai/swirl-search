@@ -17,6 +17,9 @@ nav_order: 15
 {: .warning }
 This version applies to the Community Edition of SWIRL!
 
+{: .highlight }
+SWIRL queries are subject to any rate limits or throttling imposed by the sources being queried.
+
 SearchProviders are the essential element of SWIRL. They make it quick and easy to connect SWIRL to sources without writing any code.
 
 SearchProviders are JSON objects. SWIRL's distribution comes preloaded with a variety of configurations for sources like Elastic, Solr, PostgreSQL, BigQuery, NLResearch.com, Miro.com, Atlassian, and more.
