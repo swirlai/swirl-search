@@ -34,8 +34,16 @@ This document applies to all SWIRL Editions.
 
 # Architecture
 
-![SWIRL Federated Search Architecture -1](images/swirl_architecture-1.png)
-![SWIRL Federated Search Architecture -2](images/swirl_architecture-2.png)
+## SWIRL AI Connect
+![SWIRL AI Connect Architecture](images/swirl_architecture_1.png)
+
+![SWIRL AI Connect Architecture Part 2](images/swirl_architecture_2.png)
+
+## SWIRL RAG Architecture
+![SWIRL RAG Architecture](images/swirl_architecture_3.png)
+
+## SWIRL AI Co-Pilot
+![SWIRL AI Co-Pilot Architecture](images/swirl_architecture_4.png)
 
 # Workflow
 
@@ -191,11 +199,11 @@ SWIRL AI Connect, Community Edition, supports this using the ChatGPTQueryProcess
 
 ## Adjusting the swirl_score that causes Galaxy UI to star results
 
-The `swirl_score` configuration is available in `theminimumSwirlScore` entry of `static/api/config/default`. 
+For SWIRL Community, this configuration is the `theminimumSwirlScore` entry of `static/api/config/default`. The default value is `100`. Higher values will produce fewer starred results.
 
-The default value is `100`. Higher values will produce fewer starred results.
+For SWIRL Enterprise, the configuration is the `minimumConfidenceScore` entry of the `static/api/config/default`. The default value is .7. Higher values will produce fewer starred results. 
 
-![Galaxy UI with stars](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/3_2_0-Galaxy-star.png)
+![SWIRL AI Connect 4.0 Results](images/swirl_40_results.png)
 
 ## Handle NOTted queries
 
@@ -391,7 +399,29 @@ It is intended for SearchProviders that would otherwise have few (or no) good re
 
 Specify `DATASET` in the `result_mappings` to have SWIRL organize a columnar response into a single result, with the columns in the payload.
 
-![Galaxy UI with Chart Generated from Thoughtspot Dataset Result](images/3_5_0-Chart_UI.png)
+![Galaxy UI with charts displayed](images/swirl_40_chart_display.png)
+
+`DATASET` is fully compatible with `result_mappings`, including `NO_PAYLOAD`. 
+
+SWIRL uses `chart.js` to visualize data sets. The following list explains how it selects the type of chart:
+
+* Field Analysis via checkSupported():
+This method examines the first row of the extracted data:
+It counts how many fields are numeric versus non‑numeric.
+
+* No Numeric Fields:
+A pseudo-count field `count` is added to simulate numeric data. Depending on how many fields are present, it will default to a bar or a stacked bar chart.
+
+* One Numeric Field:
+If there’s only one numeric field (and at least one string/discrete field), the component chooses a bar chart.
+
+* Two Numeric Fields:
+If exactly two numeric fields are present, the component checks the range (difference between maximum and minimum values) of each field. If both ranges are positive, a scatter chart is used; otherwise, it defaults to a bar chart.
+
+* Three or More Numeric Fields:
+With three or more numeric fields, the third field is used to size the bubbles. If the third field’s range is positive, the component chooses a bubble chart; if not, it defaults to a bar chart.
+
+Please [contact support](mailto:support@swirlaiconnect.com) if you need help with this feature.
 
 ## Expire Search Objects
 

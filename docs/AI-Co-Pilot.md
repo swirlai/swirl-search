@@ -39,7 +39,7 @@ SWIRL AI Connect, included with Co-Pilot, defines four roles for GAI/LLMs, as no
 
 * Edit any AI Provider by adding the `id` value to the end of the `swirl/aiproviders` URL. For example: `http://localhost:8000/swirl/aiproviders/4/`
 
-![SWIRL AIProvider - Azure/OpenAI GPT-4](./images/swirl_aiprovider_4.png)
+![SWIRL AIProvider - Azure/OpenAI GPT-4](images/swirl_aiprovider_4.png)
 
 * Review the provider definition to ensure that the `active` property is `true`.
 
@@ -78,11 +78,11 @@ For example, here is the preloaded OpenAI GPT-4 provider, set for chat as well a
     }
 ```
 
-Assuming the AI provider is correctly configured, you should be able to load the Co-Pilot using a browser. If you are using the default installation, this will be:
+Assuming the AI provider is correctly configured, you should be able to load the Co-Pilot using a browser. If using the default installation, this will be:
 
 [http://localhost:8000/galaxy/chat](http://localhost:8000/galaxy/chat)
 
-![SWIRL Co-Pilot](images/swirl_copilot_chat_rag.png)
+![SWIRL Co-Pilot discussion](images/swirl_40_chat_scop.png)
 
 Please refer to the AI Connect, Enterprise Edition, section on [Connecting to Enteprise AI](AI-Connect.html#connecting-to-enterprise-ai) for more information on configuring AI Providers.
 
