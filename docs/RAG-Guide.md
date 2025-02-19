@@ -71,10 +71,7 @@ SWIRL AI Connect Community Edition supports RAG only against OpenAI and Azure/Op
 
 Adjust the `timeout` value if necessary. Change the `User-Agent` string as needed, and/or authorize it to fetch pages from internal applications.
 
-You can also override the default timeout value with a URL parameter in the Galaxy UI. For example: `http://localhost:8000/galaxy/?q=gig%20economics&rag=true&rag_timeout=90`
-
-{: .highlight }
-Starting with SWIRL 3.7.0, we specify `rag_timeout`in seconds
+You can also override the default timeout value with a URL parameter in the Galaxy UI. For example, to set a timeout of 90 seconds: `http://localhost:8000/galaxy/?q=gig%20economics&rag=true&rag_timeout=90`
 
 * Restart SWIRL:
 
@@ -82,25 +79,21 @@ Starting with SWIRL 3.7.0, we specify `rag_timeout`in seconds
 python swirl.py restart
 ```
 
-* Go to the Galaxy UI ([http://localhost:8000/galaxy/](http://localhost:8000/galaxy/)). The "Generate AI Response" switch should be "off" as shown:
-![Galaxy with RAG Generate AI Response switch off](images/swirl_rag_switch_off.png)
+* Go to the Galaxy UI ([http://localhost:8000/galaxy/](http://localhost:8000/galaxy/)). The "Generate AI Response" switch should be "off".
 
-* Run a search. Results appear quickly after you press the "Search" button ([http://localhost:8000/galaxy/?q=epmc:future+of+ai+care](http://localhost:8000/galaxy/?q=epmc:future+of+ai+care)):
-![Galaxy with RAG results ready for selection](images/swirl_rag_pulmonary_1.png)
+* Run a search. Results appear quickly after you press the "Search" button ([http://localhost:8000/galaxy/?q=epmc:future+of+ai+care](http://localhost:8000/galaxy/?q=SWIRL+AI+Connect)):
+![Galaxy with RAG results ready for selection](images/swirl_40_community_rag.png)
 
-* If you wish to manually select the results to RAG with, click the "Select Items" switch to make the shopping cart appear. Results that SWIRL thinks should be used in RAG will be pre-checked. Check or uncheck results, and optionally sort and/or filter them.
-![Galaxy with RAG results selected](images/swirl_rag_pulmonary_2.png)
+* If you wish to manually select the results to RAG with, click the "Select Items" switch to make the shopping cart appear. Results that SWIRL thinks should be used in RAG will be pre-checked. Check or uncheck results, and optionally sort and/or filter them. When ready, click the "Generate AI Response" switch. A spinner will appear. The RAG response will appear several seconds later depending on a variety of factors. :slightly_smiling_face:
+![Galaxy with RAG results selected](images/swirl_40_rag_select.png)
 
-* Click the "Generate AI Response" switch. A spinner will appear. The RAG response will appear several seconds later depending on a variety of factors. :slightly_smiling_face:
-![Galaxy with human directed RAG AI insight](images/swirl_rag_pulmonary_3.png)
-
-* Verify the RAG insight you received by reviewing the citations at the end RAG response. 
+* Verify the RAG insight you received by reviewing the citations below the RAG response.
 
 {: .highlight }
 To cancel a RAG process, click the "Generate AI Summary" toggle off.
 
 {: .warning }
-SWIRL's RAG processing utilizes only the *first 10 results* that are selected either automatically or manually using the "Select Items" option.
+By default, SWIRL's RAG processing utilizes the *first 10 results* that are selected either automatically or manually using the "Select Items" option. To change the number, specify `SWIRL_RAG_MAX_TO_CONSIDER` in the .env file as noted in the [AI Connect Guide](./AI-Connect.md#configuration-options).
 
 ## Notes
 

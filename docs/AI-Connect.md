@@ -192,7 +192,7 @@ The following links present the models available through LiteLLM:
 
 Edit any AI Provider by adding the `id` value to the end of the `swirl/aiproviders` URL. For example: `http://localhost:8000/swirl/aiproviders/4/`
 
-![SWIRL AIProvider - Azure/OpenAI GPT-4](./images/swirl_aiprovider_4.png)
+![SWIRL AIProvider - Azure/OpenAI GPT-4](images/swirl_aiprovider_4.png)
 
 From here, use the form at the bottom of the page to:
 
@@ -346,25 +346,7 @@ This will ensure you see messages from the `celery-beats` log. However, most of 
 {: .warning }
 If you edit a default system prompt, your changes will be lost the next time you update SWIRL.
 
-By default, the SWIRL system prompt is as follows:
-
-```
-{
-        "name": "search_rag_default",
-        "shared": true,
-        "prompt": "{header} for the query '{query}', given the following recent search results as background information, do not mention that you are using the provided background information. Please list the sources at the end of your response. Ignore information that is off-topic or obviously conflicting, without warning about it. The results may include information for different entities with identical names, try to disambiguate them in your response. If you discover possible familiar relationships in the content, mention it as a possibility. When a text contains code snippets, wrap those snippets with the <code style=\"color: inherit\"> tag if it's inline code, and use <pre><code> tags if it's a block of code.",
-        "note": "Important: Text between {start_tag} and {end_tag} is most pertinent to the query.\n",
-        "footer": "\n\n\n\n--- Final Instructions ---\n In your response do not assume people with vastly different work histories are the same person. If the query appears to be a proper name, focus on answering the question, 'Who is?' or 'What is?', as appropriate. If the query appears to be a question, then try to answer it. After answering the question, generate and include a bulleted list of follow-up questions that may be useful for the user to consider. For the list of questions, use the HTML tags and format in the example below: \n\n <p class=\"question-header\">Follow-up questions you might consider:</p>\n<div=class\"question-list\">\n<ul>\n<li class=\"question-list-item\"><a class=\"question-link\">question</a></li>\n<li class=\"question-list-item\"><a class=\"question-link\">question</a></li>\n</ul>\n</div>\n\n For the list of sources, use the HTML tags and format exactly as in the example below. Each entry should be on a new line, starting with  the description, a comma, a space, and then the URL or source name from the Content Details. Do not generate duplicate entries, one entry per source. Enclose your response in HTML tags <p></p> and insert a <br> HTML tag every two sentences. It is crucial to follow this format strictly to ensure consistency, here is an example of correct format:\n<p>\n<br><b>Sources:</b>\n<ul class=\"sources-list-ul\">\n<li class=\"sources-list-li\"> <a class=\"sources-list-link\" target=\"_blank\" href=http://example.com/source1>Information from example source 1</a></li>\n<li class=\"sources-list-li\"> <a class=\"sources-list-link\" target=\"_blank\" href=http://example.com/source2>Information from example source 2</a></li>\n</ul>\n</p>",
-        "tags": [
-            "search-rag"
-        ],
-        "active": true,
-        "reminder": null,
-        "message_preamble": null
-}
-```
-
-This is designed to operate on search queries by providing summarization of the provided data and/or answering simple questions from it. 
+You can view the default prompts from the SWIRL AI Connect page: [localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)
 
 ## Creating New Saved Prompts
 
@@ -377,8 +359,7 @@ For example, to modify the default prompt so that the response is in pirate-spea
 ```
     {
         "name": "pirate",
-        "prompt": "Answer this query '{query}' given the following recent search results as background information. Do not mention that you are using the provided background information. Please list the sources at the end of your response. Ignore information that is off-topic or obviously conflicting, without warning about it. The results may include information for different entities with identical names, try to disambiguate them in your response. If you discover possible familiar relationships in the content, mention it as a possibility.",
-        "note": "Important: Text between {start_tag} and {end_tag} is most pertinent to the query.",
+        ... etc ...
         "footer": "--- Final Instructions ---\nIn your response, pretend you are a pirate comedian, but keep it clean!",
         "tags": [ "search-rag" ]
     }
@@ -386,7 +367,7 @@ For example, to modify the default prompt so that the response is in pirate-spea
 
 This should produce the following:
 
-![SWIRL Prompt Object](./images/swirl_prompt_form.png)
+![SWIRL Prompt Object](images/swirl_prompt_form.png)
 
 ## Specifying a Saved Prompt in a Query
 
@@ -398,7 +379,7 @@ swirl ai connect prompt:pirate
 
 The response should be in pirate-speak:
 
-![SWIRL RAG response in pirate speak](./images/swirl_prompt_pirate.png)
+![SWIRL RAG response in pirate speak](images/swirl_prompt_pirate.png)
 
 ## Understanding Saved Prompts
 

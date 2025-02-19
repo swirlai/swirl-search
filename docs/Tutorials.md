@@ -14,27 +14,15 @@ nav_order: 20
 
 # Tutorial: Extending SWIRL
 
-## Background: The SWIRL Search Workflow
+## Before You Start...
 
-In a nutshell:
+We recommend reviewing the following documents prior to pursuing the tutorial.
 
-* User creates a query - example: [http://localhost:8000/swirl/search/?q=ai](http://localhost:8000/swirl/search/?q=ai)
-* Pre-query processing - example: [SpellcheckQueryProcessor](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/spellcheck_query.py)
-
-{: .highlight }
-Each Search Provider executes in parallel
-
-* Query processing - example: [AdaptiveQueryProcessor](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/adaptive.py)
-* Connector - example: [RequestsGet](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requestsget.py)
-* Result processing - example: [MappingResultsProcessor](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/mapping.py)
-
-{: .highlight }
-Parallel processing ends here
-
-* Post-result processing - example: [CosineRelevancyPostResultProcessor](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/relevancy.py)
-* Ranked-results available via mixer - example: [http://localhost:8000/swirl/results/?search_id=1](http://localhost:8000/swirl/results/?search_id=1)
-
-For more information, consult the [Developer Guide, Workflow Overview](Developer-Guide.html#workflow).
+* [What is SWIRL?](index.md#what-is-swirl-ai-connect)
+* [SWIRL Workflow](Developer-Guide.html#workflow)
+* [How do I connect SWIRL to some new source?](index.md#how-do-i-connect-swirl-to-some-new-source)
+* [Response Mappings](https://docs.swirlaiconnect.com/SP-Guide.html#response-mappings)
+* [Result Mappings](https://docs.swirlaiconnect.com/SP-Guide.html#result-mappings)
 
 # Creating a SearchProvider
 
@@ -53,10 +41,13 @@ For example, if trying to query a website using a URL like `https://host.com/?q=
 ```
 To learn more about query and URL parameters, refer to the [SearchProvider Guide](SP-Guide.html).
 
-* If the website offers the ability to page through results, or sort results by date (as well as relevancy), use the `PAGE=` and `DATE_SORT=` query mappings to add support for these features through SWIRL.  For example:
+* If the website offers the ability to page through results, or sort results by date (as well as relevancy), use the `PAGE=` and `DATE_SORT=` query mappings to add support for these features through SWIRL.  
+
+For example:
 ```
-TO DO 
+"query_mappings": "DATE_SORT=sort=date,PAGE=start=RESULT_INDEX"
 ```
+
 For more information, refer to the [SearchProvider Guide, Query Mappings](SP-Guide.html#query-mappings) section.
 
 * Open the query URL in a browser and look through the JSON response. 
@@ -125,12 +116,15 @@ class MyConnector(Connector):
 
 * In the `__init__` class, load and persist anything that will be needed when connecting and querying the service.
 
-* Import the Python package(s) to connect to the service. The ChatGPT connector uses the `openai` package, for example:
+* Import the Python package(s) to connect to the service. 
+
 ```
-import openai
+import your-connector-package
 ```
 
-* Modify the `execute_search` method to connect to the service. As you can see from the ChatGPT Connector, it first loads the OpenAI credentials, then constructs a prompt, sends the prompt via `openai.ChatCompletion.create()`, then stores the response. 
+* Modify the `execute_search` method to connect to the service. 
+
+As you can see from the ChatGPT Connector, it first loads the OpenAI credentials, then constructs a prompt, sends the prompt via `openai.ChatCompletion.create()`, then stores the response. 
 
 ```
     def execute_search(self, session=None):
@@ -185,7 +179,10 @@ import openai
 
 ```
 
-* ChatGPT depends on the OpenAI API key, which is provided to SWIRL via the `.env` file. To follow this pattern, create new values in `.env` then modify `swirl_server/settings.py` to load them as Django settings, and set a reasonable default.
+* ChatGPT depends on the OpenAI API key, which is provided to SWIRL Community via the `.env` file. To follow this pattern, create new values in `.env` then modify `swirl_server/settings.py` to load them as Django settings, and set a reasonable default.
+
+{: .highlight }
+In SWIRL Enterprise, use [AIProviders to configure LLMs and RAG](AI-Connect.md#activating-ai-providers) instead of the `.env` file.
 
 * Modify the `normalize_response()` method to store the raw response. This is literally no more (or less) than writing the result objects out as a Python list and storing that in `self.results`:
 ```

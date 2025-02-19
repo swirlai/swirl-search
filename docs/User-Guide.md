@@ -37,7 +37,7 @@ Please refer to the [SWIRL AI Connect Overview](index.html) for more information
 
 The SWIRL login page will appear:
 
-![SWIRL Login](images/swirl_login-galaxy_dark.png)
+<img src="images/swirl_40_login.png" alt="SWIRL 4.0 Login" width="300">
 
 * Enter username `admin` and password `password`, then click `Login`.
 
@@ -46,17 +46,15 @@ If you receive a warning about the password being compromised or in a recent dat
 
 * Enter some search terms in the search box and press the `Search` button. Re-ranked results will appear in just a few seconds:
 
-![SWIRL Results](images/swirl_results_no_m365-galaxy_dark.png)
+![SWIRL AI Connect 4.0 Results](images/swirl_40_results.png)
 
 Note that SWIRL Community will only retrieve a single set of results as configured in each SearchProvider. Fetching additional pages, on demand, is planned for a future release.
 
-The Galaxy UI highlghts results with a `swirl_score` above a configurable minimum score with a star in the results list. 
-
-![Galaxy UI with stars](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/3_2_0-Galaxy-star.png)
+The Galaxy UI stars results with a `swirl_score` above a configurable minimum. 
 
 ## Filtering Results by Source
 
-![SWIRL Results Source Facet](images/swirl_results_source-galaxy_dark.png)
+![SWIRL AI Connect 4.0 Results w/Facet Selected](images/swirl_40_results_facet.png)
 
 SWIRL returns the best results from all available sources by default. To filter results by one or more sources, check one or more of the `Source` boxes as shown above. Results are instantly filtered to just those sources.
 
@@ -64,11 +62,11 @@ Click `Clear All` to return to viewing all results.
 
 ## Sorting Results
 
-![SWIRL Results View By](images/swirl_results_view_by-galaxy_dark.png)
+![SWIRL Results View By](images/swirl_40_results_sorted.png)
 
-SWIRL presents results sorted by relevancy by default. To sort by `Date` or to see the `Top Picks` from each silo, click on the `VIEW BY` dropdown and select your preference.
+By default, SWIRL Community presents results sorted by relevancy score. To sort by `Date` or to see the `Top Picks` from each silo, click on the `VIEW BY` dropdown and select your preference.
 
-SWIRL hides results that don't have a `date_published` value when sorting by `Date`.
+SWIRL hides results that don't have a `date_published` value when sorting by `Date`. Switch back to `Relevancy` to see all results.
 
 ## Starting a New Search
 
@@ -187,7 +185,9 @@ For more details, refer to the [Organizing SearchProviders with Active, Default 
 
 SWIRL returns a unified result set consisting of results from all responding SearchProviders, matched by stemmed word form, and re-ranked using a cosine vector similarity relevancy model based on [spaCy](https://spacy.io/) and normalized by query and token length. It also incorporates the original `searchprovider_rank`.
 
-For more details please consult the Developer Guide [Configure Relevancy Field Weights](Developer-Guide.html#configure-relevancy-field-weights) and [Understand the Explain Structure](Developer-Guide.html#understand-the-explain-structure) sections.
+The Galaxy UI puts a star next to items that are over a configurable relevancy threshold. 
+
+For more information consult the [Developer Guide Adjusting The SWIRL Score](./Developer-Guide.md#adjusting-the-swirl_score-that-causes-galaxy-ui-to-star-results), [Configure Relevancy Field Weights](Developer-Guide.html#configure-relevancy-field-weights) and [Understand the Explain Structure](Developer-Guide.html#understand-the-explain-structure) sections.
 
 ## Hit Highlighting
 
