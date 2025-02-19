@@ -240,19 +240,17 @@ To:
 }
 ```
 
-# Authenticate to Microsoft
-
-{: .highlight }
-As of SWIRL 3.2.0, when signing in to SWIRL via Microsoft OIDC, users are now automatically authorized to any active M365 SearchProviders.
+# Authenticating with Microsoft
 
 To verify that the SWIRL-M365 integration is working, open the Galaxy UI: <http://localhost:8000> (or <http://localhost:8000/galaxy/>)
 
-Click on the profile icon at the top right and then click the Microsoft toggle to activate it. Depending on how the above configuration was done, M365 may require authentication and/or granting of access. After that, the toggle next to the Microsoft logo will light up, indicating a successful connection. You can then query any of the Microsoft sources:
+Click on the profile icon at the top right and then click the Microsoft toggle to activate it. Depending on how the above configuration was done, M365 may require authentication and/or granting of access. 
+
+<img src="images/swirl_40_ms_login.png" alt="SSO Provider Login Page" width="300">
+
+After that, the toggle next to the Microsoft logo will light up, indicating a successful connection. You can then query any of the Microsoft sources:
 
 ![SWIRL Co-Pilot discussion](images/swirl_40_search_msft.png)
-
-
-
 
 {: .warning }
 If the toggle does not light up after authenticating with Microsoft, please [contact support](#support). The [related documentation](#related-documentation) below may also be useful.

@@ -199,9 +199,9 @@ SWIRL AI Connect, Community Edition, supports this using the ChatGPTQueryProcess
 
 ## Adjusting the swirl_score that causes Galaxy UI to star results
 
-The `swirl_score` configuration is available in `theminimumSwirlScore` entry of `static/api/config/default`. 
+For SWIRL Community, this configuration is the `theminimumSwirlScore` entry of `static/api/config/default`. The default value is `100`. Higher values will produce fewer starred results.
 
-The default value is `100` for Community Edition. Higher values will produce fewer starred results.
+For SWIRL Enterprise, the configuration is the `minimumConfidenceScore` entry of the `static/api/config/default`. The default value is .7. Higher values will produce fewer starred results. 
 
 ![SWIRL AI Connect 4.0 Results](images/swirl_40_results.png)
 
@@ -399,7 +399,7 @@ It is intended for SearchProviders that would otherwise have few (or no) good re
 
 Specify `DATASET` in the `result_mappings` to have SWIRL organize a columnar response into a single result, with the columns in the payload.
 
-![Galaxy UI with Chart Generated from Thoughtspot Dataset Result](images/swirl_40_chart_display.png)
+![Galaxy UI with charts displayed](images/swirl_40_chart_display.png)
 
 `DATASET` is fully compatible with `result_mappings`, including `NO_PAYLOAD`. 
 

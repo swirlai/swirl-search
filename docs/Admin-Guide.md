@@ -179,6 +179,14 @@ python swirl.py restart
 {: .highlight }
 Consult the [release notes](https://github.com/swirlai/swirl-search/releases) for more information on each release.
 
+## Resetting Prompts
+
+To reset AI prompts to their default state, run the following command:
+
+`python swirl.py reload_ai_prompts`
+
+This will restore the system prompts to the "factory" settings. New prompts are not impacted.
+
 # Configuring SWIRL
 
 SWIRL uses the following configuration items, defined in the [`swirl_server/settings.py`](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py):
