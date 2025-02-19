@@ -192,7 +192,7 @@ The following links present the models available through LiteLLM:
 
 Edit any AI Provider by adding the `id` value to the end of the `swirl/aiproviders` URL. For example: `http://localhost:8000/swirl/aiproviders/4/`
 
-![SWIRL AIProvider - Azure/OpenAI GPT-4](./images/swirl_aiprovider_4.png)
+![SWIRL AIProvider - Azure/OpenAI GPT-4](images/swirl_aiprovider_4.png)
 
 From here, use the form at the bottom of the page to:
 
@@ -343,21 +343,7 @@ This will ensure you see messages from the `celery-beats` log. However, most of 
 
 ## Default Prompt
 
-By default, the SWIRL system prompt is as follows:
-
-```
-{
-    "name": "default",
-    "shared": false,
-    "prompt": "Answer this query '{query}' given the following recent search results as background information. Do not mention that you are using the provided background information. Please list the sources at the end of your response. Ignore information that is off-topic or obviously conflicting, without warning about it. The results may include information for different entities with identical names, try to disambiguate them in your response. If you discover possible familiar relationships in the content, mention it as a possibility.",
-    "data": [],
-    "note": "Important: Text between {RAG_IMPORTANT_START_TAG} and {RAG_IMPORTANT_END_TAG} is most pertinent to the query.\n",
-    "footer": "\n\n\n\n--- Final Instructions ---\nIn your response do not assume people with vastly different work histories are the same person. If the query appears to be a proper name, focus on answering the question, 'Who is?' or 'What is?', as appropriate. If the query appears to be a question, then try to answer it. For the list of sources, use the HTML tags and format in the example below:\n\n<p>\n<br><b>Sources:</b>\n<br><i>example description 1</i> &nbsp;&nbsp;&nbsp; <b>example website or source name 1</b>\n<br><i>example description 2</i> &nbsp;&nbsp;&nbsp; <b>example website or source name 2</b>\n</p>\n\nEnclose your response in HTML tags <p></p> and insert a <br> HTML tag every two sentences.",
-    "tags": []
-}
-```
-
-This is designed to operate on search queries by providing summarization of the provided data and/or answering simple questions from it. 
+You can view the default prompts from the SWIRL AI Connect page:
 
 ## Creating New Saved Prompts
 
@@ -370,8 +356,7 @@ For example, to modify the default prompt so that the response is in pirate-spea
 ```
     {
         "name": "pirate",
-        "prompt": "Answer this query '{query}' given the following recent search results as background information. Do not mention that you are using the provided background information. Please list the sources at the end of your response. Ignore information that is off-topic or obviously conflicting, without warning about it. The results may include information for different entities with identical names, try to disambiguate them in your response. If you discover possible familiar relationships in the content, mention it as a possibility.",
-        "note": "Important: Text between {RAG_IMPORTANT_START_TAG} and {RAG_IMPORTANT_END_TAG} is most pertinent to the query.",
+        ... etc ...
         "footer": "--- Final Instructions ---\nIn your response, pretend you are a pirate comedian, but keep it clean!",
         "tags": []
     }
@@ -379,7 +364,7 @@ For example, to modify the default prompt so that the response is in pirate-spea
 
 This should produce the following:
 
-![SWIRL Prompt Object](./images/swirl_prompt_form.png)
+![SWIRL Prompt Object](images/swirl_prompt_form.png)
 
 ## Specifying a Saved Prompt in a Query
 
@@ -391,7 +376,7 @@ swirl ai connect prompt:pirate
 
 The response should be in pirate-speak:
 
-![SWIRL RAG response in pirate speak](./images/swirl_prompt_pirate.png)
+![SWIRL RAG response in pirate speak](images/swirl_prompt_pirate.png)
 
 ## Understanding Saved Prompts
 

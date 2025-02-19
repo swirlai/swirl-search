@@ -946,7 +946,7 @@ Note: Putting a fixed SQL query in the `query_template` is perfectly acceptable.
 
 # Processing Pipelines
 
-![SWIRL Processing Pipelines](images/processing_pipielines.png)
+![SWIRL Processing Pipelines](images/swirl_architecture_1.png)
 
 Processors are intended to be single purpose and executed in a sequence called a "pipeline". Pipelines are specified as JSON lists in their respective properties.  There are four processing pipelines in SWIRL:
 * `Search.pre_query_processors`
