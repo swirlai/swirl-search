@@ -48,6 +48,8 @@ module_name = 'views.py'
 from swirl.tasks import update_microsoft_token_task
 from swirl.search import search as run_search
 
+from swirl.banner import SWIRL_VERSION
+
 SWIRL_EXPLAIN = getattr(settings, 'SWIRL_EXPLAIN', True)
 SWIRL_SUBSCRIBE_WAIT = getattr(settings, 'SWIRL_SUBSCRIBE_WAIT', 20)
 
@@ -148,7 +150,7 @@ class LoginView(APIView):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key, 'user': user.username})
+            return Response({'token': token.key, 'user': user.username, 'swirl_version': SWIRL_VERSION})
         else:
             return Response({'error': 'Invalid credentials'})
 
@@ -192,7 +194,7 @@ class OidcAuthView(APIView):
                             is_staff=True
                         )
                     token, created = Token.objects.get_or_create(user=user)
-                    return Response({ 'user': user.username, 'token': token.key })
+                    return Response({ 'user': user.username, 'token': token.key, 'swirl_version': SWIRL_VERSION })
                 return HttpResponseForbidden()
             return HttpResponseForbidden()
         return HttpResponseForbidden()
