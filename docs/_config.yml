@@ -1,5 +1,5 @@
 # Site settings
-title: SWIRL Documentation
+title: SWIRL AI Documentation
 description: "Powerful Real-Time AI Infrastructure Software"
 repository: "swirlai/swirl-search"
 url: https://docs.swirlaiconnect.com
@@ -12,7 +12,7 @@ logo: "/assets/images/swirl-logo.png"
 favicon_ico: "/assets/images/favicon.ico"
 
 # Color scheme supports "light" (default) and "dark"
-color_scheme: dark
+color_scheme: light
 
 # Heading anchor links appear on hover over h1-h6 tags in page content
 heading_anchors: true
@@ -32,7 +32,7 @@ nav_external_links_new_tab: true # set to true to open all external links in new
 
 # Aux links for the upper right navigation
 aux_links:
-  "SWIRL on GitHub":
+  "SWIRL AI on GitHub":
     - "//github.com/swirlai/swirl-search"
 aux_links_new_tab: true # Makes Aux links open in a new tab. Default is false
 
@@ -114,3 +114,8 @@ plugins:
 just_the_docs:
   # other settings...
   auxiliary_stylesheets: ["_sass/custom/custom.scss"]
+
+# Quiet the deprecation warnings from the 'sass-embedded' gem
+sass:
+  quiet_deps: true
+  silence_deprecations: ['import']
