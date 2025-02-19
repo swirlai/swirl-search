@@ -200,13 +200,17 @@ python swirl.py restart
 The SWIRL distribution includes pre-configured SearchProviders for Outlook Email, Calendar Events, OneDrive Files, SharePoint Sites, and Teams Chat.
 
 {: .warning }
-The local Teams app must already be open when clicking a Teams Chat result link in order for Teams to take you to the correct chat. 
+The local Teams app must already be open when clicking a Teams Chat result link in order for Teams to take you to the correct chat.
 
 {: .highlight }
-For results containing recurring Microsoft 365 Calendar events or nested Outlook Message threads, only the most recent events and messages are shown.
+> For results containing recurring Microsoft 365 Calendar events or nested Outlook Message threads, only the most recent events and messages are shown.
+>
+> OneDrive results return only documents, folders are omitted from results.
+>
+> Teams results ONLY return chat matches; documents shared in chats are found in OneDrive or SharePoint results.
 
 {: .highlight }
-In version 3.0.0, the OneDrive SearchProvider was updated to omit folders as results; it now only returns documents.
+To search all Microsoft sources at once, use the `microsoft:` prefix.
 
 * Open the admin console: <http://localhost:8000/swirl/>
 

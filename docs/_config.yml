@@ -44,7 +44,7 @@ callouts_level: loud # or quiet
 callouts:
   highlight:
     title: Note
-    color: yellow
+    color: blue
   warning:
     title: Warning
     color: red
