@@ -36,7 +36,7 @@ oracledb
 psycopg2-binary
 transformers
 torch
-pinecone-client
+pinecone
 pandas
 drf-spectacular
 qdrant-client==1.10.0
