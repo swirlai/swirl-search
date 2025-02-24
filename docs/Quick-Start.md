@@ -128,7 +128,7 @@ The Docker version of SWIRL AI Connect Community Edition does *not* retain any d
 ## Notes
 
 {: .highlight }
-SWIRL includes SearchProviders for Google Web (via their Programmable Search Engine offering), Arxiv.org, European PMC, Google News and SWIRL Documentation to get you up and running right away. The credentials for the Google Cloud API are shared with the SWIRL Community for this purpose.
+SWIRL includes active SearchProviders for Arxiv.org, European PMC and Google News that will work "out of the box" so long as internet access is available. There are also inactive providers for Google Web and SWIRL Documentation that use the Google Programmable Search Engine (PSE). These services require a Google API key. Consult the [SearchProvider Guide](SP-Guide.md#activating-a-google-programmable-search-engine-pse-searchprovider) for more information.
 
 {: .highlight }
 Using SWIRL with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](M365-Guide.html) or contact support as noted below. 

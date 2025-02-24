@@ -25,7 +25,7 @@ SearchProviders are the essential element of SWIRL. They make it quick and easy 
 SearchProviders are JSON objects. SWIRL's distribution comes preloaded with a variety of configurations for sources like Elastic, Solr, PostgreSQL, BigQuery, NLResearch.com, Miro.com, Atlassian, and more.
 
 {: .highlight }
-SWIRL includes a Google's Programmable Search Engines SearchProvider with live credentials so you can use SWIRL on web data right away. The credentials for these are shared with the SWIRL Community.  The EuropePMC SearchProvider, Arxiv.org and the SWIRL documentation are also enabled for search by default; no credentials are required for any of those sources.
+SWIRL includes active SearchProviders for Arxiv.org, European PMC and Google News that will work "out of the box" so long as internet access is available. There are also inactive providers for Google Web and SWIRL Documentation that use the Google Programmable Search Engine (PSE). These services require a Google API key. Consult the [SearchProvider Guide](#activating-a-google-programmable-search-engine-pse-searchprovider) for more information.
 
 [SearchProvider Example JSON](https://github.com/swirlai/swirl-search/tree/main/SearchProviders)
 
@@ -47,7 +47,7 @@ SWIRL includes a Google's Programmable Search Engines SearchProvider with live c
 | funding_db_sqlite3.json  | SQLite3 funding database  | [Funding Dataset](Developer-Reference.html#funding-data-set) |
 | github.json | Searches public repositories for Code, Commits, Issues, and Pull Requests | Requires a bearer token |
 | google_news.json | Searches the [Google News](https://news.google.com/) feed | No authorization required |
-| google_pse.json | Five Google Programmable Search Engines (PSE) | Includes shared SWIRL credentials; may return a 429 error if overused |
+| google_pse.json | Search the web, SWIRL documentation and more | Uses Google PSE, requires a valid Google API key |
 | hacker_news.json | Queries a [searchable version](https://hn.algolia.com/) of the Hacker News feeds | No authorization required |
 | http_get_with_auth.json | Generic HTTP GET query with basic authentication | Requires url, credentials | 
 | http_post_with_auth.json | Generic HTTP POST query with basic authentication | Requires url, credentials |
@@ -85,6 +85,51 @@ to
 Click the `PUT` button to save the change. You can use the `HTML Form` at the bottom of the page for convenience.
 
 ![picture of the SearchProvider endpoint HTML form](images/swirl_sp_html_form.png)
+
+## Activating a Google Programmable Search Engine (PSE) SearchProvider
+
+SWIRL includes an inactive Google PSE configuration that can be used to search the web or most any "slice" of it. 
+PSE is not free and requires a valid Google API key to operate. 
+
+To create a Google PSE:
+* <https://programmablesearchengine.google.com/about/> - click "Get Started" and login with your Google account
+
+To create a Google API key: 
+* <https://developers.google.com/custom-search/v1/overview>
+
+To activate the SearchProvider:
+* [Edit the Google PSE provider ](#editing)
+
+* Change:
+
+``` json
+    "active": false
+```
+
+to
+
+``` json
+    "active": true
+```
+
+Or use the HTML form at at the bottom of the page.
+
+* Edit the `query_mappings` and put in the id (cx parameter) from a valid Google PSE you created:
+
+``` json
+    "query_mappings": "cx=<your-Google-PSE-id>",
+```
+
+
+* Edit the `credentials` field and put in your Google API key, with the `key=` prefix as shown:
+
+``` json
+    "credentials": "key=<your-Google-API-key>",
+```
+
+* Click the `PUT` button to save the change. 
+
+* Reload SWIRL Galaxy to see the new source appear in the source selector.
 
 ## Copy/Paste Install
 
