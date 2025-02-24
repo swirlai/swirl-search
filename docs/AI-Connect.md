@@ -470,6 +470,8 @@ The following SearchProvider configuration is recommended for public source data
         
 ```
 
+To obtain a Diffbot token, sign up here: <https://www.diffbot.com/> 
+
 If you prefer not to use Diffbot, the following configuration is recommended: 
 
 ```
@@ -496,6 +498,9 @@ If you prefer not to use Diffbot, the following configuration is recommended:
             "timeout": 30
         },
 ```
+
+{: .highlight }
+Consult the [SearchProvider Guide](SP-Guide.md#activating-a-google-programmable-search-engine-pse-searchprovider) for more information about the Google PSE SearchProvider.
 
 ### Notes
 
