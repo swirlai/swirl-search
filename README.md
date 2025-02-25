@@ -214,7 +214,7 @@ The most recent Search object will be displayed at the top. Click on the `result
 > **Warning**
 > The Docker version of Swirl *does not* retain any data or configuration when shut down!
 
-:key: Swirl includes five (5) Google Programmable Search Engines (PSEs) to get you up and running right away. The credentials for these are shared with the Swirl Community.
+:key: Swirl comes configured to search Arxiv, European PMC and Google News right out of the box.
 
 :key: Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](https://docs.swirlaiconnect.com/M365-Guide.html) or [contact us](mailto:hello@swirlaiconnect.com).
 
