@@ -393,6 +393,29 @@ The [`requests.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/conn
 
 SWIRL will automatically convert this format to a JSON array of dicts, with the fieldnames specified in the first element.
 
+### Constructing URLs 
+
+When trying to map results from a SearchProvider that doesn't return a full URL, use JSONPath conventions to construct it on-the-fly from a base URL and/or other result field(s). 
+
+For example, here's the `result_mapping` for Europe PubMed Central SP:
+`url='https://europepmc.org/article/{source}/{id}'`
+
+The value in braces is a JSON field from the result - in this case, the id and source field.
+
+### Aggregating Field Values
+
+To aggregate list values into a single string field, use JSONPath. 
+
+For example, from the Google PSE SearchProvider: 
+`pagemap.metatags[*].['og:type']`
+
+This mapping aggregates all values from the list of metatags that are ['og:type'].
+
+Another example, from the Arxiv SearchProvider:
+`author[*].name`
+
+This aggregates all author names into a single field.
+
 ### Multiple Mappings
 
 SWIRL can map multiple SearchProvider fields to a single SWIRL field, aggregating multiple responses in the PAYLOAD field as necessary.
