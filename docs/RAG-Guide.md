@@ -136,7 +136,7 @@ SWIRL's RAG workflow is shown above, and explained below:
 
 ### Enterprise RAG Support 
 - The **Community Edition** can fetch **publicly accessible sources**.  
-- For **RAG with enterprise services** (e.g., Microsoft 365, ServiceNow, Salesforce, Atlassian) with **OAuth2 and SSO**, [contact us for SWIRL Enterprise](mailto:hello@swirl.today).  
+- For **RAG with enterprise services** (e.g., Microsoft 365, ServiceNow, Salesforce, Atlassian) with **OAuth2 and SSO**, [contact us for SWIRL Enterprise](mailto:hello@swirlaiconnect.com).  
 
 ### Preloaded RAG Configurations  
 The following **SearchProviders** come pre-configured for RAG:  

@@ -71,7 +71,7 @@ The SWIRL login page will show a button for SSO login.
     ![SWIRL Co-Pilot with user logged in via SSO](images/swirl_40_chat_start.png)
 
 {: .warning }
-If you encounter an error, please [contact support](mailto:support@swirl.today) or your local system administrator.
+If you encounter an error, please [contact support](mailto:support@swirlaiconnect.com) or your local system administrator.
 
 # Verifying Login
 
@@ -107,7 +107,7 @@ Other supported query languages include:
 - **Solr syntax**  
   
 {: .warning }
-For assistance with specific query languages, please [contact SWIRL](mailto:support@swirl.today).
+For assistance with specific query languages, please [contact SWIRL](mailto:support@swirlaiconnect.com).
 
 # Human Language Support
 

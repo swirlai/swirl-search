@@ -34,7 +34,7 @@ Ensure Docker is running before proceeding!
 
 ## Downloading SWIRL Enterprise Files
 
-1. Locate the email from `hello@swirl.today` with the subject **"Try SWIRL Enterprise"**.
+1. Locate the email from `hello@swirlaiconnect.com` with the subject **"Try SWIRL Enterprise"**.
 2. The email contains three attachments:
    - `Try SWIRL Enterprise with Docker.pdf`
    - `docker-compose.yaml`
