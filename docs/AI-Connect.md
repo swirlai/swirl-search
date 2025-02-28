@@ -93,8 +93,7 @@ To connect SWIRL to your **Microsoft 365 (M365) tenant**, follow the instruction
 
 To integrate SWIRL with an Identity Provider (IDP) or Single Sign-On (SSO) system, you need to configure an **Authenticator object**.
 
-To manage authenticators, go to:  
-[http://localhost:8000/swirl/aiproviders](http://localhost:8000/swirl/aiproviders) (default local installation).
+To manage authenticators, go to: [http://localhost:8000/swirl/aiproviders](http://localhost:8000/swirl/aiproviders) (default local installation).
 
 ### Authenticator Fields
 
@@ -154,8 +153,7 @@ SWIRL includes a preconfigured **Microsoft Authenticator**:
 
 ### Activating the Microsoft Authenticator
 
-To enable Microsoft authentication, register a **new SWIRL app** in **Azure**.  
-Refer to the [M365 Guide](M365-Guide.html) for detailed setup instructions.
+To enable Microsoft authentication, register a **new SWIRL app** in **Azure**. Refer to the [M365 Guide](M365-Guide.html) for detailed setup instructions.
 
 ## Other Authenticators
 
@@ -204,8 +202,7 @@ For assistance with any of these or additional models, please [contact support](
 
 ## Editing AI Providers
 
-To edit an AI provider, append its `id` to the `swirl/aiproviders` URL. Example:  
-[http://localhost:8000/swirl/aiproviders/4/](http://localhost:8000/swirl/aiproviders/4/)
+To edit an AI provider, append its `id` to the `swirl/aiproviders` URL. Example: [http://localhost:8000/swirl/aiproviders/4/](http://localhost:8000/swirl/aiproviders/4/)
 
 ![SWIRL AIProvider - Azure/OpenAI GPT-4](images/swirl_aiprovider_4.png)
 
@@ -274,8 +271,7 @@ Example: Switching between OpenAI GPT-4 and Azure/OpenAI GPT-4 for RAG:
 1. Set `active` to `true` for Azure/OpenAI GPT-4 and **PUT** the update.
 2. Set `active` to `false` for OpenAI GPT-4 and **PUT** the update.
 
-Now, Azure/OpenAI GPT-4 is active for RAG, while OpenAI GPT-4 is inactive.  
-Future versions of SWIRL will introduce prioritization and fallback between providers.
+Now, Azure/OpenAI GPT-4 is active for RAG, while OpenAI GPT-4 is inactive. Future versions of SWIRL will introduce prioritization and fallback between providers.
 
 ## Installing AI Providers via Copy/Paste
 
@@ -346,10 +342,9 @@ python swirl.py start celery-beats
 
 #### 5. Restart the logs:
 
-If `python swirl.py logs` is running, restart it to view `celery-beats` messages.  
-Most Bearer Token service logs appear in `logs/celery-worker.log`.
+If `python swirl.py logs` is running, restart it to view `celery-beats` messages. 
 
----
+Most Bearer Token service logs appear in `logs/celery-worker.log`.
 
 This ensures automatic updates for AI provider credentials, reducing manual intervention.
 
@@ -423,13 +418,11 @@ This ensures prompts are correctly applied when interacting with AI-based query 
 
 ## Using Summaries
 
-Set `SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY` to `True` to enable SWIRL to use result summaries for RAG.  
-This is the best option for sources where full-page fetching is restricted due to authentication limitations.
+Set `SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY` to `True` to enable SWIRL to use result summaries for RAG. This is the best option for sources where full-page fetching is restricted due to authentication limitations.
 
 ## Distribution Strategy
 
-The **distribution strategy** determines how SWIRL selects pages from search results per source.  
-Configure this by setting `SWIRL_RAG_DISTRIBUTION_STRATEGY` to one of the following:
+The **distribution strategy** determines how SWIRL selects pages from search results per source. Configure this by setting `SWIRL_RAG_DISTRIBUTION_STRATEGY` to one of the following:
 
 - **`Distributed`** – Maintains the original sort order and evenly selects pages from each source.  
   - Example: If two sources return results, SWIRL selects five pages from each, adding them to the prompt until token limits are reached.
