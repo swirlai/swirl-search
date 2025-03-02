@@ -76,7 +76,7 @@ For a default installation, go to: [http://localhost:8000/galaxy/chat](http://lo
 
 ![SWIRL Co-Pilot discussion](images/swirl_40_chat_scop.png)
 
-For more details, see the **AI Connect, Enterprise Edition** section: [Connecting to Enterprise GAI and LLMs](AI-Connect.md#connecting-to-generative-ai-gai-and-large-language-models-llms).
+For more details, see the **AI Connect, Enterprise Edition** section: [Connecting to Enterprise GAI and LLMs](AI-Connect.html#connecting-to-generative-ai-gai-and-large-language-models-llms).
 
 ## GAI/LLM Requirements
 
