@@ -662,7 +662,7 @@ docker run -d -p 9998:9998 apache/tika
 To use a **remote Tika instance**, set `TIKA_SERVER_ENDPOINT` in SWIRL’s `.env` file:
 
 ```sh
-TIKA_SERVER_ENDPOINT='http://your-tika-server:9998/'
+TIKA_SERVER_ENDPOINT='http://<your-tika-server>:9998/'
 ```
 
 Restart SWIRL after making changes.

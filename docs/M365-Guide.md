@@ -41,9 +41,9 @@ If your deployment is **`search.swirl.today`**, the `swirl-host` is **`search.sw
 
 **HTTPS Requirement**
 
-To use **OIDC** and **OAuth2**, your deployment **must use** `https`, except when using **`localhost`**, where **`http://`** is allowed.  
+To use **OIDC** and **OAuth2**, your deployment **must use** `https`, except when using `localhost`, where `http://` is allowed.  
 
-**Single Page Applications and Web Protocols** require **`https://`** for fully qualified domains.
+**Single Page Applications and Web Protocols** require `https://` for fully qualified domains.
 
 ## Getting Started
 
