@@ -59,7 +59,8 @@ This starts all services required by SWIRL. Initialization takes a few minutes.
 {: .warning }
 Do not press `CTRL+C` or stop Docker during this process—doing so will shut down SWIRL.
 
-Once complete, the output should look like this:
+Once complete, the output should look like this: 
+
 ![SWIRL Enterprise Docker successful startup](images/swirl_enterprise_docker_started.png)
 
 ## Verifying SWIRL Startup
