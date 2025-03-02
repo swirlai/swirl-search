@@ -12,70 +12,78 @@ nav_order: 16
 {:toc}
 </details>
 
-# Troubleshooting SWIRL
+<span class="big-text">Troubleshooting SWIRL</span><br/><span class="med-text">Community Edition | Enterprise Edition</span>
 
-{: .warning }
-This document applies to all SWIRL Editions. 
+---
 
-## Understanding .swirl
+# Understanding `.swirl`
 
-The `swirl.py` control script writes the list of services and their associated pids to a file: `.swirl`
+The `swirl.py` control script tracks running services and their process IDs (PIDs) in a file called `.swirl`.
 
-Here is an example of a `.swirl` file for a fully running system:
+## Example `.swirl` File
 
-``` shell
+For a fully running system, the file looks like this:
+
+```shell
 {"django": 26391, "celery-worker": 26424}
 ```
 
-This file is read by the `status` and `stop` commands. Both commands invoke `ps -p` with the pids for the services to determine if they are actually running and display this information for you.
+## How `.swirl` Works
 
-If you `start` or `stop` individual services, the `.swirl` file should only have the names and pids for running services. 
+- The `.swirl` file is **read** by the `status` and `stop` commands to check running processes.
+- These commands use `ps -p` with stored PIDs to determine if services are actually running.
 
-In the event that the `.swirl` file is out of sync with the running processes, you may delete it, or edit it to match the
-actual running processes. Be sure to manually delete any running processes. 
+If you manually `start` or `stop` services, the `.swirl` file updates accordingly.
 
-## Finding SWIRL processes
+## Fixing Out-of-Sync `.swirl` Files
 
-You can find the SWIRL procsses as follows:
+If the `.swirl` file **does not match** actual running processes:
 
-On OS/X or Linux:
+1. **Delete** the file (`rm .swirl`).
+2. **Restart SWIRL** to regenerate it.
+3. **Manually stop any remaining SWIRL processes** before restarting.
 
-``` shell
+# Finding SWIRL Processes
+
+To check for running SWIRL processes, use the following commands:
+
+### On macOS or Linux:
+
+```shell
 ps -ef | grep daphne
 ps -ef | grep celery
 ps -ef | grep redis
 ```
 
-## Logs
+# Logs
 
-All SWIRL services write log files in the `logs/` folder under `swirl-search`.
+All SWIRL services write logs to the `logs/` folder inside `swirl-search`.
 
-Here's what to expect in each:
+### Log Files Overview
 
-| Logfile | Details | Notes | 
-| ---------- | ---------- | ---------- ||
-| logs/django.log | Contains the log of the Django container, which includes all HTTP activity API calls. | Not involved in federation |
-| logs/celery-worker.log | Contains the log of Celery tasks | Very involved in federation, look for detailed information regarding errors in `search.status` or partial results |
-| logs/celery-beats.log | Contains the log of the celery-beats service, which is only used by the Search Expiration and Subscription Services | Look here for issues with subscription or expiration not working | 
+| Logfile | Description | Notes |
+|---------|-------------|-------|
+| **logs/django.log** | Logs **Django container activity**, including all API calls. | Not involved in query federation. |
+| **logs/celery-worker.log** | Logs **Celery tasks**, including search federation processes. | Look for errors in `search.status` or partial results. |
+| **logs/celery-beats.log** | Logs **Celery Beats service**, used for **Search Expiration** and **Subscription Services**. | Check here if subscriptions or expirations are not working. |
 
-## Viewing Logs
+# Viewing Logs
 
-From the SWIRL root directory, try running:
+To continuously view logs, run:
 
-``` shell
+```shell
 python swirl.py logs/
 ```
 
-This will show you the collected, latest output of all logs, continuously.
+This command displays **live log output** from all SWIRL services.
 
-SWIRL outputs a single log entry with each request at the default log level INFO:
+## Example Log Entry (INFO Level)
 
-``` shell
+```shell
 2023-08-02 10:49:09,466 INFO     admin search 452 FULL_RESULTS_READY 32 2.2
 ```
 
-Detailed logging is available in Debug mode: restart SWIRL with the `--debug` flag to enable (or edit the `settings.py` file as outlined below).
+For **detailed logging**, enable **Debug mode**:
 
-## Reporting a Problem
-
-If you find a problem, please [contact support](#support) via email, or on slack, for the fastest response. 
+- Restart SWIRL with the `--debug` flag.
+- Alternatively, update the `settings.py` file (see the Developer Guide for details).

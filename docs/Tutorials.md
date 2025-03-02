@@ -12,9 +12,11 @@ nav_order: 20
 {:toc}
 </details>
 
-# Tutorial: Extending SWIRL
+<span class="big-text">Tutorial: Extending SWIRL</span><br/><span class="med-text">Community Edition | Enterprise Edition</span>
 
-## Before You Start...
+---
+
+# Before You Start...
 
 We recommend reviewing the following documents prior to pursuing the tutorial.
 

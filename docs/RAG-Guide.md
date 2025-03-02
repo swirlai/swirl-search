@@ -12,15 +12,11 @@ nav_order: 5
 {:toc}
 </details>
 
-# Retrieval Augmented Generation (RAG) Configuration - Community Edition  
-
-{: .warning }  
-This document applies only to the **SWIRL AI Connect, Community Edition**.  
-[Switch to the AI Connect, Enterprise Edition guide](AI-Connect.html)  
-
-SWIRL supports Real-Time **[Retrieval Augmented Generation (RAG)](index.html#what-is-retrieval-augmented-generation-rag-does-swirl-support-it)** out of the box, using result snippets and/or the full text of fetched result pages.  
+<span class="big-text">Retrieval Augmented Generation (RAG) Configuration</span><br/><span class="med-text">Community Edition</span>
 
 ---
+
+SWIRL supports Real-Time **[Retrieval Augmented Generation (RAG)](index.html#what-is-retrieval-augmented-generation-rag-does-swirl-support-it)** out of the box, using result snippets and/or the full text of fetched result pages.  
 
 # Configuring RAG  
 

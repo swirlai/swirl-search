@@ -12,10 +12,12 @@ nav_order: 10
 {:toc}
 </details>
 
-# AI Co-Pilot Guide - Enterprise Edition
+<span class="big-text">AI Co-Pilot Guide</span><br/><span class="med-text">Enterprise Edition</span>
 
 {: .warning }
-This document applies only to SWIRL AI Co-Pilot, Enterprise Edition. 
+Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Enterprise.
+
+---
 
 # Configuring SWIRL AI Co-Pilot, Enterprise Edition
 

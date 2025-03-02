@@ -12,50 +12,45 @@ nav_order: 21
 {:toc}
 </details>
 
-# Contributions Guide
+<span class="big-text">Contributions Guide</span><br/><span class="med-text">Community Edition</span>
 
-SWIRL welcomes contributions to AI Connect, Community Edition.
+---
 
-The following table identifies the major classes of contributions, and the expected level of effort. 
+SWIRL welcomes contributions to AI Connect, Community Edition. The table below outlines the major types of contributions and the expected level of effort.
 
-## SearchProviders / Connectors
+# SearchProviders / Connectors
 
-We gratefully accept SPs/Connector PRs, so long as they can be tested without expense. These contributions are excellent for new to intermediate developers, and should take 1 day to 1 week with most time determined by the time to stand up a test server.
+We welcome new SearchProviders and Connectors, provided they can be tested without expense. These contributions are ideal for new to intermediate developers and typically take **1 day to 1 week**, depending on test server setup time.
 
-Candidates include:
+## Potential Candidates:
+- **Notion** (service)
+- **MarqoDB** (vector DB)
+- **ChromaDB** (vector DB)
+- **RaptorDB** (vector DB)
+- **MySQL** (relational DB)
+- **SQLAlchemy** (relational DB package)
 
-* Notion (service)
-* MarqoDB (vector DB)
-* ChromaDB (vector DB)
-* RaptorDB (vector DB)
-* MySQL (relational DB)
-* SQLAlchemy (relational DB package)
+# Processors
 
-## Processors
+We are always looking for useful processors, including:
 
-We are always looking for useful Processors, including:
+- **Regex-based result modifications** (configurable pattern replacements)
+- **Query transformations** (lookup and replace from CSV/database)
+- **Ontology/taxonomy-based query expansion**
 
-* Configurably apply regex replacement to results
-* Lookup and replace values in query from CSV or database
-* Apply ontology/taxonomy to query
+These tasks generally take **1-2 weeks** for an intermediate to advanced developer.
 
-These tasks should take 1-2 weeks for an intermediate to advanced developer.
+# Testing & Documentation
 
-## Testing & Documentation
+SWIRL has an extensive automated testing system and detailed documentation. Contributions in these areas range from **small updates to major improvements**. Please [contact us](#support) for details.
 
-SWIRL has an extensive automated testing system, and a decent amount of documentation. We gratefully welcome contributions in these areas, which can be very minimal effort (such as documentation updates) to quite complex. Please [contact us](#support) for more information.
+# Guidelines for Submissions
 
-## Guidelines for Submissions
+- **Join [SWIRL Slack](#support)** and ask in `#support` or `#general` before contributing.
+- **Branch off `develop`** with a descriptive branch name.
+- **Follow the Gitflow branching model** and ensure all required changes are included in your PR.
 
-* Please join [SWIRL Slack](#support) as noted below, and feel free to ask #support or #general about what you propose to contribute.
-
-* Create a branch lways branch off of `develop` with a descriptive name that encapsulates your idea or fix.
-
-* Create a PR following the Gitflow branching model, including all required changes.
-
-For more information please review GitHub's [Contributing to a Project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project) guide. 
-
-
+For more details, see GitHub’s [Contributing to a Project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project) guide.
 
 
 

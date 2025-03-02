@@ -12,10 +12,12 @@ nav_order: 7
 {:toc}
 </details>
 
-# Quick Start Guide - Enterprise Edition
+<span class="big-text">Quick Start Guide</span><br/><span class="med-text">Enterprise Edition</span>
 
 {: .warning }
-This version applies to the Enterprise Edition of SWIRL! A valid license key is required.
+Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Enterprise.
+
+---
 
 * The recommended minimum system configuration is a **16-core server**, with **32 GB of memory** and at least **500 GB of available disk space**. This configuration supports up to **25 users**.
 

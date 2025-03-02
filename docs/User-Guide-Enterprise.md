@@ -12,10 +12,12 @@ nav_order: 8
 {:toc}
 </details>
 
-# User Guide - Enterprise Edition
+<span class="big-text">User Guide</span><br/><span class="med-text">Enterprise Edition</span>
 
 {: .warning }
-This version applies to the Enterprise Edition of SWIRL!
+Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Enterprise.
+
+---
 
 # Glossary
 

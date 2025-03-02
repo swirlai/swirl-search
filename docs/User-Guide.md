@@ -12,10 +12,9 @@ nav_order: 4
 {:toc}
 </details>
 
-# User Guide - Community Edition  
+<span class="big-text">User Guide</span><br/><span class="med-text">Community Edition</span>
 
-{: .warning }  
-This guide applies to the **Community Edition** of SWIRL AI Connect.
+---
 
 # Glossary  
 

@@ -12,7 +12,7 @@ nav_exclude: true
 {:toc}
 </details>
 
-# Installation Guide - Community Edition
+<span class="big-text">Installation Guide - Community Edition</span>
 
 {: .warning }
 This document applies only to **SWIRL AI Connect, Community Edition**.

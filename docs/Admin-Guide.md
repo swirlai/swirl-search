@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Admin Guide
-nav_order: 11
+nav_order: 12
 ---
 <details markdown="block">
   <summary>
@@ -12,10 +12,9 @@ nav_order: 11
 {:toc}
 </details>
 
-# Admin Guide 
+<span class="big-text">Admin Guide</span><br/><span class="med-text">Community Edition | Enterprise Edition</span>
 
-{: .warning }
-This document applies to all SWIRL Editions. 
+---
 
 # Configuring SWIRL AI Connect
 
@@ -26,7 +25,7 @@ SWIRL uses **`django-environ`** to load critical settings from a file named **`.
 - The **`.env.dist`** file contains **default settings**.
 - If **no `.env` file exists**, the `install.sh` script **copies `.env.dist` to `.env`**.
 
-### Example `.env` File:
+**Example `.env` File:**
 
 ```shell
 SECRET_KEY=your-secret-key
@@ -45,7 +44,7 @@ MICROSOFT_REDIRECT_URI=''
 OPENAI_API_KEY=
 ```
 
-### Making Changes to `.env`
+**Making Changes to `.env`**
 
 To configure **hostname, protocol, or port**:
 
@@ -55,7 +54,7 @@ To configure **hostname, protocol, or port**:
 {: .warning }
 There should **never be a `.env` file** in the SWIRL repo. When upgrading SWIRL, these settings **persist automatically**.
 
-### Environment Variable Descriptions
+**Environment Variable Descriptions**
 
 - **`SWIRL_EXPLAIN`** → Enables the [explain structure](Developer-Guide.html#understand-the-explain-structure).  
 - **`SECRET_KEY`** → A **cryptographic salt** used by Django. **Generate a new one for production**:  
@@ -93,7 +92,7 @@ If the new password is **too simple**, Django will reject it.
 
 For more details, see: [Django Admin and manage.py](https://docs.djangoproject.com/en/4.0/ref/django-admin/)
 
-### Using the Django Admin
+**Using the Django Admin**
 
 To **change the Super User password via Django Admin**:
 
@@ -132,7 +131,7 @@ Each **SWIRL core object** (`SearchProviders`, `Search`, `Result`, `Query Transf
 
   ![Django Admin - Permissions](images/django_admin_console_permissions.png)
 
-### Recommended Permission Configurations
+**Recommended Permission Configurations**
 
 | Scenario | SearchProvider | Search | Results | Query Transform |
 |----------|--------------|--------|---------|----------------|
@@ -154,7 +153,7 @@ Each **SWIRL core object** (`SearchProviders`, `Search`, `Result`, `Query Transf
 
 This prevents users from needing to duplicate **SearchProviders** or **Query Transformations**.
 
-### Managing Large User Groups
+**Managing Large User Groups**
 
 For installations with **many users**, consider:
 
@@ -167,7 +166,7 @@ This simplifies **access control** and **reduces administrative overhead**.
 
 The SWIRL application is designed to be deployed **behind a reverse-proxy** for optimal **scalability, security, performance, and availability**.
 
-### **Why Use a Reverse-Proxy?**
+****Why Use a Reverse-Proxy?****
 
 - **Scalability:**  
   - Enables **horizontal scaling** by distributing requests across multiple SWIRL servers.
@@ -185,7 +184,7 @@ The SWIRL application is designed to be deployed **behind a reverse-proxy** for 
   - **Load balances** traffic across multiple backend SWIRL servers.  
   - **Monitors and removes** failed servers to maintain uptime.
 
-### **Recommended Reverse-Proxy Solutions**
+****Recommended Reverse-Proxy Solutions****
 
 - [HA Proxy](https://www.haproxy.org/)  
 - [Nginx](https://nginx.org/en/)  
@@ -241,7 +240,7 @@ This restores **system prompts** to **factory settings** while keeping **custom 
 
 SWIRL configuration is managed in: [`swirl_server/settings.py`](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py)
 
-## **Key Configuration Items**
+## Key Configuration Items
 
 | Configuration Item | Explanation | Example |
 |-------------------|-------------|---------|
@@ -257,7 +256,7 @@ SWIRL configuration is managed in: [`swirl_server/settings.py`](https://github.c
 | **SWIRL_MIN_SIMILARITY** | Minimum score required for query hits to be scored | `SWIRL_MIN_SIMILARITY = 0.54` |
 | **SWIRL_EXPLAIN** | Enables relevancy explain structures in responses | `SWIRL_EXPLAIN = false` |
 
-### **Example `SWIRL_RELEVANCY_CONFIG`**
+**Example `SWIRL_RELEVANCY_CONFIG`**
 
 ```shell
 SWIRL_RELEVANCY_CONFIG = {
@@ -345,7 +344,7 @@ If you modify `crontab` in the **database** without updating **`CELERY_BEAT_SCHE
 
 For normal operations, use **`swirl.py`** to **start, stop, or restart** services. This script is located in the **SWIRL installation directory** (next to `manage.py`).
 
-### **Starting Services**
+****Starting Services****
 
 ```shell
 python swirl.py start
@@ -356,7 +355,7 @@ To start **specific services**, specify them by name:
 python swirl.py start celery-beats
 ```
 
-### **Checking Service Status**
+****Checking Service Status****
 
 ```shell
 python swirl.py status
@@ -386,13 +385,13 @@ Service: celery-worker...RUNNING, pid:34767
 Command successful!
 ```
 
-### **Stopping Services**
+****Stopping Services****
 
 ```shell
 python swirl.py stop
 ```
 
-### **Restarting Services**
+****Restarting Services****
 
 ```shell
 python swirl.py restart
@@ -403,7 +402,7 @@ To restart **specific services**, specify them by name:
 python swirl.py restart celery-worker consumer
 ```
 
-### **Getting Help**
+****Getting Help****
 
 ```shell
 python swirl.py help
@@ -436,7 +435,7 @@ To **customize the logo, search button, and labels** in **SWIRL Galaxy**:
    - At least **one additional field** must be customized.
    - To change the **logo**, upload a **light mode image**.
 
-### Branding Configuration Options
+**Branding Configuration Options**
 
 | Item | Galaxy Location | Default |
 |------|----------------|---------|
@@ -518,7 +517,7 @@ You must **[create a new SWIRL Super User](#creating-a-swirl-super-user)** after
 
 [`sqlite-web`](https://github.com/coleifer/sqlite-web) provides an **open-source web-based GUI** for SQLite.
 
-### **Installation & Usage**
+****Installation & Usage****
 
 ```shell
 pip install sqlite-web
@@ -532,18 +531,18 @@ Use the **full path** to `db.sqlite3` in `swirl-search` when running `sqlite-web
 
 If you modify **`swirl/models.py`**, you must run a **database migration**.
 
-### **Basic Migration Command**
+****Basic Migration Command****
 ```shell
 python swirl.py migrate
 ```
 
 For more details, see:  [https://docs.djangoproject.com/en/4.0/topics/migrations/](https://docs.djangoproject.com/en/4.0/topics/migrations/)
 
-### **General Migration Guidelines**
+****General Migration Guidelines****
 - **Adding fields or changing defaults** is **usually simple**.
 - If renaming an `id` or modifying relationships, **consider wiping existing data first** (`sqlite-web` can help).
 
-### **If Migration Fails**
+****If Migration Fails****
 
 1. Delete `db.sqlite3`
 2. Delete all files in `swirl/migrations/`
@@ -561,9 +560,9 @@ After **flushing the database**, don't forget to **[create a SWIRL Super User](#
 SWIRL's **Django configuration** is managed in:  
 [`swirl_server/settings.py`](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py)
 
-## **Key Configuration Items**
+## Key Configuration Items
 
-### **Hostname & Protocol**
+**Hostname & Protocol**
 
 ```shell
 # Set the Fully Qualified Domain Name (FQDN) first
@@ -575,7 +574,7 @@ PROTOCOL = 'http'
 {: .highlight }
 **The FQDN SWIRL should listen on must be the first entry in `ALLOWED_HOSTS`.**
 
-### **Time Zone**
+**Time Zone**
 
 ```shell
 TIME_ZONE = 'US/Eastern'
@@ -583,7 +582,7 @@ CELERY_TIMEZONE = "US/Eastern"
 CELERY_TIME_ZONE = "US/Eastern"
 ```
 
-### **Celery Beats**
+**Celery Beats**
 
 Celery-Beats is used for scheduled services like the **[Search Expiration Service](#search-expiration-service)** and the **[Search Subscription Service](#search-subscriber-service)**.
 
@@ -597,7 +596,7 @@ CELERY_BEAT_SCHEDULE = {
 }
 ```
 
-### **Database Provider**
+**Database Provider**
 
 ```shell
 DATABASES = {
@@ -612,7 +611,7 @@ DATABASES = {
 }
 ```
 
-## **Configuring PostgreSQL as the Database Backend**
+## Configuring PostgreSQL as the Database Backend
 
 1. **Install PostgreSQL** (if not already installed).  
 2. Ensure `pg_config` is in your **`PATH`** and runs from the command line.  
@@ -624,13 +623,13 @@ pip install psycopg2
 
 4. **Uncomment the PostgreSQL connector** in these files:
 
-### **`swirl/connectors/__init__.py`**
+**`swirl/connectors/__init__.py`**
 ```shell
 # Uncomment this line to enable PostgreSQL
 # from swirl.connectors.postgresql import PostgreSQL
 ```
 
-### **`swirl/models.py`**
+**`swirl/models.py`**
 ```shell
 CONNECTOR_CHOICES = [
     ...
@@ -649,7 +648,7 @@ SWIRL uses **Celery** for executing metasearch requests asynchronously, with **R
 {: .warning }
 Celery is **configured in at least three locations**. They **must be consistent**!
 
-### **1. `swirl_server/celery.py`**
+**1. `swirl_server/celery.py`**
 ```shell
 app = Celery('swirl_server', 
              broker='redis://localhost:6379/0', 
@@ -663,7 +662,7 @@ To verify the setup, run Celery from the command line:
 - ** ---------- .> results:     rpc://
 ```
 
-### **2. `swirl_server/settings.py` (Django Settings)**
+**2. `swirl_server/settings.py` (Django Settings)**
 
 ```shell
 # Celery Configuration Options
@@ -684,7 +683,7 @@ CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 ```
 
-### **3. Celery Broker Settings**
+**3. Celery Broker Settings**
 Ensure Redis is running and configured properly. Alternatively, use **RabbitMQ** by uncommenting:
 
 ```shell
@@ -694,7 +693,7 @@ Ensure Redis is running and configured properly. Alternatively, use **RabbitMQ**
 
 # Security
 
-## **The Django Secret Key**
+## The Django Secret Key
 
 Django's `SECRET_KEY` is a **cryptographic salt** used for security. If changed, active users will need to log in again.
 
@@ -710,14 +709,14 @@ For more details: **[Django Secret Key Guide](https://stackoverflow.com/question
 
 Django provides **built-in authentication** with **User and Group objects**. These can be managed via the **Django Console** or API.
 
-### **User Management API**
+**User Management API**
 
 | URL | Explanation |
 |-----|------------|
 | `/swirl/users/` | List User objects & create new users |
 | `/swirl/users/id/` | Retrieve, delete, or edit a User object |
 
-### **Group Management API**
+**Group Management API**
 
 | URL | Explanation |
 |-----|------------|

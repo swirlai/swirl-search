@@ -12,15 +12,16 @@ nav_order: 9
 {:toc}
 </details>
 
-# AI Connect Guide - Enterprise Edition
+<span class="big-text">AI Connect Guide</span><br/><span class="med-text">Enterprise Edition</span>
 
 {: .warning }
-**Note:** This document applies only to SWIRL AI Connect, Enterprise Edition.  
-[Switch to the AI Connect, Community Edition guide](RAG-Guide.html).
+Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Enterprise.
 
-## Configuring SWIRL AI Connect, Enterprise Edition
+---
 
-### Licensing
+# Configuring SWIRL AI Connect, Enterprise Edition
+
+## Licensing
 
 Add the license provided by SWIRL to the installation’s `.env` file in the following format:
 
@@ -30,14 +31,14 @@ SWIRL_LICENSE={"owner": "<owner-name>", "expiration": "<expiration-date>", "key"
 
 If the license is invalid, a message will appear in `logs/django.log`. Please [contact support](mailto:support@swirlaiconnect.com) if this happens.
 
-### Database
+## Database 
 
 For Proof of Value (POV) testing, SWIRL AI Connect, Enterprise Edition can use SQLite3.  
 Please [contact support](#support) for assistance with this configuration.
 
 For production environments, SWIRL recommends **PostgreSQL**.
 
-#### PostgreSQL Configuration
+## PostgreSQL Configuration**
 
 Modify the database settings in `swirl_server/settings.py`:
 
@@ -95,7 +96,7 @@ To integrate SWIRL with an Identity Provider (IDP) or Single Sign-On (SSO) syste
 
 To manage authenticators, go to: [http://localhost:8000/swirl/aiproviders](http://localhost:8000/swirl/aiproviders) (default local installation).
 
-### Authenticator Fields
+**Authenticator Fields**
 
 | Field | Description |
 | ----- | ----------- |
@@ -151,7 +152,7 @@ SWIRL includes a preconfigured **Microsoft Authenticator**:
 }
 ```
 
-### Activating the Microsoft Authenticator
+**Activating the Microsoft Authenticator**
 
 To enable Microsoft authentication, register a **new SWIRL app** in **Azure**. Refer to the [M365 Guide](M365-Guide.html) for detailed setup instructions.
 
@@ -195,7 +196,7 @@ SWIRL, via LiteLLM and direct connections, supports major GAI/LLMs, including:
 
 For assistance with any of these or additional models, please [contact support](#support).
 
-### External Model Resources
+**External Model Resources**
 
 - [Full list of Supported Embeddings](https://docs.litellm.ai/docs/embedding/supported_embedding)
 - [Full list of Supported GAI/LLMs](https://docs.litellm.ai/docs/providers)
@@ -206,7 +207,7 @@ To edit an AI provider, append its `id` to the `swirl/aiproviders` URL. Example:
 
 ![SWIRL AIProvider - Azure/OpenAI GPT-4](images/swirl_aiprovider_4.png)
 
-### Available Actions:
+**Available Actions:**
 
 - **Delete** the AI provider permanently
 - **Modify** and **update** the AI provider configuration
@@ -221,7 +222,7 @@ To activate a preloaded AI provider:
 4. Assign the provider’s role in the `tags` list
 5. Set the provider as the default for a role in the `defaults` list (if applicable)
 
-### Example: Preloaded OpenAI GPT-4 Provider
+**Example: Preloaded OpenAI GPT-4 Provider**
 
 ```json
 {
@@ -266,7 +267,7 @@ Example: Switching between OpenAI GPT-4 and Azure/OpenAI GPT-4 for RAG:
 }
 ```
 
-### Steps to Switch
+**Steps to Switch**
 
 1. Set `active` to `true` for Azure/OpenAI GPT-4 and **PUT** the update.
 2. Set `active` to `false` for OpenAI GPT-4 and **PUT** the update.
@@ -284,7 +285,7 @@ To manually install an AI provider using JSON:
 
 SWIRL will respond with the registered AI provider.
 
-### Bulk Loading AI Providers
+**Bulk Loading AI Providers**
 
 Use the [`swirl_load.py`](https://github.com/swirlai/swirl-search/blob/main/swirl_load.py) script to load multiple AI providers.
 
@@ -292,15 +293,15 @@ Use the [`swirl_load.py`](https://github.com/swirlai/swirl-search/blob/main/swir
 
 SWIRL AI Connect, Enterprise Edition, includes a **Bearer Token Service** that refreshes tokens automatically.
 
-### How It Works
+**How It Works**
 
 1. Sends a `POST` request to an Identity Provider (IDP) URL with user credentials.
 2. Extracts a `bearer_token` from the response.
 3. Updates the `api_key` of the configured AI provider.
 
-### Configuration
+**Configuration**
 
-#### 1. Add the following settings to `.env`:
+**# 1. Add the following settings to `.env`:**
 
 ```
 BT_IDP_URL=''
@@ -308,7 +309,7 @@ BT_IDP_CLIENT_ID=''
 BT_IDP_CLIENT_SECRET=''
 ```
 
-#### 2. Specify the AI Provider IDs to update:
+**# 2. Specify the AI Provider IDs to update:**
 
 ```
 BT_AIP=9
@@ -320,7 +321,7 @@ For multiple providers, use a comma-separated list:
 BT_AIP='9,10'
 ```
 
-#### 3. Schedule Token Refresh in `swirl_server/settings.py`:
+**# 3. Schedule Token Refresh in `swirl_server/settings.py`:**
 
 By default, the service runs every **20 minutes**. Adjust the schedule in `CELERY_BEAT_SCHEDULE`:
 
@@ -334,13 +335,13 @@ CELERY_BEAT_SCHEDULE = {
 }
 ```
 
-#### 4. Start the `celery-beats` service:
+**# 4. Start the `celery-beats` service:**
 
 ```
 python swirl.py start celery-beats
 ```
 
-#### 5. Restart the logs:
+**# 5. Restart the logs:**
 
 If `python swirl.py logs` is running, restart it to view `celery-beats` messages. 
 
@@ -365,7 +366,7 @@ To create a new saved prompt:
 1. Open [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)
 2. Use the form at the bottom of the page to create a new prompt **or** paste raw JSON and click `POST`.
 
-### Example: Creating a Pirate-Themed Prompt
+**Example: Creating a Pirate-Themed Prompt**
 
 Modify the default prompt to generate responses in pirate-speak:
 
@@ -459,7 +460,7 @@ The following sections explain how to configure **Page Fetching** for specific S
 
 For **public source data** via **Google PSE SearchProviders**, the recommended configuration uses [Diffbot](https://www.diffbot.com/)—a page fetching and content cleaning service.
 
-### Configuration with Diffbot
+**Configuration with Diffbot**
 
 ```json
 "page_fetch_config_json": {
@@ -496,7 +497,7 @@ For **public source data** via **Google PSE SearchProviders**, the recommended c
 To obtain a **Diffbot token**, sign up at:  
 [https://www.diffbot.com/](https://www.diffbot.com/)
 
-### Configuration Without Diffbot
+**Configuration Without Diffbot**
 
 If you prefer **not** to use Diffbot, use the following configuration:
 
@@ -580,7 +581,7 @@ Add the following configuration to the **Microsoft Calendar** SearchProvider:
 
 ## Microsoft OneDrive
 
-### Configuration Options
+**Configuration Options**
 
 | Field | Description |
 | ----- | ----------- |
@@ -589,7 +590,7 @@ Add the following configuration to the **Microsoft Calendar** SearchProvider:
 | `mimetype_path` | JSON path to extract the **mimetype** from the fetched object. |
 | `mimetype_whitelist` | List of **mimetypes** allowed for content fetching. |
 
-### OneDrive Configuration
+**OneDrive Configuration**
 
 - The configuration below enables fetching **HTML, PDFs, and Microsoft Office documents**.
 - **Binary content (PDF, DOCX, PPTX, etc.) requires a configured text extractor** for RAG.
@@ -676,7 +677,7 @@ To support additional file types, expand the **whitelist** to include any [docum
 
 SWIRL AI Connect, Enterprise Edition, includes **passage detection** in the **Reader LLM**, which enhances RAG accuracy by identifying relevant sections of text.
 
-### Running Passage Detection Locally
+**Running Passage Detection Locally**
 
 Start the **passage detection service** using Docker:
 
@@ -699,7 +700,7 @@ The following environment variables allow customization of **Reader LLM** and **
 | `SWIRL_RAG_MAX_TO_CONSIDER` | Maximum search results considered for RAG | `10` |
 | `SWIRL_RAG_DISTRIBUTION_STRATEGY` | Defines how search results are selected for RAG: `Distributed`, `RoundRobin`, or `Sorted` | `RoundRobin` |
 
-### About `SWIRL_RAG_DISTRIBUTION_STRATEGY`
+**About `SWIRL_RAG_DISTRIBUTION_STRATEGY`**
 
 If set to **`Distributed`**, and the number of documents is **less than `SWIRL_RAG_MAX_TO_CONSIDER`**, SWIRL **backfills** results by iterating through the next available results.
 
@@ -719,7 +720,7 @@ This configuration ensures **Apache Tika** and **Reader LLM passage detection** 
 When `SWIRL_TEXT_SUMMARIZATION_URL` is set to a **Text Analyzer URL**, SWIRL sends text to the **Text Analyzer** before further RAG processing.  
 This allows SWIRL to **tag important parts of the text** that are most relevant to the query before they are included in the ChatGPT prompt.
 
-### Example: Tagged Text in a Prompt
+**Example: Tagged Text in a Prompt**
 
 ```text
 --- Content Details ---
@@ -740,14 +741,14 @@ We believe in delivering high-quality releases through each stage of our develop
 
 When **text truncation** is enabled, **only** text that contains at least one important tagged section (as shown above) is included in the ChatGPT prompt.  
 
-### **Enabling Text Truncation**
+****Enabling Text Truncation****
 
 To activate this feature, ensure **both** conditions are met:
 
 1. `SWIRL_TEXT_SUMMARIZATION_URL` is set to a valid **Text Analyzer** URL.
 2. `SWIRL_TEXT_SUMMARIZATION_TRUNCATION` is set to `true`.
 
-### **Log Entries for Truncated Content**
+****Log Entries for Truncated Content****
 
 When a text chunk is excluded due to summarization truncation, logs will show entries like this:
 

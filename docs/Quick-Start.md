@@ -12,10 +12,9 @@ nav_order: 3
 {:toc}
 </details>
 
-# Quick Start Guide - Community Edition  
+<span class="big-text">Quick Start Guide</span><br/><span class="med-text">Community Edition</span>
 
-{: .warning }  
-This guide applies to the **Community Edition** of SWIRL AI Connect.
+---
 
 ## 1. Prerequisites  
 

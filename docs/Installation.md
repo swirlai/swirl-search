@@ -12,14 +12,17 @@ nav_order: 13
 {:toc}
 </details>
 
-# Installation Guides - All Editions
+<span class="big-text">Installation Guides</span><br/><span class="med-text">Community Edition | Enterprise Edition</span>
+
+---
 
 The following guides provide detailed information on how to install SWIRL. 
 
-## Local Installation
+# Local Installation
 
 * [SWIRL AI Connect, Community Edition](./Installation-Community.html)
 
-## Docker Installation
+# Docker Installation
 
-* [SWIRL AI Connect, Enterprise Edition](./Quick-Start-Enterprise.html)
+* [SWIRL AI Connect, Community Edition](./Quick-Start.html)
+* [SWIRL AI, Enterprise Edition](./Quick-Start-Enterprise.html)
