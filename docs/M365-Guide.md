@@ -327,7 +327,7 @@ To verify that **SWIRL-M365 integration** is working:
    - The **Microsoft toggle lights up** after authentication.  
    - You can now search Microsoft 365 sources.
 
-   ![SWIRL Co-Pilot discussion](images/swirl_40_search_msft.png)
+   ![SWIRL Assistant discussion](images/swirl_40_search_msft.png)
 
 {: .warning }
 If the **Microsoft toggle does not activate** after authentication, please [contact support](#support). The [Related Documentation](#related-documentation) below may also be helpful.

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: AI Connect Guide
+title: AI Search Guide
 nav_order: 9
 ---
 <details markdown="block">
@@ -12,14 +12,14 @@ nav_order: 9
 {:toc}
 </details>
 
-<span class="big-text">AI Connect Guide</span><br/><span class="med-text">Enterprise Edition</span>
+<span class="big-text">AI Search Guide</span><br/><span class="med-text">Enterprise Edition</span>
 
 {: .warning }
 Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Enterprise.
 
 ---
 
-# Configuring SWIRL AI Connect, Enterprise Edition
+# Configuring SWIRL AI Search, Enterprise Edition
 
 ## Licensing
 
@@ -33,7 +33,7 @@ If the license is invalid, a message will appear in `logs/django.log`. Please [c
 
 ## Database 
 
-For Proof of Value (POV) testing, SWIRL AI Connect, Enterprise Edition can use SQLite3.  
+For Proof of Value (POV) testing, SWIRL AI Search, Enterprise Edition can use SQLite3.  
 Please [contact support](#support) for assistance with this configuration.
 
 For production environments, SWIRL recommends **PostgreSQL**.
@@ -291,7 +291,7 @@ Use the [`swirl_load.py`](https://github.com/swirlai/swirl-search/blob/main/swir
 
 ## Using the Bearer Token Service to Update AI Providers
 
-SWIRL AI Connect, Enterprise Edition, includes a **Bearer Token Service** that refreshes tokens automatically.
+SWIRL AI Search, Enterprise Edition, includes a **Bearer Token Service** that refreshes tokens automatically.
 
 **How It Works**
 
@@ -389,7 +389,7 @@ This will produce:
 Test a saved prompt using the **prompt operator**:
 
 ```
-swirl ai connect prompt:pirate
+swirl AI Search prompt:pirate
 ```
 
 The response should be generated in pirate-speak:
@@ -448,9 +448,9 @@ The **distribution strategy** determines how SWIRL selects pages from search res
 
 # Configuring the Authenticating Page Fetcher for RAG with Enterprise Content
 
-SWIRL AI Connect, Enterprise Edition, includes a **Page Fetcher** that retrieves results from sources requiring authentication.
+SWIRL AI Search, Enterprise Edition, includes a **Page Fetcher** that retrieves results from sources requiring authentication.
 
-![SWIRL AI Connect Insight Pipeline](images/swirl_rag_pipeline.png)
+![SWIRL AI Search Insight Pipeline](images/swirl_rag_pipeline.png)
 
 The Page Fetcher authenticates using the **user’s token** or a configured authentication method for each source.
 
@@ -675,7 +675,7 @@ To support additional file types, expand the **whitelist** to include any [docum
 
 ## Configuring Passage Detection with Reader LLM
 
-SWIRL AI Connect, Enterprise Edition, includes **passage detection** in the **Reader LLM**, which enhances RAG accuracy by identifying relevant sections of text.
+SWIRL AI Search, Enterprise Edition, includes **passage detection** in the **Reader LLM**, which enhances RAG accuracy by identifying relevant sections of text.
 
 **Running Passage Detection Locally**
 
@@ -713,7 +713,7 @@ SWIRL_RAG_DISTRIBUTION_STRATEGY='RoundRobin'
 TIKA_SERVER_ENDPOINT='http://localhost:9998/'
 ```
 
-This configuration ensures **Apache Tika** and **Reader LLM passage detection** are correctly integrated into SWIRL AI Connect.
+This configuration ensures **Apache Tika** and **Reader LLM passage detection** are correctly integrated into SWIRL AI Search.
 
 # Text Summarization
 

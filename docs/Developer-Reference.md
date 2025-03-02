@@ -299,7 +299,7 @@ More information: [BigQuery Documentation](https://cloud.google.com/bigquery/doc
 
 ## GenAI
 
-The [GenAI Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/gen_ai.py) uses the OpenAI chat completion API. It returns at most one result.
+The [GenAI Searchor](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/gen_ai.py) uses the OpenAI chat completion API. It returns at most one result.
 
 LLM responses typically rank highly as they are generated dynamically, reflect query terminology, and are titled accordingly.
 

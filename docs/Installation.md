@@ -20,9 +20,9 @@ The following guides provide detailed information on how to install SWIRL.
 
 # Local Installation
 
-* [SWIRL AI Connect, Community Edition](./Installation-Community.html)
+* [SWIRL AI Search, Community Edition](./Installation-Community.html)
 
 # Docker Installation
 
-* [SWIRL AI Connect, Community Edition](./Quick-Start.html)
+* [SWIRL AI Search, Community Edition](./Quick-Start.html)
 * [SWIRL AI, Enterprise Edition](./Quick-Start-Enterprise.html)

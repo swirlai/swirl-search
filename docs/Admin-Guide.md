@@ -16,7 +16,7 @@ nav_order: 12
 
 ---
 
-# Configuring SWIRL AI Connect
+# Configuring SWIRL AI Search
 
 ## Configuring the Environment
 
@@ -118,7 +118,7 @@ http://localhost:8000/admin/
   ![Django Admin - Users](images/django_admin_console_user.png)
 
 {: .highlight }
-If using **OpenID Connect**, manual user creation is **not required**. See the [AI Connect Guide](AI-Connect.html#openid-connect) for details.
+If using **OpenID Connect**, manual user creation is **not required**. See the [AI Search Guide](AI-Connect.html#openid-connect) for details.
 
 ## Permissioning Normal Users
 

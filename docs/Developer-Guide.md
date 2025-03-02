@@ -33,16 +33,16 @@ nav_order: 18
 
 # Architecture
 
-## SWIRL AI Connect
-![SWIRL AI Connect Architecture](images/swirl_architecture_1.png)
+## SWIRL AI Search
+![SWIRL AI Search Architecture](images/swirl_architecture_1.png)
 
-![SWIRL AI Connect Architecture Part 2](images/swirl_architecture_2.png)
+![SWIRL AI Search Architecture Part 2](images/swirl_architecture_2.png)
 
 ## SWIRL RAG Architecture
 ![SWIRL RAG Architecture](images/swirl_architecture_3.png)
 
-## SWIRL AI Co-Pilot
-![SWIRL AI Co-Pilot Architecture](images/swirl_architecture_4.png)
+## SWIRL AI Search Assistant
+![SWIRL AI Search Assistant Architecture](images/swirl_architecture_4.png)
 
 # Workflow
 
@@ -215,7 +215,7 @@ To address this, use the **[DateFindingResultProcessor](#find-dates-in-bodytitle
 
 ## Use an LLM to Rewrite Queries
 
-SWIRL AI Connect (Community Edition) supports **query rewriting** using `ChatGPTQueryProcessor`.
+SWIRL AI Search (Community Edition) supports **query rewriting** using `ChatGPTQueryProcessor`.
 
 To enable it, add `"ChatGPTQueryProcessor"` to `SearchProvider.query_processors`.  
 
@@ -231,7 +231,7 @@ For details, see: [Developer Reference - Query Processors](Developer-Reference.h
 - Configured via `"minimumConfidenceScore"` in `static/api/config/default`.
 - Default: `0.7`. Increase this to reduce starred results.
 
-![SWIRL AI Connect 4.0 Results](images/swirl_40_results.png)
+![SWIRL AI Search 4.0 Results](images/swirl_40_results.png)
 
 ## Handle NOT Queries
 

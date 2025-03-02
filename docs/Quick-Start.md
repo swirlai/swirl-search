@@ -85,7 +85,7 @@ nav_order: 3
 
 - Enter a search query in the search box and click `Search`. Ranked results should appear within a few seconds:  
 
-![SWIRL AI Connect 4.0 Results](images/swirl_40_results.png)  
+![SWIRL AI Search 4.0 Results](images/swirl_40_results.png)  
 
 ## 4. Generate AI Insights  
 
@@ -94,7 +94,7 @@ nav_order: 3
 {: .warning }  
 **Important:** If using the **Community Edition**, you *must* set up **OpenAI** or **Azure OpenAI** before running this step.
 
-![SWIRL AI Connect 4.0 Results with RAG](images/swirl_40_community_rag.png)  
+![SWIRL AI Search 4.0 Results with RAG](images/swirl_40_community_rag.png)  
 
 ## 5. Managing SWIRL  
 
@@ -123,7 +123,7 @@ You can stop SWIRL in several ways:
    ![Shutdown SWIRL with docker compose](images/shutdown_compose.png)  
 
 {: .warning }  
-The **Docker version** of SWIRL AI Connect Community Edition does *not* retain any data or configuration when shut down.
+The **Docker version** of SWIRL AI Search Community Edition does *not* retain any data or configuration when shut down.
 
 ---
 

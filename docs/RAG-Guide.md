@@ -37,7 +37,7 @@ SWIRL supports Real-Time **[Retrieval Augmented Generation (RAG)](index.html#wha
     ```
 
     {: .warning }  
-    **SWIRL AI Connect Community Edition supports RAG only with OpenAI and Azure OpenAI.**  
+    **SWIRL AI Search Community Edition supports RAG only with OpenAI and Azure OpenAI.**  
     The [Enterprise Edition](AI-Connect.html#connecting-to-generative-ai-gai-and-large-language-models-llms) supports additional providers.  
 
 3. **For PRODUCTION use**, update `static/api/config/default`:  
@@ -114,11 +114,11 @@ SWIRL supports Real-Time **[Retrieval Augmented Generation (RAG)](index.html#wha
 
     {: .warning }  
     By default, **SWIRL's RAG uses the first 10 selected results** (auto or manual).  
-    To adjust this, set `SWIRL_RAG_MAX_TO_CONSIDER` in `.env`, as noted in the [AI Connect Guide](AI-Connect.html#configuration-options-1).  
+    To adjust this, set `SWIRL_RAG_MAX_TO_CONSIDER` in `.env`, as noted in the [AI Search Guide](AI-Connect.html#configuration-options-1).  
 
 # SWIRL RAG Process: 
 
-![SWIRL AI Connect Insight Pipeline](images/swirl_rag_pipeline.png)  
+![SWIRL AI Search Insight Pipeline](images/swirl_rag_pipeline.png)  
 
 SWIRL's RAG workflow is shown above, and explained below:
 

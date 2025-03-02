@@ -28,7 +28,7 @@ nav_order: 4
 | **Subscribe** | A key property of **Search** objects. When set to `true`, SWIRL periodically re-runs the search, sorting by date to retrieve new data and removing duplicates. Currently, users must poll for updates, but future releases will support: - **Callbacks** when new results are available.  - **Automatic regeneration of AI Insights.** |  
 | **Relevancy Ranking** | A scoring system that determines how relevant a search result is compared to others. Learn more: [Relevance in Information Retrieval](https://en.wikipedia.org/wiki/Relevance_(information_retrieval)). |  
 
-For additional details, refer to the [SWIRL AI Connect Overview](index.html).
+For additional details, refer to the [SWIRL AI Search Overview](index.html).
 
 # Running a Search  
 
@@ -48,7 +48,7 @@ For additional details, refer to the [SWIRL AI Connect Overview](index.html).
 3. **Enter your search terms** in the search box and click `Search`.  
    - SWIRL will return **re-ranked results** in just a few seconds:  
 
-     ![SWIRL AI Connect 4.0 Results](images/swirl_40_results.png)  
+     ![SWIRL AI Search 4.0 Results](images/swirl_40_results.png)  
 
 {: .highlight }  
 The **Galaxy UI highlights** results with a `swirl_score` above a configurable threshold.  
@@ -58,7 +58,7 @@ The **Galaxy UI highlights** results with a `swirl_score` above a configurable t
 
 ## Filtering Results by Source  
 
-![SWIRL AI Connect 4.0 Results w/Facet Selected](images/swirl_40_results_facet.png)  
+![SWIRL AI Search 4.0 Results w/Facet Selected](images/swirl_40_results_facet.png)  
 
 By default, **SWIRL returns the best results from all available sources**. To filter results, check the desired `Source` boxes as shown above. Results update instantly.  
 

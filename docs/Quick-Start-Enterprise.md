@@ -96,7 +96,7 @@ Once complete, the output should look like this:
 ## Enabling AI Features
 
 {: .warning }
-To use **Generate AI Insights** (RAG) or **AI Co-Pilot**, at least one AI provider must be activated.
+To use **Generate AI Insights** (RAG) or **AI Search Assistant**, at least one AI provider must be activated.
 
 1. Go to [http://localhost:8000/swirl/aiproviders/](http://localhost:8000/swirl/aiproviders/).
 2. Review the **pre-loaded AI providers**.
@@ -115,7 +115,7 @@ To use **Generate AI Insights** (RAG) or **AI Co-Pilot**, at least one AI provid
 
 5. To create a new provider, **copy an existing one** and paste it as a new entry.
 
-    To use **different AI providers** for **RAG and AI Co-Pilot**, adjust the `"defaults"` list:
+    To use **different AI providers** for **RAG and AI Search Assistant**, adjust the `"defaults"` list:
 
     - Example:  
       - **OpenAI GPT-4** → `"defaults": ["rag"]`
@@ -125,14 +125,14 @@ To use **Generate AI Insights** (RAG) or **AI Co-Pilot**, at least one AI provid
 
     ![SWIRL Results with RAG](images/swirl_40_community_rag.png)
 
-7. To access **SWIRL AI Co-Pilot**, visit: [http://localhost:8000/galaxy/chat](http://localhost:8000/galaxy/chat)
+7. To access **SWIRL AI Search Assistant**, visit: [http://localhost:8000/galaxy/chat](http://localhost:8000/galaxy/chat)
 
 8. Ask a question, such as:  
    - *"What sources do I have access to?"*  
 
 9. Conduct a search and verify that **RAG results** appear:
 
-    ![SWIRL Co-Pilot Conversation with RAG Result](images/swirl_40_enterprise_assistant_rag.png)
+    ![SWIRL Assistant Conversation with RAG Result](images/swirl_40_enterprise_assistant_rag.png)
 
 ## Security Notice
 

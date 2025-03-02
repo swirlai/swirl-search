@@ -16,7 +16,7 @@ nav_order: 21
 
 ---
 
-SWIRL welcomes contributions to AI Connect, Community Edition. The table below outlines the major types of contributions and the expected level of effort.
+SWIRL welcomes contributions to AI Search, Community Edition. The table below outlines the major types of contributions and the expected level of effort.
 
 # SearchProviders / Connectors
 

@@ -12,10 +12,9 @@ nav_exclude: true
 {:toc}
 </details>
 
-<span class="big-text">Installation Guide - Community Edition</span>
+<span class="big-text">Installation Guide</span><br/><span class="med-text">Community Edition</span>
 
-{: .warning }
-This document applies only to **SWIRL AI Connect, Community Edition**.
+---
 
 {: .warning }
 **SWIRL no longer starts Redis automatically.**  
@@ -65,7 +64,7 @@ To use PostgreSQL as a **data source** or **SWIRL’s backend database**:
    pip install psycopg2
    ```
 
-## Installing SWIRL AI Connect
+## Installing SWIRL AI Search
 
 1. **Clone the repository:**  
    ```shell
