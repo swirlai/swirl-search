@@ -12,105 +12,125 @@ nav_order: 4
 {:toc}
 </details>
 
-# User Guide - Community Edition
+<span class="big-text">User Guide</span><br/><span class="med-text">Community Edition</span>
 
-{: .warning }
-This version applies to the Community Edition of SWIRL!
+---
 
-# Glossary
+# Glossary  
 
-| Word | Explanation | 
-| ---------- | ---------- |
-| Connector | A SWIRL module that can query a particular type of data source. |
-| Page Fetcher | A SWIRL module that can obtain a copy of a specific document. The Enterprise edition can authenticate while fetching. |
-| Query | Search engines distinguish between the act of searching and the terms used for searching, which are referred to as a `query`. SWIRL follows this convention whenever possible. |
-| Search | 	A SWIRL object that defies some search to be run, on behalf of some user. It includes the `query_string` with the actual text of the query, and associated metadata. |
-| SearchProvider | A configuration of a Connector, intended to allow SWIRL to query some endpoint via it's API. It includes metadata such as credentials. |
-| Subscribe | An important property of Search objects. When set to `true`, SWIRL periodically reruns the search, specifying a date sort to get newer data, and removing duplicates from results. Currently users are expected to poll for updates, but future releases will support a call-back when new results are available, as well as support for automatic regeneration of AI Insights. |
-| Relevancy Ranking | A scoring system that ranks the relevancy of a given search engine result to the user's query, as compared to all others. For more information: [https://en.wikipedia.org/wiki/Relevance_(information_retrieval)](https://en.wikipedia.org/wiki/Relevance_(information_retrieval)) | 
+| Word | Explanation |  
+| ---------- | ---------- |  
+| **Connector** | A SWIRL module that queries a specific type of data source. |  
+| **Page Fetcher** | A SWIRL module that retrieves a copy of a specific document. |  
+| **Query** | In search engines, the act of searching is distinct from the search terms themselves, which are called a **query**. SWIRL follows this convention whenever possible. |  
+| **Search** | A SWIRL object that **defines a search** to be executed on behalf of a user. It includes the `query_string` (actual search text) and associated metadata. |  
+| **SearchProvider** | A configuration of a **Connector**, enabling SWIRL to query a specific endpoint via its API. This includes metadata such as credentials. |  
+| **Subscribe** | A key property of **Search** objects. When set to `true`, SWIRL periodically re-runs the search, sorting by date to retrieve new data and removing duplicates. Currently, users must poll for updates, but future releases will support: - **Callbacks** when new results are available.  - **Automatic regeneration of AI Insights.** |  
+| **Relevancy Ranking** | A scoring system that determines how relevant a search result is compared to others. Learn more: [Relevance in Information Retrieval](https://en.wikipedia.org/wiki/Relevance_(information_retrieval)). |  
 
-Please refer to the [SWIRL AI Connect Overview](index.html) for more information.
+For additional details, refer to the [SWIRL AI Search Overview](./index).
 
-# Running a Search
+# Running a Search  
 
-* Open this URL with a browser: <http://localhost:8000/> (or <http://localhost:8000/galaxy/search/>)
+1. **Open SWIRL in your browser: [http://localhost:8000](http://localhost:8000/)** (or) **[http://localhost:8000/galaxy/search](http://localhost:8000/galaxy/search/)**  
 
-The SWIRL login page will appear:
+2. **Log in to SWIRL:**  
+   - The login page will appear:  
 
-<img src="images/swirl_40_login.png" alt="SWIRL 4.0 Login" width="300">
+     <img src="images/swirl_40_login.png" alt="SWIRL 4.0 Login" width="300">  
 
-* Enter username `admin` and password `password`, then click `Login`.
+   - **Username:** `admin`  
+   - **Password:** `password`  
 
-{: .warning }
-If you receive a warning about the password being compromised or in a recent data breach, you can safely ignore it by clicking `Ok`, and then [changing the super user password](Admin-Guide.html#changing-a-super-user-password).
+    {: .warning }  
+    If you receive a warning about the password being compromised or part of a known data breach, you can safely ignore it by clicking `OK`. However, it's recommended to [change the superuser password](./Admin-Guide#changing-the-super-user-password).
 
-* Enter some search terms in the search box and press the `Search` button. Re-ranked results will appear in just a few seconds:
+3. **Enter your search terms** in the search box and click `Search`.  
+   - SWIRL will return **re-ranked results** in just a few seconds:  
 
-![SWIRL AI Connect 4.0 Results](images/swirl_40_results.png)
+     ![SWIRL AI Search 4.0 Results](images/swirl_40_results.png)  
 
-Note that SWIRL Community will only retrieve a single set of results as configured in each SearchProvider. Fetching additional pages, on demand, is planned for a future release.
+{: .highlight }  
+The **Galaxy UI highlights** results with a `swirl_score` above a configurable threshold.  
 
-The Galaxy UI stars results with a `swirl_score` above a configurable minimum. 
+{: .highlight }  
+**SWIRL Community Edition retrieves a single set of results** per **SearchProvider** configuration.  Fetching additional result pages on demand is planned for a future release. 
 
-## Filtering Results by Source
+## Filtering Results by Source  
 
-![SWIRL AI Connect 4.0 Results w/Facet Selected](images/swirl_40_results_facet.png)
+![SWIRL AI Search 4.0 Results w/Facet Selected](images/swirl_40_results_facet.png)  
 
-SWIRL returns the best results from all available sources by default. To filter results by one or more sources, check one or more of the `Source` boxes as shown above. Results are instantly filtered to just those sources.
+By default, **SWIRL returns the best results from all available sources**. To filter results, check the desired `Source` boxes as shown above. Results update instantly.  
 
-Click `Clear All` to return to viewing all results.
+Click `Clear All` to reset the filter and view all results.  
 
-## Sorting Results
+## Sorting Results  
 
-![SWIRL Results View By](images/swirl_40_results_sorted.png)
+![SWIRL Results View By](images/swirl_40_results_sorted.png)  
 
-By default, SWIRL Community presents results sorted by relevancy score. To sort by `Date` or to see the `Top Picks` from each silo, click on the `VIEW BY` dropdown and select your preference.
+By default, **SWIRL Community sorts results by relevancy score**. To change this:  
 
-SWIRL hides results that don't have a `date_published` value when sorting by `Date`. Switch back to `Relevancy` to see all results.
+- Click the **`View By`** dropdown.  
+- Select:  
+  - **`Date`** – Sorts results chronologically. Results without a `date_published` value are hidden.  
+  - **`Top Picks`** – Highlights the most relevant results from each source.  
 
-## Starting a New Search
+To see all results again, switch back to **`Relevancy`** sorting.  
 
-Click the SWIRL logo to reset the Galaxy search form and start over.
+## Starting a New Search  
 
-## Search Syntax
+Click the **SWIRL logo** to reset the search form and begin a new search.  
 
-The following table summarizes SWIRL's support for common search syntax:
+## Search Syntax  
 
-| Syntax | Handling | Notes | 
-| ---------- | ---------- | ---------- |
-| AND, OR       | Passed down to all SearchProviders | SWIRL does not verify compliance |
-| NOT, -term    | Passed down to configured SearchProviders and rewritten if necessary; removed from the query for providers that don't support `NOT` or `-term` | SWIRL verifies compliance; and also down-weights and flags responses that included NOT-ed terms |
-| tag:term | Passes `term` to the SearchProviders configured with it in their `tags` field. The untagged portion of the query is discarded. If `tag:` begins the query, then only providers with that Tag are searched. | Example: `electric vehicle company:tesla`<br/>Only the term `tesla` will go to SearchProviders with the `company` Tag, so long as they are active.<br/>Example: `company:facebook`<br/>The query `facebook` will only go to SearchProviders with the `company` Tag. |
+The following table summarizes SWIRL's support for common search syntax:  
+
+| Syntax | Handling | Notes |  
+| ---------- | ---------- | ---------- |  
+| **AND, OR** | Passed down to all SearchProviders | SWIRL does not modify or verify whether a provider supports these operators. |  
+| **NOT, -term** | Passed down to configured SearchProviders and rewritten if necessary; removed for providers that do not support `NOT` or `-term` | SWIRL verifies compliance and **down-weights or flags responses** that contain terms excluded by `NOT`. |  
+| **tag:term** | Passes `term` to SearchProviders configured with that **Tag** in their `tags` field. The untagged portion of the query is discarded. If a query starts with `tag:`, only providers with that Tag are searched. | **Example:** `electric vehicle company:tesla` → Only the term **`tesla`** is sent to SearchProviders with the `company` Tag.<br/> **Example:** `company:facebook` → The query **`facebook`** is only sent to SearchProviders with the `company` Tag. |  
 
 ### AND, OR
 
-AND and OR are passed down to all SearchProviders. SWIRL does not verify that results from any SearchProvider comply.
+- **AND** and **OR** operators are **passed unchanged** to all SearchProviders.  
+- SWIRL does **not** verify whether a provider supports these operators or correctly applies them.  
 
-### NOT
+### NOT (`NOT` and `-` Syntax)  
 
-* NOT is left in queries for SearchProviders with `NOT=True` in their `query_mappings`. The `NOT` applies to all terms following it.
+- `NOT` remains in queries for SearchProviders that have **`NOT=True`** in their `query_mappings`.  
+  - The `NOT` operator applies to **all terms that follow it** (if the provider supports it).  
 
-* NOT is rewritten to `-term` for SearchProviders with `NOT_CHAR=-` and `NOT=False` (or not specified). The `-term` applies to all terms following it.
+- `NOT` is rewritten as `-term` for SearchProviders that have:  
+  - **`NOT_CHAR=-`** and **`NOT=False`** (or `NOT` unspecified).  
+  - The `-term` applies to all terms that follow it.  
 
-* NOT and NOT-ed terms are removed from the query for providers that do not have `NOT=True` in `query_mappings`.
+- **For SearchProviders without `NOT=True`**, `NOT` and its associated terms are **removed from the query**.  
 
-SWIRL scans responses for compliance with NOT statements. Responses that contain NOT-ed content are down-weighted.
+- SWIRL **scans responses** for compliance with `NOT` statements.  
+  - If a response **contains excluded terms**, its **relevancy score is reduced**.  
 
-### Plus/Minus (+/-) Syntax
+### Plus/Minus (`+/-`) Syntax 
 
-* A `+` (PLUS) prefixed to any search term is left in query term and passed down to all SearchProviders.
+- **`+` (PLUS) before a term** ensures it **must** be included in results.  
+  - It is **passed unchanged** to all SearchProviders.  
 
-* A `-` (MINUS) prefixed to any search term is left in queries for SearchProviders with `NOT_CHAR=-` configured in their `query_mappings`. MINUS is rewritten to follow NOT for any source with `NOT=True` and without `NOT_CHAR=-` in `query_mappings`.
+- **`-` (MINUS) before a term** functions as `NOT` **for providers that support it**.  
+  - If a provider has **`NOT_CHAR=-`** configured in `query_mappings`, `-term` is passed unchanged.  
+  - If a provider has **`NOT=True`** but **not** `NOT_CHAR=-`, `-term` is rewritten to `NOT term`.  
 
-* All `-` (MINUS) prefixed terms are removed from the query for providers that do not have `NOT_CHAR=-` in `query_mappings`.
+- **For providers without `NOT_CHAR=-`**, all `-term` exclusions are **removed** from the query.  
 
-## Using Tags to Select SearchProviders
+## Using Tags to Select SearchProviders  
 
-SearchProviders can be given arbitrary tags to label them by topic, type of entity, or whatever concept(s) the source is expected to know about - for example, `company`, or `person`, or `financial`. These tags may be used in searches to select specific providers, and/or direct specific parts of the query to specific sources.
+**Tags** categorize **SearchProviders** by topic, entity type, or relevant concepts (e.g., `company`, `person`, `financial`).  
+These tags can:  
+- **Filter SearchProviders**—Only tagged providers are selected when a query starts with `tag:`.  
+- **Direct query terms**—SWIRL rewrites portions of the query based on the provider's tags.  
 
-For example: the funding data set included with SWIRL has SearchProviders for SQLite3, PostgreSQL and Google BigQuery, all of which contains Tags:
+For example, the **funding dataset** included with SWIRL has SearchProviders for **SQLite3, PostgreSQL, and Google BigQuery**, each containing relevant **Tags**:  
 
-``` json
+```json
 {
     "name": "Company Funding Records (cloud/BigQuery)",
     "connector": "BigQuery",
@@ -122,82 +142,109 @@ For example: the funding data set included with SWIRL has SearchProviders for SQ
 }
 ```
 
-If a query begins with `tag:`, then only SearchProviders with that tag will be selected, regardless of their default status. (Of course, they must still be active.)
+### How Tags Work in Queries  
 
-For example:
+#### 1. Filtering by Tag Only 
+If a query **begins with `tag:`**, only **SearchProviders with that Tag** are selected—regardless of their `default` status.  
 
-``` shell
-company: facebook
+```shell
+company:facebook
 ```
+- This limits the query to **SearchProviders with the `company` Tag**.  
+- Unrelated providers **are excluded**, even if they are `default=true`.  
 
-This will limit the query to SearchProviders with tag `company`. However, the following query combines a default search with the `company` tag for the term `tesla` only:
+#### 2. Combining a Tag with a General Query
+A **default search** can be combined with a **tagged search** for specific terms.  
 
-``` shell
+```shell
 electric vehicle company:tesla
 ```
+- **Default SearchProviders** receive the full query: `"electric vehicle tesla"`.  
+- **SearchProviders with the `company` Tag** receive only `"tesla"`.  
 
-For SearchProviders with that tag, SWIRL rewrites the query to just the terms following it. In this case, the BigQuery SearchProvider will receive the query:
+For example, the **BigQuery SearchProvider** will receive:  
 
-``` shell
+```shell
 tesla
 ```
 
-A direct hit on a funding record is likely to rank in the top 10 results, depending on what they are. For example:
+This makes **direct hits** on funding records more likely to **rank higher** in the results.
 
-``` json
+### Example Response from BigQuery SearchProvider
+
+```json
 "results": [
-        {
-            "swirl_rank": 1,
-            "swirl_score": 1316.565600582163,
-            "searchprovider": "Company Funding Records (cloud/BigQuery)",
-            "searchprovider_rank": 1,
-            "title": "*Tesla* Motors",
-            "url": "tesla-motors",
-            "body": "*Tesla* Motors raised $40000000 series c on 2006-05-01. *Tesla* Motors is located in San Carlos CA and has 270 employees.",
-            "date_published": "2006-05-01 00:00:00",
-            "date_retrieved": "2023-01-11 12:16:43.302730",
-            "author": "",
-            "payload": {},
-            "explain": {
-                "stems": "tesla",
-                "title": {
-                    "tesla_*": 0.8357298742623626,
-                    "Tesla_0": 0.8357298742623626,
-                    "result_length_adjust": 4.5,
-                    "query_length_adjust": 1.0
-                },
-                "body": {
-                    "Tesla_0": 0.7187157993182859,
-                    "result_length_adjust": 1.25,
-                    "query_length_adjust": 1.0
-                }
+    {
+        "swirl_rank": 1,
+        "swirl_score": 1316.565600582163,
+        "searchprovider": "Company Funding Records (cloud/BigQuery)",
+        "searchprovider_rank": 1,
+        "title": "*Tesla* Motors",
+        "url": "tesla-motors",
+        "body": "*Tesla* Motors raised $40000000 series C on 2006-05-01. *Tesla* Motors is located in San Carlos, CA, and has 270 employees.",
+        "date_published": "2006-05-01 00:00:00",
+        "date_retrieved": "2023-01-11 12:16:43.302730",
+        "author": "",
+        "payload": {},
+        "explain": {
+            "stems": "tesla",
+            "title": {
+                "tesla_*": 0.8357298742623626,
+                "Tesla_0": 0.8357298742623626,
+                "result_length_adjust": 4.5,
+                "query_length_adjust": 1.0
+            },
+            "body": {
+                "Tesla_0": 0.7187157993182859,
+                "result_length_adjust": 1.25,
+                "query_length_adjust": 1.0
             }
         }
+    }
+]
 ```
 
-The other SearchProviders will respond to the full query `electric vehicle tesla`. 
+### Notes 
 
-SearchProviders do not need to have the `default` property set to `true` for Tsags to work. So long as they have `active` set to `true`, then using the Tag in a query will cause SWIRL to invoke it.
+- **Tagged SearchProviders receive a rewritten query** with only the terms that follow `tag:`.  
+- **Other SearchProviders** receive the **full original query**.  
+- **SearchProviders do not need `default=true` for Tags to work.**  
+  - As long as they are **`active=true`**, using a tag in a query will **invoke them**.  
 
-For more details, refer to the [Organizing SearchProviders with Active, Default and Tags](#organizing-searchproviders-with-active-default-and-tags) section.
+For more details, refer to the [**Organizing SearchProviders with Active, Default, and Tags**](./SP-Guide#organizing-searchproviders-with-active-default-and-tags) section.  
 
-# Relevancy Ranking
+# Relevancy Ranking  
 
-SWIRL returns a unified result set consisting of results from all responding SearchProviders, matched by stemmed word form, and re-ranked using a cosine vector similarity relevancy model based on [spaCy](https://spacy.io/) and normalized by query and token length. It also incorporates the original `searchprovider_rank`.
+SWIRL generates a **unified result set** by aggregating results from all responding **SearchProviders**.  
 
-The Galaxy UI puts a star next to items that are over a configurable relevancy threshold. 
+Relevancy ranking is determined by:  
+- **Stemmed word matching** to improve recall.  
+- **Cosine vector similarity scoring** using **[spaCy](https://spacy.io/)** for semantic relevance.  
+- **Normalization by query length and token count** to ensure fair scoring across queries.  
+- **Incorporation of the original `searchprovider_rank`** to maintain provider-specific relevance.  
 
-For more information consult the [Developer Guide Adjusting The SWIRL Score](./Developer-Guide.md#adjusting-the-swirl_score-that-causes-galaxy-ui-to-star-results), [Configure Relevancy Field Weights](Developer-Guide.html#configure-relevancy-field-weights) and [Understand the Explain Structure](Developer-Guide.html#understand-the-explain-structure) sections.
+The **Galaxy UI** puts a star next to results that exceed a configurable relevancy threshold, making high-confidence matches more visible.  
 
-## Hit Highlighting
+For more details, see:  
+- [Adjusting the SWIRL Score](./Developer-Guide#adjust-swirl_score-for-starred-results-in-galaxy-ui)  
+- [Configuring Relevancy Field Weights](./Developer-Guide#configure-relevancy-field-weights)  
+- [Understanding the Explain Structure](./Developer-Guide#understand-the-explain-structure)  
 
-SWIRL highlights occurrences of query terms in the `title`, `body` and `author` fields. For example:
+## Hit Highlighting  
 
-``` json
-    "body": "<em>Performance</em> <em>management</em> is the process of setting goals and expectations for employees and then tracking and measuring their progress. This can be done through regular one-on-one meetings, <em>performance</em> reviews, and other feedback mechanisms.",
+SWIRL **highlights query term matches** in the following fields:  
+- **`title`**  
+- **`body`**  
+- **`author`**  
+
+For example:  
+
+```json
+"body": "<em>Performance</em> <em>management</em> is the process of setting goals and expectations for employees and then tracking and measuring their progress. This can be done through regular one-on-one meetings, <em>performance</em> reviews, and other feedback mechanisms."
 ```
 
-## Integrating with Source Synonyms
+## Integrating with Source Synonyms  
 
-SWIRL can also integrate source synonym configurations into relevancy calculations with corresponding hit highlighting.  See the Developer Guide [Integrate Source Synonyms Into SWIRL Relevancy](Developer-Guide.html#integrate-source-synonyms-into-swirl-relevancy)
-section for details.
+SWIRL supports **source synonym configurations** to enhance relevancy calculations and hit highlighting.  
+
+For details, see the Developer Guide: [Integrate Source Synonyms Into SWIRL Relevancy](./Developer-Guide#integrate-source-synonyms-into-swirl-relevancy)

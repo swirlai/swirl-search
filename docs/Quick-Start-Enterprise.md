@@ -12,175 +12,203 @@ nav_order: 7
 {:toc}
 </details>
 
-# Quick Start Guide - Enterprise Edition
+<span class="big-text">Quick Start Guide</span><br/><span class="med-text">Enterprise Edition</span>
 
 {: .warning }
-This version applies to the Enterprise Edition of SWIRL! A valid license key is required.
+Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Enterprise.
 
-* The recommended minimum system configuration is a 16 core server, with 32 GB of memory and at least 500 GB of available disk space. This should support up to 25 users. 
+---
 
-* To run SWIRL in Docker, you must have the latest [Docker app](https://docs.docker.com/get-docker/) for MacOS, Linux, or Windows installed and running locally. Docker should be configured to use all available CPU, memory and storage.  
+* The recommended minimum system configuration is a **16-core server**, with **32 GB of memory** and at least **500 GB of available disk space**. This configuration supports up to **25 users**.
 
-* You must be logged in to a valid Docker Hub by opening the command-line interface (CLI) and executing the following command, replacing <docker-username> and <docker-password> with your Docker Hub credentials.
+* To run SWIRL in Docker, install the latest version of [Docker](https://docs.docker.com/get-docker/) for macOS, Linux, or Windows. **Ensure Docker is configured to use all available CPU, memory, and storage.**
 
-``` shell
+* You must be logged in to Docker Hub. Open a command-line interface (CLI) and execute the following command, replacing `<docker-username>` and `<docker-password>` with your credentials:
+
+```shell
 docker login --username <docker-username> --password <docker-password>
 ```
 
-* Windows users must first install and configure either the WSL 2 or the Hyper-V backend, as outlined in the  [System Requirements for installing Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/#system-requirements).
+* **Windows users** must install and configure either **WSL 2** or the **Hyper-V backend**, as outlined in the [Docker Desktop System Requirements](https://docs.docker.com/desktop/install/windows-install/#system-requirements).
 
 {: .warning }
-Make sure the Docker app is running before proceeding!
+Ensure Docker is running before proceeding!
 
-* Locate and open the email message from hello@swirl.today with subject "Try SWIRL Enterprise".
-There should be three attachments: 
+## Downloading SWIRL Enterprise Files
 
-  * Try SWIRL Enterprise with Docker PDF
-  * docker-compose.yaml
-  * env.license 
-
-* Save the docker-compose.yml attached to the email message to a folder on the target server. 
-
-* Locate the file named env.license attached to the email message to the same folder, renaming it to .env.license as you do so. 
+1. Locate the email from `hello@swirlaiconnect.com` with the subject **"Try SWIRL Enterprise"**.
+2. The email contains three attachments:
+   - `Try SWIRL Enterprise with Docker.pdf`
+   - `docker-compose.yaml`
+   - `env.license`
+3. **Save** `docker-compose.yaml` to a folder on the target server.
+4. **Rename** `env.license` to `.env.license` and save it in the same folder.
 
 {: .warning }
-The leading dot (.) character is required!
+The leading dot (`.`) in `.env.license` is required!
 
-* Open a command line interface and navigate to the folder where you saved the docker-compose.yml file. Launch the containers by running the following command:
+## Starting SWIRL Enterprise
 
-```
+1. Open a command line and navigate to the folder where `docker-compose.yml` is saved.
+2. Run the following command to pull and start the containers:
+
+```shell
 docker-compose pull && docker-compose up
 ```
 
-This command will start all the services used by Swirl. It will take a few minutes for the services to initialize.
-  
-{: .warning }
-Do not hit ^C or stop Docker in this window, otherwise SWIRL will be shut down.
+This starts all services required by SWIRL. Initialization takes a few minutes.
 
-After a few minutes, the output will look like this, or similar:
+{: .warning }
+Do not press `CTRL+C` or stop Docker during this process—doing so will shut down SWIRL.
+
+Once complete, the output should look like this: 
+
 ![SWIRL Enterprise Docker successful startup](images/swirl_enterprise_docker_started.png)
 
-* Launch another command line interface, and run the following command to check the status of the running containers:
+## Verifying SWIRL Startup
 
-```
-docker ps
-```
+1. Open a new command line and check the running containers:
 
-The output should look like this, or similar:
-![SWIRL Enterprise Docker ps command](images/swirl_docker_ps.png)
+    ```shell
+    docker ps
+    ```
 
-* Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy>)
+    The output should look like this:
+    ![SWIRL Enterprise Docker ps command](images/swirl_docker_ps.png)
 
-If the search page appears, click `Log Out` at the top, right. The SWIRL login page will appear:
+2. Open a browser and navigate to <http://localhost:8000> or <http://localhost:8000/galaxy>  
 
-![SWIRL Login](images/swirl_40_login.png)
+3. If the search page loads, click `Log Out` in the top-right corner. The login page will appear:
 
-* Enter the username `admin` and password `password`, then click `Login`.
+    ![SWIRL Login](images/swirl_40_login.png)
 
-* Enter a search in the search box and press the `Search` button. Ranked results appear in just a few seconds:
+4. Log in with:
 
-![SWIRL Results No M365](images/swirl_40_results.png)
+   - **Username:** `admin`  
+   - **Password:** `password`  
 
-If they don’t appear, or an error occurs, please [contact support](#support).
+5. Enter a search term and press `Search`. The ranked results should appear:
+
+    ![SWIRL Results No M365](images/swirl_40_results.png)
+
+    If no results appear or an error occurs, please [contact support](#support).
+
+## Enabling AI Features
 
 {: .warning }
-To use the Generate AI insights button (to RAG on the most relevant results) or use the AI Co-Pilot (http://localhost:8000/galaxy/chat) feature, at least one AI Provider must be activated. 
-These functions will not work “out of the box” without activation.
+To use **Generate AI Insights** (RAG) or **AI Search Assistant**, at least one AI provider must be activated.
 
-* Go to the [http://localhost:8000/swirl/aiproviders/](http://localhost:8000/swirl/aiproviders/)
+1. Go to [http://localhost:8000/swirl/aiproviders/](http://localhost:8000/swirl/aiproviders/).
+2. Review the **pre-loaded AI providers**.
+3. To edit a provider, add its ID to the URL. Example: <http://localhost:8000/swirl/aiproviders/16/>
 
-Review the pre-loaded providers. Then edit a pre-loaded provider by adding the id of the provider to the URL. For example: http://localhost:8000/swirl/aiproviders/16/: 
+    ![SWIRL AI Provider](images/swirl_aip_1.png)
 
-![SWIRL AI Provider](images/swirl_aip_1.png)
+4. Use the **"Raw Data"** form at the bottom to make changes, then click **PUT** to save.
 
-For an AI provider to perform either RAG or chat functions, as shown above, it must:
-•	Have the “active” property set to “true”
-•	Have the “rag” and/or “chat” in the “tags” list
-•	Have the “rag” and/or “chat” in the “default” list 
-•	Have a valid API key if required
+    To function correctly, an AI provider must:
 
-Use the “Raw Data” form at the bottom to make changes. Don’t forget to click the “PUT” button to save them.
+    - Have `"active": true` set.
+    - Include `"rag"` and/or `"chat"` in the `"tags"` list.
+    - Include `"rag"` and/or `"chat"` in the `"default"` list.
+    - Have a valid API key (if required).
 
-To create a new AI provider, copy an existing one and paste it in as a new one, at the bottom of the page. 
+5. To create a new provider, **copy an existing one** and paste it as a new entry.
 
-To use different AI providers for RAG and AI Co-Pilot, set the “defaults” lists different for each. For example, set one provider (e.g. OpenAI GPT-4) up with “rag” in the defaults list, and another (e.g. Azure/OpenAI GPT-4o) with “chat” in the defaults list. (Each provider also needs the appropriate tag, “chat” or “rag”, in the “tags” list.)
+    To use **different AI providers** for **RAG and AI Search Assistant**, adjust the `"defaults"` list:
 
-* When there is at least one active, default provider for RAG, you may click the “Generate AI Insights” button at the top of the AI Connect form. 
+    - Example:  
+      - **OpenAI GPT-4** → `"defaults": ["rag"]`
+      - **Azure/OpenAI GPT-4o** → `"defaults": ["chat"]`
 
-For example:
-![SWIRL Results with RAG](images/swirl_40_community_rag.png)
+6. Once an active provider for **RAG** exists, click **Generate AI Insights**.
 
-* To try the SWIRL AI Co-Pilot, navigate to: [http://localhost:8000/galaxy/chat](http://localhost:8000/galaxy/chat)
+    ![SWIRL Results with RAG](images/swirl_40_community_rag.png)
 
-Be sure to verify that RAG is working before attempting to use Co-Pilot.
+7. To access **SWIRL AI Search Assistant**, visit: [http://localhost:8000/galaxy/chat](http://localhost:8000/galaxy/chat)
 
-* Put in a question such as “What sources do I have access to?” and you should get a result within a few seconds. 
+8. Ask a question, such as:  
+   - *"What sources do I have access to?"*  
 
-* Direct the co-pilot to search for something of interest, and you should get a RAG result as part of the conversation, including citations:
+9. Conduct a search and verify that **RAG results** appear:
 
-![SWIRL Co-Pilot Conversation with RAG Result](images/swirl_40_enterprise_assistant_rag.png)
- 
-* SWIRL ships with admin/password pre-configured as noted. This may cause a warning to appear if using Galaxy with the Google Chrome browser.  
+    ![SWIRL Assistant Conversation with RAG Result](images/swirl_40_enterprise_assistant_rag.png)
 
-To change the password, follow instructions here: https://docs.swirl.today/Admin-Guide.html#changing-a-super-user-password 
+## Security Notice
 
-* When finished working with SWIRL, stop the containers using one of these methods:
+SWIRL ships with a default **admin/password** login. **If using Google Chrome, a security warning may appear.**
 
-1.	Via Docker Desktop: 
-![Shutdown SWIRL with Docker Desktop](images/shutdown_docker.png)
+To change the password, follow these steps: [Admin Guide - Changing Password](./Admin-Guide#changing-a-users-password)
 
-2.	Press CTRL-C in the terminal window where Docker Compose is running:
-![Shutdown SWIRL with Control-C](images/shutdown_ctl_c.png)
+## Stopping SWIRL
 
-3. Execute docker-compose stop from a different terminal:
-![Shutdown SWIRL with docker compose in a different window](images/shutdown_compose.png)
+To stop SWIRL, use one of these methods:
 
- These will all preserve the SWIRL database. If you don't care about preserving the database, you can hit CTRL-C twice to stop SWIRL instantly, losing all configuration and data in the process.
+1. **Via Docker Desktop:**
+   ![Shutdown SWIRL with Docker Desktop](images/shutdown_docker.png)
 
-# Optional Steps
+2. **Using CTRL-C in the terminal:**
+   ![Shutdown SWIRL with Control-C](images/shutdown_ctl_c.png)
 
-* Click the “Select Items” button to change the documents used in the RAG, and click the switch again to generate updated insight.
+3. **Via a separate terminal:**
 
-* To view the raw result JSON, click `Search` under the API section of the `Manage SWIRL` page linked above, or open <http://localhost:8000/swirl/search/>
+```shell
+docker-compose stop
+```
 
-The most recent Search object will be displayed at the top. Click on the `result_url` link to view the full JSON Response. 
+   ![Shutdown SWIRL with docker compose](images/shutdown_compose.png)
 
-For example:
+These methods **preserve** the SWIRL database. If you don't need to save data, press `CTRL-C` **twice** to stop SWIRL instantly.
+
+## Optional Steps
+
+- Click **Select Items** to modify documents used for RAG.
+- View raw JSON results at:
+  - [http://localhost:8000/swirl/search/](http://localhost:8000/swirl/search/)
+  - Click `result_url` to view the full JSON response.
+
 ![SWIRL JSON response](images/swirl_results_mixed_1.png)
 
-* Click the profile avatar in the upper right corner of the Galaxy UI. Then click [Manage SWIRL](http://localhost:8000/swirl/) to explore the rest of SWIRL's features.
+- Manage SWIRL via **Galaxy UI**:
+  - Click the profile avatar (top-right corner).
+  - Click **Manage SWIRL** ([http://localhost:8000/swirl/](http://localhost:8000/swirl/)).
 
-* Integrate with Microsoft 365
+## Microsoft 365 Integration
 
-To connect the SWIRL installation Microsoft 365, be aware of the pre-requisites:
-•	Administrative access to the Azure/M365 tenant 
-•	Successful creation of a new app registration in Azure
-•	Addition of the new app ID and secrets to the SWIRL configuration.
+To connect SWIRL with **Microsoft 365**, you need:
 
-This process takes approximately one hour, assuming sufficient privileges are available. Please follow the guide here: https://docs.swirl.today/M365-Guide.html 
+- **Admin access** to the Azure/M365 tenant.
+- **App registration** in Azure.
+- **App ID and secrets** added to SWIRL.
 
-For additional support on M365 integration, please [contact SWIRL](#support).
- 
-*  To persist configuration changes outside docker: 
+Setup takes ~1 hour. Follow the guide: [Microsoft 365 Integration Guide](./M365-Guide)
 
-1.	Identify the name of your swirl docker container, it will contain the term ‘app’ - for example:
-![SWIRL docker container app name](images/persist_1.png)
+For additional support, please [contact SWIRL](#support).
 
-2.	Copy the env file outside of your docker and into the directory in which the docker compose is running:
-![SWIRL container env](images/persist_env1.png)
- 
-3.	Stop the containers:
-![SWIRL containers stop](images/persist_stop.png)
- 
-4.	Edit the docker-compose as follows:
-Before:
-![SWIRL container config before](images/persist_before.png)
- 
-After: 
-![SWIRL container config after](images/persist_after.png)
+## Persisting Configuration Changes
 
-5. Restart Swirl 
+1. Identify your SWIRL Docker container (`app` in the name):
 
-```
+   ![SWIRL docker container app name](images/persist_1.png)
+
+2. Copy the `.env` file outside Docker:
+
+   ![SWIRL container env](images/persist_env1.png)
+
+3. Stop the containers:
+
+   ![SWIRL containers stop](images/persist_stop.png)
+
+4. Modify `docker-compose.yml`:
+
+   **Before:**  
+   ![SWIRL config before](images/persist_before.png)
+
+   **After:**  
+   ![SWIRL config after](images/persist_after.png)
+
+5. Restart SWIRL:
+
+```shell
 docker-compose pull && docker-compose up
 ```

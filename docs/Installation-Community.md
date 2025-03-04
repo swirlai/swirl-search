@@ -12,165 +12,174 @@ nav_exclude: true
 {:toc}
 </details>
 
-# Installation Guide - Community Edition
+<span class="big-text">Installation Guide</span><br/><span class="med-text">Community Edition</span>
+
+---
 
 {: .warning }
-This document applies only to SWIRL AI Connect, Community Edition. 
-
-{: .warning }
-SWIRL's start-up process no longer starts `redis`.  You must now have `redis` installed *and running* before starting SWIRL. Refer to [Install Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) for more information.
+**SWIRL no longer starts Redis automatically.**  
+You must have **Redis installed and running** before starting SWIRL.  
+Refer to [Install Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) for details.
 
 # System Requirements
 
-* Platform - Ubuntu, RHEL, or OS/X; Microsfot Windows is *not* supported for local installation due to Celery support
-* 8+ VCPU, 16+ GB of memory
-* At least 500 GB of free disk space
-* Python 3.11 or newer
+- **Platform:** Ubuntu, RHEL, or macOS  
+  - Microsoft Windows is **not supported** due to Celery dependencies  
+- **Hardware:** 8+ VCPU, 16+ GB RAM  
+- **Storage:** 500+ GB free disk space  
+- **Python:** 3.11 or newer  
 
-## MacOS
+## macOS
 
-* Python 3.12.x (or latest stable) with `pip`
-    * If necessary, modify the system PATH so that Python runs when you type `python` at the Terminal (not `python3`)
-    * [venv](https://docs.python.org/3/library/venv.html) (*optional*)
-    * [pyenv](https://github.com/pyenv/pyenv) (*optional*)
-* [Homebrew](https://brew.sh/) installed and updated
-* Redis installed:
- ``` shell
- brew install redis
- ```
-* jq installed:
-``` shell
-brew install jq
-```
+- **Python 3.12+** with `pip`
+    - Ensure Python runs as `python`, not `python3`  
+    - Install **[venv](https://docs.python.org/3/library/venv.html) (optional)**  
+    - Install **[pyenv](https://github.com/pyenv/pyenv) (optional)**  
+- **Homebrew** installed and updated  
+- **Redis installed:**  
+  ```shell
+  brew install redis
+  ```
+- **jq installed:**  
+  ```shell
+  brew install jq
+  ```
 
 ## Linux
 
-* Python 3.12.x (or latest stable) with `pip`
-* Redis and jq installed:
-``` shell
-sudo apt install jq redis-server -y
-```
+- **Python 3.12+** with `pip`
+- **Redis and jq installed:**  
+  ```shell
+  sudo apt install jq redis-server -y
+  ```
 
 ## PostgreSQL (optional)
 
-If you wish to use PostgreSQL as a data source or as the SWIRL back-end database:
+To use PostgreSQL as a **data source** or **SWIRL’s backend database**:
 
-1. Install [PostgreSQL](https://www.postgresql.org/)
+1. Install [PostgreSQL](https://www.postgresql.org/)  
+2. Ensure `pg_config` is in your system `PATH`  
+3. Install the PostgreSQL driver:
+   ```shell
+   pip install psycopg2
+   ```
 
-2. Modify the system PATH so that `pg_config` from the PostgreSQL distribution is accessible from the command line
+## Installing SWIRL AI Search
 
-3. Install `psycopg2` using `pip`:
-``` shell
-pip install psycopg2
-```
+1. **Clone the repository:**  
+   ```shell
+   git clone https://github.com/swirlai/swirl-search
+   cd swirl-search
+   ```
 
-## Installing SWIRL AI Connect
+2. **Install SWIRL (macOS):**  
+   ```shell
+   ./install.sh
+   ```
 
-* Clone the repo:
+3. **Install SWIRL (Linux):**  
+   ```shell
+   apt-get update --allow-insecure-repositories -y && apt-get install apt-file -y && apt-file update && apt-get install -y python3-dev build-essential
+   ./install.sh
+   ```
 
-``` shell
-git clone https://github.com/swirlai/swirl-search
-cd swirl-search
-```
-
-* To install SWIRL on MacOS, execute this command from the Console:
-
-``` shell
-./install.sh
-```
-
-* To install SWIRL on Linux, execute this command from the Console:
-
-``` shell
-apt-get update --allow-insecure-repositories -y && apt-get install apt-file -y && apt-file update && apt-get install -y python3-dev build-essential
-./install.sh
-```
-
-* If there are problems running `install.sh`, proceed manually:
-
-``` shell
-pip install -r requirements.txt
-python -m spacy download en_core_web_lg
-python -m nltk.downloader stopwords
-python -m nltk.downloader punkt
-```
+4. **If `install.sh` fails, install manually:**  
+   ```shell
+   pip install -r requirements.txt
+   python -m spacy download en_core_web_lg
+   python -m nltk.downloader stopwords
+   python -m nltk.downloader punkt
+   ```
 
 {: .warning }
-Issues with certifications on OS/X? See: [urllib and "SSL: CERTIFICATE_VERIFY_FAILED" Error](https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error/42334357#42334357)
+**macOS SSL Issues?** See: [urllib and "SSL: CERTIFICATE_VERIFY_FAILED" Error](https://stackoverflow.com/questions/27835619/urllib-and-ssl-certificate-verify-failed-error/42334357#42334357)
 
 ## Setup SWIRL
 
-* Execute the following command from the Console to setup SWIRL:
+Run the following command to **initialize SWIRL**:
 
-``` shell
+```shell
 python swirl.py setup
 ```
 
 ## Setup RAG
 
-* To enable SWIRL's Real-Time Retrieval Augmented Generation (RAG) on your `localhost`, run the following commands from the Console before installing the Galaxy UI:
-``` shell
+To enable **Real-Time Retrieval Augmented Generation (RAG)**:
+
+```shell
 export MSAL_CB_PORT=8000
 export MSAL_HOST=localhost
 ```
 
-For more information, refer to the [RAG Configuration guide](RAG-Guide.html).
+See the [RAG Configuration Guide](./RAG-Guide) for more details.
 
 ## Install the Galaxy UI
 
 {: .warning }
-To install the Galaxy UI, you must have the latest [Docker app](https://docs.docker.com/get-docker/) for MacOS or Linux installed and running locally.
+To install **Galaxy UI**, you must have the latest **[Docker](https://docs.docker.com/get-docker/)** installed and running.
 
+Run the following command **with Docker running**:
 
-* To install Galaxy, execute the following command the Console (with the Docker app running):
-
-``` shell
+```shell
 ./install-ui.sh
 ```
 
 {: .highlight }
-The Galaxy UI components should be installed only *after* running the `./install.sh` and `python swirl.py setup` commands.
+**Galaxy UI must be installed only after running** `./install.sh` and `python swirl.py setup`.
 
 ## Start SWIRL
 
-* Execute the following command from the Console to start SWIRL:
+To **start SWIRL**, run:
 
-``` shell
+```shell
 python swirl.py start
 ```
 
 ## Open the SWIRL Homepage
 
-* Enter this URL into a browser: <http://localhost:8000/swirl/>
+Visit: [http://localhost:8000/swirl/](http://localhost:8000/swirl/)
 
-The following page should appear:
-
-![SWIRL Homepage](images/swirl_frontpage.png)
+  ![SWIRL Homepage](images/swirl_frontpage.png)
 
 ## Open the Galaxy UI
 
-* Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy/>)
+Visit: [http://localhost:8000](http://localhost:8000) or [http://localhost:8000/galaxy/](http://localhost:8000/galaxy/)
 
-If the search page appears, click `Log Out` at the top, right. The SWIRL login page will appear:
+If the search page loads, **log out** to see the login screen:
 
-![SWIRL Login](images/swirl_login-galaxy_dark.png)
+  ![SWIRL Login](images/swirl_40_login.png)
 
-* Enter the username `admin` and password `password`, then click `Login`.
+### Log in to SWIRL
 
-* Enter a search in the search box and press the `Search` button. Ranked results appear in just a few seconds:
+- **Username:** `admin`  
+- **Password:** `password`  
 
-![SWIRL Results](images/swirl_results_no_m365-galaxy_dark.png)
+### Perform a Search
 
-* Click the `Generate AI Insight` button to RAG using the most relevant results, if you have specified an OpenAI key as noted earlier.
+1. Enter a search query in the **search box**.  
+2. Click **Search**.  
+3. Results will appear in seconds:
 
-![SWIRL Results with RAG](images/swirl_rag_pulmonary_1.png)
+  ![SWIRL Results](images/swirl_40_results.png)
 
-* Click the profile avatar in the upper right corner of the Galaxy UI. Then click [Manage SWIRL](http://localhost:8000/swirl/) to explore the rest of SWIRL's features.
+### Enable RAG (if OpenAI API key is set)
 
-* To view the raw result JSON, click `Search` under the API section of the `Manage SWIRL` page linked above, or open <http://localhost:8000/swirl/search/>
+Click **Generate AI Insight**:
 
-The most recent Search object will be displayed at the top. Click on the `result_url` link to view the full JSON Response. For example:
+  ![SWIRL Results with RAG](images/swirl_40_community_rag.png)
 
-![SWIRL JSON response](images/swirl_results_mixed_1.png)
+### Manage SWIRL
 
-* Read the [SWIRL User Guide](User-Guide.html) for additional information.
+Click the **profile avatar (top-right)** → Click **[Manage SWIRL](http://localhost:8000/swirl/)**.
+
+### View Raw JSON Results
+
+- Click **Search** under **API** in the **Manage SWIRL** page.  
+- Open: [http://localhost:8000/swirl/search/](http://localhost:8000/swirl/search/)  
+- Click **`result_url`** to view the full **JSON response**:
+
+  ![SWIRL JSON response](images/swirl_results_mixed_1.png)
+
+## Read More
+
+Refer to the **[SWIRL User Guide](./User-Guide)** for additional details.

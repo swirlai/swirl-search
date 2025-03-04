@@ -12,31 +12,30 @@ nav_order: 19
 {:toc}
 </details>
 
-# Developer Reference
+<span class="big-text">Developer Reference</span><br/><span class="med-text">Community Edition | Enterprise Edition</span>
 
-{: .warning }
-This document applies to all SWIRL Editions. 
+---
 
 # State Table
 
-The following table describes in more detail all the steps in the federation process, with the associated `status` and other important state information.
+The following table provides a detailed breakdown of each step in the federation process, along with the corresponding `status` and other key state information.
 
 | Action | Module | Status | Notes | 
 | ---------- | ---------- | ---------- | ---------- | 
-| Search object created | views.py SearchViewSet.list() | Search.status:<br/>NEW_SEARCH<br/>UPDATE_SEARCH | Required:<br/>`Search.query_string` |
-| Pre-processing | search.py search() | Search.status:<br/>PRE_PROCESSING | Checks permissions<br/>Loads the Search object  |
-| Pre-query processing | search.py search() | Search.status:<br/>PRE_QUERY_PROCESSING | Processes `Search.query_string` and updates `Search.query_string_processed` |
-| Federation | search.py search() | Search.status:<br/>FEDERATING<br/>FEDERATING_WAIT_*<br/>FULL_RESULTS | Creates one Connector for each SearchProvider in the Search |
-| Connector Init | connectors/connector.py<br/>connectors/db_connector.py | Connector.status:<br/>INIT<br/>READY | Loads the Search and SearchProvider | 
-| Connector Federate | federate() | Connector.status:<br/>FEDERATING |  |
-| Connector Query Processing|  process_query() | FEDERATING | Process `Search.query_string_processed` and store in `Connector.query_string_to_provider` |
-| Connector Construct Query | construct_query() | FEDERATING | Take `Connector.query_string_to_provider` and create `Connector.query_to_provider` |
-| Connector Validate Query | validate_query() | FEDERATING | Returns "False" if `Connector.query_to_provider` is empty |
-| Connector Execute Search | execute_search () | FEDERATING | Connect to the SearchProvider<br/>Execute the search using `Search.query_to_provider`<br/>Store the response in `Connector.response` | 
-| Connector Normalize Response | normalize_response() | FEDERATING | Transform `Connector.response` into JSON list of dicts<br/>Store it in `Connector.results` |
-| Connector Process Results | process_results() | Connector.status:<br/>FEDERATING<br/>READY | Process `Connector.results` |
-| Connector Save Results | save_results() | Connector.status:<br/>READY | Returns "True" |
-| Post-result processing | search.py search() | Search.status:<br/>POST_RESULT_PROCESSING<br/>FULL_RESULTS_READY<br/>FULL_UPDATE_READY | Runs the `post_result_processors`<br/>Updates Result objects | 
+| **Search object created** | views.py SearchViewSet.list() | Search.status:<br/>NEW_SEARCH<br/>UPDATE_SEARCH | Required:<br/>`Search.query_string` |
+| **Pre-processing** | search.py search() | Search.status:<br/>PRE_PROCESSING | Checks permissions<br/>Loads the Search object |
+| **Pre-query processing** | search.py search() | Search.status:<br/>PRE_QUERY_PROCESSING | Processes `Search.query_string` and updates `Search.query_string_processed` |
+| **Federation** | search.py search() | Search.status:<br/>FEDERATING<br/>FEDERATING_WAIT_*<br/>FULL_RESULTS | Creates one Connector for each SearchProvider in the Search |
+| **Connector Init** | connectors/connector.py<br/>connectors/db_connector.py | Connector.status:<br/>INIT<br/>READY | Loads the Search and SearchProvider | 
+| **Connector Federate** | federate() | Connector.status:<br/>FEDERATING |  |
+| **Connector Query Processing** | process_query() | Connector.status:<br/>FEDERATING | Processes `Search.query_string_processed` and stores it in `Connector.query_string_to_provider` |
+| **Connector Construct Query** | construct_query() | Connector.status:<br/>FEDERATING | Takes `Connector.query_string_to_provider` and creates `Connector.query_to_provider` |
+| **Connector Validate Query** | validate_query() | Connector.status:<br/>FEDERATING | Returns "False" if `Connector.query_to_provider` is empty |
+| **Connector Execute Search** | execute_search() | Connector.status:<br/>FEDERATING | Connects to the SearchProvider<br/>Executes the search using `Connector.query_to_provider`<br/>Stores the response in `Connector.response` | 
+| **Connector Normalize Response** | normalize_response() | Connector.status:<br/>FEDERATING | Transforms `Connector.response` into a JSON list of dictionaries<br/>Stores it in `Connector.results` |
+| **Connector Process Results** | process_results() | Connector.status:<br/>FEDERATING<br/>READY | Processes `Connector.results` |
+| **Connector Save Results** | save_results() | Connector.status:<br/>READY | Returns "True" |
+| **Post-result processing** | search.py search() | Search.status:<br/>POST_RESULT_PROCESSING<br/>FULL_RESULTS_READY<br/>FULL_UPDATE_READY | Runs the `post_result_processors`<br/>Updates Result objects | 
 
 # `Search.Status`
 
@@ -44,33 +43,33 @@ The following table describes in more detail all the steps in the federation pro
 
 | Status | Meaning | 
 | ---------- | ---------- |
-| NEW_SEARCH | The search object is to be executed immediately |
-| UPDATE_SEARCH | The search object is to be updated immediately |
-| PRE_PROCESSING | SWIRL is performing pre-processing for this search |
-| PRE_QUERY_PROCESSING | SWIRL is performing pre-query processing for this search |
-| FEDERATING | SWIRL is provisioning Celery workers with Connectors and waiting for results |
-| FEDERATING_WAIT_n | SWIRL has been waiting for the number of seconds indicated by `n` |
-| FULL_RESULTS | SWIRL has received all results |
-| NO_RESULTS | SWIRL received no results |
-| PARTIAL_RESULTS | SWIRL has received results from some providers, but not all |
-| POST_RESULT_PROCESSING | SWIRL is performing post-result processing |
-| PARTIAL_RESULTS_READY | SWIRL has processed results from responding providers |
-| PARTIAL_UPDATE_READY | SWIRL has processed updated results from responding providers  |
-| FULL_RESULTS_READY | SWIRL has processed results for all specified providers  |
-| FULL_UPDATE_READY | SWIRL has processed updated results for all specified providers |
+| **NEW_SEARCH** | The search object is to be executed immediately. |
+| **UPDATE_SEARCH** | The search object is to be updated immediately. |
+| **PRE_PROCESSING** | SWIRL is performing pre-processing for this search. |
+| **PRE_QUERY_PROCESSING** | SWIRL is performing pre-query processing for this search. |
+| **FEDERATING** | SWIRL is provisioning Celery workers with Connectors and waiting for results. |
+| **FEDERATING_WAIT_n** | SWIRL has been waiting for the number of seconds indicated by `n`. |
+| **FULL_RESULTS** | SWIRL has received all results. |
+| **NO_RESULTS** | SWIRL received no results. |
+| **PARTIAL_RESULTS** | SWIRL has received results from some providers, but not all. |
+| **POST_RESULT_PROCESSING** | SWIRL is performing post-result processing. |
+| **PARTIAL_RESULTS_READY** | SWIRL has processed results from responding providers. |
+| **PARTIAL_UPDATE_READY** | SWIRL has processed updated results from responding providers. |
+| **FULL_RESULTS_READY** | SWIRL has processed results for all specified providers. |
+| **FULL_UPDATE_READY** | SWIRL has processed updated results for all specified providers. |
 
 ## Error States
 
 | Status | Meaning | 
 | ---------- | ---------- |
-| ERR_DUPLICATE_RESULT_OBJECTS | More than one Result object was found; [contact support](#support) for assistance. |
-| ERR_NEED_PERMISSION | The Django User did not have sufficient permissions to perform the requested operation. More: [Permissioning Normal Users](Admin-Guide.html#permissioning-normal-users) | 
-| ERR_NO_ACTIVE_SEARCHPROVIDERS | Search failed because no specified SearchProviders were active |
-| ERR_NO_RESULTS | SWIRL has not received results from any source |
-| ERR_NO_SEARCHPROVIDERS | Search failed because no SearchProviders were specified |
-| ERR_RESULT_NOT_FOUND | A Result object that was expected to be found, was not; [contact support](#support) for assistance. |
-| ERR_RESULT_PROCESSING | An error occurred during Result processing - check the `logs/celery-worker.log` for details | 
-| ERR_SUBSCRIBE_PERMISSIONS | The user who created the Search object lacks permission to enable `subscribe` mode |
+| **ERR_DUPLICATE_RESULT_OBJECTS** | More than one Result object was found; [contact support](#support) for assistance. |
+| **ERR_NEED_PERMISSION** | The Django user does not have sufficient permissions to perform the requested operation. More: [Permissioning Normal Users](./Admin-Guide#permissioning-normal-users). | 
+| **ERR_NO_ACTIVE_SEARCHPROVIDERS** | Search failed because no specified SearchProviders were active. |
+| **ERR_NO_RESULTS** | SWIRL has not received results from any source. |
+| **ERR_NO_SEARCHPROVIDERS** | Search failed because no SearchProviders were specified. |
+| **ERR_RESULT_NOT_FOUND** | A Result object that was expected to be found was not; [contact support](#support) for assistance. |
+| **ERR_RESULT_PROCESSING** | An error occurred during result processing - check the `logs/celery-worker.log` for details. | 
+| **ERR_SUBSCRIBE_PERMISSIONS** | The user who created the Search object lacks permission to enable `subscribe` mode. |
 
 # Key Module List
 
@@ -83,151 +82,151 @@ The following table describes in more detail all the steps in the federation pro
 
 # SearchProvider Object
 
-A SearchProvider defines some searchable source. It includes metadata identifying the type of connector used to search the source and much more. Many properties are optional when creating a SearchProvider object. They will have the default values shown below.
+A SearchProvider defines a searchable source. It includes metadata identifying the connector type used to search the source, along with various configuration properties. Many properties are optional when creating a SearchProvider object, and default values are listed below.
 
 ## Properties
 
 | Property | Description | Default Value (`Example Value`) | 
 | ---------- | ---------- | ---------- |
-| id | Unique identifier for the SearchProvider | Automatic (`1`) |
-| name | Human-readable name for the source | "" (`"Enterprise Search PSE"`) |
-| owner | The username of the Django user that owns the object | Logged-in user (`"admin"`) |
-| shared | Boolean setting: if `true` the SearchProvider can be searched by other users, if `false` it is only available to the `owner` | true (`false`) |
-| date_created | The time and date at which the SearchProvider was created | Automatic (`2022-02-28T17:55:04.811262Z`) |
-| date_updated | The time and date at which the SearchProvdier was updated  | Automatic (`2022-02-29T18:03:02.716456Z`) |
-| active | Boolean setting: if `true` the SearchProvider is used, if `false` it is ignored when federating | false (`true`) |
-| default | Boolean setting: if `true` the SearchProvider will be queried for searches that don't specify a `searchprovider_list`; if `false`, the SearchProvider must be specified in the `searchprovider_list` | false (`true`) |
-| connector | Name of the Connector to use for this source | "" (`"RequestsGet"`) | 
-| url | The URL or other string including file path needed by the Connector for this source; not validated | "" (`"https://www.googleapis.com/customsearch/v1"`) |
-| query_template | A string with optional variables in form `{variable}`; the Connector will bind the `query_template` with required data including the `url` and `query_string`, as well as any `query_mappings` or `credentials`, at runtime. Note this format is not yet used by the [Sqlite3 Connector](#sqlite3). | "" (`"{url}?q={query_string}"`) |
-| post_query_template | For the RequestsPost Connector: valid JSON and a marker for the query text which then sent as the POST body | "" (`"query": "{query_string}","limit": "100"`) |
-| http_request_headers | A string for passing custom HTTP Request Header values to the source along with query| "" (`"Accept": "application/vnd.github.text-match+json"`) |
-| query_processors | A list of processors to use to prepare the query for this source | "" (`"AdaptiveQueryProcessor"`) |
-| query_mappings | A string defining the mappings for the query. Depends on the Connector used. | "" (`"cx=your-google-search-engine-key"`) |
-| result_grouping_field | Used with the `DedupeByFieldResultProcessor` result processor, this string defines the specific source field to use for duplicate suppression. | "" (`"resource.conversationId"`) |
-| result_processors | A list of processors to use to normalize results from this source | "CosineRelevancyResultProcessor" (`"MappingResultProcessor","CosineRelevancyResultProcessor"`) |
-| response_mappings | List of response keys and JSONPaths to transform this providers response into a JSON result set | "" (`"FOUND=searchInformation.totalResults, RETRIEVED=queries.request[0].count, RESULTS=items"`) |
-| result_mappings | List of keys, optionally with values; see [SP Guide, Result Mappings](SP-Guide.html#result-mappings) for more information| "" (`"url=link,body=snippet,cacheId,NO_PAYLOAD"`) |
-| results_per_query | The number of results to request from this source for each query | 10 (`20`) |
-| credentials | The credentials to use for this source. Dependent on the source. | "" (`"key=your-google-json-api-key"`) |
-| eval_credentials | A credential variable set in the session and then be used in the SearchProvider. | "" (`"session["my-connector-token"]"`) |
-| tags | List of strings that organize SearchProviders into groups. | "" (`"News", "EnterpriseSearch"`) |
+| **id** | Unique identifier for the SearchProvider | Automatic (`1`) |
+| **name** | Human-readable name for the source | "" (`"Enterprise Search PSE"`) |
+| **owner** | Username of the Django user who owns the object | Logged-in user (`"admin"`) |
+| **shared** | Boolean: if `true`, the SearchProvider can be searched by other users; if `false`, it is available only to the `owner` | true (`false`) |
+| **date_created** | Timestamp when the SearchProvider was created | Automatic (`2022-02-28T17:55:04.811262Z`) |
+| **date_updated** | Timestamp when the SearchProvider was last updated | Automatic (`2022-02-29T18:03:02.716456Z`) |
+| **active** | Boolean: if `true`, the SearchProvider is used; if `false`, it is ignored in federated searches | false (`true`) |
+| **default** | Boolean: if `true`, the SearchProvider is queried when no `searchprovider_list` is specified; if `false`, it must be explicitly included in `searchprovider_list` | false (`true`) |
+| **connector** | Name of the Connector to use for this source | "" (`"RequestsGet"`) | 
+| **url** | URL or file path required by the Connector for this source (not validated) | "" (`"https://www.googleapis.com/customsearch/v1"`) |
+| **query_template** | String with optional `{variable}` placeholders for dynamic query construction. The Connector binds this template with `url`, `query_string`, `query_mappings`, and `credentials` at runtime. Not used by the [Sqlite3 Connector](#sqlite3). | "" (`"{url}?q={query_string}"`) |
+| **post_query_template** | For the RequestsPost Connector: valid JSON with a query marker used in the POST body | "" (`"query": "{query_string}","limit": "100"`) |
+| **http_request_headers** | Custom HTTP request headers for the source | "" (`"Accept": "application/vnd.github.text-match+json"`) |
+| **query_processors** | List of processors applied to the query before execution | "" (`"AdaptiveQueryProcessor"`) |
+| **query_mappings** | String defining query parameter mappings, dependent on the Connector | "" (`"cx=your-google-search-engine-key"`) |
+| **result_grouping_field** | Used with `DedupeByFieldResultProcessor` to define a field for duplicate suppression | "" (`"resource.conversationId"`) |
+| **result_processors** | List of processors normalizing results from this source | "CosineRelevancyResultProcessor" (`"MappingResultProcessor","CosineRelevancyResultProcessor"`) |
+| **response_mappings** | JSONPath mappings to transform the source's response into a standardized JSON result set | "" (`"FOUND=searchInformation.totalResults, RETRIEVED=queries.request[0].count, RESULTS=items"`) |
+| **result_mappings** | Key-value mappings for result fields. See [SP Guide, Result Mappings](./SP-Guide#result-mappings) for details. | "" (`"url=link,body=snippet,cacheId,NO_PAYLOAD"`) |
+| **results_per_query** | Number of results requested per query from this source | 10 (`20`) |
+| **credentials** | Credentials used for authentication (dependent on source) | "" (`"key=your-google-json-api-key"`) |
+| **eval_credentials** | Session-based credential variables for dynamic authentication | "" (`"session['my-connector-token']"`) |
+| **tags** | List of strings for categorizing SearchProviders | "" (`"News", "EnterpriseSearch"`) |
 
 {: .warning }
-The `CosineRelevancyResultProcessor` must be after the `MappingResultProcessor` in the default list of `result_processors`.
+The `CosineRelevancyResultProcessor` must follow `MappingResultProcessor` in the `result_processors` list.
 
 ## APIs
 
 | URL | Explanation |
 | ---------- | ---------- |
-| /swirl/searchproviders/      | List SearchProvider objects, newest first; create a new one using the POST button and the form at the bottom |
-| /swirl/searchproviders/id/ | Retrieve a specific SearchProvider object; destroy it using the DELETE button; edit it using the PUT button and the form at the bottom  |
+| **/swirl/searchproviders/** | List all SearchProvider objects (newest first); create a new one using the POST form |
+| **/swirl/searchproviders/id/** | Retrieve a specific SearchProvider object; delete it using the DELETE button; edit it using the PUT button |
 
 # Search Object
 
-Search objects are JSON dictionaries that define the searches some user or system desires to have run. They have unique IDs. They may be linked to by Result objects.
+A Search object is a JSON dictionary that defines a search operation. Each search has a unique ID and may be referenced by Result objects.
 
-The only required property is a `query_string` with the actual text to be searched. All other properties are optional when creating a Search object, and they will have default values shown below. As SWIRL executes a search, asynchronously, it will update properties of the Search object like `status` and `result_url` in real-time.
+The only required property is `query_string`, which contains the search text. All other properties are optional and have default values. SWIRL executes searches asynchronously, updating properties like `status` and `result_url` in real-time.
 
 ## Properties
 
 | Property | Description | Default Value (`Example Value`) | 
 | ---------- | ---------- | ---------- |
-| id | Unique identifier for the Search | Automatic (`search_id=1`) |
-| owner | The username of the Django user that owns the object | logged-in user (`admin`) |
-| date_created | The time and date at which the Search was created | Automatic (`2022-02-28T17:55:04.811262Z`) |
-| date_updated | The time and date at which the Search was updated  | Automatic (`2022-02-28T17:55:07.811262Z`) |
-| query_string | The query to be federated - the only required field! | "" (`knowledge management`) | 
-| query_string_processed | The Search query, modified by any pre-query processing | "" ("") |
-| sort | The type of search to be run | relevancy (`date`) | 
-| results_requested | The number of results, overall, the user has requested | 10 (`25`) | 
-| searchprovider_list | A list of the SearchProviders to search for this query; an empty list, the default, searches all sources | [] (`[ "Enterprise Search Engines - Google PSE" ]`) |
-| subscribe | If `True`, SWIRL will update this Search as per the Celery-Beats schedule | False (`True`) |
-| status | The execution status of this search (see below) | NEW_SEARCH (`FULL_RESULTS_READY`) |
-| pre_query_processors | A list of processors to apply to the query before federation starts | "" (`[ "SpellcheckQueryProcessor" ]`) |
-| post_result_processors | A list of result processors to apply to the results after federation is complete | "" (`[ "DedupeByFieldPostResultProcessor", "CosineRelevancyPostResultProcessor" ]`) |
-| result_url | Link to the initial Result object for the Search which uses the `RelevancyMixer` | Automatic (`"http://localhost:8000/swirl/results?search_id=17&result_mixer=RelevancyMixer"`) |
-| new_result_url | Link to the updated Result object for the search which uses the `RelevancyNewItemsMixer` | Automatic (`"http://localhost:8000/swirl/results?search_id=17&result_mixer=RelevancyNewItemsMixer"`) | 
-| messages | Messages from SearchProviders | "" (`Retrieved 1 of 1 results from: Document DB Search`) | 
-| result_mixer | The name of the Mixer object (see below) to use for ordering results | RoundRobinMixer (`Stack2Mixer`) | 
-| retention | The retention setting for this object; `0` = retain indefinitely; see [Search Expiration Service](Admin-Guide.html#search-expiration-service) for details | 0 (`2` for daily deletion) | 
-| tags | Parameter (string) that can be passed into a search and will be attached to the Search object that is stored in SWIRL | "" (`{ "query_string": "knowledge management", "tags": ["max_length:50"] }`) |
+| **id** | Unique identifier for the Search | Automatic (`search_id=1`) |
+| **owner** | Username of the Django user who owns the object | Logged-in user (`admin`) |
+| **date_created** | Timestamp when the Search was created | Automatic (`2022-02-28T17:55:04.811262Z`) |
+| **date_updated** | Timestamp when the Search was last updated | Automatic (`2022-02-28T17:55:07.811262Z`) |
+| **query_string** | The query text (required) | "" (`"knowledge management"`) | 
+| **query_string_processed** | Query text after pre-processing | "" ("") |
+| **sort** | Search result ordering method | relevancy (`date`) | 
+| **results_requested** | Total number of results requested | 10 (`25`) | 
+| **searchprovider_list** | List of SearchProviders to query; an empty list searches all sources | [] (`["Enterprise Search Engines - Google PSE"]`) |
+| **subscribe** | If `True`, SWIRL updates the Search per the Celery-Beats schedule | False (`True`) |
+| **status** | Execution status (see below) | NEW_SEARCH (`FULL_RESULTS_READY`) |
+| **pre_query_processors** | List of processors applied before federation | "" (`["SpellcheckQueryProcessor"]`) |
+| **post_result_processors** | List of processors applied after federation | "" (`["DedupeByFieldPostResultProcessor", "CosineRelevancyPostResultProcessor"]`) |
+| **result_url** | Link to the initial Result object using `RelevancyMixer` | Automatic (`"http://localhost:8000/swirl/results?search_id=17&result_mixer=RelevancyMixer"`) |
+| **new_result_url** | Link to updated Result object using `RelevancyNewItemsMixer` | Automatic (`"http://localhost:8000/swirl/results?search_id=17&result_mixer=RelevancyNewItemsMixer"`) | 
+| **messages** | SearchProvider messages | "" (`"Retrieved 1 of 1 results from: Document DB Search"`) | 
+| **result_mixer** | Mixer object used for result ordering | RoundRobinMixer (`Stack2Mixer`) | 
+| **retention** | Retention setting (`0` = indefinite). See [Search Expiration Service](./Admin-Guide#search-expiration-service). | 0 (`2` for daily deletion) | 
+| **tags** | Custom metadata attached to the Search object | "" (`{"query_string": "knowledge management", "tags": ["max_length:50"]}`) |
 
 {: .highlight }
-There are some special Search tags that control query processing.  For example, the `SW_RESULT_PROCESSOR_SKIP` Search tag can be used to skip a processor for the Search it is specified for:  `SW_RESULT_PROCESSOR_SKIP:DedupeByFieldResultProcessor`
+Some special Search tags control query processing. For example, `SW_RESULT_PROCESSOR_SKIP` skips a specified processor: `SW_RESULT_PROCESSOR_SKIP:DedupeByFieldResultProcessor`
 
 ## APIs
 
 | URL | Explanation |
 | ---------- | ---------- |
-| /swirl/search/      | List Search objects, newest first; create a new one using the form at the bottom and the POST button |
-| /swirl/search/id/ | Retrieve a specific Search object; destroy it using the DELETE button; edit it using the form at the bottom and the  PUT button |
-| /swirl/search/?q=some+query | Create a Search object with default values except for `query_string` which is set to the `q=` parameter value; return redirects to result set; also accepts `providers` parameter |
-| /swirl/search/?qs=some+query | Create Search object as above, but return results synchronously; also accepts `providers` and `result_mixer` parameters |
-| /swirl/search/?rerun=id | Re-run a Search, deleting any previously stored Results |
-| /swirl/search/?update=id | [Update a Search](Developer-Guide.html#update-a-search) with new results since the last time you ran it |
+| **/swirl/search/** | List all Search objects (newest first); create a new one using the POST form |
+| **/swirl/search/id/** | Retrieve a specific Search object; delete it using the DELETE button; edit it using the PUT button |
+| **/swirl/search/?q=some+query** | Create a Search object with default values except for `query_string`; redirects to result set; also accepts `providers` parameter |
+| **/swirl/search/?qs=some+query** | Create a Search object as above but return results synchronously; also accepts `providers` and `result_mixer` parameters |
+| **/swirl/search/?rerun=id** | Re-run a Search, deleting previously stored Results |
+| **/swirl/search/?update=id** | [Update a Search](./Developer-Guide#update-a-search) with new results since the last execution |
 
 # Result Objects
 
-A Result object is the normalized, re-ranked result for a single Search, from a single SearchProvider. They are created at the end of the federated search process in response to the creation of a Search object.  They are the only SWIRL object that has a foreign key (`search.id`).
+A Result object represents the normalized, re-ranked results for a single Search from a single SearchProvider. These objects are created at the end of the federated search process when a Search object is executed. They are the only SWIRL objects that have a foreign key (`search.id`).
 
-Only Connectors should create Result objects. 
+Only Connectors should create Result objects.
 
-Developers are free to operate on individual Results as needed for their application. 
+Developers can manipulate individual Results as needed for their applications.
 
-However, the [goal of SWIRL](index.html) (and federated search in general) is to provide unified results from all sources. SWIRL uses Mixers to make this quick and easy.
+However, the [goal of SWIRL](./index) (and federated search in general) is to provide unified results from all sources. SWIRL uses Mixers to streamline this process.
 
 ## Properties
 
-| Property | Description | `Example Value` | 
+| Property | Description | Example Value | 
 | ---------- | ---------- | ---------- | 
-| id | Unique identifier for the Result | `1` |
-| owner | The username of the Django user that owns the object | `admin` |
-| date_created | The time and date at which the Result was created. | `2022-02-28T17:55:04.811262Z` |
-| date_updated | The time and date at which the Result was updated  | `2022-02-28T19:55:02.752962Z` |
-| search_id | The `id` of the associated Search; there may be many Result objects with this `id` | `18` | 
-| searchprovider | The name value of the SearchProvider that provided this result list | `"OneDrive Files - Microsoft 365"` |
-| query_to_provider | The exact query sent to the SearchProvider | `https://www.googleapis.com/customsearch/v1?cx=google-search-engine-id&key=google-json-api-key&q=strategy` |
-| query_processors | The names of the Processors, specified in the SearchProvider, that processed the query | `"AdaptiveQueryProcessor"` |
-| result_processors | The names of the Processors, specified in the SearchProvider, that normalized the results | `"MappingResultProcessor","CosineRelevancyResultProcessor"` |
-| result_processor_json_feedback | A list of processors that responded | (*See a full result object*) |
-| messages | A list of any messages (strings) from the SearchProvider | `Retrieved 10 of 249 results from: OneDrive Files - Microsoft 365` |
-| status | The readiness of the result set | `READY` |
-| retrieved | The number of results SWIRL retrieved from this SearchProvider for this query | `10` |
-| found | The total number of results reported by the SearchProvider for this query | `2309` |
-| time | The time it took for the SearchProvider to create this result set, in seconds | `1.9` |
-| json_results | The normalized JSON results from this SearchProvider | (*See below*) | 
+| **id** | Unique identifier for the Result | `1` |
+| **owner** | Username of the Django user who owns the object | `admin` |
+| **date_created** | Timestamp when the Result was created | `2022-02-28T17:55:04.811262Z` |
+| **date_updated** | Timestamp when the Result was last updated | `2022-02-28T19:55:02.752962Z` |
+| **search_id** | ID of the associated Search; multiple Result objects may share this ID | `18` | 
+| **searchprovider** | Name of the SearchProvider that produced this result set | `"OneDrive Files - Microsoft 365"` |
+| **query_to_provider** | Exact query sent to the SearchProvider | `https://www.googleapis.com/customsearch/v1?cx=google-search-engine-id&key=google-json-api-key&q=strategy` |
+| **query_processors** | List of processors applied to the query (as specified in the SearchProvider) | `"AdaptiveQueryProcessor"` |
+| **result_processors** | List of processors applied to the results (as specified in the SearchProvider) | `"MappingResultProcessor","CosineRelevancyResultProcessor"` |
+| **result_processor_json_feedback** | List of processors that responded | (*See full result object*) |
+| **messages** | Messages from the SearchProvider | `Retrieved 10 of 249 results from: OneDrive Files - Microsoft 365` |
+| **status** | Readiness status of the result set | `READY` |
+| **retrieved** | Number of results SWIRL retrieved from this SearchProvider | `10` |
+| **found** | Total number of results reported by the SearchProvider | `2309` |
+| **time** | Time taken by the SearchProvider to generate this result set (in seconds) | `1.9` |
+| **json_results** | Normalized JSON results from this SearchProvider | (*See below*) | 
 
 ## `json_results`
 
 | Field | Description | Example |
 | ---------- | ---------- | ---------- |
-| swirl_rank | SWIRL's relevancy ranking for this result | `1` |
-| swirl_score | A metric showing the relevancy of the result to the query. It is not meant to be meaningful as a number otherwise. It is only shown if [&explain=True](Developer-Guide.html#understand-the-explain-structure) is set. | `1890.6471312936828` |
-| searchprovider | The human-readable name for the SearchProvider | `"OneDrive Files - Microsoft 365"` |
-| searchprovider_rank | The SearchProvider's ranking of this result | `3`
-| title | The source-reported title for this result, with search term matches highlighted | `German car industry to invest in <em>electric</em> <em>vehicles</em> ...` |
-| url | The URL for this result; may be reported by the source and/or calculated by SWIRL | `http://pwc.com/etc` |
-| body | The source-reported result snippet(s), with search term matches highlighted | `<em>Technology</em> strategy encompasses a full set of Consulting capabilities ...` |
-| date_published | The source-reported time and date of publication of this result, when available (`unknown` if not). This is the field used by the [DateMixer](#mixers-1) | `unknown` |
-| date_published_display | Optional SearchProvider field for mapping a different publish date value for display purposes. | `... date_published=foo.bar.date1,date_published_display=foo.bar.date2 ...` |
-| date_retrieved | The time and date at which SWIRL received this result from the source | `2022-02-20 03:45:03.207909` |
-| author | The source-reported author of this result, when available | `"CNN staff"` |
-| title_hit_highlights | A list of highlights found in title |  |
-| body_hit_highlights | A list of highlights found in the body |  |
-| payload | A dictionary of all remaining keys in the SearchProvider's response | `{}` |
-| explain | A dictionary containing (a) the matching word stems, (b) similarity scores for each match in each field, (c) length adjustments and other metadata, (d) `hits` information. It is only shown if [&explain=True](Developer-Guide.html#understand-the-explain-structure) is set. | `{}` |
+| **swirl_rank** | SWIRL's relevancy ranking for this result | `1` |
+| **swirl_score** | Relevancy metric for this result. It is only displayed if [&explain=True](./Developer-Guide#understand-the-explain-structure) is set. | `1890.6471312936828` |
+| **searchprovider** | Human-readable name of the SearchProvider | `"OneDrive Files - Microsoft 365"` |
+| **searchprovider_rank** | SearchProvider's ranking for this result | `3` |
+| **title** | Source-reported title with highlighted search term matches | `German car industry to invest in <em>electric</em> <em>vehicles</em> ...` |
+| **url** | URL for this result (reported by source and/or generated by SWIRL) | `http://pwc.com/etc` |
+| **body** | Source-reported snippet with highlighted search term matches | `<em>Technology</em> strategy encompasses a full set of Consulting capabilities ...` |
+| **date_published** | Source-reported publication date (if available, otherwise `unknown`). Used by the [DateMixer](#mixers-1). | `unknown` |
+| **date_published_display** | Alternative publish date for display purposes, if mapped via SearchProvider. | `... date_published=foo.bar.date1,date_published_display=foo.bar.date2 ...` |
+| **date_retrieved** | Timestamp when SWIRL retrieved this result | `2022-02-20 03:45:03.207909` |
+| **author** | Source-reported author (if available) | `"CNN staff"` |
+| **title_hit_highlights** | List of matched highlights in title |  |
+| **body_hit_highlights** | List of matched highlights in body |  |
+| **payload** | Dictionary of additional fields in the SearchProvider's response | `{}` |
+| **explain** | Dictionary containing word stems, similarity scores, length adjustments, and `hits` metadata. Displayed only if [&explain=True](./Developer-Guide#understand-the-explain-structure) is set. | `{}` |
 
 {: .highlight }
-Note that PAYLOAD can be totally different from SearchProvider to SearchProvider. It is up to the caller to access the PAYLOAD and extract whatever is needed, generally by making a new Processor (see below) or adding `result_mappings`.
+The `PAYLOAD` structure varies by SearchProvider. The caller must extract needed fields, typically by creating a new Processor or adding `result_mappings`.
 
 ## APIs
 
 | URL | Explanation |
 | ---------- | ---------- |
-| /swirl/results/      | List Result objects, newest first; create a new one using the POST button and form at bottom |
-| /swirl/results/id/ | Retrieve a specific Result object; destroy it using the DELETE button; edit it using the PUT button and form at bottom  |
-| /swirl/results/?search_id=search_id | Retrieve unified Results for a specific Search, ordered by the Mixer specified; also accepts `result_mixer` and `page` parameters|
+| **/swirl/results/** | List all Result objects (newest first); create a new one using the POST form |
+| **/swirl/results/id/** | Retrieve a specific Result object; delete it using the DELETE button; edit it using the PUT button |
+| **/swirl/results/?search_id=search_id** | Retrieve unified Results for a specific Search, ordered by the specified Mixer; also accepts `result_mixer` and `page` parameters |
 
 # Connectors
 
@@ -238,32 +237,40 @@ Both [`connector.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/co
 {: .highlight }
 Note that the [`requests.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requests.py) connector automatically converts XML responses to JSON for mapping in SearchProvider configurations.
 
+# Connectors
+
 The following table describes the included source Connectors:
 
 | Connector | Description | Inputs |
 | ---------- | ---------- | ---------- |
-| BigQuery | Searches Google BigQuery | `query_template`, `credentials` (project JSON token file) |
-| GenAI | Asks LLM questions for direct answer | `credentials` |
-| Elastic | Searches Elasticsearch | `url` or `cloud_id`, `query_template`, `index_name`, `credentials` |
-| Microsoft Graph | Uses the Microsoft Graph API to search M365 content | `credentials` |
-| Mongodb | Searches a Mongodb Atlas search index | `mongo_uri`, `database_name`, `collection_name`, `credentials` |
-| OpenSearch | Searches OpenSearch | `url`, `query_template`, `index_name`, `credentials` |
-| Oracle | Tested against 23c Free (and presumably supporting earlier versions) | `credentials` |
-| PostgreSQL | Searches PostgreSQL database | `url` (connection parameters), `query_template`, `credentials` |
-| RequestsGet | Searches any web endpoint using HTTP/GET with JSON response, including Google PSE, SOLR, Northern Light and more (see below) | `url`, `credentials` |
-| RequestsPost | Searches any web endpoint using HTTP/POST with JSON response, including M365 | `url`, `credentials` |
-| Snowflake | Searches Snowflake datasets | `credentials`, `database`, `warehouse` |
-| Sqlite3 | Searches SQLite3 databases | `url` (database file path), `query_template` |
+| **BigQuery** | Searches Google BigQuery | `query_template`, `credentials` (project JSON token file) |
+| **GenAI** | Asks LLM questions for direct answers | `credentials` |
+| **Elastic** | Searches Elasticsearch | `url` or `cloud_id`, `query_template`, `index_name`, `credentials` |
+| **MicrosoftOutlookMessages** | Uses the Microsoft Graph API to search M365 content | None |
+| **MicrosoftOutlookCalendar** | Uses the Microsoft Graph API to search M365 content | None |
+| **MicrosoftOneDrive** | Uses the Microsoft Graph API to search M365 content | None |
+| **MicrosoftSharePointSites** | Uses the Microsoft Graph API to search M365 content | None |
+| **MicrosoftTeams** | Uses the Microsoft Graph API to search M365 content | None |
+| **Mongodb** | Searches a MongoDB Atlas search index | `mongo_uri`, `database_name`, `collection_name`, `credentials` |
+| **OpenSearch** | Searches OpenSearch | `url`, `query_template`, `index_name`, `credentials` |
+| **Oracle** | Tested against 23c Free (supports earlier versions) | `credentials` |
+| **QdrantDB** | Searches Qdrant | `url` (connection parameters), `query_template`, `credentials` |
+| **PineconeDB** | Searches Pinecone database | `url` (connection parameters), `query_template`, `credentials` |
+| **PostgreSQL** | Searches PostgreSQL database | `url` (connection parameters), `query_template`, `credentials` |
+| **RequestsGet** | Searches any web endpoint using HTTP/GET with JSON response, including Google PSE, SOLR, and Northern Light | `url`, `credentials` |
+| **RequestsPost** | Searches any web endpoint using HTTP/POST with JSON response, including M365 | `url`, `credentials` |
+| **Snowflake** | Searches Snowflake datasets | `credentials`, `database`, `warehouse` |
+| **Sqlite3** | Searches SQLite3 databases | `url` (database file path), `query_template` |
 
-Connectors are specified in, and configured by, SearchProvider objects. 
+Connectors are specified in, and configured by, SearchProvider objects.
 
 ## BigQuery
 
-The [BigQuery connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/bigquery.py) uses the Google Cloud Python package. 
+The [BigQuery Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/bigquery.py) uses the Google Cloud Python package.
 
-The included [BigQuery SearchProvider](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_bigquery.json) is intended for use with the [Funding Data Set](#funding-data-set) but can be adapted to most any configuration.
+The included [BigQuery SearchProvider](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_bigquery.json) is configured for the [Funding Data Set](#funding-data-set) but can be adapted to other datasets.
 
-``` json
+```json
 {
     "name": "Company Funding Records - BigQuery",
     "active": false,
@@ -275,7 +282,7 @@ The included [BigQuery SearchProvider](https://github.com/swirlai/swirl-search/b
     ],
     "query_mappings": "fields=*,sort_by_date=fundedDate,table=funding.funding,field1=company,field2=city",
     "result_processors": [
-        "MappingResultProcessor",	
+        "MappingResultProcessor",
         "CosineRelevancyResultProcessor"
     ],
     "result_mappings": "title='{company}',body='{company} raised ${raisedamt} series {round} on {fundeddate}. The company is located in {city} {state} and has {numemps} employees.',url=id,date_published=fundeddate,NO_PAYLOAD",
@@ -292,14 +299,13 @@ More information: [BigQuery Documentation](https://cloud.google.com/bigquery/doc
 
 ## GenAI
 
+The [GenAI Searchor](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/gen_ai.py) uses the OpenAI chat completion API. It returns at most one result.
 
-The [GenAI Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/gen_ai.py) makes use of the OpenAI chat completion API. It will return at most one result.
+LLM responses typically rank highly as they are generated dynamically, reflect query terminology, and are titled accordingly.
 
-LLM responses usually rank highly since they are written on-the-fly in response to the user's query, reflect the terminology associated with that query, and are titled for the query.
+The included [SearchProvider](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/gen_ai.json) is pre-configured with a "Tell me about: ..." prompt. The [`GenAIQueryProcessor`](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/gen_ai_query.py) offers additional query options.
 
-The included [SearchProvider](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/gen_ai.json) is pre-configured with a "Tell me about: ..." prompt.  The [`GenAIQueryProcessor`](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/gen_ai_query.py) also contains other query options for using LLMs that follow the OpenAI standard.
-
-``` json
+```json
 {
     "name": "GenAI - OpenAI",
     "active": false,
@@ -326,61 +332,63 @@ The included [SearchProvider](https://github.com/swirlai/swirl-search/blob/main/
 }
 ```
 
-The `Question` and `GenAI` SearchProvider Tags make it easy to target the LLM by starting a query with either of them. For example:
+The `Question` and `GenAI` SearchProvider Tags enable targeted queries. Example:
 
-``` shell
+```shell
 Question: Tell me about knowledge management software?
 ```
 
-### GenAI SearchProvider Tags
+**GenAI SearchProvider Tags**
 
-The following three Tags are available for use in the GenAI SearchProvider to help shape the Prompt or Default Role passed to GenAI along with the user's query.  To utilize these options:
-1. Add a valid OpenAI API Key to SWIRL's `.env` file (found in the `swirl-home` directory), and then restart the SWIRL for it to take effect.
-2. Add the `GenAIQueryProcessor` to the SearchProvider query_processors list:
-``` json
+The following Tags adjust the Prompt or Default Role passed to GenAI. 
+
+1. Add a valid OpenAI API Key to SWIRL’s `.env` file (in `swirl-home`).
+2. Restart SWIRL.
+3. Add `GenAIQueryProcessor` to the SearchProvider's `query_processors` list:
+
+```json
     "query_processors": [
         "AdaptiveQueryProcessor",
         "GenAIQueryProcessor"
-    ],
+    ]
 ```
 
-#### Available Tags
+*Available Tags*
 
-* `CHAT_QUERY_REWRITE_PROMPT`: Override the default Prompt used to rewrite the query.
-``` json
-"CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this : {query_string}"
+* `CHAT_QUERY_REWRITE_PROMPT`: Customizes the prompt used to refine the query.
+```json
+"CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this: {query_string}"
 ```
 
-* `CHAT_QUERY_REWRITE_GUIDE`:  Override the `system` role passed to the LLM.
-``` json
+* `CHAT_QUERY_REWRITE_GUIDE`: Overrides the `system` role.
+```json
 "CHAT_QUERY_REWRITE_GUIDE:You are a helpful assistant that responds like a pirate captain"
 ```
 
-* `CHAT_QUERY_DO_FILTER`: Turn on or off the default internal filter of LLM responses. 
-``` json
+* `CHAT_QUERY_DO_FILTER`: Enables/disables internal filtering of LLM responses.
+```json
 "CHAT_QUERY_DO_FILTER:false"
 ```
 
-### GenAI `query_mapping`
+**GenAI `query_mapping`**
 
-The following `query_mapping` is also available for use in the GenAI SearchProvider to help shape the Default Role passed to GenAI along with the user's query. To utilize this `query_mapping`, add a valid OpenAI API Key to SWIRL's `.env` file (found in the `swirl-home` directory) and then restart the SWIRL for it to take effect.
+This `query_mapping` adjusts the Default Role passed to GenAI:
 
-* `CHAT_QUERY_REWRITE_GUIDE`:  Override the `system` role passed to GenAI.
-``` shell
+```shell
 "query_mappings": "PROMPT='Tell me about: {query_to_provider}',CHAT_QUERY_REWRITE_GUIDE='You are a helpful assistant that responds like a pirate captain'",
 ```
 
-### Other GAI/LLMs
+**Other GAI/LLMs**
 
-The Community Edition of SWIRL supports OpenAI and Azure/OpenAI for LLMs. The [Enterprise Edition supports additional platforns](https://swirlaiconnect.com/connectors). Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for more information. 
+The Community Edition of SWIRL supports OpenAI and Azure/OpenAI for LLMs. The [Enterprise Edition supports additional platforms](https://swirlaiconnect.com/connectors). Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for more information.
 
-## Elastic & OpenSearch
+# Elastic & OpenSearch
 
-The [Elastic](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/elastic.py) and [OpenSearch](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/opensearch.py) Connectors make use of each engine's Python client.
+The [Elastic](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/elastic.py) and [OpenSearch](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/opensearch.py) Connectors use each engine's Python client.
 
-Here is an example of a SearchProvider to connect to ElasticCloud using the `cloud_id`:
+**Example: Elastic Cloud SearchProvider**
 
-``` json
+```json
 {
     "name": "ENRON Email - Elastic Cloud",
     "connector": "Elastic",
@@ -404,16 +412,16 @@ Here is an example of a SearchProvider to connect to ElasticCloud using the `clo
 }
 ```
 
-This is the default OpenSearch SearchProvider that connects to a local instance of the engine:
+**Example: OpenSearch SearchProvider**
 
-``` json
+```json
 {
     "name": "ENRON Email - OpenSearch",
     "active": false,
     "default": false,
     "connector": "OpenSearch",
     "url": "https://localhost:9200/",
-    "query_template": "{\"query\":{\"query_string\":{\"query\":\"{query_string}\",\"default_field\":\"{default_field}\",\"default_operator\":\"and\"}}}",
+    "query_template": "{"query":{"query_string":{"query":"{query_string}","default_field":"{default_field}","default_operator":"and"}}}",
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
@@ -432,60 +440,64 @@ This is the default OpenSearch SearchProvider that connects to a local instance 
 }
 ```
 
-Note the use of JSONPaths in the `result_mappings`. This is essential for Elastic and OpenSearch since they embed results in a `_source` field unless otherwise configured. 
+JSONPaths in `result_mappings` are essential for Elastic and OpenSearch, as they embed results in a `_source` field unless configured otherwise.
 
-For more details consult the [SearchProvider Guide, Result Mappings](SP-Guide.html#result-mappings) section.
+See the [SearchProvider Guide, Result Mappings](./SP-Guide#result-mappings) for more details.
 
-Use the [Payload Field](SP-Guide.html#payload-field) to store extra content that doesn't map to an existing item.
+Use the [Payload Field](./SP-Guide#payload-field) to store additional content.
 
-## Microsoft Graph
+# Microsoft Graph
 
-The [Microsoft Graph connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/microsoft_graph.py) uses the Microsoft Graph API to query M365 content.  The user must authenticate via OAuth2 in order to enable searching of their M365 content.
+The [Microsoft Graph Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/microsoft_graph.py) queries M365 content using OAuth2 authentication.
 
-There are 5 pre-configured SearchProviders for querying the authenticated user's M365 content:
+There are five pre-configured SearchProviders:
 * Outlook Messages
 * Calendar Events
 * OneDrive Files
 * SharePoint Sites
 * Teams Chat
 
-``` json
+**Example: Outlook Messages SearchProvider**
+
+```json
 {
-        "name": "Outlook Messages - Microsoft 365",
-        "active": false,
-        "default": true,
-        "connector": "M365OutlookMessages",
-        "url": "",
-        "query_template": "{url}",
-        "query_processors": [
-            "AdaptiveQueryProcessor"
-        ],
-        "query_mappings": "NOT=true,NOT_CHAR=-",
-        "result_grouping_field": "conversationId",
-        "result_processors": [
-            "MappingResultProcessor",
-            "DedupeByFieldResultProcessor",
-            "CosineRelevancyResultProcessor"
-        ],
-        "response_mappings": "",
-        "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
-        "results_per_query": 10,
-        "credentials": "",
-        "eval_credentials": "",
-        "tags": [
-            "Microsoft",
-            "Email"
-        ]
-    }
+    "name": "Outlook Messages - Microsoft 365",
+    "active": false,
+    "default": true,
+    "connector": "M365OutlookMessages",
+    "url": "",
+    "query_template": "{url}",
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "NOT=true,NOT_CHAR=-",
+    "result_grouping_field": "conversationId",
+    "result_processors": [
+        "MappingResultProcessor",
+        "DedupeByFieldResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "title=resource.subject,body=summary,date_published=resource.createdDateTime,author=resource.sender.emailAddress.name,url=resource.webLink,resource.isDraft,resource.importance,resource.hasAttachments,resource.ccRecipients[*].emailAddress[*].name,resource.replyTo[*].emailAddress[*].name,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "",
+    "eval_credentials": "",
+    "tags": [
+        "Microsoft",
+        "Email"
+    ]
+}
 ```
 
-## Mongodb
+# MongoDB
 
-The [Mongodb connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/mongodb.py) uses the `pymongo` package to connect to an [Atlas Search](https://www.mongodb.com/docs/atlas/atlas-search/atlas-search-overview/) index.
+The [MongoDB Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/mongodb.py) uses `pymongo` to connect to an [Atlas Search](https://www.mongodb.com/docs/atlas/atlas-search/atlas-search-overview/) index.
 
-The included [IMDB Movie Samples](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/movies_mongodb.json) SearchProvider is configured to search the `sample_mflix` collection, `movies` sample table.
+The included [IMDB Movie Samples](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/movies_mongodb.json) SearchProvider searches the `sample_mflix.movies` collection.
 
-``` json
+**Example: MongoDB SearchProvider**
+
+```json
 {
     "name": "IMDB Movie Samples - MongoDB",
     "active": false,
@@ -494,19 +506,14 @@ The included [IMDB Movie Samples](https://github.com/swirlai/swirl-search/blob/m
     "connector": "MongoDB",
     "url": "sample_mflix:movies",
     "query_template": "{'$text': {'$search': '{query_string}'}}",
-    "post_query_template": {},
-    "http_request_headers": {},
-    "page_fetch_config_json": {},
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
     "query_mappings": "DATE_SORT=year,NOT_CHAR=-",
-    "result_grouping_field": "",
     "result_processors": [
         "MappingResultProcessor",
         "CosineRelevancyResultProcessor"
     ],
-    "response_mappings": "",
     "result_mappings": "title=name,body=fullplot,date_published=released,date_published_display=year,author=directors[*],url=poster,lastupdated,genres[*],rated,runtime,languages[*],cast[*],writers[*],awards.text,imdb.rating,tomatoes.viewer.rating,tomatoes.critic.rating,NO_PAYLOAD",
     "results_per_query": 10,
     "credentials": "mongodb+srv://<mongodb-username>:<mongodb-password>@<mongdb-cluster>.mongodb.net/?retryWrites=true&w=majority",
@@ -519,76 +526,82 @@ The included [IMDB Movie Samples](https://github.com/swirlai/swirl-search/blob/m
 }
 ```
 
-The MongoDB SearchProvider is configured with `MATCH_ALL` by default, which requires that all search terms be present in a result (similar to a Boolean `AND` operator). This can be changed to `MATCH_ANY`, which would only require one search term be present in a result (similar to a Boolean `OR` operator). There are two way to change the default behavior.
+By default, MongoDB SearchProvider uses `MATCH_ALL`, requiring all terms in a result. To switch to `MATCH_ANY` (Boolean `OR` behavior):
 
-* Update the `query_mappings` of the SP:
+**Option 1: Update `query_mappings`**
+
+```json
+"query_mappings": "DATE_SORT=year,NOT_CHAR=-,MATCH_ANY"
 ```
-"query_mappings": "DATE_SORT=year,NOT_CHAR=-,MATCH_ANY",
-```
-* Add a Search Tag (not a SearchProvider Tag).
 
-## Oracle
+**Option 2: Add a Search Tag**
 
-The [Oracle connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/oracle.py) use the `oracledb` package to connect to an Oracle instance.
+Instead of modifying the SearchProvider, apply a Search Tag.
 
-The included [Free Public DB](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/oracle.json) SearchProvider has tested against 23c Free and presumably supports earlier versions. 
+# Oracle
 
-## PostgreSQL
+The [Oracle Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/oracle.py) uses `oracledb` to connect to an Oracle instance.
 
-The [PostgreSQL connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/postgresql.py) uses the [psycopg2](https://pypi.org/project/psycopg2/) driver. 
+The included [Free Public DB](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/oracle.json) SearchProvider has been tested with 23c Free and likely supports earlier versions.
 
-### Installing the PostgreSQL Driver
+# PostgreSQL
+
+The [PostgreSQL Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/postgresql.py) uses the [psycopg2](https://pypi.org/project/psycopg2/) driver.
+
+## Installing the PostgreSQL Driver
 
 To use PostgreSQL with SWIRL:
 
-* Install [PostgreSQL](https://www.postgresql.org/) 
-* Modify the system PATH so that `pg_config` from the PostgreSQL distribution runs from the command line
-* Install `psycopg2` using `pip`:
+1. Install [PostgreSQL](https://www.postgresql.org/).
+2. Modify the system PATH to ensure `pg_config` from the PostgreSQL distribution is accessible from the command line.
+3. Install `psycopg2` using `pip`:
 
-``` shell
+```shell
 pip install psycopg2
 ```
 
-* Uncomment the PostgreSQL Connector in the following modules:
-  * [swirl.connectors.__init__.py](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/__init__.py)
-```
-# uncomment this to enable PostgreSQL
+4. Uncomment the PostgreSQL Connector in the following modules:
+
+**`swirl.connectors.__init__.py`**
+```python
+# Uncomment this to enable PostgreSQL
 # from swirl.connectors.postgresql import PostgreSQL
 ```
-  * [swirl.models.py](https://github.com/swirlai/swirl-search/blob/main/swirl/models.py)
-``` python
-    CONNECTOR_CHOICES = [
-        ('RequestsGet', 'HTTP/GET returning JSON'),
-        ('Elastic', 'Elasticsearch Query String'),
-        # Uncomment the line below to enable PostgreSQL
-        # ('PostgreSQL', 'PostgreSQL'),
-        ('BigQuery', 'Google BigQuery'),
-        ('Sqlite3', 'Sqlite3')
-    ]
+
+**`swirl.models.py`**
+```python
+CONNECTOR_CHOICES = [
+    ('RequestsGet', 'HTTP/GET returning JSON'),
+    ('Elastic', 'Elasticsearch Query String'),
+    # Uncomment the line below to enable PostgreSQL
+    # ('PostgreSQL', 'PostgreSQL'),
+    ('BigQuery', 'Google BigQuery'),
+    ('Sqlite3', 'Sqlite3')
+]
 ```
 
-* Run SWIRL setup:
+5. Run SWIRL setup:
 
-``` shell
+```shell
 python swirl.py setup
 ```
 
-* Restart SWIRL:
+6. Restart SWIRL:
 
-``` shell
+```shell
 python swirl.py restart
 ```
 
-* Add a PostgreSQL SearchProvider like the one provided with the [Funding Dataset](#funding-data-set)
+7. Add a PostgreSQL SearchProvider, such as the one configured for the [Funding Dataset](#funding-data-set).
 
 {: .highlight }
-Suggestions on how to improve this process are [most welcome](#support)!
+Feedback and suggestions on improving this setup are [welcome](#support)!
 
-Here is an example of a basic SearchProvider using PostgreSQL:
+## Example: PostgreSQL SearchProvider
 
-``` json
+```json
 {
-    "name": "Company Funding Records - PostgreSQL)",
+    "name": "Company Funding Records - PostgreSQL",
     "default": false,
     "connector": "PostgreSQL",
     "url": "host:port:database:username:password",
@@ -610,13 +623,17 @@ Here is an example of a basic SearchProvider using PostgreSQL:
 }
 ```
 
-Note: Putting a fixed SQL query in the `query_template` is perfectly acceptable. Anything that doesn't change in the URL can be stored here.
+**Notes**
+- A fixed SQL query in `query_template` is acceptable.
+- Any static elements in the URL can be stored within `query_template`.
 
-## RequestsGet
+# RequestsGet
 
-The [RequestsGet connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requestsget.py) uses HTTP/GET to fetch URLs. It supports optional authentication. Here is a generic SearchProvider based on RequestsGet:
+The [RequestsGet Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requestsget.py) uses HTTP/GET to fetch URLs. It supports optional authentication.
 
-``` json
+## Example: Generic HTTP GET SearchProvider
+
+```json
 {
     "name": "Sample HTTP GET Endpoint",
     "connector": "RequestsGet",
@@ -639,160 +656,44 @@ The [RequestsGet connector](https://github.com/swirlai/swirl-search/blob/main/sw
 }
 ```
 
-Here is the same connector, configured for three different Google Programmable Search Engines:
+## Example: Google Programmable Search Engine (PSE)
 
-``` json
-[
-    {
-        "name": "Enterprise Search Engines - Google PSE",
-        "active": true,
-        "default": true,
-        "connector": "RequestsGet",
-        "url": "https://www.googleapis.com/customsearch/v1",
-        "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "post_query_template": "{}",
-        "http_request_headers": {},
-        "page_fetch_config_json": {
-            "cache": "false",
-            "headers": {
-                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
-            },
-            "www.businesswire.com": {
-                "timeout": 60
-            },
-            "www.linkedin.com": {
-                "timeout": 5
-            },
-            "rs.linkedin.com": {
-                "timeout": 5
-            },
-            "uk.linkedin.com": {
-                "timeout": 5
-            },
-            "au.linkedin.com": {
-                "timeout": 5
-            },
-            "timeout": 30
+```json
+{
+    "name": "Enterprise Search Engines - Google PSE",
+    "active": true,
+    "default": true,
+    "connector": "RequestsGet",
+    "url": "https://www.googleapis.com/customsearch/v1",
+    "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
+    "page_fetch_config_json": {
+        "cache": "false",
+        "headers": {
+            "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
         },
-        "query_processors": [
-            "AdaptiveQueryProcessor"
-        ],
-        "query_mappings": "cx=0c38029ddd002c006,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
-        "result_processors": [
-            "MappingResultProcessor",
-            "DateFinderResultProcessor",
-            "CosineRelevancyResultProcessor"
-        ],
-        "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
-        "result_mappings": "url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
-        "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
-        "tags": [
-            "News",
-            "EnterpriseSearch"
-        ]
+        "timeout": 30
     },
-    {
-        "name": "Strategy Consulting - Google PSE",
-        "active": true,
-        "default": true,
-        "connector": "RequestsGet",
-        "url": "https://www.googleapis.com/customsearch/v1",
-        "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "post_query_template": "{}",
-        "http_request_headers": {},
-        "page_fetch_config_json": {
-            "cache": "false",
-            "headers": {
-                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
-            },
-            "www.businesswire.com": {
-                "timeout": 60
-            },
-            "www.linkedin.com": {
-                "timeout": 5
-            },
-            "rs.linkedin.com": {
-                "timeout": 5
-            },
-            "uk.linkedin.com": {
-                "timeout": 5
-            },
-            "au.linkedin.com": {
-                "timeout": 5
-            },
-            "timeout": 30
-        },
-        "query_processors": [
-            "AdaptiveQueryProcessor"
-        ],
-        "query_mappings": "cx=7d473806dcdde5bc6,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
-        "result_processors": [
-            "MappingResultProcessor",
-            "DateFinderResultProcessor",
-            "CosineRelevancyResultProcessor"
-        ],
-        "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
-        "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['authors-name'],cacheId,pagemap.metatags[*].['articletype'],pagemap.metatags[*].['practice-name'],pagemap.metatags[*].['searchresults-tags'],pagemap.metatags[*].['site_name'],pagemap.metatags[*].['twitter:description'],NO_PAYLOAD",
-        "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
-        "tags": [
-            "News",
-            "StrategyConsulting"
-        ]
-    },
-    {
-        "name": "Mergers & Acquisitions - Google PSE",
-        "active": true,
-        "default": true,
-        "connector": "RequestsGet",
-        "url": "https://www.googleapis.com/customsearch/v1",
-        "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
-        "post_query_template": "{}",
-        "http_request_headers": {},
-        "page_fetch_config_json": {
-            "cache": "false",
-            "headers": {
-                "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
-            },
-            "www.businesswire.com": {
-                "timeout": 60
-            },
-            "www.linkedin.com": {
-                "timeout": 5
-            },
-            "rs.linkedin.com": {
-                "timeout": 5
-            },
-            "uk.linkedin.com": {
-                "timeout": 5
-            },
-            "au.linkedin.com": {
-                "timeout": 5
-            },
-            "timeout": 30
-        },
-        "query_processors": [
-            "AdaptiveQueryProcessor"
-        ],
-        "query_mappings": "cx=b384c4e79a5394479,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
-        "result_processors": [
-            "MappingResultProcessor",
-            "DateFinderResultProcessor",
-            "CosineRelevancyResultProcessor"
-        ],
-        "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
-        "result_mappings": "url=link,body=snippet,author=pagemap.metatags[*].['article:publisher'],cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['article:tag'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
-        "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
-        "tags": [
-            "News",
-            "MergersAcquisitions"
-        ]
-    }
-]
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "cx=<your-Google-PSE-id-here>,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
+    "result_processors": [
+        "MappingResultProcessor",
+        "DateFinderResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
+    "result_mappings": "url=link,body=snippet,author=displayLink,cacheId,NO_PAYLOAD",
+    "credentials": "key=<your-Google-API-key-here>",
+    "tags": [
+        "Web"
+    ]
+}
 ```
 
-And here it is again, configured for SOLR with the [tech products example collection](https://solr.apache.org/guide/solr/latest/getting-started/tutorial-techproducts.html) installed:
+## Example: SOLR Tech Products Collection
 
-``` json
+```json
 {
     "name": "techproducts - Apache Solr",
     "active": false,
@@ -810,26 +711,26 @@ And here it is again, configured for SOLR with the [tech products example collec
     ],
     "response_mappings": "FOUND=numFound,RESULTS=response.docs",
     "result_mappings": "title=name,body=features,response",
-    "credentials": "",
     "tags": [
         "TechProducts",
-        "Solr",
-        "Internal"
+        "Solr"
     ]
 }
 ```
 
-To adapt RequestsGet for your JSON response, just replace the JSONPaths on the right of the `FOUND`, `RETRIEVED`, and `RESULT` configurations in `response_mappings`, following the left-to-right format of `swirl_key=source-key`. If the response provides a dictionary wrapper around each result, use the RESULT path to extract it.
+To adapt RequestsGet to your JSON response, modify the JSONPaths in `response_mappings` using the format `swirl_key=source-key`. If results are wrapped in a dictionary, use `RESULTS` to extract them.
 
-From there, map results fields to SWIRL's schema as described in the [SearchProvider Guide, Result Mapping](SP-Guide.html#result-mappings) section. Use the [PAYLOAD Field](SP-Guide.html#payload-field) to store any extra content from SearchProviders that doesn't map to an existing SWIRL field.
-
-Add additional required `key/value` parameters to the `url` - if they won't change from SearchProvider to SearchProvider - or by adding a mapping in the `query_template` and a default or guide value in the `query_mappings`. (See `{collection}` in the SOLR example above.)
+For more details, refer to:
+- [SearchProvider Guide, Result Mappings](./SP-Guide#result-mappings)
+- [Payload Field](./SP-Guide#payload-field) for extra data storage.
 
 ## RequestsPost
 
-The [RequestsPost connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requestspost.py) uses HTTP/POST to submit search forms to configured URLs. It supports optional authentication. RequestsPost is used by M365 connectors and is now available for other sources.  Here is a generic SearchProvider based on RequestsPost:
+The [RequestsPost Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/requestspost.py) uses HTTP/POST to submit search forms. It supports optional authentication and is used by M365 connectors and other sources.
 
-``` json
+**Example: Generic HTTP POST SearchProvider**
+
+```json
 {
     "name": "Sample HTTP POST Endpoint",
     "active": false,
@@ -837,22 +738,20 @@ The [RequestsPost connector](https://github.com/swirlai/swirl-search/blob/main/s
     "connector": "RequestsPost",
     "url": "https://xx.apis.it.h.edu/ats/person/v3/search",
     "query_template": "{url}?Query={query_string}",
-    "query_processor": "",
     "post_query_template": {
         "fields": [
-          "names.personNameKey",
-          "names.firstName",
-          "names.lastName"
+            "names.personNameKey",
+            "names.firstName",
+            "names.lastName"
         ],
         "conditions": {
-          "names.name": "*{query_string}*"
+            "names.name": "*{query_string}*"
         }
     },
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
     "query_mappings": "NOT=true,NOT_CHAR=-",
-    "result_processor": "",
     "result_processors": [
         "MappingResultProcessor",
         "CosineRelevancyResultProcessor"
@@ -861,38 +760,30 @@ The [RequestsPost connector](https://github.com/swirlai/swirl-search/blob/main/s
     "result_mappings": "titles=names[0].name,url=names[0].personNameKey,body='{names[0].name} ID#: {names[*].personNameKey}'",
     "results_per_query": 10,
     "credentials": "X-Api-Key=<your-api-key>",
-    "eval_credentials": "",
     "tags": [
         "People"
     ]
 }
 ```
 
-[Contact Support](#support) for help getting started.
+# Snowflake
 
-## Snowflake
-
-The [Snowflake connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/snowflake.py) uses the `snowflake-connector-python` package to connect to a Snowflake instance.
+The [Snowflake Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/snowflake.py) uses the `snowflake-connector-python` package to connect to a Snowflake instance.
 
 The included [Free Company Records](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/company_snowflake.json) SearchProvider is configured to search the `FreeCompanyResearch` dataset available in the Snowflake Marketplace.
 
-``` json
+## Example: Snowflake SearchProvider
+
+```json
 {
     "name": "Free Company Records - Snowflake",
-    "active": false,
-    "default": false,
-    "authenticator": "",
     "connector": "Snowflake",
     "url": "<snowflake-instance-address>",
     "query_template": "SELECT {fields} FROM {table} WHERE {field1} ILIKE '%{query_string}%' AND NULLIF(TRIM(founded), '') IS NOT NULL ORDER BY TRY_TO_NUMBER(REGEXP_REPLACE(SPLIT_PART(size, '-', 1), '[^0-9]', '')) DESC;",
-    "post_query_template": {},
-    "http_request_headers": {},
-    "page_fetch_config_json": {},
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
     "query_mappings": "fields=*,sort_by_date=founded,table=FREECOMPANYDATASET,field1=name",
-    "result_grouping_field": "",
     "result_processors": [
         "MappingResultProcessor",
         "CosineRelevancyResultProcessor"
@@ -901,7 +792,6 @@ The included [Free Company Records](https://github.com/swirlai/swirl-search/blob
     "result_mappings": "title='{name}  ({founded})',body='{name} was founded in {founded} in {country}. It has {size} employees and operates in the {industry} industry.',url='https://{linkedin_url}',date_published=founded,NO_PAYLOAD",
     "results_per_query": 10,
     "credentials": "<username>:<password>:FREE_COMPANY_DATASET:COMPUTE_WH",
-    "eval_credentials": "",
     "tags": [
         "Company",
         "Snowflake"
@@ -909,15 +799,17 @@ The included [Free Company Records](https://github.com/swirlai/swirl-search/blob
 }
 ```
 
-Note: Putting a fixed SQL query in the `query_template` is perfectly acceptable. Anything that doesn't change in the URL can be stored here.
+**Notes:**
+- A fixed SQL query in the `query_template` is acceptable.
+- Static parameters can be stored in `query_template` instead of the URL.
 
-## SQLite3
+# SQLite3
 
-The [SQLite3 Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/sqlite3.py) uses the SQLite3 driver built-in to Python.
+The [SQLite3 Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/sqlite3.py) uses the SQLite3 driver built into Python.
 
-Here is an example of a SearchProvider using SQLite3:
+## Example: SQLite3 SearchProvider
 
-``` json
+```json
 {
     "name": "Company Funding Records - SQLite3",
     "active": false,
@@ -936,320 +828,311 @@ Here is an example of a SearchProvider using SQLite3:
     "result_mappings": "title='{company} series {round}',body='{city} {fundeddate}: {company} raised usd ${raisedamt}\nThe company is headquartered in {city} and employs {numemps}',date_published=fundeddate,NO_PAYLOAD",
     "tags": [
         "Company",
-        "SQLite3",
-        "Internal"
+        "SQLite3"
     ]
 }
 ```
 
-Note: Putting a fixed SQL query in the `query_template` is perfectly acceptable. Anything that doesn't change in the URL can be specified here.
+**Notes:**
+- A fixed SQL query in the `query_template` is acceptable.
+- Static parameters can be stored in `query_template` instead of the URL.
 
 # Processing Pipelines
 
 ![SWIRL Processing Pipelines](images/swirl_architecture_1.png)
 
-Processors are intended to be single purpose and executed in a sequence called a "pipeline". Pipelines are specified as JSON lists in their respective properties.  There are four processing pipelines in SWIRL:
+Processors execute in a sequence called a "pipeline." Pipelines are specified as JSON lists in their respective properties. SWIRL has four processing pipelines:
+
 * `Search.pre_query_processors`
 * `SearchProvider.query_processors`
 * `SearchProvider.result_processors`
 * `Search.post_result_processors`
 
-For example, the default `Search.post_result_processors` pipeline is:
+**Example: Default `Search.post_result_processors` Pipeline**
 
-``` json
+```json
 "post_result_processors": [
-            "DedupeByFieldPostResultProcessor",
-            "CosineRelevancyPostResultProcessor"
-        ],
+    "DedupeByFieldPostResultProcessor",
+    "CosineRelevancyPostResultProcessor"
+]
 ```
 
-This pipeline removes duplicates from the result set prior to relevancy ranking.
+This pipeline removes duplicates before applying relevancy ranking.
 
-## Query Processors
+# Query Processors
 
-Query Processors operate queries. The exact field they operate on depends on how they are deployed.
+Query Processors modify queries. The field they operate on depends on where they are deployed.
 
 | Pipeline | Reads | Updates |
 | ---------- | ---------- | ---------- | 
-| Search.pre_query_processors | `Search.query_string` | `Search.query_string_processed` | 
-| SearchProvider.query_processors | `Search.query_string_processed` | `<Connector>.query_string_to_provider` | 
+| **Search.pre_query_processors** | `Search.query_string` | `Search.query_string_processed` | 
+| **SearchProvider.query_processors** | `Search.query_string_processed` | `<Connector>.query_string_to_provider` | 
 
-This table describes the query processors included in SWIRL:
-
-| Processor | Description | Notes | 
-| ---------- | ---------- | ---------- | 
-| AdaptiveQueryProcessor | Rewrites queries based on the `query_mappings` for a given SearchProvider | Should not be used as `pre_query_processor` |
-| GenAIQueryProcessor | This query processor asks an LLM to rewrite queries based on a configurable prompt. For example it can rewrite queries to be fuzzier, broader, more specific, boolean, or in another language. | Experimental |
-| GenericQueryProcessor | Removes special characters from the query |  |
-| SpellcheckQueryProcessor | Uses [TextBlob](https://textblob.readthedocs.io/en/dev/quickstart.html#spelling-correction) to predict and fix spelling errors in `query_string` | Best deployed in a `SearchProvider.query_processor` for sources that need it; not recommended with Google PSEs | 
-| NoModQueryProcessor |  Only removes leading SearchProvider Tags and does not modify the query terms in any way. | It is intended for repositories that allow non-search characters (such as brackets). |
-| RemovePIIQueryProcessor | Removes PII entities from the query. It does not replace them. | | 
-
-## Result Processors
-
-Result Processors transform source results into the SWIRL format defined in [swirl/processors/utils.py](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/utils.py).
-
-The following table lists the Result Processors included with SWIRL:
+## Included Query Processors
 
 | Processor | Description | Notes | 
 | ---------- | ---------- | ---------- | 
-| GenericResultProcessor | Copies results from source format to SWIRL format by exact match on name | Recommended for sources that don't need mapping |
-| MappingResultProcessor | Transforms results from source format to SWIRL format, using `SearchProvider.result_mappings` | Default |
-| LenLimitingResultProcessor | Checks if the `title` and `body` responses from a source exceed a configurable length (set in `swirl_server/settings.py`: `SWIRL_MAX_FIELD_LEN = 512`), truncates anything after that value, and adds an ellipsis ("..."). If the `body` field has been truncated, the processor reports the entire response in a new `body_full` field in the Payload. The default truncation length for can be overridden for a specific SearchProvider using a new Tag value (e.g. `max_length:256`). | Recommended for sources that consistently return lengthy title or body fields; should follow the `MappingResultProcessor`. |
-| CleanTextResultProcessor | Removes non-alphanumeric characters from the source response. It should be considered for lengthy responses where URLs or other HTML or Markdown syntax appear in results. | Should be installed before the `LenLimitingResultProcessor` when both are used. |
-| DateFinderResultProcessor | Looks for a date in any a number of formats in the body field of each result item. Should it find one, and the `date_published` for that item is `'unknown'`, it replaces `date_published` with the date extracted from the body, and notes this in the `result.messages`. | This processor can detect the following date formats:<br/> `06/01/23`<br/>`06/01/2023`<br/>`06-01-23`<br/>`06-01-2023`<br/>`jun 1, 2023`<br/>`june 1, 2023` |
-| AutomaticPayloadMapperResultProcessor | Profiles response data to find good strings for SWIRL's `title`, `body`, and `date_published` fields. It is intended for SearchProviders that would otherwise have few (or no) good `result_mappings` options. | It should be place after the `MappingResultProcessor`. The `result_mappings` field should be blank, except for the optional DATASET directive, which will return only a single SWIRL response for each provider response, with the original response in the `payload` field under the `dataset` key. |
-| RequireQueryStringInTitleResultProcessor | Drops results that do not contain the `query_string_to_provider` in the result `title` field. | It should be added after the `MappingResultProcessor` and is now included by default in the "LinkedIn - Google PSE" SearchProvider. | 
-| RemovePIIResultProcessor | Redacts PII entries in all result fields for configured SearchProviders, including payload string fields, with a generic tag showing the entity type. For example "James T. Kirk" -> "<PERSON>". | This processor may be installed before or after the CosineRelevancyResultProcessor. If it runs before, query terms which are PII entities will not be used in relevancy ranking, since they will be redacted. More information: [https://microsoft.github.io/presidio/](https://microsoft.github.io/presidio/) |
+| **AdaptiveQueryProcessor** | Rewrites queries based on `query_mappings` for a given SearchProvider | Not for `pre_query_processors` |
+| **GenAIQueryProcessor** | Uses an LLM to rewrite queries, making them broader, more specific, boolean, or in another language | Experimental |
+| **GenericQueryProcessor** | Removes special characters from queries |  |
+| **SpellcheckQueryProcessor** | Uses [TextBlob](https://textblob.readthedocs.io/en/dev/quickstart.html#spelling-correction) to correct spelling errors | Best used in `SearchProvider.query_processors`; avoid with Google PSE |
+| **NoModQueryProcessor** | Removes only leading SearchProvider Tags, leaving query terms unchanged | For repositories allowing non-search characters (e.g., brackets) |
+| **RemovePIIQueryProcessor** | Removes PII entities from queries without replacing them |  |
 
-## Post Result Processors
+# Result Processors
 
-`PostResultProcessors` operate only on processed result data and are saved to the SWIRL database by each connector. They operate on Result objects.
+Result Processors transform source results into SWIRL format, as defined in [swirl/processors/utils.py](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/utils.py).
 
-### `CosineRelevancyPostResultProcessor`
+## Included Result Processors
 
-SWIRL includes a cosine vector similarity relevancy model based on [spaCy](https://spacy.io/). The source code is found in: [swirl/processors/relevancy.py](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/relevancy.py)
+| Processor | Description | Notes | 
+| ---------- | ---------- | ---------- | 
+| **GenericResultProcessor** | Copies results from source format to SWIRL format by exact name match | Use for sources that don’t require mapping |
+| **MappingResultProcessor** | Maps results to SWIRL format using `SearchProvider.result_mappings` | Default |
+| **LenLimitingResultProcessor** | Truncates long `title` and `body` fields, appending an ellipsis ("..."). If truncated, stores full response in `body_full` in `payload`. Default limit: `512` characters, configurable via SearchProvider tag (`max_length:256`). | Should follow `MappingResultProcessor` |
+| **CleanTextResultProcessor** | Removes non-alphanumeric characters (e.g., HTML/Markdown syntax) | Should run before `LenLimitingResultProcessor` |
+| **DateFinderResultProcessor** | Extracts dates from result `body` and assigns them to `date_published` if missing | Detects formats like:<br/> `06/01/23`, `jun 1, 2023`, `06-01-2023` |
+| **AutomaticPayloadMapperResultProcessor** | Identifies suitable `title`, `body`, and `date_published` values in source data | Place after `MappingResultProcessor`. Use `DATASET` directive for single response storage in `payload.dataset`. |
+| **RequireQueryStringInTitleResultProcessor** | Removes results lacking `query_string_to_provider` in the `title` | Place after `MappingResultProcessor`. Default for "LinkedIn - Google PSE" |
+| **RemovePIIResultProcessor** | Redacts PII in all result fields, including payload strings, replacing entities with tags (e.g., `"James T. Kirk"` → `"<PERSON>"`) | If applied before `CosineRelevancyResultProcessor`, PII terms won't affect ranking. Uses [Presidio](https://microsoft.github.io/presidio/). |
 
-The relevancy model is as follows:
+# Post Result Processors
 
-* Matches on word stems from [nltk](https://www.nltk.org/howto/stem.html)
+`PostResultProcessors` modify stored result data. They operate only on processed results saved by each connector.
 
-* Scores the fields configured in `SWIRL_RELEVANCY_CONFIG` in [swirl_server/settings.py](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py)
+# CosineRelevancyPostResultProcessor
 
-* Aggregates the similarity of:
+SWIRL includes a cosine vector similarity relevancy model based on [spaCy](https://spacy.io/). The source code is found in [swirl/processors/relevancy.py](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/relevancy.py).
 
-    * the entire query and the field, with the score being the highest in any single sentence (if any), 
-    
-    * the entire query and a window of text around the field match
+**Relevancy Model**
 
-    * the 1 and 2 word combinations in the query (if long enough), and a window of text around the field match
+- Matches word stems using [nltk](https://www.nltk.org/howto/stem.html).
+- Scores fields defined in `SWIRL_RELEVANCY_CONFIG` in [swirl_server/settings.py](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py).
+- Aggregates similarity of:
+  - Entire query vs. field (highest match in any sentence).
+  - Entire query vs. text window around field match.
+  - 1- and 2-word query combinations vs. text window around match.
+- Weights fields as defined in `SWIRL_RELEVANCY_CONFIG`.
+- Further weights window-text matches by match length.
+- Provides a minor boost based on the original SearchProvider's rank:  
+  - $1/(1+\sqrt{SearchProvider.rank})$
+- Normalizes result length against the median of all results (`result_length_adjust` in `explain`).
+- Normalizes query length compared to all executed queries (`query_length_adjust` in `explain`).
 
-* Weights these fields as defined in  `SWIRL_RELEVANCY_CONFIG`, a dictionary structure in [swirl_server/settings.py](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py)
+**Score Interpretation**
 
-* Further weights the window-text matches with the length of the match
+The SWIRL score is relative: a higher score indicates greater contextual relevance. Scores are **not** comparable across queries.
 
-* Gives a small boost based on the original SearchProvider's rank, equal to $1/(1+\sqrt{SearchProvider.rank})$
+**Tip:** To translate a score into confidence, set the highest result as `1.0`, then divide other scores by it.
 
-* Normalizes the length of the result against the median length of all results in the set - this is reflected in the `result_length_adjust` in the `explain` structure.
+SWIRL provides:
+- `swirl_rank` (1 to N, where N is total results).
+- `searchprovider_rank` (rank assigned by the source).
 
-* Normalizes the query executed by this SearchProvider vs. all the other queries in the set - this is reflected in the `query_length_adjust` in the `explain` structure.
-
-The SWIRL score is just that: a score. The higher a score is, the more contextually relevant the result is. Scores aren't comparable between queries or results.
-
-*Tip: to translate a result score to a confidence score, take the #1 result as 1.0, and then divide subsequent results by the score for that result to calculate the confidence.*
-
-SWIRL reports the `swirl_rank`, from 1 to N, where N is the total number of results. SWIRL also includes the `searchprovider_rank`, which is the result rank assigned by the source. This makes it easy to compare what SWIRL viewed as relevant compared to what each SearchProvider did.
-
-In the event of a relevancy tie, the `date_published` and `search_provider` rank are used as additional sorts, to break it.
+Ties in relevancy ranking are broken by `date_published` and `searchprovider_rank`.
 
 {: .highlight }
-Note that there are two steps to Relevancy ranking: 
-1. `SearchProvider.result_processors` processes the results from each configured SearchProvider, asynchronously
-2. `Search.post_result_processors` makes a final pass over the results, adjusting for length and finalizing the score for each item.  
+**Relevancy Ranking Process:**
+1. `SearchProvider.result_processors` ranks results asynchronously per SearchProvider.
+2. `Search.post_result_processors` finalizes ranking across results, adjusting for length and score normalization.
 
-For this to work, the `CosineRelevancyPostResultProcessor` must be added in the `Search.post_result_processors` list. It should be after any result mappings, but before any other stages you add that depend on a finished `swirl_score`.
+The `CosineRelevancyPostResultProcessor` must be included in `Search.post_result_processors`, after result mappings but before any processor dependent on `swirl_score`.
 
-For example:
+**Example Configuration**
 
-``` json
-    "result_processors": [
-        "MappingResultProcessor",
-        "DateFinderResultProcessor",
-        "CosineRelevancyResultProcessor"
-    ],
+```json
+"result_processors": [
+    "MappingResultProcessor",
+    "DateFinderResultProcessor",
+    "CosineRelevancyResultProcessor"
+]
 ```
 
-### `DropIrrelevantPostResultProcessor`
+# Additional Post Result Processors
 
-The `DropIrrelevantPostResultProcessor` drops results with `swirl_score < settings.MIN_SWIRL_SCORE` (which is set to 500 by default) and results with no `swirl_score`.  This processor is available for use but not enabled by default.
+**DropIrrelevantPostResultProcessor**
+
+Drops results with `swirl_score < settings.MIN_SWIRL_SCORE` (default: 500) and results lacking a `swirl_score`. **Not enabled by default.**
 
 {: .highlight }
-The Galaxy UI will not display the correct number of results if this ResultProcessor is deployed. 
+**Note:** Galaxy UI may not correctly display the result count when using this processor.
 
-### `RemovePIIPostResultProcessor`
+**RemovePIIPostResultProcessor**
 
-This processor is identical in most respects to the [RemovePIIResultProcessor](#result-processors), except that it operates on all results in a result set, not just a single SearchProvider. 
+Identical to [RemovePIIResultProcessor](#result-processors), but processes all results in a search instead of per SearchProvider.
 
 # Mixers
 
-The following table details the Result Mixers included with SWIRL:
+Mixers organize search results into a structured order.
 
 | Mixer | Description | Notes |
 | ---------- | ---------- | ---------- | 
-| RelevancyMixer | Organizes results by [relevancy](User-Guide.html#relevancy-ranking) score (descending), then source rank (ascending) | The default; depends on `relevancy_processor` being installed as the `search.post_result_processors` (also the default) |
-| RelevancyNewItemsMixer | Organizes results as above, but hiding results that don't have the `new` field as [created during Search updates](Developer-Guide.html#update-a-search) | This is the default for `search.new_result_url`|
-| DateMixer | Organizes results by `date_published`. Results with "unknown" for `date_published` are omitted | Use when you want date sorted results | 
-| DateNewItemsMixer | Organizes results as above, but hiding results that don't have the `new` field as [created during Search updates](Developer-Guide.html#update-a-search) | This is the default for `search.new_result_url` when `search.date` is set to `sort` |     
-| RoundRobinMixer | Organizes results by taking 1 result from each responding SearchProvider, alternating; actually calls `Stack1Mixer` (see below) | Good for searches with `search.sort` set to "date" or anytime you want a cross-section of results instead of just the ones with the most evidence | 
-| Stack1Mixer | Organizes results by taking 1 result from each responding SearchProvider, alternating | Good for cross-sections of data |
-| Stack2Mixer | Organizes results by taking 2 from each responding SearchProvider, alternating | Good for cross-sections of data with 4-6 sources |
-| Stack3Mixer | Organizes results by taking 3 from each responding SearchProvider, alternating | Good for cross-sections of data with few sources | 
-| StackNMixer | Organizes results by taking `N` from each responding source, where `N` if not specified is the number of results requested divided by the number of SearchProviders reporting at least 1 result | Good for cross-sections of data with few providers | 
+| **RelevancyMixer** | Sorts by [relevancy](./User-Guide#relevancy-ranking) score (descending), then source rank (ascending). | Default; depends on `relevancy_processor` in `search.post_result_processors`. |
+| **RelevancyNewItemsMixer** | Same as `RelevancyMixer`, but hides results missing the `new` field from [Search updates](./Developer-Guide#update-a-search). | Default for `search.new_result_url`. |
+| **DateMixer** | Sorts by `date_published`. Omits results with `"unknown"` dates. | Use for date-sorted results. |
+| **DateNewItemsMixer** | Same as `DateMixer`, but hides results missing the `new` field. | Default for `search.new_result_url` when sorting by date. |
+| **RoundRobinMixer** | Alternates results from each SearchProvider; equivalent to `Stack1Mixer`. | Good for cross-sectioned results or date sorting. |
+| **Stack1Mixer** | Alternates results from each SearchProvider, one at a time. | Good for cross-sectioned data. |
+| **Stack2Mixer** | Alternates results, taking two per SearchProvider. | Good for 4-6 sources. |
+| **Stack3Mixer** | Alternates results, taking three per SearchProvider. | Good for few sources. |
+| **StackNMixer** | Alternates results, taking `N` per SearchProvider (default: results requested ÷ number of providers responding). | Good for fewer providers. |
 
 ## Date Mixer
 
-If you want results sorted by `date_published`, descending, use the Date Mixer.
+For `date_published`-sorted results, use `DateMixer`.
 
 ![SWIRL Results, Date Mixer](images/swirl_results_mixed_2_date_sort.png)
 
+Example:
 
-{: .highlight }
-For example: [http://localhost:8000/swirl/results?search_id=1&result_mixer=DateMixer](http://localhost:8000/swirl/results?search_id=1&result_mixer=DateMixer)
+[http://localhost:8000/swirl/results?search_id=1&result_mixer=DateMixer](http://localhost:8000/swirl/results?search_id=1&result_mixer=DateMixer)
 
 ## NewItems Mixers
 
-The two NewItems mixers automatically filter results to items with the `new` field present. Both will report the number of results hidden because they do not have this field. 
+NewItems Mixers filter results to only those with the `new` field. They also report hidden results.
 
-To remove the `new` field from all results in a search, add `&mark_all_as_read=1` to the `result_mixer` URL property. For example:
+To mark all results as "read" (removing `new` status), add `&mark_all_as_read=1`:
 
-``` shell
+```shell
 http://localhost:8000/swirl/results/?search_id=1&result_mixer=DateNewItemsMixer&mark_all_as_read=1
 ```
 
-The Mixer will then return 0 results. But it will return results if the Search is updated.
+The mixer will then return 0 results but will return new results when the search updates.
 
-Mixer objects combine separate `Result` objects for a given `Search`, wrap them in metadata, and order them. For example, a Mixer might alternate from each source (`Stack1Mixer`), or sort results by `date_published` (`DateMixer`)
+## Using Mixers
 
-To invoke the mixer specified using the `result_mixer` property of the Search object, specify the `search_id` as shown in APIs, above:
+Mixers combine and order `Result` objects. For example:
+- `Stack1Mixer` alternates between sources.
+- `DateMixer` sorts by `date_published`.
 
-``` shell
+To apply the default Mixer:
+
+```shell
 http://localhost:8000/swirl/results/?search_id=1
 ```
 
-If you use the SWIRL defaults, a search will produce a JSON result that is relevancy ranked.
+To specify a different Mixer, append `&result_mixer=mixer-name`:
 
-To specify a different Mixer, add `&result_mixer=mixer-name` to the URL.
-
-``` shell
+```shell
 http://localhost:8000/swirl/results/?search_id=1&result_mixer=Stack1Mixer
 ```
 
-The following table describes the Mixer wrapper in more detail:
+**Mixer Response Format**
 
 | Field | Description |
 | ---------- | ---------- |
-| messages | All messages from the Search and all SearchProviders |
-| info | A dictionary of Found and Retrieved counts from each SearchProvider | 
-| info - search | Information about the Search, including the processed query, and links to re-run and re-score Searches |
-| info - results | Information about the Results, including the number retrieved and the URL of the next (and previous) pages of results |
-| results | Mixed Results from the specified Search |
+| **messages** | All messages from the Search and SearchProviders. |
+| **info** | Found/Retrieved counts per SearchProvider. | 
+| **info - search** | Search metadata, processed query, re-run links, and re-score links. |
+| **info - results** | Result count, next/previous page URLs. |
+| **results** | Mixed results from the search. |
 
 # Sample Data Sets
 
 ## Funding Data Set
 
-The TechCrunch Continental USA funding data set was taken from [Insurity SpatialKey](https://support.spatialkey.com/spatialkey-sample-csv-data/). It is included with SWIRL in [Data/funding_db.csv](https://github.com/swirlai/swirl-search/blob/main/Data/funding_db.csv)
-This file was processed with [scripts/fix_csv.py](https://github.com/swirlai/swirl-search/blob/main/DevUtils/fix_csv.py) prior to loading into SQLite3. 
+The TechCrunch Continental USA funding data set is sourced from [Insurity SpatialKey](https://support.spatialkey.com/spatialkey-sample-csv-data/). It is included in SWIRL as [Data/funding_db.csv](https://github.com/swirlai/swirl-search/blob/main/Data/funding_db.csv) and processed with [scripts/fix_csv.py](https://github.com/swirlai/swirl-search/blob/main/DevUtils/fix_csv.py) before loading into SQLite3.
 
-### Loading into SQLite3 
+**Loading into SQLite3 **
 
-1. Activate [sqlite_web](Admin-Guide.html#sqlite-web)
-Then, from the swirl-home directory:
-``` shell
+1. Activate [sqlite_web](./Admin-Guide#sqlite-web) from the `swirl-home` directory:
+
+```shell
 sqlite_web db.sqlite3
 ```
 
-2. A browser window should open automatically; if not go to [http://localhost:8080/](http://localhost:8080/)
-3. Enter "funding" in the text box in the upper right of the screen and press the `Create` button
-![Sqlite loading funding dataset](images/sqlite_import_funding_1.png)
-
-4. Click `Choose File` and select [Data/funding_db.csv](https://github.com/swirlai/swirl-search/blob/main/Data/funding_db.csv)
-
-5. Leave "Yes" in the box below.
-
+2. Open [http://localhost:8080/](http://localhost:8080/) in a browser if it does not open automatically.
+3. Enter `"funding"` in the text box in the upper right and click `Create`.
+4. Click `Choose File` and select [Data/funding_db.csv](https://github.com/swirlai/swirl-search/blob/main/Data/funding_db.csv).
+5. Leave "Yes" in the confirmation box.
 6. Click `Import`.
+
 ![Sqlite loading funding dataset](images/sqlite_import_funding_2.png)
 
-7. Load the [Funding DB SQLite3](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_sqlite3.json) SearchProvider as [described in the SearchProvider Guide](SP-Guide.html#copypaste-install).
+7. Load the [Funding DB SQLite3](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_sqlite3.json) SearchProvider as described in the [SearchProvider Guide](./SP-Guide#copypaste-install).
 
-### Loading into PostgreSQL
+**Loading into PostgreSQL**
 
-* Create a table following the structure in the CSV using SQL or something like [Postico](https://eggerapps.at/postico/)
+1. Create a table using SQL or [Postico](https://eggerapps.at/postico/):
 
-``` shell
--- DDL generated by Postico 1.5.21
--- Table Definition ----------------------------------------------
-
+```sql
 CREATE TABLE funding (
-    id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    permalink text,
-    company text,
-    numemps text DEFAULT '0'::numeric,
-    category text,
-    city text,
-    state text,
-    fundeddate date,
-    raisedamt numeric DEFAULT '0'::numeric,
-    raisedcurrency text,
-    round text
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    permalink TEXT,
+    company TEXT,
+    numemps TEXT DEFAULT '0',
+    category TEXT,
+    city TEXT,
+    state TEXT,
+    fundeddate DATE,
+    raisedamt NUMERIC DEFAULT '0',
+    raisedcurrency TEXT,
+    round TEXT
 );
 
--- Indices -------------------------------------------------------
-
-CREATE UNIQUE INDEX funding_pkey ON funding(id int4_ops);
+CREATE UNIQUE INDEX funding_pkey ON funding(id);
 ```
 
-* Run this SQL to ingest the CSV:
+2. Import the CSV:
 
-``` shell
-COPY funding(permalink,company,numemps,category,city,state,fundeddate,raisedamt,raisedcurrency,round) FROM '/path/to/Data/funding_db.csv' DELIMITER ',' CSV HEADER;
+```shell
+COPY funding(permalink,company,numemps,category,city,state,fundeddate,raisedamt,raisedcurrency,round) 
+FROM '/path/to/Data/funding_db.csv' 
+DELIMITER ',' CSV HEADER;
 ```
 
-* Load the [Funding DB PostgreSQL](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_postgres.json) SearchProvider as [described in the SearchProvider Guide, SearchProvider](SP-Guide.html#copypaste-install) section.
+3. Load the [Funding DB PostgreSQL](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_postgres.json) SearchProvider as described in the [SearchProvider Guide](./SP-Guide#copypaste-install).
 
-### Loading into BigQuery
+**Loading into BigQuery**
 
-* Create a table with a schema like so:
+1. Create a table with the following schema:
 
 ![BigQuery Funding DB Schema in Console](images/funding_bigquery_schema.png)
 
-* Load the CSV file into this table: [Loading CSV data into a table](https://cloud.google.com/bigquery/docs/loading-data-cloud-storage-csv#loading_csv_data_into_a_table)
+2. Load the CSV using [Google's BigQuery CSV Import Guide](https://cloud.google.com/bigquery/docs/loading-data-cloud-storage-csv#loading_csv_data_into_a_table).
+3. Load the [Funding DB BigQuery](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_bigquery.json) SearchProvider as described in the [SearchProvider Guide](./SP-Guide#copypaste-install).
 
-* Load the [Funding DB BigQuery](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_bigquery.json) SearchProvider as [described in the User Guide, SearchProvider](SP-Guide.html#copypaste-install) section.
+---
 
 ## Enron Email Data Set
 
-This data set consists of 500,000+ emails from 150 employees of the former Enron Corporation. It's available from Kaggle: [https://www.kaggle.com/datasets/wcukierski/enron-email-dataset](https://www.kaggle.com/datasets/wcukierski/enron-email-dataset) among [other places](https://www.cs.cmu.edu/~./enron/).
+This dataset includes 500,000+ emails from 150 former Enron employees. It is available on [Kaggle](https://www.kaggle.com/datasets/wcukierski/enron-email-dataset) and [Carnegie Mellon](https://www.cs.cmu.edu/~./enron/).
 
-### Loading into Elastic or OpenSearch
+**Loading into Elastic or OpenSearch**
 
-* Download the Enron email data set.
+1. Download and extract the Enron email dataset.
+2. Move `emails.csv` to your `swirl-home` directory.
+3. Create a new index named `'email'` using the [Elastic/OpenSearch console](http://localhost:5601/app/dev_tools#/console):
 
-* Unzip and untar the download and place the `email.csv` file in your swirl-home directory
-
-* Create a new Elastic/OpenSearch index named 'email' using the [development console](http://localhost:5601/app/dev_tools#/console):
-
-``` shell
+```shell
 PUT /email
 ```
 
 {: .highlight }
-To index the Enron data into Elastic, you must first update the load script with the path to a certificate, as required by Elastic.
+To index Enron data into Elastic, update the load script to include a valid certificate path.
 
-* Add the path to a valid certificate as the value in `scripts/index_email_elastic.py`, line 37, and save the change.
+4. Modify `scripts/index_email_elastic.py` (line 37):
 
-``` shell
+```python
 # Insert path to Elastic cert below
 ca_certs = "<PATH-TO-CERT>"
 ```
 
-* Index the `emails.csv` from the SWIRL directory:
+5. Index the emails:
 
-For Elastic:
-``` shell
+*For Elastic:*
+```shell
 python scripts/index_email_elastic.py emails.csv -p elastic-password
 ```
 
-For OpenSearch:
-``` shell
+*For OpenSearch:*
+```shell
 python scripts/index_email_opensearch.py emails.csv -p admin-password
 ```
 
-The script will report progress every 100 rows. Hit `Ctrl-C` to stop it if desired.
+6. Verify the index in the [development console](http://localhost:5601/app/dev_tools#/console):
 
-* Verify that the messages have been indexed by Elastic/OpenSearch by querying in the [development console](http://localhost:5601/app/dev_tools#/console):
-
-``` shell
+```shell
 GET _search
 {
   "query": {
@@ -1258,37 +1141,38 @@ GET _search
 }
 ```
 
-Results should appear in the right-hand pane:
-
-``` shell
+**Example Response:**
+```json
 {
-  "took" : 38,
-  "timed_out" : false,
-  "_shards" : {
-    "total" : 6,
-    "successful" : 6,
-    "skipped" : 0,
-    "failed" : 0
+  "took": 38,
+  "timed_out": false,
+  "_shards": {
+    "total": 6,
+    "successful": 6,
+    "skipped": 0,
+    "failed": 0
   },
-  "hits" : {
-    "total" : {
-      "value" : 6799,
-      "relation" : "eq"
+  "hits": {
+    "total": {
+      "value": 6799,
+      "relation": "eq"
     },
-    "max_score" : 1.0,
-    "hits" : [
-      ...
+    "max_score": 1.0,
+    "hits": [
       {
-        "_index" : "email",
-        "_id" : "c13MwoUBmlIzd81ioZ7H",
-        "_score" : 1.0,
-        "_source" : {
-          "url" : "allen-p/_sent_mail/118.",
-          "date_published" : "2000-09-26 09:26:00.000000",
-          "author" : "Phillip K Allen",
-          "to" : "pallen70@hotmail.com",
-          "subject" : "Investment Structure",
-          "content" : """---------------------- Forwarded by 
-          
-    ...
+        "_index": "email",
+        "_id": "c13MwoUBmlIzd81ioZ7H",
+        "_score": 1.0,
+        "_source": {
+          "url": "allen-p/_sent_mail/118.",
+          "date_published": "2000-09-26 09:26:00.000000",
+          "author": "<name>",
+          "to": "<email-address>",
+          "subject": "Investment Structure",
+          "content": "---------------------- Forwarded by ..."
+        }
+      }
+    ]
+  }
+}
 ```

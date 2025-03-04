@@ -11,7 +11,7 @@ sitemap: 'false'
 {: .warning }
 The Docker version of SWIRL does *not* retain any data or configuration when shut down!
 
-Please [contact support](mailto:support@swirl.today) for a Docker image suitable for production deployment. 
+Please [contact support](mailto:support@swirlaiconnect.com) for a Docker image suitable for production deployment. 
 
 <br/>
 
@@ -51,7 +51,7 @@ This command should produce a long response starting with:
 ...etc...
 ```
 
-If you see any error messages, please [contact support](mailto:support@swirl.today) for assistance.
+If you see any error messages, please [contact support](mailto:support@swirlaiconnect.com) for assistance.
 
 <br/>
 

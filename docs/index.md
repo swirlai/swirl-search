@@ -13,129 +13,154 @@ permalink: "/"
 {:toc}
 </details>
 
-# SWIRL Overview
+<span class="big-text">SWIRL Overview</span><br/><span class="med-text">Community Edition | Enterprise Edition</span>
 
-## What is SWIRL AI Connect?
+---
 
-SWIRL AI Connect is an AI-powered [metasearch engine](https://en.wikipedia.org/wiki/Metasearch_engine) engine that connects most any Generative AI/LLM to enterprise data platforms, applications and information services *without copying*, ingesting data and/or indexing *anything*.
+# What is SWIRL AI Search?
 
-SWIRL is installed in your own environment - anywhere Docker/Kubernetes runs. Configure it in minutes by filling out forms and users can be generating personalized, secure AI insights from the information they're already authorized to see - in minutes, without developers, signing a complicated legal agreement, or executing a complex data transfer / ETL project.
+SWIRL AI Search is a hybrid [metasearch engine](https://en.wikipedia.org/wiki/Metasearch_engine) that seamlessly connects almost any Generative AI or LLM to enterprise data platforms, applications, and information services—without copying, ingesting, or indexing *any* data.
+
+SWIRL runs in your own environment—anywhere Docker or Kubernetes is supported. Setup takes just minutes through a simple configuration process. Users can instantly generate personalized, secure AI-driven insights from the data they’re already authorized to access—without requiring developers, lengthy legal agreements, or complex data transfer/ETL projects.
 
 ![SWIRL RAG AI Insight with results](images/swirl_40_community_rag.png)
 
-## What is SWIRL AI Co-Pilot? 
+# What is SWIRL AI Search Assistant? 
 
-SWIRL AI Co-Pilot is an AI-powered Search Assistant that converses with users to determine what they are looking for and where they are most likely to find it. It can run searches on the user's behalf and provide in-line RAG results whenever the conversation demands. 
+SWIRL AI Search Assistant is supportive chat bot that converses with users to identify the best data sources for their inquiry, and the exact query to run. It provides in-line insights, using RAG on the most relevant search results, whenever relevant to the conversation.
 
-SWIRL 4.0 can write queries in SQL, Sparql and other dialects. Any knowledge available to the model can be used for this purpose.
+As of SWIRL Enterprise 4.0, the AI Search Assistant can generate queries in SQL, SPARQL, and other query languages known by the underlying LLM/model.
 
 ![SWIRL RAG AI Insight with results](images/swirl_40_enterprise_assistant_rag.png)
 
-## How does SWIRL Provide Insight without Copying and Ingesting and Indexing Data?
+# How Does SWIRL Provide Insights Without Copying, Ingesting, or Indexing Data?
 
-SWIRL AI Connect sends user queries to the configured, specific endpoints - APIs and other interfaces they're authorized to see - asynchronously. The response time will be driven by the slowest responding source.
+SWIRL AI Search asynchronously sends user queries to authorized APIs and other configured endpoints. Response time depends on the slowest source.
 
-SWIRL then re-ranks the results from responding sources so the user doesn't have to, using embeddings from the configured LLM.
+SWIRL then re-ranks results from all responding sources, so users don’t have to, using embeddings from the configured LLM.
 
-The re-ranking process is as follows: 
-* Vectorize the user's query (or parts of it)
-* Send the text of the user's query and/or the vector, to each source requested (or default)
-* Asynchronously gather the results from each source
-* Normalize the results from each source using jsonpath (or xpath)
-* Vectorize each result snippet (or parts of it)
-* Re-rank the results by aggregating the similarity, frequency and position, and adjusting for other factors like length variation, freshness, etc 
+The re-ranking process follows these steps:
 
-The [Xethub study](https://xethub.com/blog/you-dont-need-a-vector-database) as [explained by Simson Garfinkel](https://www.linkedin.com/pulse/vector-databases-rag-simson-garfinkel-hzule/) showed that re-ranking "naive" keyword search engines outperforms re-indexing the data using a vector database for tasks like question answering.
+* Vectorize the user's query (or relevant parts of it).
+* Send the text of the user's query and/or the vector to each requested (or default) source.
+* Asynchronously gather results from each source.
+* Normalize results using **JSONPath** (or **XPath**).
+* Vectorize each result snippet (or relevant parts of it).
+* Re-rank results based on similarity, frequency, and position, while adjusting for factors like length variation, freshness, and more.
 
-SWIRL AI Connect also includes state-of-the-art cross-silo [Retrieval Augmented Generation (RAG)](https://en.wikipedia.org/wiki/Retrieval-augmented_generation) for generating AI insights like summarization, question answering and visualization of relevant result sets. 
+The [Xethub study](https://xethub.com/blog/you-dont-need-a-vector-database), as [explained by Simson Garfinkel](https://www.linkedin.com/pulse/vector-databases-rag-simson-garfinkel-hzule/), demonstrated that re-ranking "naive" keyword search engines outperforms re-indexing data into a vector database for tasks like question answering.
 
-![SWIRL AI Connect Insight Pipeline](images/swirl_rag_pipeline.png)
+SWIRL AI Search also includes state-of-the-art cross-silo [Retrieval-Augmented Generation (RAG)](https://en.wikipedia.org/wiki/Retrieval-augmented_generation) to generate AI-powered insights such as summarization, question answering, and visualizations of relevant result sets.
 
-When a user requests an AI insight, SWIRL:
+![SWIRL AI Search Insight Pipeline](images/swirl_rag_pipeline.png)
 
-* Sends the insight out to relevant sources
-* Normalizes and unifies the results 
-* Re-ranks the united results using non-generative Reader LLM
-* Optionally, presents them to the user and allows them to adjust the result set
-* Fetches the full-text of the results, in real time
-* Identifies the most relevant portions of the documents and binding them to a prompt using real-time vector analysis similar to the re-ranking described above
-* Sends the prompt to the approved generative AI for insight generation
-* Returns a single set of insights with citations
+When a user requests an AI-generated insight, SWIRL:
 
-SWIRL AI Connect includes the Galaxy UI, but includes fully Swagger'd APIs and is easy to integrate with most any front-end or system.
+* Sends the request to relevant sources.
+* Normalizes and unifies the retrieved results.
+* Re-ranks the unified results using a **non-generative Reader LLM**.
+* Optionally presents them to the user, allowing adjustments to the result set.
+* Fetches the full text of results in real time.
+* Identifies the most relevant portions of the documents and binds them into a prompt using real-time vector analysis similar to the re-ranking process above.
+* Sends the refined prompt to the approved generative AI for insight generation.
+* Returns a single set of AI-generated insights with citations.
 
-SWIRL AI Connect, Enterprise Edition, includes flexible, generic OAUTH2 and SSO, with auto-provisioning via OpenID Connect.
+SWIRL AI Search includes the **Galaxy UI** and fully documented **Swagger APIs**, making it easy to integrate with nearly any front-end or system.
 
-## How does SWIRL AI Co-Pilot work?
+SWIRL AI Search, **Enterprise Edition**, supports flexible, generic **OAuth2** and **SSO**, with auto-provisioning via **OpenID Connect**.
 
-SWIRL AI Co-Pilot educates the configured GAI/LLM about the user and what they have access to via the integration with SWIRL AI Connect. 
+# How Does SWIRL AI Search Assistant Work?
 
-SWIRL manages the context and history for each chat, initiating RAG through AI Connect as directed by the user and Co-Pilot. The user can only see insight from data they are already authorized to see, and the Co-Pilot is privy only to each user's conversations and history when conversing with them. All access is controlled and provisioned via the existing sign on (SSO) system. 
+SWIRL AI Search Assistant ensures that the configured **Generative AI (GAI) or LLM** only accesses data the user is authorized to see, leveraging its integration with **SWIRL AI Search**.
 
-For more information please refer to the [AI Co-Pilot Guide](AI-Co-Pilot.html).
-## What systems can SWIRL integrate with?
+SWIRL manages chat context and history, triggering **Retrieval-Augmented Generation (RAG)** through AI Search based on user requests and conversation flow. Users can only receive insights from data they are already authorized to access. Additionally, Assistant retains context only within each user's active session—ensuring conversations remain private and contextualized per user. All access is managed through the existing **Single Sign-On (SSO)** system.
 
-The full list is here: [https://swirlaiconnect.com/connectors](https://swirlaiconnect.com/connectors)
+For more information, please refer to the [AI Search Assistant Guide](./AI-Co-Pilot).
 
-## How do I connect SWIRL to some new source?
+# What Systems Can SWIRL Integrate With?
 
-To connect SWIRL with an internal data source, you [create a SearchProvider record](./SP-Guide.html#using-searchproviders).
+SWIRL AI Search integrates with a wide range of systems, including **enterprise applications, cloud platforms, databases, search engines, and AI services**.  
 
-To integrate SWIRL Enterprise with a generative AI, you create an AIProvider record, as described 
-[in the AI Connect Guide](AI-Connect.html#connecting-to-generative-ai-gai-and-large-language-models-llms).
+For a full list of supported integrations, visit: [https://swirlaiconnect.com/connectors](https://swirlaiconnect.com/connectors).
 
-## What is included in SWIRL Enterprise Products?
+# How Do I Connect SWIRL to a New Source?
 
-SWIRL Enterprise Edition includes:
+To connect SWIRL AI Search with an internal data source, you need to **create a SearchProvider record**, which defines how SWIRL interacts with that source. Learn more in the [SearchProvider Guide](./SP-Guide#using-searchproviders).
 
-* Configurable support for many enterprise AI providers (e.g. Anthropic and Cohere), including support for multiple GAI/LLMs in different roles - chat, query rewriting, direct answer, RAG and embeddings (for re-ranking/passage detection by the Reader LLM)
+To integrate SWIRL Enterprise with **Generative AI (GAI) or a Large Language Model (LLM)**, you need to **create an AIProvider record**, which configures SWIRL to communicate with the AI system. Detailed instructions can be found in the [AI Search Guide](./AI-Connect#connecting-to-generative-ai-gai-and-large-language-models-llms).
 
-* Support for Single Sign On (SSO) with various IDPs (e.g. Ping Federate) and autoprovisioning via OpenID Connect. (The Community version only supports M365.)
+# What Is Included in SWIRL Enterprise Products?
 
-* Support for generating AI insights from 1,500 different file formats, including tables and txt in images 
+SWIRL **Enterprise Edition** includes:
 
-* Authentication support for the PageFetcher
+* **Support for multiple AI providers** (e.g., Anthropic, Cohere), with configurable roles for **Generative AI (GAI) or Large Language Models (LLMs)**, including:
+  - Chat
+  - Query rewriting
+  - Direct answer retrieval
+  - **Retrieval-Augmented Generation (RAG)**
+  - Embeddings for re-ranking and passage detection by the **Reader LLM**  
 
-* Configurable prompts, including role, user, group and on-the-fly selection
+* **Single Sign-On (SSO) support** with various Identity Providers (IDPs), such as **Ping Federate**, plus auto-provisioning via **OpenID Connect**.  
+  *(The Community version only supports M365.)*
 
-* SWIRL AI Co-Pilot as noted above
+* **AI-powered insights from 1,500+ file formats**, including:
+  - Structured data (e.g., tables)
+  - Extracted text from images  
 
-## How much do SWIRL Enterprise Products cost?
+* **Authentication support for PageFetcher**, enabling secure retrieval of protected content.
 
-Pricing for SWIRL Enterprise is here: [https://swirlaiconnect.com/pricing](https://swirlaiconnect.com/pricing)
+* **Configurable prompts**, allowing customization based on:
+  - Role
+  - User
+  - Group
+  - On-the-fly selection  
 
-## When should I use SWIRL AI Connect, Community Edition?
+* **SWIRL AI Search Assistant**, providing an interactive AI-powered search assistant.
 
-Use SWIRL AI Connect, Community Edition, if you have one or more repositories that you want to search and RAG against the full text *without* authenticating and/or indexing it into yet-another repository and/or writing more code.
+# How Much Do SWIRL Enterprise Products Cost?
 
-Note that you may freely re-distribute solutions that incorporate SWIRL AI Connect, Community Edition, under the [Apache 2.0 License](https://github.com/swirlai/swirl-search/blob/main/LICENSE).
+SWIRL Enterprise pricing varies based on deployment type, features, and support level.  
 
-## When should I use SWIRL Enterprise Edition? 
+For detailed pricing information, visit: [https://swirlaiconnect.com/pricing](https://swirlaiconnect.com/pricing).
 
-Use SWIRL Enterprise Edition when you have:
+# When Should I Use SWIRL AI Search Community Edition?
 
-* Repositories that require Single Sign On (SSO) and/or OAUTH2
-* Content that requires text extraction, and/or authenticated page fetching
-* The need to RAG from long documents, complex tables, or text from images
-* Need to use GAI/LLMs other than OpenAI/Azure OpenAI
-* Want to have a conversation with your data, via the Co-Pilot
+Use **SWIRL AI Search Community Edition** if you need to search across one or more repositories and apply **Retrieval-Augmented Generation (RAG)** to full-text content—without requiring authentication, indexing the data into another repository, or writing additional code.
 
-## Why don't you use GitHub Issues?
+You may also freely redistribute solutions that incorporate **SWIRL AI Search Community Edition** under the [Apache 2.0 License](https://github.com/swirlai/swirl-search/blob/main/LICENSE).
 
-We prefer to use [our free Slack channel](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA) for support. 
+# When Should I Use SWIRL Enterprise Edition?  
 
-Enterprise customers get access to our helpdesk.
+Use **SWIRL Enterprise Edition** when you have:  
 
-## What is the SWIRL Architecture & Technology Stack
+* **Repositories that require authentication** via **Single Sign-On (SSO) or OAuth2**.  
+* **A need to extract text** from documents and fetch authenticated pages securely.  
+* **A need to apply Retrieval-Augmented Generation (RAG)** to long documents, complex tables, or text extracted from images.  
+* **A need to use Generative AI (GAI) or LLMs** beyond OpenAI and Azure OpenAI.  
+* **A desire to interact conversationally** with your data using **SWIRL AI Search Assistant**.  
 
-SWIRL products use the Python/Django/Celery/Redis stack, with PostgreSQL recommended for production deployments.
+# Why Don't You Use GitHub Issues?  
 
-Consult the [Developer Guide](./Developer-Guide.md#architecture) for more information!
+We handle support through our **free Slack channel** rather than GitHub Issues because it allows for **faster responses and real-time discussions**. Join us here: [SWIRL Slack Community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA).  
 
-## How is SWIRL usually deployed?
+**Enterprise customers** receive priority support via our **dedicated support portal**.  
 
-SWIRL is usually deployed via Docker. SWIRL Enterprise products are also available as Kubernetes images. 
+# What Is the SWIRL Architecture and Technology Stack?  
 
-## Does SWIRL offer hosting? How can I learn more? 
+SWIRL products are built on a **Python/Django/Celery/Redis** stack:  
 
-Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for information about hosted SWIRL. 
+* **Python & Django** – Core framework for application logic and API services.  
+* **Celery & Redis** – Handles asynchronous processing and task management.  
+* **PostgreSQL (recommended for production)** – Ensures scalability and reliability.  
+
+For a deeper dive into SWIRL’s architecture, check out the [Developer Guide](./Developer-Guide#architecture).
+
+# How Is SWIRL Usually Deployed?  
+
+SWIRL is typically deployed using **Docker**, with **Docker Compose** for easy setup.  
+
+For **SWIRL Enterprise**, deployments are also available as **Kubernetes images**, allowing for scalable, containerized orchestration.  
+
+# Does SWIRL Offer Hosting?  
+
+Yes! For details about **hosted SWIRL solutions**, [contact us](mailto:hello@swirlaiconnect.com) or visit [swirlaiconnect.com](https://swirlaiconnect.com).

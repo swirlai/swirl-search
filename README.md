@@ -118,7 +118,7 @@ Real examples of what teams build with SWIRL:
 
 **Try SWIRL Enterprise for free for 30 Days. Click on the banner to contact us.**
 
-[![SWIRL Co-Pilot](docs/images/swirl_enterprise_demo.png)](https://swirlaiconnect.com/contact-us)
+[![SWIRL Assistant](docs/images/swirl_enterprise_demo.png)](https://swirlaiconnect.com/contact-us)
 
 ### ⚡ Why Teams Choose SWIRL
 
