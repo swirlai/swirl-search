@@ -36,14 +36,14 @@ nav_order: 3
 
     To enable **Real-Time Retrieval-Augmented Generation (RAG)** in SWIRL, you must provide a **valid OpenAI API key**.
 
-    #### **For macOS or Linux:**  
+    **For macOS or Linux:**  
     ```shell
     export MSAL_CB_PORT=8000
     export MSAL_HOST=localhost
     export OPENAI_API_KEY=<your-OpenAI-API-key>
     ```
 
-    #### **For Windows (PowerShell):**  
+    **For Windows (PowerShell):**  
     ```powershell
     $Env:MSAL_CB_PORT = "8000"
     $Env:MSAL_HOST = "localhost"
@@ -55,12 +55,12 @@ nav_order: 3
 
 3. **Start SWIRL**  
 
-    #### **For macOS or Linux:**  
+    **For macOS or Linux:**  
     ```shell
     docker compose pull && docker compose up
     ```
 
-    #### **For Windows (PowerShell):**  
+    **For Windows (PowerShell):**  
     ```powershell
     docker compose up
     ```
@@ -127,10 +127,10 @@ The **Docker version** of SWIRL AI Search Community Edition does *not* retain an
 
 ---
 
-## **Notes**  
+## Notes
 
 {: .highlight }  
-**Pre-configured SearchProviders**:  
+**Pre-configured SearchProviders**
 SWIRL includes **active SearchProviders** for:  
 ✅ **Arxiv.org**  
 ✅ **European PMC**  
@@ -144,5 +144,5 @@ SWIRL includes **inactive SearchProviders** for:
 These require a **Google API key**. See the [SearchProvider Guide](SP-Guide.html#activating-a-google-programmable-search-engine-pse-searchprovider) for setup instructions.
 
 {: .highlight }  
-**Using SWIRL with Microsoft 365** requires **installation and approval by an authorized company administrator**.  
+**Using SWIRL with Microsoft 365 requires installation and approval by an authorized company administrator**.  
 For more details, refer to the **[M365 Guide](M365-Guide.html)** or contact support.

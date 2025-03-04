@@ -149,12 +149,12 @@ If the search page loads, **log out** to see the login screen:
 
   ![SWIRL Login](images/swirl_40_login.png)
 
-### **Log in to SWIRL**
+### Log in to SWIRL
 
 - **Username:** `admin`  
 - **Password:** `password`  
 
-### **Perform a Search**
+### Perform a Search
 
 1. Enter a search query in the **search box**.  
 2. Click **Search**.  
@@ -162,17 +162,17 @@ If the search page loads, **log out** to see the login screen:
 
   ![SWIRL Results](images/swirl_40_results.png)
 
-### **Enable RAG** (if OpenAI API key is set)
+### Enable RAG (if OpenAI API key is set)
 
 Click **Generate AI Insight**:
 
   ![SWIRL Results with RAG](images/swirl_40_community_rag.png)
 
-### **Manage SWIRL**
+### Manage SWIRL
 
 Click the **profile avatar (top-right)** → Click **[Manage SWIRL](http://localhost:8000/swirl/)**.
 
-### **View Raw JSON Results**
+### View Raw JSON Results
 
 - Click **Search** under **API** in the **Manage SWIRL** page.  
 - Open: [http://localhost:8000/swirl/search/](http://localhost:8000/swirl/search/)  
@@ -180,6 +180,6 @@ Click the **profile avatar (top-right)** → Click **[Manage SWIRL](http://local
 
   ![SWIRL JSON response](images/swirl_results_mixed_1.png)
 
-## **Read More**
+## Read More
 
 Refer to the **[SWIRL User Guide](User-Guide.html)** for additional details.

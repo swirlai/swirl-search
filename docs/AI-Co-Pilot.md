@@ -51,7 +51,7 @@ SWIRL AI Search defines four core roles for GAI/LLMs. SWIRL AI Search Assistant 
    - `"chat"` is included in the `tags` list
    - `"chat"` is included in the `defaults` list
 
-### Example: OpenAI GPT-4 Configured for Chat & RAG
+Example: OpenAI GPT-4 Configured for Chat & RAG
 
 ```json
 {
