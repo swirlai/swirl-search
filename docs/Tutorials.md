@@ -20,11 +20,11 @@ nav_order: 20
 
 We recommend reviewing the following documents prior to pursuing the tutorial.
 
-* [What is SWIRL?](index.md#what-is-swirl-ai-connect)
-* [SWIRL Workflow](Developer-Guide.html#workflow)
-* [How do I connect SWIRL to some new source?](index.md#how-do-i-connect-swirl-to-some-new-source)
-* [Response Mappings](https://docs.swirlaiconnect.com/SP-Guide.html#response-mappings)
-* [Result Mappings](https://docs.swirlaiconnect.com/SP-Guide.html#result-mappings)
+* [What is SWIRL?](./index#what-is-swirl-ai-search)
+* [SWIRL Workflow](./Developer-Guide#workflow)
+* [How do I connect SWIRL to some new source?](./index#how-do-i-connect-swirl-to-a-new-source)
+* [Response Mappings](./SP-Guide#response-mappings)
+* [Result Mappings](./SP-Guide#result-mappings)
 
 # Creating a SearchProvider
 
@@ -41,7 +41,7 @@ For example, if trying to query a website using a URL like `https://host.com/?q=
     "query_template": "{url}?q={query_string}",
 }
 ```
-To learn more about query and URL parameters, refer to the [SearchProvider Guide](SP-Guide.html).
+To learn more about query and URL parameters, refer to the [SearchProvider Guide](./SP-Guide).
 
 * If the website offers the ability to page through results, or sort results by date (as well as relevancy), use the `PAGE=` and `DATE_SORT=` query mappings to add support for these features through SWIRL.  
 
@@ -50,7 +50,7 @@ For example:
 "query_mappings": "DATE_SORT=sort=date,PAGE=start=RESULT_INDEX"
 ```
 
-For more information, refer to the [SearchProvider Guide, Query Mappings](SP-Guide.html#query-mappings) section.
+For more information, refer to the [SearchProvider Guide, Query Mappings](./SP-Guide#query-mappings) section.
 
 * Open the query URL in a browser and look through the JSON response. 
 If using Visual Studio Code, right-click on the pasted JSON and select `Format Document` to make it easier to read.
@@ -61,9 +61,9 @@ If using Visual Studio Code, right-click on the pasted JSON and select `Format D
 "result_mappings": "url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
 ```
 
-* Add credentials as required for the service.  The format to use depends on the type of credential. Details are here: [User Guide, Authentication & Credentials](SP-Guide.html#authentication--credentials) section.
+* Add credentials as required for the service.  The format to use depends on the type of credential. Details are here: [User Guide, Authentication & Credentials](./SP-Guide#authentication--credentials) section.
 
-* Add a suitable tag that can be used to describe the source or what it knows about.  Spaces are not permitted; good tags are clear and obvious when used in a query, like `company:tesla` or `news:openai`. For more about tags, see: [Organizing SearchProviders with Active, Default and Tags](SP-Guide.html#organizing-searchproviders-with-active-default-and-tags)
+* Add a suitable tag that can be used to describe the source or what it knows about.  Spaces are not permitted; good tags are clear and obvious when used in a query, like `company:tesla` or `news:openai`. For more about tags, see: [Organizing SearchProviders with Active, Default and Tags](./SP-Guide#organizing-searchproviders-with-active-default-and-tags)
 
 * Review the finished SearchProvider:
 ```
@@ -184,7 +184,7 @@ As you can see from the ChatGPT Connector, it first loads the OpenAI credentials
 * ChatGPT depends on the OpenAI API key, which is provided to SWIRL Community via the `.env` file. To follow this pattern, create new values in `.env` then modify `swirl_server/settings.py` to load them as Django settings, and set a reasonable default.
 
 {: .highlight }
-In SWIRL Enterprise, use [AIProviders to configure LLMs and RAG](AI-Connect.md#activating-ai-providers) instead of the `.env` file.
+In SWIRL Enterprise, use [AIProviders to configure LLMs and RAG](./AI-Connect#activating-ai-providers) instead of the `.env` file.
 
 * Modify the `normalize_response()` method to store the raw response. This is literally no more (or less) than writing the result objects out as a Python list and storing that in `self.results`:
 ```
@@ -219,7 +219,7 @@ from swirl.connectors.my_connector import MyConnector
 
 * Create a SearchProvider to configure the new Connector, then add it to the SWIRL installation as noted in the [Creating a SearchProvider](#creating-a-searchprovider) section above.  Don't forget a useful Tag so that you can easily target the new connector when ready to test.
 
-To learn more about developing Connectors, refer to the [Developer Guide, Developing New Connectors](Developer-Guide.html#develop-new-connectors) section.
+To learn more about developing Connectors, refer to the [Developer Guide, Developing New Connectors](./Developer-Guide#develop-new-connectors) section.
 
 # Creating a QueryProcessor
 
@@ -227,7 +227,7 @@ A QueryProcessor is a stage executed either during Pre-Query or Query Processing
 
 In both cases, the goal is to modify the query sent to some group of SearchProviders. 
 
-Note: if you just want to rewrite the query using lookup tables or regular expressions, consider [using `QueryTransformations` instead](Developer-Guide.html#query-transformation-rules).
+Note: if you just want to rewrite the query using lookup tables or regular expressions, consider [using `QueryTransformations` instead](./Developer-Guide#query-transformation-rules).
 
 To create a new QueryProcessor:
 
@@ -333,7 +333,7 @@ def getSearchProviderQueryProcessorsDefault():
 % python swirl.py restart
 ```
 
-* Go to the Galaxy UI (`http://localhost:8000/galaxy/`) and run a search; if using a query processor be sure to [target that SearchProvider with a tag](SP-Guide.html#using-tags-to-target-searchproviders). 
+* Go to the Galaxy UI (`http://localhost:8000/galaxy/`) and run a search; if using a query processor be sure to [target that SearchProvider with a tag](./SP-Guide#organizing-searchproviders-with-active-default-and-tags). 
 
 For example if you added a QueryProcessor to a SearchProvider `query_processing` pipeline with a Tag of "news", the query would be `http://localhost:8000/swirl/search/?q=news:some+query` instead. Results should appear in a just a few seconds. In the `messages` block, a message indicating that the new QueryProcessor rewrote the query should appear:
 ```
@@ -428,7 +428,7 @@ def getSearchProviderResultProcessorsDefault():
 MyResultProcessor updated 5 results from: MyConnector",
 ```
 
-To learn more about writing Processors, refer to the [Developer Guide](Developer-Guide.html#develop-new-processors)
+To learn more about writing Processors, refer to the [Developer Guide](./Developer-Guide#develop-new-processors)
 
 # Creating a PostResultProcessor
 
@@ -515,5 +515,5 @@ def getSearchPostResultProcessorsDefault():
 MyPostResultProcessor updated 10 results from: MySearchProvider
 ```
 
-To learn more about writing Processors, refer to the [Developer Guide](Developer-Guide.html#develop-new-processors)
+To learn more about writing Processors, refer to the [Developer Guide](./Developer-Guide#develop-new-processors)
 

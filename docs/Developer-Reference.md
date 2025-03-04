@@ -63,7 +63,7 @@ The following table provides a detailed breakdown of each step in the federation
 | Status | Meaning | 
 | ---------- | ---------- |
 | **ERR_DUPLICATE_RESULT_OBJECTS** | More than one Result object was found; [contact support](#support) for assistance. |
-| **ERR_NEED_PERMISSION** | The Django user does not have sufficient permissions to perform the requested operation. More: [Permissioning Normal Users](Admin-Guide.html#permissioning-normal-users). | 
+| **ERR_NEED_PERMISSION** | The Django user does not have sufficient permissions to perform the requested operation. More: [Permissioning Normal Users](./Admin-Guide#permissioning-normal-users). | 
 | **ERR_NO_ACTIVE_SEARCHPROVIDERS** | Search failed because no specified SearchProviders were active. |
 | **ERR_NO_RESULTS** | SWIRL has not received results from any source. |
 | **ERR_NO_SEARCHPROVIDERS** | Search failed because no SearchProviders were specified. |
@@ -106,7 +106,7 @@ A SearchProvider defines a searchable source. It includes metadata identifying t
 | **result_grouping_field** | Used with `DedupeByFieldResultProcessor` to define a field for duplicate suppression | "" (`"resource.conversationId"`) |
 | **result_processors** | List of processors normalizing results from this source | "CosineRelevancyResultProcessor" (`"MappingResultProcessor","CosineRelevancyResultProcessor"`) |
 | **response_mappings** | JSONPath mappings to transform the source's response into a standardized JSON result set | "" (`"FOUND=searchInformation.totalResults, RETRIEVED=queries.request[0].count, RESULTS=items"`) |
-| **result_mappings** | Key-value mappings for result fields. See [SP Guide, Result Mappings](SP-Guide.html#result-mappings) for details. | "" (`"url=link,body=snippet,cacheId,NO_PAYLOAD"`) |
+| **result_mappings** | Key-value mappings for result fields. See [SP Guide, Result Mappings](./SP-Guide#result-mappings) for details. | "" (`"url=link,body=snippet,cacheId,NO_PAYLOAD"`) |
 | **results_per_query** | Number of results requested per query from this source | 10 (`20`) |
 | **credentials** | Credentials used for authentication (dependent on source) | "" (`"key=your-google-json-api-key"`) |
 | **eval_credentials** | Session-based credential variables for dynamic authentication | "" (`"session['my-connector-token']"`) |
@@ -149,7 +149,7 @@ The only required property is `query_string`, which contains the search text. Al
 | **new_result_url** | Link to updated Result object using `RelevancyNewItemsMixer` | Automatic (`"http://localhost:8000/swirl/results?search_id=17&result_mixer=RelevancyNewItemsMixer"`) | 
 | **messages** | SearchProvider messages | "" (`"Retrieved 1 of 1 results from: Document DB Search"`) | 
 | **result_mixer** | Mixer object used for result ordering | RoundRobinMixer (`Stack2Mixer`) | 
-| **retention** | Retention setting (`0` = indefinite). See [Search Expiration Service](Admin-Guide.html#search-expiration-service). | 0 (`2` for daily deletion) | 
+| **retention** | Retention setting (`0` = indefinite). See [Search Expiration Service](./Admin-Guide#search-expiration-service). | 0 (`2` for daily deletion) | 
 | **tags** | Custom metadata attached to the Search object | "" (`{"query_string": "knowledge management", "tags": ["max_length:50"]}`) |
 
 {: .highlight }
@@ -164,7 +164,7 @@ Some special Search tags control query processing. For example, `SW_RESULT_PROCE
 | **/swirl/search/?q=some+query** | Create a Search object with default values except for `query_string`; redirects to result set; also accepts `providers` parameter |
 | **/swirl/search/?qs=some+query** | Create a Search object as above but return results synchronously; also accepts `providers` and `result_mixer` parameters |
 | **/swirl/search/?rerun=id** | Re-run a Search, deleting previously stored Results |
-| **/swirl/search/?update=id** | [Update a Search](Developer-Guide.html#update-a-search) with new results since the last execution |
+| **/swirl/search/?update=id** | [Update a Search](./Developer-Guide#update-a-search) with new results since the last execution |
 
 # Result Objects
 
@@ -174,7 +174,7 @@ Only Connectors should create Result objects.
 
 Developers can manipulate individual Results as needed for their applications.
 
-However, the [goal of SWIRL](index.html) (and federated search in general) is to provide unified results from all sources. SWIRL uses Mixers to streamline this process.
+However, the [goal of SWIRL](./index) (and federated search in general) is to provide unified results from all sources. SWIRL uses Mixers to streamline this process.
 
 ## Properties
 
@@ -202,7 +202,7 @@ However, the [goal of SWIRL](index.html) (and federated search in general) is to
 | Field | Description | Example |
 | ---------- | ---------- | ---------- |
 | **swirl_rank** | SWIRL's relevancy ranking for this result | `1` |
-| **swirl_score** | Relevancy metric for this result. It is only displayed if [&explain=True](Developer-Guide.html#understand-the-explain-structure) is set. | `1890.6471312936828` |
+| **swirl_score** | Relevancy metric for this result. It is only displayed if [&explain=True](./Developer-Guide#understand-the-explain-structure) is set. | `1890.6471312936828` |
 | **searchprovider** | Human-readable name of the SearchProvider | `"OneDrive Files - Microsoft 365"` |
 | **searchprovider_rank** | SearchProvider's ranking for this result | `3` |
 | **title** | Source-reported title with highlighted search term matches | `German car industry to invest in <em>electric</em> <em>vehicles</em> ...` |
@@ -215,7 +215,7 @@ However, the [goal of SWIRL](index.html) (and federated search in general) is to
 | **title_hit_highlights** | List of matched highlights in title |  |
 | **body_hit_highlights** | List of matched highlights in body |  |
 | **payload** | Dictionary of additional fields in the SearchProvider's response | `{}` |
-| **explain** | Dictionary containing word stems, similarity scores, length adjustments, and `hits` metadata. Displayed only if [&explain=True](Developer-Guide.html#understand-the-explain-structure) is set. | `{}` |
+| **explain** | Dictionary containing word stems, similarity scores, length adjustments, and `hits` metadata. Displayed only if [&explain=True](./Developer-Guide#understand-the-explain-structure) is set. | `{}` |
 
 {: .highlight }
 The `PAYLOAD` structure varies by SearchProvider. The caller must extract needed fields, typically by creating a new Processor or adding `result_mappings`.
@@ -442,9 +442,9 @@ The [Elastic](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors
 
 JSONPaths in `result_mappings` are essential for Elastic and OpenSearch, as they embed results in a `_source` field unless configured otherwise.
 
-See the [SearchProvider Guide, Result Mappings](SP-Guide.html#result-mappings) for more details.
+See the [SearchProvider Guide, Result Mappings](./SP-Guide#result-mappings) for more details.
 
-Use the [Payload Field](SP-Guide.html#payload-field) to store additional content.
+Use the [Payload Field](./SP-Guide#payload-field) to store additional content.
 
 # Microsoft Graph
 
@@ -721,8 +721,8 @@ The [RequestsGet Connector](https://github.com/swirlai/swirl-search/blob/main/sw
 To adapt RequestsGet to your JSON response, modify the JSONPaths in `response_mappings` using the format `swirl_key=source-key`. If results are wrapped in a dictionary, use `RESULTS` to extract them.
 
 For more details, refer to:
-- [SearchProvider Guide, Result Mappings](SP-Guide.html#result-mappings)
-- [Payload Field](SP-Guide.html#payload-field) for extra data storage.
+- [SearchProvider Guide, Result Mappings](./SP-Guide#result-mappings)
+- [Payload Field](./SP-Guide#payload-field) for extra data storage.
 
 ## RequestsPost
 
@@ -967,8 +967,8 @@ Mixers organize search results into a structured order.
 
 | Mixer | Description | Notes |
 | ---------- | ---------- | ---------- | 
-| **RelevancyMixer** | Sorts by [relevancy](User-Guide.html#relevancy-ranking) score (descending), then source rank (ascending). | Default; depends on `relevancy_processor` in `search.post_result_processors`. |
-| **RelevancyNewItemsMixer** | Same as `RelevancyMixer`, but hides results missing the `new` field from [Search updates](Developer-Guide.html#update-a-search). | Default for `search.new_result_url`. |
+| **RelevancyMixer** | Sorts by [relevancy](./User-Guide#relevancy-ranking) score (descending), then source rank (ascending). | Default; depends on `relevancy_processor` in `search.post_result_processors`. |
+| **RelevancyNewItemsMixer** | Same as `RelevancyMixer`, but hides results missing the `new` field from [Search updates](./Developer-Guide#update-a-search). | Default for `search.new_result_url`. |
 | **DateMixer** | Sorts by `date_published`. Omits results with `"unknown"` dates. | Use for date-sorted results. |
 | **DateNewItemsMixer** | Same as `DateMixer`, but hides results missing the `new` field. | Default for `search.new_result_url` when sorting by date. |
 | **RoundRobinMixer** | Alternates results from each SearchProvider; equivalent to `Stack1Mixer`. | Good for cross-sectioned results or date sorting. |
@@ -1035,7 +1035,7 @@ The TechCrunch Continental USA funding data set is sourced from [Insurity Spatia
 
 **Loading into SQLite3 **
 
-1. Activate [sqlite_web](Admin-Guide.html#sqlite-web) from the `swirl-home` directory:
+1. Activate [sqlite_web](./Admin-Guide#sqlite-web) from the `swirl-home` directory:
 
 ```shell
 sqlite_web db.sqlite3
@@ -1049,7 +1049,7 @@ sqlite_web db.sqlite3
 
 ![Sqlite loading funding dataset](images/sqlite_import_funding_2.png)
 
-7. Load the [Funding DB SQLite3](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_sqlite3.json) SearchProvider as described in the [SearchProvider Guide](SP-Guide.html#copypaste-install).
+7. Load the [Funding DB SQLite3](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_sqlite3.json) SearchProvider as described in the [SearchProvider Guide](./SP-Guide#copypaste-install).
 
 **Loading into PostgreSQL**
 
@@ -1081,7 +1081,7 @@ FROM '/path/to/Data/funding_db.csv'
 DELIMITER ',' CSV HEADER;
 ```
 
-3. Load the [Funding DB PostgreSQL](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_postgres.json) SearchProvider as described in the [SearchProvider Guide](SP-Guide.html#copypaste-install).
+3. Load the [Funding DB PostgreSQL](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_postgres.json) SearchProvider as described in the [SearchProvider Guide](./SP-Guide#copypaste-install).
 
 **Loading into BigQuery**
 
@@ -1090,7 +1090,7 @@ DELIMITER ',' CSV HEADER;
 ![BigQuery Funding DB Schema in Console](images/funding_bigquery_schema.png)
 
 2. Load the CSV using [Google's BigQuery CSV Import Guide](https://cloud.google.com/bigquery/docs/loading-data-cloud-storage-csv#loading_csv_data_into_a_table).
-3. Load the [Funding DB BigQuery](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_bigquery.json) SearchProvider as described in the [SearchProvider Guide](SP-Guide.html#copypaste-install).
+3. Load the [Funding DB BigQuery](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/funding_db_bigquery.json) SearchProvider as described in the [SearchProvider Guide](./SP-Guide#copypaste-install).
 
 ---
 

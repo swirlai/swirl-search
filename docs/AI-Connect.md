@@ -55,7 +55,7 @@ DATABASES = {
 }
 ```
 
-For more details, refer to the [Admin Guide - Configuring Django](https://docs.swirl.today/Admin-Guide.html#configuring-django).
+For more details, refer to the [Admin Guide - Configuring Django](./Admin-Guide#configuring-django).
 
 ## OpenID Connect
 
@@ -88,7 +88,7 @@ export MSAL_HOST=localhost
 
 ## Connecting to M365
 
-To connect SWIRL to your **Microsoft 365 (M365) tenant**, follow the instructions in the [Microsoft 365 Guide](https://docs.swirl.today/M365-Guide.html).
+To connect SWIRL to your **Microsoft 365 (M365) tenant**, follow the instructions in the [Microsoft 365 Guide](./M365-Guide).
 
 ## Connecting to Other Authentication Systems
 
@@ -154,7 +154,7 @@ SWIRL includes a preconfigured **Microsoft Authenticator**:
 
 **Activating the Microsoft Authenticator**
 
-To enable Microsoft authentication, register a **new SWIRL app** in **Azure**. Refer to the [M365 Guide](M365-Guide.html) for detailed setup instructions.
+To enable Microsoft authentication, register a **new SWIRL app** in **Azure**. Refer to the [M365 Guide](./M365-Guide) for detailed setup instructions.
 
 ## Other Authenticators
 
@@ -410,8 +410,8 @@ SWIRL prompts consist of three key components:
 
 To specify a prompt when using **Generative AI (GAI)** for query rewriting or direct question answering:
 
-1. Follow the steps in [Connecting to Enterprise AI](#connecting-to-enterprise-ai).
-2. Refer to the **Developer Reference** section on [GAI SearchProvider Tags](https://docs.swirl.today/Developer-Reference.html#chatgpt-query_mapping).
+1. Follow the steps in [Connecting to Enterprise AI](#connecting-to-generative-ai-gai-and-large-language-models-llms).
+2. Refer to the **Developer Guide** section on [Using an LLM to Rewrite Queries](./Developer-Guide#use-an-llm-to-rewrite-queries).
 
 This ensures prompts are correctly applied when interacting with AI-based query transformations.
 
@@ -527,7 +527,7 @@ If you prefer **not** to use Diffbot, use the following configuration:
 ```
 
 {: .highlight } 
-**Note:** For more details on configuring Google PSE SearchProviders, refer to the [SearchProvider Guide](SP-Guide.html#activating-a-google-programmable-search-engine-pse-searchprovider).
+**Note:** For more details on configuring Google PSE SearchProviders, refer to the [SearchProvider Guide](./SP-Guide#activating-a-google-programmable-search-engine-pse-searchprovider).
 
 ## Notes
 

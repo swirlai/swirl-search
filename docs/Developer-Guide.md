@@ -168,7 +168,7 @@ The `qs=` parameter functions like `q=`, except that it **immediately returns th
 
 **`qs=` Supports:**
 - **Filtering by SearchProviders** using [`providers=`](#specify-searchproviders-with-providers-url-parameter).
-- **Using custom Mixers** via [`result_mixer=`](Developer-Reference.html#mixers-1).
+- **Using custom Mixers** via [`result_mixer=`](./Developer-Reference#mixers-1).
 - **Enabling RAG processing** in a single call:  
   `?qs=metasearch&rag=true`
 
@@ -219,7 +219,7 @@ SWIRL AI Search (Community Edition) supports **query rewriting** using `ChatGPTQ
 
 To enable it, add `"ChatGPTQueryProcessor"` to `SearchProvider.query_processors`.  
 
-For details, see: [Developer Reference - Query Processors](Developer-Reference.html#query-processors).
+For details, see: [Developer Reference - Query Processors](./Developer-Reference#query-processors).
 
 ## Adjust `swirl_score` for Starred Results in Galaxy UI
 
@@ -240,7 +240,7 @@ If a **SearchProvider returns a result** containing a **NOT-ted term**, SWIRL lo
 **Solution**
 
 1. **Verify the SearchProvider supports NOT queries.**
-2. **Ensure the correct** [`NOT` query-mapping](SP-Guide.html#query-mappings) **is set.**
+2. **Ensure the correct** [`NOT` query-mapping](./SP-Guide#query-mappings) **is set.**
 
 ## Subscribe to a Search
 
@@ -293,7 +293,7 @@ The `messages` field logs **federation processing details**, while individual Re
 
 **Viewing Only New Results**
 
-Use the **[NewItems Mixers](Developer-Reference.html#mixers-1)** to retrieve **only newly added results**.
+Use the **[NewItems Mixers](./Developer-Reference#mixers-1)** to retrieve **only newly added results**.
 
 ## Detect and Remove Duplicate Results
 
@@ -352,7 +352,7 @@ http://localhost:8000/swirl/search/?update=<search-id>
 - **De-duplicates** results using the `url` field.
 - **Updates Search and Result messages** as the process runs.
 
-Use **[`RelevancyNewItemsMixer` and `DateNewItemsMixer`](Developer-Reference.html#mixers-1)** to retrieve **only new results**.
+Use **[`RelevancyNewItemsMixer` and `DateNewItemsMixer`](./Developer-Reference#mixers-1)** to retrieve **only new results**.
 
 ## Improve Relevancy for a Single SearchProvider
 
@@ -440,8 +440,8 @@ If **Search Expiration Service** is enabled, users can set **Search retention po
 
 **Expiration Timing:**
 
-- **Controlled by** [`Celery Beat Configuration`](Admin-Guide.html#configuring-celery--redis).
-- **Runs based on** [`Search Expiration Service`](Admin-Guide.html#search-expiration-service) settings.
+- **Controlled by** [`Celery Beat Configuration`](./Admin-Guide#configuring-celery--redis).
+- **Runs based on** [`Search Expiration Service`](./Admin-Guide#search-expiration-service) settings.
 
 ## Manage Results
 
@@ -620,7 +620,7 @@ def getSearchPreQueryProcessorsDefault():
     return ["RemovePIIQueryProcessor"]
 ```
 
-More details: [ResultProcessors](./Developer-Reference.md#result-processors)
+More details: [ResultProcessors](./Developer-Reference#result-processors)
 
 **`RemovePIIResultProcessor` (Redacts Results)**
 
@@ -637,7 +637,7 @@ Redacts PII **in results** (e.g., `"James T. Kirk"` → `"<PERSON>"`).
 ]
 ```
 
-More details: [ResultProcessors](./Developer-Reference.md#post-result-processors)
+More details: [ResultProcessors](./Developer-Reference#post-result-processors)
 
 **`RemovePIIPostResultProcessor`**
 
@@ -734,7 +734,7 @@ A **new Connector must override**:
 **Connector Development Guidelines**
 
 - **Import new connectors in** [`swirl/connectors/__init__.py`](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/__init__.py).
-- **Register new processors** in `CHOICES` inside [`swirl/models.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) *(requires a [database migration](Admin-Guide.html#database-migration))*.
+- **Register new processors** in `CHOICES` inside [`swirl/models.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) *(requires a [database migration](./Admin-Guide#database-migration))*.
 - **Limit imports** to only the required libraries (e.g., `requests`, `elasticsearch`, `sqlite3`).
 - **To extend an existing transport**, subclass it and override `normalize_response()`.
 - **Ensure `execute_search()` supports**:
@@ -775,7 +775,7 @@ Each Connector should **process results** using a **Result Processor**, ideally:
 ]
 ```
 
-More details: [MappingResultProcessor](Developer-Reference.html#result-processors).
+More details: [MappingResultProcessor](./Developer-Reference#result-processors).
 
 ## Develop New Processors
 
@@ -791,7 +791,7 @@ Processor classes are located in: [swirl/processors](https://github.com/swirlai/
 **Development Notes:**
 
 - **Import new processors in:** [`swirl/processors/__init__.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/processors/__init__.py).
-- **Register processors in `CHOICES` inside:** [`swirl/models.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) *(requires a [database migration](Admin-Guide.html#database-migration)).*
+- **Register processors in `CHOICES` inside:** [`swirl/models.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) *(requires a [database migration](./Admin-Guide#database-migration)).*
 - **PostResultProcessors should be the only processors accessing model data**.
 - **Ensure `process()` returns either:**  
   - Processed data (Query/Result processors).  
@@ -854,7 +854,7 @@ class RelevancyMixer(Mixer):
 **Development Notes:**
 
 - **Import new mixers in:** [`swirl/mixers/__init__.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/mixers/__init__.py).
-- **Register mixers in `CHOICES` inside:** [`swirl/models.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) *(requires a [database migration](Admin-Guide.html#database-migration)).*
+- **Register mixers in `CHOICES` inside:** [`swirl/models.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py) *(requires a [database migration](./Admin-Guide#database-migration)).*
 
 # Retrieval Augmented Generation WebSocket API
 
@@ -1215,7 +1215,7 @@ http://localhost:8000/swirl/search?q=search+engine
 
 **Note:**  
 - SWIRL may **rewrite these queries** based on `query_mappings` in the **SearchProvider**.  
-- See: [Search Syntax](User-Guide.html#search-syntax).
+- See: [Search Syntax](./User-Guide#search-syntax).
 
 ---
 
@@ -1277,13 +1277,13 @@ This request:
 ```
 
 {: .highlight }
-Retention setting (`retention: 1`) ensures the search is **deleted after 1 hour**, assuming the **[Search Expiration Service](Admin-Guide.html#search-expiration-service)** is running.
+Retention setting (`retention: 1`) ensures the search is **deleted after 1 hour**, assuming the **[Search Expiration Service](./Admin-Guide#search-expiration-service)** is running.
 
 ---
 
 ## Funding Dataset Examples
 
-If the **[Funding Dataset](Developer-Reference.html#funding-data-set)** is installed, the following queries work:
+If the **[Funding Dataset](./Developer-Reference#funding-data-set)** is installed, the following queries work:
 
 ```shell
 electric vehicle company:tesla

@@ -28,7 +28,7 @@ nav_order: 4
 | **Subscribe** | A key property of **Search** objects. When set to `true`, SWIRL periodically re-runs the search, sorting by date to retrieve new data and removing duplicates. Currently, users must poll for updates, but future releases will support: - **Callbacks** when new results are available.  - **Automatic regeneration of AI Insights.** |  
 | **Relevancy Ranking** | A scoring system that determines how relevant a search result is compared to others. Learn more: [Relevance in Information Retrieval](https://en.wikipedia.org/wiki/Relevance_(information_retrieval)). |  
 
-For additional details, refer to the [SWIRL AI Search Overview](index.html).
+For additional details, refer to the [SWIRL AI Search Overview](./index).
 
 # Running a Search  
 
@@ -43,7 +43,7 @@ For additional details, refer to the [SWIRL AI Search Overview](index.html).
    - **Password:** `password`  
 
     {: .warning }  
-    If you receive a warning about the password being compromised or part of a known data breach, you can safely ignore it by clicking `OK`. However, it's recommended to [change the superuser password](Admin-Guide.html#changing-a-super-user-password).
+    If you receive a warning about the password being compromised or part of a known data breach, you can safely ignore it by clicking `OK`. However, it's recommended to [change the superuser password](./Admin-Guide#changing-the-super-user-password).
 
 3. **Enter your search terms** in the search box and click `Search`.  
    - SWIRL will return **re-ranked results** in just a few seconds:  
@@ -211,7 +211,7 @@ This makes **direct hits** on funding records more likely to **rank higher** in 
 - **SearchProviders do not need `default=true` for Tags to work.**  
   - As long as they are **`active=true`**, using a tag in a query will **invoke them**.  
 
-For more details, refer to the [**Organizing SearchProviders with Active, Default, and Tags**](SP-Guide.html#organizing-searchproviders-with-active-default-and-tags) section.  
+For more details, refer to the [**Organizing SearchProviders with Active, Default, and Tags**](./SP-Guide#organizing-searchproviders-with-active-default-and-tags) section.  
 
 # Relevancy Ranking  
 
@@ -226,9 +226,9 @@ Relevancy ranking is determined by:
 The **Galaxy UI** puts a star next to results that exceed a configurable relevancy threshold, making high-confidence matches more visible.  
 
 For more details, see:  
-- [Adjusting the SWIRL Score](Developer-Guide.html#adjusting-the-swirl_score-that-causes-galaxy-ui-to-star-results)  
-- [Configuring Relevancy Field Weights](Developer-Guide.html#configure-relevancy-field-weights)  
-- [Understanding the Explain Structure](Developer-Guide.html#understand-the-explain-structure)  
+- [Adjusting the SWIRL Score](./Developer-Guide#adjust-swirl_score-for-starred-results-in-galaxy-ui)  
+- [Configuring Relevancy Field Weights](./Developer-Guide#configure-relevancy-field-weights)  
+- [Understanding the Explain Structure](./Developer-Guide#understand-the-explain-structure)  
 
 ## Hit Highlighting  
 
@@ -247,4 +247,4 @@ For example:
 
 SWIRL supports **source synonym configurations** to enhance relevancy calculations and hit highlighting.  
 
-For details, see the Developer Guide: [Integrate Source Synonyms Into SWIRL Relevancy](Developer-Guide.html#integrate-source-synonyms-into-swirl-relevancy)
+For details, see the Developer Guide: [Integrate Source Synonyms Into SWIRL Relevancy](./Developer-Guide#integrate-source-synonyms-into-swirl-relevancy)

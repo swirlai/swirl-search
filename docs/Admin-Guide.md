@@ -56,7 +56,7 @@ There should **never be a `.env` file** in the SWIRL repo. When upgrading SWIRL,
 
 **Environment Variable Descriptions**
 
-- **`SWIRL_EXPLAIN`** → Enables the [explain structure](Developer-Guide.html#understand-the-explain-structure).  
+- **`SWIRL_EXPLAIN`** → Enables the [explain structure](./Developer-Guide#understand-the-explain-structure).  
 - **`SECRET_KEY`** → A **cryptographic salt** used by Django. **Generate a new one for production**:  
   - [Django Signing Key Documentation](https://docs.djangoproject.com/en/4.1/topics/signing/)
 
@@ -118,7 +118,7 @@ http://localhost:8000/admin/
   ![Django Admin - Users](images/django_admin_console_user.png)
 
 {: .highlight }
-If using **OpenID Connect**, manual user creation is **not required**. See the [AI Search Guide](AI-Connect.html#openid-connect) for details.
+If using **OpenID Connect**, manual user creation is **not required**. See the [AI Search Guide](./AI-Connect#openid-connect) for details.
 
 ## Permissioning Normal Users
 
@@ -248,7 +248,7 @@ SWIRL configuration is managed in: [`swirl_server/settings.py`](https://github.c
 | **SWIRL_DEFAULT_QUERY_LANGUAGE** | Determines the stopword dictionary | `SWIRL_DEFAULT_QUERY_LANGUAGE = 'english'` |
 | **SWIRL_TIMEOUT** | Time (in seconds) before terminating slow connectors | `SWIRL_TIMEOUT = 10` |
 | **SWIRL_SUBSCRIBE_WAIT** | Timeout for updating a search | `SWIRL_SUBSCRIBE_WAIT = 20` |
-| **SWIRL_DEDUPE_FIELD** | Field used for [duplicate detection](Developer-Guide.html#detect-and-remove-duplicate-results) | `SWIRL_DEDUPE_FIELD = 'url'` |
+| **SWIRL_DEDUPE_FIELD** | Field used for [duplicate detection](./Developer-Guide#detect-and-remove-duplicate-results) | `SWIRL_DEDUPE_FIELD = 'url'` |
 | **SWIRL_DEDUPE_SIMILARITY_MINIMUM** | Minimum similarity score to classify as duplicate | `SWIRL_DEDUPE_SIMILARITY_MINIMUM = 0.95` |
 | **SWIRL_DEDUPE_SIMILARITY_FIELDS** | Fields used for duplicate detection | `SWIRL_DEDUPE_SIMILARITY_FIELDS = ['title', 'body']` |
 | **SWIRL_RELEVANCY_CONFIG** | Defines relevancy score weights for key fields | See below |
@@ -312,7 +312,7 @@ If you modify `crontab` in the **database** without updating **`CELERY_BEAT_SCHE
 
 # Search Subscriber Service
 
-When a **Search object has `subscribe=True`**, SWIRL will **periodically update that Search**. See the [Developer Guide](Developer-Guide.html#update-a-search) for more details.
+When a **Search object has `subscribe=True`**, SWIRL will **periodically update that Search**. See the [Developer Guide](./Developer-Guide#update-a-search) for more details.
 
 - **By default, the service runs every 4 hours.**
 - The schedule is defined in [Django settings](https://github.com/swirlai/swirl-search/blob/main/swirl_server/settings.py):

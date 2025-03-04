@@ -53,7 +53,7 @@ The following terms are used when referring to **SWIRL Enterprise** products.
 
 {: .warning }
 If you receive a warning about the password being compromised, follow these steps:  
-[Change the super user password](Admin-Guide.html#changing-a-super-user-password)
+[Change the super user password](./Admin-Guide#changing-the-super-user-password)
 
 ## SSO Login
 
@@ -207,7 +207,7 @@ To modify prompts, use the **HTML form** or **Raw Data modes** at the bottom of 
 
 {: .warning }
 **SWIRL recommends not modifying system prompts.** If you need to reset them, follow the  
-[Admin Guide section on resetting prompts](Admin-Guide.md#resetting-prompts).
+[Admin Guide section on resetting prompts](Admin-Guide#resetting-prompts).
 
 
 

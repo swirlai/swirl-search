@@ -138,7 +138,7 @@ To use **Generate AI Insights** (RAG) or **AI Search Assistant**, at least one A
 
 SWIRL ships with a default **admin/password** login. **If using Google Chrome, a security warning may appear.**
 
-To change the password, follow these steps: [Admin Guide - Changing Password](https://docs.swirl.today/Admin-Guide.html#changing-a-super-user-password)
+To change the password, follow these steps: [Admin Guide - Changing Password](./Admin-Guide#changing-a-users-password)
 
 ## Stopping SWIRL
 
@@ -181,7 +181,7 @@ To connect SWIRL with **Microsoft 365**, you need:
 - **App registration** in Azure.
 - **App ID and secrets** added to SWIRL.
 
-Setup takes ~1 hour. Follow the guide: [Microsoft 365 Integration Guide](https://docs.swirl.today/M365-Guide.html)
+Setup takes ~1 hour. Follow the guide: [Microsoft 365 Integration Guide](./M365-Guide)
 
 For additional support, please [contact SWIRL](#support).
 

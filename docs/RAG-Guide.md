@@ -16,11 +16,11 @@ nav_order: 5
 
 ---
 
-SWIRL supports Real-Time **[Retrieval Augmented Generation (RAG)](index.html#what-is-retrieval-augmented-generation-rag-does-swirl-support-it)** out of the box, using result snippets and/or the full text of fetched result pages.  
+SWIRL supports Real-Time **Retrieval Augmented Generation (RAG)** out of the box, using result snippets and/or the full text of fetched result pages.  
 
 # Configuring RAG  
 
-1. **Install SWIRL** as noted in the [Quick Start Guide](Quick-Start.html#local-installation), including the latest version of the **Galaxy UI**.  
+1. **Install SWIRL** as noted in the [Quick Start Guide](./Quick-Start), including the latest version of the **Galaxy UI**.  
 
 2. **Add your OpenAI API key or Azure OpenAI credentials** to the `.env` file:  
 
@@ -38,7 +38,7 @@ SWIRL supports Real-Time **[Retrieval Augmented Generation (RAG)](index.html#wha
 
     {: .warning }  
     **SWIRL AI Search Community Edition supports RAG only with OpenAI and Azure OpenAI.**  
-    The [Enterprise Edition](AI-Connect.html#connecting-to-generative-ai-gai-and-large-language-models-llms) supports additional providers.  
+    The [Enterprise Edition](./AI-Connect#connecting-to-generative-ai-gai-and-large-language-models-llms) supports additional providers.  
 
 3. **For PRODUCTION use**, update `static/api/config/default`:  
 
@@ -114,7 +114,7 @@ SWIRL supports Real-Time **[Retrieval Augmented Generation (RAG)](index.html#wha
 
     {: .warning }  
     By default, **SWIRL's RAG uses the first 10 selected results** (auto or manual).  
-    To adjust this, set `SWIRL_RAG_MAX_TO_CONSIDER` in `.env`, as noted in the [AI Search Guide](AI-Connect.html#configuration-options-1).  
+    To adjust this, set `SWIRL_RAG_MAX_TO_CONSIDER` in `.env`, as noted in the [AI Search Guide](./AI-Connect#configuration-options).  
 
 # SWIRL RAG Process: 
 
@@ -148,7 +148,7 @@ RAG processing is available via **a single API call**:
 ```
 ?qs=metasearch&rag=true
 ```
-For details, see the [Developer Guide](https://docs.swirl.today/Developer-Guide.html#get-synchronous-results-with-the-qs-url-parameter).  
+For details, see the [Developer Guide](./Developer-Guide#get-synchronous-results-with-qs-url-parameter).  
 
 ### Configuring Timeout Behavior  
 - The **default timeout is 60 seconds**.  

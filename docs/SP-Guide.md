@@ -42,12 +42,12 @@ Additionally, **inactive** SearchProviders for **Google Web Search and SWIRL Doc
 | **company_snowflake.json** | Queries the [Snowflake](https://www.snowflake.com/en/) `FreeCompanyResearch` dataset | Requires Snowflake username and password |
 | **crunchbase.json** | Searches organizations via [Crunchbase](https://www.crunchbase.com/) API | Requires Crunchbase API key |
 | **document_db.json** | SQLite3 document database | [Sample Data](https://github.com/swirlai/swirl-search/tree/main/Data/documents_db.csv) |
-| **elastic_cloud.json** | ElasticSearch (cloud version) | [Enron Email Dataset](Developer-Reference.html#enron-email-data-set) |
-| **elasticsearch.json** | ElasticSearch (local install) | [Enron Email Dataset](Developer-Reference.html#enron-email-data-set) |
+| **elastic_cloud.json** | ElasticSearch (cloud version) | [Enron Email Dataset](./Developer-Reference#enron-email-data-set) |
+| **elasticsearch.json** | ElasticSearch (local install) | [Enron Email Dataset](./Developer-Reference#enron-email-data-set) |
 | **europe_pmc.json** | Searches [EuropePMC.org](https://europepmc.org/) for life sciences literature | No authentication required |
-| **funding_db_bigquery.json** | BigQuery funding database | [Funding Dataset](Developer-Reference.html#funding-data-set) |
-| **funding_db_postgres.json** | PostgreSQL funding database | [Funding Dataset](Developer-Reference.html#funding-data-set) |
-| **funding_db_sqlite3.json** | SQLite3 funding database | [Funding Dataset](Developer-Reference.html#funding-data-set) |
+| **funding_db_bigquery.json** | BigQuery funding database | [Funding Dataset](./Developer-Reference#funding-data-set) |
+| **funding_db_postgres.json** | PostgreSQL funding database | [Funding Dataset](./Developer-Reference#funding-data-set) |
+| **funding_db_sqlite3.json** | SQLite3 funding database | [Funding Dataset](./Developer-Reference#funding-data-set) |
 | **github.json** | Searches public repositories for Code, Commits, Issues, and PRs | Requires GitHub bearer token |
 | **google_news.json** | Queries [Google News](https://news.google.com/) | No authentication required |
 | **google_pse.json** | Web search via Google Programmable Search Engine (PSE) | Requires Google API key |
@@ -57,13 +57,13 @@ Additionally, **inactive** SearchProviders for **Google Web Search and SWIRL Doc
 | **hubspot.json** | Searches the HubSpot CRM for Companies, Contacts, and Deals | Requires API token with [these scopes](images/HubSpot-scopes.png) |
 | **internet_archive.json** | Queries the [Internet Archive](https://archive.org/) | No authentication required |
 | **littlesis.json** | Queries [LittleSis.org](https://littlesis.org/) database of influential business and government figures | No authentication required |
-| **microsoft.json** | Queries Microsoft 365 (Outlook, OneDrive, SharePoint, Teams) | See the [M365 Guide](M365-Guide.html) |
+| **microsoft.json** | Queries Microsoft 365 (Outlook, OneDrive, SharePoint, Teams) | See the [M365 Guide](./M365-Guide) |
 | **miro.json** | Searches [Miro.com](https://miro.com) boards | Requires bearer token |
 | **movies_mongodb.json** | Queries [MongoDB Atlas](https://www.mongodb.com/) `sample_mflix.movies` dataset | Requires MongoDB credentials |
 | **newsdata_io.json** | Searches [Newsdata.io](https://newsdata.io/) | Requires API key |
 | **nlresearch.json** | Searches [NLResearch.com](https://northernlight.com/) premium content | Requires credentials |
 | **open_sanctions.json** | Queries [OpenSanctions.org](https://www.opensanctions.org/) | Requires API key |
-| **opensearch.json** | OpenSearch 2.x | [Developer Guide](Developer-Reference.html#elastic--opensearch) |
+| **opensearch.json** | OpenSearch 2.x | [Developer Guide](./Developer-Reference#elastic--opensearch) |
 | **oracle.json** | Queries Oracle 23c Free (and earlier versions) | Requires Oracle credentials |
 | **preloaded.json** | All preloaded SearchProviders | Default in SWIRL |
 | **servicenow.json** | Searches ServiceNow Knowledge and Service Catalog | Requires username and password |
@@ -204,7 +204,7 @@ SearchProviders have three properties that control their participation in querie
 |-----------|------------|
 | **Active**  | `true/false` – If `false`, the SearchProvider will not receive queries, even if specified in a `searchprovider_list`. |
 | **Default** | `true/false` – If `false`, the SearchProvider will only be queried if explicitly listed in `searchprovider_list`. |
-| **Tags**    | List of strings grouping providers by topic. Tags can be used in `searchprovider_list`, as a `providers=` [URL parameter](Developer-Guide.html#create-a-search-object-with-the-q-url-parameter), or as `tag:term` in a query. |
+| **Tags**    | List of strings grouping providers by topic. Tags can be used in `searchprovider_list`, as a `providers=` [URL parameter](./Developer-Guide#create-a-search-object-with-the-q-url-parameter), or as `tag:term` in a query. |
 
 ## Best Practices for SearchProvider Organization:
 
@@ -258,7 +258,7 @@ https://www.googleapis.com/customsearch/v1?cx=0c38029ddd002c006&q=some_query_str
 
 - The `url` field is **specific to each SearchProvider** and should contain **static parameters** that never change.
 - `query_mappings` allow **dynamic replacements** using query-time values.
-- The `query_string` is populated by SWIRL as described in the [Developer Guide](Developer-Guide.html#workflow).
+- The `query_string` is populated by SWIRL as described in the [Developer Guide](./Developer-Guide#workflow).
 
 # HTTP Request Headers
 
@@ -294,11 +294,11 @@ If **Relevancy Ranking** is required:
 1. The `CosineRelevancyResultProcessor` **must be the last item** in the `result_processors` list.
 2. The `CosineRelevancyPostResultProcessor` **must be included** in the `Search.post_result_processors` method, located in `swirl/models.py`.
 
-For more details, refer to the **[Relevancy Ranking Guide](Developer-Guide.html#relevancy-ranking)**.
+For more details, refer to the **[Relevancy Ranking Guide](./User-Guide#relevancy-ranking)**.
 
 ## Additional ResultProcessors
 
-SWIRL provides other **ResultProcessors** that may be useful in specific cases. See the **[Developer Guide](Developer-Guide.html#result-processing)** for more details.
+SWIRL provides other **ResultProcessors** that may be useful in specific cases. See the **[Developer Guide](./Developer-Guide#results)** for more details.
 
 # Authentication & Credentials
 
@@ -345,7 +345,7 @@ Supported by `RequestsGet`, `ElasticSearch`, and `OpenSearch` connectors.
 
 *Other Authentication Methods*
 
-For advanced authentication techniques, consult the **[Developer Guide](Developer-Guide.html#develop-new-connectors)**.
+For advanced authentication techniques, consult the **[Developer Guide](./Developer-Guide#develop-new-connectors)**.
 
 # Response Mappings
 
@@ -506,7 +506,7 @@ The **JSON result schema** is defined in:
 - [`swirl/processors/utils.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/processors/utils.py)
 - [`swirl/models.py`](https://github.com/swirlai/swirl-search/tree/main/swirl/models.py)
 
-[Result Mixers](Developer-Reference.html#mixers-1) further process and merge data from multiple sources.
+[Result Mixers](./Developer-Reference#mixers-1) further process and merge data from multiple sources.
 
 # PAYLOAD Field
 

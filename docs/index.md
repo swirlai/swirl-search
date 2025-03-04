@@ -75,7 +75,7 @@ SWIRL AI Search Assistant ensures that the configured **Generative AI (GAI) or L
 
 SWIRL manages chat context and history, triggering **Retrieval-Augmented Generation (RAG)** through AI Search based on user requests and conversation flow. Users can only receive insights from data they are already authorized to access. Additionally, Assistant retains context only within each user's active session—ensuring conversations remain private and contextualized per user. All access is managed through the existing **Single Sign-On (SSO)** system.
 
-For more information, please refer to the [AI Search Assistant Guide](AI-Co-Pilot.html).
+For more information, please refer to the [AI Search Assistant Guide](./AI-Co-Pilot).
 
 # What Systems Can SWIRL Integrate With?
 
@@ -85,9 +85,9 @@ For a full list of supported integrations, visit: [https://swirlaiconnect.com/co
 
 # How Do I Connect SWIRL to a New Source?
 
-To connect SWIRL AI Search with an internal data source, you need to **create a SearchProvider record**, which defines how SWIRL interacts with that source. Learn more in the [SearchProvider Guide](./SP-Guide.html#using-searchproviders).
+To connect SWIRL AI Search with an internal data source, you need to **create a SearchProvider record**, which defines how SWIRL interacts with that source. Learn more in the [SearchProvider Guide](./SP-Guide#using-searchproviders).
 
-To integrate SWIRL Enterprise with **Generative AI (GAI) or a Large Language Model (LLM)**, you need to **create an AIProvider record**, which configures SWIRL to communicate with the AI system. Detailed instructions can be found in the [AI Search Guide](AI-Connect.html#connecting-to-generative-ai-gai-and-large-language-models-llms).
+To integrate SWIRL Enterprise with **Generative AI (GAI) or a Large Language Model (LLM)**, you need to **create an AIProvider record**, which configures SWIRL to communicate with the AI system. Detailed instructions can be found in the [AI Search Guide](./AI-Connect#connecting-to-generative-ai-gai-and-large-language-models-llms).
 
 # What Is Included in SWIRL Enterprise Products?
 
@@ -153,7 +153,7 @@ SWIRL products are built on a **Python/Django/Celery/Redis** stack:
 * **Celery & Redis** – Handles asynchronous processing and task management.  
 * **PostgreSQL (recommended for production)** – Ensures scalability and reliability.  
 
-For a deeper dive into SWIRL’s architecture, check out the [Developer Guide](Developer-Guide.html#architecture).
+For a deeper dive into SWIRL’s architecture, check out the [Developer Guide](./Developer-Guide#architecture).
 
 # How Is SWIRL Usually Deployed?  
 

@@ -111,7 +111,7 @@ export MSAL_CB_PORT=8000
 export MSAL_HOST=localhost
 ```
 
-See the [RAG Configuration Guide](RAG-Guide.html) for more details.
+See the [RAG Configuration Guide](./RAG-Guide) for more details.
 
 ## Install the Galaxy UI
 
@@ -182,4 +182,4 @@ Click the **profile avatar (top-right)** → Click **[Manage SWIRL](http://local
 
 ## Read More
 
-Refer to the **[SWIRL User Guide](User-Guide.html)** for additional details.
+Refer to the **[SWIRL User Guide](./User-Guide)** for additional details.

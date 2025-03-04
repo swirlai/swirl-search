@@ -141,8 +141,8 @@ These work **out of the box** as long as internet access is available.
 SWIRL includes **inactive SearchProviders** for:  
 🔹 **Google Web**  
 🔹 **SWIRL Documentation**  
-These require a **Google API key**. See the [SearchProvider Guide](SP-Guide.html#activating-a-google-programmable-search-engine-pse-searchprovider) for setup instructions.
+These require a **Google API key**. See the [SearchProvider Guide](./SP-Guide#activating-a-google-programmable-search-engine-pse-searchprovider) for setup instructions.
 
 {: .highlight }  
 **Using SWIRL with Microsoft 365 requires installation and approval by an authorized company administrator**.  
-For more details, refer to the **[M365 Guide](M365-Guide.html)** or contact support.
+For more details, refer to the **[M365 Guide](./M365-Guide)** or contact support.
