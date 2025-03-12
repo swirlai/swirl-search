@@ -29,12 +29,11 @@ Add the license provided by SWIRL to the installation’s `.env` file in the fol
 SWIRL_LICENSE={"owner": "<owner-name>", "expiration": "<expiration-date>", "key": "<public-key>"}
 ```
 
-If the license is invalid, a message will appear in `logs/django.log`. Please [contact support](mailto:support@swirlaiconnect.com) if this happens.
+If the license is invalid, a message will appear in `logs/django.log`. Please [contact support](#support) for assistance.
 
 ## Database 
 
-For Proof of Value (POV) testing, SWIRL AI Search, Enterprise Edition can use SQLite3.  
-Please [contact support](#support) for assistance with this configuration.
+For Proof of Value (POV) testing, SWIRL AI Search, Enterprise Edition can use SQLite3.  [Contact support](#support) for assistance with this configuration.
 
 For production environments, SWIRL recommends **PostgreSQL**.
 
@@ -53,37 +52,6 @@ DATABASES = {
         'PORT': '<database-port>',
     }
 }
-```
-
-For more details, refer to the [Admin Guide - Configuring Django](./Admin-Guide#configuring-django).
-
-## OpenID Connect
-
-To enable OpenID Connect for authentication and auto-provisioning, update the following variables in the instance’s `.env` file:
-
-```
-OIDC_RP_CLIENT_ID=''
-OIDC_RP_CLIENT_SECRET=''
-OIDC_OP_AUTHORIZATION_ENDPOINT=''
-OIDC_OP_TOKEN_ENDPOINT=''
-OIDC_OP_USER_ENDPOINT=''
-OIDC_RP_SIGN_ALGO=''
-OIDC_OP_JWKS_ENDPOINT=''
-LOGIN_REDIRECT_URL=''
-LOGOUT_REDIRECT_URL=''
-OIDC_USERNAME_ALGO=''
-OIDC_STORE_ACCESS_TOKEN=''
-OIDC_STORE_ID_TOKEN=''
-OIDC_AUTHENTICATION_CALLBACK_URL=''
-```
-
-## Connecting to Microsoft IDP
-
-For Microsoft Identity Provider (IDP) authentication, set the following **OS environment variables** (do not place these in `.env`):
-
-```
-export MSAL_CB_PORT=8000
-export MSAL_HOST=localhost
 ```
 
 ## Connecting to M365
@@ -119,44 +87,6 @@ To manage authenticators, go to: [http://localhost:8000/swirl/aiproviders](http:
 | `scopes` | List of authorization scopes |
 | `should_expire` | Boolean; determines if tokens need refreshing (default: `True`) |
 | `use_basic_auth` | Boolean; enables basic authentication instead of SSO |
-
-## Microsoft 365 Authentication
-
-SWIRL includes a preconfigured **Microsoft Authenticator**:
-
-```
-{
-    "idp": "Microsoft",
-    "name": "Microsoft",
-    "active": false,
-    "callback_path": "/swirl/callback/microsoft-callback",
-    "client_id": "<your-client-id>",
-    "client_secret": "<your-client-secret>",
-    "app_uri": "http://localhost:8000",
-    "auth_uri": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
-    "token_uri": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-    "user_data_url": "https://graph.microsoft.com/v1.0/me",
-    "user_data_params": {
-        "$select": "displayName,mail,userPrincipalName"
-    },
-    "user_data_headers": {
-        "Authorization": "Bearer {access_token}"
-    },
-    "user_data_method": "GET",
-    "initiate_auth_code_flow_params": {},
-    "exchange_code_params": {},
-    "is_code_challenge": true,
-    "scopes": "User.Read Mail.Read Files.Read.All Calendars.Read Sites.Read.All Chat.Read offline_access",
-    "should_expire": true,
-    "use_basic_auth": true
-}
-```
-
-**Activating the Microsoft Authenticator**
-
-To enable Microsoft authentication, register a **new SWIRL app** in **Azure**. Refer to the [M365 Guide](./M365-Guide) for detailed setup instructions.
-
-## Other Authenticators
 
 For authentication with **Elastic, OpenSearch, CAS2, Salesforce, ServiceNow, Okta, Auth0, Ping Federate**, and other systems, please [contact support](#support).  
 

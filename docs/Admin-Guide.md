@@ -611,6 +611,9 @@ DATABASES = {
 }
 ```
 
+{: .warning }
+The following sections apply **only** to SWIRL Community Edition. For Enterprise Edition instructions view the [AI Connect Guide](AI-Connect#postgresql-configuration).
+
 ## Configuring PostgreSQL as the Database Backend
 
 1. **Install PostgreSQL** (if not already installed).  
@@ -621,7 +624,7 @@ DATABASES = {
 pip install psycopg2
 ```
 
-4. **Uncomment the PostgreSQL connector** in these files:
+4. **If you are using**Uncomment the PostgreSQL connector** in these files:
 
 **`swirl/connectors/__init__.py`**
 ```shell

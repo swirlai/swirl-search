@@ -19,6 +19,10 @@ Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Ente
 
 ---
 
+{: .highlight }
+If you're looking for SWIRL AI Connect and AI Co-Pilot, you're in the right place.
+Those products have been renamed...
+
 # Glossary
 
 The following terms are used when referring to **SWIRL Enterprise** products.
@@ -72,12 +76,11 @@ The SWIRL login page will show a button for SSO login.
 
     ![SWIRL Assistant with user logged in via SSO](images/swirl_40_chat_start.png)
 
-{: .warning }
-If you encounter an error, please [contact support](mailto:support@swirlaiconnect.com) or your local system administrator.
+# Verifying Connectivity 
 
-# Verifying Login
+Click the **profile icon** (top-right) to verify your connection to individual sources, which may vary depending on your SSO configuration. 
 
-Click the **profile icon** (top-right) to verify login. Use the **toggle switches** to connect or disconnect as needed.
+Use the **toggle switches** to connect or disconnect from any source, as needed.
 
   ![SWIRL Assistant with user logged in to Microsoft, not to Box](images/swirl_40_chat_profile.png)
 
@@ -108,7 +111,7 @@ Other supported query languages include:
 - **OpenSearch Query DSL**
 - **Solr syntax**  
   
-{: .warning }
+{: .highlight }
 For assistance with specific query languages, please [contact SWIRL](mailto:support@swirlaiconnect.com).
 
 # Human Language Support
@@ -141,9 +144,11 @@ Sometimes, Assistant **won't find results**. Don't be alarmed! Try the following
   ![SWIRL Assistant correcting a spelling error](images/swirl_40_chat_try_different_query.png)
 
 {: .warning }
-If querying in **SQL** or other structured query languages, **you may need to adjust the query**:
+When querying with **SQL** or other structured query languages, **some models may require occasional correction**:
 
   ![SWIRL Assistant having SQL corrected by user](images/swirl_40_chat_correct_query.png)
+
+Please [contact support](#support) for assistance using the Assistant with any advanced query language.
 
 # Ending a Conversation
 
@@ -179,14 +184,17 @@ Alternatively, from the **Assistant page**, click the **profile button**, then c
 Starting in **SWIRL Enterprise 4.0**, SWIRL introduces a **confidence-based relevancy ranking model**. The **confidence score** ranges from **0 (not relevant) to 1.0 (extremely relevant)** and is **comparable across queries**.
 
 ### How Confidence Scores Work:
-- **AI Insights use only results** above a configurable minimum confidence score.
-- The score **factors in**:
+
+The score **factors in**:
   - **Number of matched query terms**
   - **Term importance**
-  - **Contextual relevancy**
+  - **Contextual similarity between the query and the results**
+  - **The source-reported rank**
   - **Other advanced ranking factors**
 
 You can still **sort by relevancy** using the **`VIEW BY:`** dropdown. 
+
+**AI Insights use only results** above a configurable minimum confidence score. 
 
 ## Customizing Prompts
 

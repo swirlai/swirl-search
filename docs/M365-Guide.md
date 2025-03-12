@@ -241,6 +241,48 @@ Edit the `static/api/config/default` file:
   }
 ```
 
+{: .warning }
+The following section applies to **SWIRL Enterprise Edition only**.
+Community Edition users may skip to the next section.
+
+## Activate the Authenticator
+
+SWIRL includes a preconfigured **Microsoft Authenticator**, here: <http://localhost:8000/swirl/authenticators/Microsoft/>
+
+* Update the `client-id`
+* Update the `client-secret` 
+* Change the `app_uri` to the address of the server where SWIRL is installed
+
+```
+{
+    "idp": "Microsoft",
+    "name": "Microsoft",
+    "active": false,
+    "callback_path": "/swirl/callback/microsoft-callback",
+    "client_id": "<client-id>",
+    "client_secret": "<client-secret>",
+    "app_uri": "http://localhost:8000",
+    "auth_uri": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+    "token_uri": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+    "user_data_url": "https://graph.microsoft.com/v1.0/me",
+    "user_data_params": {
+        "$select": "displayName,mail,userPrincipalName"
+    },
+    "user_data_headers": {
+        "Authorization": "Bearer {access_token}"
+    },
+    "user_data_method": "GET",
+    "initiate_auth_code_flow_params": {},
+    "exchange_code_params": {},
+    "is_code_challenge": true,
+    "scopes": "User.Read Mail.Read Files.Read.All Calendars.Read Sites.Read.All Chat.Read offline_access",
+    "should_expire": true,
+    "use_basic_auth": true
+}
+```
+
+Click the `PUT` button to save the Authenticator.
+
 ## Restart SWIRL
 
 ```shell
