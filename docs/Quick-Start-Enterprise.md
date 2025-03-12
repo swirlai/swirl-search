@@ -36,9 +36,9 @@ Ensure Docker is running before proceeding!
 
 ## Downloading SWIRL Enterprise Files
 
-1. Locate the email from `hello@swirlaiconnect.com` with the subject **"Try SWIRL Enterprise"**.
+1. Locate the email with the subject **"Try SWIRL Enterprise"**.
 2. The email contains three attachments:
-   - `Try SWIRL Enterprise with Docker.pdf`
+   - A PDF with detailed instructions
    - `docker-compose.yaml`
    - `env.license`
 3. **Save** `docker-compose.yaml` to a folder on the target server.
@@ -87,6 +87,10 @@ Once complete, the output should look like this:
    - **Username:** `admin`  
    - **Password:** `password`  
 
+   {: .warning }
+   If you receive a warning about the password being compromised, follow these steps:  
+   [Change the super user password](./Admin-Guide#changing-the-super-user-password)
+
 5. Enter a search term and press `Search`. The ranked results should appear:
 
     ![SWIRL Results No M365](images/swirl_40_results.png)
@@ -127,18 +131,9 @@ To use **Generate AI Insights** (RAG) or **AI Search Assistant**, at least one A
 
 7. To access **SWIRL AI Search Assistant**, visit: [http://localhost:8000/galaxy/chat](http://localhost:8000/galaxy/chat)
 
-8. Ask a question, such as:  
-   - *"What sources do I have access to?"*  
-
-9. Conduct a search and verify that **RAG results** appear:
+8. Ask a question, such as "Tell me about SWIRL AI Connect?"
 
     ![SWIRL Assistant Conversation with RAG Result](images/swirl_40_enterprise_assistant_rag.png)
-
-## Security Notice
-
-SWIRL ships with a default **admin/password** login. **If using Google Chrome, a security warning may appear.**
-
-To change the password, follow these steps: [Admin Guide - Changing Password](./Admin-Guide#changing-a-users-password)
 
 ## Stopping SWIRL
 
@@ -161,13 +156,6 @@ docker-compose stop
 These methods **preserve** the SWIRL database. If you don't need to save data, press `CTRL-C` **twice** to stop SWIRL instantly.
 
 ## Optional Steps
-
-- Click **Select Items** to modify documents used for RAG.
-- View raw JSON results at:
-  - [http://localhost:8000/swirl/search/](http://localhost:8000/swirl/search/)
-  - Click `result_url` to view the full JSON response.
-
-![SWIRL JSON response](images/swirl_results_mixed_1.png)
 
 - Manage SWIRL via **Galaxy UI**:
   - Click the profile avatar (top-right corner).
