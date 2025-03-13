@@ -15,6 +15,9 @@ permalink: "/"
 
 <span class="big-text">SWIRL Overview</span><br/><span class="med-text">Community Edition | Enterprise Edition</span>
 
+{: .highlight }
+Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI Search** 🔎 and **SWIRL AI Co-Pilot** is now **SWIRL AI Search Assistant** 🤖
+
 ---
 
 # What is SWIRL AI Search?
@@ -93,35 +96,31 @@ To integrate SWIRL Enterprise with **Generative AI (GAI) or a Large Language Mod
 
 SWIRL **Enterprise Edition** includes:
 
+* **SWIRL AI Search Assistant**, providing an interactive AI-powered search assistant.
+
 * **Support for multiple AI providers** (e.g., Anthropic, Cohere), with configurable roles for **Generative AI (GAI) or Large Language Models (LLMs)**, including:
   - Chat
   - Query rewriting
   - Direct answer retrieval
-  - **Retrieval-Augmented Generation (RAG)**
-  - Embeddings for re-ranking and passage detection by the **Reader LLM**  
+  - Retrieval-Augmented Generation (RAG)
+  - Embeddings for re-ranking 
 
 * **Single Sign-On (SSO) support** with various Identity Providers (IDPs), such as **Ping Federate**, plus auto-provisioning via **OpenID Connect**.  
   *(The Community version only supports M365.)*
 
 * **AI-powered insights from 1,500+ file formats**, including:
-  - Structured data (e.g., tables)
-  - Extracted text from images  
+  - Structured data including tables and charts
+  - Text in images
 
 * **Authentication support for PageFetcher**, enabling secure retrieval of protected content.
 
-* **Configurable prompts**, allowing customization based on:
-  - Role
-  - User
-  - Group
-  - On-the-fly selection  
-
-* **SWIRL AI Search Assistant**, providing an interactive AI-powered search assistant.
+* **Configurable prompts**
 
 # How Much Do SWIRL Enterprise Products Cost?
 
 SWIRL Enterprise pricing varies based on deployment type, features, and support level.  
 
-For detailed pricing information, visit: [https://swirlaiconnect.com/pricing](https://swirlaiconnect.com/pricing).
+For more information, visit: [https://swirlaiconnect.com/pricing](https://swirlaiconnect.com/pricing).
 
 # When Should I Use SWIRL AI Search Community Edition?
 

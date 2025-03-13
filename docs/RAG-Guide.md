@@ -14,6 +14,9 @@ nav_order: 5
 
 <span class="big-text">Retrieval Augmented Generation (RAG) Configuration</span><br/><span class="med-text">Community Edition</span>
 
+{: .highlight }
+Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI Search** 🔎 and **SWIRL AI Co-Pilot** is now **SWIRL AI Search Assistant** 🤖
+
 ---
 
 SWIRL supports Real-Time **Retrieval Augmented Generation (RAG)** out of the box, using result snippets and/or the full text of fetched result pages.  
