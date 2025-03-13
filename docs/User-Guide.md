@@ -16,20 +16,6 @@ nav_order: 4
 
 ---
 
-# Glossary  
-
-| Word | Explanation |  
-| ---------- | ---------- |  
-| **Connector** | A SWIRL module that queries a specific type of data source. |  
-| **Page Fetcher** | A SWIRL module that retrieves a copy of a specific document. |  
-| **Query** | In search engines, the act of searching is distinct from the search terms themselves, which are called a **query**. SWIRL follows this convention whenever possible. |  
-| **Search** | A SWIRL object that **defines a search** to be executed on behalf of a user. It includes the `query_string` (actual search text) and associated metadata. |  
-| **SearchProvider** | A configuration of a **Connector**, enabling SWIRL to query a specific endpoint via its API. This includes metadata such as credentials. |  
-| **Subscribe** | A key property of **Search** objects. When set to `true`, SWIRL periodically re-runs the search, sorting by date to retrieve new data and removing duplicates. Currently, users must poll for updates, but future releases will support: - **Callbacks** when new results are available.  - **Automatic regeneration of AI Insights.** |  
-| **Relevancy Ranking** | A scoring system that determines how relevant a search result is compared to others. Learn more: [Relevance in Information Retrieval](https://en.wikipedia.org/wiki/Relevance_(information_retrieval)). |  
-
-For additional details, refer to the [SWIRL AI Search Overview](./index).
-
 # Running a Search  
 
 1. **Open SWIRL in your browser: [http://localhost:8000](http://localhost:8000/)** (or) **[http://localhost:8000/galaxy/search](http://localhost:8000/galaxy/search/)**  

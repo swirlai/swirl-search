@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Tutorial - Extending SWIRL
-nav_order: 20
+nav_order: 21
 ---
 <details markdown="block">
   <summary>
@@ -184,7 +184,7 @@ As you can see from the ChatGPT Connector, it first loads the OpenAI credentials
 * ChatGPT depends on the OpenAI API key, which is provided to SWIRL Community via the `.env` file. To follow this pattern, create new values in `.env` then modify `swirl_server/settings.py` to load them as Django settings, and set a reasonable default.
 
 {: .highlight }
-In SWIRL Enterprise, use [AIProviders to configure LLMs and RAG](./AI-Connect#activating-ai-providers) instead of the `.env` file.
+In SWIRL Enterprise, use [AIProviders to configure LLMs and RAG](AI-Search#activating-ai-providers) instead of the `.env` file.
 
 * Modify the `normalize_response()` method to store the raw response. This is literally no more (or less) than writing the result objects out as a Python list and storing that in `self.results`:
 ```

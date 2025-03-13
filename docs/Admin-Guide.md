@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Admin Guide
-nav_order: 12
+nav_order: 13
 ---
 <details markdown="block">
   <summary>
@@ -118,7 +118,7 @@ http://localhost:8000/admin/
   ![Django Admin - Users](images/django_admin_console_user.png)
 
 {: .highlight }
-If using **OpenID Connect**, manual user creation is **not required**. See the [AI Search Guide](./AI-Connect#openid-connect) for details.
+If using **OpenID Connect**, manual user creation is **not required**. See the [AI Search Guide](AI-Search#openid-connect) for details.
 
 ## Permissioning Normal Users
 
@@ -612,7 +612,7 @@ DATABASES = {
 ```
 
 {: .warning }
-The following sections apply **only** to SWIRL Community Edition. For Enterprise Edition instructions view the [AI Connect Guide](AI-Connect#postgresql-configuration).
+The following sections apply **only** to SWIRL Community Edition. For Enterprise Edition instructions view the [AI Connect Guide](AI-Search#postgresql-configuration).
 
 ## Configuring PostgreSQL as the Database Backend
 
