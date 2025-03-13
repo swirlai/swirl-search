@@ -17,6 +17,9 @@ nav_order: 9
 {: .warning }
 Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Enterprise.
 
+{: .highlight }
+Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI Search** 🔎 and **SWIRL AI Co-Pilot** is now **SWIRL AI Search Assistant** 🤖
+
 ---
 
 # Configuring SWIRL AI Search, Enterprise Edition

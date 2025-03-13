@@ -17,23 +17,10 @@ nav_order: 8
 {: .warning }
 Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Enterprise.
 
----
-
 {: .highlight }
-If you're looking for SWIRL AI Connect and AI Co-Pilot, you're in the right place.
-Those products have been renamed...
+Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI Search** 🔎 and **SWIRL AI Co-Pilot** is now **SWIRL AI Search Assistant** 🤖
 
-# Glossary
-
-The following terms are used when referring to **SWIRL Enterprise** products.
-
-| Term | Explanation | 
-| ---------- | ---------- |
-| **AIProvider** | A configuration of a Generative AI or LLM. It includes metadata identifying the type of model used, API key, and more. *(Enterprise Edition only)* |
-| **Chat** | A SWIRL object that stores message objects for the AI Search Assistant. | 
-| **Confidence** | A prediction of the **relevancy** of a SWIRL result, ranging from **0 to 1**. | 
-| **Message** | A SWIRL object containing a message, either **to or from** a GAI/LLM. | 
-| **Prompt** | A SWIRL object that configures a GAI or LLM for use in various **AI roles**, such as **RAG or chat**. *(Enterprise Edition only)* |
+---
 
 # Accessing AI Search Assistant
 

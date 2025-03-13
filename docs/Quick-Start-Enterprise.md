@@ -17,6 +17,9 @@ nav_order: 7
 {: .warning }
 Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Enterprise.
 
+{: .highlight }
+Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI Search** 🔎 and **SWIRL AI Co-Pilot** is now **SWIRL AI Search Assistant** 🤖
+
 ---
 
 * The recommended minimum system configuration is a **16-core server**, with **32 GB of memory** and at least **500 GB of available disk space**. This configuration supports up to **25 users**.

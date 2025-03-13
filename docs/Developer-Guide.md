@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Developer Guide
-nav_order: 18
+nav_order: 19
 ---
 <details markdown="block">
   <summary>
@@ -15,21 +15,6 @@ nav_order: 18
 <span class="big-text">Developer Guide</span><br/><span class="med-text">Community Edition | Enterprise Edition</span>
 
 ---
-
-# Glossary
-
-| Term | Definition |
-|------|-----------|
-| **SearchProvider** | Defines a searchable source, including metadata and the connector type used for querying. |
-| **Search** | Represents a query execution request, containing a `query_string` and optional metadata. |
-| **Query** | Refers to the **search terms** entered by a user. SWIRL follows this terminology but may sometimes refer to searches as queries. |
-| **Subscribe** | When `true`, SWIRL periodically re-runs the search, retrieving **newer** data and removing duplicates. |
-| **Connector** | A SWIRL module that interacts with a **specific data source**, wrapping existing Python libraries (e.g., `requests.get`, `elasticsearch`). |
-| **Processors** | Modules that process **search queries and results**, transforming them (e.g., removing control characters, spell-checking, or normalizing formats). |
-| **Pipelines** | Execute pre-defined sequences of Processors to transform search or result content. |
-| **Result** | Represents **retrieved search results** from one `SearchProvider` within a federated search. |
-| **Mixer** | Combines results from multiple `SearchProviders` into a **unified result set**. |
-| **Relevancy Ranking** | Estimates the importance of a search result compared to others. [Learn more](https://en.wikipedia.org/wiki/Relevance_(information_retrieval)). |
 
 # Architecture
 

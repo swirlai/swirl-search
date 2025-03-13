@@ -17,6 +17,9 @@ nav_order: 10
 {: .warning }
 Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Enterprise.
 
+{: .highlight }
+Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI Search** 🔎 and **SWIRL AI Co-Pilot** is now **SWIRL AI Search Assistant** 🤖
+
 ---
 
 # Configuring SWIRL AI Search Assistant, Enterprise Edition
@@ -78,7 +81,7 @@ For a default installation, go to: [http://localhost:8000/galaxy/chat](http://lo
 
 ![SWIRL Assistant discussion](images/swirl_40_chat_scop.png)
 
-For more details, see the **AI Search, Enterprise Edition** section: [Connecting to Enterprise GAI and LLMs](./AI-Connect#connecting-to-generative-ai-gai-and-large-language-models-llms).
+For more details, see the **AI Search, Enterprise Edition** section: [Connecting to Enterprise GAI and LLMs](AI-Search#connecting-to-generative-ai-gai-and-large-language-models-llms).
 
 ## GAI/LLM Requirements
 
