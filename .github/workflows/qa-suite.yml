@@ -28,14 +28,14 @@ jobs:
       - name: Set Up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12.8'
+          python-version: '3.12.9'
           cache: 'pip'
       - name: Install Swirl
         run: ./install.sh
       - name: Setup Swirl
         run: python swirl.py setup
       - name: Install the Latest Galaxy UI
-        run: ./install-ui.sh
+        run: ./install-ui.sh -p
         env:
           MSAL_CB_PORT: 8000
           MSAL_HOST: localhost
@@ -46,6 +46,37 @@ jobs:
           python swirl.py start
         env:
           ALLOWED_HOSTS: localhost,host.docker.internal
+      - name: PATCH the Web PSE Config
+        env:
+          JSON: ${{ secrets.QA_PSE_WEB }}
+          API_ENDPOINT: http://localhost:8000/swirl/searchproviders/1/
+          PASSWORD: ${{ secrets.QA_ADMIN_PW }}
+        run: |
+          sleep 15
+          curl -X PATCH "$API_ENDPOINT" \
+            -u admin:"$PASSWORD" \
+            -H "Content-Type: application/json" \
+            -d "$JSON"
+      - name: PATCH the LinkedIn PSE Config
+        env:
+          JSON: ${{ secrets.QA_PSE_LINKEDIN }}
+          API_ENDPOINT: http://localhost:8000/swirl/searchproviders/3/
+          PASSWORD: ${{ secrets.QA_ADMIN_PW }}
+        run: |
+          curl -X PATCH "$API_ENDPOINT" \
+            -u admin:"$PASSWORD" \
+            -H "Content-Type: application/json" \
+            -d "$JSON"
+      - name: PATCH the SWIRL Docs PSE Config
+        env:
+          JSON: ${{ secrets.QA_PSE_DOCS }}
+          API_ENDPOINT: http://localhost:8000/swirl/searchproviders/4/
+          PASSWORD: ${{ secrets.QA_ADMIN_PW }}
+        run: |
+          curl -X PATCH "$API_ENDPOINT" \
+            -u admin:"$PASSWORD" \
+            -H "Content-Type: application/json" \
+            -d "$JSON"
       - name: Decode BigQuery token and create JSON file
         run: |
           echo "$BIGQUERY_TOKEN_BASE64" | base64 --decode > "${{ github.workspace }}/token.json"
@@ -69,7 +100,7 @@ jobs:
           echo "========"
           cat .env.qa
           echo "========"
-          docker run --net=host --env-file .env.qa -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=qa_suite,community"
+          docker run --net=host --env-file .env.qa -t swirlai/swirl-search-qa:automated-tests-develop sh -c "behave --tags=qa_suite,community"
       - name: Upload Log Files
         if: always()
         uses: actions/upload-artifact@v4

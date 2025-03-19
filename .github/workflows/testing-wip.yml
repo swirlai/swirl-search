@@ -41,7 +41,7 @@ jobs:
       - name: Set Up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12.8'
+          python-version: '3.12.9'
           cache: 'pip'
       - name: Install Swirl
         run: ./install.sh
@@ -59,6 +59,37 @@ jobs:
           python swirl.py start
         env:
           ALLOWED_HOSTS: localhost,host.docker.internal
+      - name: PATCH the Web PSE Config
+        env:
+          JSON: ${{ secrets.QA_PSE_WEB }}
+          API_ENDPOINT: http://localhost:8000/swirl/searchproviders/1/
+          PASSWORD: ${{ secrets.QA_ADMIN_PW }}
+        run: |
+          sleep 15
+          curl -X PATCH "$API_ENDPOINT" \
+            -u admin:"$PASSWORD" \
+            -H "Content-Type: application/json" \
+            -d "$JSON"
+      - name: PATCH the LinkedIn PSE Config
+        env:
+          JSON: ${{ secrets.QA_PSE_LINKEDIN }}
+          API_ENDPOINT: http://localhost:8000/swirl/searchproviders/3/
+          PASSWORD: ${{ secrets.QA_ADMIN_PW }}
+        run: |
+          curl -X PATCH "$API_ENDPOINT" \
+            -u admin:"$PASSWORD" \
+            -H "Content-Type: application/json" \
+            -d "$JSON"
+      - name: PATCH the SWIRL Docs PSE Config
+        env:
+          JSON: ${{ secrets.QA_PSE_DOCS }}
+          API_ENDPOINT: http://localhost:8000/swirl/searchproviders/4/
+          PASSWORD: ${{ secrets.QA_ADMIN_PW }}
+        run: |
+          curl -X PATCH "$API_ENDPOINT" \
+            -u admin:"$PASSWORD" \
+            -H "Content-Type: application/json" \
+            -d "$JSON"
       - name: Decode BigQuery token and create JSON file
         run: |
           echo "$BIGQUERY_TOKEN_BASE64" | base64 --decode > "${{ github.workspace }}/token.json"

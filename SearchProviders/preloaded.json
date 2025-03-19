@@ -1,8 +1,8 @@
 [
     {
         "name": "Google Web - pse.google.com",
-        "active": true,
-        "default": true,
+        "active": false,
+        "default": false,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
@@ -33,7 +33,7 @@
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
-        "query_mappings": "cx=7d473806dcdde5bc6,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
+        "query_mappings": "cx=<your-Google-PSE-code>,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
         "result_processors": [
             "MappingResultProcessor",
             "DateFinderResultProcessor",
@@ -42,7 +42,7 @@
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
+        "credentials": "key=<your-Google-API-key>",
         "tags": [
             "Google",
             "Web",
@@ -90,7 +90,7 @@
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
-        "query_mappings": "cx=333906f8f74144c5c,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
+        "query_mappings": "cx=<your-Google-PSE-code>,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
         "result_grouping_field": "",
         "result_processors": [
             "MappingResultProcessor",
@@ -101,7 +101,7 @@
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "title= htmlTitle,url=link,body=snippet,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].locale,pagemap.metatags[*].['og:image'],NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
+        "credentials": "key=<your-Google-API-key>",
         "eval_credentials": "",
         "tags": [
             "LinkedIn",
@@ -110,8 +110,8 @@
     },
     {
         "name": "Swirl Documentation - docs.swirlaiconnect.com",
-        "active": true,
-        "default": true,
+        "active": false,
+        "default": false,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
@@ -142,7 +142,7 @@
         "query_processors": [
             "AdaptiveQueryProcessor"
         ],
-        "query_mappings": "cx=f047885d9696f447c,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
+        "query_mappings": "cx=<your-Google-PSE-code>,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
         "result_grouping_field": "",
         "result_processors": [
             "MappingResultProcessor",
@@ -152,7 +152,7 @@
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "title=title,url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "key=AIzaSyDvVeE-L6nCC9u-TTGuhggvSmzhtiTHJsA",
+        "credentials": "key=<your-Google-API-key>",
         "eval_credentials": "",
         "tags": [
             "Swirl",
