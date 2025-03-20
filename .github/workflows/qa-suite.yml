@@ -35,7 +35,7 @@ jobs:
       - name: Setup Swirl
         run: python swirl.py setup
       - name: Install the Latest Galaxy UI
-        run: ./install-ui.sh -p
+        run: ./install-ui.sh
         env:
           MSAL_CB_PORT: 8000
           MSAL_HOST: localhost
@@ -100,7 +100,7 @@ jobs:
           echo "========"
           cat .env.qa
           echo "========"
-          docker run --net=host --env-file .env.qa -t swirlai/swirl-search-qa:automated-tests-develop sh -c "behave --tags=qa_suite,community"
+          docker run --net=host --env-file .env.qa -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=qa_suite,community"
       - name: Upload Log Files
         if: always()
         uses: actions/upload-artifact@v4
