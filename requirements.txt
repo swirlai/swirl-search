@@ -10,7 +10,7 @@ pyyaml
 whitenoise
 daphne
 textblob
-spacy
+spacy>=3.8.2
 natsort
 django-environ
 statistics

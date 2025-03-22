@@ -26,7 +26,7 @@ WORKDIR /app
 
 # Optimize pip and Python installations; install spaCy version matching requirements.txt
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    SPACY_VERSION=$(grep -E '^[sS]pacy==' requirements.txt | head -1 | cut -d'=' -f3) && \
+    SPACY_VERSION=$(grep -E '^[sS]pacy(==|>=)' requirements.txt | head -1 | sed -E 's/^[sS]pacy(==|>=)//') \
     if [ -n "$SPACY_VERSION" ]; then \
       echo "Found spaCy version $SPACY_VERSION in requirements.txt"; \
       pip install --no-cache-dir --only-binary :all: spacy==$SPACY_VERSION || \
