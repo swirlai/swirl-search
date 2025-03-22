@@ -19,12 +19,25 @@ COPY ./db.sqlite3.dist /app/db.sqlite3
 COPY ./.env.docker /app/.env
 COPY ./download-nltk-resources.sh /app/
 
+# Near the top or just before WORKDIR
+ENV BLIS_ARCH=generic
+
 WORKDIR /app
 
-# Optimize pip and Python installations
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir --upgrade grpcio
+# Optimize pip and Python installations; install spaCy version matching requirements.txt
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    SPACY_VERSION=$(grep -E '^[sS]pacy==' requirements.txt | head -1 | cut -d'=' -f3) && \
+    if [ -n "$SPACY_VERSION" ]; then \
+      echo "Found spaCy version $SPACY_VERSION in requirements.txt"; \
+      pip install --no-cache-dir --only-binary :all: spacy==$SPACY_VERSION || \
+      pip install --no-cache-dir spacy==$SPACY_VERSION; \
+    else \
+      echo "No pinned spaCy version found in requirements.txt, installing latest spaCy wheel"; \
+      pip install --no-cache-dir --only-binary :all: spacy || \
+      pip install --no-cache-dir spacy; \
+    fi && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir --upgrade grpcio
 
 # Swirl install requirements
 RUN python -m spacy download en_core_web_lg && \
