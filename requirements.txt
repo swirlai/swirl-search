@@ -2,7 +2,7 @@ requests
 Django>=5.1
 django_restframework
 django-celery-beat
-Celery>=5.5.0rc4
+Celery>=5.5.0rc5
 pika
 elasticsearch
 jsonpath-ng
