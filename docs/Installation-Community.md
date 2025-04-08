@@ -88,7 +88,7 @@ To use PostgreSQL as a **data source** or **SWIRL’s backend database**:
    pip install -r requirements.txt
    python -m spacy download en_core_web_lg
    python -m nltk.downloader stopwords
-   python -m nltk.downloader punkt
+   python -m nltk.downloader punkt_tab
    ```
 
 {: .warning }
