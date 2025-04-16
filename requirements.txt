@@ -1,10 +1,10 @@
 requests
-Django>=5.1
+Django
 django_restframework
 django-celery-beat
-Celery>=5.5.0rc5
+Celery
 pika
-elasticsearch
+elasticsearch<9.0.0
 jsonpath-ng
 pyyaml
 whitenoise
