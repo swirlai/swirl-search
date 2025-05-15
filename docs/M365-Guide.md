@@ -61,12 +61,12 @@ To use **OIDC** and **OAuth2**, your deployment **must use** `https`, except whe
 
 2. On the **"Register an application"** page:
 
-   - **Name** → Enter a name for the App (e.g., **`SWIRL App`**).
+   - **Name** → Enter a name for the App (e.g., **`SWIRL Documentation App`**).
    - **Supported account types** → Select:  
      `Accounts in this organizational directory only (MSFT only - Single tenant)`.
    - **Add a "Redirect URI"** for a Web application:
      - **Platform**: `Web`
-     - **Value**: `https://<swirl-host>[:<swirl-port>]/swirl/microsoft-callback`.
+     - **Value**: `https://<swirl-host>[:<swirl-port>]/swirl/callback/microsoft-callback`
 
 3. Click **`Register`** to create the application.
 
@@ -74,29 +74,20 @@ To use **OIDC** and **OAuth2**, your deployment **must use** `https`, except whe
 
 4. The **"Overview"** page for the newly created App should look similar to this:
 
-   ![Azure App Details](images/Overview_to_authentication.png)
+   ![Azure App Details](images/Return_to_Overview_1.png)
 
 ## Configure Redirect URIs for a Single Page Application
 
-1. Navigate to the **"Authentication"** page:
+1. Navigate to the **"Authentication"** page and click **`Add a platform`** and select **"Single Page Application"**:
 
-   ![Click on Authentication](images/Overview_to_authentication.png)
-
-2. Click **`Add a platform`** and select **"Single Page Application"**:
-
+   ![Overview, Authentication option](images/Overview_to_authentication.png)
    ![Single Page Application Protocol](images/Add_platform_single_page.png)
 
-3. **Add the OIDC Callback URL**:
+2. **Add the OIDC Callback URL**:
 
    ![Add OIDC Callback URL](images/Add_OIDC_Callback.png)
 
-4. **Add the Microsoft OAuth2 Callback URLs**:
-
-   ![Add OAUTH Callback URL 1](images/Add_OAUTH_Callback_1.png)
-
-   ![Add OAUTH Callback URL 2](images/Add_OAUTH_Callback_2.1.png)
-
-5. Return to the **"Overview"** page:
+3. Return to the **Authentication** screen:
 
    ![Return to Overview 1](images/Return_to_Overview_1.png)
 
@@ -135,7 +126,7 @@ To use **OIDC** and **OAuth2**, your deployment **must use** `https`, except whe
 
 ## Admin Consent for Permissions
 
-1. After adding the permissions, click **`Grant admin consent for MSFT`** under **"Configured permissions"**:
+1. After adding the permissions, click **`Grant admin consent for <your-tenant>`** under **"Configured permissions"**:
 
    ![Azure Add Permissions 3](images/Azure_add_permissions_3.png)
 
@@ -164,7 +155,7 @@ To use **OIDC** and **OAuth2**, your deployment **must use** `https`, except whe
    ![Azure Client Secret 3](images/Azure_client_secret_3.png)
 
 {: .warning }
-**Once the secret is created, copy the value immediately!**  It will be **hidden permanently** once you leave this page.
+**Once the secret is created, copy the Value immediately!**  It will be **hidden permanently** once you leave this page.
 
 # Configure OIDC and OAUTH2 in the SWIRL Client and Server
 
