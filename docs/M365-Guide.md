@@ -177,14 +177,14 @@ Open the `static/api/config/default` file within your SWIRL home directory in an
   },
 ```
 
-Update this section with the values from your Azure App Registration and the Fully Qualified Domain Name (FQDN) of the SWIRL application.  Those values should be added as follows:
+Update this section with the values from your Azure App Registration and the host and optional port of the SWIRL application.  Those values should be added as follows:
 
 ```
   "msalConfig": {
     "auth": {
       "clientId": "<application-id>",
       "authority": "https://login.microsoftonline.com/<tenant-id>",
-      "redirectUri": "http(s)://<FQDN-of-SWIRL>:<optional-port>/galaxy/microsoft-callback"
+      "redirectUri": "http(s)://<swirl-host>:<swirl-port>/galaxy/microsoft-callback"
     }
   },
 ```
@@ -229,32 +229,38 @@ This section applies to the **SWIRL Enterprise Edition only**.
 
 To enable OAuth2 content search for M365 in the SWIRL Enterprise edition, locate and copy the following values from your new Azure App Registration:
 - **`<application-id>`**
-- **`<client-secret-value>`**
 - **`<tenant-id>`**
+- **`<client-secret-value>`**
 
 ![Azure App Values](images/Azure_app_values.png)
 ![Azure Secret Value](images/Azure_secret_value.png)
 
 
-### Activate the Microsoft Authenticator
+### Configure the Microsoft Authenticator
 
 SWIRL includes a preconfigured **Microsoft Authenticator**, here: <http://localhost:8000/swirl/authenticators/Microsoft/>
 
-* Update the `client-id`
-* Update the `client-secret` 
-* Change the `app_uri` to the address of the server where SWIRL is installed
+* Update the Authenticator `client_id` value with Azure App `<application-id>`
+* Update the Authenticator `client_secret` value with Azure App `<client-secret-value>`
+* Update the Authenticator `app_uri` value with the host and optional port of the SWIRL application.
+* Update the Authenticator `auth_uri` and `token_uri` values to include the Azure App `<tenant-id>` where indicated.
+* Update the Authenticator `active` value to `true`.
 
-```
+{: .highlight }
+Do not include a trailing slash in the `app_uri` value!
+
+
+```json
 {
     "idp": "Microsoft",
     "name": "Microsoft",
     "active": false,
     "callback_path": "/swirl/callback/microsoft-callback",
-    "client_id": "<client-id>",
+    "client_id": "<application(client)-id>",
     "client_secret": "<client-secret>",
-    "app_uri": "http://localhost:8000",
-    "auth_uri": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
-    "token_uri": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+    "app_uri": "https://<fully-qualified-domain-of-swirl-app>",
+    "auth_uri": "https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/authorize",
+    "token_uri": "https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token",
     "user_data_url": "https://graph.microsoft.com/v1.0/me",
     "user_data_params": {
         "$select": "displayName,mail,userPrincipalName"
@@ -268,32 +274,82 @@ SWIRL includes a preconfigured **Microsoft Authenticator**, here: <http://localh
     "is_code_challenge": true,
     "scopes": "User.Read Mail.Read Files.Read.All Calendars.Read Sites.Read.All Chat.Read offline_access",
     "should_expire": true,
-    "use_basic_auth": true
+    "use_basic_auth": true,
+    "expires_in": 0
+}
+```
+
+Example Authenticator configuration for SWIRL running locally:
+
+```json
+{
+    "idp": "Microsoft",
+    "name": "Microsoft",
+    "active": true,
+    "callback_path": "/swirl/callback/microsoft-callback",
+    "client_id": "7df052ca-a153-4514-b26c-87eef2696e59",
+    "client_secret": "<secret-redacted>",
+    "app_uri": "http://localhost:8000",
+    "auth_uri": "https://login.microsoftonline.com/2c1f7fec-50db-4d19-99c2-073454d5e3c2/oauth2/v2.0/authorize",
+    "token_uri": "https://login.microsoftonline.com/2c1f7fec-50db-4d19-99c2-073454d5e3c2/oauth2/v2.0/token",
+    "user_data_url": "https://graph.microsoft.com/v1.0/me",
+    "user_data_params": {
+        "$select": "displayName,mail,userPrincipalName"
+    },
+    "user_data_headers": {
+        "Authorization": "Bearer {access_token}"
+    },
+    "user_data_method": "GET",
+    "initiate_auth_code_flow_params": {},
+    "exchange_code_params": {},
+    "is_code_challenge": true,
+    "scopes": "User.Read Mail.Read Files.Read.All Calendars.Read Sites.Read.All Chat.Read offline_access",
+    "should_expire": true,
+    "use_basic_auth": true,
+    "expires_in": 0
 }
 ```
 
 Click the `PUT` button to save the Authenticator.
 
-### Restart SWIRL
-
-```shell
-python swirl.py restart
-```
-
 Proceed to [Activate the M365 SearchProviders](#activate-the-microsoft-365-searchproviders)
 
+# Configuring OIDC With Microsoft
 
-# NEW SECTIONS TBD - OIDC CONFIG...
+## Community Edition
+TBD
 
-Something like this...
-- Configuring OIDC With Microsoft (new structure only?)
-   - Community Edition
-   - Enterprise Edition
-      - Preview Docker
-      - Azure Offer Docker (same as new Customer public Docker...)
+```
+"oidcConfig": {
+   "Microsoft": {
+      "active": false,
+      "issuer": "https://login.microsoftonline.com/common/v2.0",
+      "clientId": "<microsoft-client-id>",
+      "redirectUri": "http://<msal-host>:<msal-port>/galaxy/oidc-callback",
+      "scope": "openid email",
+      "responseType": "code",
+      "requireHttps": false,
+      "strictDiscoveryDocumentValidation": false,
+      "skipIssuerCheck": true
+   },
+   "Google": {
+      "active": false,
+      "clientId":  "<google-client-id>.apps.googleusercontent.com",
+      "redirectUri": "http://<swirl-host>:<swirl-port>/galaxy/oidc-callback",
+      "scope": "openid email profile"
+   }
+},
+```
 
 
-----------
+## Enterprise Edition
+TBD
+
+### SWIRL Preview Docker
+TBD
+
+### SWIRL Azure Marketplace Offer
+TBD
 
 # Activate the Microsoft 365 SearchProviders
 
