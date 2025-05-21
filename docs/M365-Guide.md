@@ -301,8 +301,8 @@ Example Authenticator configuration for SWIRL running locally:
     "client_id": "7df052ca-a153-4514-b26c-87eef2696e59",
     "client_secret": "<secret-redacted>",
     "app_uri": "http://localhost:8000",
-    "auth_uri": "https://login.microsoftonline.com/2c1f7fec-50db-4d19-99c2-073454d5e3c2/oauth2/v2.0/authorize",
-    "token_uri": "https://login.microsoftonline.com/2c1f7fec-50db-4d19-99c2-073454d5e3c2/oauth2/v2.0/token",
+    "auth_uri": "https://login.microsoftonline.com/<tenant-id-redacted>/oauth2/v2.0/authorize",
+    "token_uri": "https://login.microsoftonline.com/<tenant-id-redacted>/oauth2/v2.0/token",
     "user_data_url": "https://graph.microsoft.com/v1.0/me",
     "user_data_params": {
         "$select": "displayName,mail,userPrincipalName"
@@ -325,16 +325,25 @@ Click the `PUT` button to save the Authenticator.
 
 Proceed to [Activate the M365 SearchProviders](#activate-the-microsoft-365-searchproviders) for Enterprise Edition.
 
-# Configuring OIDC With Microsoft
+# Configuring OIDC for Microsoft
 
-## Community Edition
-TBD
+To enable OIDC ("Login with Microsoft) in both SWIRL Enterprise and Community edition, locate and copy the following values from your new Azure App Registration:
+- **`<application-id>`**
+- **`<tenant-id>`**
+- **`<oidc-callback-url>`**
+
+{: .highlight }
+Complete Step 3 of the [Configure Redirect URI(s) for a Single-Page Application](#configure-redirect-uris-for-a-single-page-application) section above before proceeding!
+
+## Update the Default Configuration Values
+
+From the SWIRL home directory, open the `static/api/config/default` file within in an editor and locate the `oidcConfig` section:
 
 ```
 "oidcConfig": {
    "Microsoft": {
       "active": false,
-      "issuer": "https://login.microsoftonline.com/common/v2.0",
+      "issuer": "https://login.microsoftonline.com/<tenant-id>/v2.0",
       "clientId": "<microsoft-client-id>",
       "redirectUri": "http://<msal-host>:<msal-port>/galaxy/oidc-callback",
       "scope": "openid email",
@@ -352,14 +361,53 @@ TBD
 },
 ```
 
+Add the values from your Azure App Registration to the `Microsoft` section as follows:
+* Update the `clientId` value with the Azure App `<application-id>`
+* Update the `redirectUri` value with the `<oidc-callback-url>` from your Single-Page Application
+* Update the `issuer` field with the Azure App `<tenant-id>`
+* Update the `active` value to `true`
 
-## Enterprise Edition
+Example OIDC configuration for Microsoft:
+
+```
+"oidcConfig": {
+   "Microsoft": {
+      "active": true,
+      "issuer": "https://login.microsoftonline.com/<tenant-id-redacted>/v2.0",
+      "clientId": "7df052ca-a153-4514-b26c-87eef2696e59",
+      "redirectUri": "https://search.swirl.today/galaxy/oidc-callback",
+      "scope": "openid email",
+      "responseType": "code",
+      "requireHttps": false,
+      "strictDiscoveryDocumentValidation": false,
+      "skipIssuerCheck": true
+   },
+   "Google": {
+      "active": false,
+      "clientId":  "<google-client-id>.apps.googleusercontent.com",
+      "redirectUri": "http://<swirl-host>:<swirl-port>/galaxy/oidc-callback",
+      "scope": "openid email profile"
+   }
+},
+```
+
+{: .highlight }
+For the Enterprise Edition, the Microsoft Authenticator must be correctly configured as well.  Please see above to [Conigure the Microsoft Authenticator](#configure-the-microsoft-authenticator) if needed.
+
+### Restart SWIRL
+
+```shell
+python swirl.py restart
+```
+
+The SWIRL login page should now contain a `Login with Microsoft` button configured to your Azure tenant.
+
+   ![Login with Microsoft](images/Login-with-Microsoft.png)
+
+## Configure OIDC for the SWIRL Preview Docker
 TBD
 
-### SWIRL Preview Docker
-TBD
-
-### SWIRL Azure Marketplace Offer
+## Configure OIDC for the SWIRL Azure Marketplace Offer
 TBD
 
 # Activate the Microsoft 365 SearchProviders
