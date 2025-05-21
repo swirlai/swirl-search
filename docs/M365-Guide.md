@@ -39,11 +39,11 @@ Ensure you have the following details about your **SWIRL deployment**:
 Example:  
 If your deployment is **`search.swirl.today`**, the `swirl-host` is **`search.swirl.today`**.
 
-**HTTPS Requirement**
+## HTTPS Requirement
 
-To use **OIDC** and **OAuth2**, your deployment **must use** `https`, except when using `localhost`, where `http://` is allowed.  
+To use **OIDC** and **OAuth2** with Microsoft, your deployment **must use** `https` (except when using `localhost`, where `http://` is allowed).
 
-**Single Page Applications and Web Protocols** require `https://` for fully qualified domains.
+Single-Page Applications and Web Protocols in Azure Applications require `https://` for fully qualified domains.
 
 ## Getting Started
 
@@ -53,7 +53,7 @@ To use **OIDC** and **OAuth2**, your deployment **must use** `https`, except whe
 
    ![Azure find app registration](images/Azure_find_app_reg.png)
 
-## Create the New App
+## Create the New Application
 
 1. On the **"App registrations"** page, click **`New registration`**:
 
@@ -64,26 +64,40 @@ To use **OIDC** and **OAuth2**, your deployment **must use** `https`, except whe
    - **Name** → Enter a name for the App (e.g., **`SWIRL Documentation App`**).
    - **Supported account types** → Select:  
      `Accounts in this organizational directory only (MSFT only - Single tenant)`.
-   - **Add a "Redirect URI"** for a Web application:
+
+3. **For the SWIRL Enterprise Edition:**
+   - Add a **Redirect URI (optional)** value for a "Web" application:
      - **Platform**: `Web`
      - **Value**: `https://<swirl-host>[:<swirl-port>]/swirl/callback/microsoft-callback`
 
-3. Click **`Register`** to create the application.
-
    ![Azure App Registration](images/Azure_app_registration.png)
 
-## Configure Redirect URIs for a Single Page Application
+4. Click **`Register`** to create the application.
+
+## Configure Redirect URI(s) for a Single-Page Application
 
 1. Navigate to the **"Authentication"** page and click **`Add a platform`** and select **"Single Page Application"**:
 
    ![Overview, Authentication option](images/Overview_to_authentication.png)
-   ![Single Page Application Protocol](images/Add_platform_single_page.png)
+   ![Single-Page Application Protocol](images/Add_platform_single_page.png)
 
-2. **Add the OIDC Callback URL**:
+2. **For SWIRL Community edition:**
+   - Add the OAuth2 callback URL:
+      - Click `Add URI`
+      - **Value**: `https://<swirl-host>[:<swirl-port>]/galaxy/microsoft-callback`
+   - Click `Configure` to add the URI.
+
+   ![Add Community OAuth Callback URL](images/OAuth-callback-Community.png)
+
+3. **Optional, for both Community and Enterprise Editions:**
+   - If you plan to configure "Login with Microsoft", add the OIDC Callback URL:
+      - Click `Add URI`
+      - **Value**: `https://<swirl-host>[:<swirl-port>]/galaxy/oidc-callback`
+   - Click `Save` to add the URI.
 
    ![Add OIDC Callback URL](images/Add_OIDC_Callback.png)
 
-3. Return to the **Authentication** screen:
+4. Return to the **Authentication** screen:
 
    ![Return to Overview 1](images/Return_to_Overview_1.png)
 
@@ -165,7 +179,7 @@ To enable OAuth2 content search for M365 in the SWIRL Community Edition, locate 
 
 ![Azure App Values](images/Azure_app_values.png)
 
-Open the `static/api/config/default` file within your SWIRL home directory in an editor and locate the `msalConfig` section:
+From the SWIRL home directory, open the `static/api/config/default` file within in an editor and locate the `msalConfig` section:
 
 ```
   "msalConfig": {
@@ -177,14 +191,14 @@ Open the `static/api/config/default` file within your SWIRL home directory in an
   },
 ```
 
-Update this section with the values from your Azure App Registration and the host and optional port of the SWIRL application.  Those values should be added as follows:
+Update this section with the values from your Azure App Registration and the host and (optional) port of the SWIRL application.  Those values should be added as follows:
 
 ```
   "msalConfig": {
     "auth": {
       "clientId": "<application-id>",
       "authority": "https://login.microsoftonline.com/<tenant-id>",
-      "redirectUri": "http(s)://<swirl-host>:<swirl-port>/galaxy/microsoft-callback"
+      "redirectUri": "http(s)://<swirl-host>(:<swirl-port>)/galaxy/microsoft-callback"
     }
   },
 ```
@@ -219,13 +233,10 @@ Example configuration for SWIRL running behind a gateway:
 python swirl.py restart
 ```
 
-Proceed to [Activate the M365 SearchProviders](#activate-the-microsoft-365-searchproviders)
+Proceed to [Activate the M365 SearchProviders](#activate-the-microsoft-365-searchproviders) for Community Edition.
 
 
 ## Enterprise Edition
-
-{: .warning }
-This section applies to the **SWIRL Enterprise Edition only**.
 
 To enable OAuth2 content search for M365 in the SWIRL Enterprise edition, locate and copy the following values from your new Azure App Registration:
 - **`<application-id>`**
@@ -312,7 +323,7 @@ Example Authenticator configuration for SWIRL running locally:
 
 Click the `PUT` button to save the Authenticator.
 
-Proceed to [Activate the M365 SearchProviders](#activate-the-microsoft-365-searchproviders)
+Proceed to [Activate the M365 SearchProviders](#activate-the-microsoft-365-searchproviders) for Enterprise Edition.
 
 # Configuring OIDC With Microsoft
 
