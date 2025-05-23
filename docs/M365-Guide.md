@@ -408,7 +408,23 @@ The SWIRL login page should now contain a `Login with Microsoft` button configur
 TBD
 
 ## Configure OIDC for the SWIRL Azure Marketplace Offer
-TBD
+Configure the following environment variables in the `/app` directory `.env` file:
+
+- `MS_AUTH_CLIENT_ID` - Microsoft application registration client ID value.
+- `MS_TENANT_ID` - Tenant ID value from Microsoft Azure IdP.
+- `PROTOCOL` - The protocol used by the SWIRL instance (e.g. `http` or `https`).
+- `SHOULD_USE_TOKEN_FROM_OAUTH`- Set this value to "True" (default) to use the tokens from OIDC. Otherwise, set it to False.
+- `SWIRL_FQDN`	The Fully Qualified Domain Name of the SWIRL instance.
+- `SWIRL_PORT`	The port used by SWIRL (defaults to `unset` allowing `PROTOCOL` to set to 443 for HTTPS, and 80 for HTTP).
+
+### Restart SWIRL
+
+```shell
+sudo systemctl stop swirl
+sudo systemctl start swirl
+```
+
+The SWIRL login page should now contain a `Login with Microsoft` button configured to your Azure tenant.
 
 # Activate the Microsoft 365 SearchProviders
 
