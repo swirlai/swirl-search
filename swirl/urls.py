@@ -42,6 +42,7 @@ urlpatterns = [
     path('querytransforms/delete/<int:pk>/', views.QueryTransformViewSet.as_view({'delete': 'destroy'}), name='delete'),
 
     path('search/search', views.SearchViewSet.as_view({'get': 'list'}), name='search'),
+    path('sapi/detail-search-rag/', views.DetailSearchRagView.as_view(), name='detail-search-rag'),
 
     path('', views.index, name='index'),
     path('index.html', views.index, name='index'),
