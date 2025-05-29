@@ -405,10 +405,13 @@ The SWIRL login page should now contain a `Login with Microsoft` button configur
    ![Login with Microsoft](images/Login-with-Microsoft.png)
 
 ## Configure OIDC for the SWIRL Preview Docker
-TBD
+Details TBD...outline:
+- Persist the `.env` file outside the Docker (reference the instructions that Preview participants receive via email)
+- Config the `.env` just like for the Offer below
+- Restart the Docker
 
 ## Configure OIDC for the SWIRL Azure Marketplace Offer
-Configure the following environment variables in the `/app` directory `.env` file:
+Configure the following environment variables in the  `.env` file found in the deployment's `/app` directory:
 
 - `MS_AUTH_CLIENT_ID` - Microsoft application registration client ID value.
 - `MS_TENANT_ID` - Tenant ID value from Microsoft Azure IdP.
@@ -422,6 +425,12 @@ Configure the following environment variables in the `/app` directory `.env` fil
 ```shell
 sudo systemctl stop swirl
 sudo systemctl start swirl
+```
+
+During the SWIRL start-up process, the following command is run, which populates the `/app/static/api/config/default` file:
+
+```
+python swirl.py config_default_api_settings
 ```
 
 The SWIRL login page should now contain a `Login with Microsoft` button configured to your Azure tenant.
