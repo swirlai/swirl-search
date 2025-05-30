@@ -39,9 +39,10 @@ import hmac
 from swirl.models import *
 from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, OauthToken
-from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, StatusResponseSerializer, AuthResponseSerializer
+from swirl.serializers import UserSerializer, DetailSearchRagSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, StatusResponseSerializer, AuthResponseSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
+from swirl.views_helpers.search_rag import SearchRag
 
 module_name = 'views.py'
 
@@ -641,6 +642,23 @@ class SearchViewSet(viewsets.ModelViewSet):
 
 ########################################
 ########################################
+
+class DetailSearchRagView(APIView):
+    serializer_class = DetailSearchRagSerializer
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = []
+
+    def get(self, request):
+        logger.debug(f"DetailSearchRagView: {request.GET}")
+        search_rag = SearchRag(request)
+        result = search_rag.process_rag()
+        serializer = DetailSearchRagSerializer(result)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+########################################
+########################################
+
 
 class ResultViewSet(viewsets.ModelViewSet):
     """
