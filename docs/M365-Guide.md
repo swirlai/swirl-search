@@ -392,7 +392,7 @@ Example OIDC configuration for Microsoft:
 ```
 
 {: .highlight }
-For the Enterprise Edition, the Microsoft Authenticator must be correctly configured as well.  Please see above to [Conigure the Microsoft Authenticator](#configure-the-microsoft-authenticator) if needed.
+For the Enterprise Edition, the Microsoft Authenticator must be correctly configured as well.  Please see above to [Configure the Microsoft Authenticator](#configure-the-microsoft-authenticator) if needed.
 
 ### Restart SWIRL
 
@@ -405,13 +405,30 @@ The SWIRL login page should now contain a `Login with Microsoft` button configur
    ![Login with Microsoft](images/Login-with-Microsoft.png)
 
 ## Configure OIDC for the SWIRL Preview Docker
-Details TBD...outline:
-- Persist the `.env` file outside the Docker (reference the instructions that Preview participants receive via email)
-- Config the `.env` just like for the Offer below
-- Restart the Docker
+
+{: .warning }
+You must persist the `.env` file to your local working directory in order to enable OIDC in the Preview Docker following the instructions provided with the image.
+
+Configure the following environment variables in the `.env` file persisted to the local working directory:
+
+- `MS_AUTH_CLIENT_ID` - Microsoft application registration client ID value.
+- `MS_TENANT_ID` - Tenant ID value from Microsoft Azure IdP.
+- `PROTOCOL` - The protocol used by the SWIRL instance (e.g. `http` or `https`).
+- `SHOULD_USE_TOKEN_FROM_OAUTH`- Set this value to "True" (default) to use the tokens from OIDC. Otherwise, set it to False.
+- `SWIRL_FQDN`	The Fully Qualified Domain Name of the SWIRL instance.
+- `SWIRL_PORT`	The port used by SWIRL (defaults to `unset` allowing `PROTOCOL` to set to 443 for HTTPS, and 80 for HTTP).
+
+### Restart the Preview Docker
+
+```
+docker-compose stop
+docker-compose up
+```
+
+The SWIRL login page should now contain a `Login with Microsoft` button configured to your Azure tenant.
 
 ## Configure OIDC for the SWIRL Azure Marketplace Offer
-Configure the following environment variables in the  `.env` file found in the deployment's `/app` directory:
+Configure the following environment variables in the `.env` file found in the deployment's `/app` directory:
 
 - `MS_AUTH_CLIENT_ID` - Microsoft application registration client ID value.
 - `MS_TENANT_ID` - Tenant ID value from Microsoft Azure IdP.
