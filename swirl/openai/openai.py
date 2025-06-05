@@ -59,7 +59,8 @@ class OpenAIClient:
                 ai_client = OpenAI(api_key=key)
             elif provider == "AZUREAI":
                 from openai import AzureOpenAI
-                ai_client = AzureOpenAI(api_key=key, azure_endpoint=self._azure_endpoint, api_version="2023-10-01-preview")
+                self._azure_api_version = getattr(settings, "AZURE_API_VERSION", None)
+                ai_client = AzureOpenAI(api_key=key, azure_endpoint=self._azure_endpoint, api_version=self._azure_api_version)
             else:
                 raise NotImplementedError(f"Unknown AI provider {provider}. Client initialization not supported.")
         except Exception as err:
