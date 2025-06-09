@@ -604,7 +604,7 @@ Restart SWIRL after making changes.
 
 Refer to the **Microsoft OneDrive** section for a **Page Fetcher** configuration that integrates Tika for extracting text from **PDFs, Microsoft Office documents, and other file formats** retrieved via the **Microsoft Graph API**.
 
-To support additional file types, expand the **whitelist** to include any [document format that Tika supports](https://tika.apache.org/1.10/formats.html).
+To support additional file types, expand the **whitelist** to include any [document format that Tika supports](https://tika.apache.org/3.2.0/formats.html).
 
 ## Configuring Passage Detection with Reader LLM
 
