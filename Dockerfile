@@ -44,7 +44,7 @@ RUN python -m spacy download en_core_web_lg && \
      ./download-nltk-resources.sh
 
 # Install the Galaxy UI
-COPY --from=swirlai/spyglass:preview /usr/src/spyglass/ui/dist/spyglass/browser/. /app/swirl/static/galaxy
-COPY --from=swirlai/spyglass:preview /usr/src/spyglass/ui/config-swirl-demo.db.json /app/
+COPY --from=swirlai/spyglass:latest /usr/src/spyglass/ui/dist/spyglass/browser/. /app/swirl/static/galaxy
+COPY --from=swirlai/spyglass:latest /usr/src/spyglass/ui/config-swirl-demo.db.json /app/
 
 EXPOSE 8000
