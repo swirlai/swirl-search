@@ -1,7 +1,7 @@
 ---
 layout: default
-title: Microsoft 365 Guide
-nav_order: 15
+title: Google Workspace Guide
+nav_order: 16
 ---
 <details markdown="block">
   <summary>
@@ -12,22 +12,22 @@ nav_order: 15
 {:toc}
 </details>
 
-<span class="big-text">Microsoft 365 Guide</span><br/><span class="med-text">Community Edition | Enterprise Edition</span>
+<span class="big-text">Google Workspace Guide</span><br/><span class="med-text">Community Edition | Enterprise Edition</span>
 
 ---
 
-This guide explains how to integrate SWIRL with an existing **Microsoft 365 (M365) tenant**. It is intended for **M365 administrators** who have permission to **register new applications** in the **Azure Portal**.  
+This guide explains how to integrate SWIRL with an existing **Google Workspace (GW) tenant**. It is intended for **GW administrators** who have permission to **register new applications** in the **GW Portal**.  
 
-Administrators may also need to **grant API permissions** so users can **query their personal M365 content** through SWIRL.
+Administrators may also need to **grant API permissions** so users can **query their personal GW content** through SWIRL.
 
-# Register a New App in Azure Portal
+# Register a New App in GW Portal
 
-To connect **SWIRL** to an **M365 tenant**, you must **register and configure a new App** in the **Azure Portal**.
+To connect **SWIRL** to an **GW tenant**, you must **register and configure a new App** in the **GW Portal**.
 
 Once registered, the App allows:
 
 - **User authentication via OIDC**
-- **Personal M365 content searches using OAuth2 permission consent**
+- **Personal GW content searches using OAuth2 permission consent**
 
 ## Before You Begin
 
@@ -43,21 +43,21 @@ If your deployment is **`search.swirl.today`**, the `swirl-host` is **`search.sw
 
 To use **OIDC** and **OAuth2** with Microsoft, your deployment **must use** `https` (except when using `localhost`, where `http://` is allowed).
 
-Single-Page Applications and Web Protocols in Azure Applications require `https://` for fully qualified domains.
+Single-Page Applications and Web Protocols in GW Applications require `https://` for fully qualified domains.
 
 ## Getting Started
 
-1. **Log in to the Azure Portal**: [https://portal.azure.com](https://portal.azure.com/)
+1. **Log in to the GW Portal**: [https://portal.GW.com](https://portal.GW.com/)
 
 2. In the **search bar**, type: **`app registrations`**, then select **"App registrations"** under **Services**.
 
-   ![Azure find app registration](images/Azure_find_app_reg.png)
+   ![GW find app registration](images/GW_find_app_reg.png)
 
 ## Create the New Application
 
 1. On the **"App registrations"** page, click **`New registration`**:
 
-   ![Azure New Registration](images/Azure_new_registration.png)
+   ![GW New Registration](images/GW_new_registration.png)
 
 2. On the **"Register an application"** page:
 
@@ -70,7 +70,7 @@ Single-Page Applications and Web Protocols in Azure Applications require `https:
      - **Platform**: `Web`
      - **Value**: `https://<swirl-host>[:<swirl-port>]/swirl/callback/microsoft-callback`
 
-   ![Azure App Registration](images/Azure_app_registration.png)
+   ![GW App Registration](images/GW_app_registration.png)
 
 4. Click **`Register`** to create the application.
 
@@ -107,18 +107,18 @@ Single-Page Applications and Web Protocols in Azure Applications require `https:
 
 1. In the left column, select **"API permissions"**, then click **`Add a permission`**:
 
-   ![Azure Add Permissions 1](images/Azure_add_permissions_1.png)
+   ![GW Add Permissions 1](images/GW_add_permissions_1.png)
 
 2. In the **"Request API permissions"** panel that opens:
    - Select the **"Microsoft APIs"** tab (at the top).
    - Click the **"Microsoft Graph"** button.
    - Click the **"Delegated permissions"** button.
 
-   ![Azure Add Permissions 2](images/Azure_add_permissions_2.png)
+   ![GW Add Permissions 2](images/GW_add_permissions_2.png)
 
 3. In the **search box**, enter and select each of the following permissions, then click **`Add permissions`**:
 
-   ![Azure Add Permissions 4](images/Azure_add_permissions_4.png)
+   ![GW Add Permissions 4](images/GW_add_permissions_4.png)
 
 4. **Required Permissions:**
 
@@ -138,46 +138,46 @@ Single-Page Applications and Web Protocols in Azure Applications require `https:
 
 1. After adding the permissions, click **`Grant admin consent for <your-tenant>`** under **"Configured permissions"**:
 
-   ![Azure Add Permissions 3](images/Azure_add_permissions_3.png)
+   ![GW Add Permissions 3](images/GW_add_permissions_3.png)
 
 2. Confirm by selecting **"Yes"**:
 
-   ![Azure Add Permissions 5](images/Azure_add_permissions_5.png)
+   ![GW Add Permissions 5](images/GW_add_permissions_5.png)
 
 3. The **Configured permissions** section should now display all granted permissions:
 
-   ![Azure Add Permissions 6](images/Azure_add_permissions_6.png)
+   ![GW Add Permissions 6](images/GW_add_permissions_6.png)
 
 # Generate a Client Secret
 
 1. In the left sidebar, select **"Certificates & secrets"**, then click **`New client secret`**:
 
-   ![Azure Client Secret 1](images/Azure_client_secret_1.png)
+   ![GW Client Secret 1](images/GW_client_secret_1.png)
 
 2. In the **"Add a client secret"** panel:
    - Enter a **`Description`** for the new secret.
    - Select an **`Expires`** time range for the secret.
 
-   ![Azure Client Secret 2](images/Azure_client_secret_2.png)
+   ![GW Client Secret 2](images/GW_client_secret_2.png)
 
 3. Click **`Add`**. The **"Certificates & secrets"** page will now display a new **Client secret** entry.
 
-   ![Azure Client Secret 3](images/Azure_client_secret_3.png)
+   ![GW Client Secret 3](images/GW_client_secret_3.png)
 
 {: .warning }
 **Once the secret is created, copy the Value immediately!**  It will be **hidden permanently** once you leave this page.
 
-# Configure OAuth2 for M365
+# Configure OAuth2 for GW
 
 ## Community Edition
 
 ### Add the OAuth2 Configurations
 
-To enable OAuth2 content search for M365 in the SWIRL Community Edition, locate and copy the following values from your new Azure App Registration:
+To enable OAuth2 content search for GW in the SWIRL Community Edition, locate and copy the following values from your new GW App Registration:
 - **`<application-id>`**  
 - **`<tenant-id>`** 
 
-![Azure App Values](images/Azure_app_values.png)
+![GW App Values](images/GW_app_values.png)
 
 From the SWIRL home directory, open the `static/api/config/default` file within in an editor and locate the `msalConfig` section:
 
@@ -191,7 +191,7 @@ From the SWIRL home directory, open the `static/api/config/default` file within 
   },
 ```
 
-Update this section with the values from your Azure App Registration and the host and (optional) port of the SWIRL application.  Those values should be added as follows:
+Update this section with the values from your GW App Registration and the host and (optional) port of the SWIRL application.  Those values should be added as follows:
 
 ```
   "msalConfig": {
@@ -233,28 +233,28 @@ Example configuration for SWIRL running behind a gateway:
 python swirl.py restart
 ```
 
-Proceed to [Activate the M365 SearchProviders](#activate-the-microsoft-365-searchproviders) for Community Edition.
+Proceed to [Activate the GW SearchProviders](#activate-the-microsoft-365-searchproviders) for Community Edition.
 
 
 ## Enterprise Edition
 
-To enable OAuth2 content search for M365 in the SWIRL Enterprise edition, locate and copy the following values from your new Azure App Registration:
+To enable OAuth2 content search for GW in the SWIRL Enterprise edition, locate and copy the following values from your new GW App Registration:
 - **`<application-id>`**
 - **`<tenant-id>`**
 - **`<client-secret-value>`**
 
-![Azure App Values](images/Azure_app_values.png)
-![Azure Secret Value](images/Azure_secret_value.png)
+![GW App Values](images/GW_app_values.png)
+![GW Secret Value](images/GW_secret_value.png)
 
 
 ### Configure the Microsoft Authenticator
 
 SWIRL includes a preconfigured **Microsoft Authenticator**, here: <http://localhost:8000/swirl/authenticators/Microsoft/>
 
-* Update the Authenticator `client_id` value with Azure App `<application-id>`
-* Update the Authenticator `client_secret` value with Azure App `<client-secret-value>`
+* Update the Authenticator `client_id` value with GW App `<application-id>`
+* Update the Authenticator `client_secret` value with GW App `<client-secret-value>`
 * Update the Authenticator `app_uri` value with the host and optional port of the SWIRL application.
-* Update the Authenticator `auth_uri` and `token_uri` values to include the Azure App `<tenant-id>` where indicated.
+* Update the Authenticator `auth_uri` and `token_uri` values to include the GW App `<tenant-id>` where indicated.
 * Update the Authenticator `active` value to `true`.
 
 {: .highlight }
@@ -323,11 +323,11 @@ Example Authenticator configuration for SWIRL running locally:
 
 Click the `PUT` button to save the Authenticator.
 
-Proceed to [Activate the M365 SearchProviders](#activate-the-microsoft-365-searchproviders) for Enterprise Edition.
+Proceed to [Activate the GW SearchProviders](#activate-the-microsoft-365-searchproviders) for Enterprise Edition.
 
 # Configuring OIDC for Microsoft
 
-To enable OIDC ("Login with Microsoft) in both SWIRL Enterprise and Community edition, locate and copy the following values from your new Azure App Registration:
+To enable OIDC ("Login with Microsoft) in both SWIRL Enterprise and Community edition, locate and copy the following values from your new GW App Registration:
 - **`<application-id>`**
 - **`<tenant-id>`**
 - **`<oidc-callback-url>`**
@@ -341,41 +341,6 @@ From the SWIRL home directory, open the `static/api/config/default` file within 
 
 ```
 "oidcConfig": {
-   "Microsoft": {
-      "active": false,
-      "issuer": "https://login.microsoftonline.com/<tenant-id>/v2.0",
-      "clientId": "<microsoft-client-id>",
-      "redirectUri": "http://<msal-host>:<msal-port>/galaxy/oidc-callback",
-      "scope": "openid email",
-      "responseType": "code",
-      "requireHttps": false,
-      "strictDiscoveryDocumentValidation": false,
-      "skipIssuerCheck": true
-   }
-},
-```
-
-Add the values from your Azure App Registration to the `Microsoft` section as follows:
-* Update the `clientId` value with the Azure App `<application-id>`
-* Update the `redirectUri` value with the `<oidc-callback-url>` from your Single-Page Application
-* Update the `issuer` field with the Azure App `<tenant-id>`
-* Update the `active` value to `true`
-
-Example OIDC configuration for Microsoft:
-
-```
-"oidcConfig": {
-   "Microsoft": {
-      "active": true,
-      "issuer": "https://login.microsoftonline.com/<tenant-id-redacted>/v2.0",
-      "clientId": "7df052ca-a153-4514-b26c-87eef2696e59",
-      "redirectUri": "https://search.swirl.today/galaxy/oidc-callback",
-      "scope": "openid email",
-      "responseType": "code",
-      "requireHttps": false,
-      "strictDiscoveryDocumentValidation": false,
-      "skipIssuerCheck": true
-   },
    "Google": {
       "active": false,
       "clientId":  "<google-client-id>.apps.googleusercontent.com",
@@ -385,8 +350,14 @@ Example OIDC configuration for Microsoft:
 },
 ```
 
+Add the values from your GW App Registration to the `Google` section as follows:
+* Update the `clientId` value with the GW App `<application-id>`
+* Update the `redirectUri` value with the `<oidc-callback-url>` from your Single-Page Application
+* Update the `issuer` field with the GW App `<tenant-id>`
+* Update the `active` value to `true`
+
 {: .highlight }
-For the Enterprise Edition, the Microsoft Authenticator must be correctly configured as well.  Please see above to [Configure the Microsoft Authenticator](#configure-the-microsoft-authenticator) if needed.
+For the Enterprise Edition, the Google Authenticator must be correctly configured as well.  Please see above to [Configure the Google Workspace Authenticator](#TBD if needed.
 
 ### Restart SWIRL
 
@@ -394,9 +365,9 @@ For the Enterprise Edition, the Microsoft Authenticator must be correctly config
 python swirl.py restart
 ```
 
-The SWIRL login page should now contain a `Login with Microsoft` button configured to your Azure tenant.
+The SWIRL login page should now contain a `Login with Google` button configured to your GW tenant.
 
-   ![Login with Microsoft](images/Login-with-Microsoft.png)
+   ![Login with Microsoft](images/TBD)
 
 ## Configure OIDC for the SWIRL Preview Docker
 
@@ -405,8 +376,10 @@ You must persist the `.env` file to your local working directory in order to ena
 
 Configure the following environment variables in the `.env` file persisted to the local working directory:
 
+TBD: revise below
+
 - `MS_AUTH_CLIENT_ID` - Microsoft application registration client ID value.
-- `MS_TENANT_ID` - Tenant ID value from Microsoft Azure IdP.
+- `MS_TENANT_ID` - Tenant ID value from Microsoft GW IdP.
 - `PROTOCOL` - The protocol used by the SWIRL instance (e.g. `http` or `https`).
 - `SHOULD_USE_TOKEN_FROM_OAUTH`- Set this value to "True" (default) to use the tokens from OIDC. Otherwise, set it to False.
 - `SWIRL_FQDN`	The Fully Qualified Domain Name of the SWIRL instance.
@@ -419,53 +392,26 @@ docker-compose stop
 docker-compose up
 ```
 
-The SWIRL login page should now contain a `Login with Microsoft` button configured to your Azure tenant.
+The SWIRL login page should now contain a `Login with Microsoft` button configured to your GW tenant.
 
-## Configure OIDC for the SWIRL Azure Marketplace Offer
-Configure the following environment variables in the `.env` file found in the deployment's `/app` directory:
+![SWIRL with Login with Google Workspace button enabled via OIDC](images/swirl_login_google_workspace.png)
 
-- `MS_AUTH_CLIENT_ID` - Microsoft application registration client ID value.
-- `MS_TENANT_ID` - Tenant ID value from Microsoft Azure IdP.
-- `PROTOCOL` - The protocol used by the SWIRL instance (e.g. `http` or `https`).
-- `SHOULD_USE_TOKEN_FROM_OAUTH`- Set this value to "True" (default) to use the tokens from OIDC. Otherwise, set it to False.
-- `SWIRL_FQDN`	The Fully Qualified Domain Name of the SWIRL instance.
-- `SWIRL_PORT`	The port used by SWIRL (defaults to `unset` allowing `PROTOCOL` to set to 443 for HTTPS, and 80 for HTTP).
-
-### Restart SWIRL
-
-```shell
-sudo systemctl stop swirl
-sudo systemctl start swirl
-```
-
-During the SWIRL start-up process, the following command is run, which populates the `/app/static/api/config/default` file:
-
-```
-python swirl.py config_default_api_settings
-```
-
-The SWIRL login page should now contain a `Login with Microsoft` button configured to your Azure tenant.
-
-# Activate the Microsoft 365 SearchProviders
+# Activate the Google Workspace SearchProviders
 
 The **SWIRL distribution** includes pre-configured **SearchProviders** for:
 
-- **Outlook Email**  
-- **Calendar Events**  
-- **OneDrive Files**  
-- **SharePoint Sites**  
-- **Teams Chat**  
-
-{: .warning }
-The **Microsoft Teams desktop app must be open** before clicking a Teams Chat result link.  
+- **Google Mail (GMail)**  
+- **Google Calendar**  
+- **Google Drive**  
+- **Google Chat**  
 
 {: .highlight }
-> - **Calendar Events** – Only **recent** events are shown.  
-> - **Outlook Threads** – Only the **latest** messages are shown.  
-> - **OneDrive** – **Folders are omitted**; only documents appear.  
-> - **Teams** – **Only chat messages** are indexed. Files shared in chats appear in **OneDrive or SharePoint results**.
+> - **Google Mail** – Only the **latest** messages are shown.  
+> - **Google Calendar** – Only **recent** events are shown.  
+> - **Google Drive** – **Folders are omitted**; only documents appear.  
+> - **Google Chat** – **Only chat messages** are indexed. Files shared in chats appear in **Google Drive results**.
 
-**Enable Microsoft SearchProviders**
+**Enable Google Workplaces**
 
 1. **Open the Admin Console**:  
    [http://localhost:8000/swirl/](http://localhost:8000/swirl/)
@@ -473,13 +419,13 @@ The **Microsoft Teams desktop app must be open** before clicking a Teams Chat re
 2. **Access SearchProviders**:  
    Click **`SearchProviders`** to view all configured providers.
 
-3. **Find and Edit a Microsoft 365 SearchProvider:**  
-   Each M365 app has its own **SearchProvider** entry.  
+3. **Find and Edit a Google Workspace SearchProvider:**  
+   Each GW app has its own **SearchProvider** entry.  
    - To edit a provider, add its `id` to the URL.  
    - Example: If the **id** is `16`, navigate to:  
      [http://localhost:8000/swirl/searchproviders/16/](http://localhost:8000/swirl/searchproviders/16/)
 
-   ![SWIRL SearchProvider](images/swirl_sp_m365.png)
+   ![SWIRL SearchProvider](images/TBD)
 
 4. **Activate the Provider:**  
    - Scroll to the **Raw data** tab at the bottom.
@@ -489,7 +435,7 @@ The **Microsoft Teams desktop app must be open** before clicking a Teams Chat re
    ```json
    {
      "id": 16,
-     "name": "Outlook Messages - Microsoft 365",
+     "name": "Google Mail",
      ...
      "active": false,
      ...
@@ -500,7 +446,7 @@ The **Microsoft Teams desktop app must be open** before clicking a Teams Chat re
    ```json
    {
      "id": 16,
-     "name": "Outlook Messages - Microsoft 365",
+     "name": "Google Mail",
      ...
      "active": true,
      ...
@@ -509,7 +455,7 @@ The **Microsoft Teams desktop app must be open** before clicking a Teams Chat re
 
 # Authenticating with Microsoft
 
-To verify that **SWIRL-M365 integration** is working:
+To verify that **SWIRL-GW integration** is working:
 
 1. **Open the Galaxy UI:**  
    - [http://localhost:8000](http://localhost:8000)  
@@ -524,7 +470,7 @@ To verify that **SWIRL-M365 integration** is working:
 
 3. **Successful Connection:**  
    - The **Microsoft toggle lights up** after authentication.  
-   - You can now search Microsoft 365 sources.
+   - You can now search Google Workspace sources.
 
    ![SWIRL Assistant discussion](images/swirl_40_search_msft.png)
 
@@ -533,6 +479,6 @@ If the **Microsoft toggle does not activate** after authentication, please [cont
 
 # Related Documentation
 
-- [Register an app with Azure Active Directory](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/walkthrough-register-app-azure-active-directory) *(Some steps do not apply to the SWIRL App)*
+- [Register an app with GW Active Directory](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/walkthrough-register-app-GW-active-directory) *(Some steps do not apply to the SWIRL App)*
 
-- [Configure user consent for applications](https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/configure-user-consent?pivots=portal#risk-based-step-up-consent)
+- [Configure user consent for applications](https://learn.microsoft.com/en-us/GW/active-directory/manage-apps/configure-user-consent?pivots=portal#risk-based-step-up-consent)
