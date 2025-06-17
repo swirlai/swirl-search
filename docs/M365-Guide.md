@@ -22,7 +22,7 @@ Administrators may also need to **grant API permissions** so users can **query t
 
 # Register a New App in Azure Portal
 
-To connect **SWIRL** to an **M365 tenant**, you must **register and configure a new App** in the **Azure Portal**.
+To connect **SWIRL** to an **M365 tenant**, first **register and configure a new App** in the **Azure Portal**.
 
 Once registered, the App allows:
 
