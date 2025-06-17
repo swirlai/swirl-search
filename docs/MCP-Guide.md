@@ -374,7 +374,6 @@ The output from the second task, also a "Research Agent", is:
   "query_text": "cybersecurity regulations for AI models",
   "query_sources": "${{previous_task_output}}",
 }
-```
 Summarise the most important findings in 4-6 bullet points.
 🚀 Crew: crew
 ├── 📋 Task: 4fedc0cd-a4c1-432e-9892-fae8d4873c46
