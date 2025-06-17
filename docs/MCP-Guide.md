@@ -18,12 +18,12 @@ nav_order: 18
 
 This guide explains how to install the SWIRL MCP (Model Context Protocol) proxy server & CLI client and optionally use it with [Crew.AI](https://crew.ai).
 
+# Overview
+
 The SWIRL MCP server supports three categories of MCP endpoints:
 
 Tools: 
 * AI Search
-* AI Search + RAG
-* AI Search Asistant RAG
 * Retrieve SearchProviders
 
 Resources:
@@ -39,11 +39,11 @@ Resources:
 # Installation
 
 ```bash
-git clone https://github.com/your-org/swirl-mcp-proxy-internal.git
+git clone https://github.com/swirlai/swirl-mcp-proxy-internal.git
 cd swirl-mcp-proxy-internal
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r mcp_swirl_proxy_internal/requirements.txt
 ```
 
 ## Configuration Options
@@ -138,7 +138,7 @@ What's next:
 ## Running the TCP Server
 
 ```bash
-python mcp_swirl_proxy_internal/swirl-mcp-server-tcp.py
+python mcp_swirl_proxy_internal/swirl-mcp-server-tcp.py 
 ```
 
 By default, this server binds to $SWIRL_MCP_SERVER_HOST:$SWIRL_MCP_SERVER_PORT and speaks the MCP JSON-RPC protocol over raw TCP.
@@ -161,7 +161,7 @@ docker compose up
 
 Use our REPL client to talk to your server:
 ```bash
-python swirl-mcp-client-tcp-interactive.py $SWIRL_MCP_SERVER_HOST $SWIRL_MCP_SERVER_PORT
+python mcp_swirl_proxy_internal/swirl_mcp_client_tcp_interactive.py $SWIRL_MCP_SERVER_HOST $SWIRL_MCP_SERVER_PORT
 ```
 
 # Available Commands
@@ -290,9 +290,10 @@ MCP> /call SWIRL_search {"query_text": "swirl ai search"}
 After completing the above installation, and verifying that SWIRL and the MCP server are running, run the Crew.AI integration example:
 
 ```bash
-pip install -r requirements-crew.txt
+pip install -r mcp_swirl_proxy_internal/requirements-crew.txt
+TBD: should there be a venv step here???
 export OPENAI_API_KEY='<openai-api-key>'
-python swirl_crew_example.py
+python mcp_swirl_proxy_internal/swirl_crew_example.py
 ```
 
 This script creates two dependent tasks:
