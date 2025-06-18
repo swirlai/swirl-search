@@ -166,8 +166,6 @@ Click the "Save" button - or "Cancel", if you changed values on this screen - af
 
 # Configure the Google Authenticator
 
-TBD: confirm below
-
 SWIRL includes a preconfigured **Google Workspace Authenticator**, here: <http://localhost:8000/swirl/authenticators/Google/>
 
 * Update the Authenticator `client_id`
@@ -215,8 +213,6 @@ Do not include a trailing slash in the `app_uri` value!
 
 Click the `PUT` button to save the modified Authenticator.
 
-Proceed to [Activate the GW SearchProviders](#TBD) for Enterprise Edition.
-
 # Configuring OIDC for Google
 
 To enable OIDC ("Login with Google"), locate and copy the following values from the just completed application registration:
@@ -254,7 +250,7 @@ The **SWIRL distribution** includes pre-configured **SearchProviders** for:
 > - **Google Drive** – **Folders are omitted**; only documents appear.  
 > - **Google Chat** – **Only chat messages** are indexed. Files shared in chats appear in **Google Drive results**.
 
-**Enable Google Workplaces**
+To **Enable Google Workplaces** do the following:
 
 1. **Open the Admin Console**:  
    [http://localhost:8000/swirl/](http://localhost:8000/swirl/)
@@ -323,11 +319,6 @@ The user should now be able to search the configured Google properties using the
 ![SWIRL AI Search showing Google Workspace integration](images/swirl_galaxy_gw_sources.png)
 
 The Search Assistant will also be able to search those sources on the user's behalf.
-
-## Configure OIDC for the SWIRL Preview Docker
-
-{: .warning }
-TBD
 
 # Related Documentation
 

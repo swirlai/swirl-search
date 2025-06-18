@@ -18,6 +18,9 @@ nav_order: 18
 
 This guide explains how to install the SWIRL MCP (Model Context Protocol) proxy server & CLI client and optionally use it with [Crew.AI](https://crew.ai).
 
+{: .warning }
+**This guide is still being reviewed**. [Contact support](#support) for additional assistance.
+
 # Overview
 
 The SWIRL MCP server supports three categories of MCP endpoints:
@@ -291,7 +294,6 @@ After completing the above installation, and verifying that SWIRL and the MCP se
 
 ```bash
 pip install -r mcp_swirl_proxy_internal/requirements-crew.txt
-TBD: should there be a venv step here???
 export OPENAI_API_KEY='<openai-api-key>'
 python mcp_swirl_proxy_internal/swirl_crew_example.py
 ```
