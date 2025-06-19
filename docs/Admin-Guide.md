@@ -195,6 +195,8 @@ For deployment assistance, please [contact support](#support).
 
 # Upgrading SWIRL
 
+## Local Installations
+
 {: .warning }
 For **Docker upgrades**, please [contact support](#support) for instructions!
 
@@ -218,7 +220,26 @@ For **Docker upgrades**, please [contact support](#support) for instructions!
    ./install-ui.sh
    ```
 
-5. **Restart SWIRL**:  
+5. **Update AI prompts**:
+   ```shell
+   python swirl.py reload_ai_prompts
+
+6. **Update Authenticators**: 
+
+   Check the release notes (see below) and update Authenticators that have changed.
+
+   ```shell
+   python manage.py load_authenticators swirl/fixtures/DefaultAuthenticators.json
+
+7. **Update SearchProviders**:
+
+   Check the release notes (see below) and only update SPs that have changed.
+
+   ```shell
+   python manage.py load_fixture SearchProviders/<searchprovider-name>
+   ```
+
+8. **Restart SWIRL**:  
    ```shell
    python swirl.py restart
    ```
@@ -226,15 +247,36 @@ For **Docker upgrades**, please [contact support](#support) for instructions!
 {: .highlight }
 Refer to the [release notes](https://github.com/swirlai/swirl-search/releases) for details on each update.
 
+## Docker
+
+Refer to the appropriate guide for your edition:
+* [Quick Start Guide - Community](./Quick-Start.md) 
+* [Quick Start Guide - Enterprise](./Quick-Start-Enterprise.md) 
+
 ## Resetting Prompts
 
-To reset AI prompts to **default settings**, run:
+To reset AI prompts to the **default settings**, run:
 
 ```shell
 python swirl.py reload_ai_prompts
 ```
-
 This restores **system prompts** to **factory settings** while keeping **custom prompts unchanged**.
+
+## Resetting Authenticators 
+
+To update all Authenticators:
+
+```shell
+python manage.py load_authenticators swirl/fixtures/DefaultAuthenticators.json
+```
+
+## Resetting SearchProviders 
+
+To reset a specific SearchProvider:
+
+```shell
+python manage.py load_fixture SearchProviders/<searchprovider-name>
+```
 
 # Configuring SWIRL
 

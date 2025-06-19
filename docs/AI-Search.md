@@ -550,7 +550,7 @@ Add the following configuration to the **Microsoft Calendar** SearchProvider:
 
 ## Microsoft SharePoint
 
-Add the following configuration to the **Microsoft SharePoint** SearchProvider:
+To fetch Sharepoint objects, add the following configuration to the **Microsoft SharePoint** SearchProvider:
 
 ```json
 "page_fetch_config_json": {
@@ -563,22 +563,119 @@ Add the following configuration to the **Microsoft SharePoint** SearchProvider:
 }
 ```
 
-## Microsoft Teams Chat
+This ensures SWIRL correctly fetches authenticated content from Microsoft sources while maintaining security and efficiency.
 
-Add the following configuration to the **Microsoft Teams Chat** SearchProvider:
+### Customizing
+
+SWIRL recommends using the RequestsPost connector to perform advanced querying. This section describes how to configure it.
+
+Here is a sample SearchProvider:
 
 ```json
-"page_fetch_config_json": {
-    "cache": "false",
-    "content_url": "https://graph.microsoft.com/beta/chats/'{resource.chatId}'/messages",
-    "headers": {
-        "User-Agent": "Swirlbot/1.0 (+http://swirl.today)"
-    },
-    "timeout": 10
-}
+ {
+        "name": "Sharepoint Advanced Query",
+        "description": "Searches a set of documents. Supports most languages.",
+        "owner": "admin",
+        "shared": true,
+        "active": true,
+        "default": false,
+        "authenticator": "Microsoft",
+        "connector": "RequestsPost",
+        "url": "https://graph.microsoft.com/beta/search/microsoft.graph.query",
+        "query_template": "{url}",
+        "query_template_json": {},
+        "post_query_template": {
+            "requests": [
+                {
+                    "from": 0,
+                    "size": 10,
+                    "query": {
+                        "queryString": "( {query_string} )  AND  site:\"https://<m365-tenant-name>.sharepoint.com/sites/<site-name>*\" AND (ContentTypeId:0x0101009D1CB255DA76424F860D91F20E6C411800FE9B4A881A37C14EB317C8BB00D7678E OR ContentTypeId:0x0101005F15B24C83D3604385BF439DD37F6A1D)"
+                    },
+                    "fields": [
+                        "ContentTypeId",
+                        "title",
+                        "webUrl",
+                        "lastModifiedDateTime",
+                        "description"
+                    ],
+                    "entityTypes": [
+                        "driveItem",
+                        "listItem"
+                    ]
+                }
+            ]
+        },
+        "http_request_headers": {
+            "Content-Type": "application/json"
+        },
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "NoModQueryProcessor"
+        ],
+        "query_mappings": "NO_URL_ENCODE",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "FOUND=value[0].hitsContainers[0].total,RESULTS=value[0].hitsContainers[0].hits",
+        "result_mappings": "url=resource.webUrl,title='{$[*].resource..fields.title}',body='{summary} - {resource.fields.description}',date_published=resource.createdDateTime,author=resource.createdBy.user.displayName",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "sp1"
+        ],
+        "ephemeral_store_config_json": {
+            "ephemeral": false
+        },
+        "query_language": "Generic_Keyword",
+        "config": {}
+    }
 ```
 
-This ensures SWIRL correctly fetches authenticated content from Microsoft sources while maintaining security and efficiency.
+{: .warning }
+**Warning:** The SP above must be edited before using!!
+
+{: .warning }
+**Warning:** The SP above will *not* *work* without the quote handling transformer installed. Follow the procedure under [Quote Handling](#quote-handling) to install it.
+
+### query_processors
+
+The `NoModQueryProcessor` should be specified in the `query_processors` list, instead of the `AdaptiveQueryProcessor`. This will ensure no modification of the query in the SearchProvider.
+
+### post_query_template
+
+The `post_query_template` field contains JSON that wraps additional query parameters. 
+
+* Change <m365-tenant-name> and <sharepoint-site-name> to the appropriate values for your tenant.
+
+* The `query_string` will be filled-in at run time by SWIRL. The value is in parenthesis because it may contain keywords like AND, OR or NOT, and also nested parens.
+
+* The `ContentTypeId` specifies which types of documents to focus on. For Sharepoint and OneDrive, the main types are `driveItem` and `listItem`.
+
+### Quote Handling
+
+SWIRL Enterprise 4.2 and earlier requires a query transformer to handle quoted searches in Sharepoint correctly.
+
+To install this transformer:
+
+* [Download the file](./escape_quotes.csv)
+
+* Login to the SWIRL admin, query transform CSV page: http://localhost/api/swirl/query_transform_form/
+
+![SWIRL Query Transform Page](images/query_transform_upload_1.png)
+
+* Enter name `escape_quotes`
+
+* Leave the type set to `Rewrite`
+
+* Click "Choose file", select the downloaded CSV file, and then click "Upload" (highlighted in green above). 
+
+The file should upload almost instantly, and redirect you back to the homepage. 
+
+Please, [contact support](#support) if you receive an error message. 
 
 # Extracting Enterprise Content with Apache Tika
 

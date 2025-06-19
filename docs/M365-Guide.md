@@ -22,7 +22,7 @@ Administrators may also need to **grant API permissions** so users can **query t
 
 # Register a New App in Azure Portal
 
-To connect **SWIRL** to an **M365 tenant**, you must **register and configure a new App** in the **Azure Portal**.
+To connect **SWIRL** to an **M365 tenant**, first **register and configure a new App** in the **Azure Portal**.
 
 Once registered, the App allows:
 
@@ -351,12 +351,6 @@ From the SWIRL home directory, open the `static/api/config/default` file within 
       "requireHttps": false,
       "strictDiscoveryDocumentValidation": false,
       "skipIssuerCheck": true
-   },
-   "Google": {
-      "active": false,
-      "clientId":  "<google-client-id>.apps.googleusercontent.com",
-      "redirectUri": "http://<swirl-host>:<swirl-port>/galaxy/oidc-callback",
-      "scope": "openid email profile"
    }
 },
 ```

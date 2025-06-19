@@ -1,7 +1,7 @@
 ---
 layout: default
 title: SearchProviders
-nav_order: 16
+nav_order: 17
 ---
 <details markdown="block">
   <summary>
@@ -51,6 +51,7 @@ Additionally, **inactive** SearchProviders for **Google Web Search and SWIRL Doc
 | **github.json** | Searches public repositories for Code, Commits, Issues, and PRs | Requires GitHub bearer token |
 | **google_news.json** | Queries [Google News](https://news.google.com/) | No authentication required |
 | **google_pse.json** | Web search via Google Programmable Search Engine (PSE) | Requires Google API key |
+| **google_workspace.json** | Queries [Google Workspace](https://workspace.google.com/) | See the [Google Workspace Guide](GoogleWorkspace-Guide) | 
 | **hacker_news.json** | Queries [Hacker News](https://hn.algolia.com/) | No authentication required |
 | **http_get_with_auth.json** | Generic HTTP GET with authentication | Requires URL and credentials |
 | **http_post_with_auth.json** | Generic HTTP POST with authentication | Requires URL and credentials |

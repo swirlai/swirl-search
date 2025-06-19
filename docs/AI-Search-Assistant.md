@@ -90,5 +90,6 @@ SWIRL AI Search Assistant expects AI providers to support:
 - **Chat history in reverse chronological order**, following the format used by the [OpenAI Chat Completions API](https://platform.openai.com/docs/guides/chat-completions/getting-started).
 - **Prompt size of at least 3K tokens per message**, with 6K+ preferred.
 - **Recommended models:** OpenAI GPT-4 (`gpt-4`, `gpt-4o`), Anthropic Claude 3, or Google Gemini Pro/Ultra.
+- **Mini models may not work correctly** we recommend full-featured models for both RAG and Chat roles. 
 
 Other LLMs may also work **if they support chat history as described above**. If you test alternative models, please **[let us know](#support)** what works (or doesn’t)!
