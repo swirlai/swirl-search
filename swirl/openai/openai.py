@@ -33,7 +33,7 @@ class OpenAIClient:
         self._swirl_q_model   = getattr(settings,"SWIRL_QUERY_MODEL", None)
         self._swirl_rag_model = getattr(settings,'SWIRL_RAG_MODEL',None)
 
-        logger.debug(f'cons config : {self._openapi_key} {self._azure_model}'
+        logger.info(f'>>>>>> cons config : {self._openapi_key} {self._azure_model}'
                     f'{self._azureapi_key} {self._azure_endpoint} {self._swirl_rw_model} {self._swirl_q_model} {self._swirl_rag_model}')
 
         self._api_key = None
@@ -87,4 +87,7 @@ class OpenAIClient:
         elif self._usage == AI_QUERY_USE:
             return self._swirl_q_model
         else:
+            # TODO: Temporary fix for gpt-4.1 model.
+            if self._swirl_rag_model == "gpt-4.1":
+                return "gpt-4o"
             return self._swirl_rag_model
