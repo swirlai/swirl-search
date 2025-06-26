@@ -374,6 +374,114 @@ Proper response mappings ensure **consistent search results** across different s
 
 SearchProvider `result_mappings` define how JSON result sets from external sources are mapped to SWIRL's **standard result schema**. Each mapping follows **JSONPath** conventions.
 
+# Configuration Options
+
+Use the following configuration options to override default SP behavior. 
+
+They must be placed in the "config" block.
+
+## Retrieval Augmented Generation (RAG)
+
+The following configuration items change the RAG defaults for a single SearchProvider:
+
+```
+"swirl": { 
+    "rag": {
+        "swirl_rag_max_to_consider": <integer-max-to-consider>,
+        "swirl_rag_fetch_timeout": <integer-rag-fetch-timeout>,
+        "swirl_rag_score_inclusion_threshold": <float-rag-score-inclusion-threshold>,
+        "swirl_rag_distribution_strategy": <rag-distribution-strategy>,
+        "swirl_rag_inclusion_field": "<swirl_confidence_score|swirl_score>"
+     }
+}
+```
+
+The following are valid RAG distribution strategies that can be selected by `swirl_rag_distribution_strategy`:
+* `distributed`
+* `roundrobin`
+* `sorted`
+* `roundrobinthreshold`
+
+For example:
+
+```
+"swirl": {
+    "rag": {
+        "swirl_rag_inclusion_field": "swirl_score",
+        "swirl_rag_distribution_strategy": "sorted",
+        "swirl_rag_score_inclusion_threshold": 2500,
+        "swirl_rag_max_to_consider": 4,
+        "swirl_rag_fetch_timeout": 1
+    }
+},
+```
+
+## Page Fetching
+
+The following configuration items allow modification of the page fetching defaults for a single SearchProvider:
+
+```
+"config": {
+        "swirl": {
+            "fetch_url_body": {
+               "body_pagefetch_min_tokens": <min-tokens>,
+               "body_pagefetch_token_length":  <token-length>,
+               "body_pagefetch_fallback_token_length": <fallback-token-length>,
+               "body_pagefetch_generation_method":"<generation-method>",
+               "body_pagefetch_text_extract_timeout": <text-extraction-timeout>
+             }
+        }
+    }
+```
+
+The following are valid generation methods that may be selected using `body_pagefetch_generation_method`:
+* TERM_COUNT
+* TERM_VECTOR
+
+For example:
+
+```
+"config": {
+        "swirl": {
+            "fetch_url_body": {
+               "body_pagefetch_min_tokens": 5,
+               "body_pagefetch_token_length":64,
+               "body_pagefetch_fallback_token_length":128,
+               "body_pagefetch_generation_method":"TERM_COUNT",
+               "body_pagefetch_text_extract_timeout":30
+             }
+        }
+    }
+```
+
+## Google Calendar
+
+The following configuration items allow modification of the Google Calendar defaults:
+
+```
+"config": {
+        "swirl": {
+            "google_calendar": {
+               "calendar_lookback_days": <lookback-days>,
+               "calendar_lookahead_days": <lookahead-days>
+            }
+        }
+    }
+```
+
+In both cases, specify the number of days. For example:
+
+```
+"config": {
+        "swirl": {
+            "google_calendar": {
+               "calendar_lookback_days": 30,
+               "calendar_lookahead_days": 30
+            }
+        }
+    }
+```
+
 # Default SWIRL Fields
 
 | Field Name | Description |
