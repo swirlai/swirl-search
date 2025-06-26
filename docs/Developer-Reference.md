@@ -1031,7 +1031,7 @@ http://localhost:8000/swirl/results/?search_id=1&result_mixer=Stack1Mixer
 
 ## Funding Data Set
 
-The TechCrunch Continental USA funding data set is sourced from [Insurity SpatialKey](https://support.spatialkey.com/spatialkey-sample-csv-data/). It is included in SWIRL as [Data/funding_db.csv](https://github.com/swirlai/swirl-search/blob/main/Data/funding_db.csv) and processed with [scripts/fix_csv.py](https://github.com/swirlai/swirl-search/blob/main/DevUtils/fix_csv.py) before loading into SQLite3.
+The TechCrunch Continental USA funding data set is sourced from [Insurity SpatialKey](https://support.spatialkey.com/spatialkey-sample-csv-data/). It is included in SWIRL as [Data/funding_db.csv](https://github.com/swirlai/swirl-search/blob/main/Data/funding_db.csv) and processed with [DevUtils/fix_csv.py](https://github.com/swirlai/swirl-search/blob/main/DevUtils/fix_csv.py) before loading into SQLite3.
 
 **Loading into SQLite3 **
 
@@ -1111,7 +1111,7 @@ PUT /email
 {: .highlight }
 To index Enron data into Elastic, update the load script to include a valid certificate path.
 
-4. Modify `scripts/index_email_elastic.py` (line 37):
+4. Modify `DevUtils/index_email_elastic.py` (line 37):
 
 ```python
 # Insert path to Elastic cert below
@@ -1122,12 +1122,12 @@ ca_certs = "<PATH-TO-CERT>"
 
 *For Elastic:*
 ```shell
-python scripts/index_email_elastic.py emails.csv -p elastic-password
+python DevUtils/index_email_elastic.py emails.csv -p elastic-password
 ```
 
 *For OpenSearch:*
 ```shell
-python scripts/index_email_opensearch.py emails.csv -p admin-password
+python DevUtils/index_email_opensearch.py emails.csv -p admin-password
 ```
 
 6. Verify the index in the [development console](http://localhost:5601/app/dev_tools#/console):
