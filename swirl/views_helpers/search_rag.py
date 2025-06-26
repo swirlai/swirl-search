@@ -20,7 +20,7 @@ class SearchRag:
 
         # Parse query parameters
         self.rag_query_items = []
-        rag_query_items = request_data.get("rag_items", [""])[0]
+        rag_query_items = request_data.get("rag_items", [""])
 
         if rag_query_items:
             self.rag_query_items = rag_query_items.split(",")
