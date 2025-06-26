@@ -400,7 +400,7 @@ The following are valid RAG distribution strategies that can be selected by `swi
 * `distributed`
 * `roundrobin`
 * `sorted`
-* `RoundRobinThreshold`
+* `roundrobinthreshold`
 
 For example:
 
@@ -408,7 +408,7 @@ For example:
 "swirl": {
     "rag": {
         "swirl_rag_inclusion_field": "swirl_score",
-        "swirl_rag_distribution_strategy": "Sorted",
+        "swirl_rag_distribution_strategy": "sorted",
         "swirl_rag_score_inclusion_threshold": 2500,
         "swirl_rag_max_to_consider": 4,
         "swirl_rag_fetch_timeout": 1
@@ -420,6 +420,7 @@ For example:
 
 The following configuration items allow modification of the page fetching defaults for a single SearchProvider:
 
+```
 "config": {
         "swirl": {
             "fetch_url_body": {
@@ -431,13 +432,15 @@ The following configuration items allow modification of the page fetching defaul
              }
         }
     }
+```
 
 The following are valid generation methods that may be selected using `body_pagefetch_generation_method`:
 * TERM_COUNT
-* <TBD>
+* TERM_VECTOR
 
 For example:
 
+```
 "config": {
         "swirl": {
             "fetch_url_body": {
@@ -449,11 +452,13 @@ For example:
              }
         }
     }
+```
 
 ## Google Calendar
 
 The following configuration items allow modification of the Google Calendar defaults:
 
+```
 "config": {
         "swirl": {
             "google_calendar": {
@@ -466,6 +471,7 @@ The following configuration items allow modification of the Google Calendar defa
 
 In both cases, specify the number of days. For example:
 
+```
 "config": {
         "swirl": {
             "google_calendar": {
