@@ -87,4 +87,7 @@ class OpenAIClient:
         elif self._usage == AI_QUERY_USE:
             return self._swirl_q_model
         else:
+            # TODO: Temporary fix for gpt-4.1 model.
+            if self._swirl_rag_model == "gpt-4.1":
+                return "gpt-4o"
             return self._swirl_rag_model
