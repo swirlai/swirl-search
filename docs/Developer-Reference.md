@@ -446,6 +446,66 @@ See the [SearchProvider Guide, Result Mappings](./SP-Guide#result-mappings) for 
 
 Use the [Payload Field](./SP-Guide#payload-field) to store additional content.
 
+# FESS
+
+FESS is a free enterprise search server that can be used to crawl web content, file systems and other data sources. Download FESS here: [https://fess.codelibs.org/](https://fess.codelibs.org/)
+
+SWIRL can query anything FESS indexes using the built-in HTTP server.
+
+The following SearchProvider example can be used with FESS:
+
+```
+{
+    "name": "Files - FESS",
+    "description": "SearchProvider description",
+    "active": true,
+    "default": false,
+    "authenticator": null,
+    "connector": "RequestsGet",
+    "url": "http://localhost:8080/api/v1/documents",
+    "query_template": "{url}?x=x&q={query_string}",
+    "query_template_json": {},
+    "post_query_template": {},
+    "http_request_headers": {
+        "Content-Type": "application/json"
+    },
+    "page_fetch_config_json": {
+        "cache": "false",
+        "headers": {
+            "User-Agent": "Swirlbot/1.0 (+http://swirlaiconnect.com)"
+        },
+        "timeout": 10
+    },
+    "query_processors": [
+        "AdaptiveQueryProcessor"
+    ],
+    "query_mappings": "DATE_SORT=sort=created.desc,RELEVANCY_SORT=sort=score",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "RESULTS=data,FOUND=record_count",
+    "result_mappings": "title=title,body=content_description,date_published=created,url=url",
+    "results_per_query": 10,
+    "credentials": "",
+    "eval_credentials": "",
+    "tags": [
+        "Files",
+        "FESS"
+    ],
+    "ephemeral_store_config_json": {
+        "ephemeral": false
+    },
+    "query_language": "Generic_Keyword",
+    "config": {}
+}
+```
+
+This SearchProvider supports date sorted requests. 
+
+Modify the query_template to target different types and collections in FESS as [noted in their API documentation](https://fess.codelibs.org/15.0/api/api-search.html).
+
 # Microsoft Graph
 
 The [Microsoft Graph Connector](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/microsoft_graph.py) queries M365 content using OAuth2 authentication.
