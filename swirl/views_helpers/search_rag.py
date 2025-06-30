@@ -15,14 +15,14 @@ class SearchRag:
 
     def __init__(self, request_data: Request) -> None:
         request_data = request_data.GET.dict()
-        logger.info(f"{self}: init search rag {request_data}")
+        logger.debug(f"{self}: init search rag {request_data}")
         self.search_id = request_data.get("search_id", None)
 
         # Parse query parameters
         self.rag_query_items = []
-        rag_query_items = request_data.get("rag_items", [""])
+        rag_query_items = request_data.get("rag_items", None)
 
-        if rag_query_items:
+        if rag_query_items and isinstance(rag_query_items, str):
             self.rag_query_items = rag_query_items.split(",")
 
     def get_rag_result(self) -> tuple[str, dict[str, str]]:
