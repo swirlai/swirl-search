@@ -204,6 +204,18 @@ To modify prompts, use the **HTML form** or **Raw Data modes** at the bottom of 
 **SWIRL recommends not modifying system prompts.** If you need to reset them, follow the  
 [Admin Guide section on resetting prompts](Admin-Guide#resetting-prompts).
 
+## Guiding Retrieval Augmented Generation (RAG) for AI Insight Generation
+
+SWIRL Enterprise 4.2 includes a new field on the search form: `Optional instructions for the AI response`. This field allows you to provide instructions to the LLM that will summarize the retrieved results - without having it be part of the selection criteria. The search box with the hint "What are you searching for today" determines which results are retrieved. 
+
+For example, this query selects the top documents about Karen Sparck Jones, and instructs the configured LLM to report on major inventions.
+
+![SWIRL RAG results for Karen Sparck Jones inventions](images/ksj_rag_example.png)
+
+The RAG result includes [details of her invention of TF/IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) as expected.
+
+
+
 
 
 
