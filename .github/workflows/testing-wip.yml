@@ -113,7 +113,7 @@ jobs:
           echo "========"
           cat .env.qa
           echo "========"
-          docker run --net=host --env-file .env.qa -t swirlai/swirl-search-qa:${{ github.event.inputs.qa_image }} sh -c "behave --tags=${{ github.event.inputs.behave_tags }}"
+          docker run --net=host --env-file .env.qa -t swirlai/swirl-search-qa:${{ github.event.inputs.qa_image }} sh -c "behave --no-capture --tags=${{ github.event.inputs.behave_tags }}"
       - name: Upload Log Files
         if: always()
         uses: actions/upload-artifact@v4
