@@ -200,9 +200,9 @@ To address this, use the **[DateFindingResultProcessor](#find-dates-in-bodytitle
 
 ## Use an LLM to Rewrite Queries
 
-SWIRL AI Search (Community Edition) supports **query rewriting** using `ChatGPTQueryProcessor`.
+SWIRL AI Search supports **query rewriting** using `ChatGPTQueryProcessor` (for the Community edition) or the `GenAIQueryProcessor` (for Enterprise).
 
-To enable it, add `"ChatGPTQueryProcessor"` to `SearchProvider.query_processors`.  
+To enable it, add the processor to `SearchProvider.query_processors`.  
 
 For details, see: [Developer Reference - Query Processors](./Developer-Reference#query-processors).
 
