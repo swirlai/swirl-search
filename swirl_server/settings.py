@@ -96,6 +96,7 @@ MIDDLEWARE = [
     'swirl.middleware.TokenMiddleware',
     'swirl.middleware.SpyglassAuthenticatorsMiddleware',
     'swirl.middleware.SwaggerMiddleware',
+    'swirl.middleware.TimeoutMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
