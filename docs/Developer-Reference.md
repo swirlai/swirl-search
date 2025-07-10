@@ -297,13 +297,13 @@ The included [BigQuery SearchProvider](https://github.com/swirlai/swirl-search/b
 
 More information: [BigQuery Documentation](https://cloud.google.com/bigquery/docs)
 
-## GenAI
+## GenAI and ChatGPT Connectors
 
-The [GenAI Searchor](https://github.com/swirlai/swirl-search/blob/main/swirl/connectors/gen_ai.py) uses the OpenAI chat completion API. It returns at most one result.
+SWIRL includes connectors that can be used to obtain direct answers from LLMs, as if they were regular SearchProviders. The connector is the `ChatGPTConnector` (for the Community edition) or the `GenAIConnector` (for Enterprise).
 
-LLM responses typically rank highly as they are generated dynamically, reflect query terminology, and are titled accordingly.
+Both connectors return at most one result.
 
-The included [SearchProvider](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/gen_ai.json) is pre-configured with a "Tell me about: ..." prompt. The [`GenAIQueryProcessor`](https://github.com/swirlai/swirl-search/blob/main/swirl/processors/gen_ai_query.py) offers additional query options.
+The included [SearchProvider](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/gen_ai.json) is pre-configured with a "Tell me about: ..." prompt. 
 
 ```json
 {
@@ -316,7 +316,7 @@ The included [SearchProvider](https://github.com/swirlai/swirl-search/blob/main/
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
-    "query_mappings": "PROMPT='Tell me about: {query_to_provider}'",
+    "query_mappings": "",
     "result_processors": [
         "GenericResultProcessor",
         "CosineRelevancyResultProcessor"
@@ -332,55 +332,39 @@ The included [SearchProvider](https://github.com/swirlai/swirl-search/blob/main/
 }
 ```
 
-The `Question` and `GenAI` SearchProvider Tags enable targeted queries. Example:
+The `Question` and `GenAI` SearchProvider Tags enable targeted queries. For example:
 
 ```shell
 Question: Tell me about knowledge management software?
 ```
 
-**GenAI SearchProvider Tags**
+### Setting the GenAI Prompt or Role
 
-The following Tags adjust the Prompt or Default Role passed to GenAI. 
-
-1. Add a valid OpenAI API Key to SWIRL’s `.env` file (in `swirl-home`).
-2. Restart SWIRL.
-3. Add `GenAIQueryProcessor` to the SearchProvider's `query_processors` list:
-
-```json
-    "query_processors": [
-        "AdaptiveQueryProcessor",
-        "GenAIQueryProcessor"
-    ]
-```
-
-*Available Tags*
+The following tags adjust the prompt or role passed to GenAI. 
 
 * `CHAT_QUERY_REWRITE_PROMPT`: Customizes the prompt used to refine the query.
+
 ```json
 "CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this: {query_string}"
 ```
 
 * `CHAT_QUERY_REWRITE_GUIDE`: Overrides the `system` role.
+
 ```json
 "CHAT_QUERY_REWRITE_GUIDE:You are a helpful assistant that responds like a pirate captain"
 ```
 
 * `CHAT_QUERY_DO_FILTER`: Enables/disables internal filtering of LLM responses.
+
 ```json
 "CHAT_QUERY_DO_FILTER:false"
 ```
 
-**GenAI `query_mapping`**
-
-This `query_mapping` adjusts the Default Role passed to GenAI:
+The following `query_mapping` adjusts the default role passed to GenAI:
 
 ```shell
 "query_mappings": "PROMPT='Tell me about: {query_to_provider}',CHAT_QUERY_REWRITE_GUIDE='You are a helpful assistant that responds like a pirate captain'",
 ```
-
-**Other GAI/LLMs**
-
-The Community Edition of SWIRL supports OpenAI and Azure/OpenAI for LLMs. The [Enterprise Edition supports additional platforms](https://swirlaiconnect.com/connectors). Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for more information.
 
 # Elastic & OpenSearch
 
@@ -933,11 +917,56 @@ Query Processors modify queries. The field they operate on depends on where they
 | Processor | Description | Notes | 
 | ---------- | ---------- | ---------- | 
 | **AdaptiveQueryProcessor** | Rewrites queries based on `query_mappings` for a given SearchProvider | Not for `pre_query_processors` |
-| **GenAIQueryProcessor** | Uses an LLM to rewrite queries, making them broader, more specific, boolean, or in another language | Experimental |
+| **ChatGPTQueryProcessor** | Uses OpenAI to rewrite queries, making them broader, more specific, boolean, or in another language | Community edition only |
+| **GenAIQueryProcessor** | Uses an LLM to rewrite queries, making them broader, more specific, boolean, or in another language | Enterprise edition only |
 | **GenericQueryProcessor** | Removes special characters from queries |  |
 | **SpellcheckQueryProcessor** | Uses [TextBlob](https://textblob.readthedocs.io/en/dev/quickstart.html#spelling-correction) to correct spelling errors | Best used in `SearchProvider.query_processors`; avoid with Google PSE |
 | **NoModQueryProcessor** | Removes only leading SearchProvider Tags, leaving query terms unchanged | For repositories allowing non-search characters (e.g., brackets) |
 | **RemovePIIQueryProcessor** | Removes PII entities from queries without replacing them |  |
+
+## GenAIQueryProcessor
+
+The `GenAIQueryProcessor` calls an LLM with the user's query and a custom prompt to enable rewriting. For example this processor can:
+
+* Translate queries between languages
+* Rewrite queries as booleans
+* Perform phrase detection
+
+And much more. 
+
+### Configuring the SearchProvider
+
+To use the `GenAIQueryProcessor` with a specific `SearchProvider`, add it to the SearchProvider's `query_processors` list:
+
+```json
+    "query_processors": [
+        "AdaptiveQueryProcessor",
+        "GenAIQueryProcessor"
+    ]
+```
+
+To alter the query sent to all Searchproviders, add it to the `search.pre_query_processor` object. 
+
+```json
+{
+    "query_string": "<user-query-string>",
+    "pre_query_processors": ["GenAIQueryProcessor"]
+}
+```
+
+Note: this requires calling the Swirl Search API and is not supported via Galaxy.
+
+### Configuring the QueryProcessor
+
+The GenAIQueryProcessor supports the same tags and configuration options as the [GenAIConnector](#setting-the-genai-prompt-or-role).
+
+For example:
+
+```json
+"tags": [
+            "PROMPT='Translate this query to japanese, if necessary: {query_string}"
+        ],
+```
 
 # Result Processors
 
