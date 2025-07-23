@@ -728,14 +728,6 @@ CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 ```
 
-**3. Celery Broker Settings**
-Ensure Redis is running and configured properly. Alternatively, use **RabbitMQ** by uncommenting:
-
-```shell
-# CELERY_BROKER_URL = 'amqp://guest:guest@localhost:6379//'
-# CELERY_RESULT_BACKEND = 'rpc://'
-```
-
 # Security
 
 ## The Django Secret Key
