@@ -20,6 +20,10 @@ heading_anchors: true
 # For copy button on code
 enable_copy_code_button: true
 
+# Swirl chat feature toggle
+enableSwirlChat: true
+swirlDocOriginChat: "https://chat.docs.swirlaiconnect.com"
+
 # External navigation links
 nav_external_links:
   - title: SWIRL on GitHub

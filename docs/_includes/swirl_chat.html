@@ -1,0 +1,53 @@
+<div class="swirl-iframe-container">
+  <iframe
+    id="swirl-chat-iframe"
+    frameborder="0"
+    allowfullscreen
+    style="width:100%; height:80vh;"
+  ></iframe>
+</div>
+{% assign chat_origin = include.chat_origin | default: "http://localhost:8000" %}
+<script>
+  const CHAT_ORIGIN = {{ chat_origin | jsonify }};
+  async function initSwirlChat() {
+    console.log('initSwirlChat start');
+    try {
+      const resp = await fetch(`${CHAT_ORIGIN}/swirl/init-session/`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+      if (!resp.ok) throw new Error(`Init failed: ${resp.status}`);
+
+      const { token } = await resp.json();
+
+      const iframe = document.getElementById('swirl-chat-iframe');
+      iframe.src = `${CHAT_ORIGIN}/galaxy/pre-chat`;
+
+      iframe.onload = () => {
+        console.log('posting setLocalStorage message');
+        iframe.contentWindow.postMessage({
+          action: 'setLocalStorage',
+          payload: {
+            'swirl-token': token,
+            'swirl-chat-status': 'true'
+          }
+        }, CHAT_ORIGIN);
+      };
+    } catch (err) {
+      console.error('initSwirlChat error:', err);
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        `<p style="color:red">Chat unavailable: ${err.message}</p>`
+      );
+    }
+    console.log('initSwirlChat end');
+  }
+
+  console.log('registering initSwirlChat listener');
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSwirlChat);
+  } else {
+    console.log('document already ready — calling initSwirlChat');
+    initSwirlChat();
+  }
+</script>

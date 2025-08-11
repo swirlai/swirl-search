@@ -163,3 +163,11 @@ For **SWIRL Enterprise**, deployments are also available as **Kubernetes images*
 # Does SWIRL Offer Hosting?  
 
 Yes! For details about **hosted SWIRL solutions**, [contact us](mailto:hello@swirlaiconnect.com) or visit [swirlaiconnect.com](https://swirlaiconnect.com).
+
+{% if site.enableSwirlChat %}
+## Ask SWIRL
+
+Have questions about **SWIRL**? Just type below.
+
+{% include swirl_chat.html chat_origin=site.swirlDocOriginChat %}
+{% endif %}
