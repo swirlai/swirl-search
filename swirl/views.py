@@ -995,3 +995,13 @@ class BrandingConfigurationViewSet(viewsets.ModelViewSet):
             return JsonResponse({}, status=status.HTTP_200_OK)
         else:
             return Response('Logo Object Not Found', status=status.HTTP_404_NOT_FOUND)
+
+
+class IsChatAIProviderExists(viewsets.ModelViewSet):
+
+    def list(self, request):
+        # TODO: The Community Edition does not include an AI provider model. 
+        # For now, we are setting the status to True as a temporary workaround. 
+        # This should be updated once the AI provider model is implemented.
+        # This validation is used to enable or disable the second row of Search RAG.
+        return Response({'status': 'True'}, status=status.HTTP_200_OK)
