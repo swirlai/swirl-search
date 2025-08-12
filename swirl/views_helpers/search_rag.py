@@ -61,14 +61,13 @@ class SearchRag:
         instances[self.search_id] = rag_processor
         if rag_processor.validate():
             result = rag_processor.process(should_return=True)
-            try:
-                if self.search_id in instances:
-                    del instances[self.search_id]
-                return result.json_results[0]["body"][0]
-            except:
-                if self.search_id in instances:
-                    del instances[self.search_id]
-                return False
+            if result == 0:
+                return "API key is required to initialize AIClient"
+
+            if self.search_id in instances:
+                del instances[self.search_id]
+
+            return result.json_results[0]["body"][0]
 
     def process_rag(self) -> dict[str, str]:
         result = ""
