@@ -62,7 +62,7 @@ class SearchRag:
         if rag_processor.validate():
             result = rag_processor.process(should_return=True)
             if result == 0:
-                return "API key is required to initialize AIClient"
+                return "Please check the OpenAI or Azure/OpenAI credentials in your environment."
 
             if self.search_id in instances:
                 del instances[self.search_id]
