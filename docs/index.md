@@ -146,7 +146,6 @@ Use **SWIRL Enterprise Edition** when you have:
 # How Can I Get Help With SWIRL?
 
 * **Visit the Documentation Site**: [docs.swirlaiconnect.com](https://docs.swirlaiconnect.com/)
-* **Community**: [Create a GitHub Issue](https://github.com/swirlai/swirl-search/issues)
 * **Enterprise**: [Create a Ticket](https://swirlaiconnect.com/support-ticket)
 * **Email**: [support@swirlaiconnect.com](mailto:swirlaiconnect.com)
 
