@@ -1,16 +1,19 @@
-from rest_framework.authtoken.models import Token
-from django.http import HttpResponseForbidden, HttpResponse
-from swirl.models import Search
-from swirl.authenticators import *
-from channels.middleware import BaseMiddleware
-from channels.db import database_sync_to_async
-from urllib.parse import parse_qs
-from django.core.exceptions import ObjectDoesNotExist
 import json
-import yaml
-import jwt
 import logging
+
+import jwt
+import yaml
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from func_timeout import FunctionTimedOut, func_timeout
+from rest_framework.authtoken.models import Token
+
+from swirl.authenticators import *
+
 logger = logging.getLogger(__name__)
+
+
+SWIRL_API_SEARCH_URLS = ["/api/swirl/search/", "/swirl/search/"]
+SWIRL_API_RAG_URLS = ["/api/swirl/rag-search/", "/api/swirl/sapi/detail-search-rag/"]
 
 
 class TokenMiddleware:
@@ -59,61 +62,6 @@ class SpyglassAuthenticatorsMiddleware:
             logger.debug(f'SpyglassAuthenticatorsMiddleware - No action')
         return self.get_response(request)
 
-
-class WebSocketTokenMiddleware(BaseMiddleware):
-    async def __call__(self, scope, receive, send):
-        query_string = scope.get("query_string", b"").decode("utf-8")
-        query_params = parse_qs(query_string)
-        token_key = query_params.get("token", [""])[0]
-        rag_query_items = query_params.get("rag_items", [""])[0]
-        if rag_query_items:
-            scope['rag_query_items'] = rag_query_items.split(',')
-        else:
-            scope['rag_query_items'] = []
-
-        ### DJANGO TOKEN CHECKING
-
-        if token_key:
-            logger.debug(f'WebSocketTokenMiddleware - Token exists')
-            user = await self.get_user_from_token(token_key)
-            if user:
-                logger.debug(f'WebSocketTokenMiddleware - Token is valid')
-                scope["user"] = user
-                print(user.username)
-
-                search_id = query_params.get("search_id", [""])[0]
-                if search_id:
-                    logger.debug(f'WebSocketTokenMiddleware - Search ID exists')
-                    found = await self.get_search_by_id_and_user(search_id, user)
-                    if found:
-                        logger.debug(f'WebSocketTokenMiddleware - Search for current user {user} was found')
-                        scope["search_id"] = search_id
-                    else:
-                        logger.debug(f'WebSocketTokenMiddleware - Search for current user {user} was not found')
-                else:
-                    logger.debug(f'WebSocketTokenMiddleware - Search ID does not exist')
-            else:
-                logger.debug(f'WebSocketTokenMiddleware - Token is not valid')
-        else:
-            logger.debug(f'WebSocketTokenMiddleware - Token does not exist')
-
-        return await super().__call__(scope, receive, send)
-
-
-    @database_sync_to_async
-    def get_user_from_token(self, token_key):
-        try:
-            return Token.objects.get(key=token_key).user
-        except Token.DoesNotExist:
-            return None
-
-    @database_sync_to_async
-    def get_search_by_id_and_user(self, search_id, user):
-        try:
-            return Search.objects.filter(pk=search_id, owner=user).exists()
-        except ObjectDoesNotExist:
-            return None
-
 class SwaggerMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -129,3 +77,57 @@ class SwaggerMiddleware:
                 return response
             return self.get_response(request)
         return self.get_response(request)
+
+class TimeoutMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        min_timeout = 1
+        max_timeout = 180
+        timeout_param = request.GET.get("rag_timeout")
+        is_rag_url = request.path in SWIRL_API_RAG_URLS
+        is_search_url = request.path in SWIRL_API_SEARCH_URLS
+        has_search_rag_tag = (
+            request.GET.get("rag", False)
+            or request.GET.get("do_rag", "").lower() == "true"
+        )
+
+        logger.info(
+            f"TimeoutMiddleware - init path {request.path} rag_timeout {timeout_param} rag {has_search_rag_tag} (rag:{request.GET.get('rag','<unset>')} or do_rag:{request.GET.get('do_rag','<unset>')})"
+        )
+
+        if timeout_param and ((is_search_url and has_search_rag_tag) or is_rag_url):
+            logger.debug(
+                f"Enabling RAG timeout for {request.path} and {timeout_param} seconds"
+            )
+
+            ## little method to wrap the request execution
+            def execute_request_with_timeout():
+                return self.get_response(request)
+
+            ## parse the timeout value or fail the request
+            try:
+                timeout_duration = int(timeout_param)
+            except ValueError:
+                return HttpResponseBadRequest("Invalid timeout value provided")
+
+            ## validate the timeout value
+            if timeout_duration < min_timeout or timeout_duration > max_timeout:
+                return HttpResponseBadRequest(
+                    f"Timeout value must be between {min_timeout} and {max_timeout} seconds"
+                )
+
+            try:
+                logger.info(f"Request timeout set to {timeout_duration} seconds")
+                response = func_timeout(timeout_duration, execute_request_with_timeout)
+            except FunctionTimedOut:
+                logger.debug(
+                    f"Raise timeout for {request.path} after {timeout_duration} seconds"
+                )
+                response = HttpResponse("Rag timed out", status=504)
+        else:
+            logger.debug(f"Disabling RAG timeout for {request.path}")
+            response = self.get_response(request)
+
+        return response

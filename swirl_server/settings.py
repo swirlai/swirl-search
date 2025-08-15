@@ -96,6 +96,7 @@ MIDDLEWARE = [
     'swirl.middleware.TokenMiddleware',
     'swirl.middleware.SpyglassAuthenticatorsMiddleware',
     'swirl.middleware.SwaggerMiddleware',
+    'swirl.middleware.TimeoutMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -295,6 +296,7 @@ OPENAI_API_KEY = env.get_value('OPENAI_API_KEY', default='')
 AZURE_OPENAI_KEY = env.get_value('AZURE_OPENAI_KEY', default='')
 AZURE_OPENAI_ENDPOINT = env.get_value('AZURE_OPENAI_ENDPOINT', default='')
 AZURE_MODEL = env.get_value('AZURE_MODEL', default='')
+AZURE_API_VERSION = os.getenv("AZURE_API_VERSION", default='') 
 
 # Defines for RAG ChatGPT models
 CGPT_MODEL_3 = "gpt-3.5-turbo"

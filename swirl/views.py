@@ -39,9 +39,10 @@ import hmac
 from swirl.models import *
 from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, OauthToken
-from swirl.serializers import UserSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, StatusResponseSerializer, AuthResponseSerializer
+from swirl.serializers import UserSerializer, DetailSearchRagSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, StatusResponseSerializer, AuthResponseSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
+from swirl.views_helpers.search_rag import SearchRag
 
 module_name = 'views.py'
 
@@ -642,6 +643,23 @@ class SearchViewSet(viewsets.ModelViewSet):
 ########################################
 ########################################
 
+class DetailSearchRagView(APIView):
+    serializer_class = DetailSearchRagSerializer
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = []
+
+    def get(self, request):
+        logger.debug(f"DetailSearchRagView: {request.GET}")
+        search_rag = SearchRag(request)
+        result = search_rag.process_rag()
+        serializer = DetailSearchRagSerializer(result)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+########################################
+########################################
+
+
 class ResultViewSet(viewsets.ModelViewSet):
     """
     API endpoint for managing Result objects, including Mixed Results
@@ -977,3 +995,13 @@ class BrandingConfigurationViewSet(viewsets.ModelViewSet):
             return JsonResponse({}, status=status.HTTP_200_OK)
         else:
             return Response('Logo Object Not Found', status=status.HTTP_404_NOT_FOUND)
+
+
+class IsChatAIProviderExists(viewsets.ModelViewSet):
+
+    def list(self, request):
+        # TODO: The Community Edition does not include an AI provider model. 
+        # For now, we are setting the status to True as a temporary workaround. 
+        # This should be updated once the AI provider model is implemented.
+        # This validation is used to enable or disable the second row of Search RAG.
+        return Response({'status': 'True'}, status=status.HTTP_200_OK)
