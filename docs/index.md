@@ -169,5 +169,5 @@ Yes! For details about **hosted SWIRL solutions**, [contact us](mailto:hello@swi
 
 Have questions about **SWIRL**? Just type below.
 
-{% include swirl_chat.html chat_origin=site.swirlDocOriginChat %}
+{% include swirl_chat.html chat_origin=site.swirlChatOrigin %}
 {% endif %}

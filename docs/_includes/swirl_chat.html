@@ -6,9 +6,13 @@
     style="width:100%; height:80vh;"
   ></iframe>
 </div>
-{% assign chat_origin = include.chat_origin | default: "http://localhost:8000" %}
+{% assign chat_origin = include.chat_origin | default: "https://chat.docs.swirlaiconnect.com" %}
 <script>
   const CHAT_ORIGIN = {{ chat_origin | jsonify }};
+
+  const getCookie = (name) =>
+    document.cookie.split('; ').find(c => c.startsWith(name + '='))?.split('=')[1] || null;
+
   async function initSwirlChat() {
     console.log('initSwirlChat start');
     try {
@@ -19,6 +23,7 @@
       if (!resp.ok) throw new Error(`Init failed: ${resp.status}`);
 
       const { token } = await resp.json();
+      const csrfToken = getCookie('csrftoken');
 
       const iframe = document.getElementById('swirl-chat-iframe');
       iframe.src = `${CHAT_ORIGIN}/galaxy/pre-chat`;
@@ -29,7 +34,8 @@
           action: 'setLocalStorage',
           payload: {
             'swirl-token': token,
-            'swirl-chat-status': 'true'
+            'swirl-chat-status': 'true',
+            'csrftoken': csrfToken
           }
         }, CHAT_ORIGIN);
       };

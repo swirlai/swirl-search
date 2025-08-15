@@ -21,8 +21,9 @@ heading_anchors: true
 enable_copy_code_button: true
 
 # Swirl chat feature toggle
-enableSwirlChat: true
-swirlDocOriginChat: "https://chat.docs.swirlaiconnect.com"
+enableSwirlChat: false
+# Set Swirl chat origin if running locally
+#swirlChatOrigin: "http://localhost:8000"
 
 # External navigation links
 nav_external_links:
