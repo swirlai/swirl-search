@@ -42,6 +42,8 @@ urlpatterns = [
     path('querytransforms/delete/<int:pk>/', views.QueryTransformViewSet.as_view({'delete': 'destroy'}), name='delete'),
 
     path('search/search', views.SearchViewSet.as_view({'get': 'list'}), name='search'),
+    path('sapi/detail-search-rag/', views.DetailSearchRagView.as_view(), name='detail-search-rag'),
+    path('sapi/is_chat_ai_provider_exists', views.IsChatAIProviderExists.as_view({'get': 'list'}), name='is-chat-ai-provider-exists'),
 
     path('', views.index, name='index'),
     path('index.html', views.index, name='index'),
