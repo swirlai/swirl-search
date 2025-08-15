@@ -46,7 +46,6 @@ SWIRL has an extensive automated testing system and detailed documentation. Cont
 
 # Guidelines for Submissions
 
-- **Join [SWIRL Slack](#support)** and ask in `#support` or `#general` before contributing.
 - **Branch off `develop`** with a descriptive branch name.
 - **Follow the Gitflow branching model** and ensure all required changes are included in your PR.
 

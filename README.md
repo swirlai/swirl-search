@@ -21,15 +21,12 @@ Watch it on [Youtube](https://youtu.be/6cT25SD4cV4)
 <div align="center">
 
 [⚡ Quick Start](#-try-swirl-now-in-docker) ·
-[💬 Join Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA) ·
-[📚 Docs](docs.swirlaiconnect.com) ·
 [🔌 Connectors](swirlaiconnect.com/connectors) ·
 [🤝 Contribute](#contributing)
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=088395&logoColor=blue&style=flat-square)](https://opensource.org/license/apache-2-0/)
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat-square&color=8DDFCB&label=Release)](https://github.com/swirlai/swirl-search/releases)
 [![Website](https://img.shields.io/badge/Website-swirlaiconnect.com-00215E?style=flat-square)](https://www.swirlaiconnect.com)
-[![SWIRL Slack](https://img.shields.io/badge/Slack-SWIRL%20Community-0E21A0?logo=slack&style=flat-square)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA)
 [![Time Saved](https://img.shields.io/badge/Hours%20Saved-10K%2B-brightgreen)]()
 [![GitHub Stars](https://img.shields.io/github/stars/swirlai/swirl-search?style=social)](https://github.com/swirlai/swirl-search/stargazers)
 
@@ -260,22 +257,6 @@ Guide to Run SWIRL in Docker in 60 seconds.
 
 <br/>
 
-# 👩‍💻 Contributing to Swirl
-
-**Do you have a brilliant idea or improvement for SWIRL?** We're all ears, and thrilled you're here to help!
-
-🔗 **Get Started in 3 Easy Steps**:
-
-1. **Connect with Fellow Enthusiasts** - Jump into the [Swirl Slack Community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA) and share your ideas. You'll find a welcoming group of Swirl enthusiasts and team members eager to assist and collaborate.
-2. **Branch It Out** - Always branch off from the `develop` branch with a descriptive name that encapsulates your idea or fix.
-3. **Start Your Contribution** - Ready to get your hands dirty? Make sure all contributions come through a GitHub pull request. We roughly follow the [Gitflow branching model](https://nvie.com/posts/a-successful-git-branching-model/), so all changes destined for the next release should be made to the `develop` branch.
-
-📚 **First time contributing on GitHub?** No worries, the [GitHub documentation](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) has you covered with a great guide on contributing to projects.
-
-💡 Every contribution, big or small, makes a difference. Join us in shaping the future of Swirl!
-
-<br/>
-
 # ☁ Use the Swirl Cloud
 
 For information about Swirl as a managed service, please [contact us](mailto:hello@swirlaiconnect.com)!
@@ -292,8 +273,6 @@ For information about Swirl as a managed service, please [contact us](mailto:hel
 
 At Swirl, every user matters to us. Whether you're a beginner finding your way or an expert with feedback, we're here to support, listen, and help. Don't hesitate to reach out to us.
 
-- **Join the SWIRL Community Slack:** Dive into our  [SWIRL Community on Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA) - to discuss anything related to SWIRL.
-
 - **Direct Support:** For any questions, suggestions, or even a simple hello, drop us an email at [support@swirlaiconnect.com](mailto:support@swirlaiconnect.com). We cherish every message and promise to get back to you promptly!
 
-- **Request A Connector (Enterprise Support)** Want to see a new connector quickly and fast. Contact the Swirl Team at: [support@swirlaiconnect.com](mailto:support@swirlaiconnect.com)
+- **Request A Connector (Enterprise Support)** Want to see a new connector quickly and fast? Contact us: [support@swirlaiconnect.com](mailto:support@swirlaiconnect.com)

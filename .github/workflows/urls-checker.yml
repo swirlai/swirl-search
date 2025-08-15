@@ -38,7 +38,7 @@ jobs:
           timeout: 5
           retry_count: 3
           exclude_patterns: localhost,api,apis,rss,etc,xx,googleapis,hostname,snowflake,graph.microsoft.com,login.microsoftonline.com,my-host.com,azure.com,github.com,platform.openai.com/docs/guides/chat-completions/getting-started,microsoft-callback
-          exclude_files: Swirl.postman_collection.json,docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/,SearchProviders/,DevUtils/
+          exclude_files: Swirl.postman_collection.json,docs/googlec95caf0bd4a8c5df.html,docs/Gemfile,docs/Gemfile.lock,docs/_config.yml,tests/,SearchProviders/,DevUtils/,docs/_includes
           save: ${{ env.URLCHECK_RESULTS }}
 
       - name: Generate Summary

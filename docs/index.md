@@ -138,11 +138,16 @@ Use **SWIRL Enterprise Edition** when you have:
 * **A need to use Generative AI (GAI) or LLMs** beyond OpenAI and Azure OpenAI.  
 * **A desire to interact conversationally** with your data using **SWIRL AI Search Assistant**.  
 
-# Why Don't You Use GitHub Issues?  
+# How Can I Obtain SWIRL Enterprise Edition? 
 
-We handle support through our **free Slack channel** rather than GitHub Issues because it allows for **faster responses and real-time discussions**. Join us here: [SWIRL Slack Community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-2sfwvhwwg-mMn9tcKhAbqXbrV~9~Y1eA).  
+* Use the [Azure Marketplace Offer](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/swirlcorporation1684335149355.swirl_vm_offer_poc?tab=Overview) to spin-up a Virtual Machine in minutes!
+* [Contact SWIRL](mailto:hello@swirlaiconnect.com) for a license key, or delivery on any other platform.
 
-**Enterprise customers** receive priority support via our **dedicated support portal**.  
+# How Can I Get Help With SWIRL?
+
+* **Visit the Documentation Site**: [docs.swirlaiconnect.com](https://docs.swirlaiconnect.com/)
+* **Enterprise**: [Create a Ticket](https://swirlaiconnect.com/support-ticket)
+* **Email**: [support@swirlaiconnect.com](mailto:swirlaiconnect.com)
 
 # What Is the SWIRL Architecture and Technology Stack?  
 
@@ -162,7 +167,7 @@ For **SWIRL Enterprise**, deployments are also available as **Kubernetes images*
 
 # Does SWIRL Offer Hosting?  
 
-Yes! For details about **hosted SWIRL solutions**, [contact us](mailto:hello@swirlaiconnect.com) or visit [swirlaiconnect.com](https://swirlaiconnect.com).
+Yes! For details about **SWIRL Cloud**, please [contact us](mailto:hello@swirlaiconnect.com).
 
 {% if site.enableSwirlChat %}
 ## Ask SWIRL
