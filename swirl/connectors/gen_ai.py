@@ -79,8 +79,7 @@ class GenAI(Connector):
             messages=[
                 {"role": "system", "content": self.system_guide},
                 {"role": "user", "content": self.query_to_provider},
-            ],
-            temperature=0
+            ]
         )
         message = completions.choices[0].message.content
         self.found = 1
