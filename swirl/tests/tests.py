@@ -601,8 +601,7 @@ def test_cgptqp_1():
             messages=[
                 {"role": "system", "content": "You are helping a user formulate better queries"},
                 {"role": "user", "content": "Write a more precise query of similar length to this : gig economy"}
-            ],
-            temperature=0
+            ]
         )
 
 @pytest.mark.django_db
@@ -630,8 +629,8 @@ def test_cgptqp_2():
         mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "Write a more precise query of similar length to this : gig economy"}
-            ],
-            temperature=0)
+            ]
+        )
 
 @pytest.mark.django_db
 def test_cgptqp_3():
@@ -658,8 +657,8 @@ def test_cgptqp_3():
         mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "Write a more precise query of similar length to this : gig economy"}
-            ],
-            temperature=0)
+            ]
+        )
 
 @pytest.mark.django_db
 def test_cgptqp_4():
@@ -688,8 +687,8 @@ def test_cgptqp_4():
         mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "This should be used: gig economy"}
-            ],
-            temperature=0)
+            ]
+        )
 
 
 @pytest.mark.django_db
@@ -721,8 +720,8 @@ def test_cgptqp_5():
         mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "This should be used: gig economy"}
-            ],
-            temperature=0)
+            ]
+        )
 
 
 @pytest.mark.django_db
@@ -754,8 +753,8 @@ def test_cgptqp_6():
         mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "This should be used: gig economy"}
-            ],
-            temperature=0)
+            ]
+        )
 
 
 @pytest.mark.django_db
@@ -787,8 +786,8 @@ def test_cgptqp_7():
         mock_create.assert_called_once_with(model=TEST_AI_MODEL, messages=[
                 {"role": "system", "content": "You are a malevolent dictator"},
                 {"role": "user", "content":   "This should be used: gig economy"}
-            ],
-            temperature=0)
+            ]
+        )
 
 
 @pytest.fixture
