@@ -188,7 +188,7 @@ def parse_query(q_string, results_processor_feedback):
 
 def create_result_dictionary():
     """
-    Create an empty ressult dictionary, when entries are made this dictionary, the type must
+    Create an empty result dictionary, when entries are made this dictionary, the type must
     correspond w/ the type that will be mapped from in results_mapping, if the types do not
     agree, the mapped values will not be added to the results.
     """
@@ -316,14 +316,14 @@ def tokenize_word_list(word_list):
 
         # Now, for eaech tokenized term
         for i,word_tk in enumerate(wtk):
-            # Handle possesive cases by rejoining them.
+            # Handle possessive cases by rejoining them.
             if word_tk.lower() == "'s" and i > 0:
                 ret_list[-1] = ret_list[-1] + word_tk.lower()
                 continue
             # Don't highlight lone punctuation.
             if not is_punctuation(word_tk):
                 if is_punctuation(word_tk[-1]):
-                    word_tk = word_tk[:-1] # strip trailing punctiation, we are not going to match on it
+                    word_tk = word_tk[:-1] # strip trailing punctuation, we are not going to match on it
                 ret_list.append(word_tk.lower())
     return ret_list
 
@@ -340,7 +340,7 @@ def _tokenize_word_text(text, do_dedup=True):
 
         if not is_punctuation(aw_lower):
             if is_punctuation(aw_lower[-1]):
-                # strip trailing punctiation, we are not going to match on it
+                # strip trailing punctuation, we are not going to match on it
                 aw_lower = aw_lower[:-1]
                 aw = aw[:-1]
             if aw_lower not in seen_words:
@@ -406,7 +406,7 @@ def remove_tags(html):
     soup = bs(html, "html.parser")
 
     # Find all tags that contain URLs
-    url_tags = soup.find_all(text=re.compile(r"<https?://[\w./?=#&-]+>"))
+    url_tags = soup.find_all(string=re.compile(r"<https?://[\w./?=#&-]+>"))
 
     # Remove unwanted tags
     for tag in soup(['style', 'script']):
@@ -749,7 +749,7 @@ def _date_str_parse_to_timestamp(s):
     ret = ""
     try:
         date_str = str(s)
-        # stabalize day of year for dates that consist only of a year.
+        # stabilize day of year for dates that consist only of a year.
         if len(date_str) == 4:
             ret = get_jan_1_year(date_str)
         else:
