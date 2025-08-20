@@ -106,16 +106,14 @@ class GenAIQueryProcessor(QueryProcessor):
                 messages=[
                     {"role": "system", "content": self.system_guide},
                     {"role": "user", "content": self.prompt.format(query_string=self.query_string)    },
-                ],
-                temperature=0
+                ]
             )
             response = client.openai_client.chat.completions.create(
                 model=client.get_model(),
                 messages=[
                     {"role": "system", "content": self.system_guide},
                     {"role": "user", "content": self.prompt.format(query_string=self.query_string)    },
-                ],
-                temperature=0
+                ]
             )
             message = response.choices[0].message.content
             logger.info(f"ChatGPT Response: {message}")
