@@ -493,7 +493,7 @@ To **customize the logo, search button, and labels** in **SWIRL Galaxy**:
 {: .warning }
 Refreshing may start a **new RAG or chat session**.
 
-## Logo File Requirements
+## Logo File Suggestions
 
 - **Format:** PNG  
 - **Dimensions:** **818 × 214 px**  
@@ -501,6 +501,18 @@ Refreshing may start a **new RAG or chat session**.
 
 {: .warning }
 Only **one branding configuration** can be **active at a time**.
+
+## Restoring a Previous Branding Configuration
+
+SWIRL displays the last updated branding configuration. To make a previous configuration active:
+
+1. **Go to the SWIRL Admin Page**: [http://localhost:8000/admin/](http://localhost:8000/admin/)
+
+2. **Scroll down to Branding Configurations** under the **SWIRL** section. **Click it**.
+
+3. **Click on a previous configuration**. Then **click SAVE** at the bottom of the form. No actual changes need to be made.
+
+Reload Galaxy in the browser. The saved branding configuration will appear, replacing the previous one.
 
 # Managing Django Users
 
