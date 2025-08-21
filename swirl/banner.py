@@ -10,9 +10,9 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
 
-SWIRL_VERSION = '4.3-DEV'
+SWIRL_VERSION = '4.4-DEV'
 
-SWIRL_BANNER_TEXT = "__S_W_I_R_L__A_I__4_._3-DEV__________________________________________________________"
+SWIRL_BANNER_TEXT = "__S_W_I_R_L__A_I__4_._4-DEV__________________________________________________________"
 SWIRL_BANNER = f'{bcolors.BOLD}{SWIRL_BANNER_TEXT}{bcolors.ENDC}'
 
 #############################################
