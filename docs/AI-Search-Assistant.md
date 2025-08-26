@@ -1,7 +1,7 @@
 ---
 layout: default
 title: AI Search Assistant Guide
-nav_order: 10
+nav_order: 11
 ---
 <details markdown="block">
   <summary>

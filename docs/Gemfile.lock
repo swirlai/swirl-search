@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (8.0.2)
+    activesupport (8.0.2.1)
       base64
       benchmark (>= 0.3)
       bigdecimal
@@ -38,25 +38,25 @@ GEM
     ffi (1.17.2-x86_64-linux-musl)
     forwardable-extended (2.6.0)
     gemoji (4.1.0)
-    google-protobuf (4.31.1)
+    google-protobuf (4.32.0)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-aarch64-linux-gnu)
+    google-protobuf (4.32.0-aarch64-linux-gnu)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-aarch64-linux-musl)
+    google-protobuf (4.32.0-aarch64-linux-musl)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-arm64-darwin)
+    google-protobuf (4.32.0-arm64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-x86_64-darwin)
+    google-protobuf (4.32.0-x86_64-darwin)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-x86_64-linux-gnu)
+    google-protobuf (4.32.0-x86_64-linux-gnu)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.31.1-x86_64-linux-musl)
+    google-protobuf (4.32.0-x86_64-linux-musl)
       bigdecimal
       rake (>= 13)
     html-pipeline (2.14.3)
@@ -100,7 +100,7 @@ GEM
       gemoji (>= 3, < 5)
       html-pipeline (~> 2.2)
       jekyll (>= 3.0, < 5.0)
-    json (2.13.0)
+    json (2.13.2)
     just-the-docs (0.10.1)
       jekyll (>= 3.8.5)
       jekyll-include-cache
@@ -144,21 +144,21 @@ GEM
     rexml (3.4.1)
     rouge (4.6.0)
     safe_yaml (1.0.5)
-    sass-embedded (1.89.2-aarch64-linux-gnu)
+    sass-embedded (1.90.0-aarch64-linux-gnu)
       google-protobuf (~> 4.31)
-    sass-embedded (1.89.2-aarch64-linux-musl)
+    sass-embedded (1.90.0-aarch64-linux-musl)
       google-protobuf (~> 4.31)
-    sass-embedded (1.89.2-arm-linux-gnueabihf)
+    sass-embedded (1.90.0-arm-linux-gnueabihf)
       google-protobuf (~> 4.31)
-    sass-embedded (1.89.2-arm-linux-musleabihf)
+    sass-embedded (1.90.0-arm-linux-musleabihf)
       google-protobuf (~> 4.31)
-    sass-embedded (1.89.2-arm64-darwin)
+    sass-embedded (1.90.0-arm64-darwin)
       google-protobuf (~> 4.31)
-    sass-embedded (1.89.2-x86_64-darwin)
+    sass-embedded (1.90.0-x86_64-darwin)
       google-protobuf (~> 4.31)
-    sass-embedded (1.89.2-x86_64-linux-gnu)
+    sass-embedded (1.90.0-x86_64-linux-gnu)
       google-protobuf (~> 4.31)
-    sass-embedded (1.89.2-x86_64-linux-musl)
+    sass-embedded (1.90.0-x86_64-linux-musl)
       google-protobuf (~> 4.31)
     securerandom (0.4.1)
     terminal-table (3.0.2)
