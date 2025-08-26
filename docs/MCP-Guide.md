@@ -1,7 +1,7 @@
 ---
 layout: default
 title: MCP Server
-nav_order: 18
+nav_order: 20
 ---
 <details markdown="block">
   <summary>

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Tutorial - Extending SWIRL
-nav_order: 23
+nav_order: 25
 ---
 <details markdown="block">
   <summary>

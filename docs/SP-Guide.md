@@ -1,7 +1,7 @@
 ---
 layout: default
 title: SearchProviders
-nav_order: 17
+nav_order: 19
 ---
 <details markdown="block">
   <summary>

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Installation Guide
-nav_order: 14
+nav_order: 16
 ---
 <details markdown="block">
   <summary>
