@@ -94,7 +94,7 @@ It will respond with a list of active, authenticated SearchProviders. It can dis
 
 ## Describing Sources
 
-The description for each SearchProvider is stored in the `description` field. This is used to provide backround information to the assistant about the source - including what type of information can be found there, what language(s) are supported, if NOT is supported, and more. The Assistant will share this information with the user on demand.
+The description for each SearchProvider is stored in the `description` field. This is used to provide background information to the assistant about the source - including what type of information can be found there, what language(s) are supported, if NOT is supported, and more. The Assistant will share this information with the user on demand.
 
 The `SearchProvider`.`config` item should be populated with a detailed instruction set which helps the LLM use the source. This information is not directly shared with the user.
 
