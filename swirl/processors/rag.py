@@ -232,8 +232,7 @@ class RAGPostResultProcessor(PostResultProcessor):
                 messages=[
                     {"role": "system", "content": rag_prompt.get_role_system_guide_text()},
                     {"role": "user", "content": new_prompt_text},
-                ],
-                temperature=0
+                ]
             )
             model_response = completions_new.choices[0].message.content
             logger.warning(f'RAG: fetch_prompt_errors follow:')
