@@ -101,7 +101,7 @@ The `SearchProvider`.`config` item should be populated with a detailed instructi
 For example, a cloud storage service like M365 OneDrive:
 
 ```
-Searches the user's OneDrive files which will contain internal company information related to almost any area including finance, HR, contrcts, insurance, product development, devops, legal, etc. English only. Supports many languages. Supports NOT operator.
+Searches the user's OneDrive files which will contain internal company information related to almost any area including finance, HR, contracts, insurance, product development, devops, legal, etc. English only. Supports many languages. Supports NOT operator.
 ```
 
 Or, for a database of company information, stored in Google BigQuery:
