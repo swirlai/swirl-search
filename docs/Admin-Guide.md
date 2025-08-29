@@ -516,7 +516,17 @@ Reload Galaxy in the browser. The saved branding configuration will appear, repl
 
 # Configuring Advanced Language Support
 
-TBD
+{: .warning }
+This section applies to SWIRL Enterprise only.
+
+SWIRL Enterprise is configured for English by default. To configure a different default language, set the `SWIRL_DEFAULT_LANGUAGE` setting in the `.env` file to a different language code.
+
+For example, to configure Japanese as the default:
+```
+SWIRL_DEFAULT_LANGUAGE='jp'
+```
+
+Refer to the [Enterprise User's Guide](./User-Guide-Enterprise.md#human-language-processing-in-ai-search) for more information on language processing.
 
 # Managing Django Users
 
