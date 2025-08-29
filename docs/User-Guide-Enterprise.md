@@ -83,6 +83,20 @@ The Assistant will often suggest **follow-up questions**. Click one to view the 
 
   ![SWIRL Assistant follow-up question and response](images/swirl_40_chat_2.png)
 
+# Deep Linked Citations
+
+When possible, the Assistant will link directly to the relevant section of a web page used in a RAG response, and highlight it. 
+
+![SWIRL Citations with Deep Links](images/4_3_0-Deeplinking-1.png)
+
+The first citation is a page on EY.com:
+
+![Deep Link Example #1](images/4_3_0-Deeplinking-2.png)
+
+The second citation is on the IMF site:
+
+![Deep Link Example #2](images/4_3_0-Deeplinking-3.png)
+
 # Generating Complex Queries
 
 SWIRL Assistant can generate queries in **any query language** supported by the underlying model.  
