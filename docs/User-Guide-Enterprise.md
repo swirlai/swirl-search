@@ -101,13 +101,13 @@ Other supported query languages include:
 {: .highlight }
 For assistance with specific query languages, please [contact SWIRL](mailto:support@swirlaiconnect.com).
 
-## Human Language Support
+## Human Language Processing by the Assistant
 
-SWIRL Assistant can **converse and query** in any language supported by the underlying model. For example, OpenAI's latest models can converse in **100+ languages**:
+The SWIRL AI Search Assistant can **converse and query** in any language supported by the underlying model. For example, OpenAI's latest models can converse in **100+ languages**:
 
-  ![Querying SWIRL Assistant in Japanese](images/swirl_40_chat_query_in_japanese.png)
+  ![SWIRL AI Search Assistant in Japanese](images/4_3_0-JA-assistant.png)
 
-  ![Asking Assistant to translate an English response to Japanese](images/swirl_40_chat_translate_response_to_japanese.png)
+Consult the [Human Language Processing Table](#human-language-processing-in-ai-search) for additional information.
 
 ## Other Model Capabilities
 
@@ -159,11 +159,11 @@ To access the **Search Interface**, open the following URL:
 
 Alternatively, from the **Assistant page**, click the **profile button**, then click **"SWIRL AI Search"**:
 
-  ![SWIRL AI Search](images/swirl_40_searchlink.png)
+![SWIRL AI Search](images/swirl_40_searchlink.png)
 
 **Login and authentication remain the same.** If you are already logged into **Assistant**, you **will remain logged in** when using search.
 
-  ![SWIRL AI Search with results and RAG](images/swirl_40_enterprise_search.png)
+![SWIRL AI Search with results and RAG](images/swirl_40_enterprise_search.png)
 
 ## Search Syntax  
 
@@ -266,6 +266,24 @@ For example:
 ```json
 "body": "<em>Performance</em> <em>management</em> is the process of setting goals and expectations for employees and then tracking and measuring their progress. This can be done through regular one-on-one meetings, <em>performance</em> reviews, and other feedback mechanisms."
 ```
+
+## Human Language Processing in AI Search
+
+The following table details the language processing capabilities provided in SWIRL AI Search, Enterprise Edition:
+
+|-----|-----|-----|-----|-----|-----|-----|
+|**Language**|**Stemming**|**Stopwords**|**Segmentation**|**Highlighting**|**Prompts**|
+|English|Yes|Yes|No|Yes|Yes|
+|French|Yes|Yes|No|Yes|No|
+|German|Yes|Yes|No|Yes|No|
+|Italian|Yes|Yes|No|Yes|No|
+|Japanese|No|No|Yes|Yes|Yes|
+|Spanish|No|Yes|No|No|No|
+
+For example, here is SWIRL AI Search showing results and RAG in Japanese:
+
+![SWIRL AI Search results in Japanese](images/4_3_0-JA-search-rag.png)
+
 
 ## Confidence Scores
 

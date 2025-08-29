@@ -514,6 +514,10 @@ SWIRL displays the last updated branding configuration. To make a previous confi
 
 Reload Galaxy in the browser. The saved branding configuration will appear, replacing the previous one.
 
+# Configuring Advanced Language Support
+
+TBD
+
 # Managing Django Users
 
 ## Django Admin
