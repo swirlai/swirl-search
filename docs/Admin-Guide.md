@@ -546,6 +546,22 @@ To change a user's password via the command line:
 python manage.py changepassword <user_name>
 ```
 
+## Unlocking a Locked Account
+
+1. Login to the SWIRL UI with a different [superuser account](#creating-a-swirl-super-user). 
+
+2. Open the user profile icon in the top right corner, and click the `Manage SWIRL` link: ![SWIRL Reset Lockout, Step #1](images/reset-lockout-1.png)
+
+3. From the new tab that opens, click the `Admin` link to enter the Django Admin area. 
+
+3. In the top left corner, click on the “Reset Lockout Attempts for User” option: ![SWIRL Reset Lockout, Step #2](images/reset-lockout-admin.png)
+
+4. In the new tab that opens, select the “admin” user from the list of locked out accounts. (In the example above, we are unlocking the user `testuser01`.) With the user selected, click the `Reset` button on this page: ![SWIRL Reset Lockout, Step #3](images/reset-lockout-2.png)
+
+5. Return to main SWIRL UI tab, and select the User Profile icon again. Click `Logout` for the superuser account. 
+
+6. This returns you to the SWIRL login page where you should be able to login again with the `admin` user, now unlocked!
+
 # Management Tools
 
 ## Django Console
