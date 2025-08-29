@@ -546,7 +546,7 @@ To change a user's password via the command line:
 python manage.py changepassword <user_name>
 ```
 
-## Unlocking a Locked Admin Account
+## Unlocking a Locked Account
 
 1. Login to the SWIRL UI with a different [superuser account](#creating-a-swirl-super-user). 
 
@@ -556,7 +556,7 @@ python manage.py changepassword <user_name>
 
 3. In the top left corner, click on the “Reset Lockout Attempts for User” option: ![SWIRL Reset Lockout, Step #2](images/reset-lockout-admin.png)
 
-4. In the new tab that opens, select the “admin” user from the list of locked out accounts. (In the example above, the user doing the unlock is `testuser01`.) With the `admin` user selected, click the `Reset` button on this page: ![SWIRL Reset Lockout, Step #3](images/reset-lockout-2.png)
+4. In the new tab that opens, select the “admin” user from the list of locked out accounts. (In the example above, we are unlocking the user `testuser01`.) With the user selected, click the `Reset` button on this page: ![SWIRL Reset Lockout, Step #3](images/reset-lockout-2.png)
 
 5. Return to main SWIRL UI tab, and select the User Profile icon again. Click `Logout` for the superuser account. 
 
