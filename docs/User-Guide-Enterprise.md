@@ -137,21 +137,20 @@ When querying with **SQL** or other structured query languages, **some models ma
 
 Please [contact support](#support) for assistance using the Assistant with any advanced query language.
 
-# Ending a Conversation
+# Ending a Chat Conversation
 
 To **end a conversation**, click the **SWIRL logo** at the top of the page. This starts a **new conversation**.
 
 {: .highlight }
 Assistant **will not remember** past chat sessions *unless* the model supports memory.
 
-# Resuming an Old Conversation
+# Resuming and Managing Existing Chat Conversations
 
-To **resume a conversation**, construct the chat session URL using the `chat_id`:
+To **resume a conversation**, use the "Show/Hide History" link at the top of the Search Assistant page.
 
-[http://localhost:8000/galaxy/chat/?chat_id=1](http://localhost:8000/galaxy/chat/?chat_id=1)
+![SWIRL AI Search Assistant showing chat history](images/swirl_search_assistant_show_history.png)
 
-{: .highlight }
-**Future versions of SWIRL Galaxy** will include direct access to previous chats from the UI.
+Use the controls in the box to delete and rename individual chats. Click the `DELETE_ALL` link to clear your chat history completely.
 
 # Using AI Search
 
