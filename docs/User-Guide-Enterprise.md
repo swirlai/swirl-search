@@ -228,6 +228,11 @@ For example, this query selects the top documents about Karen Sparck Jones, and 
 
 The RAG result includes [details of her invention of TF/IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) as expected.
 
+## Deep Linked Citations
+
+When possible, AI Insights generated using the Search form will deep link directly to the relevant section of a result used in a RAG response, and highlight it. 
+
+Refer to the [section on Deep Linking](#deep-linked-citations) above for more information.
 
 
 
