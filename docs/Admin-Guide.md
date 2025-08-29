@@ -456,6 +456,18 @@ The services invoked by **`swirl.py`** are defined in: [swirl/services.py](https
 
 Modify this list to **automatically start `celery-beats`**.
 
+# Disabling the Cookie Consent Notice in Galaxy
+
+By default, the Cookie Consent Notice will appear for users in Galaxy until they accept it. 
+
+![SWIRL Galaxy UI with consent notice](images/galaxy_consent_screen.png)
+
+To prevent the notice from appearing, add the following to the `.env` file:
+
+```
+COOKIE_CONSENT_DISPLAY=False
+```
+
 # Changing the Galaxy Logos and Branding
 
 To **customize the logo, search button, and labels** in **SWIRL Galaxy**:
