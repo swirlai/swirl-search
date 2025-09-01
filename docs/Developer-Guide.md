@@ -491,7 +491,7 @@ http://localhost:8000/swirl/results?search_id=<search-id>&page=<page-number>
 **Example:**  
 [http://localhost:8000/swirl/results?search_id=1&page=2](http://localhost:8000/swirl/results?search_id=1&page=2)
 
-**Increase Available Results**
+## Increase Available Results
 
 To **store more results for paging**, update `results_per_query` in the **SearchProvider configuration**.
 

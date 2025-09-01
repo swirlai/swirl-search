@@ -24,15 +24,17 @@ Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI 
 
 # Accessing the SWIRL AI Search Assistant
 
-* Open this URL in a browser: <http://localhost:8000/galaxy/chat/>  
+For local installs, open this URL in a browser: <http://localhost:8000/galaxy/chat/>  
 
   ![SWIRL AI Search Assistant](images/swirl_40_assistant_start.png)
 
-* Alternatively, click the **user profile icon** (top-right) on the [SWIRL Search page](http://localhost:8000/galaxy/search/), then click **"SWIRL AI Search Assistant"**.
+## From SWIRL AI Search 
+
+Click the **user profile icon** (top-right) on the [SWIRL Search page](http://localhost:8000/galaxy/search/), then click **"SWIRL AI Search Assistant"**.
 
   ![SWIRL AI Search link to SWIRL AI Search Assistant](images/swirl_40_assistant_link.png)
 
-## Logging In
+## Login and Authentication
 
 **If the SWIRL login page appears:**  
 
@@ -46,7 +48,7 @@ Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI 
 If you receive a warning about the password being compromised, follow these steps:  
 [Change the super user password](./Admin-Guide#changing-the-super-user-password)
 
-## SSO Login
+### Logging In With SSO
 
 **If your organization uses SSO:**  
 
@@ -63,7 +65,7 @@ The SWIRL login page will show a button for SSO login.
 
     ![SWIRL Assistant with user logged in via SSO](images/swirl_40_chat_start.png)
 
-## Verifying Connectivity 
+## Verifying Authentication
 
 Click the **profile icon** (top-right) to verify your connection to individual sources, which may vary depending on your SSO configuration. 
 
@@ -82,6 +84,20 @@ Use the **input box** to send a message to the Assistant. It will assist you in 
 The Assistant will often suggest **follow-up questions**. Click one to view the answer!
 
   ![SWIRL Assistant follow-up question and response](images/swirl_40_chat_2.png)
+
+## Deep Linked Citations
+
+When possible, the Assistant will link directly to the relevant section of a web page used in a RAG response, and highlight it. 
+
+![SWIRL Citations with Deep Links](images/4_3_0-Deeplinking-1.png)
+
+The first citation is a page on EY.com:
+
+![Deep Link Example #1](images/4_3_0-Deeplinking-2.png)
+
+The second citation is on the IMF site:
+
+![Deep Link Example #2](images/4_3_0-Deeplinking-3.png)
 
 ## Generating Complex Queries
 
@@ -154,16 +170,58 @@ Use the controls in the box to delete and rename individual chats. Click the `DE
 
 # Using AI Search
 
-To access the **Search Interface**, open the following URL:  
+If running locally, access the **Search Interface** here:  
 [http://localhost:8000/galaxy/chat/](http://localhost:8000/galaxy/chat/)
 
-Alternatively, from the **Assistant page**, click the **profile button**, then click **"SWIRL AI Search"**:
+## From the AI Search Assistant
 
-  ![SWIRL AI Search](images/swirl_40_searchlink.png)
+From the **Assistant page**, click the **profile button**, then click **"SWIRL AI Search"**:
 
-**Login and authentication remain the same.** If you are already logged into **Assistant**, you **will remain logged in** when using search.
+## The AI Search Form Explained
 
-  ![SWIRL AI Search with results and RAG](images/swirl_40_enterprise_search.png)
+![SWIRL AI Search form, annotated](images/swirl_43_search_rag_annotated.png)
+
+1. **SWIRL Logo**. Click on it to reset the form and start over. 
+
+2. **User Profile**. Click the profile icon to [view authentication status](#login-and-authentication-1), then click a switch to connect/disconnect from a specific source. Refer to the [AI Assistant section on Login and Authentication](#login-and-authentication) for more information.
+
+3. **Source Selector**. Click to select one or more sources to target for search.
+
+4. **Search Box**. Much larger than it looks. By default, favors results that have you’re your search terms. Feel free to ask questions or query in SQL, MQL, etc if targeting a source that supports it. 
+
+5. **Search Button**. Click to get results for your search, from the selected source(s).
+
+6. **Select AI Prompt**. Click to select a special prompt **before clicking** the `Generate AI Insight` switch.
+
+7. **AI Instructions**. Use this to provide instructions to the AI/LLM when generating insight. This input won’t change or alter the search results or item selections you make.
+
+8. **Generate AI Insight switch**. Click to make SWIRL fetch the most relevant (starred) items and provides them to the configured AI/LLM to [generate insight](#guiding-retrieval-augmented-generation-rag-for-ai-insight-generation). 
+
+9. **Source Filter Options**. By default, **SWIRL returns the best results from all available sources**. To filter results, check the desired `Source` boxes. The displayed results will update instantly. Click `Clear All` to reset the filter and view all results.  
+
+10. **AI Summary**. This is where an AI/LLM insight will appear, typically in 15+ seconds. 
+
+11. **AI Summary Model & Timing**. Provides the name of the model responding, and how long the response took to generate.
+
+12. **AI Generated Follow-Up Questions**. Click one to view the answer, in 15+ seconds.
+
+13. **AI Summary Citations**. Click to verify the results, with deep linking on many sources.
+
+14. **Summary Rating**. Click the “thumbs-up” or “thumbs-down” to provide feedback on AI messages. (Please select and/or fill-in the reason(s) why, if asked.)
+
+15. **Result Summary & Timing**. Sumarizes the number of results, and how long it took to re-rank them.
+
+16. **Page Navigation**. Use to page through search results. Note, you must run a new search if you run out of results. The [SWIRL Administrator can increase the number of results](Developer-Guide.md#increase-available-results) retrieved from each source.
+
+17. **Result Sort Selector**. By default, SWIRL sorts by [Confidence Score](#confidence-scores). Use `Date` to see the latest, and `Top Pick` to see the best from each responding source. Note that when sorting by date, results with no `date_published` field are hidden.
+
+18. **Select Items & DESELECT switch**. Click to select individual results to use when [Generating AI Insights](#guiding-retrieval-augmented-generation-rag-for-ai-insight-generation).
+
+19. **Show ALL Details switch**. Click to show any hidden result field(s). 
+
+20. **Result Item**. Each result may inclucde a linked title,snippet of text that matched your query from the source, the author's name, the date published and/or retrieved, the result type and URL, a “highly relevant” star (when appropriate), a shopping cart selection checkbox and a “SHOW DETAILS” link.
+
+Read on for more information about these capabilities.
 
 ## Search Syntax  
 
@@ -254,6 +312,16 @@ tesla
 
 This makes **direct hits** on funding records more likely to **rank higher** in the results.
 
+## Viewing and Editing Prompts
+
+- Open: [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)  
+
+- Admins may use the **[Admin UI Manage Prompts](http://localhost:8000/admin/swirl/prompt/)**.
+
+{: .warning }
+**SWIRL recommends not modifying system prompts.** If you need to reset them, follow the  
+[Admin Guide section on resetting prompts](Admin-Guide#resetting-prompts).
+
 ## Hit Highlighting  
 
 SWIRL **highlights query term matches** in the following fields:  
@@ -269,7 +337,9 @@ For example:
 
 ## Confidence Scores
 
-Starting in **SWIRL Enterprise 4.0**, SWIRL introduces a **confidence-based relevancy ranking model**. The **confidence score** ranges from **0 (not relevant) to 1.0 (extremely relevant)** and is **comparable across queries**.
+SWIRL Enterprise uses a **confidence-based relevancy ranking model**. 
+
+The **confidence score** ranges from **0 (not relevant) to 1.0 (extremely relevant)** and is **comparable across queries**.
 
 ### How Confidence Scores Work:
 
@@ -284,26 +354,6 @@ You can still **sort by relevancy** using the **`VIEW BY:`** dropdown.
 
 **AI Insights use only results** above a configurable minimum confidence score. 
 
-## Alternate Sort Orders
-
-By default, **SWIRL sorts results by Confidence Score**. To change this:  
-
-- Click the **`View By`** dropdown.  
-- Select:  
-  - **`Relevancy`** - Sorts results by a raw relevancy score. This value is not comparable between queries, and is deprecated as of SWIRL 4.
-  - **`Date`** – Sorts results chronologically. Results without a `date_published` value are hidden.  
-  - **`Top Picks`** – Highlights the most relevant results from each source.  
-
-To see all results again, switch back to **`Confidence`** sorting.  
-
-## Filtering Results by Source  
-
-**SWIRL returns the best results from all available sources** by default. 
-
-To filter results, check the desired `Source` boxes as shown above. The displayed results will update instantly. 
-
-Click `Clear All` to reset the filter and view all results.  
-
 ## Guiding Retrieval Augmented Generation (RAG) for AI Insight Generation
 
 SWIRL Enterprise 4.2 includes a new field on the search form: `Optional instructions for the AI response`. This field allows you to provide instructions to the LLM that will summarize the retrieved results - without having it be part of the selection criteria. The search box with the hint "What are you searching for today" determines which results are retrieved. 
@@ -316,36 +366,23 @@ The RAG result includes [details of her invention of TF/IDF](https://en.wikipedi
 
 ### Using the Shopping Cart
 
-To further guide RAG responses, use the shopping cart to manually select the results to send to the LLM for when generating AI insights.
+Click `Select Items` to manually select the result to use during RAG.
 
 ![SWIRL AI Search result with select items enabled](images/4_1_0-SelectAll.png)
 
-Use the `DESELECT ALL` / `SELECT ALL` link to check or uncheck all results, then adjust as desired.
+Use the `DESELECT ALL` / `SELECT ALL` link to check or uncheck all results, then further adjust as desired. 
 
-### Customizing Prompts
+Click the `Generate AI Insights` switch to send the selected items to the AI/LLM for response.
 
-**SWIRL AI Search (Enterprise Edition)** allows authorized users to **select a specific prompt** when generating AI Insights.
+## Deep Linked Citations
 
-  ![SWIRL AI Search with results and RAG](images/swirl_40_search_prompts.png)
+When possible, AI Insights generated using the Search form will deep link directly to the relevant section of a result used in a RAG response, and highlight it. 
 
-### Selecting a Prompt
-- Use the **drop-down list** below the search box **before clicking** `Generate AI Insight`.
-
-### Viewing or Editing Prompts
-- Open: [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)  
-- Or use the **[Admin UI prompts management](http://localhost:8000/admin/swirl/prompt/)**.
-
-To modify prompts, use the **HTML form** or **Raw Data modes** at the bottom of the page.
-
-  ![SWIRL AI Search prompts HTML form](images/swirl_40_prompt_endpoint.png)
-
-{: .warning }
-**SWIRL recommends not modifying system prompts.** If you need to reset them, follow the  
-[Admin Guide section on resetting prompts](Admin-Guide#resetting-prompts).
+Refer to the [section on Deep Linking](#deep-linked-citations) above for more information.
 
 ## Starting a New Search  
 
-Click the **SWIRL logo** to reset the search form and begin a new search.  
+Click the **SWIRL logo** to reset the search form and start over.
 
 
 
