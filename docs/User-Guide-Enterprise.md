@@ -73,17 +73,37 @@ Use the **toggle switches** to connect or disconnect from any source, as needed.
 
   ![SWIRL Assistant with user logged in to Microsoft, not to Box](images/swirl_40_chat_profile.png)
 
-## Starting a Conversation
+## The AI Search Assistant Explained
 
-Use the **input box** to send a message to the Assistant. It will assist you in finding the information you need. When you and the Assistant agree, it will perform a **search** against one or more sources and either **summarize** the results or **answer your question**.
+![SWIRL AI Search Assistant, annotated](images/swirl_assistant_explained.png)
 
-  ![SWIRL Assistant discussion](images/swirl_40_chat_1.png)
+1. **SWIRL Logo**. Click on it to reset the form and start over. 
 
-## Follow-up Questions
+2. **Support Link**. Click the information icon to view the SWIRL version and optionally open a support ticket.
 
-The Assistant will often suggest **follow-up questions**. Click one to view the answer!
+3. **User Profile**. Click the profile icon to view profile management tools, including:
 
-  ![SWIRL Assistant follow-up question and response](images/swirl_40_chat_2.png)
+4. **Link to SWIRL AI Search form**. Click the link to [use the search form](#the-ai-search-form-explained) instead of the Assistant.
+
+5. **Manage SWIRL**. Admins may click this link to [Administer SWIRL](Admin-Guide.html#django-console).
+
+6. **View Authentication Status** for each configured source. Click a switch to connect or disconnect. Refer to the [AI Assistant section on Login and Authentication](#login-and-authentication) for more information.
+
+7. **Show/Hide History**. Click to view the chat history and optionally [manage it](#resuming-and-managing-existing-chat-conversations). Click again to hide the history.
+
+8. **Your First Message** in this chat. It will appear at the top of the conversation scroll.
+
+9. **SWIRL's First Response**. It will include:
+
+10. **Follow-up Questions**. Click to view the response/answer.
+
+11. **Citations**. Click to verify the response behind the summary or answer. Web sources may be [deep linked](#deep-linked-citations). If the Search Assistant doesn't provide citations, please rate the response appropriatel, and then instruct it to provide them.
+
+12. **Model and Timing**. This text reports the AI/LLM model used to generate the response, and the time it took to do so.
+
+13. **Message Window**. Use the **input box** and **send button** to talk to the Assistant. It will assist you in finding the information you need. When you and the Assistant agree, it will perform a **search** against one or more sources and either **summarize** the results or **answer your question**.
+
+Read on to learn more about the SWIRL AI Search Assistant's capabilities!
 
 ## Deep Linked Citations
 
@@ -211,7 +231,7 @@ From the **Assistant page**, click the **profile button**, then click **"SWIRL A
 
 15. **Result Summary & Timing**. Sumarizes the number of results, and how long it took to re-rank them.
 
-16. **Page Navigation**. Use to page through search results. Note, you must run a new search if you run out of results. The [SWIRL Administrator can increase the number of results](Developer-Guide.md#increase-available-results) retrieved from each source.
+16. **Page Navigation**. Use to page through search results. Note, you must run a new search if you run out of results. The [SWIRL Administrator can increase the number of results](Developer-Guide.html#increase-available-results) retrieved from each source.
 
 17. **Result Sort Selector**. By default, SWIRL sorts by [Confidence Score](#confidence-scores). Use `Date` to see the latest, and `Top Pick` to see the best from each responding source. Note that when sorting by date, results with no `date_published` field are hidden.
 
