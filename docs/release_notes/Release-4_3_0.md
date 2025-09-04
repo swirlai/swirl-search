@@ -71,7 +71,7 @@ This release includes support for querying M-Files, Better Regulation, custom Sh
 
 ## Upgrading
 
-⚠️ Version 4.3 includes **Django migrations**.  Please see the [Database Migrations](../Admin-Guide.md#database-migration) documentation for details.
+⚠️ Version 4.3 includes **Django migrations**.  Please see the [Database Migrations](../Admin-Guide#database-migration) documentation for details.
 
 ---
 
