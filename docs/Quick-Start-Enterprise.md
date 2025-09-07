@@ -165,6 +165,10 @@ These methods **preserve** the SWIRL database. If you don't need to save data, p
 
 ## Optional Steps
 
+- Customize SWIRL for any organization
+  - [Upload a branding configuration](Admin-Guide.html#changing-the-galaxy-logos-and-branding) including logos and Galaxy control labels
+  - [Customize the AI Search RAG prompt](AI-Search.html#customizing-the-ai-search-rag-prompt) and the [AI Search Assistant prompt](AI-Search-Assistant.html#customizing-the-ai-search-assistant-prompts)
+
 - Manage SWIRL via **Galaxy UI**:
   - Click the profile avatar (top-right corner).
   - Click **Manage SWIRL** ([http://localhost:8000/swirl/](http://localhost:8000/swirl/)).
