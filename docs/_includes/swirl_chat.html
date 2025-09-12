@@ -8,15 +8,27 @@
 </div>
 {% assign chat_origin = include.chat_origin | default: "https://chat.docs.swirlaiconnect.com" %}
 <script>
-  const CHAT_ORIGIN = {{ chat_origin | jsonify }};
+  const CHAT_ORIGIN = {{ chat_origin | jsonify }}; // e.g. "https://dev.swirl.today"
+  const TARGET_ORIGIN = new URL(CHAT_ORIGIN).origin; // normalize to pure origin
+
+  const stamp = () => ({ rel: performance.now(), abs: Date.now() });
 
   const getCookie = (name) =>
     document.cookie.split('; ').find(c => c.startsWith(name + '='))?.split('=')[1] || null;
 
+  // Listen early (before setting iframe.src) so we never miss early posts
+  window.addEventListener('message', (e) => {
+    console.log('[HOST] got message from iframe', {
+      at: stamp(),
+      origin: e.origin,
+      data: e.data
+    });
+  });
+
   async function initSwirlChat() {
-    console.log('initSwirlChat start');
+    console.log('initSwirlChat start', stamp());
     try {
-      const resp = await fetch(`${CHAT_ORIGIN}/swirl/init-session/`, {
+      const resp = await fetch(`${TARGET_ORIGIN}/swirl/init-session/`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -26,19 +38,38 @@
       const csrfToken = getCookie('csrftoken');
 
       const iframe = document.getElementById('swirl-chat-iframe');
-      iframe.src = `${CHAT_ORIGIN}/galaxy/pre-chat`;
+      iframe.src = `${TARGET_ORIGIN}/galaxy/pre-chat`;
 
       iframe.onload = () => {
-        console.log('posting setLocalStorage message');
-        iframe.contentWindow.postMessage({
-          action: 'setLocalStorage',
-          payload: {
-            'swirl-token': token,
-            'swirl-chat-status': 'true',
-            'swirl-rag-rating-status': 'true',
-            'csrftoken': csrfToken
+        console.log('[HOST] iframe onload', { at: stamp(), src: iframe.src });
+
+        // Optional sanity check: targetOrigin agrees with iframe src
+        const iframeOrigin = new URL(iframe.src).origin;
+        console.assert(
+          iframeOrigin === TARGET_ORIGIN,
+          '[HOST] origin mismatch',
+          { iframeOrigin, TARGET_ORIGIN }
+        );
+
+        const payload = {
+          'swirl-token': token,                  // mask in prod logs
+          'swirl-chat-status': 'true',
+          'swirl-rag-rating-status': 'true',
+          'csrftoken': csrfToken
+        };
+
+        console.log('[HOST] posting message', { at: stamp(), to: TARGET_ORIGIN, keys: Object.keys(payload) });
+
+        const send = () => {
+          // Guard in case contentWindow is briefly null
+          if (!iframe.contentWindow) {
+            console.warn('[HOST] contentWindow not ready, retrying next frame');
+            requestAnimationFrame(send);
+            return;
           }
-        }, CHAT_ORIGIN);
+          iframe.contentWindow.postMessage({ action: 'setLocalStorage', payload }, TARGET_ORIGIN);
+        };
+        send();
       };
     } catch (err) {
       console.error('initSwirlChat error:', err);
@@ -47,12 +78,12 @@
         `<p style="color:red">Chat unavailable: ${err.message}</p>`
       );
     }
-    console.log('initSwirlChat end');
+    console.log('initSwirlChat end', stamp());
   }
 
   console.log('registering initSwirlChat listener');
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initSwirlChat);
+    document.addEventListener('DOMContentLoaded', initSwirlChat, { once: true });
   } else {
     console.log('document already ready — calling initSwirlChat');
     initSwirlChat();
