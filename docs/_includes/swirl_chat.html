@@ -29,17 +29,27 @@
       iframe.src = `${CHAT_ORIGIN}/galaxy/pre-chat`;
 
       iframe.onload = () => {
-        console.log('posting setLocalStorage message');
-        iframe.contentWindow.postMessage({
+        console.log('[HOST] iframe onload fired at', performance.now());
+
+        const msg = {
           action: 'setLocalStorage',
           payload: {
             'swirl-token': token,
             'swirl-chat-status': 'true',
             'swirl-rag-rating-status': 'true',
-            'csrftoken': csrfToken
-          }
-        }, CHAT_ORIGIN);
+            'csrftoken': csrfToken,
+          },
+        };
+
+        console.log('[HOST] posting message at', performance.now(), 'to', CHAT_ORIGIN, msg);
+
+        iframe.contentWindow.postMessage(msg, CHAT_ORIGIN);
       };
+
+      window.addEventListener('message', (e) => {
+        console.log('[HOST] got message from iframe', e.origin, e.data);
+      });
+
     } catch (err) {
       console.error('initSwirlChat error:', err);
       document.body.insertAdjacentHTML(
