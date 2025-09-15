@@ -165,6 +165,10 @@ These methods **preserve** the SWIRL database. If you don't need to save data, p
 
 ## Optional Steps
 
+- Customize SWIRL for any organization
+  - [Upload a branding configuration](Admin-Guide.html#changing-the-galaxy-logos-and-branding) including logos and Galaxy control labels
+  - [Customize the AI Search RAG prompt](AI-Search.html#customizing-the-ai-search-rag-prompt) and the [AI Search Assistant prompt](AI-Search-Assistant.html#customizing-the-ai-search-assistant-prompts)
+
 - Manage SWIRL via **Galaxy UI**:
   - Click the profile avatar (top-right corner).
   - Click **Manage SWIRL** ([http://localhost:8000/swirl/](http://localhost:8000/swirl/)).
@@ -186,10 +190,10 @@ For additional support, please [contact SWIRL](Quick-Start-Enterprise-1.md#suppo
 To connect SWIRL with **Google Workspace**, you need:
 
 - **Admin access** to the Google Workspace tenant.
-- **App registration** in Google Workspace TBD.
+- **App registration** in Google Workspace.
 - **App ID and secrets** added to SWIRL.
 
-Setup takes ~1 hour. Follow the guide: [Google Workspace Integration Guide](TBD)
+Setup takes ~1 hour. Follow the guide: [Google Workspace Integration Guide](GoogleWorkspace-Guide.html)
 
 For additional support, please [contact SWIRL](Quick-Start-Enterprise-1.md#support).
 
@@ -240,6 +244,64 @@ python swirl.py <swirl-command>
 ```
 
 Example: `python manage.py makemigrations`
+
+## Migrating from SWIRL Community
+
+### Migrating SearchProviders
+
+Before migrating, consider [deleting the preloaded SearchProviders](SP-Guide.html#editing-a-searchprovider) in the SWIRL Enterprise installation. 
+
+1. Locate the `migrate_sp.py` script. As of SWIRL 4.4, this is located in the `DevUtils` folder. If you are running an earlier version please [request it from support](#support)
+
+2. Go to the `swirl/SearchProviders` endpoint on the SWIRL server. Copy the entire JSON list to the clipboard, then paste this into a text file. Save the text file - for example, to `mySPs.json`
+
+3. Run the script:
+`python migrate_sp.py myCommunitySPs.json myEnterpriseSPs.json`
+
+4. Open the output file. Copy and paste the contents into the input box at the bottom of the same endpoint `/swirl/SearchProviders` of your SWIRL Enterprise installation. Click the `PUT` button.
+
+5. The page should refresh and show you the new SearchProviders. (If there were already SearchProviders loaded, the new ones will be later in the list.)
+
+Note any errors, and feel free to [contact support](#support) for assistance.
+
+### Migrating OpenAI/Azure OpenAI settings
+
+1. Go to the `/swirl/aiproviders/` endpoint in the SWIRL Enterprise installation.
+
+![SWIRL AI Providers](images/swirl_aiproviders.png)
+
+2. Locate the OpenAI or AzureOpenAI preloaded configuration.
+
+3. Copy the API key from the Community `.env` file, or the appropriate environment 
+variable, to the `credentials` field in the Enterprise AI Provider. For example:
+
+For OpenAI:
+```
+% echo $OPENAI_API_KEY
+<your-key-here>
+```
+
+For Azure/OpenAI: 
+```
+% echo $AZURE_OPENAI_KEY
+<your-api-key>
+% echo AZURE_OPENAI_ENDPOINT
+<your-azure-openai-endpoint-url>
+% echo $AZURE_MODEL
+<your-azure-openai-model>
+```
+
+Set the Enterprise AI Provider configuration `active` to `true. Set the `tags` and `default` lists to include `rag` and `chat`.
+
+4. Refresh the Galaxy UI. The `Generate AI Insights` switch in the [Galaxy Search UI](https://docs.swirlaiconnect.com/User-Guide-Enterprise.html#the-ai-search-form-explained) should now be available, and the `SWIRL AI Assistant` (at `/galaxy/chat`), or use the link under the profile icon (top/right).
+
+### Migrating M365 Authentication
+
+1. Go to the `swirl/authenticators/Microsoft` endpoint in the SWIRL Enterprise installation. 
+
+2. Copy the `Client Id` and `Client Secret` from the [M365 Azure App Registration](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade) or your Community `.env` file as noted here in the [Microsoft 365 Integration Guide](https://docs.swirlaiconnect.com/M365-Guide.html#configure-the-microsoft-authenticator). 
+
+Note that you may have to modify the existing app registration if URL of the SWIRL server is changing.
 
 ## Updating SWIRL 
 
