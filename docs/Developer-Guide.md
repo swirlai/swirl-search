@@ -583,7 +583,7 @@ By default, SWIRL loads **English stopwords**. To change this:
 
 SWIRL supports redaction or removal of PII from queries and results, via [Microsoft Presidio](https://microsoft.github.io/presidio/).
 
-** RedactPIIQueryProcessor **
+### RedactPIIQueryProcessor
 
 This processor redacts PII entities in queries. For example: `Captain James T. Kirk` → `Captain [PERSON]`
 
@@ -596,10 +596,10 @@ To enable for a specific SearchProvider, add it before the `Adaptive` or `NoMod`
 ]
 ```
 
-{.warning}
+{: .warning }
 If the API receiving the redacted PII can't handle brackets `[]`, use the `AdaptiveQueryProcessor` *after* PII redaction to remove them.
 
-** RemovePIIQueryProcessor **
+### RemovePIIQueryProcessor
 
 This processor removes detected PII entities from queries entirely. 
 
@@ -627,7 +627,7 @@ And restart SWIRL. [Contact support](#support) for assistance.
 
 For more information: [ResultProcessors](./Developer-Reference#result-processors)
 
-** RedactPIIResultProcessor **
+### RedactPIIResultProcessor
 
 Redacts PII in results. In a document, for example: `These are the logs of Captain James T. Kirk.` → `"These are the logs of Captain [PERSON]"`
 
@@ -642,10 +642,10 @@ Redacts PII in results. In a document, for example: `These are the logs of Capta
 
 More details: [ResultProcessors](./Developer-Reference#post-result-processors)
 
-{.note}
+{: .note }
 There is no RemovePIIResultProcessor at this time as it may impair use of AI. 
 
-** RedactPIIPostResultProcessor **
+### RedactPIIPostResultProcessor
 
 This processor applies PII redaction from the unified results, from all responding sources. 
 
@@ -660,7 +660,7 @@ def getSearchPostResultProcessorsDefault():
     return ["CosineRelevancyPostResultProcessor","RedactPIIPostResultProcessor"]
 ```
 
-This configuration re-ranks using entities, but then redacts them in the results displayed to the user. This leaves the entities in the explain vector, which is available via the API. To prevent this, [disable the explain vector by setting `SWIRL_EXPLAIN` to `False`](TBD).
+This configuration re-ranks using entities, but then redacts them in the results displayed to the user. This leaves the entities in the explain vector, which is available via the API. To prevent this, [disable the explain vector by setting `SWIRL_EXPLAIN` to `False`](Admin-Guide.html#configuring-swirl).
 
 ## Understand the Explain Structure
 
