@@ -297,13 +297,12 @@ The included [BigQuery SearchProvider](https://github.com/swirlai/swirl-search/b
 
 More information: [BigQuery Documentation](https://cloud.google.com/bigquery/docs)
 
-## GenAI and ChatGPT Connectors
+## GenAI Connectors
 
-SWIRL includes connectors that can be used to obtain direct answers from LLMs, as if they were regular SearchProviders. The connector is the `ChatGPTConnector` (for the Community edition) or the `GenAIConnector` (for Enterprise).
-
-Both connectors return at most one result.
+SWIRL includes the `GenAIConnector` which can ask for direct answers from LLMs, as if they were regular SearchProviders. It returns at most one result.
 
 The included [SearchProvider](https://github.com/swirlai/swirl-search/blob/main/SearchProviders/gen_ai.json) is pre-configured with a "Tell me about: ..." prompt. 
+
 
 ```json
 {
@@ -316,7 +315,7 @@ The included [SearchProvider](https://github.com/swirlai/swirl-search/blob/main/
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
-    "query_mappings": "",
+    "query_mappings": "PROMPT='Tell me about: {query_to_provider}'",
     "result_processors": [
         "GenericResultProcessor",
         "CosineRelevancyResultProcessor"
@@ -332,39 +331,36 @@ The included [SearchProvider](https://github.com/swirlai/swirl-search/blob/main/
 }
 ```
 
-The `Question` and `GenAI` SearchProvider Tags enable targeted queries. For example:
-
-```shell
-Question: Tell me about knowledge management software?
-```
-
 ### Setting the GenAI Prompt or Role
 
-The following tags adjust the prompt or role passed to GenAI. 
+The following `query_mappings` **including quotes** adjust the prompt or role passed to GenAI. 
 
 * `CHAT_QUERY_REWRITE_PROMPT`: Customizes the prompt used to refine the query.
 
 ```json
-"CHAT_QUERY_REWRITE_PROMPT:Write a more precise query of similar length to this: {query_string}"
+"CHAT_QUERY_REWRITE_PROMPT: Write a more precise query of similar length to this: {query_to_provider}"
 ```
 
 * `CHAT_QUERY_REWRITE_GUIDE`: Overrides the `system` role.
 
 ```json
-"CHAT_QUERY_REWRITE_GUIDE:You are a helpful assistant that responds like a pirate captain"
+"CHAT_QUERY_REWRITE_GUIDE: You are a helpful assistant that responds like a pirate captain"
 ```
 
 * `CHAT_QUERY_DO_FILTER`: Enables/disables internal filtering of LLM responses.
 
 ```json
-"CHAT_QUERY_DO_FILTER:false"
+"CHAT_QUERY_DO_FILTER: false"
 ```
 
-The following `query_mapping` adjusts the default role passed to GenAI:
+For example:
 
-```shell
-"query_mappings": "PROMPT='Tell me about: {query_to_provider}',CHAT_QUERY_REWRITE_GUIDE='You are a helpful assistant that responds like a pirate captain'",
+```json
+"query_mappings": "CHAT_QUERY_REWRITE_PROMPT='Tell me about: {query_to_provider}',CHAT_QUERY_REWRITE_GUIDE='You are a helpful assistant that talks like a pirate captain but keeps it clean!'",
 ```
+
+{.warning}
+Do not use commas inside of a prompt passed in this manner.
 
 # Elastic & OpenSearch
 
@@ -917,8 +913,7 @@ Query Processors modify queries. The field they operate on depends on where they
 | Processor | Description | Notes | 
 | ---------- | ---------- | ---------- | 
 | **AdaptiveQueryProcessor** | Rewrites queries based on `query_mappings` for a given SearchProvider | Not for `pre_query_processors` |
-| **ChatGPTQueryProcessor** | Uses OpenAI to rewrite queries, making them broader, more specific, boolean, or in another language | Community edition only |
-| **GenAIQueryProcessor** | Uses an LLM to rewrite queries, making them broader, more specific, boolean, or in another language | Enterprise edition only |
+| **GenAIQueryProcessor** | Uses an LLM to rewrite queries, making them broader, more specific, boolean, or in another language |  |
 | **GenericQueryProcessor** | Removes special characters from queries |  |
 | **SpellcheckQueryProcessor** | Uses [TextBlob](https://textblob.readthedocs.io/en/dev/quickstart.html#spelling-correction) to correct spelling errors | Best used in `SearchProvider.query_processors`; avoid with Google PSE |
 | **NoModQueryProcessor** | Removes only leading SearchProvider Tags, leaving query terms unchanged | For repositories allowing non-search characters (e.g., brackets) |
@@ -926,13 +921,7 @@ Query Processors modify queries. The field they operate on depends on where they
 
 ## GenAIQueryProcessor
 
-The `GenAIQueryProcessor` calls an LLM with the user's query and a custom prompt to enable rewriting. For example this processor can:
-
-* Translate queries between languages
-* Rewrite queries as booleans
-* Perform phrase detection
-
-And much more. 
+The `GenAIQueryProcessor` calls an LLM with the user's query and a custom prompt to enable rewriting, translation phrase detection and much more. 
 
 ### Configuring the SearchProvider
 
@@ -954,18 +943,20 @@ To alter the query sent to all Searchproviders, add it to the `search.pre_query_
 }
 ```
 
-Note: this requires calling the Swirl Search API and is not supported via Galaxy.
+Note that the example above only applies to calling the SWIRL API. Please [contact support](#support) for instructions on how to configure this behavior with the Galaxy UI. 
 
 ### Configuring the QueryProcessor
 
-The GenAIQueryProcessor supports the same tags and configuration options as the [GenAIConnector](#setting-the-genai-prompt-or-role).
+The GenAIQueryProcessor supports the same tags and configuration options as the [GenAIConnector](#setting-the-genai-prompt-or-role) but using a colon (':') as a delimeter.
 
 For example:
 
 ```json
 "tags": [
-            "PROMPT='Translate this query to japanese, if necessary: {query_string}"
-        ],
+    "CHAT_QUERY_REWRITE_PROMPT:If this query is in Japanese, tokenize it, and output ONLY the tokenized japanese, NOTHING ELSE -> {query_string}",
+    "CHAT_QUERY_REWRITE_GUIDE:You are a speedy tokenizer!",
+    "CHAT_QUERY_DO_FILTER:False"
+],
 ```
 
 # Result Processors

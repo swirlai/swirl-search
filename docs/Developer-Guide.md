@@ -200,11 +200,9 @@ To address this, use the **[DateFindingResultProcessor](#find-dates-in-bodytitle
 
 ## Use an LLM to Rewrite Queries
 
-SWIRL AI Search supports **query rewriting** using `ChatGPTQueryProcessor` (for the Community edition) or the `GenAIQueryProcessor` (for Enterprise).
+SWIRL AI Search supports **query rewriting** using an LLM. To set this up, add the `GenAIQueryProcessor` to some  `SearchProvider.query_processors` list. 
 
-To enable it, add the processor to `SearchProvider.query_processors`.  
-
-For details, see: [Developer Reference - Query Processors](./Developer-Reference#query-processors).
+For details, see: [Developer Reference - GenAIQueryProcessor](./Developer-Reference.md#genai-and-chatgpt-connectors)
 
 ## Adjust `swirl_score` for Starred Results in Galaxy UI
 
@@ -214,7 +212,7 @@ For details, see: [Developer Reference - Query Processors](./Developer-Reference
 
 **SWIRL Enterprise Edition  **
 - Configured via `"minimumConfidenceScore"` in `static/api/config/default`.
-- Default: `0.7`. Increase this to reduce starred results.
+- Default: `0.7`. Increase this to reduce the number of starred results and use only highly relevant results.
 
 ![SWIRL AI Search 4.0 Results](images/swirl_40_results.png)
 
