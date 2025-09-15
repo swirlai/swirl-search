@@ -42,8 +42,24 @@
       const iframe = document.getElementById('swirl-chat-iframe');
       iframe.src = CHAT_ORIGIN + '/galaxy/pre-chat';
 
+      let handshakeDone = false;
+
+      window.addEventListener('message', function (e) {
+        console.log(LOG_PREFIX, nowTs(), 'got message from iframe', e.origin, e.data);
+        if (e.origin === CHAT_ORIGIN && e.data && e.data.action === 'setLocalStorage-ack') {
+          handshakeDone = true;
+          iframe.dataset.swirlHandshakeDone = '1';
+          console.log(LOG_PREFIX, nowTs(), 'ack observed in logger; handshakeDone=true');
+        }
+      });
+
       iframe.onload = function () {
         console.log(LOG_PREFIX, nowTs(), 'iframe onload fired');
+
+        if (handshakeDone || iframe.dataset.swirlHandshakeDone === '1') {
+          console.log(LOG_PREFIX, nowTs(), 'handshake already complete; ignoring subsequent load');
+          return;
+        }
 
         var msg = {
           action: 'setLocalStorage',
@@ -63,6 +79,8 @@
         function stopOnAck(e) {
           if (e.origin === CHAT_ORIGIN && e.data && e.data.action === 'setLocalStorage-ack') {
             done = true;
+            handshakeDone = true;                        
+            iframe.dataset.swirlHandshakeDone = '1';     
             window.removeEventListener('message', stopOnAck);
             console.log(LOG_PREFIX, nowTs(), 'received setLocalStorage-ack; stopping retries');
           }
@@ -70,25 +88,19 @@
         window.addEventListener('message', stopOnAck);
 
         (function resend() {
-          if (done || tries >= MAX_TRIES) {
-            if (!done) console.warn(LOG_PREFIX, nowTs(), 'no ack; gave up after', tries, 'tries');
+          if (done || handshakeDone || tries >= MAX_TRIES) {
+            if (!done && !handshakeDone) {
+              console.warn(LOG_PREFIX, nowTs(), 'no ack; gave up after', tries, 'tries');
+            }
             return;
           }
           tries++;
           console.log(LOG_PREFIX, nowTs(), 'posting setLocalStorage (try', tries, ') to', CHAT_ORIGIN, msg);
-          try {
-            iframe.contentWindow.postMessage(msg, CHAT_ORIGIN);
-          } catch (err) {
-            console.warn(LOG_PREFIX, nowTs(), 'postMessage failed on try', tries, err);
-          }
+          try { iframe.contentWindow.postMessage(msg, CHAT_ORIGIN); }
+          catch (err) { console.warn(LOG_PREFIX, nowTs(), 'postMessage failed on try', tries, err); }
           setTimeout(resend, INTERVAL_MS);
         })();
       };
-
-      window.addEventListener('message', function (e) {
-        console.log(LOG_PREFIX, nowTs(), 'got message from iframe', e.origin, e.data);
-      });
-
     } catch (err) {
       console.error(LOG_PREFIX, nowTs(), 'initSwirlChat error:', err);
       document.body.insertAdjacentHTML(
