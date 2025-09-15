@@ -73,6 +73,8 @@ Example: OpenAI GPT-4 Configured for Chat & RAG
 }
 ```
 
+For more details, see the **AI Search, Enterprise Edition** section: [Connecting to Enterprise GAI and LLMs](AI-Search#connecting-to-generative-ai-gai-and-large-language-models-llms).
+
 ## Launching Assistant
 
 Once the AI provider is configured correctly, **Assistant should be accessible via a browser**.  
@@ -80,9 +82,6 @@ Once the AI provider is configured correctly, **Assistant should be accessible v
 For a default installation, go to: [http://localhost:8000/galaxy/chat](http://localhost:8000/galaxy/chat)
 
 ![SWIRL Assistant discussion](images/swirl_40_chat_scop.png)
-
-For more details, see the **AI Search, Enterprise Edition** section: [Connecting to Enterprise GAI and LLMs](AI-Search#connecting-to-generative-ai-gai-and-large-language-models-llms).
-
 
 ## Listing Sources
 
@@ -111,6 +110,84 @@ Queries information on 7 million companies worldwide, including number of employ
 ```
 
 The `description` field can be up to 2k in length.
+
+## Using Prompts
+
+SWIRL Enterprise includes a set of pre-loaded, standard prompts. Each consiss of three key components:
+
+| Field | Description |
+| ----- | ----------- |
+| `prompt` | The main body of the prompt. Use `{query}` to represent the SWIRL query. |
+| `note` | Text appended to search result data sent to the LLM for insight generation. |
+| `footer` | Additional instructions appended after the prompt and RAG data. This is ideal for formatting guidance. |
+
+The name of the `prompt` has no importance. SWIRL uses the `tags` field to determine which prompt is used for a given function. 
+
+The following table presents the `tags` options:
+
+| Tag | LLM Role | 
+| --- | -------- | 
+| chat | Used by AI Search Assistant for chat conversations, including company background; not technical | 
+| chat-rag | Used by AI Search Assistant to answer questions and summarize data via RAG; somewhat technical | 
+| search-rag | Used by AI Search, `Generate AI Insight` (RAG) switch, somewhat technical | 
+
+Note that there must be at least one `active` prompt for each of these tags for the relevant SWIRL features to work.
+
+### Modifying the Standard Prompts
+
+{.warning}
+**Warning: never modify the standard prompts!** Any such changes will be discarded when SWIRL updates. 
+
+Use the [Customizing Prompts](#customizing-the-ai-search-assistant-prompts) procedure instead.
+
+### Customizing the AI Search Assistant Prompts
+
+The following procedure below below to copy the standard prompts, modify them, then make them active. 
+New prompts that you create won't be disturbed during upgrades.
+
+1. Open [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)
+
+2. Locate the `chat_rag_instructions_standard`, `chat_rag_standard` or `chat_rag_deeplink` prompts and note the `id`. 
+
+3. Add the `id` to the URL to view just that prompt. 
+
+4. Click the `Raw data` tab at the bottom of the page. Copy the entire JSON record to the clipboard. 
+
+5. Click the `HTML form` tab at the bottom of the page. Set `active` to `false`. Click `PUT` to save the change. 
+
+6. Go back to [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/) and scroll to the bottom of the form. 
+
+7. Select the `Raw data` tab if necessary. Paste the prompt copied in step #4 into `Content:` block. **Do not hit `Put` yet**.
+
+8. Remove the `id`, `owner`, `date_created` and `date_updated` fields. Change the `name` field to something descriptive. Also, make sure `active` is set to `true`. Finally, if you don't wish to share this prompt with other users, set `shared` to `false`. Feel free to hit `PUT` now to save the record. 
+
+9. Modify the `prompt` field, and change `SWIRL Corporation` to the name of your organization. We also recommend adding adding 2-3 sentences describing the organization as well. immediately afterwards. 
+
+For example:
+
+```json
+{
+    "prompt": "You are an expert online assistant and reference librarian working for **<your-company-name>. <Your-company-name> is located in <description> and operates in <industry> etc**... Your job is...
+ }
+```
+
+{: .warning }
+**Warning:** Removing important sections of any prompt such as variables like `{header}` and `{query}` may cause AI Insight generation to fail or not contain important features such as follow-up questions or citations. 
+
+10. Hit `PUT`. This will save the prompt.
+
+![SWIRL Prompt Object](images/swirl_prompt_form.png)
+
+## Restoring Standard Prompts
+
+To go back to a standard prompt after creating a new one:
+
+1. Edit the new prompt and set `active` to `false`. 
+2. Edit the standard prompt and set `active` to `true`.
+
+### Restoring All Prompts to Default
+
+To restore all prompts to the default, refer to the [Admin Guide on Resetting Prompts](Admin-Guide.html#resetting-prompts).
 
 ## Advanced Querying
 
