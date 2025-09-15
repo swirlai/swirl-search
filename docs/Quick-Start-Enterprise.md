@@ -285,13 +285,13 @@ For Azure/OpenAI:
 ```
 % echo $AZURE_OPENAI_KEY
 <your-api-key>
-% echo AZURE_OPENAI_ENDPOINT
+% echo $AZURE_OPENAI_ENDPOINT
 <your-azure-openai-endpoint-url>
 % echo $AZURE_MODEL
 <your-azure-openai-model>
 ```
 
-Set the Enterprise AI Provider configuration `active` to `true. Set the `tags` and `default` lists to include `rag` and `chat`.
+Set the Enterprise AI Provider configuration `active` to `true`. Set the `tags` and `default` lists to include `rag` and `chat`.
 
 4. Refresh the Galaxy UI. The `Generate AI Insights` switch in the [Galaxy Search UI](https://docs.swirlaiconnect.com/User-Guide-Enterprise.html#the-ai-search-form-explained) should now be available, and the `SWIRL AI Assistant` (at `/galaxy/chat`), or use the link under the profile icon (top/right).
 
