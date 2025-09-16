@@ -26,6 +26,15 @@
     return null;
   }
 
+  function redact(obj) {
+    try {
+      const clone = JSON.parse(JSON.stringify(obj));
+      if (clone?.payload?.['swirl-token']) clone.payload['swirl-token'] = '[REDACTED]';
+      if (clone?.payload?.['csrftoken'])    clone.payload['csrftoken']    = '[REDACTED]';
+      return clone;
+    } catch { return '[unserializable]'; }
+  }
+
   async function initSwirlChat() {
     console.log(LOG_PREFIX, nowTs(), 'initSwirlChat start');
     try {
@@ -43,13 +52,18 @@
       iframe.src = CHAT_ORIGIN + '/galaxy/pre-chat';
 
       let handshakeDone = false;
+      let handshakeNonce = String(Date.now()) + '-' + Math.random().toString(36).slice(2);
 
       window.addEventListener('message', function (e) {
-        console.log(LOG_PREFIX, nowTs(), 'got message from iframe', e.origin, e.data);
+        console.log(LOG_PREFIX, nowTs(), 'got message from iframe', e.origin, redact(e.data));
         if (e.origin === CHAT_ORIGIN && e.data && e.data.action === 'setLocalStorage-ack') {
+          if (e.data.nonce !== handshakeNonce) {
+            console.warn(LOG_PREFIX, nowTs(), 'ack nonce mismatch; ignoring');
+            return;
+          }
           handshakeDone = true;
           iframe.dataset.swirlHandshakeDone = '1';
-          console.log(LOG_PREFIX, nowTs(), 'ack observed in logger; handshakeDone=true');
+          console.log(LOG_PREFIX, nowTs(), 'ack observed; handshakeDone=true');
         }
       });
 
@@ -63,6 +77,7 @@
 
         var msg = {
           action: 'setLocalStorage',
+          nonce: handshakeNonce, 
           payload: {
             'swirl-token': token,
             'swirl-chat-status': 'true',
@@ -78,6 +93,7 @@
 
         function stopOnAck(e) {
           if (e.origin === CHAT_ORIGIN && e.data && e.data.action === 'setLocalStorage-ack') {
+            if (e.data.nonce !== handshakeNonce) return; 
             done = true;
             handshakeDone = true;                        
             iframe.dataset.swirlHandshakeDone = '1';     
@@ -95,7 +111,7 @@
             return;
           }
           tries++;
-          console.log(LOG_PREFIX, nowTs(), 'posting setLocalStorage (try', tries, ') to', CHAT_ORIGIN, msg);
+          console.log(LOG_PREFIX, nowTs(), 'posting setLocalStorage (try', tries, ') to', CHAT_ORIGIN, redact(msg));
           try { iframe.contentWindow.postMessage(msg, CHAT_ORIGIN); }
           catch (err) { console.warn(LOG_PREFIX, nowTs(), 'postMessage failed on try', tries, err); }
           setTimeout(resend, INTERVAL_MS);
