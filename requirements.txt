@@ -1,5 +1,5 @@
 requests
-Django>=5.1, <5.2
+Django
 django_restframework
 django-celery-beat
 Celery
@@ -31,7 +31,7 @@ channels
 channels-redis
 tika
 pymongo
-snowflake-connector-python
+snowflake-connector-python==3.17.3
 oracledb
 psycopg2-binary
 transformers
