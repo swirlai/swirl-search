@@ -9,12 +9,34 @@
 {% assign chat_origin = include.chat_origin | default: "https://chat.docs.swirlaiconnect.com" %}
 <script>
   const CHAT_ORIGIN = {{ chat_origin | jsonify }};
+  const LOG_PREFIX = '[HOST]';
 
-  const getCookie = (name) =>
-    document.cookie.split('; ').find(c => c.startsWith(name + '='))?.split('=')[1] || null;
+  function nowTs() {
+    return new Date().toISOString(); 
+  }
+
+  function getCookie(name) {
+    var cookies = document.cookie ? document.cookie.split('; ') : [];
+    for (var i = 0; i < cookies.length; i++) {
+      var c = cookies[i];
+      if (c.indexOf(name + '=') === 0) {
+        return c.substring((name + '=').length);
+      }
+    }
+    return null;
+  }
+
+  function redact(obj) {
+    try {
+      const clone = JSON.parse(JSON.stringify(obj));
+      if (clone?.payload?.['swirl-token']) clone.payload['swirl-token'] = '[REDACTED]';
+      if (clone?.payload?.['csrftoken'])    clone.payload['csrftoken']    = '[REDACTED]';
+      return clone;
+    } catch { return '[unserializable]'; }
+  }
 
   async function initSwirlChat() {
-    console.log('initSwirlChat start');
+    console.log(LOG_PREFIX, nowTs(), 'initSwirlChat start');
     try {
       const resp = await fetch(`${CHAT_ORIGIN}/swirl/init-session/`, {
         method: 'GET',
@@ -22,39 +44,94 @@
       });
       if (!resp.ok) throw new Error(`Init failed: ${resp.status}`);
 
-      const { token } = await resp.json();
+      const json = await resp.json();
+      const token = json && json.token;
       const csrfToken = getCookie('csrftoken');
 
       const iframe = document.getElementById('swirl-chat-iframe');
-      iframe.src = `${CHAT_ORIGIN}/galaxy/pre-chat`;
+      iframe.src = CHAT_ORIGIN + '/galaxy/pre-chat';
 
-      iframe.onload = () => {
-        console.log('posting setLocalStorage message');
-        iframe.contentWindow.postMessage({
+      let handshakeDone = false;
+      let handshakeNonce = String(Date.now()) + '-' + Math.random().toString(36).slice(2);
+
+      window.addEventListener('message', function (e) {
+        console.log(LOG_PREFIX, nowTs(), 'got message from iframe', e.origin, redact(e.data));
+        if (e.origin === CHAT_ORIGIN && e.data && e.data.action === 'setLocalStorage-ack') {
+          if (e.data.nonce !== handshakeNonce) {
+            console.warn(LOG_PREFIX, nowTs(), 'ack nonce mismatch; ignoring');
+            return;
+          }
+          handshakeDone = true;
+          iframe.dataset.swirlHandshakeDone = '1';
+          console.log(LOG_PREFIX, nowTs(), 'ack observed; handshakeDone=true');
+        }
+      });
+
+      iframe.onload = function () {
+        console.log(LOG_PREFIX, nowTs(), 'iframe onload fired');
+
+        if (handshakeDone || iframe.dataset.swirlHandshakeDone === '1') {
+          console.log(LOG_PREFIX, nowTs(), 'handshake already complete; ignoring subsequent load');
+          return;
+        }
+
+        var msg = {
           action: 'setLocalStorage',
+          nonce: handshakeNonce, 
           payload: {
             'swirl-token': token,
             'swirl-chat-status': 'true',
             'swirl-rag-rating-status': 'true',
             'csrftoken': csrfToken
           }
-        }, CHAT_ORIGIN);
+        };
+
+        var tries = 0;
+        var done = false;
+        var MAX_TRIES = 20;      
+        var INTERVAL_MS = 250;
+
+        function stopOnAck(e) {
+          if (e.origin === CHAT_ORIGIN && e.data && e.data.action === 'setLocalStorage-ack') {
+            if (e.data.nonce !== handshakeNonce) return; 
+            done = true;
+            handshakeDone = true;                        
+            iframe.dataset.swirlHandshakeDone = '1';     
+            window.removeEventListener('message', stopOnAck);
+            console.log(LOG_PREFIX, nowTs(), 'received setLocalStorage-ack; stopping retries');
+          }
+        }
+        window.addEventListener('message', stopOnAck);
+
+        (function resend() {
+          if (done || handshakeDone || tries >= MAX_TRIES) {
+            if (!done && !handshakeDone) {
+              console.warn(LOG_PREFIX, nowTs(), 'no ack; gave up after', tries, 'tries');
+            }
+            return;
+          }
+          tries++;
+          console.log(LOG_PREFIX, nowTs(), 'posting setLocalStorage (try', tries, ') to', CHAT_ORIGIN, redact(msg));
+          try { iframe.contentWindow.postMessage(msg, CHAT_ORIGIN); }
+          catch (err) { console.warn(LOG_PREFIX, nowTs(), 'postMessage failed on try', tries, err); }
+          setTimeout(resend, INTERVAL_MS);
+        })();
       };
     } catch (err) {
-      console.error('initSwirlChat error:', err);
+      console.error(LOG_PREFIX, nowTs(), 'initSwirlChat error:', err);
       document.body.insertAdjacentHTML(
         'beforeend',
-        `<p style="color:red">Chat unavailable: ${err.message}</p>`
+        '<p style="color:red">Chat unavailable: ' + err.message + '</p>'
       );
     }
-    console.log('initSwirlChat end');
+    console.log(LOG_PREFIX, nowTs(), 'initSwirlChat end');
   }
 
-  console.log('registering initSwirlChat listener');
+  console.log(LOG_PREFIX, nowTs(), 'registering initSwirlChat listener');
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initSwirlChat);
   } else {
-    console.log('document already ready — calling initSwirlChat');
+    console.log(LOG_PREFIX, nowTs(), 'document already ready — calling initSwirlChat');
     initSwirlChat();
   }
 </script>
