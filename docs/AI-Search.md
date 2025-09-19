@@ -284,28 +284,60 @@ This ensures automatic updates for AI provider credentials, reducing manual inte
 
 # Managing Prompts
 
-## Default Prompts
+SWIRL Enterprise includes a set of pre-loaded standard prompts used when Generating AI Insights via RAG. 
 
-{: .warning }
-**Warning:** If you edit a default system prompt, your changes will be lost when SWIRL is updated.
+Each consiss of three key components:
 
-View the default prompts at:  
-[http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)
+| Field | Description |
+| ----- | ----------- |
+| `prompt` | The main body of the prompt. Use `{query}` to represent the SWIRL query. |
+| `note` | Text appended to search result data sent to the LLM for insight generation. |
+| `footer` | Additional instructions appended after the prompt and RAG data. This is ideal for formatting guidance. |
 
-## Creating New Saved Prompts
+The name of the `prompt` has no importance. SWIRL uses the `tags` field to determine which prompt is used for a given function. 
 
-To create a new saved prompt:
+The following table presents the `tags` options:
+
+| Tag | LLM Role | 
+| --- | -------- | 
+| search-rag | Used by AI Search, `Generate AI Insight` (RAG) switch, somewhat technical | 
+| chat | Used by AI Search Assistant for chat conversations, including company background; not technical | 
+| chat-rag | Used by AI Search Assistant to answer questions and summarize data via RAG; somewhat technical | 
+
+Note that there must be at least one `active` prompt for each of these tags for the relevant SWIRL features to work.
+
+### Modifying the Standard Prompts
+
+{.warning}
+**Warning: never modify the standard prompts!** Any such changes will be discarded when SWIRL updates. 
+
+Use the [Customizing Prompts](#customizing-the-ai-search-rag-prompt) procedure instead.
+
+### Customizing the AI Search RAG Prompt
+
+The following procedure below below to copy the standard prompts, modify them, then make them active. 
+New prompts that you create won't be disturbed during upgrades.
 
 1. Open [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)
-2. Use the form at the bottom of the page to create a new prompt **or** paste raw JSON and click `POST`.
 
-**Example: Creating a Pirate-Themed Prompt**
+2. Locate the `search_rag_standard` or, if using [Deep Linking](./User-Guide-Enterprise.md#deep-linked-citations) `search_rag_deeplink` prompt, and note the `id`. 
 
-Modify the default prompt to generate responses in pirate-speak:
+3. Add the `id` to the URL to view just that prompt. 
 
+4. Click the `Raw data` tab at the bottom of the page. Copy the entire JSON record to the clipboard. 
+
+5. Click the `HTML form` tab at the bottom of the page. Set `active` to `false`. Click `PUT` to save the change. 
+
+6. Go back to [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/) and scroll to the bottom of the form. 
+
+7. Select the `Raw data` tab if necessary. Paste the prompt copied in step #4 into `Content:` block. **Do not hit `Put` yet**.
+
+8. Remove the `id`, `owner`, `date_created` and `date_updated` fields. Change the `name` field to something descriptive. Also, make sure `active` is set to `true`. Finally, if you don't wish to share this prompt with other users, set `shared` to `false`. Feel free to hit `PUT` now to save the record. 
+
+9. Modify the `prompt`, `note` and/or `footer` as needed, while retaining all critical instructions. For example, to instruct the LLM to use pirate-speak:
 ```json
 {
-    "name": "pirate",
+    "name": "search_rag_standard_pirate",
     "...": "... etc ...",
     "footer": "--- Final Instructions ---
 In your response, pretend you are a pirate comedian, but keep it clean!",
@@ -313,31 +345,38 @@ In your response, pretend you are a pirate comedian, but keep it clean!",
 }
 ```
 
-This will produce:
-
+10. Hit `PUT`. This will save the prompt.
 ![SWIRL Prompt Object](images/swirl_prompt_form.png)
 
-## Specifying a Saved Prompt in a Query
+{: .warning }
+**Warning:** Removing important sections of any prompt such as variables like `{header}` and `{query}` may cause AI Insight generation to fail or not contain important features such as follow-up questions or citations. 
 
-Test a saved prompt using the **prompt operator**:
+## Specifying a Saved Prompt when Generating AI Insights
+
+There are two ways to select a saved prompt: 
+
+1. Use the prompt selector on the AI Search form:
+![SWIRL AI Search Form w/Prompt Selector](./images/swirl_40_search_prompts.png)
+
+2. Use the **prompt operator** in your query. For example: 
 
 ```
 swirl AI Search prompt:pirate
 ```
 
-The response should be generated in pirate-speak:
-
+In either case, the response is generated in pirate-speak as the prompt instructs:
 ![SWIRL RAG response in pirate speak](images/swirl_prompt_pirate.png)
 
-## Understanding Saved Prompts
+## Restoring Standard Prompts
 
-SWIRL prompts consist of three key components:
+To go back to a standard prompt after creating a new one:
 
-| Field | Description |
-| ----- | ----------- |
-| `prompt` | The main body of the prompt. Use `{query}` to represent the SWIRL query. |
-| `note` | Text appended to RAG data chunks, annotated by the [Text Analyzer](#text-summarization). |
-| `footer` | Additional instructions appended after the prompt and RAG data. This is ideal for formatting guidance. |
+1. Edit the new prompt and set `active` to `false`. 
+2. Edit the standard prompt and set `active` to `true`.
+
+### Restoring All Prompts to Default
+
+To restore all prompts to the default, refer to the [Admin Guide on Resetting Prompts](https://docs.swirlaiconnect.com/Admin-Guide#resetting-prompts).
 
 ## Using a Prompt in a Query Processor or Connector
 

@@ -105,6 +105,38 @@ Use the **toggle switches** to connect or disconnect from any source, as needed.
 
 Read on to learn more about the SWIRL AI Search Assistant's capabilities!
 
+### Understanding Prompts
+
+SWIRL prompts consist of three key components:
+
+| Field | Description |
+| ----- | ----------- |
+| `prompt` | The main body of the prompt. Use `{query}` to represent the SWIRL query. |
+| `note` | Text appended to RAG data chunks, annotated by the [Text Analyzer](#text-summarization). |
+| `footer` | Additional instructions appended after the prompt and RAG data. This is ideal for formatting guidance. |
+
+The name of the `prompt` has no importance. SWIRL uses the `tags` field to determine which prompt is used for a given function. 
+
+The following table presents the `tags` options:
+
+| Tag | LLM Role | 
+| --- | -------- | 
+| chat | Used by AI Search Assistant for chat conversations, including company background; not technical | 
+| chat-rag | Used by AI Search Assistant to answer questions and summarize data via RAG; somewhat technical | 
+| search-rag | Used by AI Search, `Generate AI Insight` (RAG) switch, somewhat technical | 
+
+### Viewing Prompts
+
+- Any user may view the prompts endpoint: [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)  
+
+- Admins may use the [Admin Tool - Manage Prompts](http://localhost:8000/admin/swirl/prompt/) interface.
+
+### Modifying Prompts
+
+Administrators can modify prompts, as follows: 
+- [Customize the SWIRL AI Search Generate AI Insight RAG prompt](AI-Search.html#customizing-the-ai-search-rag-prompt)
+- [Customize the SWIRL AI Search Assistant prompts](AI-Search-Assistant.html#customizing-the-ai-search-assistant-prompts)
+
 ## Deep Linked Citations
 
 When possible, the Assistant will link directly to the relevant section of a web page used in a RAG response, and highlight it. 
@@ -332,16 +364,6 @@ tesla
 
 This makes **direct hits** on funding records more likely to **rank higher** in the results.
 
-## Viewing and Editing Prompts
-
-- Open: [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)  
-
-- Admins may use the **[Admin UI Manage Prompts](http://localhost:8000/admin/swirl/prompt/)**.
-
-{: .warning }
-**SWIRL recommends not modifying system prompts.** If you need to reset them, follow the  
-[Admin Guide section on resetting prompts](Admin-Guide#resetting-prompts).
-
 ## Hit Highlighting  
 
 SWIRL **highlights query term matches** in the following fields:  
@@ -373,6 +395,29 @@ The score **factors in**:
 You can still **sort by relevancy** using the **`VIEW BY:`** dropdown. 
 
 **AI Insights use only results** above a configurable minimum confidence score. 
+
+## Managing Prompts
+
+SWIRL prompts consist of three key components:
+
+| Field | Description |
+| ----- | ----------- |
+| `prompt` | The main body of the prompt. Use `{query}` to represent the SWIRL query. |
+| `note` | Text appended to RAG data chunks, annotated by the [Text Analyzer](#text-summarization). |
+| `footer` | Additional instructions appended after the prompt and RAG data. This is ideal for formatting guidance. |
+
+### Viewing Prompts
+
+- Any user may view the prompts endpoint: [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)  
+
+- Admins may use the [Admin Tool - Manage Prompts](http://localhost:8000/admin/swirl/prompt/) interface.
+
+### Modifying Prompts
+
+Request new prompts, or modifications to existing ones, from SWIRL administrators. 
+
+- [Customize the SWIRL AI Search Assistant prompts](AI-Search-Assistant.html#customizing-the-ai-search-assistant-prompt)
+- [Resetting SWIRL AI prompts](./Admin-Guide.md#resetting-prompts)
 
 ## Guiding Retrieval Augmented Generation (RAG) for AI Insight Generation
 
