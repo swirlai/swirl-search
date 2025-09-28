@@ -482,6 +482,30 @@ In both cases, specify the number of days. For example:
     }
 ```
 
+## Retrieving More Results for a Single Provider Search
+
+{: .warning }
+This feature is only supported in SWIRL Enterprise.
+
+To retrieve more results when the user (or the Search Assistant) selects a single SearchProvider for a search, add the following to the `config` block:
+
+```
+"config":{
+  "swirl": {
+    "connector_use": {
+      "single_provider_results_requested": 50
+    }
+  }
+}
+```
+
+SWIRL will retrieve the number of results specified by `single_provider_results_requested`, instead of `results_per_query`.
+
+To disable this behavior, remove the configuration item.
+
+In addition you can pass `single_provider_results_requested=<int>` to a `GET /api/swirl/search` REST request. If  there is also exactly one Search Provider ID in the Search Provider list the number of results passed in will be fetched. If the value is also set in the configuration of that Search Provider, the passed in value is used.
+
+
 # Default SWIRL Fields
 
 | Field Name | Description |
