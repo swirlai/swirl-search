@@ -503,6 +503,9 @@ SWIRL will retrieve the number of results specified by `single_provider_results_
 
 To disable this behavior, remove the configuration item.
 
+In addition you can pass `single_provider_results_requested=<int>` to a `GET /api/swirl/search` REST request. If  there is also exactly one Search Provider ID in the Search Provider list the number of results passed in will be fetched. If the value is also set in the configuration of that Search Provider, the passed in value is used.
+
+
 # Default SWIRL Fields
 
 | Field Name | Description |
