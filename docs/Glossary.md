@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Glossary
-nav_order: 14
+nav_order: 18
 ---
 <details markdown="block">
   <summary>

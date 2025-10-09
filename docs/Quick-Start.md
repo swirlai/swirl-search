@@ -14,9 +14,6 @@ nav_order: 3
 
 <span class="big-text">Quick Start Guide</span><br/><span class="med-text">Community Edition</span>
 
-{: .highlight }
-Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI Search** 🔎 and **SWIRL AI Co-Pilot** is now **SWIRL AI Search Assistant** 🤖
-
 ---
 
 ## 1. Prerequisites  

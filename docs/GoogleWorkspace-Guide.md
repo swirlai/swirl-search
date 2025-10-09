@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Google Workspace Guide
-nav_order: 18
+nav_order: 15
 ---
 <details markdown="block">
   <summary>
@@ -13,6 +13,9 @@ nav_order: 18
 </details>
 
 <span class="big-text">Google Workspace Guide</span><br/><span class="med-text">Enterprise Edition</span>
+
+{: .warning }
+Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Enterprise.
 
 ---
 
