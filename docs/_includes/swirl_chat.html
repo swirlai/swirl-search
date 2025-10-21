@@ -6,7 +6,7 @@
     style="width:100%; height:80vh;"
   ></iframe>
 </div>
-{% assign chat_origin = include.chat_origin | default: "https://chat.docs.swirlaiconnect.com" %}
+{% assign chat_origin = include.chat_origin | default: "https://dev.swirl.today" %}
 <script>
   const CHAT_ORIGIN = {{ chat_origin | jsonify }};
   const LOG_PREFIX = '[HOST]';
@@ -93,7 +93,7 @@
 
         function stopOnAck(e) {
           if (e.origin === CHAT_ORIGIN && e.data && e.data.action === 'setLocalStorage-ack') {
-            if (e.data.nonce !== handshakeNonce) return; 
+            if (e.data.nonce !== handshakeNonce) return; // <<< verify nonce
             done = true;
             handshakeDone = true;                        
             iframe.dataset.swirlHandshakeDone = '1';     
@@ -117,6 +117,7 @@
           setTimeout(resend, INTERVAL_MS);
         })();
       };
+
     } catch (err) {
       console.error(LOG_PREFIX, nowTs(), 'initSwirlChat error:', err);
       document.body.insertAdjacentHTML(
