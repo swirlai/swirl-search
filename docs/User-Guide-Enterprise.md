@@ -261,7 +261,7 @@ From the **Assistant page**, click the **profile button**, then click **"SWIRL A
 
 14. **Summary Rating**. Click the “thumbs-up” or “thumbs-down” to provide feedback on AI messages. (Please select and/or fill-in the reason(s) why, if asked.)
 
-15. **Result Summary & Timing**. Sumarizes the number of results, and how long it took to re-rank them.
+15. **Result Summary & Timing**. Summarizes the number of results, and how long it took to re-rank them.
 
 16. **Page Navigation**. Use to page through search results. Note, you must run a new search if you run out of results. The [SWIRL Administrator can increase the number of results](Developer-Guide.html#increase-available-results) retrieved from each source.
 

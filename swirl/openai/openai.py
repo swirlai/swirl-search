@@ -68,7 +68,7 @@ class OpenAIClient:
         return ai_client
 
     def get_model(self):
-        # If the provder is AZURE and the az model is set, use it.
+        # If the provider is AZURE and the az model is set, use it.
         logger.info(f'get model {self._api_provider} {self._azure_model}')
         if self._api_provider == 'AZUREAI' and self._azure_model:
             return self._azure_model

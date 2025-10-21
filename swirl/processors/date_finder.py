@@ -49,7 +49,7 @@ class DateFinderResultProcessor(ResultProcessor):
                                 item['date_published'] = date.strftime('%Y-%m-%d %H:%M:%S')
                                 updated = updated + 1
                             except ValueError:
-                                logger.warning(f'ignoring invalud date {match}')
+                                logger.warning(f'ignoring invalid date {match}')
                                 continue
                             break
                 # end if

@@ -184,7 +184,7 @@ Command | Action
 
 ## Logging In
 
-Use the `/login` command. The username and password are configured in the enviroment as noted above. If not specified, they default to `swirlmcpuser`:`swirlmcppass`.
+Use the `/login` command. The username and password are configured in the environment as noted above. If not specified, they default to `swirlmcpuser`:`swirlmcppass`.
 
 ```
 MCP> /login <swirl-mcp-username> <swirl-mcp-password>

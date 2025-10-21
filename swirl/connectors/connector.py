@@ -330,7 +330,7 @@ class Connector:
 
         for processor in processor_list:
             if processor in processors_to_skip:
-                logger.debug(f"{self}: skipping processor: process results {processor} becasue it was in a skip tag of the search")
+                logger.debug(f"{self}: skipping processor: process results {processor} because it was in a skip tag of the search")
                 continue
             logger.debug(f"{self}: invoking processor: process results {processor}")
             last_results = copy.deepcopy(self.results)
@@ -340,7 +340,7 @@ class Connector:
                 modified = proc.process()
                 self.results = proc.get_results()
                 logger.debug(f'provider : {self.provider.name} processor: {processor} modified : {modified}')
-                ## Check if this processor generated feed back and if so, remember it and merge it in to the exsiting
+                ## Check if this processor generated feed back and if so, remember it and merge it in to the existing
                 if self.results and 'result_processor_feedback' in self.results[-1]:
                     self.result_processor_json_feedback =  self.results.pop(-1)
             except (NameError, TypeError, ValueError) as err:
