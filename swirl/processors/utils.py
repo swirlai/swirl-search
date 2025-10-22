@@ -744,7 +744,7 @@ def get_jan_1_year(year):
 
 def _date_str_parse_to_timestamp(s):
     """
-        try to parse the string as a date to a timestampe
+        try to parse the string as a date to a timestamp
     """
     ret = ""
     try:

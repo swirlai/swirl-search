@@ -22,7 +22,7 @@ django.setup()
 
 from swirl.models import Search, OauthToken
 from swirl.authenticators import *
-from swirl.search import search as run_search, get_query_selectd_provder_list
+from swirl.search import search as run_search, get_query_selected_provider_list
 from datetime import datetime
 
 
@@ -48,7 +48,7 @@ def _get_oauth_idp_for_providers(search):
     if not search:
         logger.debug(f"{module_name}: _get_oauth_idp_for_providers(search): no search")
         return ret
-    selected_provider_list = get_query_selectd_provder_list(search=search)
+    selected_provider_list = get_query_selected_provider_list(search=search)
     for provider in selected_provider_list:
         if provider.authenticator:
             ret.append(provider.authenticator)

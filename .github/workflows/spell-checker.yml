@@ -3,7 +3,7 @@ name: Check Spelling
 # Only allow manual run of this workflow from the Actions tab
 on:
   pull_request:
-    # Run for all PRs to develop - means PR cannot merge until unit tests pass
+    # Run for all PRs to develop or main - means PR cannot merge until unit tests pass
     branches:
       - develop
       - main
@@ -26,10 +26,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Check Spelling
       uses: crate-ci/typos@master  # From here:  https://github.com/crate-ci/typos
       with:
         config: ./.github/workflows/typos.toml
-        write_changes: true  # Writes changes on the Action's local checkout

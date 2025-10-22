@@ -16,7 +16,7 @@ MAX_QUERY_STRING_LENGTH = 2048
 class FlexibleChoiceField(models.CharField):
     """
     Allow choices and free text so we can have a user named and shared query transform
-    in a seacrh provider
+    in a search provider
     """
     def __init__(self, *args, **kwargs):
         self.custom_choices = kwargs.pop("choices", [])
