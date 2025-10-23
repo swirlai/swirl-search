@@ -21,9 +21,9 @@ heading_anchors: true
 enable_copy_code_button: true
 
 # Swirl chat feature toggle
-enableSwirlChat: false
-# Set Swirl chat origin if different from the default value: https://dev.swirl.today
-#swirlChatOrigin: "https://dev.swirl.today"
+enableSwirlChat: true
+# Set Swirl chat origin if different from the default value: https://docbot.swirlaiconnect.com
+swirlChatOrigin: "https://docbot.swirlaiconnect.com"
 
 # External navigation links
 nav_external_links:
