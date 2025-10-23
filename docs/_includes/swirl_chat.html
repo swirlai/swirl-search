@@ -6,7 +6,7 @@
     style="width:100%; height:80vh;"
   ></iframe>
 </div>
-{% assign chat_origin = include.chat_origin | default: "https://dev.swirl.today" %}
+{% assign chat_origin = include.chat_origin | default: "https://docbot.swirlaiconnect.com" %}
 <script>
   const CHAT_ORIGIN = {{ chat_origin | jsonify }};
   const LOG_PREFIX = '[HOST]';
