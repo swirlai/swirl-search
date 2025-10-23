@@ -24,13 +24,15 @@ Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI 
 
 SWIRL is a [federated AI search engine](https://en.wikipedia.org/wiki/Metasearch_engine) you run in your own environment via Docker or Kubernetes. It sits between your LLM/GenAI and your systems (M365, Google Workspace, Box, Salesforce, Confluence/Jira, databases, file shares, etc.) 
 
-WIRL calls each source in real time using standard authentication mechanisms like OAuth2/app registrations, API keys and service identities. It does not copy or re-index content; data stays in place. Permissions are enforced by the source systems. SWIRL uses the user’s identity or a scoped service identity to retrieve only what they are already allowed. It then re-ranks the results using real-time, non-generative AI. 
+SWIRL calls each source in real time using standard authentication mechanisms like OAuth2/app registrations, API keys and service identities. It does not copy or re-index content; data stays in place. Permissions are enforced by the source systems, and no user ever sees anything they weren't already authorized to see. 
+
+SWIRL finally re-ranks the results using real-time, non-generative AI, to find the best result across all sources.
 
 ![SWIRL RAG AI Insight with results](images/swirl_40_community_rag.png)
 
 # What is SWIRL AI Search Assistant? 
 
-The SWIRL AI Search Assistant is a conversational front end to SWIRL. It helps the user clarify intent, navigate across sources, run queries and summarize the most relevant results found, along with links back to the original items and optional follow-up questions. 
+The SWIRL AI Search Assistant is a conversational front end to SWIRL. It helps the user clarify intent, discuss and select sources, run queries and summarize the most relevant results found. It also provides deeplinked citations and optional follow-up questions. 
 
 No additional data store is required or created. The assistant integrates with any LLM that supports user/assistant roles, tool-calling and JSON schema support.
 
