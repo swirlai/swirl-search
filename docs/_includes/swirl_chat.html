@@ -93,7 +93,7 @@
 
         function stopOnAck(e) {
           if (e.origin === CHAT_ORIGIN && e.data && e.data.action === 'setLocalStorage-ack') {
-            if (e.data.nonce !== handshakeNonce) return; // <<< verify nonce
+            if (e.data.nonce !== handshakeNonce) return;
             done = true;
             handshakeDone = true;                        
             iframe.dataset.swirlHandshakeDone = '1';     
