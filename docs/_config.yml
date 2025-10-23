@@ -21,7 +21,7 @@ heading_anchors: true
 enable_copy_code_button: true
 
 # Swirl chat feature toggle
-enableSwirlChat: true
+enableSwirlChat: false
 # Set Swirl chat origin if running locally
 swirlChatOrigin: "https://docbot.swirl.today"
 
