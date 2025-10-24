@@ -49,7 +49,7 @@ class GenAI(Connector):
         try:
             client = OpenAIClient(usage=AI_QUERY_USE, key=self.provider.credentials)
         except ValueError as valErr:
-            logger.error(f"err {valErr} while initilizing OpenAI client")
+            logger.error(f"err {valErr} while initializing OpenAI client")
             self.status = "ERR_NO_CREDENTIALS"
             return
 

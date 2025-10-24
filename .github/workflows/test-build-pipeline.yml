@@ -21,11 +21,11 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout the Code
-          uses: actions/checkout@v4
+          uses: actions/checkout@v5
         - name: Set Up Python
-          uses: actions/setup-python@v5
+          uses: actions/setup-python@v6
           with:
-            python-version: '3.13.5'
+            python-version: '3.13.9'
             cache: 'pip'
         - name: Install Swirl
           run: ./install.sh
@@ -50,13 +50,13 @@ jobs:
             - 6379:6379
       steps:
         - name: Checkout the Code
-          uses: actions/checkout@v4
+          uses: actions/checkout@v5
         - name: Pull the Latest (for just this branch)
           run: git pull origin ${{ github.ref_name }}
         - name: Set Up Python
-          uses: actions/setup-python@v5
+          uses: actions/setup-python@v6
           with:
-            python-version: '3.13.5'
+            python-version: '3.13.9'
             cache: 'pip'
         - name: Install Swirl (with a timeout)
           run: ./install.sh
@@ -114,7 +114,7 @@ jobs:
             - 6379:6379
       steps:
         - name: Checkout the Code
-          uses: actions/checkout@v4
+          uses: actions/checkout@v5
         - name: Pull the Latest (for just this branch)
           run: git pull origin ${{ github.ref_name }}
         - name: Login to Docker Hub
@@ -123,9 +123,9 @@ jobs:
             username: ${{ secrets.SBS_DOCKER_USER }}
             password: ${{ secrets.SBS_DOCKER_PAT }}
         - name: Set Up Python
-          uses: actions/setup-python@v5
+          uses: actions/setup-python@v6
           with:
-            python-version: '3.13.5'
+            python-version: '3.13.9'
             cache: 'pip'
         - name: Install Swirl
           run: ./install.sh
@@ -204,7 +204,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout the Code
-          uses: actions/checkout@v4
+          uses: actions/checkout@v5
         - name: Pull the Latest (for just this branch)
           run: git pull origin ${{ github.ref_name }}
         - name: Login to Docker Hub

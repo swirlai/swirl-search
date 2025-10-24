@@ -75,7 +75,7 @@ class M365SearchQuery(M365Post):
         self.query_mappings_mappings = get_mappings_dict(self.provider.query_mappings)
         self.provider.url = 'https://graph.microsoft.com/beta/search/query'
         self.entity_type = ""
-        self.search = get_search_obj(id=search_id) # get the seach object so we can decorate the search request if needed
+        self.search = get_search_obj(id=search_id) # get the search object so we can decorate the search request if needed
 
     def send_request(self, url, params=None, query=None, **kwargs):
         json = dict({

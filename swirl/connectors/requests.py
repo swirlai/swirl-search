@@ -63,7 +63,7 @@ class Requests(VerifyCertsCommon):
     def construct_query(self):
 
         """
-        Contstruct the query to provider is actually constructing a URL to the provider
+        Construct the query to provider is actually constructing a URL to the provider
         As part of this it handles next page logic. This is approproaye for GET requests
         but less necessary for a POST.
 

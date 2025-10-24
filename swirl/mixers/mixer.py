@@ -171,7 +171,7 @@ class Mixer:
 
         '''
         Orders all_results into mixed_results
-        Base class, intended to be overriden!
+        Base class, intended to be overridden!
         '''
 
         self.mixed_results = self.all_results[(self.page-1)*self.results_requested:(self.page)*self.results_requested]

@@ -1,4 +1,4 @@
-# Some utlity functions for external use
+# Some utility functions for external use
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -11,7 +11,7 @@ from swirl.processors import alloc_processor
 module_name = 'transform_query_processor_utils'
 def __find_query_transform(name, type, user=None):
     """
-    Atttempt to find the trasnform in the DB
+    Attempt to find the transform in the DB
     """
     try:
         if user:

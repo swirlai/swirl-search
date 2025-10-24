@@ -396,7 +396,7 @@ def stop(service_list):
         # print("Ok")
 
     if flag:
-        print("Warning: at least one error occured, check .swirl for remaining pids")
+        print("Warning: at least one error occurred, check .swirl for remaining pids")
         return False
 
     if not dict_pid:

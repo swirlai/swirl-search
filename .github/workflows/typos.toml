@@ -1,8 +1,17 @@
 # Exclude the following from spell checking
 
 [files]
-extend-exclude = ["swirl/tests/"]
+# Files and directories to exclude from the check
+extend-exclude = [
+    "swirl/tests",
+    "Data",
+    "DevUtils/Swirl.postman_collection.json",
+]
 
 [default.extend-identifiers]
-# Don't correct this variable from scripts/fix_csv.py
+# Don't correct this variable (it's in DevUtils/fix_csv.py)
 fo = "fo"
+
+[default.extend-words]
+# Don't correct the initialism "SME"
+sme = "sme"
