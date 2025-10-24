@@ -33,7 +33,7 @@ from swirl.performance_logger import SwirlQueryRequestLogger
 
 module_name = 'search.py'
 
-def get_query_selectd_provder_list(search):
+def get_query_selected_provider_list(search):
     """
     Get the list of providers from the query, taking
     into account
@@ -127,7 +127,7 @@ def search(id, session=None, request=None):
         return False
 
     # check for starting tag
-    selected_provider_list = get_query_selectd_provder_list(search)
+    selected_provider_list = get_query_selected_provider_list(search)
 
     user = User.objects.get(id=search.owner.id)
     if not user.has_perm('swirl.view_searchprovider'):

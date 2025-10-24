@@ -22,7 +22,7 @@ enable_copy_code_button: true
 
 # Swirl chat feature toggle
 enableSwirlChat: true
-# Set Swirl chat origin if running locally
+# Set Swirl chat origin if different from the default value: https://docbot.swirlaiconnect.com
 swirlChatOrigin: "https://docbot.swirlaiconnect.com"
 
 # External navigation links

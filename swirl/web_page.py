@@ -39,7 +39,7 @@ class WebPage (metaclass=ABCMeta):
 
     @abstractmethod
     def get_response_url(self):
-        """ get the resposne URL"""
+        """ get the response URL"""
         pass
     @abstractmethod
     def get_content(self):
@@ -77,7 +77,7 @@ class WebPage (metaclass=ABCMeta):
             soup = BeautifulSoup(cleaned_html, 'html.parser')
             ret_text = soup.get_text()
         except Exception as err:
-            logger.erro(f"{self} convertin html to text")
+            logger.error(f"{self} convertin html to text")
         finally:
             return ret_text
 
@@ -222,7 +222,7 @@ class PageFetcherOptions:
     @staticmethod
     def _merge_options(input, defaults):
         """
-        Merget the input values with defaults, if the input
+        Merge the input values with defaults, if the input
         contains a null string for a default, then remove the
         default from the resulting config
         """

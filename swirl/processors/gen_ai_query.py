@@ -56,7 +56,7 @@ class GenAIQueryProcessor(QueryProcessor):
             self.warning(f"No prompt provided, using default {MODEL_DEFAULT_PROMPT}")
             self.prompt = MODEL_DEFAULT_PROMPT
         # to do: improve the below
-        # NOTE: D.A.N kept for backward compatability
+        # NOTE: D.A.N kept for backward compatibility
         if not self.prompt.endswith('{query_string}'):
             self.warning("Prompt does not end w/ {query_string}, it may be modified")
             if self.prompt.endswith(':'):
@@ -121,7 +121,7 @@ class GenAIQueryProcessor(QueryProcessor):
             if not self.do_filter:
                 return clean_reply(message=message)
             else:
-                logger.info(f"applying legacy filters to resposne, it may not be used")
+                logger.info(f"applying legacy filters to response, it may not be used")
 
             if message.strip().lower() == self.query_string.strip().lower():
                 return self.query_string
@@ -166,5 +166,5 @@ class GenAIQueryProcessor(QueryProcessor):
             self.warning(f"{self}: ChatGPT response didn't parse clean: {message}")
             return self.query_string
         except Exception as x:
-            logger.error(f"unexpected excecption while rewriting query, returning original")
+            logger.error(f"unexpected exception while rewriting query, returning original")
             return self.query_string

@@ -100,7 +100,7 @@ class Microsoft(Authenticator):
         result = self.get_token_from_code(request)
         tok = result.get('access_token', None)
         if not tok:
-            logger.error(f'acccess token not present in call back result {result}')
+            logger.error(f'access token not present in call back result {result}')
             raise ValueError(result)
 
         user = self.get_user(tok)

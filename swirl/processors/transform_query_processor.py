@@ -49,7 +49,7 @@ class _ConfigReplacePattern ():
 
 class AbstractTransformQueryProcessor(QueryProcessor, metaclass=ABCMeta):
     """
-    Holder for Query shared transform fuctionality and interfaces
+    Holder for Query shared transform functionality and interfaces
     """
 
     def __init__(self,  query_string, name, config):
@@ -246,6 +246,6 @@ class SynonymBagQueryProcessor(SynonymQueryProcessor):
             return
         for word in cline:
             normal_word = super(SynonymBagQueryProcessor, self)._normalize_word(word)
-            # noramlize and add to the config replace pattern
+            # normalize and add to the config replace pattern
             word_buf = [bw for w in cline if (bw := super(SynonymBagQueryProcessor,self)._normalize_word(w)) != normal_word ]
             self.replace_index[normal_word] = _ConfigReplacePattern(normal_word, word_buf)

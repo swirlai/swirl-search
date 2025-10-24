@@ -24,7 +24,7 @@ class AdaptiveQueryProcessor(QueryProcessor):
         query_wot_list = []
         dict_tags = {}
         tag = ""
-        cannonical_provider_tag_set = {s.lower() for s in self.tags}
+        canonical_provider_tag_set = {s.lower() for s in self.tags}
 
         for term in self.query_string.strip().split():
             val = ""
@@ -47,7 +47,7 @@ class AdaptiveQueryProcessor(QueryProcessor):
             # end if
             if tag:
                 if val:
-                    if tag.lower() not in cannonical_provider_tag_set:
+                    if tag.lower() not in canonical_provider_tag_set:
                         query_wot_list.append(term)
                     else:
                         if not tag.lower() in dict_tags:
