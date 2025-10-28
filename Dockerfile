@@ -1,4 +1,4 @@
-FROM python:3.13.9-slim-bookworm
+FROM python:3.13.9-slim-trixie
 
 # Update, upgrade and install packages in a single RUN to reduce layers
 RUN apt-get update && apt-get install -y \
