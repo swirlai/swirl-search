@@ -1,7 +1,7 @@
 ---
 layout: default
 title: RAG Configuration
-nav_order: 5
+nav_order: 6
 ---
 <details markdown="block">
   <summary>
@@ -13,9 +13,6 @@ nav_order: 5
 </details>
 
 <span class="big-text">Retrieval Augmented Generation (RAG) Configuration</span><br/><span class="med-text">Community Edition</span>
-
-{: .highlight }
-Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI Search** 🔎 and **SWIRL AI Co-Pilot** is now **SWIRL AI Search Assistant** 🤖
 
 ---
 
