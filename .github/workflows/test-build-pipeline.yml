@@ -218,12 +218,13 @@ jobs:
             TAG_NAME=$([ "$BRANCH_NAME" = "main" ] && echo "latest" || echo "$BRANCH_NAME")
             docker buildx use devBuilder || docker buildx create --name devBuilder --use
             docker buildx build -t swirlai/swirl-search:$TAG_NAME --platform linux/amd64,linux/arm64 --push .
-        # - name: Update the Docker Repo Description
-        #   uses: peter-evans/dockerhub-description@v4
-        #   with:
-        #     username: ${{ secrets.SBS_DOCKER_USER }}
-        #     password: ${{ secrets.SBS_DOCKER_PAT }}
-        #     repository: swirlai/swirl-search
+        - name: Update the Docker Repo Description
+          if: github.ref == 'refs/heads/main'
+          uses: peter-evans/dockerhub-description@v5
+          with:
+            username: ${{ secrets.SBS_DOCKER_USER }}
+            password: ${{ secrets.SBS_DOCKER_PAT }}
+            repository: swirlai/swirl-search
         - name: Upload Log Files
           if: always()
           uses: actions/upload-artifact@v4
