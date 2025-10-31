@@ -213,6 +213,7 @@ jobs:
             username: ${{ secrets.SBS_DOCKER_USER }}
             password: ${{ secrets.SBS_DOCKER_PAT }}
         - name: Build and Push Swirl Docker Image
+          if: github.ref == 'refs/heads/main'
           run: |
             BRANCH_NAME=${GITHUB_REF#refs/heads/}
             TAG_NAME=$([ "$BRANCH_NAME" = "main" ] && echo "latest" || echo "$BRANCH_NAME")
