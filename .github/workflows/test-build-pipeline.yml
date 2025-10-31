@@ -213,13 +213,13 @@ jobs:
             username: ${{ secrets.SBS_DOCKER_USER }}
             password: ${{ secrets.SBS_DOCKER_PAT }}
         - name: Build and Push Swirl Docker Image
-          if: github.ref == 'refs/heads/main'
           run: |
             BRANCH_NAME=${GITHUB_REF#refs/heads/}
             TAG_NAME=$([ "$BRANCH_NAME" = "main" ] && echo "latest" || echo "$BRANCH_NAME")
             docker buildx use devBuilder || docker buildx create --name devBuilder --use
             docker buildx build -t swirlai/swirl-search:$TAG_NAME --platform linux/amd64,linux/arm64 --push .
         - name: Update the Docker Repo Description
+          if: github.ref == 'refs/heads/main'
           uses: peter-evans/dockerhub-description@v5
           with:
             username: ${{ secrets.SBS_DOCKER_USER }}
