@@ -225,6 +225,7 @@ jobs:
             username: ${{ secrets.SBS_DOCKER_USER }}
             password: ${{ secrets.SBS_DOCKER_PAT }}
             repository: swirlai/swirl-search
+            enable-url-completion: true
         - name: Upload Log Files
           if: always()
           uses: actions/upload-artifact@v4
