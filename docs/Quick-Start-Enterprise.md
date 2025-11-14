@@ -22,7 +22,59 @@ Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI 
 
 ---
 
+# Installation Options
+
+* [SWIRL Enterprise via Azure Marketplace - Virtual Machine](https://marketplace.microsoft.com/en-us/product/virtual-machines/swirlcorporation1684335149355.swirl_vm_offer_poc?tab=Overview)
+
+* [SWIRL Enterprise - Docker Compose](https://github.com/swirlai/docker-compose/blob/main/README.md)
+
+* [SWIRL Enterprise - Helm Chart (Kubernetes)](https://github.com/swirlai/helm-charts/blob/main/README.md) - [Contact SWIRL for installation support](mailto:support@swirlaiconnect.com)
+
+## Notes
+
 * The recommended minimum system configuration is a **32-core server**, with **64 GB of memory** and at least **500 GB of available disk space**. This configuration supports up to **25 users**. [View recommended cloud instances for AWS, Azure and GCP](#recommended-cloud-instances).
+
+---
+
+# Azure Installation
+
+{: .warning }
+The user who performs the installation must be the Cloud Admin for the Azure tenant/subscription.
+
+## Install the Azure CLI
+
+### Windows:
+* Install Windows Subsystem for Linux (WSL) which is required to run the Application Registration script
+* Download the MSI installer from the Azure CLI installation page.
+
+### MacOS: 
+* Using the Brew package manager: `brew update && brew install azure-cli`
+
+## Installation Procedure
+
+1. Download the script and save locally: [https://github.com/swirlai/swirl-internal/blob/main/appreg/swirl_appreg.sh](https://github.com/swirlai/swirl-internal/blob/main/appreg/swirl_appreg.sh)
+
+2. Make this script executable by opening a terminal session, change the directory to where you save the script and change the modes on the file to make it executable: `chmod +x swirl_appreg.sh`
+
+3. Run the script and provide the following information:
+
+* Fully Qualified Domain Name of the Swirl deployment; for example if your domain is `mycompany.com`, consider `swirl.mycompany.com` or `search.mycompany.com` or similar
+
+* The Azure `tenant ID` & `subscription ID`
+
+* The name of the application they are registering - this will appear in the Application Registration and be used by the Swirl Application to provide SSO as well as to grant the Swirl application the necessary Graph API permissions - should not include spaces but may include "-" or "_".
+
+When the script is run there will be some output with warnings that can safely be ignored. Note any errors. 
+
+4. When the script finishes it provides two pieces of information need for the Swirl Deployment: `Object ID` and `Application (client) ID`. *Please copy these values down and keep in a safe place for use later.*
+
+The installation process may take 1-4 minutes to finish. 
+
+When completed, inspect the App Registration in the Azure portal here: [https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade) 
+
+The application name specified in step 3 should appear. 
+
+# Docker Installation 
 
 * To run SWIRL in Docker, install the latest version of [Docker](https://docs.docker.com/get-docker/) for macOS, Linux, or Windows. **Ensure Docker is configured to use all available CPU, memory, and storage.**
 
@@ -37,7 +89,7 @@ docker login --username <docker-username> --password <docker-password>
 {: .warning }
 Ensure Docker is running before proceeding!
 
-## Downloading SWIRL Enterprise Files
+## Installation Steps
 
 1. Locate the email with the subject **"Try SWIRL Enterprise"**.
 2. The email contains three attachments:
@@ -68,12 +120,10 @@ This starts all required SWIRL services and displays the log output. Initializat
 
 Press **CTRL+C** to stop the log output.
 
-> _NOTE TO EDITORS: verify that the below screenshot is still current._
-
 Once complete, the output should look like this:  
 ![SWIRL Enterprise Docker successful startup](images/swirl_enterprise_docker_started.png)
 
-## Verifying SWIRL Startup
+## Verifying Startup
 
 1. Open a new command line and check the running containers:
 
@@ -245,9 +295,9 @@ python swirl.py <swirl-command>
 
 Example: `python manage.py makemigrations`
 
-## Migrating from SWIRL Community
+# Migrating from SWIRL Community
 
-### Migrating SearchProviders
+## Migrating SearchProviders
 
 Before migrating, consider [deleting the preloaded SearchProviders](SP-Guide.html#editing-a-searchprovider) in the SWIRL Enterprise installation. 
 
@@ -264,7 +314,7 @@ Before migrating, consider [deleting the preloaded SearchProviders](SP-Guide.htm
 
 Note any errors, and feel free to [contact support](#support) for assistance.
 
-### Migrating OpenAI/Azure OpenAI settings
+## Migrating OpenAI/Azure OpenAI settings
 
 1. Go to the `/swirl/aiproviders/` endpoint in the SWIRL Enterprise installation.
 
@@ -295,7 +345,7 @@ Set the Enterprise AI Provider configuration `active` to `true`. Set the `tags` 
 
 4. Refresh the Galaxy UI. The `Generate AI Insights` switch in the [Galaxy Search UI](https://docs.swirlaiconnect.com/User-Guide-Enterprise.html#the-ai-search-form-explained) should now be available, and the `SWIRL AI Assistant` (at `/galaxy/chat`), or use the link under the profile icon (top/right).
 
-### Migrating M365 Authentication
+## Migrating M365 Authentication
 
 1. Go to the `swirl/authenticators/Microsoft` endpoint in the SWIRL Enterprise installation. 
 
@@ -303,7 +353,7 @@ Set the Enterprise AI Provider configuration `active` to `true`. Set the `tags` 
 
 Note that you may have to modify the existing app registration if URL of the SWIRL server is changing.
 
-## Updating SWIRL 
+# Updating SWIRL 
 
 {: .warning }
 Be sure to complete all steps under [Persisting Configuration Changes](Quick-Start-Enterprise-1.md#persisting-configuration-changes) before upgrading.
