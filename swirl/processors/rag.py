@@ -12,6 +12,8 @@ from swirl.processors.processor import *
 
 from datetime import datetime
 
+from django.conf import settings
+
 from swirl.openai.openai import OpenAIClient, AI_RAG_USE
 
 from celery import group
@@ -21,16 +23,24 @@ import threading
 # from swirl.web_page import PageFetcherFactory
 from swirl.rag_prompt import RagPrompt
 
-MODEL_3 = "gpt-3.5-turbo"
-MODEL_3_TOK_MAX = 3800
-MODEL_4 = "gpt-4"
-MODEL_4_TOK_MAX = 7000
-MODEL = MODEL_3
-MODEL_TOK_MAX = MODEL_3_TOK_MAX
-MODEL_DEFAULT_SYSTEM_GUIDE = "You are a helpful assistant who considers recent information when answering questions."
-FETCH_TO_SECS=10
-DO_MESSAGE_MOCK_ON_ERROR=False
-MESSAGE_MOCK_ON_ERROR=f"Mock API response from {MODEL}. This is a mock response for testing purpose only."
+# RAG configuration
+RAG_MAX_TOKENS = getattr(settings, "SWIRL_RAG_TOK_MAX", 4000)
+RAG_MAX_TO_CONSIDER = getattr(settings, "SWIRL_RAG_MAX_TO_CONSIDER", 10)
+
+RAG_DEFAULT_SYSTEM_GUIDE = getattr(
+    settings,
+    "SWIRL_RAG_SYSTEM_GUIDE",
+    "You are a helpful assistant who considers recent information when answering questions.",
+)
+
+FETCH_TO_SECS = 10
+DO_MESSAGE_MOCK_ON_ERROR = False
+
+# Don't hard-code a model name here; this is just for the mock path.
+MESSAGE_MOCK_ON_ERROR = (
+    "Mock API response from RAG model. "
+    "This is a mock response for testing purpose only."
+)
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -153,11 +163,17 @@ class RAGPostResultProcessor(PostResultProcessor):
 
         MAX_TO_CONSIDER = 10
 
-        chosen_rag = sorted_rag[:MAX_TO_CONSIDER]
-        max_tokens = MODEL_TOK_MAX
+        # Use module-level, settings-driven config
+        chosen_rag = sorted_rag[:RAG_MAX_TO_CONSIDER]
+
+        max_tokens = RAG_MAX_TOKENS
         fallback_text = ""
         fallback_tokens = 0
-        rag_prompt = RagPrompt(user_query, max_tokens=max_tokens, model=self.client.get_encoding_model())
+        rag_prompt = RagPrompt(
+            user_query,
+            max_tokens=max_tokens,
+            model=self.client.get_encoding_model()
+        )
 
         fetch_prompt_errors = {}
         from swirl.tasks import page_fetcher_task
@@ -216,7 +232,7 @@ class RAGPostResultProcessor(PostResultProcessor):
         logger.debug(f"\nRAG Prompt:\n\t{new_prompt_text}")
 
         if len(new_prompt_text) < 5:
-            self.warning(f"RAG too short after trying {MAX_TO_CONSIDER} items, trying fallback")
+            self.warning(f"RAG too short after trying {RAG_MAX_TO_CONSIDER} items, trying fallback")
             new_prompt_text = fallback_text
 
         if len(new_prompt_text) < 5:
