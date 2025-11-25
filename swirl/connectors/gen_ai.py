@@ -9,11 +9,11 @@ from os import environ
 import django
 
 from swirl.utils import swirl_setdir
-path.append(swirl_setdir()) # path to settings.py file
+path.append(swirl_setdir())  # path to settings.py file
 environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 django.setup()
 
-from django.conf import settings
+from django.conf import settings  # still available if needed later
 
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
@@ -24,15 +24,13 @@ from datetime import datetime
 
 from swirl.openai.openai import AI_QUERY_USE, OpenAIClient
 
-MODEL_3 = "gpt-3.5-turbo"
-MODEL_4 = "gpt-4"
-
-MODEL = MODEL_3
-
 ########################################
 ########################################
 
-MODEL_DEFAULT_SYSTEM_GUIDE = "You are a helpful assistant, keeping your response brief and to the point."
+MODEL_DEFAULT_SYSTEM_GUIDE = (
+    "You are a helpful assistant, keeping your response brief and to the point."
+)
+
 
 class GenAI(Connector):
 
@@ -47,6 +45,7 @@ class GenAI(Connector):
         logger.debug(f"{self}: execute_search()")
         client = None
         try:
+            # If provider.credentials is set, it overrides the default key
             client = OpenAIClient(usage=AI_QUERY_USE, key=self.provider.credentials)
         except ValueError as valErr:
             logger.error(f"err {valErr} while initializing OpenAI client")
@@ -58,13 +57,17 @@ class GenAI(Connector):
             prompted_query = self.query_to_provider
         else:
             if 'PROMPT' in self.query_mappings:
-                prompted_query = self.query_mappings['PROMPT'].format(query_to_provider=self.query_to_provider)
+                prompted_query = self.query_mappings['PROMPT'].format(
+                    query_to_provider=self.query_to_provider
+                )
             else:
                 prompted_query = self.query_to_provider
-                self.warning(f'PROMPT not found in query_mappings!')
+                self.warning('PROMPT not found in query_mappings!')
 
         if 'CHAT_QUERY_REWRITE_GUIDE' in self.query_mappings:
-            self.system_guide = self.query_mappings['CHAT_QUERY_REWRITE_GUIDE'].format(query_to_provider=self.query_to_provider)
+            self.system_guide = self.query_mappings['CHAT_QUERY_REWRITE_GUIDE'].format(
+                query_to_provider=self.query_to_provider
+            )
 
         if not prompted_query:
             self.found = 0
@@ -72,26 +75,34 @@ class GenAI(Connector):
             self.response = []
             self.status = "ERR_PROMPT_FAILED"
             return
-        logger.info(f'CGPT completion system guide:{self.system_guide} query to provider : {self.query_to_provider}')
+
+        model_name = client.get_model()
+        logger.info(
+            "GenAI completion system guide: %s model: %s query_to_provider: %s",
+            self.system_guide,
+            model_name,
+            self.query_to_provider,
+        )
+
         self.query_to_provider = prompted_query
         completions = client.openai_client.chat.completions.create(
-            model=client.get_model(),
+            model=model_name,
             messages=[
                 {"role": "system", "content": self.system_guide},
                 {"role": "user", "content": self.query_to_provider},
-            ]
+            ],
         )
         message = completions.choices[0].message.content
         self.found = 1
         self.retrieved = 1
         msg = message.replace("\n\n", "")
         self.response = [
-                {
+            {
                 'title': self.query_string_to_provider,
                 'body': f'{msg}',
-                'author': f'GenAI',
+                'author': 'GenAI',
                 'date_published': str(datetime.now()),
-                'model': f'Unknown Model'
+                'model': model_name,
             }
         ]
 

@@ -292,29 +292,23 @@ SWIRL_SEARCH_FORM_URL = env('SWIRL_SEARCH_FORM_URL', default=SWIRL_SEARCH_FORM_U
 
 SWIRL_DEFAULT_RESULT_BLOCK = 'ai_summary'
 
+# RAG / Gen_AI settings
 OPENAI_API_KEY = env.get_value('OPENAI_API_KEY', default='')
 AZURE_OPENAI_KEY = env.get_value('AZURE_OPENAI_KEY', default='')
 AZURE_OPENAI_ENDPOINT = env.get_value('AZURE_OPENAI_ENDPOINT', default='')
 AZURE_MODEL = env.get_value('AZURE_MODEL', default='')
-AZURE_API_VERSION = os.getenv("AZURE_API_VERSION", default='') 
+AZURE_API_VERSION = os.getenv("AZURE_API_VERSION", default='')
 
-# Defines for RAG ChatGPT models
-CGPT_MODEL_3 = "gpt-3.5-turbo"
-CGPT_MODEL_3_TOK_MAX = 3800
-CGPT_MODEL_4 = "gpt-4"
-CGPT_MODEL_4_TOK_MAX = 7000
-CGPT_MODEL_DEF = CGPT_MODEL_4
-CGPT_MODEL_TOK_MAX = CGPT_MODEL_4_TOK_MAX - 3000
+# Model names:
+# - For AZURE/OPENAI, AZURE_MODEL is the deployment name.
+# - For OPENAI, these must be set explicitly in the environment;
+SWIRL_RAG_MODEL = env.get_value('SWIRL_RAG_MODEL', default='')
+SWIRL_REWRITE_MODEL = env.get_value('SWIRL_REWRITE_MODEL', default='')
+SWIRL_QUERY_MODEL = env.get_value('SWIRL_QUERY_MODEL', default='')
 
-SWIRL_RAG_MODEL = env.get_value('SWIRL_RAG_MODEL', default=CGPT_MODEL_DEF)
-SWIRL_RAG_TOK_MAX = env.get_value('SWIRL_RAG_TOK_MAX', default=CGPT_MODEL_TOK_MAX, cast=int)
+# RAG token and results budgets
+SWIRL_RAG_TOK_MAX = env.int('SWIRL_RAG_TOK_MAX', default=4000)   # low default for backward compatibility only
 SWIRL_RAG_MAX_TO_CONSIDER = env.int('SWIRL_RAG_MAX_TO_CONSIDER', default=10)
-
-SWIRL_REWRITE_MODEL_DEF= CGPT_MODEL_3
-SWIRL_QUERY_MODEL_DEF = CGPT_MODEL_3
-
-SWIRL_REWRITE_MODEL = env.get_value('SWIRL_REWRITE_MODEL', default=SWIRL_REWRITE_MODEL_DEF)
-SWIRL_QUERY_MODEL = env.get_value('SWIRL_QUERY_MODEL', default=SWIRL_QUERY_MODEL_DEF)
 
 SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY_DEF=True
 SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY=env.bool('SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY',default=SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY_DEF)
