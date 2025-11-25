@@ -186,9 +186,9 @@ jobs:
             echo "MSAL_CB_PORT=8000" >> .env.qa
             echo "QA_ADMIN_PW=${{ secrets.QA_ADMIN_PW }}" >> .env.qa
             echo "QA_OPENAI_KEY=${{ secrets.QA_OPENAI_KEY }}" >> .env.qa
-            echo "SWIRL_RAG_MODEL='gpt-4.1'" >> .env.qa
-            echo "SWIRL_REWRITE_MODEL='gpt-4.1'" >> .env.qa
-            echo "SWIRL_QUERY_MODEL='gpt-4.1'" >> .env.qa
+            echo "SWIRL_RAG_MODEL=gpt-4.1" >> .env.qa
+            echo "SWIRL_REWRITE_MODEL=gpt-4.1" >> .env.qa
+            echo "SWIRL_QUERY_MODEL=gpt-4.1" >> .env.qa
             echo "SWIRL_RAG_TOK_MAX=100000" >> .env.qa
             echo "QA_NLR_USERNAME=${{ secrets.QA_NLR_USERNAME }}" >> .env.qa
             echo "QA_NLR_PASSWORD=${{ secrets.QA_NLR_PASSWORD }}" >> .env.qa
