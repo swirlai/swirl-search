@@ -143,6 +143,9 @@ jobs:
             python swirl.py start
           env:
             ALLOWED_HOSTS: localhost,host.docker.internal
+            SWIRL_RAG_MODEL: gpt-4.1
+            SWIRL_REWRITE_MODEL: gpt-4.1
+            SWIRL_QUERY_MODEL: gpt-4.1
         - name: PATCH the Web PSE Config
           env:
             JSON: ${{ secrets.QA_PSE_WEB }}
@@ -186,10 +189,6 @@ jobs:
             echo "MSAL_CB_PORT=8000" >> .env.qa
             echo "QA_ADMIN_PW=${{ secrets.QA_ADMIN_PW }}" >> .env.qa
             echo "QA_OPENAI_KEY=${{ secrets.QA_OPENAI_KEY }}" >> .env.qa
-            echo "SWIRL_RAG_MODEL=gpt-4.1" >> .env.qa
-            echo "SWIRL_REWRITE_MODEL=gpt-4.1" >> .env.qa
-            echo "SWIRL_QUERY_MODEL=gpt-4.1" >> .env.qa
-            echo "SWIRL_RAG_TOK_MAX=100000" >> .env.qa
             echo "QA_NLR_USERNAME=${{ secrets.QA_NLR_USERNAME }}" >> .env.qa
             echo "QA_NLR_PASSWORD=${{ secrets.QA_NLR_PASSWORD }}" >> .env.qa
             echo "QA_CRUNCHBASE_KEY=${{ secrets.QA_CRUNCHBASE_KEY }}" >> .env.qa
