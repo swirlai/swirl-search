@@ -143,6 +143,9 @@ jobs:
             python swirl.py start
           env:
             ALLOWED_HOSTS: localhost,host.docker.internal
+            SWIRL_RAG_MODEL: gpt-4.1
+            SWIRL_REWRITE_MODEL: gpt-4.1
+            SWIRL_QUERY_MODEL: gpt-4.1
         - name: PATCH the Web PSE Config
           env:
             JSON: ${{ secrets.QA_PSE_WEB }}
