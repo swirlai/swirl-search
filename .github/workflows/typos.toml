@@ -6,6 +6,7 @@ extend-exclude = [
     "swirl/tests",
     "Data",
     "DevUtils/Swirl.postman_collection.json",
+    "docs/googlec95caf0bd4a8c5df.html",
 ]
 
 [default.extend-identifiers]

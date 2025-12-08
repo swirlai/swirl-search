@@ -947,7 +947,7 @@ Note that the example above only applies to calling the SWIRL API. Please [conta
 
 ### Configuring the QueryProcessor
 
-The GenAIQueryProcessor supports the same tags and configuration options as the [GenAIConnector](#setting-the-genai-prompt-or-role) but using a colon (':') as a delimeter.
+The GenAIQueryProcessor supports the same tags and configuration options as the [GenAIConnector](#setting-the-genai-prompt-or-role) but using a colon (':') as a delimiter.
 
 For example:
 
