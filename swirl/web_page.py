@@ -207,7 +207,7 @@ class PageFetcherOptions:
             options["headers"] = self._merge_options(options["headers"],
                                     PageFetcherOptions.get_page_fetch_defaults()["headers"])
 
-        # merge passed in WITH passed in headers correct, and prefering passed in
+        # merge passed in WITH passed in headers correct, and preferring passed in
         # with defaults
         self._options = PageFetcherOptions._merge_options(input=options, defaults=PageFetcherOptions.get_page_fetch_defaults())
         self._url = url
