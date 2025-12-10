@@ -5,36 +5,90 @@ on:
   workflow_dispatch:
 
 jobs:
-
   swirl-docker:
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout the Code
-            uses: actions/checkout@v5
-          - name: Login to Docker Hub
-            uses: docker/login-action@v3
-            with:
-              username: ${{ secrets.SBS_DOCKER_USER }}
-              password: ${{ secrets.SBS_DOCKER_PAT }}
-          - name: Build and Push Swirl Docker Image
-            run: |
-              BRANCH_NAME=${GITHUB_REF#refs/heads/}
-              TAG_NAME=$([ "$BRANCH_NAME" = "main" ] && echo "latest" || echo "$BRANCH_NAME")
-              docker buildx use devBuilder || docker buildx create --name devBuilder --use
-              docker buildx build -t swirlai/swirl-search:$TAG_NAME --platform linux/amd64,linux/arm64 --push .
-          - name: Update the Docker Repo Description
-            if: github.ref == 'refs/heads/main'
-            uses: peter-evans/dockerhub-description@v5
-            with:
-              username: ${{ secrets.SBS_DOCKER_USER }}
-              password: ${{ secrets.SBS_DOCKER_PAT }}
-              repository: swirlai/swirl-search
-              enable-url-completion: true
-          - name: Upload Log Files
-            if: always()
-            uses: actions/upload-artifact@v4
-            with:
-              name: log-files
-              path: |
-                logs/
-                /var/log/syslog*
+    runs-on: ubuntu-latest
+    steps:
+      - name: Disk usage at start
+        run: |
+          echo "=== df -h ==="
+          df -h
+          echo
+          echo "=== /home/runner usage ==="
+          du -h -d1 /home/runner || true
+          echo
+          echo "=== /var usage ==="
+          du -h -d1 /var || true
+
+      - name: Checkout the Code
+        uses: actions/checkout@v5
+
+      # Optional: shrink build context slightly (no need for full git history inside Docker build)
+      # - name: Remove .git to shrink build context
+      #   run: rm -rf .git
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.SBS_DOCKER_USER }}
+          password: ${{ secrets.SBS_DOCKER_PAT }}
+
+      - name: Disk usage before docker build
+        run: |
+          echo "=== df -h (before build) ==="
+          df -h
+          echo
+          echo "=== /home/runner usage (before build) ==="
+          du -h -d1 /home/runner || true
+          echo
+          echo "=== /var usage (before build) ==="
+          du -h -d1 /var || true
+
+      # Optional: pre-build prune to see how much extra space you can reclaim
+      # - name: Pre-build Docker prune
+      #   run: |
+      #     docker system df || true
+      #     docker system prune -af || true
+      #     docker builder prune -af || true
+      #     docker volume prune -f || true
+      #   # You might want to run once WITHOUT this first, to see the raw usage.
+
+      - name: Build and Push Swirl Docker Image
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          TAG_NAME=$([ "$BRANCH_NAME" = "main" ] && echo "latest" || echo "$BRANCH_NAME")
+          echo "Building for BRANCH_NAME=$BRANCH_NAME TAG_NAME=$TAG_NAME"
+          docker buildx use devBuilder || docker buildx create --name devBuilder --use
+          docker buildx build \
+            -t swirlai/swirl-search:$TAG_NAME \
+            --platform linux/amd64,linux/arm64 \
+            --push .
+
+      - name: Disk usage after docker build
+        if: always()
+        run: |
+          echo "=== df -h (after build) ==="
+          df -h
+          echo
+          echo "=== /home/runner usage (after build) ==="
+          du -h -d1 /home/runner || true
+          echo
+          echo "=== /var usage (after build) ==="
+          du -h -d1 /var || true
+
+      - name: Update the Docker Repo Description
+        if: github.ref == 'refs/heads/main'
+        uses: peter-evans/dockerhub-description@v5
+        with:
+          username: ${{ secrets.SBS_DOCKER_USER }}
+          password: ${{ secrets.SBS_DOCKER_PAT }}
+          repository: swirlai/swirl-search
+          enable-url-completion: true
+
+      - name: Upload Log Files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: log-files
+          path: |
+            logs/
+            /var/log/syslog*
