@@ -206,6 +206,11 @@ jobs:
       needs: qa-suite
       runs-on: ubuntu-latest
       steps:
+        - name: Clean Docker from previous jobs
+          run: |
+            docker system prune -af || true
+            docker builder prune -af || true
+            docker volume prune -f || true
         - name: Checkout the Code
           uses: actions/checkout@v5
         - name: Pull the Latest (for just this branch)
