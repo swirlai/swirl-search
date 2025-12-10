@@ -27,7 +27,9 @@ SWIRL_SERVICES = [
     },
     {
         'name': 'celery-worker',
-        'path': 'celery -A swirl_server worker',
+        # 'path': 'celery -A swirl_server worker',
+        # MACOS 26 / Tahoe Incantation
+        'path': f'celery -A swirl_server worker --pool=threads',
         'default': True,
         'retired': False
     },

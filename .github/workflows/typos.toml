@@ -1,13 +1,16 @@
 # Exclude the following from spell checking
 
 [files]
+# Files and directories to exclude from the check
 extend-exclude = [
     "swirl/tests",
-    "docs/"
+    "Data",
+    "DevUtils/Swirl.postman_collection.json",
+    "docs/googlec95caf0bd4a8c5df.html",
 ]
 
 [default.extend-identifiers]
-# Don't correct this variable from scripts/fix_csv.py
+# Don't correct this variable (it's in DevUtils/fix_csv.py)
 fo = "fo"
 
 [default.extend-words]

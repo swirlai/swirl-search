@@ -27,10 +27,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Check Spelling
       uses: crate-ci/typos@master  # From here:  https://github.com/crate-ci/typos
       with:
         config: ./.github/workflows/typos.toml
-        write_changes: true  # Writes changes on the Action's local checkout
