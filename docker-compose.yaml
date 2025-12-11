@@ -26,3 +26,12 @@ services:
              daphne -b 0.0.0.0 -p 8000 swirl_server.asgi:application'
     environment: # Environment variables section
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - AZURE_OPENAI_KEY=${AZURE_OPENAI_KEY}
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+      - AZURE_MODEL=${AZURE_MODEL}
+      - AZURE_API_VERSION=${AZURE_API_VERSION}
+      - SWIRL_RAG_MODEL=${SWIRL_RAG_MODEL}
+      - SWIRL_REWRITE_MODEL=${SWIRL_REWRITE_MODEL}
+      - SWIRL_QUERY_MODEL=${SWIRL_QUERY_MODEL}
+      - SWIRL_RAG_TOK_MAX=${SWIRL_RAG_TOK_MAX}
+      - SWIRL_RAG_MAX_TO_CONSIDER=${SWIRL_RAG_MAX_TO_CONSIDER}
