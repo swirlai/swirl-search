@@ -158,9 +158,8 @@ For details, see the [Developer Guide](./Developer-Guide#get-synchronous-results
 - To modify the timeout and error message, update:  
 
 ```json
-"webSocketConfig": {
-    "url": "ws://localhost:8000/chatgpt-data",
-    "timeout": 60000,
+"ragConfig": {
+    "timeout": 90,
     "timeoutText": "Timeout: No response from Generative AI."
-}
+},
 ```  
