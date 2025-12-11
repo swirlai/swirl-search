@@ -6,4 +6,3 @@ gem "jekyll-relative-links"
 gem "jemoji"
 gem "just-the-docs", "0.10.1"
 gem 'jekyll-sass-converter', '~> 3.1.0' # Quiet the deprecation warnings from the 'sass-embedded' gem
-

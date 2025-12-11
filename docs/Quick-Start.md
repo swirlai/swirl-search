@@ -37,24 +37,47 @@ Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI 
 
 2. **Set Up Environment Variables**  
 
-    To enable **Real-Time Retrieval-Augmented Generation (RAG)** in SWIRL, you must provide a **valid OpenAI API key**.
+    To enable **Real-Time Retrieval-Augmented Generation (RAG)** in SWIRL, you must export the following environment variables.
+    
+    **MSAL values for SWIRL's host and port**
 
-    **For macOS or Linux:**  
+    *MacOS or Linux:*
     ```shell
     export MSAL_CB_PORT=8000
     export MSAL_HOST=localhost
-    export OPENAI_API_KEY=<your-OpenAI-API-key>
     ```
 
-    **For Windows (PowerShell):**  
+    *Windows (PowerShell):*
     ```powershell
     $Env:MSAL_CB_PORT = "8000"
     $Env:MSAL_HOST = "localhost"
-    $Env:OPENAI_API_KEY = "<your-OpenAI-API-key>"
     ```
 
-    {: .highlight }  
-    Need an OpenAI API Key? Watch [OpenAI’s setup guide](https://youtu.be/nafDyRsVnXU?si=YpvyaRvhX65vtBrb).  
+    **Valid model version along with valid OpenAI or Azure/OpenAI credentials**
+
+    *MacOS or Linux:*
+    ```shell
+    export SWIRL_RAG_MODEL='gpt-4.1'
+
+    export OPENAI_API_KEY=<your-OpenAI-API-key>
+
+    export AZURE_OPENAI_KEY=<your-AzureOpenAI-key>
+    export AZURE_OPENAI_ENDPOINT=<your-AzureOpenAI-endpoint>
+    export AZURE_MODEL='gpt-4.1'
+    export AZURE_API_VERSION=<your-AzureOpenAI-version>
+    ```
+
+    *Windows (PowerShell):*
+    ```powershell
+    $Env:SWIRL_RAG_MODEL = "gpt-4.1"
+
+    $Env:OPENAI_API_KEY = "<your-OpenAI-API-key>"
+
+    $Env:AZURE_OPENAI_KEY = "<your-AzureOpenAI-key>"
+    $Env:AZURE_OPENAI_ENDPOINT = "<your-AzureOpenAI-endpoint>"
+    $Env:AZURE_MODEL = "gpt-4.1"
+    $Env:AZURE_API_VERSION = "<your-AzureOpenAI-version>"
+    ```
 
 3. **Start SWIRL**  
 

@@ -25,41 +25,41 @@ SWIRL supports Real-Time **Retrieval Augmented Generation (RAG)** out of the box
 
 1. **Install SWIRL** as noted in the [Quick Start Guide](./Quick-Start), including the latest version of the **Galaxy UI**.  
 
-2. **Add your OpenAI API key or Azure OpenAI credentials** to the `.env` file:  
+2. **Add the RAG configuration and credentials values** to the `.env` file.
+
+    OpenAI direct:
 
     ```shell
-    OPENAI_API_KEY='your-key-here'
+    OPENAI_API_KEY='your-OpenAI-key'
     ```
 
-    *Check out [OpenAI's YouTube video](https://youtu.be/nafDyRsVnXU?si=YpvyaRvhX65vtBrb) if you don't have an OpenAI API Key.*  
+    Azure/OpenAI:
 
     ```shell
-    AZURE_OPENAI_KEY=<your-key>
-    AZURE_OPENAI_ENDPOINT=<your-azure-openai-endpoint-url>
-    AZURE_MODEL=<your-azure-openai-model>
+    AZURE_OPENAI_KEY='your-Azure/OpenAI-key'
+    AZURE_OPENAI_ENDPOINT='your-Azure/OpenAI-endpoint'
+    AZURE_MODEL='your-Azure/OpenAI-model'
+    AZURE_API_VERSION='your-Azure/OpenAI-version'
+    ```
+
+    *Optional RAG Configurations:*
+
+    ```shell
+    # Additional model usage options
+    SWIRL_RAG_MODEL='gpt-4.1'
+    SWIRL_REWRITE_MODEL='gpt-4.1'
+    SWIRL_QUERY_MODEL='gpt-4.1'
+
+    # RAG token and results budgets (defaults are 4000 and 10, respectively)
+    SWIRL_RAG_TOK_MAX=25000
+    SWIRL_RAG_MAX_TO_CONSIDER=12
     ```
 
     {: .warning }  
-    **SWIRL AI Search Community Edition supports RAG only with OpenAI and Azure OpenAI.**  
+    **SWIRL AI Search Community Edition supports RAG only with OpenAI and Azure/OpenAI.**  
     The [Enterprise Edition](AI-Search#connecting-to-generative-ai-gai-and-large-language-models-llms) supports additional providers.  
 
-3. **For PRODUCTION use**, update `static/api/config/default`:  
-
-    Change this:  
-    ```json
-    "webSocketConfig": {
-        "url": "ws://<yourhost>:<your-port>/chatgpt-data"
-    }
-    ```  
-    ...to this:  
-    ```json
-    "webSocketConfig": {
-        "url": "wss://<yourhost>:<your-port>/chatgpt-data"
-    }
-    ```  
-    *Using `ws://` locally is fine, but it is **not secure** for production!*  
-
-4. **Configure SearchProviders for RAG:**  
+3. **Configure SearchProviders for RAG:**  
 
     Modify the `page_fetch_config_json` parameter for each **SearchProvider**:  
 
@@ -82,13 +82,13 @@ SWIRL supports Real-Time **Retrieval Augmented Generation (RAG)** out of the box
     http://localhost:8000/galaxy/?q=gig%20economics&rag=true&rag_timeout=90
     ```  
 
-5. **Restart SWIRL:**  
+4. **Restart SWIRL:**  
 
     ```shell
     python swirl.py restart
     ```  
 
-6. **Run a Search in the Galaxy UI**:  
+5. **Run a Search in the Galaxy UI**:  
 
     - Open [http://localhost:8000/galaxy/](http://localhost:8000/galaxy/).  
     - Ensure the **"Generate AI Response"** switch is **off**.  
@@ -100,7 +100,7 @@ SWIRL supports Real-Time **Retrieval Augmented Generation (RAG)** out of the box
     Results appear:  
     ![Galaxy with RAG results ready for selection](images/swirl_40_community_rag.png)  
 
-7. **Manually Select Results for RAG (Optional)**:  
+6. **Manually Select Results for RAG (Optional)**:  
 
     - Click **"Select Items"** to enable manual selection.  
     - Pre-selected results indicate **SWIRL's best matches for RAG**.  
@@ -110,7 +110,7 @@ SWIRL supports Real-Time **Retrieval Augmented Generation (RAG)** out of the box
 
     ![Galaxy with RAG results selected](images/swirl_40_rag_select.png)  
 
-8. **Verify citations** under the RAG response.  
+7. **Verify citations** under the RAG response.  
 
     {: .highlight }  
     To **cancel** a RAG process, toggle **"Generate AI Summary"** off.  
@@ -158,9 +158,8 @@ For details, see the [Developer Guide](./Developer-Guide#get-synchronous-results
 - To modify the timeout and error message, update:  
 
 ```json
-"webSocketConfig": {
-    "url": "ws://localhost:8000/chatgpt-data",
-    "timeout": 60000,
+"ragConfig": {
+    "timeout": 90,
     "timeoutText": "Timeout: No response from Generative AI."
-}
+},
 ```  
