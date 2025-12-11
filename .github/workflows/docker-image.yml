@@ -5,36 +5,81 @@ on:
   workflow_dispatch:
 
 jobs:
-
   swirl-docker:
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout the Code
-            uses: actions/checkout@v5
-          - name: Login to Docker Hub
-            uses: docker/login-action@v3
-            with:
-              username: ${{ secrets.SBS_DOCKER_USER }}
-              password: ${{ secrets.SBS_DOCKER_PAT }}
-          - name: Build and Push Swirl Docker Image
-            run: |
-              BRANCH_NAME=${GITHUB_REF#refs/heads/}
-              TAG_NAME=$([ "$BRANCH_NAME" = "main" ] && echo "latest" || echo "$BRANCH_NAME")
-              docker buildx use devBuilder || docker buildx create --name devBuilder --use
-              docker buildx build -t swirlai/swirl-search:$TAG_NAME --platform linux/amd64,linux/arm64 --push .
-          - name: Update the Docker Repo Description
-            if: github.ref == 'refs/heads/main'
-            uses: peter-evans/dockerhub-description@v5
-            with:
-              username: ${{ secrets.SBS_DOCKER_USER }}
-              password: ${{ secrets.SBS_DOCKER_PAT }}
-              repository: swirlai/swirl-search
-              enable-url-completion: true
-          - name: Upload Log Files
-            if: always()
-            uses: actions/upload-artifact@v4
-            with:
-              name: log-files
-              path: |
-                logs/
-                /var/log/syslog*
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check disk before cleanup
+        run: |
+          echo "=== DISK USAGE BEFORE CLEANUP ==="
+          df -h
+
+      - name: Free disk space on runner (SDKs & toolcache)
+        run: |
+          echo "=== REMOVING LARGE PREINSTALLED SDKs & TOOL CACHES ==="
+          echo "Removing: /usr/share/dotnet"
+          sudo rm -rf /usr/share/dotnet || true
+
+          echo "Removing: /usr/local/lib/android"
+          sudo rm -rf /usr/local/lib/android || true
+
+          echo "Removing: /opt/ghc"
+          sudo rm -rf /opt/ghc || true
+
+          echo "Removing: /usr/local/.ghcup"
+          sudo rm -rf /usr/local/.ghcup || true
+
+          echo "Removing: /opt/hostedtoolcache"
+          sudo rm -rf /opt/hostedtoolcache || true
+
+          echo
+          echo "=== DISK USAGE AFTER SDK/TOOLCACHE CLEANUP ==="
+          df -h
+
+      - name: Clean up any existing Docker data
+        run: |
+          echo "=== DOCKER SYSTEM PRUNE (IF ANY) ==="
+          docker system df || true
+          docker system prune -af || true
+          docker builder prune -af || true
+
+          echo
+          echo "=== DISK USAGE AFTER DOCKER CLEANUP ==="
+          df -h
+
+      - name: Checkout the Code
+        uses: actions/checkout@v5
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.SBS_DOCKER_USER }}
+          password: ${{ secrets.SBS_DOCKER_PAT }}
+
+      - name: Build and Push Swirl Docker Image
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          TAG_NAME=$([ "$BRANCH_NAME" = "main" ] && echo "latest" || echo "$BRANCH_NAME")
+          echo "Building tag: swirlai/swirl-search:$TAG_NAME"
+          docker buildx use devBuilder || docker buildx create --name devBuilder --use
+          docker buildx build \
+            -t swirlai/swirl-search:$TAG_NAME \
+            --platform linux/amd64,linux/arm64 \
+            --push .
+
+      - name: Update the Docker Repo Description
+        if: github.ref == 'refs/heads/main'
+        uses: peter-evans/dockerhub-description@v5
+        with:
+          username: ${{ secrets.SBS_DOCKER_USER }}
+          password: ${{ secrets.SBS_DOCKER_PAT }}
+          repository: swirlai/swirl-search
+          enable-url-completion: true
+
+      - name: Upload Log Files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: log-files
+          path: |
+            logs/
+            /var/log/syslog*
