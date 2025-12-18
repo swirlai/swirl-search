@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Release 4.3.0, Enterprise Edition
+title: Release 4.4.0, Enterprise Edition
 nav_exclude: true
 ---
 
@@ -19,11 +19,11 @@ SWIRL 4.4 includes file location and holding for deep, detailed, ongoing convers
 
 - The AI Search Assistant can now locate and hold files for an ongoing conversation.
 
-![](TBD)
+![SWIRL Enterprise 4.4 featuring Document Location](../images/4_4_0_locate_document.png)
 
 - PII redaction via Microsoft Presidio is now supported for queries, results, and RAG responses.
 
-![](TBD)
+![SWIRL Enterprise 4.4 featuring PII Redaction](../images/4_4_0_pii_redaction.png)
 
 - Advanced German query processing is now supported, including de-compounding of words.
 - New connector for SpiraPlan TBD
