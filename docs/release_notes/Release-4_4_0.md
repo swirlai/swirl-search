@@ -26,25 +26,19 @@ SWIRL 4.4 includes file location and holding for deep, detailed, ongoing convers
 ![SWIRL Enterprise 4.4 featuring PII Redaction](../images/4_4_0_pii_redaction.png)
 
 - Advanced German query processing is now supported, including de-compounding of words.
-- New connector for SpiraPlan TBD
+- New connector for [Inflectra SpiraPlan](https://www.inflectra.com/Products/SpiraPlan/)
 
 # Improvements
 
-- The AI Search Assistant has improved tool calling for SQL and sources that require complex query languages.
-
-![](TBD)
-
 - The list of preloaded SearchProviders has been re-organized to improve clarity.
 
-![](TBD)
+- The AI Search Assistant has improved tool calling for SQL and sources that require complex query languages.
 
-- Each SearchProvider can now specify a unique timeout... TBD
-
-![](TBD)
+- Each SearchProvider can now specify a unique timeout. The Galaxy UI will report on sources that don't answer in time.
 
 - The RequestGet and RequestPost connectors have been updated to support 429 back-off
 - The Galaxy Source Selector now supports partial source selection as per the CUA protocol.
-- Galaxy's handling of LLM-generated markup, late-arriving results and author display has been improved.
+- Galaxy's handling of LLM-generated markup, late-arriving results and author display have been improved.
 - Japanese tokenization & stemming have been improved.
 - Celery workers have been re-organized for easier scaling.
 - The Manage SWIRL link is now restricted to admins & superusers.
