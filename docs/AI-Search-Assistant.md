@@ -145,7 +145,7 @@ Use the [Customizing Prompts](#customizing-the-ai-search-assistant-prompts) proc
 The following procedure below below to copy the standard prompts, modify them, then make them active. 
 New prompts that you create won't be disturbed during upgrades.
 
-1. Open [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)
+1. Open [http://localhost:8000/admin/swirl/prompt/](http://localhost:8000/admin/swirl/prompt/)
 
 2. Locate the `chat_rag_instructions_standard`, `chat_rag_standard` or `chat_rag_deeplink` prompts and note the `id`. 
 
@@ -155,7 +155,7 @@ New prompts that you create won't be disturbed during upgrades.
 
 5. Click the `HTML form` tab at the bottom of the page. Set `active` to `false`. Click `PUT` to save the change. 
 
-6. Go back to [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/) and scroll to the bottom of the form. 
+6. Go back to [http://localhost:8000/admin/swirl/prompt/](http://localhost:8000/admin/swirl/prompt/) and scroll to the bottom of the form. 
 
 7. Select the `Raw data` tab if necessary. Paste the prompt copied in step #4 into `Content:` block. **Do not hit `Put` yet**.
 

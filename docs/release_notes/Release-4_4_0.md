@@ -13,15 +13,20 @@ Team SWIRL is announcing the release of **SWIRL AI Search 4.4, Enterprise Editio
 
 ---
 
-SWIRL 4.4 includes file location and holding for deep, detailed, ongoing conversations, plus updated PII redaction, improved advanced querying support and usability fixes.
+SWIRL 4.4 adds support for locating and interrogating a single document using the AI Search Assistant. This release also includes updated PII support via Microsoft Presidio, improved support for Search Assistant querying and usability fixes.
 
 # New features
 
 - The AI Search Assistant can now locate and hold files for an ongoing conversation.
 
-![SWIRL Enterprise 4.4 featuring Document Location](../images/4_4_0_locate_document.png)
+![SWIRL Enterprise 4.4 featuring Document location](../images/4_4_0_locate_document.png)
 
-- PII redaction via Microsoft Presidio is now supported for queries, results, and RAG responses.
+- Galaxy now supports a "Connect all" button which re-connects/refreshes all OAUTH2 sources. 
+
+![SWIRL Enterprise 4.4 featuring Connect all button](../images/4_4_0_connect_all.png)
+![SWIRL Enterprise 4.4 featuring Disconnect all button](../images/4_4_0_disconnect_all.png)
+
+- PII detection via Microsoft Presidio is now supported for queries, results, and RAG responses, with a choice of redaction or removal. 
 
 ![SWIRL Enterprise 4.4 featuring PII Redaction](../images/4_4_0_pii_redaction.png)
 
@@ -32,9 +37,9 @@ SWIRL 4.4 includes file location and holding for deep, detailed, ongoing convers
 
 - The list of preloaded SearchProviders has been re-organized to improve clarity.
 
-- The AI Search Assistant has improved tool calling for SQL and sources that require complex query languages.
+- The AI Search Assistant has improved tool calling for SQL and other sources that require complex query languages like Open Search, Elastic and MongoDB. 
 
-- Each SearchProvider can now specify a unique timeout. The Galaxy UI will report on sources that don't answer in time.
+- Each SearchProvider can now specify a unique timeout. The Galaxy UI will identify sources that don't answer in time.
 
 - The RequestGet and RequestPost connectors have been updated to support 429 back-off
 - The Galaxy Source Selector now supports partial source selection as per the CUA protocol.
