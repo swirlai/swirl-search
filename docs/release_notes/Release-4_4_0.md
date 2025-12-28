@@ -23,8 +23,8 @@ SWIRL 4.4 adds support for locating and interrogating a single document using th
 
 - Galaxy now supports a "Connect all" button which re-connects/refreshes all OAUTH2 sources. 
 
-![SWIRL Enterprise 4.4 featuring Connect all button](../images/4_4_0_connect_all.png)
-![SWIRL Enterprise 4.4 featuring Disconnect all button](../images/4_4_0_disconnect_all.png)
+<img src="../images/4_4_0_connect_all.png" alt="SWIRL Enterprise 4.4 featuring Connect all button" width="300">
+<img src="../images/4_4_0_disconnect_all.png" alt="SWIRL Enterprise 4.4 featuring Disconnect all button" width="300">  
 
 - PII detection via Microsoft Presidio is now supported for queries, results, and RAG responses, with a choice of redaction or removal. 
 
@@ -52,7 +52,7 @@ SWIRL 4.4 adds support for locating and interrogating a single document using th
 
 # Upgrading
 
-⚠️ Version 4.3 includes **Django migrations**.  Please see the [Database Migrations](../Admin-Guide#database-migration) documentation for details.
+⚠️ Version 4.4 includes **Django migrations**.  Please see the [Database Migrations](../Admin-Guide#database-migration) documentation for details.
 
 ---
 
