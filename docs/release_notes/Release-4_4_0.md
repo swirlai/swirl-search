@@ -6,22 +6,22 @@ nav_exclude: true
 
 # 🚀 SWIRL Enterprise 4.4 Release Notes
 
-Team SWIRL is announcing the release of **SWIRL AI Search 4.4, Enterprise Edition**.
+Team SWIRL is announcing the release of **SWIRL Enterprise, Version 4.4**.
 
-⭐ PLEASE STAR OUR REPO: https://github.com/swirlai/swirl-search
-🌐 PLEASE VISIT OUR WEBSITE: https://www.swirlaiconnect.com/
+⭐ PLEASE STAR OUR REPO: <https://github.com/swirlai/swirl-search><br/>
+🌐 PLEASE VISIT OUR WEBSITE: <https://www.swirlaiconnect.com>
 
----
+<hr style="border:0;height:2px;background:#000;margin:16px 0;"/>
 
-SWIRL 4.4 adds support for locating and interrogating a single document using the AI Search Assistant. This release also includes updated PII support via Microsoft Presidio, improved support for Search Assistant querying and usability fixes.
+This version of SWIRL Enterprise adds support for locating and interrogating a single document using the AI Search Assistant, a new "Connect all" switch in the Galaxy UI plus updated PII support (via [Microsoft Presidio](https://microsoft.github.io/presidio/)) and more!
 
-# New features
+# New Features
 
 - The AI Search Assistant can now locate and hold files for an ongoing conversation.
 
 ![SWIRL Enterprise 4.4 featuring Document location](../images/4_4_0_locate_document.png)
 
-- Galaxy now supports a "Connect all" button which re-connects/refreshes all OAUTH2 sources. 
+- Galaxy now offers a "Connect all" button which re-connects/refreshes all OAUTH2 sources. 
 
 <img src="../images/4_4_0_connect_all.png" alt="SWIRL Enterprise 4.4 featuring Connect all button" width="300">
 <img src="../images/4_4_0_disconnect_all.png" alt="SWIRL Enterprise 4.4 featuring Disconnect all button" width="300">  
