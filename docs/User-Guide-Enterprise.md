@@ -73,6 +73,20 @@ Use the **toggle switches** to connect or disconnect from any source, as needed.
 
   ![SWIRL Assistant with user logged in to Microsoft, not to Box](images/swirl_40_chat_profile.png)
 
+## Connecting to All Sources
+
+As of SWIRL 4.4, the Galaxy UI offers a "Connect all" button on the search profile page.
+
+<img src="../images/4_4_0_connect_all.png" alt="SWIRL Enterprise 4.4 featuring Connect all button" width="300">
+<img src="../images/4_4_0_disconnect_all.png" alt="SWIRL Enterprise 4.4 featuring Disconnect all button" width="300">  
+
+When clicked, SWIRL will check the connection to each listed source. The login page will appear for each source that requires a new login. 
+
+Click "Disconnect all" to terminate connections.
+
+{: .warning }
+This feature is not yet available in the AI Search Assistant. This will be resolved in release 4.4.1.
+
 ## The AI Search Assistant Explained
 
 ![SWIRL AI Search Assistant, annotated](images/swirl_assistant_explained.png)
