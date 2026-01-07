@@ -22,6 +22,231 @@ Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI 
 
 ---
 
+# Using AI Search
+
+If running locally, access the **Search Interface** here:  
+[http://localhost:8000/galaxy/chat/](http://localhost:8000/galaxy/chat/)
+
+## The AI Search Form Explained
+
+![SWIRL AI Search form, annotated](images/swirl_43_search_rag_annotated.png)
+
+1. **Source Selector**. Click to select one or more sources to target for search.
+
+2. **Search Box**. Much larger than it looks. By default, favors results that have you’re your search terms. Feel free to ask questions or query in SQL, MQL, etc if targeting a source that supports it. 
+
+3. **Search Button**. Click to get results for your search, from the selected source(s).
+
+4. **User Profile**. Click the profile icon to [view authentication status](#login-and-authentication-1), then click a switch to connect/disconnect from a specific source. Refer to the [AI Assistant section on Login and Authentication](#login-and-authentication) for more information.
+
+5. **SWIRL Logo**. Click on it to reset the form and start over. 
+
+6. **Select AI Prompt**. Click to select a special prompt **before clicking** the `Generate AI Insight` switch.
+
+7. **AI Instructions**. Use this to provide instructions to the AI/LLM when generating insight. This input won’t change or alter the search results or item selections you make.
+
+8. **Generate AI Insight switch**. Click to make SWIRL fetch the most relevant (starred) items and provides them to the configured AI/LLM to [generate insight](#guiding-retrieval-augmented-generation-rag-for-ai-insight-generation). 
+
+9. **Source Filter Options**. By default, **SWIRL returns the best results from all available sources**. To filter results, check the desired `Source` boxes. The displayed results will update instantly. Click `Clear All` to reset the filter and view all results.  
+
+10. **AI Summary**. This is where an AI/LLM insight will appear, typically in 15+ seconds. 
+
+11. **AI Summary Model & Timing**. Provides the name of the model responding, and how long the response took to generate.
+
+12. **AI Generated Follow-Up Questions**. Click one to view the answer, in 15+ seconds.
+
+13. **AI Summary Citations**. Click to verify the results, with deep linking on many sources.
+
+14. **Summary Rating**. Click the “thumbs-up” or “thumbs-down” to provide feedback on AI messages. (Please select and/or fill-in the reason(s) why, if asked.)
+
+15. **Result Summary & Timing**. Summarizes the number of results, and how long it took to re-rank them.
+
+16. **Page Navigation**. Use to page through search results. Note, you must run a new search if you run out of results. The [SWIRL Administrator can increase the number of results](Developer-Guide.html#increase-available-results) retrieved from each source.
+
+17. **Result Sort Selector**. By default, SWIRL sorts by [Confidence Score](#confidence-scores). Use `Date` to see the latest, and `Top Pick` to see the best from each responding source. Note that when sorting by date, results with no `date_published` field are hidden.
+
+18. **Select Items & DESELECT switch**. Click to select individual results to use when [Generating AI Insights](#guiding-retrieval-augmented-generation-rag-for-ai-insight-generation).
+
+19. **Show ALL Details switch**. Click to show any hidden result field(s). 
+
+20. **Result Item**. Each result may inclucde a linked title,snippet of text that matched your query from the source, the author's name, the date published and/or retrieved, the result type and URL, a “highly relevant” star (when appropriate), a shopping cart selection checkbox and a “SHOW DETAILS” link.
+
+Read on for more information about these capabilities.
+
+## Search Syntax  
+
+The following table details SWIRL's search syntax:  
+
+| Syntax | Handling | Notes |  
+| ---------- | ---------- | ---------- |  
+| **AND, OR** | Passed down to all SearchProviders | SWIRL does not modify or verify whether a provider supports these operators. |  
+| **NOT, -term** | Passed down to configured SearchProviders and rewritten if necessary; removed for providers that do not support `NOT` or `-term` | SWIRL verifies compliance and **down-weights or flags responses** that contain terms excluded by `NOT`. |  
+| **tag:term** | Passes `term` to SearchProviders configured with that **Tag** in their `tags` field. The untagged portion of the query is discarded. If a query starts with `tag:`, only providers with that Tag are searched. | **Example:** `electric vehicle company:tesla` → Only the term **`tesla`** is sent to SearchProviders with the `company` Tag.<br/> **Example:** `company:facebook` → The query **`facebook`** is only sent to SearchProviders with the `company` Tag. |  
+
+### AND, OR
+
+- **AND** and **OR** operators are **passed unchanged** to all SearchProviders.  
+- SWIRL does **not** verify whether a provider supports these operators or correctly applies them.  
+
+### NOT (`NOT` and `-` Syntax)  
+
+- `NOT` remains in queries for SearchProviders that have **`NOT=True`** in their `query_mappings`.  
+  - The `NOT` operator applies to **all terms that follow it** (if the provider supports it).  
+
+- `NOT` is rewritten as `-term` for SearchProviders that have:  
+  - **`NOT_CHAR=-`** and **`NOT=False`** (or `NOT` unspecified).  
+  - The `-term` applies to all terms that follow it.  
+
+- **For SearchProviders without `NOT=True`**, `NOT` and its associated terms are **removed from the query**.  
+
+- SWIRL **scans responses** for compliance with `NOT` statements.  
+  - If a response **contains excluded terms**, its **relevancy score is reduced**.  
+
+### Plus/Minus (`+/-`) Syntax 
+
+- **`+` (PLUS) before a term** ensures it **must** be included in results.  
+  - It is **passed unchanged** to all SearchProviders.  
+
+- **`-` (MINUS) before a term** functions as `NOT` **for providers that support it**.  
+  - If a provider has **`NOT_CHAR=-`** configured in `query_mappings`, `-term` is passed unchanged.  
+  - If a provider has **`NOT=True`** but **not** `NOT_CHAR=-`, `-term` is rewritten to `NOT term`.  
+
+- **For providers without `NOT_CHAR=-`**, all `-term` exclusions are **removed** from the query.  
+
+## Using Tags to Select SearchProviders  
+
+**Tags** categorize **SearchProviders** by topic, entity type, or relevant concepts (e.g., `company`, `person`, `financial`).  
+These tags can:  
+- **Filter SearchProviders**—Only tagged providers are selected when a query starts with `tag:`.  
+- **Direct query terms**—SWIRL rewrites portions of the query based on the provider's tags.  
+
+For example, the **funding dataset** included with SWIRL has SearchProviders for **SQLite3, PostgreSQL, and Google BigQuery**, each containing relevant **Tags**:  
+
+```json
+{
+    "name": "Company Funding Records (cloud/BigQuery)",
+    "connector": "BigQuery",
+    ...
+    "tags": [
+        "Company",
+        "BigQuery"
+    ]
+}
+```
+
+### How Tags Work in Queries  
+
+#### 1. Filtering by Tag Only 
+If a query **begins with `tag:`**, only **SearchProviders with that Tag** are selected—regardless of their `default` status.  
+
+```shell
+company:facebook
+```
+- This limits the query to **SearchProviders with the `company` Tag**.  
+- Unrelated providers **are excluded**, even if they are `default=true`.  
+
+#### 2. Combining a Tag with a General Query
+A **default search** can be combined with a **tagged search** for specific terms.  
+
+```shell
+electric vehicle company:tesla
+```
+- **Default SearchProviders** receive the full query: `"electric vehicle tesla"`.  
+- **SearchProviders with the `company` Tag** receive only `"tesla"`.  
+
+For example, the **BigQuery SearchProvider** will receive:  
+
+```shell
+tesla
+```
+
+This makes **direct hits** on funding records more likely to **rank higher** in the results.
+
+## Hit Highlighting  
+
+SWIRL **highlights query term matches** in the following fields:  
+- **`title`**  
+- **`body`**  
+- **`author`**  
+
+For example:  
+
+```json
+"body": "<em>Performance</em> <em>management</em> is the process of setting goals and expectations for employees and then tracking and measuring their progress. This can be done through regular one-on-one meetings, <em>performance</em> reviews, and other feedback mechanisms."
+```
+
+## Confidence Scores
+
+SWIRL Enterprise uses a **confidence-based relevancy ranking model**. 
+
+The **confidence score** ranges from **0 (not relevant) to 1.0 (extremely relevant)** and is **comparable across queries**.
+
+### How Confidence Scores Work:
+
+The score **factors in**:
+  - **Number of matched query terms**
+  - **Term importance**
+  - **Contextual similarity between the query and the results**
+  - **The source-reported rank**
+  - **Other advanced ranking factors**
+
+You can still **sort by relevancy** using the **`VIEW BY:`** dropdown. 
+
+**AI Insights use only results** above a configurable minimum confidence score. 
+
+## Managing Prompts
+
+SWIRL prompts consist of three key components:
+
+| Field | Description |
+| ----- | ----------- |
+| `prompt` | The main body of the prompt. Use `{query}` to represent the SWIRL query. |
+| `note` | Text appended to RAG data chunks, annotated by the [Text Analyzer](#text-summarization). |
+| `footer` | Additional instructions appended after the prompt and RAG data. This is ideal for formatting guidance. |
+
+### Viewing Prompts
+
+- Any user may view the prompts endpoint: [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)  
+
+- Admins may use the [Admin Tool - Manage Prompts](http://localhost:8000/admin/swirl/prompt/) interface.
+
+### Modifying Prompts
+
+Request new prompts, or modifications to existing ones, from SWIRL administrators. 
+
+- [Customize the SWIRL AI Search Assistant prompts](AI-Search-Assistant.html#customizing-the-ai-search-assistant-prompt)
+- [Resetting SWIRL AI prompts](./Admin-Guide.md#resetting-prompts)
+
+## Guiding Retrieval Augmented Generation (RAG) for AI Insight Generation
+
+SWIRL Enterprise 4.2 includes a new field on the search form: `Optional instructions for the AI response`. This field allows you to provide instructions to the LLM that will summarize the retrieved results - without having it be part of the selection criteria. The search box with the hint "What are you searching for today" determines which results are retrieved. 
+
+For example, this query selects the top documents about Karen Sparck Jones, and instructs the configured LLM to report on major inventions.
+
+![SWIRL RAG results for Karen Sparck Jones inventions](images/ksj_rag_example.png)
+
+The RAG result includes [details of her invention of TF/IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) as expected.
+
+### Using the Shopping Cart
+
+Click `Select Items` to manually select the result to use during RAG.
+
+![SWIRL AI Search result with select items enabled](images/4_1_0-SelectAll.png)
+
+Use the `DESELECT ALL` / `SELECT ALL` link to check or uncheck all results, then further adjust as desired. 
+
+Click the `Generate AI Insights` switch to send the selected items to the AI/LLM for response.
+
+## Deep Linked Citations
+
+When possible, AI Insights generated using the Search form will deep link directly to the relevant section of a result used in a RAG response, and highlight it. 
+
+Refer to the [section on Deep Linking](#deep-linked-citations) above for more information.
+
+## Starting a New Search  
+
+Click the **SWIRL logo** to reset the search form and start over.
+
 # Accessing the SWIRL AI Search Assistant
 
 For local installs, open this URL in a browser: <http://localhost:8000/galaxy/chat/>  
@@ -234,237 +459,9 @@ To **resume a conversation**, use the "Show/Hide History" link at the top of the
 
 Use the controls in the box to delete and rename individual chats. Click the `DELETE_ALL` link to clear your chat history completely.
 
-# Using AI Search
-
-If running locally, access the **Search Interface** here:  
-[http://localhost:8000/galaxy/chat/](http://localhost:8000/galaxy/chat/)
-
-## From the AI Search Assistant
+## Going to the AI Search Form
 
 From the **Assistant page**, click the **profile button**, then click **"SWIRL AI Search"**:
-
-## The AI Search Form Explained
-
-![SWIRL AI Search form, annotated](images/swirl_43_search_rag_annotated.png)
-
-1. **SWIRL Logo**. Click on it to reset the form and start over. 
-
-2. **User Profile**. Click the profile icon to [view authentication status](#login-and-authentication-1), then click a switch to connect/disconnect from a specific source. Refer to the [AI Assistant section on Login and Authentication](#login-and-authentication) for more information.
-
-3. **Source Selector**. Click to select one or more sources to target for search.
-
-4. **Search Box**. Much larger than it looks. By default, favors results that have you’re your search terms. Feel free to ask questions or query in SQL, MQL, etc if targeting a source that supports it. 
-
-5. **Search Button**. Click to get results for your search, from the selected source(s).
-
-6. **Select AI Prompt**. Click to select a special prompt **before clicking** the `Generate AI Insight` switch.
-
-7. **AI Instructions**. Use this to provide instructions to the AI/LLM when generating insight. This input won’t change or alter the search results or item selections you make.
-
-8. **Generate AI Insight switch**. Click to make SWIRL fetch the most relevant (starred) items and provides them to the configured AI/LLM to [generate insight](#guiding-retrieval-augmented-generation-rag-for-ai-insight-generation). 
-
-9. **Source Filter Options**. By default, **SWIRL returns the best results from all available sources**. To filter results, check the desired `Source` boxes. The displayed results will update instantly. Click `Clear All` to reset the filter and view all results.  
-
-10. **AI Summary**. This is where an AI/LLM insight will appear, typically in 15+ seconds. 
-
-11. **AI Summary Model & Timing**. Provides the name of the model responding, and how long the response took to generate.
-
-12. **AI Generated Follow-Up Questions**. Click one to view the answer, in 15+ seconds.
-
-13. **AI Summary Citations**. Click to verify the results, with deep linking on many sources.
-
-14. **Summary Rating**. Click the “thumbs-up” or “thumbs-down” to provide feedback on AI messages. (Please select and/or fill-in the reason(s) why, if asked.)
-
-15. **Result Summary & Timing**. Summarizes the number of results, and how long it took to re-rank them.
-
-16. **Page Navigation**. Use to page through search results. Note, you must run a new search if you run out of results. The [SWIRL Administrator can increase the number of results](Developer-Guide.html#increase-available-results) retrieved from each source.
-
-17. **Result Sort Selector**. By default, SWIRL sorts by [Confidence Score](#confidence-scores). Use `Date` to see the latest, and `Top Pick` to see the best from each responding source. Note that when sorting by date, results with no `date_published` field are hidden.
-
-18. **Select Items & DESELECT switch**. Click to select individual results to use when [Generating AI Insights](#guiding-retrieval-augmented-generation-rag-for-ai-insight-generation).
-
-19. **Show ALL Details switch**. Click to show any hidden result field(s). 
-
-20. **Result Item**. Each result may inclucde a linked title,snippet of text that matched your query from the source, the author's name, the date published and/or retrieved, the result type and URL, a “highly relevant” star (when appropriate), a shopping cart selection checkbox and a “SHOW DETAILS” link.
-
-Read on for more information about these capabilities.
-
-## Search Syntax  
-
-The following table details SWIRL's search syntax:  
-
-| Syntax | Handling | Notes |  
-| ---------- | ---------- | ---------- |  
-| **AND, OR** | Passed down to all SearchProviders | SWIRL does not modify or verify whether a provider supports these operators. |  
-| **NOT, -term** | Passed down to configured SearchProviders and rewritten if necessary; removed for providers that do not support `NOT` or `-term` | SWIRL verifies compliance and **down-weights or flags responses** that contain terms excluded by `NOT`. |  
-| **tag:term** | Passes `term` to SearchProviders configured with that **Tag** in their `tags` field. The untagged portion of the query is discarded. If a query starts with `tag:`, only providers with that Tag are searched. | **Example:** `electric vehicle company:tesla` → Only the term **`tesla`** is sent to SearchProviders with the `company` Tag.<br/> **Example:** `company:facebook` → The query **`facebook`** is only sent to SearchProviders with the `company` Tag. |  
-
-### AND, OR
-
-- **AND** and **OR** operators are **passed unchanged** to all SearchProviders.  
-- SWIRL does **not** verify whether a provider supports these operators or correctly applies them.  
-
-### NOT (`NOT` and `-` Syntax)  
-
-- `NOT` remains in queries for SearchProviders that have **`NOT=True`** in their `query_mappings`.  
-  - The `NOT` operator applies to **all terms that follow it** (if the provider supports it).  
-
-- `NOT` is rewritten as `-term` for SearchProviders that have:  
-  - **`NOT_CHAR=-`** and **`NOT=False`** (or `NOT` unspecified).  
-  - The `-term` applies to all terms that follow it.  
-
-- **For SearchProviders without `NOT=True`**, `NOT` and its associated terms are **removed from the query**.  
-
-- SWIRL **scans responses** for compliance with `NOT` statements.  
-  - If a response **contains excluded terms**, its **relevancy score is reduced**.  
-
-### Plus/Minus (`+/-`) Syntax 
-
-- **`+` (PLUS) before a term** ensures it **must** be included in results.  
-  - It is **passed unchanged** to all SearchProviders.  
-
-- **`-` (MINUS) before a term** functions as `NOT` **for providers that support it**.  
-  - If a provider has **`NOT_CHAR=-`** configured in `query_mappings`, `-term` is passed unchanged.  
-  - If a provider has **`NOT=True`** but **not** `NOT_CHAR=-`, `-term` is rewritten to `NOT term`.  
-
-- **For providers without `NOT_CHAR=-`**, all `-term` exclusions are **removed** from the query.  
-
-## Using Tags to Select SearchProviders  
-
-**Tags** categorize **SearchProviders** by topic, entity type, or relevant concepts (e.g., `company`, `person`, `financial`).  
-These tags can:  
-- **Filter SearchProviders**—Only tagged providers are selected when a query starts with `tag:`.  
-- **Direct query terms**—SWIRL rewrites portions of the query based on the provider's tags.  
-
-For example, the **funding dataset** included with SWIRL has SearchProviders for **SQLite3, PostgreSQL, and Google BigQuery**, each containing relevant **Tags**:  
-
-```json
-{
-    "name": "Company Funding Records (cloud/BigQuery)",
-    "connector": "BigQuery",
-    ...
-    "tags": [
-        "Company",
-        "BigQuery"
-    ]
-}
-```
-
-### How Tags Work in Queries  
-
-#### 1. Filtering by Tag Only 
-If a query **begins with `tag:`**, only **SearchProviders with that Tag** are selected—regardless of their `default` status.  
-
-```shell
-company:facebook
-```
-- This limits the query to **SearchProviders with the `company` Tag**.  
-- Unrelated providers **are excluded**, even if they are `default=true`.  
-
-#### 2. Combining a Tag with a General Query
-A **default search** can be combined with a **tagged search** for specific terms.  
-
-```shell
-electric vehicle company:tesla
-```
-- **Default SearchProviders** receive the full query: `"electric vehicle tesla"`.  
-- **SearchProviders with the `company` Tag** receive only `"tesla"`.  
-
-For example, the **BigQuery SearchProvider** will receive:  
-
-```shell
-tesla
-```
-
-This makes **direct hits** on funding records more likely to **rank higher** in the results.
-
-## Hit Highlighting  
-
-SWIRL **highlights query term matches** in the following fields:  
-- **`title`**  
-- **`body`**  
-- **`author`**  
-
-For example:  
-
-```json
-"body": "<em>Performance</em> <em>management</em> is the process of setting goals and expectations for employees and then tracking and measuring their progress. This can be done through regular one-on-one meetings, <em>performance</em> reviews, and other feedback mechanisms."
-```
-
-## Confidence Scores
-
-SWIRL Enterprise uses a **confidence-based relevancy ranking model**. 
-
-The **confidence score** ranges from **0 (not relevant) to 1.0 (extremely relevant)** and is **comparable across queries**.
-
-### How Confidence Scores Work:
-
-The score **factors in**:
-  - **Number of matched query terms**
-  - **Term importance**
-  - **Contextual similarity between the query and the results**
-  - **The source-reported rank**
-  - **Other advanced ranking factors**
-
-You can still **sort by relevancy** using the **`VIEW BY:`** dropdown. 
-
-**AI Insights use only results** above a configurable minimum confidence score. 
-
-## Managing Prompts
-
-SWIRL prompts consist of three key components:
-
-| Field | Description |
-| ----- | ----------- |
-| `prompt` | The main body of the prompt. Use `{query}` to represent the SWIRL query. |
-| `note` | Text appended to RAG data chunks, annotated by the [Text Analyzer](#text-summarization). |
-| `footer` | Additional instructions appended after the prompt and RAG data. This is ideal for formatting guidance. |
-
-### Viewing Prompts
-
-- Any user may view the prompts endpoint: [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)  
-
-- Admins may use the [Admin Tool - Manage Prompts](http://localhost:8000/admin/swirl/prompt/) interface.
-
-### Modifying Prompts
-
-Request new prompts, or modifications to existing ones, from SWIRL administrators. 
-
-- [Customize the SWIRL AI Search Assistant prompts](AI-Search-Assistant.html#customizing-the-ai-search-assistant-prompt)
-- [Resetting SWIRL AI prompts](./Admin-Guide.md#resetting-prompts)
-
-## Guiding Retrieval Augmented Generation (RAG) for AI Insight Generation
-
-SWIRL Enterprise 4.2 includes a new field on the search form: `Optional instructions for the AI response`. This field allows you to provide instructions to the LLM that will summarize the retrieved results - without having it be part of the selection criteria. The search box with the hint "What are you searching for today" determines which results are retrieved. 
-
-For example, this query selects the top documents about Karen Sparck Jones, and instructs the configured LLM to report on major inventions.
-
-![SWIRL RAG results for Karen Sparck Jones inventions](images/ksj_rag_example.png)
-
-The RAG result includes [details of her invention of TF/IDF](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) as expected.
-
-### Using the Shopping Cart
-
-Click `Select Items` to manually select the result to use during RAG.
-
-![SWIRL AI Search result with select items enabled](images/4_1_0-SelectAll.png)
-
-Use the `DESELECT ALL` / `SELECT ALL` link to check or uncheck all results, then further adjust as desired. 
-
-Click the `Generate AI Insights` switch to send the selected items to the AI/LLM for response.
-
-## Deep Linked Citations
-
-When possible, AI Insights generated using the Search form will deep link directly to the relevant section of a result used in a RAG response, and highlight it. 
-
-Refer to the [section on Deep Linking](#deep-linked-citations) above for more information.
-
-## Starting a New Search  
-
-Click the **SWIRL logo** to reset the search form and start over.
-
-
-
 
 
 
