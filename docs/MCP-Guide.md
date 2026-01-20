@@ -1,7 +1,7 @@
 ---
 layout: default
 title: MCP Server
-nav_order: 20
+nav_order: 22
 ---
 <details markdown="block">
   <summary>
@@ -13,6 +13,9 @@ nav_order: 20
 </details>
 
 <span class="big-text">MCP (Model Context Protocol) Guide</span><br/><span class="med-text">Enterprise Edition</span>
+
+{: .warning }
+Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Enterprise.
 
 ---
 

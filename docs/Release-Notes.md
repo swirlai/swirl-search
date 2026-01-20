@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Release Notes
-nav_order: 6
+nav_order: 8
 ---
 
 <span class="big-text">Release Notes</span><br/><span class="med-text">Community Edition</span>

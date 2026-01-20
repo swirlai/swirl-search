@@ -1,7 +1,7 @@
 ---
 layout: default
 title: AI Search Assistant Guide
-nav_order: 11
+nav_order: 13
 ---
 <details markdown="block">
   <summary>
@@ -16,9 +16,6 @@ nav_order: 11
 
 {: .warning }
 Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Enterprise.
-
-{: .highlight }
-Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI Search** 🔎 and **SWIRL AI Co-Pilot** is now **SWIRL AI Search Assistant** 🤖
 
 ---
 

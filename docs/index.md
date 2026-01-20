@@ -15,9 +15,6 @@ permalink: "/"
 
 <span class="big-text">SWIRL Overview</span><br/><span class="med-text">Community Edition | Enterprise Edition</span>
 
-{: .highlight }
-Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI Search** 🔎 and **SWIRL AI Co-Pilot** is now **SWIRL AI Search Assistant** 🤖
-
 ---
 
 # What is SWIRL AI Search?
