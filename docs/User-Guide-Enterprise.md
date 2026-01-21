@@ -22,226 +22,24 @@ Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI 
 
 ---
 
-# Accessing the SWIRL AI Search Assistant
-
-For local installs, open this URL in a browser: <http://localhost:8000/galaxy/chat/>  
-
-  ![SWIRL AI Search Assistant](images/swirl_40_assistant_start.png)
-
-## From SWIRL AI Search 
-
-Click the **user profile icon** (top-right) on the [SWIRL Search page](http://localhost:8000/galaxy/search/), then click **"SWIRL AI Search Assistant"**.
-
-  ![SWIRL AI Search link to SWIRL AI Search Assistant](images/swirl_40_assistant_link.png)
-
-## Login and Authentication
-
-**If the SWIRL login page appears:**  
-
-  <img src="images/swirl_40_login.png" alt="SWIRL Login with SSO" width="300">
-
-  - Enter **username:** `admin`  
-  - Enter **password:** `password`  
-  - Click **`Login`**  
-
-{: .warning }
-If you receive a warning about the password being compromised, follow these steps:  
-[Change the super user password](./Admin-Guide#changing-the-super-user-password)
-
-### Logging In With SSO
-
-**If your organization uses SSO:**  
-
-The SWIRL login page will show a button for SSO login.  
-
-  <img src="images/swirl_40_swirl_login.png" alt="SWIRL Login with SSO" width="300">
-
-1. Click the **SSO login button**.  
-2. You may need to authenticate:  
-
-    <img src="images/swirl_40_ms_login.png" alt="SSO Provider Login Page" width="300">
-
-3. Once logged in, you will be redirected to the AI Search Assistant:  
-
-    ![SWIRL Assistant with user logged in via SSO](images/swirl_40_chat_start.png)
-
-## Verifying Authentication
-
-Click the **profile icon** (top-right) to verify your connection to individual sources, which may vary depending on your SSO configuration. 
-
-Use the **toggle switches** to connect or disconnect from any source, as needed.
-
-  ![SWIRL Assistant with user logged in to Microsoft, not to Box](images/swirl_40_chat_profile.png)
-
-## The AI Search Assistant Explained
-
-![SWIRL AI Search Assistant, annotated](images/swirl_assistant_explained.png)
-
-1. **SWIRL Logo**. Click on it to reset the form and start over. 
-
-2. **Support Link**. Click the information icon to view the SWIRL version and optionally open a support ticket.
-
-3. **User Profile**. Click the profile icon to view profile management tools, including:
-
-4. **Link to SWIRL AI Search form**. Click the link to [use the search form](#the-ai-search-form-explained) instead of the Assistant.
-
-5. **Manage SWIRL**. Admins may click this link to [Administer SWIRL](Admin-Guide.html#django-console).
-
-6. **View Authentication Status** for each configured source. Click a switch to connect or disconnect. Refer to the [AI Assistant section on Login and Authentication](#login-and-authentication) for more information.
-
-7. **Show/Hide History**. Click to view the chat history and optionally [manage it](#resuming-and-managing-existing-chat-conversations). Click again to hide the history.
-
-8. **Your First Message** in this chat. It will appear at the top of the conversation scroll.
-
-9. **SWIRL's First Response**. It will include:
-
-10. **Follow-up Questions**. Click to view the response/answer.
-
-11. **Citations**. Click to verify the response behind the summary or answer. Web sources may be [deep linked](#deep-linked-citations). If the Search Assistant doesn't provide citations, please rate the response appropriatel, and then instruct it to provide them.
-
-12. **Model and Timing**. This text reports the AI/LLM model used to generate the response, and the time it took to do so.
-
-13. **Message Window**. Use the **input box** and **send button** to talk to the Assistant. It will assist you in finding the information you need. When you and the Assistant agree, it will perform a **search** against one or more sources and either **summarize** the results or **answer your question**.
-
-Read on to learn more about the SWIRL AI Search Assistant's capabilities!
-
-### Understanding Prompts
-
-SWIRL prompts consist of three key components:
-
-| Field | Description |
-| ----- | ----------- |
-| `prompt` | The main body of the prompt. Use `{query}` to represent the SWIRL query. |
-| `note` | Text appended to RAG data chunks, annotated by the [Text Analyzer](#text-summarization). |
-| `footer` | Additional instructions appended after the prompt and RAG data. This is ideal for formatting guidance. |
-
-The name of the `prompt` has no importance. SWIRL uses the `tags` field to determine which prompt is used for a given function. 
-
-The following table presents the `tags` options:
-
-| Tag | LLM Role | 
-| --- | -------- | 
-| chat | Used by AI Search Assistant for chat conversations, including company background; not technical | 
-| chat-rag | Used by AI Search Assistant to answer questions and summarize data via RAG; somewhat technical | 
-| search-rag | Used by AI Search, `Generate AI Insight` (RAG) switch, somewhat technical | 
-
-### Viewing Prompts
-
-- Any user may view the prompts endpoint: [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)  
-
-- Admins may use the [Admin Tool - Manage Prompts](http://localhost:8000/admin/swirl/prompt/) interface.
-
-### Modifying Prompts
-
-Administrators can modify prompts, as follows: 
-- [Customize the SWIRL AI Search Generate AI Insight RAG prompt](AI-Search.html#customizing-the-ai-search-rag-prompt)
-- [Customize the SWIRL AI Search Assistant prompts](AI-Search-Assistant.html#customizing-the-ai-search-assistant-prompts)
-
-## Deep Linked Citations
-
-When possible, the Assistant will link directly to the relevant section of a web page used in a RAG response, and highlight it. 
-
-![SWIRL Citations with Deep Links](images/4_3_0-Deeplinking-1.png)
-
-The first citation is a page on EY.com:
-
-![Deep Link Example #1](images/4_3_0-Deeplinking-2.png)
-
-The second citation is on the IMF site:
-
-![Deep Link Example #2](images/4_3_0-Deeplinking-3.png)
-
-## Generating Complex Queries
-
-SWIRL Assistant can generate queries in **any query language** supported by the underlying model.  
-For example, OpenAI's latest models can generate queries using most **SQL dialects**:
-
-  ![SWIRL Assistant querying Google BigQuery using SQL](images/swirl_40_chat_SQL.png)
-
-Other supported query languages include:
-
-- **MongoDB MQL**
-- **OpenSearch**
-- **Elastic ESQL**
-- **OpenSearch Query DSL**
-- **Solr syntax**  
-  
-{: .highlight }
-For assistance with specific query languages, please [contact SWIRL](mailto:support@swirlaiconnect.com).
-
-## Human Language Support
-
-SWIRL Assistant can **converse and query** in any language supported by the underlying model. For example, OpenAI's latest models can converse in **100+ languages**:
-
-  ![Querying SWIRL Assistant in Japanese](images/swirl_40_chat_query_in_japanese.png)
-
-  ![Asking Assistant to translate an English response to Japanese](images/swirl_40_chat_translate_response_to_japanese.png)
-
-## Other Model Capabilities
-
-SWIRL Assistant does not limit **LLM capabilities**. You can:
-
-- **Summarize** a Assistant chat in various formats (e.g., bullet points, narrative, iambic pentameter), as long as it is within the same chat session.
-- **Translate** Assistant responses into other languages.
-- **Reformat, revise, or retry** responses.
-- **Use memory** to retain information across chat sessions (if supported by the model).
-
-## Handling Errors
-
-Sometimes, Assistant **won't find results**. Don't be alarmed! Try the following:
-
-- **Correct the query**
-- **Remove specific terms**
-- **Simplify the search**
-- **Try a different source**
-- **Run the search again**
-
-  ![SWIRL Assistant correcting a spelling error](images/swirl_40_chat_try_different_query.png)
-
-{: .warning }
-When querying with **SQL** or other structured query languages, **some models may require occasional correction**:
-
-  ![SWIRL Assistant having SQL corrected by user](images/swirl_40_chat_correct_query.png)
-
-Please [contact support](#support) for assistance using the Assistant with any advanced query language.
-
-## Ending a Chat Conversation
-
-To **end a conversation**, click the **SWIRL logo** at the top of the page. This starts a **new conversation**.
-
-{: .highlight }
-Assistant **will not remember** past chat sessions *unless* the model supports memory.
-
-## Resuming and Managing Existing Chat Conversations
-
-To **resume a conversation**, use the "Show/Hide History" link at the top of the Search Assistant page.
-
-![SWIRL AI Search Assistant showing chat history](images/swirl_search_assistant_show_history.png)
-
-Use the controls in the box to delete and rename individual chats. Click the `DELETE_ALL` link to clear your chat history completely.
-
 # Using AI Search
 
 If running locally, access the **Search Interface** here:  
 [http://localhost:8000/galaxy/chat/](http://localhost:8000/galaxy/chat/)
 
-## From the AI Search Assistant
-
-From the **Assistant page**, click the **profile button**, then click **"SWIRL AI Search"**:
-
 ## The AI Search Form Explained
 
 ![SWIRL AI Search form, annotated](images/swirl_43_search_rag_annotated.png)
 
-1. **SWIRL Logo**. Click on it to reset the form and start over. 
+1. **Source Selector**. Click to select one or more sources to target for search.
 
-2. **User Profile**. Click the profile icon to [view authentication status](#login-and-authentication-1), then click a switch to connect/disconnect from a specific source. Refer to the [AI Assistant section on Login and Authentication](#login-and-authentication) for more information.
+2. **Search Box**. Much larger than it looks. By default, favors results that have you’re your search terms. Feel free to ask questions or query in SQL, MQL, etc if targeting a source that supports it. 
 
-3. **Source Selector**. Click to select one or more sources to target for search.
+3. **Search Button**. Click to get results for your search, from the selected source(s).
 
-4. **Search Box**. Much larger than it looks. By default, favors results that have you’re your search terms. Feel free to ask questions or query in SQL, MQL, etc if targeting a source that supports it. 
+4. **User Profile**. Click the profile icon to [view authentication status](#login-and-authentication-1), then click a switch to connect/disconnect from a specific source. Refer to the [AI Assistant section on Login and Authentication](#login-and-authentication) for more information.
 
-5. **Search Button**. Click to get results for your search, from the selected source(s).
+5. **SWIRL Logo**. Click on it to reset the form and start over. 
 
 6. **Select AI Prompt**. Click to select a special prompt **before clicking** the `Generate AI Insight` switch.
 
@@ -449,8 +247,221 @@ Refer to the [section on Deep Linking](#deep-linked-citations) above for more in
 
 Click the **SWIRL logo** to reset the search form and start over.
 
+# Accessing the SWIRL AI Search Assistant
 
+For local installs, open this URL in a browser: <http://localhost:8000/galaxy/chat/>  
 
+  ![SWIRL AI Search Assistant](images/swirl_40_assistant_start.png)
+
+## From SWIRL AI Search 
+
+Click the **user profile icon** (top-right) on the [SWIRL Search page](http://localhost:8000/galaxy/search/), then click **"SWIRL AI Search Assistant"**.
+
+  ![SWIRL AI Search link to SWIRL AI Search Assistant](images/swirl_40_assistant_link.png)
+
+## Login and Authentication
+
+**If the SWIRL login page appears:**  
+
+  <img src="images/swirl_40_login.png" alt="SWIRL Login with SSO" width="300">
+
+  - Enter **username:** `admin`  
+  - Enter **password:** `password`  
+  - Click **`Login`**  
+
+{: .warning }
+If you receive a warning about the password being compromised, follow these steps:  
+[Change the super user password](./Admin-Guide#changing-the-super-user-password)
+
+### Logging In With SSO
+
+**If your organization uses SSO:**  
+
+The SWIRL login page will show a button for SSO login.  
+
+  <img src="images/swirl_40_swirl_login.png" alt="SWIRL Login with SSO" width="300">
+
+1. Click the **SSO login button**.  
+2. You may need to authenticate:  
+
+    <img src="images/swirl_40_ms_login.png" alt="SSO Provider Login Page" width="300">
+
+3. Once logged in, you will be redirected to the AI Search Assistant:  
+
+    ![SWIRL Assistant with user logged in via SSO](images/swirl_40_chat_start.png)
+
+## Verifying Authentication
+
+Click the **profile icon** (top-right) to verify your connection to individual sources, which may vary depending on your SSO configuration. 
+
+Use the **toggle switches** to connect or disconnect from any source, as needed.
+
+  ![SWIRL Assistant with user logged in to Microsoft, not to Box](images/swirl_40_chat_profile.png)
+
+## Connecting to All Sources
+
+As of SWIRL 4.4, the Galaxy UI offers a "Connect all" button on the search profile page.
+
+<img src="../images/4_4_0_connect_all.png" alt="SWIRL Enterprise 4.4 featuring Connect all button" width="300">
+<img src="../images/4_4_0_disconnect_all.png" alt="SWIRL Enterprise 4.4 featuring Disconnect all button" width="300">  
+
+When clicked, SWIRL will check the connection to each listed source. The login page will appear for each source that requires a new login. 
+
+Click "Disconnect all" to terminate connections.
+
+{: .warning }
+This feature is not yet available in the AI Search Assistant. This will be resolved in release 4.4.1.
+
+## The AI Search Assistant Explained
+
+![SWIRL AI Search Assistant, annotated](images/swirl_assistant_explained.png)
+
+1. **SWIRL Logo**. Click on it to reset the form and start over. 
+
+2. **Support Link**. Click the information icon to view the SWIRL version and optionally open a support ticket.
+
+3. **User Profile**. Click the profile icon to view profile management tools, including:
+
+4. **Link to SWIRL AI Search form**. Click the link to [use the search form](#the-ai-search-form-explained) instead of the Assistant.
+
+5. **Manage SWIRL**. Admins may click this link to [Administer SWIRL](Admin-Guide.html#django-console).
+
+6. **View Authentication Status** for each configured source. Click a switch to connect or disconnect. Refer to the [AI Assistant section on Login and Authentication](#login-and-authentication) for more information.
+
+7. **Show/Hide History**. Click to view the chat history and optionally [manage it](#resuming-and-managing-existing-chat-conversations). Click again to hide the history.
+
+8. **Your First Message** in this chat. It will appear at the top of the conversation scroll.
+
+9. **SWIRL's First Response**. It will include:
+
+10. **Follow-up Questions**. Click to view the response/answer.
+
+11. **Citations**. Click to verify the response behind the summary or answer. Web sources may be [deep linked](#deep-linked-citations). If the Search Assistant doesn't provide citations, please rate the response appropriatel, and then instruct it to provide them.
+
+12. **Model and Timing**. This text reports the AI/LLM model used to generate the response, and the time it took to do so.
+
+13. **Message Window**. Use the **input box** and **send button** to talk to the Assistant. It will assist you in finding the information you need. When you and the Assistant agree, it will perform a **search** against one or more sources and either **summarize** the results or **answer your question**.
+
+Read on to learn more about the SWIRL AI Search Assistant's capabilities!
+
+### Understanding Prompts
+
+SWIRL prompts consist of three key components:
+
+| Field | Description |
+| ----- | ----------- |
+| `prompt` | The main body of the prompt. Use `{query}` to represent the SWIRL query. |
+| `note` | Text appended to RAG data chunks, annotated by the [Text Analyzer](#text-summarization). |
+| `footer` | Additional instructions appended after the prompt and RAG data. This is ideal for formatting guidance. |
+
+The name of the `prompt` has no importance. SWIRL uses the `tags` field to determine which prompt is used for a given function. 
+
+The following table presents the `tags` options:
+
+| Tag | LLM Role | 
+| --- | -------- | 
+| chat | Used by AI Search Assistant for chat conversations, including company background; not technical | 
+| chat-rag | Used by AI Search Assistant to answer questions and summarize data via RAG; somewhat technical | 
+| search-rag | Used by AI Search, `Generate AI Insight` (RAG) switch, somewhat technical | 
+
+### Viewing Prompts
+
+- Any user may view the prompts endpoint: [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)  
+
+- Admins may use the [Admin Tool - Manage Prompts](http://localhost:8000/admin/swirl/prompt/) interface.
+
+### Modifying Prompts
+
+Administrators can modify prompts, as follows: 
+- [Customize the SWIRL AI Search Generate AI Insight RAG prompt](AI-Search.html#customizing-the-ai-search-rag-prompt)
+- [Customize the SWIRL AI Search Assistant prompts](AI-Search-Assistant.html#customizing-the-ai-search-assistant-prompts)
+
+## Deep Linked Citations
+
+When possible, the Assistant will link directly to the relevant section of a web page used in a RAG response, and highlight it. 
+
+![SWIRL Citations with Deep Links](images/4_3_0-Deeplinking-1.png)
+
+The first citation is a page on EY.com:
+
+![Deep Link Example #1](images/4_3_0-Deeplinking-2.png)
+
+The second citation is on the IMF site:
+
+![Deep Link Example #2](images/4_3_0-Deeplinking-3.png)
+
+## Generating Complex Queries
+
+SWIRL Assistant can generate queries in **any query language** supported by the underlying model.  
+For example, OpenAI's latest models can generate queries using most **SQL dialects**:
+
+  ![SWIRL Assistant querying Google BigQuery using SQL](images/swirl_40_chat_SQL.png)
+
+Other supported query languages include:
+
+- **MongoDB MQL**
+- **OpenSearch**
+- **Elastic ESQL**
+- **OpenSearch Query DSL**
+- **Solr syntax**  
+  
+{: .highlight }
+For assistance with specific query languages, please [contact SWIRL](mailto:support@swirlaiconnect.com).
+
+## Human Language Support
+
+SWIRL Assistant can **converse and query** in any language supported by the underlying model. For example, OpenAI's latest models can converse in **100+ languages**:
+
+  ![Querying SWIRL Assistant in Japanese](images/swirl_40_chat_query_in_japanese.png)
+
+  ![Asking Assistant to translate an English response to Japanese](images/swirl_40_chat_translate_response_to_japanese.png)
+
+## Other Model Capabilities
+
+SWIRL Assistant does not limit **LLM capabilities**. You can:
+
+- **Summarize** a Assistant chat in various formats (e.g., bullet points, narrative, iambic pentameter), as long as it is within the same chat session.
+- **Translate** Assistant responses into other languages.
+- **Reformat, revise, or retry** responses.
+- **Use memory** to retain information across chat sessions (if supported by the model).
+
+## Handling Errors
+
+Sometimes, Assistant **won't find results**. Don't be alarmed! Try the following:
+
+- **Correct the query**
+- **Remove specific terms**
+- **Simplify the search**
+- **Try a different source**
+- **Run the search again**
+
+  ![SWIRL Assistant correcting a spelling error](images/swirl_40_chat_try_different_query.png)
+
+{: .warning }
+When querying with **SQL** or other structured query languages, **some models may require occasional correction**:
+
+  ![SWIRL Assistant having SQL corrected by user](images/swirl_40_chat_correct_query.png)
+
+Please [contact support](#support) for assistance using the Assistant with any advanced query language.
+
+## Ending a Chat Conversation
+
+To **end a conversation**, click the **SWIRL logo** at the top of the page. This starts a **new conversation**.
+
+{: .highlight }
+Assistant **will not remember** past chat sessions *unless* the model supports memory.
+
+## Resuming and Managing Existing Chat Conversations
+
+To **resume a conversation**, use the "Show/Hide History" link at the top of the Search Assistant page.
+
+![SWIRL AI Search Assistant showing chat history](images/swirl_search_assistant_show_history.png)
+
+Use the controls in the box to delete and rename individual chats. Click the `DELETE_ALL` link to clear your chat history completely.
+
+## Going to the AI Search Form
+
+From the **Assistant page**, click the **profile button**, then click **"SWIRL AI Search"**:
 
 
 

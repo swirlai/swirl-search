@@ -26,12 +26,15 @@ This version of SWIRL Enterprise adds support for locating and interrogating a s
 <img src="../images/4_4_0_connect_all.png" alt="SWIRL Enterprise 4.4 featuring Connect all button" width="300">
 <img src="../images/4_4_0_disconnect_all.png" alt="SWIRL Enterprise 4.4 featuring Disconnect all button" width="300">  
 
+- New [Inflectra SpiraPlan](https://www.inflectra.com/Products/SpiraPlan/) SearchProvider! 
+
+<img src="../images/4_4_0-Spira.png" alt="SWIRL Enterprise 4.4 featuring Spira">  
+
 - PII detection via Microsoft Presidio is now supported for queries, results, and RAG responses, with a choice of redaction or removal. 
 
 ![SWIRL Enterprise 4.4 featuring PII Redaction](../images/4_4_0_pii_redaction.png)
 
 - Advanced German query processing is now supported, including de-compounding of words.
-- New connector for [Inflectra SpiraPlan](https://www.inflectra.com/Products/SpiraPlan/)
 
 # Improvements
 
