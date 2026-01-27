@@ -21,10 +21,10 @@ This version of SWIRL Enterprise adds support for locating and interrogating a s
 
 ![SWIRL Enterprise 4.4 featuring Document location](../images/4_4_0_locate_document.png)
 
-- Galaxy now offers a "Connect all" button which re-connects/refreshes all OAUTH2 sources. 
+- Galaxy now offers a "Connect All" button which re-connects/refreshes all OAUTH2 sources. 
 
-<img src="../images/4_4_0_connect_all.png" alt="SWIRL Enterprise 4.4 featuring Connect all button" width="300">
-<img src="../images/4_4_0_disconnect_all.png" alt="SWIRL Enterprise 4.4 featuring Disconnect all button" width="300">  
+<img src="../images/4_4_0_connect_all.png" alt="SWIRL Enterprise 4.4 featuring Connect All button" width="300">
+<img src="../images/4_4_0_disconnect_all.png" alt="SWIRL Enterprise 4.4 featuring Disconnect All button" width="300">  
 
 - New [Inflectra SpiraPlan](https://www.inflectra.com/Products/SpiraPlan/) SearchProvider! 
 
