@@ -100,7 +100,7 @@ GEM
       html-pipeline (~> 2.2)
       jekyll (>= 3.0, < 5.0)
     json (2.18.0)
-    just-the-docs (0.10.1)
+    just-the-docs (0.12.0)
       jekyll (>= 3.8.5)
       jekyll-include-cache
       jekyll-seo-tag (>= 2.0)
@@ -186,7 +186,7 @@ DEPENDENCIES
   jekyll-relative-links
   jekyll-sass-converter (~> 3.1.0)
   jemoji
-  just-the-docs (= 0.10.1)
+  just-the-docs (= 0.12.0)
 
 CHECKSUMS
   activesupport (8.1.1) sha256=5e92534e8d0c8b8b5e6b16789c69dbea65c1d7b752269f71a39422e9546cea67
@@ -229,7 +229,7 @@ CHECKSUMS
   jekyll-watch (2.2.1) sha256=bc44ed43f5e0a552836245a54dbff3ea7421ecc2856707e8a1ee203a8387a7e1
   jemoji (0.13.0) sha256=5d4c3e8e2cbbb2b73997c31294f6f70c94e4d4fade039373e86835bcf5529e7c
   json (2.18.0) sha256=b10506aee4183f5cf49e0efc48073d7b75843ce3782c68dbeb763351c08fd505
-  just-the-docs (0.10.1) sha256=bcea878de38524207102fffa62948b44465c0069c82b97c3a464f52ddedf5578
+  just-the-docs (0.12.0) sha256=15f2839ac9082898d60f33b978aa6f8e46fc50ba8fac20ae7a7f0e1fb295523e
   kramdown (2.5.1) sha256=87bbb6abd9d3cebe4fc1f33e367c392b4500e6f8fa19dd61c0972cf4afe7368c
   kramdown-parser-gfm (1.1.0) sha256=fb39745516427d2988543bf01fc4cf0ab1149476382393e0e9c48592f6581729
   liquid (4.0.4) sha256=4fcfebb1a045e47918388dbb7a0925e7c3893e58d2bd6c3b3c73ec17a2d8fdb3

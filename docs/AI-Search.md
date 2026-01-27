@@ -40,7 +40,7 @@ For Proof of Value (POV) testing, SWIRL AI Search, Enterprise Edition can use SQ
 
 For production environments, SWIRL recommends **PostgreSQL**.
 
-## PostgreSQL Configuration**
+## PostgreSQL Configuration
 
 Modify the database settings in `swirl_server/settings.py`:
 
@@ -810,14 +810,14 @@ We believe in delivering high-quality releases through each stage of our develop
 
 When **text truncation** is enabled, **only** text that contains at least one important tagged section (as shown above) is included in the ChatGPT prompt.  
 
-****Enabling Text Truncation****
+**Enabling Text Truncation**
 
 To activate this feature, ensure **both** conditions are met:
 
 1. `SWIRL_TEXT_SUMMARIZATION_URL` is set to a valid **Text Analyzer** URL.
 2. `SWIRL_TEXT_SUMMARIZATION_TRUNCATION` is set to `true`.
 
-****Log Entries for Truncated Content****
+**Log Entries for Truncated Content**
 
 When a text chunk is excluded due to summarization truncation, logs will show entries like this:
 

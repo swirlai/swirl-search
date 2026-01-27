@@ -166,7 +166,7 @@ This simplifies **access control** and **reduces administrative overhead**.
 
 The SWIRL application is designed to be deployed **behind a reverse-proxy** for optimal **scalability, security, performance, and availability**.
 
-****Why Use a Reverse-Proxy?****
+**Why Use a Reverse-Proxy?**
 
 - **Scalability:**  
   - Enables **horizontal scaling** by distributing requests across multiple SWIRL servers.
@@ -184,7 +184,7 @@ The SWIRL application is designed to be deployed **behind a reverse-proxy** for 
   - **Load balances** traffic across multiple backend SWIRL servers.  
   - **Monitors and removes** failed servers to maintain uptime.
 
-****Recommended Reverse-Proxy Solutions****
+**Recommended Reverse-Proxy Solutions**
 
 - [HA Proxy](https://www.haproxy.org/)  
 - [Nginx](https://nginx.org/en/)  
@@ -386,7 +386,7 @@ If you modify `crontab` in the **database** without updating **`CELERY_BEAT_SCHE
 
 For normal operations, use **`swirl.py`** to **start, stop, or restart** services. This script is located in the **SWIRL installation directory** (next to `manage.py`).
 
-****Starting Services****
+**Starting Services**
 
 ```shell
 python swirl.py start
@@ -397,7 +397,7 @@ To start **specific services**, specify them by name:
 python swirl.py start celery-beats
 ```
 
-****Checking Service Status****
+**Checking Service Status**
 
 ```shell
 python swirl.py status
@@ -427,13 +427,13 @@ Service: celery-worker...RUNNING, pid:34767
 Command successful!
 ```
 
-****Stopping Services****
+**Stopping Services**
 
 ```shell
 python swirl.py stop
 ```
 
-****Restarting Services****
+**Restarting Services**
 
 ```shell
 python swirl.py restart
@@ -444,7 +444,7 @@ To restart **specific services**, specify them by name:
 python swirl.py restart celery-worker consumer
 ```
 
-****Getting Help****
+**Getting Help**
 
 ```shell
 python swirl.py help
@@ -599,7 +599,7 @@ You must **[create a new SWIRL Super User](#creating-a-swirl-super-user)** after
 
 [`sqlite-web`](https://github.com/coleifer/sqlite-web) provides an **open-source web-based GUI** for SQLite.
 
-****Installation & Usage****
+**Installation & Usage**
 
 ```shell
 pip install sqlite-web
@@ -613,18 +613,18 @@ Use the **full path** to `db.sqlite3` in `swirl-search` when running `sqlite-web
 
 If you modify **`swirl/models.py`**, you must run a **database migration**.
 
-****Basic Migration Command****
+**Basic Migration Command**
 ```shell
 python swirl.py migrate
 ```
 
 For more details, see:  [https://docs.djangoproject.com/en/4.0/topics/migrations/](https://docs.djangoproject.com/en/4.0/topics/migrations/)
 
-****General Migration Guidelines****
+**General Migration Guidelines**
 - **Adding fields or changing defaults** is **usually simple**.
 - If renaming an `id` or modifying relationships, **consider wiping existing data first** (`sqlite-web` can help).
 
-****If Migration Fails****
+**If Migration Fails**
 
 1. Delete `db.sqlite3`
 2. Delete all files in `swirl/migrations/`
@@ -706,7 +706,7 @@ The following sections apply **only** to SWIRL Community Edition. For Enterprise
 pip install psycopg2
 ```
 
-4. **If you are using**Uncomment the PostgreSQL connector** in these files:
+4. **If you are using the PostgreSQL connector** in these files:
 
 **`swirl/connectors/__init__.py`**
 ```shell
