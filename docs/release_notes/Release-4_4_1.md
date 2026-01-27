@@ -18,31 +18,36 @@ This version resolves issues found with Version 4.4.0.
 
 # New Features
 
-- Connect ALl now available in the Search Assistant
+- The "Connect All" option for OAuth2 sources is now available in the Search Assistant.
 
-- New Export as PDF option for search results
+<img src="../images/4_4_1_connect_all.png" alt="SWIRL AI Assistant 4.4.1 featuring Connect All button" width="300">
+<img src="../images/4_4_1_disconnect_all.png" alt="SWIRL AI Assistant 4.4.1 featuring Disconnect All button" width="300">
 
-- New SORT_PAYLOAD option for SearchProvider result mappings, with default sorting now following field order
+- New "Export as PDF" option for search results.
+
+<img src="../images/4_4_1_export_as_pdf.png" alt="SWIRL Enterprise 4.4.1 Export as PDF output">
+
+- New `SORT_PAYLOAD` option for SearchProvider result mappings, with default sorting now following field order.
 
 # Improvements
 
-- The iManage SearchProvider has been updated
+- The iManage SearchProvider has been updated.
 
-- Certificate renewal in the Azure Marketplace has been improved
+- Certificate renewal in the Azure Marketplace Offer has been improved.
 
-- Added django.log to the logs download for Azure Marketplace deployments
+- Added the `django.log` to the logs download for Azure Marketplace Offer deployments.
 
-- Fixed celry_metrics issues impacting auto-scaling
+- Fixed `celry_metrics` issues impacting auto-scaling in Kubernetes.
 
-- Updated preloaded periodic task list to split celery worker queues
+- Updated the preloaded Periodic Tasks list to use the new split celery worker queues.
 
-- Galaxy UI support for narrower screens
+- Galaxy UI support for narrower screens.
 
-- Eliminated unnecessary startup warnings
+- Eliminated unnecessary startup warnings.
 
-- Improved service startup ordering and port checking
+- Improved service startup ordering and port checking.
 
-- Verified SWIRL on Python 3.13.11
+- Verified SWIRL on Python 3.13.11.
 
 # Upgrading
 
