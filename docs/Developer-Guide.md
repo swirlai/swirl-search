@@ -206,11 +206,11 @@ For details, see: [Developer Reference - GenAIQueryProcessor](./Developer-Refere
 
 ## Adjust `swirl_score` for Starred Results in Galaxy UI
 
-**SWIRL Community Edition  **
+**SWIRL Community Edition**
 - Configured via `"theminimumSwirlScore"` in `static/api/config/default`.
 - Default: `100`. Increase this to reduce starred results.
 
-**SWIRL Enterprise Edition  **
+**SWIRL Enterprise Edition**
 - Configured via `"minimumConfidenceScore"` in `static/api/config/default`.
 - Default: `0.7`. Increase this to reduce the number of starred results and use only highly relevant results.
 
@@ -802,7 +802,7 @@ def mix(self):
 - Most Mixers **override `order()`**.
 - `order()` should **sort and save** `self.all_results` into `self.mixed_results`.
 
-**Example: **Basic Paging Mixer**
+**Example: Basic Paging Mixer**
 
 ```python
 def order(self):
@@ -813,7 +813,7 @@ def order(self):
     self.mixed_results = self.all_results[(self.page-1)*self.results_requested:(self.page)*self.results_requested]
 ```
 
-**Example: **RelevancyMixer**
+**Example: RelevancyMixer**
 
 ```python
 class RelevancyMixer(Mixer):
@@ -993,7 +993,7 @@ Apply query transformations **before execution**:
 /api/swirl/search/search?q=notebook&pre_query_processor=TestQueryTransform.synonym
 ```
 
-**Option 2: Update the **SWIRL Search Object**
+**Option 2: Update the SWIRL Search Object**
 
 Modify `pre_query_processors` in the Search object to include the transformation.
 

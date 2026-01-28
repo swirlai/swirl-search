@@ -1113,7 +1113,7 @@ http://localhost:8000/swirl/results/?search_id=1&result_mixer=Stack1Mixer
 
 The TechCrunch Continental USA funding data set is sourced from [Insurity SpatialKey](https://support.spatialkey.com/spatialkey-sample-csv-data/). It is included in SWIRL as [Data/funding_db.csv](https://github.com/swirlai/swirl-search/blob/main/Data/funding_db.csv) and processed with [DevUtils/fix_csv.py](https://github.com/swirlai/swirl-search/blob/main/DevUtils/fix_csv.py) before loading into SQLite3.
 
-**Loading into SQLite3 **
+**Loading into SQLite3**
 
 1. Activate [sqlite_web](./Admin-Guide#sqlite-web) from the `swirl-home` directory:
 

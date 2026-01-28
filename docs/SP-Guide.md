@@ -307,7 +307,7 @@ The `credentials` property stores authentication information required by a Searc
 
 ## Supported Authentication Formats
 
-*Key-Value Format** (Appended to URL)*
+*Key-Value Format (Appended to URL)*
 
 Used when an API key is passed as a query parameter.
 
@@ -318,7 +318,7 @@ Used when an API key is passed as a query parameter.
 "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
 ```
 
-*Bearer Token** (Sent in HTTP Header)*
+*Bearer Token (Sent in HTTP Header)*
 
 Supported by the `RequestsGet` and `RequestsPost` connectors.
 
@@ -328,7 +328,7 @@ Supported by the `RequestsGet` and `RequestsPost` connectors.
 "credentials": "bearer=your-miro-api-token",
 ```
 
-*X-Api-Key Format** (Sent in HTTP Header)*
+*X-Api-Key Format (Sent in HTTP Header)*
 
 ```json
 "credentials": "X-Api-Key=<your-api-key>",
