@@ -17,61 +17,27 @@ nav_order: 8
 {: .warning }
 Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Enterprise.
 
-{: .highlight }
-Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI Search** 🔎 and **SWIRL AI Co-Pilot** is now **SWIRL AI Search Assistant** 🤖
-
 ---
+
+## System Requirements
 
 * The recommended minimum system configuration is a **32-core server**, with **64 GB of memory** and at least **500 GB of available disk space**. This configuration supports up to **25 users**. [View recommended cloud instances for AWS, Azure and GCP](#recommended-cloud-instances).
 
-* To run SWIRL in Docker, install the latest version of [Docker](https://docs.docker.com/get-docker/) for macOS, Linux, or Windows. **Ensure Docker is configured to use all available CPU, memory, and storage.**
+## Installing SWIRL via Azure Marketplace
 
-* You must be logged in to Docker Hub. Open a command-line interface (CLI) and execute the following command, replacing `<docker-username>` and `<docker-password>` with your credentials:
+Deploy SWIRL quickly and privately on a VM in your Azure tenant.
 
-```shell
-docker login --username <docker-username> --password <docker-password>
-```
+![SWIRL Azure Marketplace Offer](images/azure_marketplace.png)
 
-* **Windows users** must install and configure either **WSL 2** or the **Hyper-V backend**, as outlined in the [Docker Desktop System Requirements](https://docs.docker.com/desktop/install/windows-install/#system-requirements).
+### >> Click "Get it now" to install: [https://marketplace.microsoft.com/en-us/product/virtual-machines/swirlcorporation1684335149355.swirl_vm_offer_poc?tab=Overview](https://marketplace.microsoft.com/en-us/product/virtual-machines/swirlcorporation1684335149355.swirl_vm_offer_poc?tab=Overview)
 
-{: .warning }
-Ensure Docker is running before proceeding!
+## Installing SWIRL via Docker
 
-## Downloading SWIRL Enterprise Files
+Deploy SWIRL quickly and privately, anywhere Docker runs!
 
-1. Locate the email with the subject **"Try SWIRL Enterprise"**.
-2. The email contains three attachments:
-   - A PDF with detailed instructions
-   - `docker-compose.yaml`
-   - `env.license`
-3. **Save** `docker-compose.yaml` to a folder on the target server.
-4. **Rename** `env.license` to `.env.license` and save it in the same folder.
+![SWIRL Public Docker Repo](images/public_docker_compose.png)
 
-{: .warning }
-The leading dot (`.`) in `.env.license` is required!
-
-## Starting SWIRL Enterprise
-
-1. Open a command line and navigate to the folder where `docker-compose.yaml` is saved.
-
-2. Run the following commands to pull and start the containers:
-
-```shell
-docker compose up -d
-docker compose logs -f app
-```
-
-{: .warning }
-Do not press **CTRL+C** or stop Docker during this process—doing so will shut down SWIRL.
-
-This starts all required SWIRL services and displays the log output. Initialization takes a few minutes and completes successfully when you see the message `Server Listening on...`.
-
-Press **CTRL+C** to stop the log output.
-
-> _NOTE TO EDITORS: verify that the below screenshot is still current._
-
-Once complete, the output should look like this:  
-![SWIRL Enterprise Docker successful startup](images/swirl_enterprise_docker_started.png)
+### >> Follow instructions here: [https://github.com/swirlai/docker-compose](https://github.com/swirlai/docker-compose)
 
 ## Verifying SWIRL Startup
 
