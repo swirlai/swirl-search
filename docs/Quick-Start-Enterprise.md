@@ -109,25 +109,9 @@ To use **Generate AI Insights** (RAG) or **AI Search Assistant**, at least one A
 
     ![SWIRL Assistant Conversation with RAG Result](images/swirl_40_enterprise_assistant_rag.png)
 
-## Stopping SWIRL
+## Starting and Stopping SWIRL
 
-To stop SWIRL, use one of the following methods:
-
-1. **Via Docker Desktop:**  
-   ![Shutdown SWIRL with Docker Desktop](images/shutdown_docker.png)
-
-2. **Using CTRL+C in the terminal:**  
-   ![Shutdown SWIRL with Control-C](images/shutdown_ctl_c.png)
-
-3. **Via a separate terminal:**
-
-```shell
-docker compose stop
-```
-
-   ![Shutdown SWIRL with docker compose](images/shutdown_compose.png)
-
-These methods **preserve** the SWIRL database. If you don't need to save data, press **CTRL+C** **twice** to stop SWIRL instantly.
+### >> Full article: [Controlling the SWIRL Service](https://github.com/swirlai/docker-compose/blob/main/doc/controlling-swirl-service.md)
 
 ## Optional Steps
 
