@@ -21,7 +21,17 @@ Please [contact SWIRL](mailto:hello@swirlaiconnect.com) for access to SWIRL Ente
 
 ## System Requirements
 
-* The recommended minimum system configuration is a **32-core server**, with **64 GB of memory** and at least **500 GB of available disk space**. This configuration supports up to **25 users**. [View recommended cloud instances for AWS, Azure and GCP](#recommended-cloud-instances).
+* The recommended minimum system configuration is a **32-core server**, with **64 GB of memory** and at least **500 GB of available disk space**. This configuration supports up to **25 users**. 
+
+## Recommended Cloud Instances
+
+| Cloud Platform         | Instance / Machine Type | vCPUs | RAM    | Default / Local Storage |
+| ---------------------- | ----------------------- | ----- | ------ | ----------------------- |
+| **AWS EC2**            | `c6i.8xlarge`           | 32    | 64 GiB | EBS-only                |
+|                        | `c7g.8xlarge`           | 32    | 64 GiB | EBS-only                |
+| **GCP Compute Engine** | `n2-custom-32-65536`    | 32    | 64 GB  | None (customizable)     |
+|                        | `c2d-standard-32`       | 32    | 128 GB | None (customizable)     |
+| **Azure VMs**          | `Standard_F32s_v2`      | 32    | 64 GiB | OS disk only            |
 
 ## Installing SWIRL via Azure Marketplace
 
@@ -29,7 +39,7 @@ Deploy SWIRL quickly and privately on a VM in your Azure tenant.
 
 ![SWIRL Azure Marketplace Offer](images/azure_marketplace.png)
 
-### >> Click "Get it now" to install: [https://marketplace.microsoft.com/en-us/product/virtual-machines/swirlcorporation1684335149355.swirl_vm_offer_poc?tab=Overview](https://marketplace.microsoft.com/en-us/product/virtual-machines/swirlcorporation1684335149355.swirl_vm_offer_poc?tab=Overview)
+**>> Click "Get it now" to install**: [https://marketplace.microsoft.com/en-us/product/virtual-machines/swirlcorporation1684335149355.swirl_vm_offer_poc?tab=Overview](https://marketplace.microsoft.com/en-us/product/virtual-machines/swirlcorporation1684335149355.swirl_vm_offer_poc?tab=Overview)
 
 ## Installing SWIRL via Docker
 
@@ -37,25 +47,16 @@ Deploy SWIRL quickly and privately, anywhere Docker runs!
 
 ![SWIRL Public Docker Repo](images/public_docker_compose.png)
 
-### >> Follow instructions here: [https://github.com/swirlai/docker-compose](https://github.com/swirlai/docker-compose)
+**>> Follow instructions here**: [https://github.com/swirlai/docker-compose](https://github.com/swirlai/docker-compose)
 
 ## Verifying SWIRL Startup
 
-1. Open a new command line and check the running containers:
+1. Open a browser and navigate to <http://localhost:8000> or <http://localhost:8000/galaxy>  
 
-    ```shell
-    docker ps
-    ```
-
-    The output should look like this:  
-    ![SWIRL Enterprise Docker ps command](images/swirl_docker_ps.png)
-
-2. Open a browser and navigate to <http://localhost:8000> or <http://localhost:8000/galaxy>  
-
-3. If the search page loads, click `Log Out` in the top-right corner. You’ll see the login page:  
+2. If the search page loads, click `Log Out` in the top-right corner. You’ll see the login page:  
     ![SWIRL Login](images/swirl_40_login.png)
 
-4. Log in with:
+3. Log in with:
 
    - **Username:** `admin`  
    - **Password:** `password`  
@@ -64,7 +65,7 @@ Deploy SWIRL quickly and privately, anywhere Docker runs!
    If you receive a warning about the password being compromised, follow these steps:  
    [Change the super user password](Admin-Guide#changing-the-super-user-password)
 
-5. Enter a search term and press `Search`. The ranked results should appear:  
+4. Enter a search term and press `Search`. The ranked results should appear:  
     ![SWIRL Results No M365](images/swirl_40_results.png)
 
     If no results appear or an error occurs, please [contact support](Quick-Start-Enterprise-1.md#support).
@@ -109,25 +110,9 @@ To use **Generate AI Insights** (RAG) or **AI Search Assistant**, at least one A
 
     ![SWIRL Assistant Conversation with RAG Result](images/swirl_40_enterprise_assistant_rag.png)
 
-## Stopping SWIRL
+## Starting and Stopping SWIRL
 
-To stop SWIRL, use one of the following methods:
-
-1. **Via Docker Desktop:**  
-   ![Shutdown SWIRL with Docker Desktop](images/shutdown_docker.png)
-
-2. **Using CTRL+C in the terminal:**  
-   ![Shutdown SWIRL with Control-C](images/shutdown_ctl_c.png)
-
-3. **Via a separate terminal:**
-
-```shell
-docker compose stop
-```
-
-   ![Shutdown SWIRL with docker compose](images/shutdown_compose.png)
-
-These methods **preserve** the SWIRL database. If you don't need to save data, press **CTRL+C** **twice** to stop SWIRL instantly.
+**>> Full article**: [Controlling the SWIRL Service](https://github.com/swirlai/docker-compose/blob/main/doc/controlling-swirl-service.md)
 
 ## Optional Steps
 
@@ -162,54 +147,6 @@ To connect SWIRL with **Google Workspace**, you need:
 Setup takes ~1 hour. Follow the guide: [Google Workspace Integration Guide](GoogleWorkspace-Guide.html)
 
 For additional support, please [contact SWIRL](Quick-Start-Enterprise-1.md#support).
-
-## Persisting Configuration Changes
-
-1. Identify your SWIRL Docker container (with `app` in the name):  
-   ![SWIRL docker container app name](images/persist_1.png)
-
-2. Copy the `.env` file outside Docker:  
-   ![SWIRL container env](images/persist_env1.png)
-
-3. Stop the containers:  
-   ![SWIRL containers stop](images/persist_stop.png)
-
-4. Modify `docker-compose.yaml`:
-
-   **Before:**  
-   ![SWIRL config before](images/persist_before.png)
-
-   **After:**  
-   ![SWIRL config after](images/persist_after.png)
-
-5. Restart SWIRL:
-
-```shell
-docker compose pull && docker compose up
-```
-
-## Running SWIRL Commands
-
-Use the following sequence to run Django or SWIRL commands:
-
-```shell
-APP_CID=$(docker ps -q -f name=app)
-docker exec -it $APP_CID /bin/bash
-```
-
-Then run:
-
-```shell
-python manage.py <django-command>
-```
-
-_or_
-
-```shell
-python swirl.py <swirl-command>
-```
-
-Example: `python manage.py makemigrations`
 
 ## Migrating from SWIRL Community
 
@@ -268,50 +205,4 @@ Set the Enterprise AI Provider configuration `active` to `true`. Set the `tags` 
 2. Copy the `Client Id` and `Client Secret` from the [M365 Azure App Registration](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade) or your Community `.env` file as noted here in the [Microsoft 365 Integration Guide](https://docs.swirlaiconnect.com/M365-Guide.html#configure-the-microsoft-authenticator). 
 
 Note that you may have to modify the existing app registration if URL of the SWIRL server is changing.
-
-## Updating SWIRL 
-
-{: .warning }
-Be sure to complete all steps under [Persisting Configuration Changes](Quick-Start-Enterprise-1.md#persisting-configuration-changes) before upgrading.
-
-Use the following commands to update SWIRL:
-
-```shell
-docker compose pull
-docker compose stop
-docker compose up -d
-```
-
-Then monitor the logs:
-
-```shell
-docker compose logs -f app
-```
-
-Once SWIRL has restarted, run:
-
-```shell
-python swirl.py reload_ai_prompts
-python manage.py load_authenticators swirl/fixtures/DefaultAuthenticators.json
-```
-
-If this release includes updates to any SearchProvider used in your setup, update it:
-
-```shell
-python manage.py load_fixture SearchProviders/<searchprovider-name>
-```
-
-Refer to [Running SWIRL Commands](Quick-Start-Enterprise-1.md#running-swirl-commands) above for details.
-
-To confirm the upgrade, repeat the [Verifying SWIRL Startup](Quick-Start-Enterprise-1.md#verifying-swirl-startup) steps.
-
-# Recommended Cloud Instances
-
-| Cloud Platform         | Instance / Machine Type | vCPUs | RAM    | Default / Local Storage |
-| ---------------------- | ----------------------- | ----- | ------ | ----------------------- |
-| **AWS EC2**            | `c6i.8xlarge`           | 32    | 64 GiB | EBS-only                |
-|                        | `c7g.8xlarge`           | 32    | 64 GiB | EBS-only                |
-| **GCP Compute Engine** | `n2-custom-32-65536`    | 32    | 64 GB  | None (customizable)     |
-|                        | `c2d-standard-32`       | 32    | 128 GB | None (customizable)     |
-| **Azure VMs**          | `Standard_F32s_v2`      | 32    | 64 GiB | OS disk only            |
 
