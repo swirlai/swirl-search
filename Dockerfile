@@ -1,4 +1,4 @@
-FROM python:3.13.11-slim-trixie
+FROM python:3.13.12-slim-trixie
 
 # Update, upgrade and install packages in a single RUN to reduce layers
 RUN apt-get update && apt-get install -y \

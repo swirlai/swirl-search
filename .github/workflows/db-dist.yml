@@ -30,7 +30,7 @@ jobs:
       - name: Set Up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.13.11'
+          python-version: '3.13.12'
           cache: 'pip'
       - name: Install Swirl (with a timeout)
         run: ./install.sh
