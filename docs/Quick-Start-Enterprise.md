@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Quick Start
-nav_order: 8
+nav_order: 10
 ---
 <details markdown="block">
   <summary>

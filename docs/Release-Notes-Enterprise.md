@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Release Notes
-nav_order: 12
+nav_order: 16
 ---
 
 <span class="big-text">Release Notes</span><br/><span class="med-text">Enterprise Edition</span>
