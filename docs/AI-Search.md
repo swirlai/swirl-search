@@ -99,26 +99,29 @@ For authentication with **Elastic, OpenSearch, CAS2, Salesforce, ServiceNow, Okt
 
 GAI/LLMs in SWIRL serve four distinct roles:
 
-| Role | Description | Default Provider |
-| ---- | ----------- | ---------------- |
-| `reader`  | Generates embeddings for SWIRL’s Reader LLM to enhance search result re-ranking | spaCy |
-| `query`   | Provides query completions for transformations | OpenAI GPT-3.5 Turbo |
-| `connector` | Answers direct questions without RAG | OpenAI GPT-3.5 Turbo |
-| `rag` | Generates Retrieval-Augmented Generation (RAG) responses using retrieved data | OpenAI GPT-4 |
+| Role | Description |
+| ---- | ----------- |
+| `reader`  | Generates embeddings for SWIRL’s Reader LLM to enhance search result re-ranking |
+| `query`   | Provides query completions for transformations |
+| `connector` | Answers direct questions without RAG |
+| `rag` | Generates Retrieval-Augmented Generation (RAG) responses using retrieved data |
 
 ## Managing AI Providers
 
-To manage AI providers (view, edit, add, or delete), go to the `swirl/aiproviders` endpoint:  
-[http://localhost:8000/swirl/aiproviders](http://localhost:8000/swirl/aiproviders) (default local installation).
+To manage AI providers (view, edit, add, or delete), use the Admin Console: <http://localhost:8000/admin/>
 
-![SWIRL AI Providers](https://docs.swirl.today/images/swirl_aiproviders.png)
+![SWIRL Admin Console top level with AIProviders highlighted](images/swirl_admin_console_aip.png)
+
+Click on AIProviders as shown above to access the full list:
+
+![SWIRL Admin Console viewing list of AIProviders](images/swirl_admin_console_aip_list.png)
 
 ## Supported Generative AI (GAI) and LLMs
 
 SWIRL, via LiteLLM and direct connections, supports major GAI/LLMs, including:
 
-- OpenAI
-- Azure/OpenAI
+- OpenAI (ChatGPT API)
+- OpenAI deployed in Azure
 - AWS Bedrock
 - Google Gemini
 - Anthropic Claude
@@ -127,94 +130,62 @@ SWIRL, via LiteLLM and direct connections, supports major GAI/LLMs, including:
 - Hugging Face
 - Locally fine-tuned models
 
-For assistance with any of these or additional models, please [contact support](#support).
-
-**External Model Resources**
-
+The full list of supported embeddings and LLMs are here: 
 - [Full list of Supported Embeddings](https://docs.litellm.ai/docs/embedding/supported_embedding)
 - [Full list of Supported GAI/LLMs](https://docs.litellm.ai/docs/providers)
 
+For assistance with any of these or additional models, please [contact support](#support).
+
 ## Editing AI Providers
 
-To edit an AI provider, append its `id` to the `swirl/aiproviders` URL. Example: [http://localhost:8000/swirl/aiproviders/4/](http://localhost:8000/swirl/aiproviders/4/)
+From the Admin Console as shown above, click on an AIProvider to edit it:
 
-![SWIRL AIProvider - Azure/OpenAI GPT-4](images/swirl_aiprovider_4.png)
+![SWIRL Admin Console viewing list of AIProviders](images/swirl_admin_console_aip_list_selected.png)
 
-**Available Actions:**
+This will bring up an edit form:
 
-- **Delete** the AI provider permanently
-- **Modify** and **update** the AI provider configuration
+![SWIRL Admin Console editing an AIProvider](images/swirl_admin_console_edit_aip.png)
+
+Click the "SAVE" button at the bottom of the page to commit changes you make. 
+
+Click "Delete" to delete the provider entirely. Note: there is no "undo" option, deleted providers are lost forever. To save an AIProvider without having it used, set the `active` property to false (unchecked).
 
 ## Activating AI Providers
 
 To activate a preloaded AI provider:
 
-1. Ensure `active` is set to `true`
-2. Provide a valid `api_key`
-3. Specify the `model` and required `config` settings
-4. Assign the provider’s role in the `tags` list
-5. Set the provider as the default for a role in the `defaults` list (if applicable)
-
-**Example: Preloaded OpenAI GPT-4 Provider**
-
-```json
-{
-    "id": 16,
-    "name": "OpenAI GPT-4",
-    "owner": "admin",
-    "shared": true,
-    "date_created": "2024-03-04T15:15:16.940393-05:00",
-    "date_updated": "2024-03-04T15:15:16.940410-05:00",
-    "active": true,
-    "api_key": "<your-openai-api-key>",
-    "model": "gpt-4",
-    "config": {},
-    "tags": ["query", "connector", "rag"],
-    "defaults": ["rag"]
-}
-```
+* Make sure the `active` property is checked
+* Add a valid api_key to the `credentials` field
+* Change the `model` and any required `config` items
+* Ensure the provider has the correct `tags` and `default` settings
 
 ## Switching AI Provider Defaults
 
-To switch providers for the same role, update the `active` property.
+To switch the provider for a given role, use the `active` property. Only one AIProvider should be active for each system defined role. 
 
-Example: Switching between OpenAI GPT-4 and Azure/OpenAI GPT-4 for RAG:
+## Adding AI Providers 
 
-```json
-{
-    "id": 4,
-    "name": "Azure/OpenAI GPT-4",
-    "owner": "admin",
-    "shared": true,
-    "date_created": "2024-03-04T15:15:13.587586-05:00",
-    "date_updated": "2024-03-04T15:15:13.587595-05:00",
-    "active": false,
-    "api_key": "<your-azure-openai-api-key>",
-    "model": "azure/gpt-4",
-    "config": {
-        "api_base": "https://swirltest-openai.openai.azure.com",
-        "api_version": ""
-    },
-    "tags": ["query", "connector", "rag", "chat"],
-    "defaults": ["rag", "chat"]
-}
-```
+### Via the Admin Console
 
-**Steps to Switch**
+From the Admin Console, click on AIProviders as shown above. Then, click "Add AIProvider": 
 
-1. Set `active` to `true` for Azure/OpenAI GPT-4 and **PUT** the update.
-2. Set `active` to `false` for OpenAI GPT-4 and **PUT** the update.
+![Admin Console showing AIProvider list with Add button highlighted](images/swirl_admin_console_aip_add.png)
 
-Now, Azure/OpenAI GPT-4 is active for RAG, while OpenAI GPT-4 is inactive. Future versions of SWIRL will introduce prioritization and fallback between providers.
+This will bring up a blank form for a new AIProvider. 
 
-## Installing AI Providers via Copy/Paste
+![Admin Console showing new AIProvider form](images/swirl_admin_console_aip_new.png)
+
+Fill out the form and click the "SAVE" button at the bottom.
+
+### Via Copy/Paste
 
 To manually install an AI provider using JSON:
 
-1. Open the AI Providers endpoint: [http://localhost:8000/swirl/aiproviders/](http://localhost:8000/swirl/aiproviders/)
-2. Click the `Raw data` tab at the bottom of the page
-3. Paste the AI provider’s JSON
-4. Press the `POST` button
+1. Make sure you are logged in as the `admin` user
+2. Open the AI Providers API endpoint: [http://localhost:8000/swirl/aiproviders/](http://localhost:8000/swirl/aiproviders/)
+3. Click the `Raw data` tab at the bottom of the page
+4. Paste the AI provider’s JSON
+5. Press the `POST` button
 
 SWIRL will respond with the registered AI provider.
 
@@ -308,48 +279,52 @@ Note that there must be at least one `active` prompt for each of these tags for 
 
 ### Modifying the Standard Prompts
 
-{.warning}
-**Warning: never modify the standard prompts!** Any such changes will be discarded when SWIRL updates. 
+{: .warning }
+**Warning: never modify the standard prompts!** All changes will be discarded when SWIRL updates. 
 
-Use the [Customizing Prompts](#customizing-the-ai-search-rag-prompt) procedure instead.
+Use the [Customizing Prompts](#customizing-the-ai-search-rag-prompt) procedure, below, instead.
 
 ### Customizing the AI Search RAG Prompt
 
-The following procedure below below to copy the standard prompts, modify them, then make them active. 
-New prompts that you create won't be disturbed during upgrades.
-
-1. Open [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/)
-
-2. Locate the `search_rag_standard` or, if using [Deep Linking](./User-Guide-Enterprise.md#deep-linked-citations) `search_rag_deeplink` prompt, and note the `id`. 
-
-3. Add the `id` to the URL to view just that prompt. 
-
-4. Click the `Raw data` tab at the bottom of the page. Copy the entire JSON record to the clipboard. 
-
-5. Click the `HTML form` tab at the bottom of the page. Set `active` to `false`. Click `PUT` to save the change. 
-
-6. Go back to [http://localhost:8000/swirl/prompts/](http://localhost:8000/swirl/prompts/) and scroll to the bottom of the form. 
-
-7. Select the `Raw data` tab if necessary. Paste the prompt copied in step #4 into `Content:` block. **Do not hit `Put` yet**.
-
-8. Remove the `id`, `owner`, `date_created` and `date_updated` fields. Change the `name` field to something descriptive. Also, make sure `active` is set to `true`. Finally, if you don't wish to share this prompt with other users, set `shared` to `false`. Feel free to hit `PUT` now to save the record. 
-
-9. Modify the `prompt`, `note` and/or `footer` as needed, while retaining all critical instructions. For example, to instruct the LLM to use pirate-speak:
-```json
-{
-    "name": "search_rag_standard_pirate",
-    "...": "... etc ...",
-    "footer": "--- Final Instructions ---
-In your response, pretend you are a pirate comedian, but keep it clean!",
-    "tags": ["search-rag"]
-}
-```
-
-10. Hit `PUT`. This will save the prompt.
-![SWIRL Prompt Object](images/swirl_prompt_form.png)
-
 {: .warning }
 **Warning:** Removing important sections of any prompt such as variables like `{header}` and `{query}` may cause AI Insight generation to fail or not contain important features such as follow-up questions or citations. 
+
+The following procedure below below to copy the standard prompts, modify them, then make them active. 
+New prompts twon't be disturbed when SWIRL upgrades.
+
+1. Open the [Admin Console]([http://localhost:8000/admin) and click `Prompts` near the bottom of the page:
+![SWIRL Admin Console showing list of prompts](images/swirl_admin_console_prompts_list.png)
+
+2. Click the `search_rag_standard` or, if using [Deep Linking](./User-Guide-Enterprise.md#deep-linked-citations) `search_rag_deeplink` prompt. 
+![SWIRL Admin Console showing list of prompts with one selected](images/swirl_admin_console_prompts_list_selected.png)
+
+3. Set `active` to `false`. Click the "SAVE" button at the bottom of the page.
+![SWIRL Admin Console showing prompt edit with save selected](images/swirl_admin_console_prompt_edit_save.png)
+
+4. Change the `name` of the prompt to something appropriate like `my_custom_prompt`. Click the "Save as new" button at the bottom of the page. 
+
+5. Set the prompt to `active`. Click the "SAVE" button at the bottom of the page to save the new prompt.
+
+6. If you don't wish to share this prompt with other users, set `shared` to `false`. 
+
+7. Modify the `prompt`, `note` and/or `footer` as needed, while retaining all critical instructions. For example, to instruct the LLM to use pirate-speak:
+![SWIRL Admin Console showing prompt footer edited for pirate-speak](images/swirl_admin_console_prompt_pirate.png)
+
+8. Click "SAVE" at the bottom of the page to save changes. 
+
+9. Try the new prompt from the Galaxy Search form or via the Search Assistant!
+
+## Restoring Standard Prompts
+
+To go back to a standard prompt after creating a new one:
+
+* Open the Admin Console and select Prompts
+* Edit the new prompt, and uncheck the `active` property
+* Edit the system prompt, and check the `active` property
+
+### Restoring All Prompts to Default
+
+To restore all prompts to the default, refer to the [Admin Guide on Resetting Prompts](https://docs.swirlaiconnect.com/Admin-Guide#resetting-prompts).
 
 ## Specifying a Saved Prompt when Generating AI Insights
 
@@ -361,22 +336,11 @@ There are two ways to select a saved prompt:
 2. Use the **prompt operator** in your query. For example: 
 
 ```
-swirl AI Search prompt:pirate
+Swirl AI Search prompt:pirate
 ```
 
 In either case, the response is generated in pirate-speak as the prompt instructs:
 ![SWIRL RAG response in pirate speak](images/swirl_prompt_pirate.png)
-
-## Restoring Standard Prompts
-
-To go back to a standard prompt after creating a new one:
-
-1. Edit the new prompt and set `active` to `false`. 
-2. Edit the standard prompt and set `active` to `true`.
-
-### Restoring All Prompts to Default
-
-To restore all prompts to the default, refer to the [Admin Guide on Resetting Prompts](https://docs.swirlaiconnect.com/Admin-Guide#resetting-prompts).
 
 ## Using a Prompt in a Query Processor or Connector
 
