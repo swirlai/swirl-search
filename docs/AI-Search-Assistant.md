@@ -28,52 +28,26 @@ Please note: we've renamed our products! **SWIRL AI Connect** is now **SWIRL AI 
 
 SWIRL AI Search defines four core roles for GAI/LLMs. SWIRL AI Search Assistant adds a **fifth role, "chat,"** which can be assigned to any sufficiently capable LLM.
 
-| Role | Description | Default Provider |
-| ------- | ----------- | ---------------- |
-| `reader`  | Generates embeddings for SWIRL’s Reader LLM to re-rank search results | spaCy |
-| `query`   | Provides query completions for transformations | OpenAI GPT-3.5 Turbo |
-| `connector` | Answers direct questions (not RAG) | OpenAI GPT-3.5 Turbo |
-| `rag` | Generates responses using Retrieval-Augmented Generation (RAG) with retrieved data | OpenAI GPT-4 |
-| `chat` | Powers SWIRL AI Search Assistant messaging | OpenAI GPT-4 |
+| Role | Description | 
+| ------- | ----------- |
+| `reader`  | Generates embeddings for SWIRL’s Reader LLM to re-rank search results |
+| `query`   | Provides query completions for transformations |
+| `connector` | Answers direct questions (not RAG) |
+| `rag` | Generates responses using Retrieval-Augmented Generation (RAG) with retrieved data |
+| `chat` | Powers SWIRL AI Search Assistant messaging |
 
 ## Adding Chat to an AI Provider
 
-1. Open the **AI Providers** management page: [http://localhost:8000/swirl/aiproviders](http://localhost:8000/swirl/aiproviders) (default local installation).
+1. Open the [Admin Console](http://localhost:8000/admin) and click on the AIProviders link at the bottom of the page:
+![SWIRL Admin Console showing AIProviders selected](images/swirl_admin_console_aip.png)
 
-   ![SWIRL AI Providers](https://docs.swirl.today/images/swirl_aiproviders.png)
+2. Add `chat` to the `tags` list, if it is not already present.
 
-2. Edit an AI provider by appending its `id` to the URL, e.g.: [http://localhost:8000/swirl/aiproviders/4/](http://localhost:8000/swirl/aiproviders/4/)
+3. Add `chat` to the `defaults` list, if it not already present. For more information: [Organizing SearchProviders with Active, Default and Tags](SP-Guide.md#organizing-searchproviders-with-active-default-and-tags)
 
-   ![SWIRL AIProvider - Azure/OpenAI GPT-4](images/swirl_aiprovider_4.png)
+4. Click the "SAVE" button at the bottom of the page. This AIProvider is now active for the chat role, and is the default AIProvider for that role.
 
-3. **Ensure the following in the provider’s configuration:**
-
-   - `active` is set to `true`
-   - `api_key` contains a valid API key
-   - `model` and `config` values are correctly filled
-   - `"chat"` is included in the `tags` list
-   - `"chat"` is included in the `defaults` list
-
-Example: OpenAI GPT-4 Configured for Chat & RAG
-
-```json
-{
-    "id": 16,
-    "name": "OpenAI GPT-4",
-    "owner": "admin",
-    "shared": true,
-    "date_created": "2024-03-04T15:15:16.940393-05:00",
-    "date_updated": "2024-03-04T15:15:16.940410-05:00",
-    "active": true,
-    "api_key": "<your-openai-api-key>",
-    "model": "gpt-4",
-    "config": {},
-    "tags": ["query", "connector", "rag", "chat"],
-    "defaults": ["rag", "chat"]
-}
-```
-
-For more details, see the **AI Search, Enterprise Edition** section: [Connecting to Enterprise GAI and LLMs](AI-Search#connecting-to-generative-ai-gai-and-large-language-models-llms).
+5. Try the new AIProvider by [chatting with the Search Assistant](#launching-assistant)!
 
 ## Launching Assistant
 
@@ -135,69 +109,64 @@ Note that there must be at least one `active` prompt for each of these tags for 
 
 ### Modifying the Standard Prompts
 
-{.warning}
-**Warning: never modify the standard prompts!** Any such changes will be discarded when SWIRL updates. 
+{: .warning }
+**Warning: never modify the standard prompts!** All changes will be discarded when SWIRL updates. 
 
-Use the [Customizing Prompts](#customizing-the-ai-search-assistant-prompts) procedure instead.
+Use the [Customizing Prompts](#customizing-the-ai-search-rag-prompt) procedure, below, instead.
 
 ### Customizing the AI Search Assistant Prompts
 
+{.warning}
+**Warning: never modify the standard prompts!** All changes will be discarded when SWIRL updates. 
+
 The following procedure below below to copy the standard prompts, modify them, then make them active. 
-New prompts that you create won't be disturbed during upgrades.
+New prompts won't be disturbed when SWIRL upgrades.
 
-1. Open [http://localhost:8000/admin/swirl/prompt/](http://localhost:8000/admin/swirl/prompt/)
+1. Open the [Admin Console]([http://localhost:8000/admin) and click `Prompts` near the bottom of the page:
+![SWIRL Admin Console showing list of prompts](images/swirl_admin_console_prompts_list.png)
 
-2. Locate the `chat_rag_instructions_standard`, `chat_rag_standard` or `chat_rag_deeplink` prompts and note the `id`. 
+2. Click the `chat_rag_instructions_standard`, `chat_rag_standard` or `chat_rag_deeplink` prompts. ![SWIRL Admin Console showing list of prompts with one selected](images/swirl_admin_console_prompts_list_selected_chat.png)
 
-3. Add the `id` to the URL to view just that prompt. 
+3. Using the form, set `active` to `false`. Click the "SAVE" button at the bottom of the page. ![SWIRL Admin Console showing prompt edit with save selected](images/swirl_admin_console_prompt_edit_save.png)
 
-4. Click the `Raw data` tab at the bottom of the page. Copy the entire JSON record to the clipboard. 
+4. Change the `name` of the prompt to something appropriate like `my_custom_prompt`. Click the "Save as new" button at the bottom of the page. 
 
-5. Click the `HTML form` tab at the bottom of the page. Set `active` to `false`. Click `PUT` to save the change. 
+5. Set the prompt to `active`. Click the "SAVE" button at the bottom of the page to save the new prompt.
 
-6. Go back to [http://localhost:8000/admin/swirl/prompt/](http://localhost:8000/admin/swirl/prompt/) and scroll to the bottom of the form. 
+6. If you don't wish to share this prompt with other users, set `shared` to `false`. 
 
-7. Select the `Raw data` tab if necessary. Paste the prompt copied in step #4 into `Content:` block. **Do not hit `Put` yet**.
-
-8. Remove the `id`, `owner`, `date_created` and `date_updated` fields. Change the `name` field to something descriptive. Also, make sure `active` is set to `true`. Finally, if you don't wish to share this prompt with other users, set `shared` to `false`. Feel free to hit `PUT` now to save the record. 
-
-9. Modify the `prompt` field, and change `SWIRL Corporation` to the name of your organization. We also recommend adding adding 2-3 sentences describing the organization as well. immediately afterwards. 
-
-For example:
-
+7. Modify the `prompt` field. Change `SWIRL Corporation` to the name of your organization. Add additional text dsecribing the organization, the role of users, and additional information, after the organization name. Do not disturb any other instructions. For example:
 ```json
 {
     "prompt": "You are an expert online assistant and reference librarian working for **<your-company-name>. <Your-company-name> is located in <description> and operates in <industry> etc**... Your job is...
- }
+}
 ```
 
-{: .warning }
-**Warning:** Removing important sections of any prompt such as variables like `{header}` and `{query}` may cause AI Insight generation to fail or not contain important features such as follow-up questions or citations. 
+8. Click "SAVE" at the bottom of the page to save changes. ![SWIRL Admin Console edit prompt save button selected](images/swirl_admin_console_prompt_edit_save.png)
 
-10. Hit `PUT`. This will save the prompt.
-
-![SWIRL Prompt Object](images/swirl_prompt_form.png)
+9. Try the new prompt by asking the Search Assistant!
 
 ## Restoring Standard Prompts
 
 To go back to a standard prompt after creating a new one:
 
-1. Edit the new prompt and set `active` to `false`. 
-2. Edit the standard prompt and set `active` to `true`.
+* Open the Admin Console and select Prompts
+* Edit the new prompt, uncheck the `active` property, and click the "SAVE" button.
+* Edit the system prompt, check the `active` property, and click the "SAVE" button.
 
 ### Restoring All Prompts to Default
 
-To restore all prompts to the default, refer to the [Admin Guide on Resetting Prompts](Admin-Guide.html#resetting-prompts).
+To restore all prompts to the default, refer to the [Admin Guide on Resetting Prompts](https://docs.swirlaiconnect.com/Admin-Guide#resetting-prompts).
 
 ## Advanced Querying
 
-To enable the Assistant to query in advanced query languages like SQL, the elastic API or Mongo MQL, add an LLM generated instruction set to this structure, including:
+To enable the Assistant to query in advanced query languages like SQL, the elastic API or Mongo MQL, add an LLM generated instruction set to the SearchProvider `config` block, including:
 
 * A description of the schema
 * Details of important fields
 * Sample queries and the natural language, business questions they answer
 
-For example, here's how SWIRL configures the Search Assistant to query the company database using Google BigQuery SQL:
+For example, here's a configuration enabling the Search Assistant to query the company database using Google BigQuery SQL:
 
 ```
     "config": {
@@ -214,9 +183,9 @@ For example, here's how SWIRL configures the Search Assistant to query the compa
 
 ```
 
-Note that `query_instructions` must be a single string with no new lines or other special formatting. 
+Note that `query_instructions` must be valid JSON, a single string with no special formatting.
 
-Once configured, this description enables rich querying without writing any SQL.
+Once configured, this description enables rich querying by the Assistant without requiring the user to write SQL or understand the table structure. 
 
 ![SWIRL AI Search Assistant running a SQL query in response to a natural language question](images/swirl_search_assistant_SQL_response_1.png)
 

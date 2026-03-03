@@ -16,14 +16,10 @@ nav_order: 19
 
 ---
 
-{: .highlight }
-SWIRL queries may be subject to rate limits or throttling imposed by the sources being queried.
+SearchProviders are the core of SWIRL, enabling easy connections to various data sources **without writing any code**. SWIRL includes preconfigured providers for sources like M365, iManage, Box.com, ServiceNow, SalesForce, HubSpot, Arxiv, Google News and many more. 
 
-SearchProviders are the core of SWIRL, enabling easy connections to various data sources **without writing any code**.
+# Default Providers
 
-Each SearchProvider is a JSON object. SWIRL includes preconfigured providers for sources like Elastic, Solr, PostgreSQL, BigQuery, NLResearch.com, Miro.com, Atlassian, and more.
-
-{: .highlight }
 SWIRL comes with **active** SearchProviders for **arXiv.org, European PMC, and Google News** that work "out of the box" if internet access is available. 
 
 Additionally, **inactive** SearchProviders for **Google Web Search and SWIRL Documentation** use Google Programmable Search Engine (PSE). These require a **Google API key**. See the [SearchProvider Guide](#activating-a-google-programmable-search-engine-pse-searchprovider) for setup details.
@@ -32,106 +28,62 @@ Additionally, **inactive** SearchProviders for **Google Web Search and SWIRL Doc
 
 # Preloaded SearchProviders
 
-| SearchProvider | Description | Notes |
-|---------------|-------------|-------|
-| **arxiv.json** | Searches the [arXiv.org](https://arxiv.org/) repository of scientific papers | No authentication required |
-| **asana.json** | Searches tasks in [Asana](https://asana.com/) | Requires Asana personal access token |
-| **atlassian.json** | Searches Atlassian [Confluence Cloud](https://www.atlassian.com/software/confluence), [Jira Cloud](https://www.atlassian.com/software/jira), and [Trello](https://trello.com/) | Requires a bearer token and/or Trello API key |
-| **blockchain-bitcoin.json** | Searches [Blockchain.com](https://www.blockchain.com/) for Bitcoin addresses and transactions | Requires Blockchain.com API key |
-| **chatgpt.json** | OpenAI ChatGPT AI chatbot | Requires OpenAI API key |
-| **company_snowflake.json** | Queries the [Snowflake](https://www.snowflake.com/en/) `FreeCompanyResearch` dataset | Requires Snowflake username and password |
-| **crunchbase.json** | Searches organizations via [Crunchbase](https://www.crunchbase.com/) API | Requires Crunchbase API key |
-| **document_db.json** | SQLite3 document database | [Sample Data](https://github.com/swirlai/swirl-search/tree/main/Data/documents_db.csv) |
-| **elastic_cloud.json** | ElasticSearch (cloud version) | [Enron Email Dataset](./Developer-Reference#enron-email-data-set) |
-| **elasticsearch.json** | ElasticSearch (local install) | [Enron Email Dataset](./Developer-Reference#enron-email-data-set) |
-| **europe_pmc.json** | Searches [EuropePMC.org](https://europepmc.org/) for life sciences literature | No authentication required |
-| **funding_db_bigquery.json** | BigQuery funding database | [Funding Dataset](./Developer-Reference#funding-data-set) |
-| **funding_db_postgres.json** | PostgreSQL funding database | [Funding Dataset](./Developer-Reference#funding-data-set) |
-| **funding_db_sqlite3.json** | SQLite3 funding database | [Funding Dataset](./Developer-Reference#funding-data-set) |
-| **github.json** | Searches public repositories for Code, Commits, Issues, and PRs | Requires GitHub bearer token |
-| **google_news.json** | Queries [Google News](https://news.google.com/) | No authentication required |
-| **google_pse.json** | Web search via Google Programmable Search Engine (PSE) | Requires Google API key |
-| **google_workspace.json** | Queries [Google Workspace](https://workspace.google.com/) | See the [Google Workspace Guide](GoogleWorkspace-Guide) | 
-| **hacker_news.json** | Queries [Hacker News](https://hn.algolia.com/) | No authentication required |
-| **http_get_with_auth.json** | Generic HTTP GET with authentication | Requires URL and credentials |
-| **http_post_with_auth.json** | Generic HTTP POST with authentication | Requires URL and credentials |
-| **hubspot.json** | Searches the HubSpot CRM for Companies, Contacts, and Deals | Requires API token with [these scopes](images/HubSpot-scopes.png) |
-| **internet_archive.json** | Queries the [Internet Archive](https://archive.org/) | No authentication required |
-| **littlesis.json** | Queries [LittleSis.org](https://littlesis.org/) database of influential business and government figures | No authentication required |
-| **microsoft.json** | Queries Microsoft 365 (Outlook, OneDrive, SharePoint, Teams) | See the [M365 Guide](./M365-Guide) |
-| **miro.json** | Searches [Miro.com](https://miro.com) boards | Requires bearer token |
-| **movies_mongodb.json** | Queries [MongoDB Atlas](https://www.mongodb.com/) `sample_mflix.movies` dataset | Requires MongoDB credentials |
-| **newsdata_io.json** | Searches [Newsdata.io](https://newsdata.io/) | Requires API key |
-| **nlresearch.json** | Searches [NLResearch.com](https://northernlight.com/) premium content | Requires credentials |
-| **open_sanctions.json** | Queries [OpenSanctions.org](https://www.opensanctions.org/) | Requires API key |
-| **opensearch.json** | OpenSearch 2.x | [Developer Guide](./Developer-Reference#elastic--opensearch) |
-| **oracle.json** | Queries Oracle 23c Free (and earlier versions) | Requires Oracle credentials |
-| **preloaded.json** | All preloaded SearchProviders | Default in SWIRL |
-| **servicenow.json** | Searches ServiceNow Knowledge and Service Catalog | Requires username and password |
-| **solr.json** | Queries Apache Solr (local install) | Requires host, port, collection |
-| **solr_with_auth.json** | Secured Solr instance | Requires credentials |
-| **youtrack.json** | Searches [JetBrains YouTrack](https://www.jetbrains.com/youtrack/) | Requires bearer token |
+To view the list of preloaded SearchProviders, use the admin console: [http://localhost:8000/admin/](http://localhost:8000/admin/)
 
-This table provides a high-level overview of the available SearchProviders. Detailed configurations can be found in the [SearchProviders repository](https://github.com/swirlai/swirl-search/tree/main/SearchProviders).
+![SWIRL Admin Console showing SearchProvider link](images/swirl_admin_console_sp_selected.png)
+
+Click the link `SearchProviders` at the bottom, left of the screen, under the `SWIRL` menu. This will bring up a list of the current SearchProviders:
+
+![SWIRL Admin Console showing SearchProvider list](images/swirl_admin_console_sp_list.png)
+
+# Editing a SearchProvider
+
+From the admin console click on a SearchProvider to edit it.
+
+![SWIRL Admin Console showing SearchProvider list](images/swirl_admin_console_sp_list.png)
+
+Use the form that appears to make changes:
+
+![SWIRL Admin Console showing SearchProvider editing](images/swirl_admin_console_edit_sp_1.png)
+
+Click the "SAVE" button, at the bottom of the form, to commit changes. 
+
+![SWIRL Admin Console showing SearchProvider editing with SAVE button](images/swirl_admin_console_edit_sp_2.png)
+
+## Cloning a SearchProvider
+
+To clone a SearchProvider, open it as described above, then:
+
+* Change the name of the SearchProvider to a unique value
+* Click the "Save as new" button at the bottom of the page.
+
+The "Save as new" button is pictured above.
 
 # Activating a SearchProvider
 
-To activate a preloaded SearchProvider, [edit it](#editing) and change:
+To activate a SearchProvider [edit it using the Admin Console](#editing-a-searchprovider) as shown above. Then check the `active` field, if it is not already.
 
-```json
-    "active": false
-```
+![SWIRL Admin Console showing SearchProvider active setting checked](images/swirl_admin_console_activate_sp.png)
 
-to
+Click the "SAVE" button, at the bottom of the page, to commit this change.
 
-```json
-    "active": true
-```
+# Adding SearchProviders
 
-Click the `PUT` button to save the change. You can also use the `HTML Form` at the bottom of the page for convenience.
+## Using the Admin Console
 
-![SearchProvider HTML form](images/swirl_sp_html_form.png)
+From the admin console, go to the SearchProvider page:
 
-# Activating a Google Programmable Search Engine (PSE) SearchProvider
+![SWIRL admin console showing SearchProvider](images/swirl_admin_console_sp_selected.png)
 
-SWIRL includes an **inactive** Google PSE configuration that allows searching the web or a defined "slice" of it.  
-Google PSE **is not free** and requires a **valid Google API key**.
+Click the "Add SearchProvider" button at the top/right of the SearchProvider list that appears:
 
-## Create a Google Programmable Search Engine (PSE)
-1. Go to [Google Programmable Search Engine](https://programmablesearchengine.google.com/about/)  
-2. Click **Get Started** and log in with your Google account  
-3. Follow the steps to create a PSE and note the `cx` parameter (your Google PSE ID)
+![SWIRL admin console showing Add SearchProvider](images/swirl_admin_console_sp_list_add.png)
 
-## Create a Google API Key
-1. Visit the [Google API Custom Search overview](https://developers.google.com/custom-search/v1/overview)  
-2. Follow the instructions to generate an API key  
+Fill in the field(s) with the appropriate values for your SearchProvider. [Contact SWIRL](#support) for assistance.
 
-## Activate the Google PSE SearchProvider
+## Via Copy/Paste
 
-1. [Edit the Google PSE provider](#editing)
-2. Change:
-   ```json
-       "active": false
-   ```
-   to:
-   ```json
-       "active": true
-   ```
-   Or use the **HTML form** at the bottom of the page.
-3. Update the `query_mappings` field with your Google PSE ID (`cx` parameter):
-   ```json
-       "query_mappings": "cx=<your-Google-PSE-id>"
-   ```
-4. Update the `credentials` field with your Google API key, using the `key=` prefix:
-   ```json
-       "credentials": "key=<your-Google-API-key>"
-   ```
-5. Click the `PUT` button to save the changes.
-6. Reload SWIRL Galaxy—your new source will appear in the source selector.
-
-# Copy/Paste Install
-
-If you have a **SearchProvider JSON file**, you can copy and paste it into the form at the bottom of the **SearchProvider endpoint**.
+If you have a **SearchProvider JSON file**, copy and paste it into the form at the bottom of the **SearchProvider API endpoint**.
 
 ![SWIRL API](images/swirl_spl_empty.png)
 
@@ -142,7 +94,7 @@ If you have a **SearchProvider JSON file**, you can copy and paste it into the f
 4. Click the `POST` button.
 5. SWIRL will confirm the new SearchProvider(s).
 
-# Bulk Loading
+## Using the Bulk Loader
 
 Use the [`swirl_load.py`](https://github.com/swirlai/swirl-search/blob/main/swirl_load.py) script to bulk-load SearchProviders.
 
@@ -162,20 +114,7 @@ Use the [`swirl_load.py`](https://github.com/swirlai/swirl-search/blob/main/swir
 ![SWIRL SearchProviders List - Google PSE Example 1](images/swirl_sp_pse-1.png)
 ![SWIRL SearchProviders List - Google PSE Example 2](images/swirl_sp_pse-2.png)
 
-# Editing a SearchProvider
-
-To edit a SearchProvider, append its `id` to the end of the `/swirl/searchproviders` URL.  
-
-For example:  
-`http://localhost:8000/swirl/searchproviders/1/`
-
-![SWIRL SearchProvider Instance - Google PSE](images/swirl_sp_instance.png)
-
-## Available Actions:
-* **DELETE** the SearchProvider permanently.
-* **Modify** the configuration and click `PUT` to save changes.
-
-# Query Templating
+# Query Templates
 
 Most SearchProviders require a **query_template**, which binds to **query_mappings** during the federation process.  
 
@@ -214,6 +153,27 @@ SearchProviders have three properties that control their participation in querie
 - Users can target specific providers using a mix of **Tags**, **SearchProvider names**, or **IDs**.
 
 This ensures broad searches use the best general providers, while topic-specific searches can target precise data sources.
+
+## Sharing a SearchProvider with Specific Users
+
+By default, SearchProviders are shared with all SWIRL users. To enable group-level access to a SearchProvider, the admin user should do the following:
+
+1. Create a new Django Group and add one or more SWIRL users to it. Use the Django Admin tool as described here: <https://docs.swirlaiconnect.com/Admin-Guide.html#django-admin>
+
+2. Edit the SearchProvider 
+
+Use the [Admin Console](#using-the-admin-console) to [edit the SearchProvider](#editing-a-searchprovider) as follows:
+
+* Change the `shared` property to false. Add the name of the group created in step 1 to the SearchProvider `groups` property. Note that this field must be a list. For example: 
+```
+"groups": ["some_new_group"]
+```
+
+![SWIRL Admin Console showing SearchProvider group and shared options](images/swirl_admin_console_edit_sp_groups.png)
+
+3. Click the SAVE button at the bottom of the form to save changes!
+
+Now, only the users who are members of the newly created group (from step 1) can use that SearchProvider, and it should appear for them in the Galaxy sources pulldown.
 
 # Query Mappings
 
@@ -655,3 +615,12 @@ To **exclude unnecessary fields** from PAYLOAD:
 
 {: .highlight }
 SWIRL copies all source data to PAYLOAD **by default** unless `NO_PAYLOAD` is specified.
+
+# Rate Limiting or Throttling of SWIRL by Sources
+
+Please note: SWIRL queries may be subject to rate limits or throttling imposed by the sources being queried. Consult the terms for the service in question for details. 
+
+SWIRL honors 429 responses to HTTP requests (including MS Graph API) and automatically back-off for a configurable time period, or the time reported. 
+
+SWIRL may be configured to limit the rate sent to any given SearchProvider. [Contact support](#support) for assistance. 
+
