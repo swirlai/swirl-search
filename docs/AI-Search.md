@@ -298,7 +298,7 @@ New prompts twon't be disturbed when SWIRL upgrades.
 2. Click the `search_rag_standard` or, if using [Deep Linking](./User-Guide-Enterprise.md#deep-linked-citations) `search_rag_deeplink` prompt. 
 ![SWIRL Admin Console showing list of prompts with one selected](images/swirl_admin_console_prompts_list_selected.png)
 
-3. Set `active` to `false`. Click the "SAVE" button at the bottom of the page.
+3. Using the form, set `active` to `false`. Click the "SAVE" button at the bottom of the page.
 ![SWIRL Admin Console showing prompt edit with save selected](images/swirl_admin_console_prompt_edit_save.png)
 
 4. Change the `name` of the prompt to something appropriate like `my_custom_prompt`. Click the "Save as new" button at the bottom of the page. 
@@ -310,17 +310,17 @@ New prompts twon't be disturbed when SWIRL upgrades.
 7. Modify the `prompt`, `note` and/or `footer` as needed, while retaining all critical instructions. For example, to instruct the LLM to use pirate-speak:
 ![SWIRL Admin Console showing prompt footer edited for pirate-speak](images/swirl_admin_console_prompt_pirate.png)
 
-8. Click "SAVE" at the bottom of the page to save changes. 
+8. Click "SAVE" at the bottom of the page to save changes. ![SWIRL Admin Console edit prompt save button selected](images/swirl_admin_console_prompt_edit_save.png)
 
-9. Try the new prompt from the Galaxy Search form or via the Search Assistant!
+9. Try the new prompt from the Galaxy Search form!
 
 ## Restoring Standard Prompts
 
 To go back to a standard prompt after creating a new one:
 
 * Open the Admin Console and select Prompts
-* Edit the new prompt, and uncheck the `active` property
-* Edit the system prompt, and check the `active` property
+* Edit the new prompt, uncheck the `active` property, and click the "SAVE" button.
+* Edit the system prompt, check the `active` property, and click the "SAVE" button.
 
 ### Restoring All Prompts to Default
 
