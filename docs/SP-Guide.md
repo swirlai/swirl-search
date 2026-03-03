@@ -55,76 +55,19 @@ Click the "SAVE" button, at the bottom of the form, to commit changes.
 To clone a SearchProvider, open it as described above, then:
 
 * Change the name of the SearchProvider to a unique value
-* Click "Save as new"
+* Click the "Save as new" button at the bottom of the page.
+
+The "Save as new" button is pictured above.
 
 # Activating a SearchProvider
 
-To activate a SearchProvider edit it as shown above, and change the `active` field from:
+To activate a SearchProvider [edit it using the Admin Console](#editing-a-searchprovider) as shown above. Then check the `active` field, if it is not already.
 
-```json
-    "active": false
-```
+![SWIRL Admin Console showing SearchProvider active setting checked](images/swirl_admin_console_activate_sp.png)
 
-to
-
-```json
-    "active": true
-```
-
-Click the `PUT` button to save the change. You may also use the `HTML Form` at the bottom of the page for convenience.
-
-![SearchProvider HTML form](images/swirl_sp_html_form.png)
-
-## Activating a Google Programmable Search Engine (PSE) SearchProvider
-
-SWIRL includes an **inactive** Google PSE configuration that allows searching the web or a defined "slice" of it. Google PSE **is not free** and requires a **valid Google API key**.
-
-### Create a Google Programmable Search Engine (PSE)
-1. Go to [Google Programmable Search Engine](https://programmablesearchengine.google.com/about/)  
-2. Click **Get Started** and log in with your Google account  
-3. Follow the steps to create a PSE and note the `cx` parameter (your Google PSE ID)
-
-## Create a Google API Key
-1. Visit the [Google API Custom Search overview](https://developers.google.com/custom-search/v1/overview)  
-2. Follow the instructions to generate an API key  
-
-### Activate the Google PSE SearchProvider
-
-1. [Edit the Google PSE provider](#editing)
-2. Change:
-   ```json
-       "active": false
-   ```
-   to:
-   ```json
-       "active": true
-   ```
-   Or use the **HTML form** at the bottom of the page.
-3. Update the `query_mappings` field with your Google PSE ID (`cx` parameter):
-   ```json
-       "query_mappings": "cx=<your-Google-PSE-id>"
-   ```
-4. Update the `credentials` field with your Google API key, using the `key=` prefix:
-   ```json
-       "credentials": "key=<your-Google-API-key>"
-   ```
-5. Click the `PUT` button to save the changes.
-6. Reload SWIRL Galaxy—your new source will appear in the source selector.
+Click the "SAVE" button, at the bottom of the page, to commit this change.
 
 # Adding SearchProviders
-
-## Via Copy/Paste
-
-If you have a **SearchProvider JSON file**, copy and paste it into the form at the bottom of the **SearchProvider endpoint**.
-
-![SWIRL API](images/swirl_spl_empty.png)
-
-## Steps:
-1. Go to [http://localhost:8000/swirl/searchproviders/](http://localhost:8000/swirl/searchproviders/)
-2. Click the `Raw data` tab at the bottom of the page.
-3. Paste the SearchProvider JSON (either a single record or a list of records).
-4. Click the `POST` button.
-5. SWIRL will confirm the new SearchProvider(s).
 
 ## Using the Admin Console
 
@@ -135,6 +78,21 @@ From the admin console, go to the SearchProvider page:
 Click the "Add SearchProvider" button at the top/right of the SearchProvider list that appears:
 
 ![SWIRL admin console showing Add SearchProvider](images/swirl_admin_console_sp_list_add.png)
+
+Fill in the field(s) with the appropriate values for your SearchProvider. [Contact SWIRL](#support) for assistance.
+
+## Via Copy/Paste
+
+If you have a **SearchProvider JSON file**, copy and paste it into the form at the bottom of the **SearchProvider API endpoint**.
+
+![SWIRL API](images/swirl_spl_empty.png)
+
+## Steps:
+1. Go to [http://localhost:8000/swirl/searchproviders/](http://localhost:8000/swirl/searchproviders/)
+2. Click the `Raw data` tab at the bottom of the page.
+3. Paste the SearchProvider JSON (either a single record or a list of records).
+4. Click the `POST` button.
+5. SWIRL will confirm the new SearchProvider(s).
 
 ## Using the Bulk Loader
 
@@ -658,10 +616,11 @@ To **exclude unnecessary fields** from PAYLOAD:
 {: .highlight }
 SWIRL copies all source data to PAYLOAD **by default** unless `NO_PAYLOAD` is specified.
 
-# {: .highlight }
+# Rate Limiting or Throttling of SWIRL by Sources
 
-TBD 
+Please note: SWIRL queries may be subject to rate limits or throttling imposed by the sources being queried. Consult the terms for the service in question for details. 
 
-SWIRL queries may be subject to rate limits or throttling imposed by the sources being queried.
+SWIRL honors 429 responses to HTTP requests (including MS Graph API) and automatically back-off for a configurable time period, or the time reported. 
 
+SWIRL may be configured to limit the rate sent to any given SearchProvider. [Contact support](#support) for assistance. 
 
