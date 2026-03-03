@@ -120,7 +120,7 @@ Use the [Customizing Prompts](#customizing-the-ai-search-rag-prompt) procedure, 
 **Warning: never modify the standard prompts!** All changes will be discarded when SWIRL updates. 
 
 The following procedure below below to copy the standard prompts, modify them, then make them active. 
-New prompts twon't be disturbed when SWIRL upgrades.
+New prompts won't be disturbed when SWIRL upgrades.
 
 1. Open the [Admin Console]([http://localhost:8000/admin) and click `Prompts` near the bottom of the page:
 ![SWIRL Admin Console showing list of prompts](images/swirl_admin_console_prompts_list.png)
