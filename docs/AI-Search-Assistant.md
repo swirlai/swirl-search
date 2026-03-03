@@ -139,7 +139,7 @@ New prompts twon't be disturbed when SWIRL upgrades.
 ```json
 {
     "prompt": "You are an expert online assistant and reference librarian working for **<your-company-name>. <Your-company-name> is located in <description> and operates in <industry> etc**... Your job is...
- }
+}
 ```
 
 8. Click "SAVE" at the bottom of the page to save changes. ![SWIRL Admin Console edit prompt save button selected](images/swirl_admin_console_prompt_edit_save.png)
@@ -160,13 +160,13 @@ To restore all prompts to the default, refer to the [Admin Guide on Resetting Pr
 
 ## Advanced Querying
 
-To enable the Assistant to query in advanced query languages like SQL, the elastic API or Mongo MQL, add an LLM generated instruction set to this structure, including:
+To enable the Assistant to query in advanced query languages like SQL, the elastic API or Mongo MQL, add an LLM generated instruction set to the SearchProvider `config` block, including:
 
 * A description of the schema
 * Details of important fields
 * Sample queries and the natural language, business questions they answer
 
-For example, here's how SWIRL configures the Search Assistant to query the company database using Google BigQuery SQL:
+For example, here's a configuration enabling the Search Assistant to query the company database using Google BigQuery SQL:
 
 ```
     "config": {
@@ -183,9 +183,9 @@ For example, here's how SWIRL configures the Search Assistant to query the compa
 
 ```
 
-Note that `query_instructions` must be a single string with no new lines or other special formatting. 
+Note that `query_instructions` must be valid JSON, a single string with no special formatting.
 
-Once configured, this description enables rich querying without writing any SQL.
+Once configured, this description enables rich querying by the Assistant without requiring the user to write SQL or understand the table structure. 
 
 ![SWIRL AI Search Assistant running a SQL query in response to a natural language question](images/swirl_search_assistant_SQL_response_1.png)
 
