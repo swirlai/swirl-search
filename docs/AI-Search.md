@@ -65,7 +65,19 @@ To connect SWIRL to your **Microsoft 365 (M365) tenant**, follow the instruction
 
 To integrate SWIRL with an Identity Provider (IDP) or Single Sign-On (SSO) system, you need to configure an **Authenticator object**.
 
-To manage authenticators, go to: [http://localhost:8000/swirl/aiproviders](http://localhost:8000/swirl/aiproviders) (default local installation).
+### Managing Authenticators
+
+Use the Admin Console to view, edit, add or delete authenticators, here: [http://localhost:8000/admin/swirl](http://localhost:8000/admin/swirl)
+
+![SWIRL Admin Console with Authenticators selected](images/swirl_admin_console_swirl_auth_selected.png)
+
+Click on "Authenticators" as shown to view the list of available ones, or add a new one:
+![SWIRL Admin Console, Authenticators list](images/swirl_admin_console_swirl_auth_list.png)
+
+Click any of the Authenticators shown in the list to view or edit it. For example, here's the default Microsoft authenticator:
+![SWIRL Admin Console, Authenticators list](images/swirl_admin_console_swirl_auth_microsoft.png)
+
+Click the "SAVE" button at the bottom of the page to commit changes. 
 
 **Authenticator Fields**
 
@@ -108,12 +120,10 @@ GAI/LLMs in SWIRL serve four distinct roles:
 
 ## Managing AI Providers
 
-To manage AI providers (view, edit, add, or delete), use the Admin Console: <http://localhost:8000/admin/>
+Use the Admin Console to view, add, edit or delete AI Providers, here: <http://localhost:8000/admin/swirl>
+![SWIRL Admin Console top level with AIProviders highlighted](images/swirl_admin_console_swirl_aip_selected.png)
 
-![SWIRL Admin Console top level with AIProviders highlighted](images/swirl_admin_console_aip.png)
-
-Click on AIProviders as shown above to access the full list:
-
+Click "AIProviders" as shown to access the full list:
 ![SWIRL Admin Console viewing list of AIProviders](images/swirl_admin_console_aip_list.png)
 
 ## Supported Generative AI (GAI) and LLMs
@@ -138,12 +148,10 @@ For assistance with any of these or additional models, please [contact support](
 
 ## Editing AI Providers
 
-From the Admin Console as shown above, click on an AIProvider to edit it:
-
+From the [Admin Console](http://localhost:8000/admin/swirl) as shown above, click "AIProviders" to view the list of all available providers. Then, click on a specific AIProvider to edit it:
 ![SWIRL Admin Console viewing list of AIProviders](images/swirl_admin_console_aip_list_selected.png)
 
 This will bring up an edit form:
-
 ![SWIRL Admin Console editing an AIProvider](images/swirl_admin_console_edit_aip.png)
 
 Click the "SAVE" button at the bottom of the page to commit changes you make. 
@@ -167,12 +175,10 @@ To switch the provider for a given role, use the `active` property. Only one AIP
 
 ### Via the Admin Console
 
-From the Admin Console, click on AIProviders as shown above. Then, click "Add AIProvider": 
-
+From the [Admin Console](http://localhost:8000/admin/swirl), click on AIProviders as shown above. Then, click "Add AIProvider": 
 ![Admin Console showing AIProvider list with Add button highlighted](images/swirl_admin_console_aip_add.png)
 
-This will bring up a blank form for a new AIProvider. 
-
+This will bring up a blank form for a new AIProvider:
 ![Admin Console showing new AIProvider form](images/swirl_admin_console_aip_new.png)
 
 Fill out the form and click the "SAVE" button at the bottom.
@@ -292,27 +298,29 @@ Use the [Customizing Prompts](#customizing-the-ai-search-rag-prompt) procedure, 
 The following procedure below below to copy the standard prompts, modify them, then make them active. 
 New prompts won't be disturbed when SWIRL upgrades.
 
-1. Open the [Admin Console]([http://localhost:8000/admin) and click `Prompts` near the bottom of the page:
-![SWIRL Admin Console showing list of prompts](images/swirl_admin_console_prompts_list.png)
+1. Open the Admin Console here: <http://localhost:8000/admin/swirl> 
 
-2. Click the `search_rag_standard` or, if using [Deep Linking](./User-Guide-Enterprise.md#deep-linked-citations) `search_rag_deeplink` prompt. 
+2. click `Prompts` near the bottom of the page:
+![SWIRL Admin Console showing list of prompts](images/swirl_admin_console_swirl_prompts_selected.png)
+
+3. Click the `search_rag_standard` or, if using [Deep Linking](./User-Guide-Enterprise.md#deep-linked-citations) `search_rag_deeplink` prompt. 
 ![SWIRL Admin Console showing list of prompts with one selected](images/swirl_admin_console_prompts_list_selected.png)
 
-3. Using the form, set `active` to `false`. Click the "SAVE" button at the bottom of the page.
+4. Using the form, set `active` to `false`. Click the "SAVE" button at the bottom of the page.
 ![SWIRL Admin Console showing prompt edit with save selected](images/swirl_admin_console_prompt_edit_save.png)
 
-4. Change the `name` of the prompt to something appropriate like `my_custom_prompt`. Click the "Save as new" button at the bottom of the page. 
+5. Change the `name` of the prompt to something appropriate like `my_custom_prompt`. Click the "Save as new" button at the bottom of the page. 
 
-5. Set the prompt to `active`. Click the "SAVE" button at the bottom of the page to save the new prompt.
+6. Set the prompt to `active`. Click the "SAVE" button at the bottom of the page to save the new prompt.
 
-6. If you don't wish to share this prompt with other users, set `shared` to `false`. 
+7. If you don't wish to share this prompt with other users, set `shared` to `false`. 
 
-7. Modify the `prompt`, `note` and/or `footer` as needed, while retaining all critical instructions. For example, to instruct the LLM to use pirate-speak:
+8. Modify the `prompt`, `note` and/or `footer` as needed, while retaining all critical instructions. For example, to instruct the LLM to use pirate-speak:
 ![SWIRL Admin Console showing prompt footer edited for pirate-speak](images/swirl_admin_console_prompt_pirate.png)
 
-8. Click "SAVE" at the bottom of the page to save changes. ![SWIRL Admin Console edit prompt save button selected](images/swirl_admin_console_prompt_edit_save.png)
+9. Click "SAVE" at the bottom of the page to save changes. ![SWIRL Admin Console edit prompt save button selected](images/swirl_admin_console_prompt_edit_save.png)
 
-9. Try the new prompt from the Galaxy Search form!
+10. Try the new prompt from the Galaxy Search form!
 
 ## Restoring Standard Prompts
 
