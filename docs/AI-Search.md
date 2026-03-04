@@ -303,10 +303,10 @@ New prompts won't be disturbed when SWIRL upgrades.
 2. click `Prompts` near the bottom of the page:
 ![SWIRL Admin Console showing list of prompts](images/swirl_admin_console_swirl_prompts_selected.png)
 
-3. Click the `search_rag_standard` or, if using [Deep Linking](./User-Guide-Enterprise.md#deep-linked-citations) `search_rag_deeplink` prompt. 
+3. Click the `search_rag_standard` or, if using [Deep Linking](./User-Guide-Enterprise.md#deep-linked-citations) `search_rag_deeplink` prompt: 
 ![SWIRL Admin Console showing list of prompts with one selected](images/swirl_admin_console_prompts_list_selected.png)
 
-4. Using the form, set `active` to `false`. Click the "SAVE" button at the bottom of the page.
+4. Using the form, uncheck `active`. Click the "SAVE" button at the bottom of the page.
 ![SWIRL Admin Console showing prompt edit with save selected](images/swirl_admin_console_prompt_edit_save.png)
 
 5. Change the `name` of the prompt to something appropriate like `my_custom_prompt`. Click the "Save as new" button at the bottom of the page. 

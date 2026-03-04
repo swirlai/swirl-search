@@ -38,22 +38,32 @@ SWIRL AI Search defines four core roles for GAI/LLMs. SWIRL AI Search Assistant 
 
 ## Adding Chat to an AI Provider
 
-1. Open the [Admin Console](http://localhost:8000/admin) and click on the AIProviders link at the bottom of the page:
-![SWIRL Admin Console showing AIProviders selected](images/swirl_admin_console_aip.png)
+1. Go to the Admin Console: <http://localhost:8000/admin/swirl>
 
-2. Add `chat` to the `tags` list, if it is not already present.
+2. Click on the AIProviders link at the bottom of the page:
+![SWIRL Admin Console showing AIProviders selected](images/swirl_admin_console_swirl_aip_selected.png)
 
-3. Add `chat` to the `defaults` list, if it not already present. For more information: [Organizing SearchProviders with Active, Default and Tags](SP-Guide.md#organizing-searchproviders-with-active-default-and-tags)
+3. The list of AIProviders will appear. 
+![SWIRL Admin Console showing AIProvider list](images/swirl_admin_console_aip_list.png)
 
-4. Click the "SAVE" button at the bottom of the page. This AIProvider is now active for the chat role, and is the default AIProvider for that role.
+4. Click one to edit it. This will bring up the edit form:
+![SWIRL Admin Console showing AIProvider edit form](images/swirl_admin_console_edit_aip.png)
 
-5. Try the new AIProvider by [chatting with the Search Assistant](#launching-assistant)!
+4. Add `chat` to the `tags` list, if not already present.
+
+5. Add `chat` to the `defaults` list, if not already present. 
+
+6. Click the "SAVE" button at the bottom of the page. This AIProvider is now active for the chat role, and is the default AIProvider for that role.
+
+7. Try the new AIProvider by [chatting with the Search Assistant](#launching-assistant)!
+
+For more information on `tags` and `default` options, see: [Organizing SearchProviders with Active, Default and Tags](SP-Guide.md#organizing-searchproviders-with-active-default-and-tags)
 
 ## Launching Assistant
 
 Once the AI provider is configured correctly, **Assistant should be accessible via a browser**.  
 
-For a default installation, go to: [http://localhost:8000/galaxy/chat](http://localhost:8000/galaxy/chat)
+For a default installation, go here: <http://localhost:8000/galaxy/chat>
 
 ![SWIRL Assistant discussion](images/swirl_40_chat_scop.png)
 
@@ -122,29 +132,31 @@ Use the [Customizing Prompts](#customizing-the-ai-search-rag-prompt) procedure, 
 The following procedure below below to copy the standard prompts, modify them, then make them active. 
 New prompts won't be disturbed when SWIRL upgrades.
 
-1. Open the [Admin Console]([http://localhost:8000/admin) and click `Prompts` near the bottom of the page:
-![SWIRL Admin Console showing list of prompts](images/swirl_admin_console_prompts_list.png)
+1. Open the Admin Console: <http://localhost:8000/admin/swirl>
 
-2. Click the `chat_rag_instructions_standard`, `chat_rag_standard` or `chat_rag_deeplink` prompts. ![SWIRL Admin Console showing list of prompts with one selected](images/swirl_admin_console_prompts_list_selected_chat.png)
+2. Click `Prompts` near the bottom of the page:
+![SWIRL Admin Console showing list of prompts](images/swirl_admin_console_swirl_prompts_selected.png)
 
-3. Using the form, set `active` to `false`. Click the "SAVE" button at the bottom of the page. ![SWIRL Admin Console showing prompt edit with save selected](images/swirl_admin_console_prompt_edit_save.png)
+3. Click the `chat_rag_instructions_standard`, `chat_rag_standard` or `chat_rag_deeplink` prompts to bring up the edit form.
 
-4. Change the `name` of the prompt to something appropriate like `my_custom_prompt`. Click the "Save as new" button at the bottom of the page. 
+4. Using the form, uncheck `active`. Then, click the "SAVE" button at the bottom of the page. ![SWIRL Admin Console showing prompt edit with save selected](images/swirl_admin_console_prompt_edit_save.png)
 
-5. Set the prompt to `active`. Click the "SAVE" button at the bottom of the page to save the new prompt.
+5. Change the `name` of the prompt to something appropriate like `my_custom_prompt`. Click the "Save as new" button at the bottom of the page. 
 
-6. If you don't wish to share this prompt with other users, set `shared` to `false`. 
+6. Check the `active` field. Then, click the "SAVE" button at the bottom of the page to save the new prompt.
 
-7. Modify the `prompt` field. Change `SWIRL Corporation` to the name of your organization. Add additional text dsecribing the organization, the role of users, and additional information, after the organization name. Do not disturb any other instructions. For example:
+7. If you don't wish to share this prompt with other users, set `shared` to `false`. 
+
+8. Modify the `prompt` field. Change `SWIRL Corporation` to the name of your organization. Add additional text dsecribing the organization, the role of users, and additional information, after the organization name. Do not disturb any other instructions. For example:
 ```json
 {
     "prompt": "You are an expert online assistant and reference librarian working for **<your-company-name>. <Your-company-name> is located in <description> and operates in <industry> etc**... Your job is...
 }
 ```
 
-8. Click "SAVE" at the bottom of the page to save changes. ![SWIRL Admin Console edit prompt save button selected](images/swirl_admin_console_prompt_edit_save.png)
+9. Click "SAVE" at the bottom of the page to save changes. ![SWIRL Admin Console edit prompt save button selected](images/swirl_admin_console_prompt_edit_save.png)
 
-9. Try the new prompt by asking the Search Assistant!
+10. Try the new prompt by asking the Search Assistant!
 
 ## Restoring Standard Prompts
 
