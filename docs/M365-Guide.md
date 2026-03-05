@@ -246,20 +246,36 @@ To enable OAuth2 content search for M365 in the SWIRL Enterprise edition, locate
 ![Azure App Values](images/Azure_app_values.png)
 ![Azure Secret Value](images/Azure_secret_value.png)
 
-
 ### Configure the Microsoft Authenticator
 
-SWIRL includes a preconfigured **Microsoft Authenticator**, here: <http://localhost:8000/swirl/authenticators/Microsoft/>
+SWIRL includes a preconfigured **Microsoft Authenticator**. 
 
+Use the Admin Console to configure it: <http://localhost:8000/admin/swirl>
+
+Click on the "Authenticators" link: 
+![SWIRL Admin Console Authenticators link](images/swirl_admin_console_swirl_auth_selected.png)
+
+Click the "Microsoft" Authenticator to bring up the edit form:
+![SWIRL Admin Console Authenticators link](images/swirl_admin_console_swirl_auth_microsoft.png)
+
+Make the following changes:
 * Update the Authenticator `client_id` value with Azure App `<application-id>`
 * Update the Authenticator `client_secret` value with Azure App `<client-secret-value>`
 * Update the Authenticator `app_uri` value with the host and optional port of the SWIRL application.
 * Update the Authenticator `auth_uri` and `token_uri` values to include the Azure App `<tenant-id>` where indicated.
-* Update the Authenticator `active` value to `true`.
+* Make the Authenticator `active` by checking it. 
 
 {: .highlight }
 Do not include a trailing slash in the `app_uri` value!
 
+Click the "SAVE" button at the bottom of the page to commit changes. 
+
+{: .highlight }
+You must [activate the M365 SearchProviders](#activate-the-microsoft-365-searchproviders) before attempting to login using the new Authenticator.
+
+#### Example Configurations
+
+This configuration is for a server running in production, with a fully qualified domain name (like `swirl.yourdomain.com`).
 
 ```json
 {
@@ -290,7 +306,7 @@ Do not include a trailing slash in the `app_uri` value!
 }
 ```
 
-Example Authenticator configuration for SWIRL running locally:
+This configuration can be used when running SWIRL locally:
 
 ```json
 {
@@ -320,10 +336,6 @@ Example Authenticator configuration for SWIRL running locally:
     "expires_in": 0
 }
 ```
-
-Click the `PUT` button to save the Authenticator.
-
-Proceed to [Activate the M365 SearchProviders](#activate-the-microsoft-365-searchproviders) for Enterprise Edition.
 
 # Configuring OIDC for Microsoft
 
@@ -386,42 +398,25 @@ Example OIDC configuration for Microsoft:
 ```
 
 {: .highlight }
-For the Enterprise Edition, the Microsoft Authenticator must be correctly configured as well.  Please see above to [Configure the Microsoft Authenticator](#configure-the-microsoft-authenticator) if needed.
+For the Enterprise Edition, the Microsoft Authenticator must be correctly configured [as noted above](#configure-the-microsoft-authenticator).
 
 ### Restart SWIRL
 
-```shell
-python swirl.py restart
-```
+Restart SWIRL. The login page should now present a `Login with Microsoft` button:
+![Login with Microsoft](images/Login-with-Microsoft.png)
 
-The SWIRL login page should now contain a `Login with Microsoft` button configured to your Azure tenant.
+## Configure OIDC for the SWIRL Public Docker Compose
 
-   ![Login with Microsoft](images/Login-with-Microsoft.png)
+{: .highlight }
+Use of OIDC is optional.
 
-## Configure OIDC for the SWIRL Preview Docker
-
-{: .warning }
-You must persist the `.env` file to your local working directory in order to enable OIDC in the Preview Docker following the instructions provided with the image.
-
-Configure the following environment variables in the `.env` file persisted to the local working directory:
-
-- `MS_AUTH_CLIENT_ID` - Microsoft application registration client ID value.
-- `MS_TENANT_ID` - Tenant ID value from Microsoft Azure IdP.
-- `PROTOCOL` - The protocol used by the SWIRL instance (e.g. `http` or `https`).
-- `SHOULD_USE_TOKEN_FROM_OAUTH`- Set this value to "True" (default) to use the tokens from OIDC. Otherwise, set it to False.
-- `SWIRL_FQDN`	The Fully Qualified Domain Name of the SWIRL instance.
-- `SWIRL_PORT`	The port used by SWIRL (defaults to `unset` allowing `PROTOCOL` to set to 443 for HTTPS, and 80 for HTTP).
-
-### Restart the Preview Docker
-
-```
-docker-compose stop
-docker-compose up
-```
-
-The SWIRL login page should now contain a `Login with Microsoft` button configured to your Azure tenant.
+Main instructions: <https://github.com/swirlai/docker-compose/blob/main/doc/setup-instructions.md#configure-oidc-with-microsoft-as-the-idp-optional>
 
 ## Configure OIDC for the SWIRL Azure Marketplace Offer
+
+{: .highlight }
+Use of OIDC is optional.
+
 Configure the following environment variables in the `.env` file found in the deployment's `/app` directory:
 
 - `MS_AUTH_CLIENT_ID` - Microsoft application registration client ID value.
@@ -444,7 +439,7 @@ During the SWIRL start-up process, the following command is run, which populates
 python swirl.py config_default_api_settings
 ```
 
-The SWIRL login page should now contain a `Login with Microsoft` button configured to your Azure tenant.
+The SWIRL login page should then present a `Login with Microsoft` button.
 
 # Activate the Microsoft 365 SearchProviders
 
@@ -454,7 +449,7 @@ The **SWIRL distribution** includes pre-configured **SearchProviders** for:
 - **Calendar Events**  
 - **OneDrive Files**  
 - **SharePoint Sites**  
-- **Teams Chat**  
+- **TeamsChat**  
 
 {: .warning }
 The **Microsoft Teams desktop app must be open** before clicking a Teams Chat result link.  
@@ -468,44 +463,21 @@ The **Microsoft Teams desktop app must be open** before clicking a Teams Chat re
 **Enable Microsoft SearchProviders**
 
 1. **Open the Admin Console**:  
-   [http://localhost:8000/swirl/](http://localhost:8000/swirl/)
+   [http://localhost:8000/admin/swirl/](http://localhost:8000/admin/swirl/)
 
-2. **Access SearchProviders**:  
-   Click **`SearchProviders`** to view all configured providers.
+2. **Click SearchProviders**:  
+   ![SWIRL Admin Console showing SearchProvider option](images/swirl_admin_console_swirl_sp_selected.png)
 
-3. **Find and Edit a Microsoft 365 SearchProvider:**  
-   Each M365 app has its own **SearchProvider** entry.  
-   - To edit a provider, add its `id` to the URL.  
-   - Example: If the **id** is `16`, navigate to:  
-     [http://localhost:8000/swirl/searchproviders/16/](http://localhost:8000/swirl/searchproviders/16/)
+3. This will bring up the list of SearchProviders:
+   ![SWIRL Admin Console showing list of SearchProviders](images/swirl_admin_console_sp_list.png)
+   
+4. Click each M365 SearchProvider like Outlook Email, OneDrive or Teams, to edit it. 
+   This will bring up the edit form: 
+   ![SWIRL Admin Console showing SearchProvider edit form](images/swirl_admin_console_edit_sp_1.png)
 
-   ![SWIRL SearchProvider](images/swirl_sp_m365.png)
+5. Activate the provider by checking the "active" box. 
 
-4. **Activate the Provider:**  
-   - Scroll to the **Raw data** tab at the bottom.
-   - Change `"active": false` → `"active": true`
-
-   **Before:**  
-   ```json
-   {
-     "id": 16,
-     "name": "Outlook Messages - Microsoft 365",
-     ...
-     "active": false,
-     ...
-   }
-   ```
-
-   **After:**  
-   ```json
-   {
-     "id": 16,
-     "name": "Outlook Messages - Microsoft 365",
-     ...
-     "active": true,
-     ...
-   }
-   ```
+6. Hit "SAVE" at the bottom of the page.
 
 # Authenticating with Microsoft
 

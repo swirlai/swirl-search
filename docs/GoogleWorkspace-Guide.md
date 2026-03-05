@@ -168,6 +168,14 @@ Click the "Save" button - or "Cancel", if you changed values on this screen - af
 
 SWIRL includes a preconfigured **Google Workspace Authenticator**, here: <http://localhost:8000/swirl/authenticators/Google/>
 
+Use the Admin Console to configure it: <http://localhost:8000/admin/swirl>
+
+Click on the "Authenticators" link: 
+![SWIRL Admin Console Authenticators link](images/swirl_admin_console_swirl_auth_selected.png)
+
+Click the "Google Workspace" Authenticator to bring up the edit form. 
+
+Make the following changes:
 * Update the Authenticator `client_id`
 * Update the Authenticator `client_secret`
 * Update the Authenticator `app_uri` value with the host and port of the SWIRL installation
@@ -215,6 +223,45 @@ Click the `PUT` button to save the modified Authenticator.
 
 # Configuring OIDC for Google
 
+## Using Public Docker Compose
+
+{: .highlight }
+Use of OIDC is optional.
+
+Main instructions: <https://github.com/swirlai/docker-compose/blob/main/doc/setup-instructions.md#configure-oidc-with-google-as-the-idp-optional>
+
+## Using Azure Marketplace
+
+{: .highlight }
+Use of OIDC is optional.
+
+Configure the following environment variables in the `.env` file found in the deployment's `/app` directory:
+
+- `GW_AUTH_CLIENT_ID` - Google application registration client ID value.
+- `GW_TENANT_ID` - Tenant ID value from Google Workspace IdP.
+- `PROTOCOL` - The protocol used by the SWIRL instance (e.g. `http` or `https`).
+- `SHOULD_USE_TOKEN_FROM_OAUTH`- Set this value to "True" (default) to use the tokens from OIDC. Otherwise, set it to False.
+- `SWIRL_FQDN`	The Fully Qualified Domain Name of the SWIRL instance.
+- `SWIRL_PORT`	The port used by SWIRL (defaults to `unset` allowing `PROTOCOL` to set to 443 for HTTPS, and 80 for HTTP).
+
+### Restart SWIRL
+
+```shell
+sudo systemctl stop swirl
+sudo systemctl start swirl
+```
+
+During the SWIRL start-up process, the following command is run, which populates the `/app/static/api/config/default` file:
+
+```
+python swirl.py config_default_api_settings
+```
+
+The SWIRL login page should then present a `Login with Google` button:
+   ![Login with Google](images/swirl_login_google_workspace.png)
+
+## Local Installation
+
 To enable OIDC ("Login with Google"), locate and copy the following values from the just completed application registration:
 - **`<application-id>`**
 - **`<tenant-id>`**
@@ -233,11 +280,13 @@ From the SWIRL home directory, open the `static/api/config/default` file within 
 },
 ```
 
-Add the values from your GW App Registration to the `Google` section. Also, set the `active` value to `true`.
+Add the values from your GW App Registration to the `Google` section. 
+
+Also, set the `active` value to `true`.
 
 # Activate the Google Workspace SearchProviders
 
-The **SWIRL distribution** includes pre-configured **SearchProviders** for:
+SWIRL includes pre-configured **SearchProviders** for:
 
 - **Google Mail (GMail)**  
 - **Google Calendar**  
@@ -253,48 +302,19 @@ The **SWIRL distribution** includes pre-configured **SearchProviders** for:
 To **Enable Google Workplaces** do the following:
 
 1. **Open the Admin Console**:  
-   [http://localhost:8000/swirl/](http://localhost:8000/swirl/)
+   [http://localhost:8000/admin/swirl/](http://localhost:8000/admin/swirl/)
 
-2. **Access SearchProviders**:  
-   Click **`SearchProviders`** to view all configured providers.
+2. **Click SearchProviders**:  
+   ![SWIRL Admin Console showing SearchProvider option](images/swirl_admin_console_swirl_sp_selected.png)
 
-3. **Find and Edit a Google Workspace SearchProvider:**  
-   Each GW app has its own **SearchProvider** entry.  
-   - To edit a provider, add its `id` to the URL.  
-   - Example: If the **id** is `16`, navigate to:  
-     [http://localhost:8000/swirl/searchproviders/16/](http://localhost:8000/swirl/searchproviders/16/)
+3. This will bring up the list of SearchProviders:
+   ![SWIRL Admin Console showing list of SearchProviders](images/swirl_admin_console_sp_list.png)
 
-4. **Activate the Provider:**  
-   - Scroll to the **Raw data** tab at the bottom.
-   - Change `"active": false` → `"active": true`
+4. Click each Google Workspace SearchProvider to edit it. 
 
-   **Before:**  
-   ```json
-   {
-     "id": 16,
-     "name": "Google Mail",
-     ...
-     "active": false,
-     ...
-   }
-   ```
+5. Check the "active" field. 
 
-   **After:**  
-   ```json
-   {
-     "id": 16,
-     "name": "Google Mail",
-     ...
-     "active": true,
-     ...
-   }
-   ```
-
-## Restart SWIRL
-
-```shell
-python swirl.py restart
-```
+6. Click the "SAVE" button at the bottom of the page.
 
 # Login to SWIRL using Google Workspace
 
