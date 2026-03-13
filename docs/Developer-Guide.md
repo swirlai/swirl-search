@@ -579,52 +579,86 @@ By default, SWIRL loads **English stopwords**. To change this:
 
 ## Redact or Remove Personally Identifiable Information (PII)
 
-SWIRL supports **PII removal and redaction** using [Microsoft Presidio](https://microsoft.github.io/presidio/).
+SWIRL supports redaction or removal of PII from queries and results, via [Microsoft Presidio](https://microsoft.github.io/presidio/).
 
-**`RemovePIIQueryProcessor` (Redacts Queries)**
+### RedactPIIQueryProcessor
 
-Removes PII **before querying**.
+This processor redacts PII entities in queries. For example: `Captain James T. Kirk` → `Captain [PERSON]`
 
-*Enable for a Specific SearchProvider:*
+To enable for a specific SearchProvider, add it before the `Adaptive` or `NoMod` Query Processor.
 
 ```json
 "query_processors": [
-    "AdaptiveQueryProcessor",
-    "RemovePIIQueryProcessor"
+    "RedactPIIQueryProcessor",
+    "AdaptiveQueryProcessor"
 ]
 ```
 
-*Enable for ALL SearchProviders:*
+{: .warning }
+If the API receiving the redacted PII can't handle brackets `[]`, use the `AdaptiveQueryProcessor` *after* PII redaction to remove them.
 
-Modify `swirl/models.py`:
+### RemovePIIQueryProcessor
+
+This processor removes detected PII entities from queries entirely. 
+
+To enable for a specific SearchProvider, add it before the `Adaptive` or `NoMod` Query Processor. 
+
+```json
+"query_processors": [
+    "RemovePIIQueryProcessor",
+    "AdaptiveQueryProcessor"
+]
+```
+
+To add either of these to the pre-query processing pipeline, so it runs before any SearchProvider query processing:
+
+1. Add it to the `search.prequery_processing` list. This is only supported via the SWIRL API.
+
+2. Modify `swirl/models.py`:
 
 ```python
 def getSearchPreQueryProcessorsDefault():
     return ["RemovePIIQueryProcessor"]
 ```
 
-More details: [ResultProcessors](./Developer-Reference#result-processors)
+And restart SWIRL. [Contact support](#support) for assistance. 
 
-**`RemovePIIResultProcessor` (Redacts Results)**
+For more information: [ResultProcessors](./Developer-Reference#result-processors)
 
-Redacts PII **in results** (e.g., `"James T. Kirk"` → `"<PERSON>"`).
+### RedactPIIResultProcessor
 
-*Enable for a Specific SearchProvider:*
+Redacts PII in results. In a document, for example: `These are the logs of Captain James T. Kirk.` → `"These are the logs of Captain [PERSON]"`
 
 ```json
 "result_processors": [
     "MappingResultProcessor",
     "DateFinderResultProcessor",
     "CosineRelevancyResultProcessor",
-    "RemovePIIResultProcessor"
+    "RedactPIIResultProcessor"
 ]
 ```
 
 More details: [ResultProcessors](./Developer-Reference#post-result-processors)
 
-**`RemovePIIPostResultProcessor`**
+{: .note }
+There is no RemovePIIResultProcessor at this time as it may impair use of AI. 
 
-This processor applies **PII redaction after all results are processed**.
+### RedactPIIPostResultProcessor
+
+This processor applies PII redaction from the unified results, from all responding sources. 
+
+To add either of these to the pre-query processing pipeline, so it runs before any SearchProvider query processing:
+
+1. Add it to the `search.prequery_processing` list. This is only supported via the SWIRL API.
+
+2. Modify `swirl/models.py`:
+
+```python
+def getSearchPostResultProcessorsDefault():
+    return ["CosineRelevancyPostResultProcessor","RedactPIIPostResultProcessor"]
+```
+
+This configuration re-ranks using entities, but then redacts them in the results displayed to the user. This leaves the entities in the explain vector, which is available via the API. To prevent this, [disable the explain vector by setting `SWIRL_EXPLAIN` to `False`](Admin-Guide.html#configuring-swirl).
 
 ## Understand the Explain Structure
 
