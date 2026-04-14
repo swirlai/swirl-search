@@ -440,6 +440,98 @@ For example:
     }
 ```
 
+## HTTP Timeout and Retry
+
+The following configuration items override the HTTP timeout and retry defaults used when SWIRL calls a SearchProvider's upstream API. These are applied to connector classes that use HTTP (such as `RequestsGet`, `RequestsPost`, and connectors derived from them) and are **separate from** the `fetch_url_body` timeout described in the Page Fetching section above, which controls secondary body-text retrieval after a search has completed.
+
+### `http_timeout`
+
+Overrides the connect and read timeouts, in seconds, for outbound HTTP calls from this SearchProvider.
+
+```
+"config": {
+    "swirl": {
+        "http_timeout": {
+            "connect": <connect-timeout-seconds>,
+            "read":    <read-timeout-seconds>
+        }
+    }
+}
+```
+
+Either key may be supplied; unspecified keys fall back to the global defaults (`SWIRL_SEARCH_HTTP_CONNECT_TIMEOUT`, default `3`; `SWIRL_SEARCH_HTTP_READ_TIMEOUT`, default `10`). Both values accept integers or floats.
+
+Use a tighter `read` value for providers that are known to stall when their credentials have expired, so the search returns faster and other providers' results are not held up. For example, a Box or SharePoint provider whose token is rejected can be configured to fail in 5 seconds instead of 10:
+
+```
+"config": {
+    "swirl": {
+        "http_timeout": {
+            "connect": 2,
+            "read":    5
+        }
+    }
+}
+```
+
+### `http_retry`
+
+Overrides the HTTP retry policy (driven by `urllib3.util.retry.Retry`) for outbound HTTP calls from this SearchProvider. All keys are optional; anything left out falls back to the global default.
+
+```
+"config": {
+    "swirl": {
+        "http_retry": {
+            "total":                       <total-retries>,
+            "status":                      <status-retries>,
+            "connect":                     <connect-retries>,
+            "read":                        <read-retries>,
+            "backoff_factor":              <backoff-factor>,
+            "status_forcelist":            [<retriable-status-codes>],
+            "allowed_methods":             [<http-methods>],
+            "respect_retry_after_header":  <true|false>
+        }
+    }
+}
+```
+
+Current global defaults:
+
+| Key | Default |
+| --- | --- |
+| `total` | 2 |
+| `status` | 2 |
+| `connect` | 2 |
+| `read` | 2 |
+| `backoff_factor` | 0.5 |
+| `status_forcelist` | `[500, 502, 503, 504]` |
+| `allowed_methods` | `["GET", "POST"]` |
+| `respect_retry_after_header` | `true` |
+
+Note that `429 Too Many Requests` is **not** in the default `status_forcelist` because quota-based rejections (for example from the Google Custom Search API) do not benefit from retry. A provider that genuinely honors `Retry-After` on 429 can opt back in:
+
+```
+"config": {
+    "swirl": {
+        "http_retry": {
+            "status_forcelist": [429, 500, 502, 503, 504]
+        }
+    }
+}
+```
+
+Conversely, a provider that should never retry failed calls (for example, a strict per-call billing API) can disable retrying entirely:
+
+```
+"config": {
+    "swirl": {
+        "http_retry": {
+            "total": 0
+        }
+    }
+}
+```
+
 ## Google Calendar
 
 The following configuration items allow modification of the Google Calendar defaults:
