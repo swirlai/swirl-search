@@ -51,9 +51,11 @@ urlpatterns = [
     path('authenticators.html', views.authenticators, name='authenticators'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('microsoft-callback', Microsoft().callback, name='microsoft_callback'),
+    path('callback/microsoft-callback', Microsoft().callback, name='microsoft_callback_callback'),
     path('password_reset/', TemplateView.as_view(template_name="no_feature_password.html"), name="password_reset"),
     path('login/', views.LoginView.as_view()),
     path('swirl-logout/', views.LogoutView.as_view()),
+    path('fetch-document/', views.FetchDocumentView.as_view(), name='fetch-document'),
     path('oidc_authenticate/', views.OidcAuthView.as_view()),
     path('microsoft/update_token', views.UpdateMicrosoftToken.as_view()),
 
