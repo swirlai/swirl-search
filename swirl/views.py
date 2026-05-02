@@ -183,7 +183,15 @@ def return_authenticators_list(request):
 ########################################
 
 def index(request):
-    return render(request, 'index.html')
+    from swirl.banner import SWIRL_VERSION
+    from swirl.models import SearchProvider
+    from swirl.utils import is_running_celery_redis
+    context = {
+        'swirl_version': SWIRL_VERSION,
+        'search_provider_count': SearchProvider.objects.filter(active=True).count(),
+        'celery_status': 'Running' if is_running_celery_redis() else 'Not running',
+    }
+    return render(request, 'index.html', context)
 
 ########################################
 
@@ -414,6 +422,53 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
 
     def partial_update(self, request, pk=None):
         return self.update(request, pk)
+
+    # 10a: health-check endpoint — GET /swirl/searchproviders/{id}/test/
+    # Runs a minimal test query against the provider and reports OK or FAIL.
+    from rest_framework.decorators import action as drf_action
+
+    @drf_action(detail=True, methods=['get'], url_path='test')
+    def test_provider(self, request, pk=None):
+        """Quick connectivity test for a single SearchProvider."""
+        from swirl.models import Search
+        from swirl.tasks import federate_task
+        import uuid
+
+        if not request.user.has_perm('swirl.view_searchprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            provider = SearchProvider.objects.get(pk=pk)
+        except SearchProvider.DoesNotExist:
+            return Response({'status': 'FAIL', 'error': 'SearchProvider not found'},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        if not (provider.owner == request.user or provider.shared):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        # Create a transient Search object for the test query
+        test_query = request.GET.get('q', 'test')
+        try:
+            test_search = Search.objects.create(
+                owner=request.user,
+                query_string=test_query,
+                query_string_processed=test_query,
+                searchprovider_list=[provider.id],
+                status='NEW_SEARCH',
+            )
+            result = federate_task.apply(
+                args=[test_search.id, provider.id, provider.connector, False, None, str(uuid.uuid4())],
+                timeout=10,
+            )
+            test_search.delete()
+            if result and result.successful():
+                return Response({'status': 'OK', 'provider': provider.name,
+                                 'retrieved': result.result if isinstance(result.result, int) else 0})
+            else:
+                return Response({'status': 'FAIL', 'provider': provider.name,
+                                 'error': str(result.result) if result else 'No result'})
+        except Exception as err:
+            return Response({'status': 'FAIL', 'provider': provider.name, 'error': str(err)})
 
 ########################################
 ########################################

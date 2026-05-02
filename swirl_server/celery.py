@@ -30,11 +30,9 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'swirl_server.settings')
 
 ### REDIS DEV CONFIGURATION
 
-# Call setup_logging here if you want it to affect the whole Celery application
+# Configure logging early so Celery worker output is captured from the start
 from swirl_server.log_config import setup_logging
-print("Celery Early Logging set up...")
 setup_logging()
-print("Celery Early Logging set up done.")
 
 app = Celery('swirl_server',
              broker='redis://localhost:6379/0',

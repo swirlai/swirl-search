@@ -88,14 +88,10 @@ def is_running_celery_redis():
                                 ssl=use_ssl,
                                 ssl_cert_reqs='required' if use_ssl else None,
                                 decode_responses=True)
-            response = r.ping()
-            if response:
-                print(f"{url} checked.")
+            r.ping()
         except redis.ConnectionError:
-            print("Redis is not running or cannot connect!")
             return False
-        except Exception as err:
-            print("{err} While checking if redis is running")
+        except Exception:
             return False
 
     return True

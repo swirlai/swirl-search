@@ -258,6 +258,15 @@ EMAIL_HOST_PASSWORD = 'your_sendgrid_password'
 # SWIRL SEARCH
 
 SWIRL_DEFAULT_QUERY_LANGUAGE = 'english'
+# SWIRL_TIMEOUT — maximum seconds to wait for all federate tasks to complete
+# before returning whatever results are ready (partial or full).
+# This timeout is shared across ALL providers in a single federated search;
+# it is not a per-provider timeout. Providers that haven't responded by the
+# deadline are dropped from the current result set (their results may still
+# arrive asynchronously if subscribe mode is active).
+# Increase this value if you have slow providers (e.g. large database queries).
+# Decrease it for faster responses at the cost of missing slower providers.
+# Can also be set via the SWIRL_TIMEOUT environment variable.
 SWIRL_TIMEOUT_DEFAULT = 10
 SWIRL_TIMEOUT = env.int('SWIRL_TIMEOUT',default=SWIRL_TIMEOUT_DEFAULT)
 SWIRL_SUBSCRIBE_WAIT = 20

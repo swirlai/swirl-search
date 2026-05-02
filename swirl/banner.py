@@ -12,8 +12,18 @@ class bcolors:
 
 SWIRL_VERSION = '4.5-DEV'
 
-SWIRL_BANNER_TEXT = "__S_W_I_R_L__A_I__4_._5-DEV__________________________________________________________"
-SWIRL_BANNER = f'{bcolors.BOLD}{SWIRL_BANNER_TEXT}{bcolors.ENDC}'
+SWIRL_LOGO = f"""
+         .   o
+        .        .   .  o
+        .      .
+  o        .  @ @   .            SWIRL AI COMMUNITY {SWIRL_VERSION}
+    .        @ @  .    .         Apache 2.0 License
+      .  . .   .     .    .
+            .       .     o
+     o  .       o .
+"""
+
+SWIRL_BANNER = f'{bcolors.BOLD}{SWIRL_LOGO}{bcolors.ENDC}'
 
 #############################################
 

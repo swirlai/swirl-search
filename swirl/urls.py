@@ -9,7 +9,7 @@ from django.urls import include, path
 from rest_framework import routers, permissions
 from . import views
 from swirl.authenticators import Microsoft
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 router = routers.DefaultRouter()
@@ -45,8 +45,8 @@ urlpatterns = [
     path('sapi/detail-search-rag/', views.DetailSearchRagView.as_view(), name='detail-search-rag'),
     path('sapi/is_chat_ai_provider_exists', views.IsChatAIProviderExists.as_view({'get': 'list'}), name='is-chat-ai-provider-exists'),
 
-    path('', views.index, name='index'),
-    path('index.html', views.index, name='index'),
+    path('', RedirectView.as_view(url='/admin/', permanent=False), name='index'),
+    path('index.html', RedirectView.as_view(url='/admin/', permanent=False), name='index_html'),
     path('error.html', views.error, name='error'),
     path('authenticators.html', views.authenticators, name='authenticators'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),

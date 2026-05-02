@@ -1,0 +1,256 @@
+{% extends "admin/base.html" %}
+{% comment %}
+  SWIRL Community Edition admin branding.
+  Extends Django's admin/base.html — does NOT extend itself.
+{% endcomment %}
+{% load i18n static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('SWIRL') }}{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+/* ============================================================
+   SWIRL admin theme — Community Edition
+   Matches the light-mode look of /swirl/ (SWIRL blue accents,
+   off-white card surfaces). Respects the [data-theme="dark"]
+   toggle without auto-switching on prefers-color-scheme.
+   ============================================================ */
+
+:root,
+[data-theme="light"] {
+  --primary:           #0060A8;
+  --primary-fg:        #FCFBFB;
+  --secondary:         #0060A8;
+  --accent:            #0060A8;
+
+  --body-fg:           #41484D;
+  --body-quiet-color:  #6B7280;
+  --body-loud-color:   #1E293B;
+  --body-bg:           #CBD5E1;
+
+  --header-bg:             #FCFBFB;
+  --header-color:          #0060A8;
+  --header-link-color:     #0060A8;
+  --header-branding-color: #0060A8;
+
+  --breadcrumbs-bg:      #F0F7FF;
+  --breadcrumbs-fg:      #41484D;
+  --breadcrumbs-link-fg: #0060A8;
+
+  --link-fg:           #0060A8;
+  --link-hover-color:  #004F8A;
+  --link-selected-fg:  #004F8A;
+
+  --button-bg:         #0060A8;
+  --button-fg:         #FCFBFB;
+  --button-hover-bg:   #004F8A;
+
+  --default-button-bg:       #0060A8;
+  --default-button-hover-bg: #004F8A;
+
+  --close-button-bg:         #6B7280;
+  --close-button-hover-bg:   #41484D;
+
+  --delete-button-bg:        #B91C1C;
+  --delete-button-hover-bg:  #7F1D1D;
+
+  --object-tools-bg:         #0060A8;
+  --object-tools-fg:         #FCFBFB;
+  --object-tools-hover-bg:   #004F8A;
+
+  --selected-row: #F0F7FF;
+  --selected-bg:  #E0EFFF;
+
+  --border-color:     #E5E7EB;
+  --hairline-color:   #E5E7EB;
+  --darkened-bg:      #F4F3F2;
+  --message-success-bg: #E6F4EA;
+  --message-warning-bg: #FEF3C7;
+  --message-error-bg:   #FEE2E2;
+}
+
+[data-theme="dark"] {
+  --primary:           #4C9DE4;
+  --secondary:         #4C9DE4;
+  --body-fg:           #CBD5E1;
+  --body-bg:           #11172B;
+  --body-quiet-color:  #94A3B8;
+  --border-color:      #1E293B;
+  --header-bg:         #0E1626;
+  --header-color:      #FCFBFB;
+  --header-link-color: #FCFBFB;
+  --breadcrumbs-bg:    #1E293B;
+  --breadcrumbs-fg:    #CBD5E1;
+  --breadcrumbs-link-fg: #93C5FD;
+  --link-fg:           #93C5FD;
+  --link-hover-color:  #4C9DE4;
+}
+
+/* Header */
+#header {
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 1px 0 rgba(0, 96, 168, 0.06);
+}
+[data-theme="dark"] #header {
+  border-bottom: 1px solid #1E293B;
+  box-shadow: none;
+}
+
+#branding #site-name,
+#branding #site-name a {
+  display: flex; align-items: center; gap: 0.6rem;
+  color: var(--header-branding-color);
+}
+#branding img.swirl-logo { height: 28px; width: auto; }
+
+/* Module (section) headers */
+.module h2,
+.module caption,
+.inline-group h2 {
+  background: #F0F7FF;
+  color: var(--primary);
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+}
+.module caption a.section:link,
+.module caption a.section:visited { color: var(--primary); }
+
+[data-theme="dark"] .module h2,
+[data-theme="dark"] .module caption,
+[data-theme="dark"] .inline-group h2 {
+  background: #1E293B; color: #93C5FD; border-bottom-color: #0E1626;
+}
+[data-theme="dark"] .module caption a.section:link,
+[data-theme="dark"] .module caption a.section:visited { color: #93C5FD; }
+
+/* Module cards */
+.module {
+  background: #FCFBFB;
+  border: 1px solid #9CA3AF;
+  border-radius: 4px;
+}
+/* Dashboard tiles: transparent rows so white card shows through */
+body.dashboard .module tr,
+body.dashboard .module tr th,
+body.dashboard .module tr td { background: transparent; }
+
+[data-theme="dark"] .module { background: #11172B; border-color: #1E293B; }
+
+/* Changelist row highlight */
+#changelist table tbody tr.selected { background: var(--selected-bg); }
+
+/* Action dropdown */
+.changelist-actions, .actions {
+  background: var(--body-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Fieldset headers */
+fieldset.module > h2 {
+  padding: 8px 12px; font-size: 0.95em;
+  text-transform: none; letter-spacing: 0;
+}
+
+/* ── SWIRL dashboard-specific components ─────────────────── */
+
+.swirl-status-strip {
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+  margin: 0 0 1rem 0; padding: 0;
+}
+.swirl-status-card {
+  flex: 1 1 130px;
+  background: var(--body-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px; padding: 8px 12px; text-align: center;
+}
+.swirl-status-value {
+  display: block; font-size: 1.35rem; font-weight: 700;
+  color: var(--body-loud-color);
+}
+.swirl-status-label {
+  display: block; font-size: 0.72rem; color: var(--body-quiet-color);
+  text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px;
+}
+.swirl-status-dot {
+  display: inline-block; width: 0.6rem; height: 0.6rem;
+  border-radius: 50%; margin-right: 5px; vertical-align: middle;
+}
+.swirl-status-dot.ok    { background: #22C55E; }
+.swirl-status-dot.error { background: #EF4444; }
+
+.swirl-category-header {
+  margin: 1.25rem 0 0.5rem 0; padding: 0 4px 0.25rem 4px;
+  font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--body-quiet-color);
+  border-bottom: 1px solid var(--border-color);
+}
+.swirl-category-header:first-of-type { margin-top: 0.75rem; }
+.swirl-category-grid {
+  display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.5rem;
+}
+.swirl-category-grid > .module {
+  flex: 1 1 calc(50% - 0.5rem); min-width: 300px; margin-bottom: 0;
+}
+
+.swirl-fineprint {
+  margin-top: 1.5rem; padding: 0.75rem 0;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.78rem; color: var(--body-quiet-color); text-align: center;
+}
+.swirl-fineprint a { color: var(--link-fg); }
+
+/* Activity analytics */
+.act-overview {
+  display: flex; flex-wrap: wrap; gap: 1rem; padding: 1rem 1.25rem;
+}
+.act-overview-card {
+  flex: 1 1 160px; padding: 10px 14px;
+  border: 1px solid var(--border-color); border-radius: 4px;
+  background: var(--body-bg); text-align: center;
+}
+.act-overview-value {
+  display: block; font-size: 1.5rem; font-weight: 700;
+  color: var(--body-loud-color);
+}
+.act-overview-label {
+  display: block; font-size: 0.72rem; color: var(--body-quiet-color);
+  text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px;
+}
+.act-table { width: 100%; border-collapse: collapse; }
+.act-table th, .act-table td {
+  padding: 7px 12px; text-align: left; vertical-align: top;
+  border-bottom: 1px solid var(--border-color); font-size: 0.88rem;
+}
+.act-table th {
+  background: var(--darkened-bg); color: var(--body-quiet-color);
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.act-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.act-section-anchor { scroll-margin-top: 80px; }
+</style>
+{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+  <a href="{% url 'admin:index' %}">
+    <img class="swirl-logo" src="{% static 'swirl-logo.png' %}" alt="SWIRL">
+    <span>{{ site_header|default:_('SWIRL Administration') }}</span>
+  </a>
+</div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block userlinks %}
+  <a href="/swirl/" title="Open the SWIRL search interface">Search UI &nearr;</a> /
+  <a href="https://docs.swirl.today/" target="_blank" rel="noopener"
+     title="SWIRL documentation">Documentation &nearr;</a> /
+  {% if user.has_usable_password %}
+    <a href="{% url 'admin:password_change' %}">{% translate 'Change password' %}</a> /
+  {% endif %}
+  <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+    {% csrf_token %}
+    <button type="submit">{% translate 'Log out' %}</button>
+  </form>
+  {% include "admin/color_theme_toggle.html" %}
+{% endblock %}

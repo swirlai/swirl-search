@@ -1,0 +1,196 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}
+<link rel="stylesheet" href="{% static "admin/css/dashboard.css" %}">
+{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+  {# ── Status strip ─────────────────────────────────────────── #}
+  {% if swirl_status_strip %}
+  <div class="swirl-status-strip">
+    <div class="swirl-status-card">
+      <span class="swirl-status-value">{{ swirl_status_strip.version }}</span>
+      <span class="swirl-status-label">Version</span>
+    </div>
+    <div class="swirl-status-card" title="{{ swirl_status_strip.celery.detail }}">
+      <span class="swirl-status-value">
+        <span class="swirl-status-dot {% if swirl_status_strip.celery.ok %}ok{% else %}error{% endif %}"></span>
+        {% if swirl_status_strip.celery.ok %}OK{% else %}DOWN{% endif %}
+      </span>
+      <span class="swirl-status-label">Celery / Redis</span>
+    </div>
+    <div class="swirl-status-card">
+      <span class="swirl-status-value">{{ swirl_status_strip.search_provider_count }}</span>
+      <span class="swirl-status-label">SearchProviders</span>
+    </div>
+    <div class="swirl-status-card">
+      <span class="swirl-status-value">{{ swirl_status_strip.search_count }}</span>
+      <span class="swirl-status-label">Searches (total)</span>
+    </div>
+  </div>
+  {% endif %}
+
+  {# ── Charts ───────────────────────────────────────────────── #}
+  {% if swirl_query_chart_svg %}
+  <div class="module">
+    <h2>
+      <a href="{% url 'admin:admin_activity' %}" style="color:inherit;text-decoration:none;"
+         title="Open Activity Analytics">
+        Searches — last {{ swirl_query_chart_days }} days &rsaquo;
+      </a>
+    </h2>
+    <div style="padding:8px 12px;">{{ swirl_query_chart_svg|safe }}</div>
+  </div>
+  {% endif %}
+
+  {% if swirl_provider_chart_svg %}
+  <div class="module">
+    <h2>
+      <a href="{% url 'admin:admin_activity' %}#top-providers" style="color:inherit;text-decoration:none;"
+         title="Open Activity Analytics — Top Providers">
+        Top SearchProviders — last {{ swirl_provider_chart_days }} days &rsaquo;
+      </a>
+    </h2>
+    <div style="padding:8px 12px;">{{ swirl_provider_chart_svg|safe }}</div>
+  </div>
+  {% endif %}
+
+  {# ── Quick-access link tables ─────────────────────────────── #}
+  <div class="swirl-category-grid">
+    <div class="module">
+      <table>
+        <caption><a class="section">Actions</a></caption>
+        <tr class="current-model">
+          <th scope="row"><a href="{% url 'admin:admin_activity' %}">Activity Analytics</a></th>
+          <td></td>
+        </tr>
+        <tr class="current-model">
+          <th scope="row"><a href="/swirl/">SWIRL Search UI</a></th>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <div class="module">
+      <table>
+        <caption><a class="section">API &amp; Reference</a></caption>
+        <tr class="current-model">
+          <th scope="row"><a href="/swirl/search/">Search API</a></th>
+          <td>browsable</td>
+        </tr>
+        <tr class="current-model">
+          <th scope="row"><a href="/swirl/results/">Results API</a></th>
+          <td>browsable</td>
+        </tr>
+        <tr class="current-model">
+          <th scope="row"><a href="/swirl/api/docs/">Swagger / OpenAPI</a></th>
+          <td></td>
+        </tr>
+        <tr class="current-model">
+          <th scope="row">
+            <a href="https://docs.swirl.today/" target="_blank" rel="noopener">
+              Documentation &#8599;
+            </a>
+          </th>
+          <td>external</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  {# ── Model list grouped by category ───────────────────────── #}
+  {% regroup app_list by category as category_groups %}
+  {% for group in category_groups %}
+  <h2 class="swirl-category-header">{{ group.grouper }}</h2>
+  <div class="swirl-category-grid">
+    {% for app in group.list %}
+    <div class="app-{{ app.app_label }} module">
+      <table>
+        <caption>
+          {% if app.app_url %}
+          <a href="{{ app.app_url }}" class="section"
+             title="Models in the {{ app.name }} group">{{ app.name }}</a>
+          {% else %}
+          <a class="section">{{ app.name }}</a>
+          {% endif %}
+        </caption>
+        {% for model in app.models %}
+        <tr class="model-{{ model.object_name|lower }}">
+          {% if model.admin_url %}
+          <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
+          {% else %}
+          <th scope="row">{{ model.name }}</th>
+          {% endif %}
+          {% if model.add_url %}
+          <td><a href="{{ model.add_url }}" class="addlink">{% translate 'Add' %}</a></td>
+          {% else %}<td></td>{% endif %}
+          {% if model.admin_url %}
+            {% if model.view_only %}
+            <td><a href="{{ model.admin_url }}" class="viewlink">{% translate 'View' %}</a></td>
+            {% else %}
+            <td><a href="{{ model.admin_url }}" class="changelink">{% translate 'Change' %}</a></td>
+            {% endif %}
+          {% else %}<td></td>{% endif %}
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+
+  {% if swirl_status_strip %}
+  <div class="swirl-fineprint">
+    <a href="https://github.com/swirlai/swirl-search" target="_blank" rel="noopener">
+      SWIRL Community Edition {{ swirl_status_strip.version }}
+    </a>
+    &mdash; Apache 2.0 License
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div id="content-related">
+  <div class="module" id="recent-actions-module">
+    <h2>{% translate 'Recent actions' %}</h2>
+    <h3>{% translate 'My actions' %}</h3>
+    {% load log %}
+    {% get_admin_log 10 as admin_log for_user user %}
+    {% if not admin_log %}
+    <p>{% translate 'None available' %}</p>
+    {% else %}
+    <ul class="actionlist">
+    {% for entry in admin_log %}
+    <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+      <span class="visually-hidden">
+        {% if entry.is_addition %}{% translate 'Added:' %}
+        {% elif entry.is_change %}{% translate 'Changed:' %}
+        {% elif entry.is_deletion %}{% translate 'Deleted:' %}{% endif %}
+      </span>
+      {% if entry.is_deletion or not entry.get_admin_url %}
+        {{ entry.object_repr }}
+      {% else %}
+        <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+      {% endif %}
+      <br>
+      {% if entry.content_type %}
+        <span class="mini quiet">{% filter capfirst %}{{ entry.content_type.name }}{% endfilter %}</span>
+      {% else %}
+        <span class="mini quiet">{% translate 'Unknown content' %}</span>
+      {% endif %}
+    </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

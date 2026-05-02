@@ -1,13 +1,434 @@
+'''
+@author:     Sid Probstein
+@contact:    sid@swirl.today
+'''
+
+import logging
+
 from django.contrib import admin
+from django.shortcuts import render
+from django.urls import path
+
 from .models import SearchProvider, Search, Result, QueryTransform, OauthToken
 
-admin.site.site_header = 'Swirl' # title
-admin.site.index_title = 'Administration Console' # subtitle
-# admin page is index_title | site_title
-admin.site.site_title = 'Swirl'
+logger = logging.getLogger(__name__)
 
-admin.site.register(SearchProvider)
-admin.site.register(Search)
-admin.site.register(Result)
-admin.site.register(QueryTransform)
-admin.site.register(OauthToken)
+##################################################
+
+admin.site.site_header = 'SWIRL'
+admin.site.index_title = 'Administration Console'
+admin.site.site_title  = 'SWIRL'
+# Point "View site" at the SWIRL search UI
+admin.site.site_url = '/swirl/'
+
+##################################################
+
+@admin.register(SearchProvider)
+class SearchProviderAdmin(admin.ModelAdmin):
+    list_display  = ['id', 'name', 'connector', 'active', 'shared', 'owner']
+    list_filter   = ['active', 'shared', 'connector', 'authenticator']
+    search_fields = ['name', 'url', 'tags']
+    ordering      = ['id']
+    fieldsets = [
+        ('Identity', {
+            'fields': ['name', 'owner', 'shared', 'active', 'default', 'tags']
+        }),
+        ('Connector', {
+            'fields': [
+                'connector', 'url', 'query_template',
+                'query_template_json', 'post_query_template',
+                'query_mappings', 'credentials', 'eval_credentials',
+                'http_request_headers',
+            ]
+        }),
+        ('Processing', {
+            'fields': [
+                'query_processors', 'result_processors',
+                'result_mappings', 'response_mappings',
+                'results_per_query', 'result_grouping_field',
+                'page_fetch_config_json',
+            ]
+        }),
+        ('Auth', {
+            'fields': ['authenticator']
+        }),
+    ]
+
+##################################################
+
+@admin.register(Search)
+class SearchAdmin(admin.ModelAdmin):
+    list_display   = ['id', 'owner', 'query_string', 'status', 'time', 'date_created']
+    list_filter    = ['status', 'sort', 'result_mixer']
+    search_fields  = ['query_string']
+    ordering       = ['-date_created']
+    readonly_fields = [
+        'id', 'owner', 'date_created', 'date_updated',
+        'query_string', 'query_string_processed',
+        'sort', 'results_requested', 'searchprovider_list',
+        'subscribe', 'status', 'time',
+        'pre_query_processors', 'post_result_processors',
+        'result_url', 'new_result_url', 'messages',
+        'result_mixer', 'retention', 'tags',
+    ]
+
+##################################################
+
+@admin.register(QueryTransform)
+class QueryTransformAdmin(admin.ModelAdmin):
+    list_display  = ['id', 'name', 'qrx_type', 'owner', 'shared']
+    list_filter   = ['qrx_type', 'shared']
+    search_fields = ['name', 'query_string', 'value']
+    ordering      = ['id']
+
+##################################################
+
+@admin.register(Result)
+class ResultAdmin(admin.ModelAdmin):
+    list_display  = ['id', 'search_id', 'searchprovider', 'status', 'retrieved', 'found', 'date_created']
+    list_filter   = ['status', 'searchprovider']
+    ordering      = ['-date_created']
+    readonly_fields = [
+        'id', 'owner', 'date_created', 'date_updated',
+        'search_id', 'provider_id', 'searchprovider',
+        'query_string_to_provider', 'result_processor_json_feedback',
+        'query_to_provider', 'query_processors', 'result_processors',
+        'messages', 'status', 'retrieved', 'found', 'time',
+        'json_results', 'tags',
+    ]
+
+##################################################
+
+@admin.register(OauthToken)
+class OauthTokenAdmin(admin.ModelAdmin):
+    list_display  = ['id', 'owner', 'idp', 'has_refresh_token']
+    list_filter   = ['idp']
+    readonly_fields = ['id', 'owner', 'idp']
+
+    @admin.display(boolean=True, description='Refresh token set')
+    def has_refresh_token(self, obj):
+        return bool(obj.refresh_token)
+
+
+##################################################
+# Pure-Python SVG chart helpers (zero JS, zero extra dependencies)
+##################################################
+
+def _searches_by_day_svg(days=30, width=720, height=140, bar_gap=3):
+    """Bar chart of daily search volume for the last ``days`` days."""
+    from datetime import timedelta
+    from django.db.models import Count
+    from django.db.models.functions import TruncDate
+    from django.utils import timezone
+    from django.utils.html import escape
+    try:
+        since = timezone.now() - timedelta(days=days - 1)
+        rows = (
+            Search.objects
+            .filter(date_created__gte=since)
+            .annotate(d=TruncDate('date_created'))
+            .values('d').annotate(n=Count('id'))
+            .order_by('d')
+        )
+        by_day = {r['d']: r['n'] for r in rows}
+    except Exception:
+        return ''
+
+    today = timezone.localdate()
+    series = [(today - timedelta(days=days - 1 - i),
+               by_day.get(today - timedelta(days=days - 1 - i), 0))
+              for i in range(days)]
+    total = sum(n for _, n in series)
+    peak = max((n for _, n in series), default=0) or 1
+
+    left_pad, right_pad, top_pad, bottom_pad = 32, 8, 10, 22
+    plot_w = width - left_pad - right_pad
+    plot_h = height - top_pad - bottom_pad
+    bar_w = max(1.0, (plot_w - bar_gap * (days - 1)) / days)
+
+    bars, x_ticks = [], []
+    for i, (d, n) in enumerate(series):
+        x = left_pad + i * (bar_w + bar_gap)
+        bar_h = (n / peak) * plot_h
+        y = top_pad + (plot_h - bar_h)
+        bars.append(
+            f'<rect x="{x:.1f}" y="{y:.1f}" width="{bar_w:.1f}" height="{bar_h:.1f}" '
+            f'fill="#0060A8"><title>{escape(d.isoformat())}: {n}</title></rect>'
+        )
+        if i % 5 == 0 or i == days - 1:
+            x_ticks.append(
+                f'<text x="{x + bar_w / 2:.1f}" y="{height - 6}" '
+                f'text-anchor="middle" font-size="10" fill="currentColor" opacity="0.6">'
+                f'{escape(d.strftime("%m/%d"))}</text>'
+            )
+    y_axis = (
+        f'<text x="{left_pad - 6}" y="{top_pad + 10}" text-anchor="end" '
+        f'font-size="10" fill="currentColor" opacity="0.6">{peak}</text>'
+        f'<text x="{left_pad - 6}" y="{top_pad + plot_h}" text-anchor="end" '
+        f'font-size="10" fill="currentColor" opacity="0.6">0</text>'
+        f'<line x1="{left_pad}" y1="{top_pad}" x2="{left_pad}" '
+        f'y2="{top_pad + plot_h}" stroke="currentColor" opacity="0.2" />'
+        f'<line x1="{left_pad}" y1="{top_pad + plot_h}" '
+        f'x2="{width - right_pad}" y2="{top_pad + plot_h}" stroke="currentColor" opacity="0.2" />'
+    )
+    return (
+        f'<svg viewBox="0 0 {width} {height}" width="100%" height="{height}" '
+        f'xmlns="http://www.w3.org/2000/svg" role="img" '
+        f'aria-label="Searches per day, last {days} days, total {total}">'
+        f'{y_axis}{"".join(bars)}{"".join(x_ticks)}'
+        f'</svg>'
+    )
+
+
+def _horizontal_bar_svg(rows, *, width=720, row_height=24, label_pad=200,
+                        right_pad=50, bar_color='#0060A8', empty_label='No data.'):
+    """
+    rows: list of (label, n) tuples sorted descending.
+    Returns a horizontal-bar SVG string.
+    """
+    from django.utils.html import escape
+    if not rows:
+        return (
+            f'<svg viewBox="0 0 {width} 40" width="100%" height="40" '
+            f'xmlns="http://www.w3.org/2000/svg">'
+            f'<text x="12" y="24" font-size="13" fill="currentColor" opacity="0.5">'
+            f'{escape(empty_label)}</text></svg>'
+        )
+    height = row_height * len(rows) + 16
+    plot_w = width - label_pad - right_pad
+    peak = max(n for _, n in rows) or 1
+    parts = []
+    for i, (label, n) in enumerate(rows):
+        y = 8 + i * row_height
+        bar_w = (n / peak) * plot_w
+        parts.append(
+            f'<text x="{label_pad - 8}" y="{y + 16}" text-anchor="end" '
+            f'font-size="12" fill="currentColor">{escape(str(label))[:40]}</text>'
+            f'<rect x="{label_pad}" y="{y + 4}" width="{bar_w:.1f}" '
+            f'height="{row_height - 8}" fill="{bar_color}" rx="2">'
+            f'<title>{escape(str(label))}: {n}</title></rect>'
+            f'<text x="{label_pad + bar_w + 6:.1f}" y="{y + 16}" '
+            f'font-size="12" fill="currentColor" opacity="0.7">{n}</text>'
+        )
+    return (
+        f'<svg viewBox="0 0 {width} {height}" width="100%" height="{height}" '
+        f'xmlns="http://www.w3.org/2000/svg" role="img">'
+        f'{"".join(parts)}</svg>'
+    )
+
+
+##################################################
+# Activity analytics admin view
+##################################################
+
+def _admin_activity_view(request):
+    """
+    Admin page: searches-by-day, top providers, futile queries.
+    Protected by admin.site.admin_view() at registration time.
+    """
+    from datetime import timedelta
+    from django.utils import timezone
+    from swirl.admin_analytics import searches_by_day, top_providers, futile_searches
+
+    WINDOW_DAYS = 30
+
+    since = timezone.now() - timedelta(days=WINDOW_DAYS)
+    until = timezone.now()
+
+    try:
+        sbd = searches_by_day(since=since, until=until)
+        n_searches = sum(r['count'] for r in sbd)
+    except Exception as exc:
+        logger.warning('admin activity: searches_by_day failed: %s', exc)
+        sbd = []
+        n_searches = 0
+
+    try:
+        tp = top_providers(since=since, until=until, limit=10)
+        n_providers_active = len(tp)
+    except Exception as exc:
+        logger.warning('admin activity: top_providers failed: %s', exc)
+        tp = []
+        n_providers_active = 0
+
+    try:
+        futile = futile_searches(since=since, until=until, limit=25)
+    except Exception as exc:
+        logger.warning('admin activity: futile_searches failed: %s', exc)
+        futile = []
+
+    # Build SVGs
+    searches_svg = _searches_by_day_svg(days=WINDOW_DAYS)
+    providers_svg = _horizontal_bar_svg(
+        tp,
+        empty_label='No SearchProvider hits in the last 30 days.',
+    )
+
+    context = {
+        **admin.site.each_context(request),
+        'title': 'Activity Analytics',
+        'window_days': WINDOW_DAYS,
+        'overview': {
+            'n_searches':        n_searches,
+            'n_providers_active': n_providers_active,
+            'n_futile':          len(futile),
+        },
+        'searches_svg':  searches_svg,
+        'providers_svg': providers_svg,
+        'futile_rows':   futile,
+    }
+    return render(request, 'admin/activity.html', context)
+
+
+##################################################
+# Register extra admin URLs (activity page lives at /admin/activity/)
+##################################################
+
+def _extend_admin_urls(original_get_urls):
+    """Prepend SWIRL-specific paths to admin.site.get_urls()."""
+    def wrapper():
+        urls = original_get_urls()
+        extras = [
+            path(
+                'activity/',
+                admin.site.admin_view(_admin_activity_view),
+                name='admin_activity',
+            ),
+        ]
+        return extras + urls
+    return wrapper
+
+
+admin.site.get_urls = _extend_admin_urls(admin.site.get_urls)
+
+
+##################################################
+# Model grouping: split the swirl app into sub-groups and tag
+# all apps with a category so the index template can render
+# category banners between cards (mirrors swirl1025im approach).
+##################################################
+
+SWIRL_MODEL_GROUPS = [
+    ('Configuration', 'swirl_configuration', [
+        'SearchProvider', 'QueryTransform',
+    ]),
+    ('Runtime', 'swirl_runtime', [
+        'Search', 'Result', 'OauthToken',
+    ]),
+]
+
+APP_CATEGORIES = {
+    'auth':               'Users & Access',
+    'authtoken':          'Users & Access',
+    'admin':              'Audit',
+    'django_celery_beat': 'Scheduling',
+    'sessions':           'System',
+    'contenttypes':       'System',
+}
+
+CATEGORY_ORDER = ['SWIRL', 'Users & Access', 'Audit', 'Scheduling', 'System', 'Other']
+_SWIRL_GROUP_ORDER = [label for label, _, __ in SWIRL_MODEL_GROUPS] + ['Other']
+
+_original_get_app_list = admin.site.get_app_list
+
+
+def _swirl_get_app_list(request, app_label=None):
+    app_list = _original_get_app_list(request, app_label)
+
+    swirl_app  = next((a for a in app_list if a.get('app_label') == 'swirl'), None)
+    other_apps = [a for a in app_list if a.get('app_label') != 'swirl']
+
+    synthetic = []
+    if swirl_app is not None:
+        models_by_name = {m.get('object_name'): m for m in swirl_app.get('models', [])}
+        accounted = set()
+        for display_name, pseudo_label, obj_names in SWIRL_MODEL_GROUPS:
+            group_models = [models_by_name[n] for n in obj_names if n in models_by_name]
+            if not group_models:
+                continue
+            accounted.update(obj_names)
+            synthetic.append({
+                'name':             display_name,
+                'app_label':        pseudo_label,
+                'app_url':          swirl_app.get('app_url', ''),
+                'has_module_perms': swirl_app.get('has_module_perms', True),
+                'models':           group_models,
+                'category':         'SWIRL',
+            })
+        leftover = [m for m in swirl_app.get('models', [])
+                    if m.get('object_name') not in accounted]
+        if leftover:
+            synthetic.append({
+                'name': 'Other', 'app_label': 'swirl_other',
+                'app_url': swirl_app.get('app_url', ''),
+                'has_module_perms': swirl_app.get('has_module_perms', True),
+                'models': leftover, 'category': 'SWIRL',
+            })
+
+    for app in other_apps:
+        app['category'] = APP_CATEGORIES.get(app.get('app_label'), 'Other')
+
+    all_apps = synthetic + other_apps
+
+    def sort_key(a):
+        cat = a.get('category', 'Other')
+        ci = CATEGORY_ORDER.index(cat) if cat in CATEGORY_ORDER else len(CATEGORY_ORDER)
+        if cat == 'SWIRL':
+            name = a.get('name', '')
+            si = _SWIRL_GROUP_ORDER.index(name) if name in _SWIRL_GROUP_ORDER else len(_SWIRL_GROUP_ORDER)
+            return (ci, si, name)
+        return (ci, 0, a.get('name', '').lower())
+
+    all_apps.sort(key=sort_key)
+    return all_apps
+
+
+admin.site.get_app_list = _swirl_get_app_list
+
+
+##################################################
+# Inject dashboard data into every admin page's template context
+##################################################
+
+def _swirl_each_context(request):
+    """Wraps Django's each_context to add charts + status strip to the index."""
+    ctx = _original_each_context(request)
+
+    try:
+        ctx['swirl_query_chart_svg']  = _searches_by_day_svg(days=30)
+        ctx['swirl_query_chart_days'] = 30
+    except Exception as exc:
+        logger.warning('admin: search chart failed: %s', exc)
+        ctx['swirl_query_chart_svg'] = ''
+
+    try:
+        from swirl.admin_analytics import top_providers
+        tp = top_providers(limit=8)
+        ctx['swirl_provider_chart_svg']  = _horizontal_bar_svg(
+            tp,
+            empty_label='No SearchProvider hits in the last 30 days.',
+        )
+        ctx['swirl_provider_chart_days'] = 30
+    except Exception as exc:
+        logger.warning('admin: provider chart failed: %s', exc)
+        ctx['swirl_provider_chart_svg'] = ''
+
+    try:
+        from swirl.banner import SWIRL_VERSION
+        from swirl.utils import is_running_celery_redis
+        celery_ok = is_running_celery_redis()
+        ctx['swirl_status_strip'] = {
+            'version':               SWIRL_VERSION,
+            'celery':                {'ok': celery_ok, 'detail': 'OK' if celery_ok else 'Not reachable'},
+            'search_provider_count': SearchProvider.objects.count(),
+            'search_count':          Search.objects.count(),
+        }
+    except Exception as exc:
+        logger.warning('admin: status strip failed: %s', exc)
+        ctx['swirl_status_strip'] = None
+
+    return ctx
+
+
+_original_each_context = admin.site.each_context
+admin.site.each_context = _swirl_each_context
