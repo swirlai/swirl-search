@@ -6,7 +6,7 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import serializers
 
-from swirl.models import QueryTransform, Result, Search, SearchProvider
+from swirl.models import AIProvider, QueryTransform, Result, Search, SearchProvider
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -196,3 +196,38 @@ class AuthResponseSerializer(serializers.Serializer):
 
 class StatusResponseSerializer(serializers.Serializer):
     status = serializers.CharField()
+
+
+# ---------------------------------------------------------------------------
+# AIProvider serializers
+# ---------------------------------------------------------------------------
+
+class AIProviderSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source="owner.username")
+
+    class Meta:
+        model = AIProvider
+        fields = [
+            "id", "name", "owner", "shared", "date_created", "date_updated",
+            "active", "api_key", "model", "config", "tags", "defaults", "prompt_overrides",
+        ]
+        extra_kwargs = {
+            "api_key": {"required": False, "allow_blank": True},
+        }
+
+    def update(self, instance, validated_data):
+        # Preserve api_key when the caller omits it or sends an empty string.
+        if validated_data.get("api_key", None) in (None, ""):
+            validated_data.pop("api_key", None)
+        return super().update(instance, validated_data)
+
+
+class AIProviderNoCredentialsSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source="owner.username")
+
+    class Meta:
+        model = AIProvider
+        fields = [
+            "id", "name", "owner", "shared", "date_created", "date_updated",
+            "active", "model", "config", "tags", "defaults", "prompt_overrides",
+        ]

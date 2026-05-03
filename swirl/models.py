@@ -268,3 +268,43 @@ class QueryTransform(models.Model) :
         unique_together = [
             ('name', 'qrx_type'),
         ]
+
+
+class AIProvider(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    shared = models.BooleanField(default=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+    api_key = models.CharField(max_length=512, default=str, blank=True)
+    model = models.CharField(max_length=255, default=str, blank=True)
+    config = models.JSONField(default=dict, blank=True)
+    tags = models.JSONField(default=list, blank=False)
+    defaults = models.JSONField(default=list, blank=False)
+    prompt_overrides = models.JSONField(default=dict, blank=True)
+
+    def get_absolute_url(self):
+        return reverse('model-detail-view', args=[str(self.id)])
+
+    def __str__(self):
+        return self.name
+
+    def get_family(self):
+        """Return the AI provider family for fallback restriction.
+
+        Returns config['family'] if set (lowercased), else the provider's
+        own name (lowercased) so providers without an explicit family
+        don't share a fallback pool with anyone else.
+        """
+        cfg = self.config or {}
+        fam = cfg.get('family')
+        if fam:
+            return str(fam).lower()
+        return (self.name or '').lower()
+
+    class Meta:
+        ordering = ['-date_updated']
+        verbose_name = "AIProvider"
+        verbose_name_plural = "AIProviders"

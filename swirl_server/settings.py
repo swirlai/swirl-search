@@ -58,7 +58,12 @@ ASGI_APPLICATION = 'swirl_server.routing.application'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
 }
 
 #drf-spectacular settings
@@ -253,6 +258,15 @@ EMAIL_HOST_PASSWORD = 'your_sendgrid_password'
 # SWIRL SEARCH
 
 SWIRL_DEFAULT_QUERY_LANGUAGE = 'english'
+# SWIRL_TIMEOUT — maximum seconds to wait for all federate tasks to complete
+# before returning whatever results are ready (partial or full).
+# This timeout is shared across ALL providers in a single federated search;
+# it is not a per-provider timeout. Providers that haven't responded by the
+# deadline are dropped from the current result set (their results may still
+# arrive asynchronously if subscribe mode is active).
+# Increase this value if you have slow providers (e.g. large database queries).
+# Decrease it for faster responses at the cost of missing slower providers.
+# Can also be set via the SWIRL_TIMEOUT environment variable.
 SWIRL_TIMEOUT_DEFAULT = 10
 SWIRL_TIMEOUT = env.int('SWIRL_TIMEOUT',default=SWIRL_TIMEOUT_DEFAULT)
 SWIRL_SUBSCRIBE_WAIT = 20
@@ -292,19 +306,46 @@ SWIRL_SEARCH_FORM_URL = env('SWIRL_SEARCH_FORM_URL', default=SWIRL_SEARCH_FORM_U
 
 SWIRL_DEFAULT_RESULT_BLOCK = 'ai_summary'
 
-# RAG / Gen_AI settings
+# ---------------------------------------------------------------------------
+# AIProvider / LiteLLM settings
+# ---------------------------------------------------------------------------
+# API keys are now stored per-provider in the AIProvider model (admin console).
+# The legacy OPENAI_API_KEY / AZURE_* env vars below are retained for
+# backward compatibility with the OpenAIClient wrapper used by any code
+# that hasn't yet been migrated to AIProviderFactory.
+
 OPENAI_API_KEY = env.get_value('OPENAI_API_KEY', default='')
 AZURE_OPENAI_KEY = env.get_value('AZURE_OPENAI_KEY', default='')
 AZURE_OPENAI_ENDPOINT = env.get_value('AZURE_OPENAI_ENDPOINT', default='')
 AZURE_MODEL = env.get_value('AZURE_MODEL', default='')
 AZURE_API_VERSION = os.getenv("AZURE_API_VERSION", default='')
 
-# Model names:
-# - For AZURE/OPENAI, AZURE_MODEL is the deployment name.
-# - For OPENAI, these must be set explicitly in the environment;
 SWIRL_RAG_MODEL = env.get_value('SWIRL_RAG_MODEL', default='')
 SWIRL_REWRITE_MODEL = env.get_value('SWIRL_REWRITE_MODEL', default='')
 SWIRL_QUERY_MODEL = env.get_value('SWIRL_QUERY_MODEL', default='')
+
+# LiteLLM behavior
+SWIRL_AI_DROP_UNSUP_PARAMS = env.bool('SWIRL_AI_DROP_UNSUP_PARAMS', default=True)
+SWIRL_LITELLM_DEBUG = env.bool('SWIRL_LITELLM_DEBUG', default=False)
+SWIRL_LITELLM_MODIFY_PARAMS = env.bool('SWIRL_LITELLM_MODIFY_PARAMS', default=True)
+SWIRL_LITELLM_TIMEOUT = env.int('SWIRL_LITELLM_TIMEOUT', default=90)
+
+# LiteLLM response cache (off by default)
+# Set SWIRL_LITELLM_CACHE_ENABLED=True to enable. For multi-worker installs
+# set SWIRL_LITELLM_CACHE_TYPE=redis and supply SWIRL_LITELLM_CACHE_REDIS_HOST.
+SWIRL_LITELLM_CACHE_ENABLED = env.bool('SWIRL_LITELLM_CACHE_ENABLED', default=False)
+SWIRL_LITELLM_CACHE_TYPE = env.get_value('SWIRL_LITELLM_CACHE_TYPE', default='local')  # 'local' | 'redis'
+SWIRL_LITELLM_CACHE_TTL = env.int('SWIRL_LITELLM_CACHE_TTL', default=300)
+SWIRL_LITELLM_CACHE_REDIS_HOST = env.get_value('SWIRL_LITELLM_CACHE_REDIS_HOST', default='')
+SWIRL_LITELLM_CACHE_REDIS_PORT = env.int('SWIRL_LITELLM_CACHE_REDIS_PORT', default=6379)
+SWIRL_LITELLM_CACHE_REDIS_PASSWORD = env.get_value('SWIRL_LITELLM_CACHE_REDIS_PASSWORD', default='')
+
+# Embedding / similarity
+SWIRL_USE_FAST_SIMILARITY = env.bool('SWIRL_USE_FAST_SIMILARITY', default=True)
+SWIRL_USE_UNIT_EMBEDDINGS = env.bool('SWIRL_USE_UNIT_EMBEDDINGS', default=True)
+SWIRL_RAG_TOK_DEFAULT = env.int('SWIRL_RAG_TOK_DEFAULT', default=4000)
+SWIRL_ST_BATCH_SIZE = env.int('SWIRL_ST_BATCH_SIZE', default=32)
+SWIRL_OLLAMA_EMBED_BATCH_SIZE = env.int('SWIRL_OLLAMA_EMBED_BATCH_SIZE', default=128)
 
 # RAG token and results budgets
 SWIRL_RAG_TOK_MAX = env.int('SWIRL_RAG_TOK_MAX', default=4000)   # low default for backward compatibility only

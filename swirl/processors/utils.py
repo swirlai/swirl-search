@@ -5,6 +5,7 @@
 
 #############################################
 #############################################
+import re
 import time
 from swirl.nltk import stopwords, word_tokenize, is_punctuation
 from nltk.tag import tnt
@@ -99,6 +100,11 @@ def parse_query(q_string, results_processor_feedback):
             'result_processor_feedback', []).get('query', []).get(
             'provider_query_terms', [])
 
+    # 4c: extract quoted phrases BEFORE stripping quotes so they can be inserted
+    # as highest-priority targets in the scoring lists, giving phrase-match results
+    # a clear relevancy advantage over results that merely contain the keywords.
+    quoted_phrases = re.findall(r'"([^"]+)"', q_string)
+
     # remove quotes
     query = clean_string(q_string).strip().replace('\"','')
     query_list = word_tokenize(query)
@@ -151,6 +157,17 @@ def parse_query(q_string, results_processor_feedback):
     # prepare query targets
     query_stemmed_target_list = []
     query_target_list = []
+
+    # 4c: prepend quoted phrases as highest-priority targets so the scoring loop
+    # sees them first and awards them higher weight via the key-length formula.
+    for phrase in quoted_phrases:
+        tokens = phrase.strip().split()
+        if tokens:
+            stemmed_tokens = stem_string(phrase.strip()).split()
+            if stemmed_tokens:
+                query_stemmed_target_list.insert(0, stemmed_tokens)
+                query_target_list.insert(0, tokens)
+
     # 1 gram
     if query_stemmed_list_len == 1:
         query_stemmed_target_list.append(query_stemmed_list)
@@ -403,7 +420,9 @@ warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
 def remove_tags(html):
     # Parse html content
-    soup = bs(html, "html.parser")
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
+        soup = bs(html, "html.parser")
 
     # Find all tags that contain URLs
     url_tags = soup.find_all(string=re.compile(r"<https?://[\w./?=#&-]+>"))

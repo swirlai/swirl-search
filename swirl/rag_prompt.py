@@ -27,7 +27,12 @@ class RagPrompt():
         self._is_full = False
         self._num_tokens = 0
         self._last_chunk_status = RAG_PROMPT_CHUNK_OK
-        self._model_encoding = tiktoken.encoding_for_model(model)
+        try:
+            self._model_encoding = tiktoken.encoding_for_model(model)
+        except (KeyError, Exception):
+            # Non-OpenAI models (Anthropic, Azure deployments, Ollama, etc.)
+            # aren't in tiktoken's registry; cl100k_base is a safe fallback.
+            self._model_encoding = tiktoken.get_encoding('cl100k_base')
 
         self._prompt_footer = (
         f"\n\n\n\n--- Final Instructions ---\nIn your response do not assume people with vastly different work histories are the same person. "

@@ -65,6 +65,14 @@ class CosineRelevancyResultProcessor(ResultProcessor):
             pass # self.info(f"parsed query [un]stemmed mismatch : {parsed_query.query_stemmed_target_list} != {parsed_query.query_target_list}")
 
         list_query_lens.append(len(parsed_query.query_list))
+
+        # 4d: compute query NLP once before the results loop — the query string does not
+        # change across results, so there is no need to re-run the spaCy pipeline per item.
+        base_query_str = ' '.join(parsed_query.query_list)
+        swrel_logger.start_nlp(len(base_query_str))
+        base_query_nlp = nlp(base_query_str)
+        swrel_logger.end_nlp()
+
         for item in self.results:
             dict_score = {}
             if 'explain' in item:
@@ -133,9 +141,9 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                         # the field is a URL, split it on -
                         if '-' in result_field:
                             result_field = result_field.replace('-', ' ')
-                    swrel_logger.start_nlp(len(result_field))
-                    result_field_nlp = nlp(result_field)
-                    swrel_logger.end_nlp()
+
+                    # 4e: compute stemmed lists cheaply BEFORE invoking spaCy, so we
+                    # can skip NLP entirely when there is no stem match at all.
                     result_field_list = result_field.strip().split()
                     # fix for https://github.com/swirlai/swirl-search/issues/34
                     result_field_stemmed = stem_string(result_field)
@@ -165,18 +173,20 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                     ###########################################
                     # query vs result_field
                     if match_any(parsed_query.query_stemmed_list, result_field_stemmed_list):
-                        # capitalize search terms that are capitalied in the result field
-                        query = ' '.join(capitalize_search(parsed_query.query_list, result_field_list))
-                        swrel_logger.start_nlp(len(query))
-                        query_nlp = nlp(query)
+                        # 4e: NLP on result field deferred until here — only runs when there is a stem match
+                        swrel_logger.start_nlp(len(result_field))
+                        result_field_nlp = nlp(result_field)
                         swrel_logger.end_nlp()
-                        # check for zero vector
-                        empty_query_vector = False
-                        if query_nlp.vector.all() == 0:
-                            empty_query_vector = True
+
+                        # 4d: reuse the pre-computed query NLP (same query for all results)
+                        query_nlp = base_query_nlp
+
+                        # 4a: correct zero-vector detection — numpy .all()==0 is wrong for
+                        # sparse vectors; use spaCy's has_vector / vector_norm instead.
+                        empty_query_vector = (not query_nlp.has_vector or query_nlp.vector_norm == 0)
                         qvr = 0.0
                         label = '_*'
-                        if empty_query_vector or result_field_nlp.vector.all() == 0:
+                        if empty_query_vector or (not result_field_nlp.has_vector or result_field_nlp.vector_norm == 0):
                             if len(result_field_list) == 0:
                                 qvr = 0.0
                             else:
@@ -247,10 +257,12 @@ class CosineRelevancyResultProcessor(ResultProcessor):
                                 dict_score[field][key] = 0.0
                                 ######## SIMILARITY vs WINDOW
                                 rw_nlp = nlp(' '.join(rw_list))
-                                if rw_nlp.vector.all() == 0:
+                                # 4a: correct zero-vector check for window NLP objects
+                                if not rw_nlp.has_vector or rw_nlp.vector_norm == 0:
                                     dict_score[field][key] = 0.31 + 1/3
                                 qw_nlp = nlp(' '.join(qw_list))
-                                if qw_nlp.vector.all() == 0:
+                                # 4a: correct zero-vector check for query-window NLP objects
+                                if not qw_nlp.has_vector or qw_nlp.vector_norm == 0:
                                     dict_score[field][key] = 0.32 + 1/3
                                 if dict_score[field][key] == 0.0:
                                     qw_nlp_sim = qw_nlp.similarity(rw_nlp)
@@ -378,11 +390,15 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
                     logger.debug(f"already scored - {item['url']}")
                 item['swirl_score'] = 0.0
                 # check for not
+                # 4b: was `break` — which exited the entire item loop and silently dropped
+                # all remaining results in this provider set. Use `continue` instead so
+                # only this one NOT-flagged item is skipped.
                 if 'NOT' in item:
                     item['swirl_score'] = -1.0 + 1/3
                     item['explain'] = { 'NOT': item['NOT'] }
                     del item['NOT']
-                    break
+                    highlighted_json_results.append(item)
+                    continue
                 # retrieve the scores and lens from pass 1
                 dict_score = None
                 if 'dict_score' in item:

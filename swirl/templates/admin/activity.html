@@ -1,0 +1,119 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Activity Analytics | {{ site_title|default:_('SWIRL') }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+  &rsaquo; Activity Analytics
+</div>
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  /* Overview strip */
+  .act-overview {
+    display: flex; flex-wrap: wrap; gap: 1rem; padding: 1rem 1.25rem;
+  }
+  .act-overview-card {
+    flex: 1 1 160px; padding: 10px 14px;
+    border: 1px solid #CBD5E1; border-radius: 4px; background: #F8FAFC;
+    text-align: center;
+  }
+  .act-overview-value {
+    display: block; font-size: 1.5rem; font-weight: 700; color: #1E293B;
+  }
+  .act-overview-label {
+    display: block; font-size: 0.72rem; color: #64748B;
+    text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px;
+  }
+
+  /* Tables */
+  .act-table { width: 100%; border-collapse: collapse; }
+  .act-table th, .act-table td {
+    padding: 7px 12px; text-align: left; vertical-align: top;
+    border-bottom: 1px solid #E5E7EB; font-size: 0.88rem;
+  }
+  .act-table th {
+    background: #F1F5F9; color: #475569;
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .act-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .act-muted { color: #94A3B8; font-style: italic; }
+  .act-section-anchor { scroll-margin-top: 80px; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{# ── Overview strip ───────────────────────────────────────── #}
+<div class="module">
+  <h2>Overview — last {{ window_days }} days</h2>
+  <div class="act-overview">
+    <div class="act-overview-card">
+      <span class="act-overview-value">{{ overview.n_searches }}</span>
+      <span class="act-overview-label">Searches</span>
+    </div>
+    <div class="act-overview-card">
+      <span class="act-overview-value">{{ overview.n_providers_active }}</span>
+      <span class="act-overview-label">Active providers</span>
+    </div>
+    <div class="act-overview-card">
+      <span class="act-overview-value">{{ overview.n_futile }}</span>
+      <span class="act-overview-label">Futile queries</span>
+    </div>
+  </div>
+</div>
+
+{# ── Search frequency chart ───────────────────────────────── #}
+<div class="module">
+  <h2 class="act-section-anchor" id="search-trend">Search volume</h2>
+  <div style="padding:8px 12px;">{{ searches_svg|safe }}</div>
+</div>
+
+{# ── Top SearchProviders ──────────────────────────────────── #}
+<div class="module">
+  <h2 class="act-section-anchor" id="top-providers">Top SearchProviders</h2>
+  <div style="padding:8px 12px;">{{ providers_svg|safe }}</div>
+  <p style="padding:0 12px 12px 12px; color:#64748B; font-size:0.83rem;">
+    Counts from each search's <code>searchprovider_list</code>. A search targeting
+    N providers contributes 1 count to each.
+  </p>
+</div>
+
+{# ── Futile queries ───────────────────────────────────────── #}
+<div class="module">
+  <h2 class="act-section-anchor" id="futile">Futile queries</h2>
+  {% if futile_rows %}
+  <table class="act-table">
+    <thead>
+      <tr>
+        <th>Query</th>
+        <th>Owner</th>
+        <th>Status</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in futile_rows %}
+      <tr>
+        <td>{{ row.query|truncatechars:100 }}</td>
+        <td>{{ row.owner }}</td>
+        <td>{{ row.status }}</td>
+        <td>{{ row.date|date:'Y-m-d H:i' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="padding:1rem 1.25rem; color:#64748B; font-style:italic;">
+    No futile queries in the last {{ window_days }} days.
+  </p>
+  {% endif %}
+  <p style="padding:0 12px 12px 12px; color:#64748B; font-size:0.83rem;">
+    A query is futile when every provider returned zero retrievals.
+  </p>
+</div>
+
+{% endblock %}

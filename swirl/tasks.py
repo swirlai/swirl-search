@@ -165,14 +165,16 @@ def update_microsoft_token_task(headers):
         auth_header = headers['Authorization']
         auth_token = auth_header.split(' ')[1]
         token_obj = Token.objects.get(key=auth_token)
-        token = headers['Authorizationmicrosoft']
+        token = headers.get('Authorizationmicrosoft')
+        refresh_token = headers.get('Authorizationmicrosoftrefresh', '')
         if token:
             try:
                 logger.debug(f"{module_name}: update_microsoft_token_task: User - {token_obj.user.username}")
-                microsoft_token_object, created = OauthToken.objects.get_or_create(owner=token_obj.user, defaults={'token': token})
-                if not created:
-                    microsoft_token_object.token = token
-                    microsoft_token_object.save()
+                microsoft_token_object, created = OauthToken.objects.update_or_create(
+                    owner=token_obj.user,
+                    idp='Microsoft',
+                    defaults={'token': token, 'refresh_token': refresh_token}
+                )
                 return { 'user': token_obj.user.username, 'status': 'success' }
             except User.DoesNotExist:
                 return {}
