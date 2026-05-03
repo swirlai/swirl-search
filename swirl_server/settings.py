@@ -20,6 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
+def _env_int(name, default):
+    """Like env.int() but treats an empty-string value (e.g. from docker-compose
+    shell-substitution when the host var is unset) as absent, falling back to default."""
+    val = os.environ.get(name, '').strip()
+    return int(val) if val else default
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -268,7 +274,7 @@ SWIRL_DEFAULT_QUERY_LANGUAGE = 'english'
 # Decrease it for faster responses at the cost of missing slower providers.
 # Can also be set via the SWIRL_TIMEOUT environment variable.
 SWIRL_TIMEOUT_DEFAULT = 10
-SWIRL_TIMEOUT = env.int('SWIRL_TIMEOUT',default=SWIRL_TIMEOUT_DEFAULT)
+SWIRL_TIMEOUT = _env_int('SWIRL_TIMEOUT', default=SWIRL_TIMEOUT_DEFAULT)
 SWIRL_SUBSCRIBE_WAIT = 20
 SWIRL_DEDUPE_FIELD = 'url'
 SWIRL_DEDUPE_SIMILARITY_MINIMUM = 0.95
@@ -328,28 +334,28 @@ SWIRL_QUERY_MODEL = env.get_value('SWIRL_QUERY_MODEL', default='')
 SWIRL_AI_DROP_UNSUP_PARAMS = env.bool('SWIRL_AI_DROP_UNSUP_PARAMS', default=True)
 SWIRL_LITELLM_DEBUG = env.bool('SWIRL_LITELLM_DEBUG', default=False)
 SWIRL_LITELLM_MODIFY_PARAMS = env.bool('SWIRL_LITELLM_MODIFY_PARAMS', default=True)
-SWIRL_LITELLM_TIMEOUT = env.int('SWIRL_LITELLM_TIMEOUT', default=90)
+SWIRL_LITELLM_TIMEOUT = _env_int('SWIRL_LITELLM_TIMEOUT', default=90)
 
 # LiteLLM response cache (off by default)
 # Set SWIRL_LITELLM_CACHE_ENABLED=True to enable. For multi-worker installs
 # set SWIRL_LITELLM_CACHE_TYPE=redis and supply SWIRL_LITELLM_CACHE_REDIS_HOST.
 SWIRL_LITELLM_CACHE_ENABLED = env.bool('SWIRL_LITELLM_CACHE_ENABLED', default=False)
 SWIRL_LITELLM_CACHE_TYPE = env.get_value('SWIRL_LITELLM_CACHE_TYPE', default='local')  # 'local' | 'redis'
-SWIRL_LITELLM_CACHE_TTL = env.int('SWIRL_LITELLM_CACHE_TTL', default=300)
+SWIRL_LITELLM_CACHE_TTL = _env_int('SWIRL_LITELLM_CACHE_TTL', default=300)
 SWIRL_LITELLM_CACHE_REDIS_HOST = env.get_value('SWIRL_LITELLM_CACHE_REDIS_HOST', default='')
-SWIRL_LITELLM_CACHE_REDIS_PORT = env.int('SWIRL_LITELLM_CACHE_REDIS_PORT', default=6379)
+SWIRL_LITELLM_CACHE_REDIS_PORT = _env_int('SWIRL_LITELLM_CACHE_REDIS_PORT', default=6379)
 SWIRL_LITELLM_CACHE_REDIS_PASSWORD = env.get_value('SWIRL_LITELLM_CACHE_REDIS_PASSWORD', default='')
 
 # Embedding / similarity
 SWIRL_USE_FAST_SIMILARITY = env.bool('SWIRL_USE_FAST_SIMILARITY', default=True)
 SWIRL_USE_UNIT_EMBEDDINGS = env.bool('SWIRL_USE_UNIT_EMBEDDINGS', default=True)
-SWIRL_RAG_TOK_DEFAULT = env.int('SWIRL_RAG_TOK_DEFAULT', default=4000)
-SWIRL_ST_BATCH_SIZE = env.int('SWIRL_ST_BATCH_SIZE', default=32)
-SWIRL_OLLAMA_EMBED_BATCH_SIZE = env.int('SWIRL_OLLAMA_EMBED_BATCH_SIZE', default=128)
+SWIRL_RAG_TOK_DEFAULT = _env_int('SWIRL_RAG_TOK_DEFAULT', default=4000)
+SWIRL_ST_BATCH_SIZE = _env_int('SWIRL_ST_BATCH_SIZE', default=32)
+SWIRL_OLLAMA_EMBED_BATCH_SIZE = _env_int('SWIRL_OLLAMA_EMBED_BATCH_SIZE', default=128)
 
 # RAG token and results budgets
-SWIRL_RAG_TOK_MAX = env.int('SWIRL_RAG_TOK_MAX', default=4000)   # low default for backward compatibility only
-SWIRL_RAG_MAX_TO_CONSIDER = env.int('SWIRL_RAG_MAX_TO_CONSIDER', default=10)
+SWIRL_RAG_TOK_MAX = _env_int('SWIRL_RAG_TOK_MAX', default=4000)   # low default for backward compatibility only
+SWIRL_RAG_MAX_TO_CONSIDER = _env_int('SWIRL_RAG_MAX_TO_CONSIDER', default=10)
 
 SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY_DEF=True
 SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY=env.bool('SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY',default=SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY_DEF)
