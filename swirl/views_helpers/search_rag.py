@@ -25,7 +25,14 @@ class SearchRag:
         if rag_query_items and isinstance(rag_query_items, str):
             self.rag_query_items = rag_query_items.split(",")
 
-    def get_rag_result(self) -> tuple[str, dict[str, str]]:
+    def _extract_result(self, json_result: dict) -> tuple:
+        """Return (body_text, additional_content) from a stored rag json_result."""
+        body = json_result.get("body", [None])
+        body_text = body[0] if isinstance(body, (list, tuple)) else body
+        additional_content = json_result.get("additional_content", {})
+        return body_text, additional_content
+
+    def get_rag_result(self) -> tuple:
         isRagItemsUpdated = False
         try:
             rag_result = Result.objects.get(
@@ -47,9 +54,10 @@ class SearchRag:
                 == set(self.rag_query_items)
             )
             if rag_result and not isRagItemsUpdated:
-                if rag_result.json_results[0]["body"][0]:
-                    return rag_result.json_results[0]["body"][0]
-                return False
+                body_text, additional_content = self._extract_result(rag_result.json_results[0])
+                if body_text:
+                    return body_text, additional_content
+                return False, {}
         except:
             pass
         rag_processor = RAGPostResultProcessor(
@@ -62,18 +70,25 @@ class SearchRag:
         if rag_processor.validate():
             result = rag_processor.process(should_return=True)
             if result == 0:
-                return "Please check the OpenAI or Azure/OpenAI credentials in your environment."
+                return "Please check the OpenAI or Azure/OpenAI credentials in your environment.", {}
 
             if self.search_id in instances:
                 del instances[self.search_id]
 
-            return result.json_results[0]["body"][0]
+            return self._extract_result(result.json_results[0])
 
-    def process_rag(self) -> dict[str, str]:
-        result = ""
+        return "", {}
+
+    def process_rag(self) -> dict:
+        body_text = ""
+        additional_content = {}
         try:
             result = self.get_rag_result()
+            if isinstance(result, tuple):
+                body_text, additional_content = result
+            else:
+                body_text = result
         except RagError as err:
             logger.error(f"{self}: Rag Error {err}")
 
-        return {"message": result}
+        return {"message": body_text, "additional_content": additional_content}

@@ -66,6 +66,24 @@ def get_session_data_with_db_fallback(request):
     """
     import jwt as _jwt
 
+    # Fast path: galaxy sends the live MSAL token inline with every request.
+    # Use it directly and write it through to OauthToken so the DB stays fresh.
+    ms_header_token = request.headers.get('Authorizationmicrosoft', '').strip()
+    if ms_header_token and getattr(request, 'user', None) and request.user.is_authenticated:
+        try:
+            OauthToken.objects.update_or_create(
+                owner=request.user, idp='Microsoft',
+                defaults={'token': ms_header_token, 'refresh_token': ''},
+            )
+            logger.debug(f"get_session_data_with_db_fallback: stored inline MS token for {request.user}")
+        except Exception as _e:
+            logger.debug(f"get_session_data_with_db_fallback: inline token DB write failed: {_e}")
+        return {
+            'microsoft_access_token': ms_header_token,
+            'microsoft_refresh_token': '',
+            'microsoft_access_token_expiration_time': 9999999999,
+        }
+
     session_data = Authenticator().get_session_data(request)
 
     if session_data:
