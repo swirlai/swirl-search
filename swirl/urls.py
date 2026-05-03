@@ -20,6 +20,7 @@ router.register(r'querytransforms', views.QueryTransformViewSet, basename='query
 router.register(r'search', views.SearchViewSet, basename='search')
 router.register(r'results', views.ResultViewSet, basename='results')
 router.register(r'branding', views.BrandingConfigurationViewSet, basename='branding')
+router.register(r'aiproviders', views.AIProviderViewSet, basename='aiproviders')
 
 router.register(r'sapi/search', views.SearchViewSet, basename='galaxy-search')
 router.register(r'sapi/results', views.ResultViewSet, basename='galaxy-results')

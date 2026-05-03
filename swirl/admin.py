@@ -5,13 +5,81 @@
 
 import logging
 
+from django import forms
 from django.contrib import admin
+from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.shortcuts import render
 from django.urls import path
+from django.utils.html import format_html
 
-from .models import SearchProvider, Search, Result, QueryTransform, OauthToken
+from .models import AIProvider, SearchProvider, Search, Result, QueryTransform, OauthToken
 
 logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# AIProvider role vocabulary
+# ---------------------------------------------------------------------------
+
+AI_PROVIDER_ROLE_CHOICES = [
+    ('chat',      'Chat'),
+    ('query',     'Query rewrite'),
+    ('rag',       'RAG / summarisation'),
+    ('connector', 'GenAI connector'),
+    ('reader',    'Reader / page fetcher'),
+    ('reranker',  'Reranker'),
+]
+
+
+def _processor_multiple(choices, label=''):
+    """Return a MultipleChoiceField rendered as a dual-list FilteredSelectMultiple."""
+    return forms.MultipleChoiceField(
+        choices=choices,
+        required=False,
+        label=label,
+        widget=FilteredSelectMultiple(label, is_stacked=False),
+    )
+
+
+# ---------------------------------------------------------------------------
+# SecretFieldsMixin — masks api_key in admin forms
+# ---------------------------------------------------------------------------
+
+class SecretFieldsMixin:
+    """
+    Replaces secret fields with PasswordInput so values are never echoed back.
+    On edit/PATCH, leaving the field blank preserves the existing secret.
+    """
+    secret_fields: tuple = ()
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        is_saveasnew = bool(
+            request and getattr(request, 'POST', None) and request.POST.get('_saveasnew')
+        )
+        for fname in self.secret_fields:
+            if fname not in form.base_fields:
+                continue
+            field = form.base_fields[fname]
+            field.widget = forms.PasswordInput(render_value=False)
+            has_value = obj and getattr(obj, fname, None)
+            if has_value or is_saveasnew:
+                field.required = False
+                field.help_text = 'Leave blank to keep the current value.'
+            else:
+                field.help_text = 'Required for a new provider.'
+        return form
+
+    def save_model(self, request, obj, form, change):
+        for fname in self.secret_fields:
+            new_val = form.cleaned_data.get(fname, '')
+            if not new_val and change:
+                # Preserve the existing value from the database.
+                try:
+                    original = self.model.objects.get(pk=obj.pk)
+                    setattr(obj, fname, getattr(original, fname, ''))
+                except self.model.DoesNotExist:
+                    pass
+        super().save_model(request, obj, form, change)
 
 ##################################################
 
@@ -310,7 +378,7 @@ admin.site.get_urls = _extend_admin_urls(admin.site.get_urls)
 
 SWIRL_MODEL_GROUPS = [
     ('Configuration', 'swirl_configuration', [
-        'SearchProvider', 'QueryTransform',
+        'AIProvider', 'SearchProvider', 'QueryTransform',
     ]),
     ('Runtime', 'swirl_runtime', [
         'Search', 'Result', 'OauthToken',
@@ -432,3 +500,66 @@ def _swirl_each_context(request):
 
 _original_each_context = admin.site.each_context
 admin.site.each_context = _swirl_each_context
+
+
+# ---------------------------------------------------------------------------
+# AIProvider admin
+# ---------------------------------------------------------------------------
+
+class AIProviderAdminForm(forms.ModelForm):
+    tags = _processor_multiple(AI_PROVIDER_ROLE_CHOICES, label='Active for role (tags)')
+    defaults = _processor_multiple(AI_PROVIDER_ROLE_CHOICES, label='Default for role')
+
+    class Meta:
+        model = AIProvider
+        fields = '__all__'
+
+
+@admin.register(AIProvider)
+class AIProviderAdmin(SecretFieldsMixin, admin.ModelAdmin):
+    form = AIProviderAdminForm
+    model = AIProvider
+
+    secret_fields = ('api_key',)
+    save_as = True
+    save_on_top = True
+
+    list_display = ('name', 'model', 'active', 'shared', 'defaults_display', 'owner', 'date_updated')
+    list_display_links = ('name',)
+    list_editable = ('active',)
+    list_filter = ('active', 'shared')
+    search_fields = ('name', 'model')
+    readonly_fields = ('date_created', 'date_updated')
+    ordering = ('-date_updated',)
+
+    fieldsets = (
+        ('Identity', {
+            'fields': ('name', ('owner', 'shared'), 'active'),
+        }),
+        ('Model', {
+            'fields': ('model', 'api_key', 'config'),
+            'description': (
+                'Set <b>model</b> to any LiteLLM-supported model string, e.g. '
+                '<code>gpt-4o</code>, <code>anthropic/claude-3-5-sonnet-20241022</code>, '
+                '<code>ollama/llama3</code>. '
+                'Store the API key here — it never needs to go in <code>.env</code>.'
+            ),
+        }),
+        ('Role tags', {
+            'fields': ('tags', 'defaults'),
+            'description': (
+                '<b>tags</b> — roles this provider is available for. '
+                '<b>defaults</b> — roles it is the default for. '
+                'Exactly one provider should be default per role '
+                '(<b>chat / query / rag / connector</b>).'
+            ),
+        }),
+        ('Audit', {
+            'classes': ('collapse',),
+            'fields': ('date_created', 'date_updated'),
+        }),
+    )
+
+    @admin.display(description='Default for')
+    def defaults_display(self, obj):
+        return ', '.join(obj.defaults or []) or '—'

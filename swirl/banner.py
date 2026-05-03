@@ -12,6 +12,8 @@ class bcolors:
 
 SWIRL_VERSION = '4.5-DEV'
 
+SWIRL_BANNER_TEXT = f"SWIRL AI COMMUNITY {SWIRL_VERSION}"
+
 SWIRL_LOGO = f"""
          .   o
         .        .   .  o

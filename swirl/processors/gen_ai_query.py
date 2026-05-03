@@ -9,6 +9,7 @@ logger = get_task_logger(__name__)
 from swirl.processors.processor import *
 from swirl.processors.utils import get_tag
 from swirl.openai.openai import OpenAIClient, AI_REWRITE_USE
+from swirl.ai_provider import AIProviderFactory
 
 
 TAG_LEGACY_PROMPT = "prompt"
@@ -102,12 +103,21 @@ class GenAIQueryProcessor(QueryProcessor):
 
             if client is None:
                 try:
-                    client = OpenAIClient(usage=AI_REWRITE_USE)
-                except ValueError as err:
-                    self.warning('API key not available')
-                    return self.query_string
+                    client = AIProviderFactory().alloc_ai_provider('query')
+                    if client is None:
+                        raise ValueError("No active AIProvider configured for role 'query'")
+                except Exception:
+                    try:
+                        client = OpenAIClient(usage=AI_REWRITE_USE)
+                    except ValueError as err:
+                        self.warning('No AI provider available for query rewrite')
+                        return self.query_string
 
-            model_name = client.get_model()
+            model_name = (
+                client.get_provider().model
+                if hasattr(client, 'get_provider')
+                else client.get_model()
+            )
             logger.info(
                 "%s model %s system guide %s prompt %s Do Filter %s",
                 self.type,
@@ -117,18 +127,16 @@ class GenAIQueryProcessor(QueryProcessor):
                 self.do_filter,
             )
 
-            response = client.openai_client.chat.completions.create(
-                model=model_name,
-                messages=[
-                    {"role": "system", "content": self.system_guide},
-                    {
-                        "role": "user",
-                        "content": self.prompt.format(
-                            query_string=self.query_string
-                        ),
-                    },
-                ],
-            )
+            messages = [
+                {"role": "system", "content": self.system_guide},
+                {"role": "user", "content": self.prompt.format(query_string=self.query_string)},
+            ]
+            if hasattr(client, 'completion'):
+                response = client.completion(messages=messages)
+            else:
+                response = client.openai_client.chat.completions.create(
+                    model=model_name, messages=messages,
+                )
             message = response.choices[0].message.content
             logger.info("ChatGPT Response: %s", message)
 

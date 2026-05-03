@@ -39,8 +39,8 @@ import hmac
 
 from swirl.models import *
 from swirl.serializers import *
-from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, OauthToken
-from swirl.serializers import UserSerializer, DetailSearchRagSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, StatusResponseSerializer, AuthResponseSerializer
+from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, OauthToken, AIProvider
+from swirl.serializers import UserSerializer, DetailSearchRagSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, StatusResponseSerializer, AuthResponseSerializer, AIProviderSerializer, AIProviderNoCredentialsSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
 from swirl.views_helpers.search_rag import SearchRag
@@ -1309,3 +1309,83 @@ class FetchDocumentView(APIView):
         response = HttpResponse(content, content_type=content_type)
         response['Content-Disposition'] = f'attachment; filename="{fetch_url.split("/")[-1].split("?")[0] or "document"}"'
         return response
+
+
+# ---------------------------------------------------------------------------
+# AIProvider CRUD viewset
+# ---------------------------------------------------------------------------
+
+class AIProviderViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for managing AIProvider objects.
+    GET lists all shared + owned providers; POST creates a new one.
+    Add /<id>/ for GET, PUT, PATCH, DELETE on a single object.
+    Superusers receive api_key in responses; other users receive the
+    no-credentials serializer so keys are never echoed back.
+    """
+    queryset = AIProvider.objects.all()
+    serializer_class = AIProviderSerializer
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+
+    def list(self, request):
+        if not request.user.has_perm('swirl.view_aiprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        qs = (
+            AIProvider.objects.filter(shared=True) |
+            AIProvider.objects.filter(owner=request.user)
+        )
+        if request.user.is_superuser:
+            serializer = AIProviderSerializer(qs, many=True)
+        else:
+            serializer = AIProviderNoCredentialsSerializer(qs, many=True)
+        return Response(paginate(serializer.data, request), status=status.HTTP_200_OK)
+
+    def create(self, request):
+        if not request.user.has_perm('swirl.add_aiprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        data = request.data.copy() if hasattr(request.data, 'copy') else dict(request.data)
+        if request.user.is_superuser:
+            data['shared'] = 'true'
+        serializer = AIProviderSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(owner=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, pk=None):
+        if not request.user.has_perm('swirl.view_aiprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        qs = (
+            AIProvider.objects.filter(pk=pk, owner=request.user) |
+            AIProvider.objects.filter(pk=pk, shared=True)
+        )
+        if not qs.exists():
+            return Response('AIProvider Object Not Found', status=status.HTTP_404_NOT_FOUND)
+        obj = AIProvider.objects.get(pk=pk)
+        if request.user == obj.owner or request.user.is_superuser:
+            serializer = AIProviderSerializer(obj)
+        else:
+            serializer = AIProviderNoCredentialsSerializer(obj)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None, partial=False):
+        if not request.user.has_perm('swirl.change_aiprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        if not AIProvider.objects.filter(pk=pk, owner=request.user).exists():
+            return Response('AIProvider Object Not Found', status=status.HTTP_404_NOT_FOUND)
+        obj = AIProvider.objects.get(pk=pk)
+        obj.date_updated = datetime.now()
+        serializer = AIProviderSerializer(instance=obj, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(owner=request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, pk=None):
+        return self.update(request, pk=pk, partial=True)
+
+    def destroy(self, request, pk=None):
+        if not request.user.has_perm('swirl.delete_aiprovider'):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        if not AIProvider.objects.filter(pk=pk, owner=request.user).exists():
+            return Response('AIProvider Object Not Found', status=status.HTTP_404_NOT_FOUND)
+        AIProvider.objects.get(pk=pk).delete()
+        return Response('AIProvider Object Deleted', status=status.HTTP_204_NO_CONTENT)

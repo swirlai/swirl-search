@@ -15,6 +15,7 @@ from datetime import datetime
 from django.conf import settings
 
 from swirl.openai.openai import OpenAIClient, AI_RAG_USE
+from swirl.ai_provider import AIProviderFactory
 
 from celery import group
 import threading
@@ -241,16 +242,27 @@ class RAGPostResultProcessor(PostResultProcessor):
             result.save()
             return 0
 
-        client_model=self.client.get_model()
+        client_model = self.client.get_provider().model if hasattr(self.client, 'get_provider') else self.client.get_model()
         try:
-            completions_new = self.client.openai_client.chat.completions.create(
-                model=client_model,
-                messages=[
-                    {"role": "system", "content": rag_prompt.get_role_system_guide_text()},
-                    {"role": "user", "content": new_prompt_text},
-                ]
-            )
-            model_response = completions_new.choices[0].message.content
+            if hasattr(self.client, 'completion'):
+                # AIProviderFactory / LLMWrapper path
+                completions_new = self.client.completion(
+                    messages=[
+                        {"role": "system", "content": rag_prompt.get_role_system_guide_text()},
+                        {"role": "user", "content": new_prompt_text},
+                    ]
+                )
+                model_response = completions_new.choices[0].message.content
+            else:
+                # Legacy OpenAIClient path
+                completions_new = self.client.openai_client.chat.completions.create(
+                    model=client_model,
+                    messages=[
+                        {"role": "system", "content": rag_prompt.get_role_system_guide_text()},
+                        {"role": "user", "content": new_prompt_text},
+                    ]
+                )
+                model_response = completions_new.choices[0].message.content
             logger.warning(f'RAG: fetch_prompt_errors follow:')
             for (k,v) in fetch_prompt_errors.items():
                 logger.warning(f'RAG:\t url:{k} problem:{v}')
@@ -274,8 +286,13 @@ class RAGPostResultProcessor(PostResultProcessor):
         rag_result['date_published'] = str(datetime.now())
         rag_result['title'] = self.search.query_string_processed,
         rag_result['body'] = model_response,
-        rag_result['author'] = 'ChatGPT'
-        rag_result['searchprovider'] = f'ChatGPT-{client_model}'
+        provider_label = (
+            self.client.get_provider().name
+            if hasattr(self.client, 'get_provider')
+            else 'ChatGPT'
+        )
+        rag_result['author'] = provider_label
+        rag_result['searchprovider'] = f'{provider_label}-{client_model}'
         rag_result['searchprovider_rank'] = 1
         if settings.SWIRL_DEFAULT_RESULT_BLOCK:
             rag_result['result_block'] = getattr(settings, 'SWIRL_DEFAULT_RESULT_BLOCK', 'ai_summary')
@@ -287,14 +304,19 @@ class RAGPostResultProcessor(PostResultProcessor):
 
     def process(self, should_return=True):
         self.client = None
-        try :
-            logger.debug('RAG allocating client')
-            self.client = OpenAIClient(usage=AI_RAG_USE)
-            logger.debug(f'RAG allocate client complete {self.client}')
-        except ValueError as err:
-            logger.warning(f"RAG : {err} allocating openAI client")
-            logger.warning(err)
-            return 0
+        try:
+            logger.debug('RAG allocating AI provider')
+            self.client = AIProviderFactory().alloc_ai_provider('rag', owner=self.search.owner)
+            if self.client is None:
+                raise ValueError("No active AIProvider configured for role 'rag'")
+            logger.debug(f'RAG allocated provider: {self.client.get_provider().name}')
+        except Exception as err:
+            logger.warning(f"RAG: {err} — falling back to OpenAIClient")
+            try:
+                self.client = OpenAIClient(usage=AI_RAG_USE)
+            except ValueError as fallback_err:
+                logger.warning(f"RAG: fallback also failed: {fallback_err}")
+                return 0
 
         if should_return:
             return self.background_process()

@@ -43,3 +43,5 @@ qdrant-client==1.10.0
 presidio-analyzer
 presidio-anonymizer
 func_timeout
+litellm
+pydantic>=2.0

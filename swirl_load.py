@@ -77,13 +77,17 @@ def main(argv):
         for json_item in json_list:
             # determine type of item, and thus target
             target = None
-            if 'name' in json_item.keys():
+            keys = json_item.keys()
+            if 'name' in keys and 'defaults' in keys and 'connector' not in keys:
+                # AIProvider — has 'defaults' list, no 'connector'
+                target = 'aiproviders'
+            elif 'name' in keys:
                 # searchprovider
                 target = 'searchproviders'
-            elif 'query_string' in json_item.keys():
+            elif 'query_string' in keys:
                 # search
                 target = 'search'
-            elif 'search_id' in json_item.keys():
+            elif 'search_id' in keys:
                 # result
                 target = 'results'
             if not target:
