@@ -178,9 +178,10 @@ class QueryTransformNoCredentialsSerializer(serializers.ModelSerializer):
 
 class DetailSearchRagSerializer(serializers.Serializer):
     message = serializers.CharField(required=True, allow_blank=True)
+    additional_content = serializers.DictField(required=False, default=dict)
 
     class Meta:
-        fields = ["message"]
+        fields = ["message", "additional_content"]
 
 
 # Minimal Serializers for drf-spectacular OpenAPI documentation only

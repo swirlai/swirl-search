@@ -167,6 +167,11 @@ class RAGPostResultProcessor(PostResultProcessor):
         # Use module-level, settings-driven config
         chosen_rag = sorted_rag[:RAG_MAX_TO_CONSIDER]
 
+        logger.info(f"RAG: considering {len(chosen_rag)} of {len(sorted_rag)} results for query '{user_query}'")
+        for i, item in enumerate(chosen_rag):
+            body_len = len((item.get('body') or '').split())
+            logger.info(f"RAG candidate [{i+1}] provider={item.get('searchprovider','?')} score={item.get('swirl_score','?')} body_words={body_len} url={item.get('url','')[:80]}")
+
         max_tokens = RAG_MAX_TOKENS
         fallback_text = ""
         fallback_tokens = 0
@@ -175,6 +180,7 @@ class RAGPostResultProcessor(PostResultProcessor):
             max_tokens=max_tokens,
             model=self.client.get_encoding_model()
         )
+        logger.info(f"RAG: token budget={max_tokens} model={self.client.get_encoding_model()}")
 
         fetch_prompt_errors = {}
         from swirl.tasks import page_fetcher_task
@@ -195,8 +201,16 @@ class RAGPostResultProcessor(PostResultProcessor):
         results = result_group.get(interval=0.05, timeout=120)
         if self.stop_background_thread:
             return 0
+
+        chunks_added = 0
+        chunks_fallback = 0
+        chunks_skipped = 0
+
         for nth_result, result in enumerate(results):
+            url = chosen_rag[nth_result].get('url', '')
             if result[0] == False:
+                chunks_skipped += 1
+                logger.info(f"RAG [{nth_result+1}] SKIPPED (page_fetcher returned False) url={url[:80]}")
                 continue
             else:
                 text_for_query, response_url, document_type, body, url, json = result
@@ -206,28 +220,41 @@ class RAGPostResultProcessor(PostResultProcessor):
                         fallback_text = fallback_text + new_content
                         fallback_tokens = fallback_tokens + len(new_content.split())
 
-                    # Getting search provider from the last item is questionable practice D.A.N.
-                    # logger.info(f'RAG {item["searchprovider"]} PageFetcherFactory adding prompt content from page :\nurl : {url}\ncontent_url : {content_url}\nresponse_url:{response_url}')
                     if new_content := text_for_query:
-                        # is_full = rag_prompt.put_chunk(new_content, url=url, type=document_type, filter_file_type=(not content_url))
+                        source = "page" if text_for_query != f"body : {body}" else "summary"
                         is_full = rag_prompt.put_chunk(new_content, url=url, type=document_type, filter_file_type=True)
                         if not rag_prompt.is_last_chunk_added():
                             summary_page_text = self.format_result_as_page(chosen_rag[nth_result]['body'], rag_prompt.get_last_chunk_status())
                             is_full = rag_prompt.put_chunk(summary_page_text, url=url, type=document_type, filter_file_type=True)
                             if not rag_prompt.is_last_chunk_added():
-                                warn =  f"RAG Chunk not added : {rag_prompt.get_last_chunk_status()}"
+                                warn = f"RAG Chunk not added : {rag_prompt.get_last_chunk_status()}"
                                 self._log_n_store_warn(url=url, warn=warn, buffer=fetch_prompt_errors)
                                 fetch_prompt_errors[url] = warn
+                                chunks_skipped += 1
+                                logger.info(f"RAG [{nth_result+1}] REJECTED status={rag_prompt.get_last_chunk_status()} url={url[:80]}")
+                            else:
+                                chunks_fallback += 1
+                                logger.info(f"RAG [{nth_result+1}] ADDED via summary fallback tokens={rag_prompt.get_num_tokens()} url={url[:80]}")
+                        else:
+                            chunks_added += 1
+                            logger.info(f"RAG [{nth_result+1}] ADDED via {source} tokens={rag_prompt.get_num_tokens()} url={url[:80]}")
 
-                        logger.debug(f'RAG : max_tokens:{max_tokens} num_tokens {rag_prompt.get_num_tokens()} is_full:{rag_prompt.is_full()}')
                         if is_full:
+                            logger.info(f"RAG: token budget exhausted after {nth_result+1} results")
                             break
                     else:
                         summary_page_text = self.format_result_as_page(chosen_rag[nth_result]['body'], "NO CONTENT")
                         is_full = rag_prompt.put_chunk(summary_page_text, url=url, type=document_type, filter_file_type=True)
                         if not rag_prompt.is_last_chunk_added():
                             warn = f'RAG No content found in {url} max_tokens:{max_tokens} num_tokens {rag_prompt.get_num_tokens()} is_full:{rag_prompt.is_full()} JSON:{json}'
-                            self._log_n_store_warn(url=url,warn=warn,buffer=fetch_prompt_errors)
+                            self._log_n_store_warn(url=url, warn=warn, buffer=fetch_prompt_errors)
+                            chunks_skipped += 1
+                            logger.info(f"RAG [{nth_result+1}] REJECTED no content url={url[:80]}")
+                        else:
+                            chunks_fallback += 1
+                            logger.info(f"RAG [{nth_result+1}] ADDED via body-only fallback tokens={rag_prompt.get_num_tokens()} url={url[:80]}")
+
+        logger.info(f"RAG summary: added={chunks_added} fallback={chunks_fallback} skipped={chunks_skipped} prompt_tokens={rag_prompt.get_num_tokens()}/{max_tokens}")
 
         new_prompt_text = rag_prompt.get_promp_text()
         logger.debug(f"\nRAG Prompt:\n\t{new_prompt_text}")
@@ -297,6 +324,13 @@ class RAGPostResultProcessor(PostResultProcessor):
         if settings.SWIRL_DEFAULT_RESULT_BLOCK:
             rag_result['result_block'] = getattr(settings, 'SWIRL_DEFAULT_RESULT_BLOCK', 'ai_summary')
         rag_result['rag_query_items'] = [str(item['swirl_id']) for item in chosen_rag]
+        rag_result['additional_content'] = {
+            'sources': [
+                {'title': item.get('title', ''), 'url': item.get('url', '')}
+                for item in chosen_rag
+                if item.get('url')
+            ]
+        }
 
         result = Result.objects.create(owner=self.search.owner, search_id=self.search, provider_id=5, searchprovider='ChatGPT', query_string_to_provider=new_prompt_text[:256], query_to_provider='None', status='READY', retrieved=1, found=1, json_results=[rag_result], time=0.0)
         result.save()
