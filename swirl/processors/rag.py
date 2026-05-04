@@ -329,7 +329,8 @@ class RAGPostResultProcessor(PostResultProcessor):
                 {'title': item.get('title', ''), 'url': item.get('url', '')}
                 for item in chosen_rag
                 if item.get('url')
-            ]
+            ],
+            'ai_model': client_model,
         }
 
         result = Result.objects.create(owner=self.search.owner, search_id=self.search, provider_id=5, searchprovider='ChatGPT', query_string_to_provider=new_prompt_text[:256], query_to_provider='None', status='READY', retrieved=1, found=1, json_results=[rag_result], time=0.0)
