@@ -349,6 +349,117 @@ def _admin_activity_view(request):
 
 
 ##################################################
+# Log viewer admin view
+##################################################
+
+# Files surfaced by the log viewer. Keep this list short and stable — it
+# becomes the tab strip in the UI. Each entry is a (label, relative_path)
+# pair; the path is resolved against settings.BASE_DIR so the view stays
+# portable across local dev (./logs/) and the Docker layout.
+_LOG_VIEWER_FILES = (
+    ('django',  'logs/django.log'),
+    ('celery',  'logs/celery-worker.log'),
+)
+
+# Hard cap on what we read off disk per request. Logs grow unbounded between
+# rotations, so we tail the last ~1 MiB rather than slurping the whole file.
+# That window comfortably covers tens of thousands of lines on a normal day
+# without risking a memory spike when something is logging in a tight loop.
+_LOG_VIEWER_TAIL_BYTES = 1024 * 1024
+
+# Default number of lines rendered. The user can override via ?lines=N up to
+# the hard cap below — keeps the page responsive when a noisy worker fills
+# the tail window with short lines.
+_LOG_VIEWER_DEFAULT_LINES = 500
+_LOG_VIEWER_MAX_LINES = 5000
+
+
+def _read_log_tail(path, max_lines):
+    """Return the last ``max_lines`` lines of ``path`` as a list of strings.
+
+    Reads at most ``_LOG_VIEWER_TAIL_BYTES`` from the end of the file so a
+    runaway log can't blow the request's memory budget. Returns an empty
+    list when the file is missing or unreadable — callers should treat that
+    as a normal "no logs yet" state.
+    """
+    import os
+    try:
+        size = os.path.getsize(path)
+    except OSError:
+        return []
+
+    start = max(0, size - _LOG_VIEWER_TAIL_BYTES)
+    try:
+        with open(path, 'rb') as fh:
+            fh.seek(start)
+            chunk = fh.read()
+    except OSError:
+        return []
+
+    # Decode tolerantly — log files can mix encodings during incidents.
+    text = chunk.decode('utf-8', errors='replace')
+    # Drop the partial line at the head if we seeked into the middle of one.
+    if start > 0:
+        first_nl = text.find('\n')
+        if first_nl >= 0:
+            text = text[first_nl + 1:]
+    lines = text.splitlines()
+    if max_lines and len(lines) > max_lines:
+        lines = lines[-max_lines:]
+    return lines
+
+
+def _admin_log_viewer_view(request):
+    """
+    Admin page: tail of the server-side log files. Read-only — nothing the
+    UI does writes back. Bounded by ``_LOG_VIEWER_TAIL_BYTES`` so a 50 GB
+    log can't OOM the request thread.
+    """
+    import os
+    from django.conf import settings
+
+    # Which tab is selected? Default to the first entry. Anything not in
+    # the whitelist is rejected to avoid path-traversal via the query string.
+    requested = request.GET.get('file', _LOG_VIEWER_FILES[0][0])
+    labels = {label: rel for label, rel in _LOG_VIEWER_FILES}
+    if requested not in labels:
+        requested = _LOG_VIEWER_FILES[0][0]
+
+    # How many lines to render. Cap at the hard limit so a stray ?lines=1e9
+    # doesn't churn the renderer.
+    try:
+        n_lines = int(request.GET.get('lines', _LOG_VIEWER_DEFAULT_LINES))
+    except (TypeError, ValueError):
+        n_lines = _LOG_VIEWER_DEFAULT_LINES
+    n_lines = max(50, min(n_lines, _LOG_VIEWER_MAX_LINES))
+
+    abs_path = os.path.join(settings.BASE_DIR, labels[requested])
+    lines = _read_log_tail(abs_path, n_lines)
+    try:
+        size_bytes = os.path.getsize(abs_path)
+    except OSError:
+        size_bytes = None
+
+    context = {
+        **admin.site.each_context(request),
+        'title': 'Log Viewer',
+        'log_files': [
+            {'label': label, 'rel': rel, 'selected': label == requested}
+            for label, rel in _LOG_VIEWER_FILES
+        ],
+        'selected_label': requested,
+        'selected_rel':   labels[requested],
+        'lines':          lines,
+        'line_count':     len(lines),
+        'size_bytes':     size_bytes,
+        'tail_bytes':     _LOG_VIEWER_TAIL_BYTES,
+        'n_lines':        n_lines,
+        'max_lines':      _LOG_VIEWER_MAX_LINES,
+    }
+    return render(request, 'admin/log_viewer.html', context)
+
+
+##################################################
 # Register extra admin URLs (activity page lives at /admin/activity/)
 ##################################################
 
@@ -361,6 +472,11 @@ def _extend_admin_urls(original_get_urls):
                 'activity/',
                 admin.site.admin_view(_admin_activity_view),
                 name='admin_activity',
+            ),
+            path(
+                'log-viewer/',
+                admin.site.admin_view(_admin_log_viewer_view),
+                name='admin_log_viewer',
             ),
         ]
         return extras + urls

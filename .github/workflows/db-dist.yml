@@ -45,6 +45,13 @@ jobs:
         run: python swirl.py start
       - name: Load the Default SearchProviders
         run:  python swirl_load.py -u admin -p password -s http://localhost:8000/ 'SearchProviders/preloaded.json'
+      - name: Load the Default AIProviders
+        # swirl_load.py auto-detects AIProvider vs SearchProvider by JSON shape
+        # (AIProviders have a `defaults` list and no `connector`). All
+        # entries in AIProviders/preloaded.json ship `"active": false` except
+        # spaCy, so this is safe to bake into the dist DB — admins can
+        # toggle the providers they want from the Django admin after install.
+        run:  python swirl_load.py -u admin -p password -s http://localhost:8000/ 'AIProviders/preloaded.json'
       - name: Stop Swirl
         run: python swirl.py stop
       - name: Create a New db.dist File

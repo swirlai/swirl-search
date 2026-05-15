@@ -201,15 +201,17 @@ def return_authenticators_list(request):
 ########################################
 
 def index(request):
-    from swirl.banner import SWIRL_VERSION
-    from swirl.models import SearchProvider
-    from swirl.utils import is_running_celery_redis
-    context = {
-        'swirl_version': SWIRL_VERSION,
-        'search_provider_count': SearchProvider.objects.filter(active=True).count(),
-        'celery_status': 'Running' if is_running_celery_redis() else 'Not running',
-    }
-    return render(request, 'index.html', context)
+    """
+    /swirl/ used to render a separate "Manage SWIRL" dashboard, but every
+    actionable link on that page already lives in the Django admin
+    (/admin/) — keeping a second dashboard meant the two pages drifted
+    apart on every release. Forward callers straight to /admin/ so there
+    is one source of truth for SWIRL administration.
+
+    /swirl/authenticators.html and /swirl/query_transform_form/ keep their
+    own routes; only the bare /swirl/ index is collapsed.
+    """
+    return redirect('/admin/')
 
 ########################################
 
