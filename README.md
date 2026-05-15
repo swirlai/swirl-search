@@ -29,6 +29,62 @@ Swirl can connect to databases (SQL, NoSQL, Google BigQuery), public data servic
 
 <br/>
 
+# 🔗 Integrations
+
+## mike
+
+[mike](https://github.com/willchen96/mike) is an open-source project assistant that uses Swirl for federated search and document import. When connected, mike's project chat gains two tools:
+
+- **`search_external`** — searches all active Swirl providers and returns ranked results into the conversation
+- **`import_document`** — fetches a document (PDF, DOCX, DOC) found via Swirl and imports it into the current project
+
+### Demo
+
+▶️ [Swirl Community × Mike OSS: Fetching & Summarizing SharePoint Docs with Claude](https://www.youtube.com/watch?v=biIEPFpQBmQ)
+
+### Prerequisites
+
+- **Swirl Community 4.5 or later** — earlier versions don't include the integration points mike needs. Earlier versions are welcome to add support via PR! 🙂
+- **mike built from [willchen96/mike#14](https://github.com/willchen96/mike/pull/14) or later** — this PR contains the Swirl integration changes
+- A running mike backend (`npm run dev` in `backend/`)
+- Optional: Microsoft 365 OAuth configured in Swirl for M365 document fetch
+
+### Configuration
+
+In mike's `backend/.env`:
+
+```env
+# SWIRL federated search (optional — enables search_external and import_document tools)
+SWIRL_URL=http://localhost:8000
+
+# Authenticate with a DRF token:
+SWIRL_TOKEN=your-swirl-api-token
+
+# Or with username/password Basic auth (takes precedence over SWIRL_TOKEN if both are set):
+# SWIRL_USERNAME=admin
+# SWIRL_PASSWORD=your-swirl-password
+```
+
+### Microsoft 365 prefix syntax
+
+When M365 is configured in Swirl, mike understands these prefixes in the search query:
+
+| Prefix | Source |
+|--------|--------|
+| `sharepoint:` | SharePoint Sites |
+| `onedrive:` | OneDrive |
+| `outlook:` | Outlook Messages |
+| `teams:` | Microsoft Teams |
+| `microsoft:` | All M365 sources |
+
+Example: *"Find the Q3 budget in sharepoint: finance"*
+
+### M365 document fetch
+
+When mike's `import_document` tool receives a SharePoint or OneDrive URL, it proxies the download through Swirl's `/swirl/fetch-document/` endpoint, which handles the Microsoft Graph API three-step fetch using the user's stored OAuth token. No M365 credentials need to be in mike's environment.
+
+<br/>
+
 # 🚀 Quick Start
 
 ## Option A — Docker (recommended for evaluation)
@@ -90,61 +146,6 @@ Configure a `ChatGPT` or `GenAI` SearchProvider with your OpenAI or compatible A
 
 <br/>
 
-# 🔗 Integrations
-
-## mike
-
-[mike](https://github.com/willchen96/mike) is an open-source project assistant that uses Swirl for federated search and document import. When connected, mike's project chat gains two tools:
-
-- **`search_external`** — searches all active Swirl providers and returns ranked results into the conversation
-- **`import_document`** — fetches a document (PDF, DOCX, DOC) found via Swirl and imports it into the current project
-
-### Demo
-
-▶️ [Swirl Community × Mike OSS: Fetching & Summarizing SharePoint Docs with Claude](https://www.youtube.com/watch?v=biIEPFpQBmQ)
-
-### Prerequisites
-
-- A running Swirl Community instance (this repo)
-- A running mike backend (`npm run dev` in `backend/`)
-- Optional: Microsoft 365 OAuth configured in Swirl for M365 document fetch
-
-### Configuration
-
-In mike's `backend/.env`:
-
-```env
-# SWIRL federated search (optional — enables search_external and import_document tools)
-SWIRL_URL=http://localhost:8000
-
-# Authenticate with a DRF token:
-SWIRL_TOKEN=your-swirl-api-token
-
-# Or with username/password Basic auth (takes precedence over SWIRL_TOKEN if both are set):
-# SWIRL_USERNAME=admin
-# SWIRL_PASSWORD=your-swirl-password
-```
-
-### Microsoft 365 prefix syntax
-
-When M365 is configured in Swirl, mike understands these prefixes in the search query:
-
-| Prefix | Source |
-|--------|--------|
-| `sharepoint:` | SharePoint Sites |
-| `onedrive:` | OneDrive |
-| `outlook:` | Outlook Messages |
-| `teams:` | Microsoft Teams |
-| `microsoft:` | All M365 sources |
-
-Example: *"Find the Q3 budget in sharepoint: finance"*
-
-### M365 document fetch
-
-When mike's `import_document` tool receives a SharePoint or OneDrive URL, it proxies the download through Swirl's `/swirl/fetch-document/` endpoint, which handles the Microsoft Graph API three-step fetch using the user's stored OAuth token. No M365 credentials need to be in mike's environment.
-
-<br/>
-
 # 🔌 List of Connectors
 
 <img src="https://docs.swirlaiconnect.com/images/Connectors_2.png" height=60% width=70%/>
@@ -194,5 +195,5 @@ New to GitHub contributions? The [GitHub contributing guide](https://docs.github
 # 👷‍♂️ Support
 
 * **Slack:** [Swirl Community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
-* **Email:** [support@swirl.today](mailto:support@swirl.today)
-* **Enterprise / managed service:** [hello@swirl.today](mailto:hello@swirl.today)
+* **Email:** [support@swirlaiconnect.com](mailto:support@swirlaiconnect.com)
+* **Enterprise / managed service:** [hello@swirlaiconnect.com](mailto:hello@swirlaiconnect.com)
