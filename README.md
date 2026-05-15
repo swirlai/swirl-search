@@ -142,7 +142,7 @@ Swirl supports OAuth2 search across M365 Outlook, OneDrive, SharePoint, and Team
 
 ## AI / LLM Providers
 
-Configure a `ChatGPT` or `GenAI` SearchProvider with your OpenAI or compatible API key to enable real-time RAG. See the [AI Guide](https://docs.swirlaiconnect.com/ai-guide).
+Configure a `ChatGPT` or `GenAI` SearchProvider with your OpenAI or compatible API key to enable real-time RAG. See the [AI Guide](https://docs.swirlaiconnect.com/rag-guide).
 
 <br/>
 
@@ -188,7 +188,7 @@ New to GitHub contributions? The [GitHub contributing guide](https://docs.github
 
 # 📖 Documentation
 
-[Overview](https://docs.swirlaiconnect.com/) | [Quick Start](https://docs.swirlaiconnect.com/quick-start) | [User Guide](https://docs.swirlaiconnect.com/user-guide) | [Admin Guide](https://docs.swirlaiconnect.com/admin-guide) | [M365 Guide](https://docs.swirlaiconnect.com/m365-guide) | [Developer Guide](https://docs.swirlaiconnect.com/developer-guide) | [Developer Reference](https://docs.swirlaiconnect.com/developer-reference) | [AI Guide](https://docs.swirlaiconnect.com/ai-guide)
+[Overview](https://docs.swirlaiconnect.com/) | [Quick Start](https://docs.swirlaiconnect.com/quick-start) | [User Guide](https://docs.swirlaiconnect.com/user-guide) | [Admin Guide](https://docs.swirlaiconnect.com/admin-guide) | [M365 Guide](https://docs.swirlaiconnect.com/m365-guide) | [Developer Guide](https://docs.swirlaiconnect.com/developer-guide) | [Developer Reference](https://docs.swirlaiconnect.com/developer-reference) | [AI Guide](https://docs.swirlaiconnect.com/rag-guide)
 
 <br/>
 
