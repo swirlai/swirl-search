@@ -232,6 +232,45 @@ def paginate(data, request):
         return page_obj.object_list
     return data
 
+
+def standard_paginate(queryset, request, serializer_class):
+    """
+    DRF-style paginated response for ViewSets that override .list().
+
+    Reads `items` (page size, default 10) and `page` (1-based, default 1)
+    from the query string. Returns a dict shaped like DRF's
+    PageNumberPagination: {count, next, previous, results}.
+
+    The Galaxy UI's search-history sidebar and home-dashboard widgets
+    (spyglass.component / search-history.component) read
+    `response.results` and `response.next`. They send `?items=N` (not the
+    DRF default `?page_size=N`), so callers must use this helper rather
+    than DRF's default paginator to honor the existing query name.
+    """
+    items_raw = request.GET.get('items', '10')
+    page_raw = request.GET.get('page', '1')
+    items = max(1, int(items_raw)) if is_int(items_raw) else 10
+    page = max(1, int(page_raw)) if is_int(page_raw) else 1
+
+    paginator = Paginator(queryset, items)
+    page_obj = paginator.get_page(page)
+
+    serializer = serializer_class(page_obj.object_list, many=True)
+
+    def _link(page_num):
+        if page_num is None:
+            return None
+        params = request.GET.copy()
+        params['page'] = str(page_num)
+        return f"{request.build_absolute_uri(request.path)}?{params.urlencode()}"
+
+    return {
+        'count': paginator.count,
+        'next': _link(page_obj.next_page_number() if page_obj.has_next() else None),
+        'previous': _link(page_obj.previous_page_number() if page_obj.has_previous() else None),
+        'results': serializer.data,
+    }
+
 def select_providers(providers, start_tag, tags_in_query_list):
     """
     - No tags

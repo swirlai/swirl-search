@@ -1,6 +1,6 @@
 [
     {
-        "name": "Google Web - pse.google.com",
+        "name": "Web - Google PSE",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -50,7 +50,7 @@
         ]
     },
     {
-        "name": "Google News - news.google.com",
+        "name": "News - Google News RSS",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
@@ -79,37 +79,7 @@
         ]
     },
     {
-        "name": "LinkedIn - www.linkedin.com",
-        "active": false,
-        "default": false,
-        "connector": "RequestsGet",
-        "url": "https://www.googleapis.com/customsearch/v1",
-        "query_template": "{url}?cx={cx}&key={key}&q={query_string}+-post",
-        "post_query_template": {},
-        "http_request_headers": {},
-        "query_processors": [
-            "AdaptiveQueryProcessor"
-        ],
-        "query_mappings": "cx=<your-Google-PSE-code>,DATE_SORT=sort=date,PAGE=start=RESULT_INDEX,NOT_CHAR=-",
-        "result_grouping_field": "",
-        "result_processors": [
-            "MappingResultProcessor",
-            "RequireQueryStringInTitleResultProcessor",
-            "DateFinderResultProcessor",
-            "CosineRelevancyResultProcessor"
-        ],
-        "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
-        "result_mappings": "title= htmlTitle,url=link,body=snippet,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].locale,pagemap.metatags[*].['og:image'],NO_PAYLOAD",
-        "results_per_query": 10,
-        "credentials": "key=<your-Google-API-key>",
-        "eval_credentials": "",
-        "tags": [
-            "LinkedIn",
-            "People"
-        ]
-    },
-    {
-        "name": "Swirl Documentation - docs.swirlaiconnect.com",
+        "name": "Documentation - SWIRL AI",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -160,7 +130,7 @@
         ]
     },
     {
-        "name": "Internet Archive Items - archive.org",
+        "name": "Web - Internet Archive",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
@@ -190,7 +160,7 @@
         ]
     },
     {
-        "name": "Europe PubMed Central - EuropePMC.org",
+        "name": "Articles - EuropePMC.org",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
@@ -226,7 +196,7 @@
         ]
     },
     {
-        "name": "ArXiv - arXiv.org",
+        "name": "Articles - ArXiv",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
@@ -254,31 +224,7 @@
         ]
     },
     {
-        "name": "IT News - NLResearch.com",
-        "active": false,
-        "default": true,
-        "connector": "RequestsGet",
-        "url": "https://nlresearch.com/results.php?datasource=BRECE&language=1&periodDate=-7&resultsPerPage=10&micpr=0&extended=1&output=json",
-        "query_template": "{url}&login={login}&password={password}&textQuery={query_string}",
-        "query_processors": [
-            "AdaptiveQueryProcessor"
-        ],
-        "query_mappings": "PAGE=startNumber=RESULT_INDEX,DATE_SORT=sort=2,RELEVANCY_SORT=sort=1,NOT=true,NOT_CHAR=-",
-        "result_processors": [
-            "MappingResultProcessor",
-            "CosineRelevancyResultProcessor"
-        ],
-        "response_mappings": "FOUND=header.@attributes.total_documents,RESULTS=result_list.result,RESULT=document",
-        "result_mappings": "body=summary,date_published=date,author=publisher,type,source,country,language,NO_PAYLOAD",
-        "results_per_query": 10,
-        "credentials": "login=your-NLResearch-username,password=your-NLResearch-password",
-        "tags": [
-            "News",
-            "NorthernLight"
-        ]
-    },
-    {
-        "name": "Generative AI",
+        "name": "Answers - GAI",
         "active": false,
         "default": true,
         "connector": "GenAI",
@@ -327,7 +273,7 @@
         ]
     },
     {
-        "name": "Company Data - Google BigQuery",
+        "name": "Companies - Google BigQuery",
         "description": "Searches info on 7 million companies worldwide including Linkedin URL, company size, location, and number of employees. Search only with company name, domain or location. Supports many languages. Does not support NOT operator.",
         "active": false,
         "default": false,
@@ -358,7 +304,7 @@
         ]
     },
     {
-        "name": "Company Funding Records - SQLite3",
+        "name": "Companies - SQLite3",
         "active": false,
         "default": false,
         "connector": "Sqlite3",
@@ -383,7 +329,7 @@
         ]
     },
     {
-        "name": "techproducts - Apache Solr",
+        "name": "Products- Apache Solr",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -408,7 +354,7 @@
         ]
     },
     {
-        "name": "ENRON Email - OpenSearch",
+        "name": "Email - OpenSearch",
         "active": false,
         "default": false,
         "connector": "OpenSearch",
@@ -433,7 +379,7 @@
         ]
     },
     {
-        "name": "ENRON Email - Elasticsearch",
+        "name": "Email - Elasticsearch",
         "active": false,
         "default": false,
         "connector": "Elastic",
@@ -458,7 +404,7 @@
         ]
     },
     {
-        "name": "Articles - JetBrains YouTrack",
+        "name": "Articles - YouTrack",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -485,7 +431,7 @@
         ]
     },
     {
-        "name": "Issues - JetBrains YouTrack",
+        "name": "Issues - YouTrack",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -512,7 +458,7 @@
         ]
     },
     {
-        "name": "Wiki - Atlassian Confluence Cloud",
+        "name": "Articles - Atlassian Confluence",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -538,7 +484,7 @@
         ]
     },
     {
-        "name": "Issues - Atlassian Jira Cloud",
+        "name": "Issues - Atlassian Jira",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -564,7 +510,7 @@
         ]
     },
     {
-        "name": "Outlook Messages - Microsoft 365",
+        "name": "Email - M365 Outlook",
         "active": false,
         "default": true,
         "connector": "M365OutlookMessages",
@@ -595,7 +541,7 @@
         ]
     },
     {
-        "name": "Calendar Events - Microsoft 365",
+        "name": "Calendar - M365 Outlook",
         "active": false,
         "default": true,
         "connector": "M365OutlookCalendar",
@@ -626,7 +572,7 @@
         ]
     },
     {
-        "name": "OneDrive Files - Microsoft 365",
+        "name": "Files - M365 OneDrive",
         "active": false,
         "default": true,
         "connector": "M365OneDrive",
@@ -655,7 +601,7 @@
         ]
     },
     {
-        "name": "SharePoint Sites - Microsoft 365",
+        "name": "Sites - M365 SharePoint",
         "active": false,
         "default": true,
         "connector": "M365SharePointSites",
@@ -684,7 +630,7 @@
         ]
     },
     {
-        "name": "Teams Chat - Microsoft 365",
+        "name": "Chats - M365 Teams",
         "active": false,
         "default": true,
         "connector": "MicrosoftTeams",
@@ -713,7 +659,7 @@
         ]
     },
     {
-        "name": "Code - GitHub.com",
+        "name": "Code - GitHub",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -745,7 +691,7 @@
         ]
     },
     {
-        "name": "Issues - GitHub.com",
+        "name": "Issues - GitHub",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -777,7 +723,7 @@
         ]
     },
     {
-        "name": "Pull Requests - GitHub.com",
+        "name": "PRs - GitHub",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -809,7 +755,7 @@
         ]
     },
     {
-        "name": "Commits - GitHub.com",
+        "name": "Commits - GitHub",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -841,7 +787,7 @@
         ]
     },
     {
-        "name": "Deals - HubSpot.com",
+        "name": "Deals - HubSpot",
         "active": false,
         "default": false,
         "connector": "RequestsPost",
@@ -875,7 +821,7 @@
         ]
     },
     {
-        "name": "Companies - HubSpot.com",
+        "name": "Companies - HubSpot",
         "active": false,
         "default": false,
         "connector": "RequestsPost",
@@ -909,7 +855,7 @@
         ]
     },
     {
-        "name": "Contacts - HubSpot.com",
+        "name": "Contacts - HubSpot",
         "active": false,
         "default": false,
         "connector": "RequestsPost",
@@ -943,7 +889,7 @@
         ]
     },
     {
-        "name": "Hacker News Stories - HN.Algolia.com",
+        "name": "News - Hacker News",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -972,7 +918,7 @@
         ]
     },
     {
-        "name": "Hacker News Comments - HN.Algolia.com",
+        "name": "Comments - Hacker News",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -1001,7 +947,7 @@
         ]
     },
     {
-        "name": "ServiceNow Knowledge - ServiceNow.com",
+        "name": "Knowledge - ServiceNow",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -1032,7 +978,7 @@
         ]
     },
     {
-        "name": "ServiceNow Service Catalog - ServiceNow.com",
+        "name": "Services - ServiceNow",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -1063,7 +1009,7 @@
         ]
     },
     {
-        "name": "Organizations - Crunchbase.com",
+        "name": "Companies - Crunchbase",
         "active": false,
         "default": false,
         "connector": "RequestsPost",
@@ -1125,7 +1071,7 @@
         ]
     },
     {
-        "name": "Bitcoin Transaction - Blockchain.com",
+        "name": "Transaction - Blockchain.com",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -1157,7 +1103,7 @@
         ]
     },
     {
-        "name": "Bitcoin Address - Blockchain.com",
+        "name": "Address - Blockchain.com",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -1222,7 +1168,7 @@
         ]
     },
     {
-        "name": "Tasks - Asana.com",
+        "name": "Tasks - Asana",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -1255,7 +1201,7 @@
         ]
     },
     {
-        "name": "IMDB Movies - MongoDB",
+        "name": "Movies - MongoDB",
         "active": false,
         "default": false,
         "connector": "MongoDB",
@@ -1290,7 +1236,7 @@
         ]
     },
     {
-        "name": "Free Company Records - Snowflake",
+        "name": "Companies - Snowflake",
         "active": false,
         "default": false,
         "connector": "Snowflake",
@@ -1379,7 +1325,7 @@
         ]
     },
     {
-        "name": "PineconeDB",
+        "name": "Collection - Pinecone",
         "active": false,
         "default": false,
         "authenticator": "",
@@ -1411,7 +1357,7 @@
         ]
     },
     {
-        "name": "QdrantDB",
+        "name": "Collection - Qdrant",
         "active": false,
         "default": false,
         "authenticator": "",
@@ -1439,6 +1385,80 @@
         "eval_credentials": "",
         "tags": [
             "Qdrant"
+        ]
+    },
+    {
+        "name": "Case Law (US) - CourtListener",
+        "active": false,
+        "default": false,
+        "authenticator": null,
+        "connector": "RequestsGet",
+        "url": "https://www.courtlistener.com/api/rest/v4/search/",
+        "query_template": "{url}?q={query_string}",
+        "query_template_json": {},
+        "post_query_template": {},
+        "http_request_headers": {},
+        "page_fetch_config_json": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "RESULTS=results,FOUND=count",
+        "result_mappings": "title=caseName,url='https://www.courtlistener.com{absolute_url}',body=$.opinions[0].snippet,date_published=dateFiled,author=judge,Court=court,Docket Number=docketNumber,Docket ID=docket_id,Source=source,Status=status,Opinion Type=$.opinions[0].type,Opinion Citations=$.opinions[0].cites,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "HTTPBasicAuth('<username>','<password>')",
+        "eval_credentials": "",
+        "tags": [
+            "legal",
+            "us",
+            "court-listener"
+        ]
+    },
+    {
+        "name": "Case Law (UK) - National Archives",
+        "description": "The UK National Archives Case Law service (Find Case Law) provides public access to court judgments from courts across England and Wales. The collection includes decisions from the Supreme Court, Court of Appeal, High Court, and many tribunals, with searchable full text and official citations. Users can review recent and historic judgments, track how legal principles develop, and locate authoritative rulings across different areas of law.",
+        "active": false,
+        "default": false,
+        "authenticator": null,
+        "connector": "RequestsGet",
+        "url": "https://caselaw.nationalarchives.gov.uk/atom.xml",
+        "query_template": "{url}?query={query_string}",
+        "query_template_json": {},
+        "post_query_template": {},
+        "http_request_headers": {
+            "Accept": "application/akn+xml, application/xml, text/xml"
+        },
+        "page_fetch_config_json": {
+            "cache": "false",
+            "headers": {
+                "User-Agent": "Swirlbot/1.0 (+http://swirlaiconnect.com)"
+            },
+            "timeout": 10
+        },
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "",
+        "result_grouping_field": "",
+        "result_processors": [
+            "MappingResultProcessor",
+            "FetchURLForBodyResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "RESULTS=feed.entry",
+        "result_mappings": "title=title,url=link[0].@href,date_published=published,author=author.name,Date Updated=updated,Document ID=$['tna:uri'],Neutral Citation Number=$['tna:identifier'][0]['#text'],NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "uk",
+            "legal",
+            "national-archives"
         ]
     }
 ]

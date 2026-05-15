@@ -1,5 +1,5 @@
 {
-    "name": "ENRON Email - OpenSearch",
+    "name": "Email - OpenSearch",
     "active": false,
     "default": false,
     "connector": "OpenSearch",

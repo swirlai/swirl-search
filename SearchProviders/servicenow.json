@@ -1,6 +1,6 @@
 [
     {
-        "name": "ServiceNow Knowledge - ServiceNow.com",
+        "name": "Knowledge - ServiceNow",
         "active": false,
         "default": false,
         "authenticator": "",
@@ -32,7 +32,7 @@
         ]
     },
     {
-        "name": "ServiceNow Service Catalog - ServiceNow.com",
+        "name": "Services - ServiceNow",
         "active": false,
         "default": false,
         "authenticator": "",

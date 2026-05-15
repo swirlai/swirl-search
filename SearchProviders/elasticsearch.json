@@ -1,5 +1,5 @@
 {
-    "name": "ENRON Email - Elasticsearch",
+    "name": "Email - Elasticsearch",
     "active": false,
     "default": false,
     "connector": "Elastic",

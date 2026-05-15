@@ -1,5 +1,5 @@
 {
-    "name": "ArXiv - arxiv.org",
+    "name": "Articles - ArXiv",
     "active": false,
     "default": false,
     "connector": "RequestsGet",

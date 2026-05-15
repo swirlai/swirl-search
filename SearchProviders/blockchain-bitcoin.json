@@ -1,6 +1,6 @@
 [
     {
-        "name": "Bitcoin Transaction - Blockchain.com",
+        "name": "Transaction - Blockchain.com",
         "active": false,
         "default": false,
         "authenticator": "",
@@ -33,7 +33,7 @@
         ]
     },
     {
-        "name": "Bitcoin Address - Blockchain.com",
+        "name": "Address - Blockchain.com",
         "active": false,
         "default": false,
         "authenticator": "",

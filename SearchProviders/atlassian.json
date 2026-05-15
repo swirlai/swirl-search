@@ -1,6 +1,6 @@
 [
     {
-        "name": "Issues - Atlassian Jira Cloud",
+        "name": "Issues - Atlassian Jira",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -26,7 +26,7 @@
         ]
     },
     {
-        "name": "Wiki - Atlassian Confluence Cloud",
+        "name": "Articles - Atlassian Confluence",
         "active": false,
         "default": false,
         "connector": "RequestsGet",

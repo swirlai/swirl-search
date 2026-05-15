@@ -1,5 +1,5 @@
 {
-    "name": "QdrantDB",
+    "name": "Collection - Qdrant",
     "active": false,
     "default": false,
     "authenticator": "",

@@ -1,6 +1,6 @@
 [
     {
-        "name": "Google Web - pse.google.com",
+        "name": "Web - Google PSE",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -47,7 +47,7 @@
         ]
     },
     {
-        "name": "Google News - news.google.com",
+        "name": "News - Google News RSS",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -106,7 +106,7 @@
         ]
     },
     {
-        "name": "Swirl Documentation - docs.swirlaiconnect.com",
+        "name": "Documentation - SWIRL AI",
         "active": false,
         "default": false,
         "connector": "RequestsGet",

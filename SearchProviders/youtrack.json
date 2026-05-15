@@ -27,7 +27,7 @@
         ]
     },
     {
-        "name": "Articles - JetBrains YouTrack",
+        "name": "Articles - YouTrack",
         "active": false,
         "default": false,
         "connector": "RequestsGet",

@@ -1,5 +1,5 @@
 {
-    "name": "Internet Archive Items - archive.org",
+    "name": "Web - Internet Archive",
     "active": true,
     "default": false,
     "connector": "RequestsGet",

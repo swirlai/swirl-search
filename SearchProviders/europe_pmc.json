@@ -1,5 +1,5 @@
 {
-    "name": "Europe PubMed Central - EuropePMC.org",
+    "name": "Articles - EuropePMC.org",
     "active": true,
     "default": true,
     "connector": "RequestsGet",
