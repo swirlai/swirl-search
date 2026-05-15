@@ -656,3 +656,51 @@ def test_factory_llm_wrapper_get_provider_returns_selected(superuser):
         factory = _factory()
         result = factory.alloc_ai_provider('chat', options={'unit_test': True})
     assert result.get_provider().name == 'My Model'
+
+
+# ===========================================================================
+# LLMWrapper.get_encoding_model tests
+#
+# Regression coverage for DS-5598: rag.py calls self.client.get_encoding_model()
+# during background_process(). Before the fix this raised AttributeError on
+# LLMWrapper, breaking /api/swirl/sapi/detail-search-rag/ with a 500.
+# ===========================================================================
+
+def _alloc_wrapper(superuser, model):
+    _make_provider(superuser, name=f'Provider-{model}', model=model,
+                   tags=['rag'], defaults=['rag'])
+    with patch('swirl.ai_provider.litellm'):
+        return _factory().alloc_ai_provider('rag', options={'unit_test': True})
+
+
+@pytest.mark.django_db
+def test_llmwrapper_get_encoding_model_known_openai_model(superuser):
+    wrapper = _alloc_wrapper(superuser, 'gpt-4o')
+    assert wrapper.get_encoding_model() == 'gpt-4o'
+
+
+@pytest.mark.django_db
+def test_llmwrapper_get_encoding_model_strips_known_provider_prefix(superuser):
+    wrapper = _alloc_wrapper(superuser, 'azure/gpt-4o')
+    assert wrapper.get_encoding_model() == 'gpt-4o'
+
+
+@pytest.mark.django_db
+def test_llmwrapper_get_encoding_model_falls_back_for_unknown_model(superuser):
+    wrapper = _alloc_wrapper(superuser, 'anthropic/claude-3-5-sonnet-20241022')
+    assert wrapper.get_encoding_model() == 'gpt-4o'
+
+
+@pytest.mark.django_db
+def test_llmwrapper_get_encoding_model_falls_back_for_arbitrary_deployment(superuser):
+    wrapper = _alloc_wrapper(superuser, 'azure/my-custom-deployment')
+    assert wrapper.get_encoding_model() == 'gpt-4o'
+
+
+@pytest.mark.django_db
+def test_llmwrapper_get_encoding_model_handles_empty_model(superuser):
+    _make_provider(superuser, name='NoModel', model='', config={'family': 'openai'},
+                   tags=['rag'], defaults=['rag'])
+    with patch('swirl.ai_provider.litellm'):
+        wrapper = _factory().alloc_ai_provider('rag', options={'unit_test': True})
+    assert wrapper.get_encoding_model() == 'gpt-4o'
