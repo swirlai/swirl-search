@@ -1,5 +1,5 @@
 {
-    "name": "Company Funding Records - SQLite3",
+    "name": "Companies - SQLite3",
     "active": false,
     "default": false,
     "connector": "Sqlite3",

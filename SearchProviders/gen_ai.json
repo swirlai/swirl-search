@@ -1,5 +1,5 @@
 {
-    "name": "Generative AI",
+    "name": "Answers - GAI",
     "active": false,
     "default": true,
     "connector": "GenAI",

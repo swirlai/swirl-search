@@ -1,5 +1,5 @@
 {
-    "name": "IMDB Movies - MongoDB",
+    "name": "Movies - MongoDB",
     "active": false,
     "default": false,
     "authenticator": "",

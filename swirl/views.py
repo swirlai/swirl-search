@@ -18,7 +18,7 @@ from django.db import Error
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.core.mail import send_mail
-from swirl.utils import paginate
+from swirl.utils import paginate, standard_paginate
 from django.conf import settings
 from .forms import QueryTransformForm
 
@@ -201,15 +201,17 @@ def return_authenticators_list(request):
 ########################################
 
 def index(request):
-    from swirl.banner import SWIRL_VERSION
-    from swirl.models import SearchProvider
-    from swirl.utils import is_running_celery_redis
-    context = {
-        'swirl_version': SWIRL_VERSION,
-        'search_provider_count': SearchProvider.objects.filter(active=True).count(),
-        'celery_status': 'Running' if is_running_celery_redis() else 'Not running',
-    }
-    return render(request, 'index.html', context)
+    """
+    /swirl/ used to render a separate "Manage SWIRL" dashboard, but every
+    actionable link on that page already lives in the Django admin
+    (/admin/) — keeping a second dashboard meant the two pages drifted
+    apart on every release. Forward callers straight to /admin/ so there
+    is one source of truth for SWIRL administration.
+
+    /swirl/authenticators.html and /swirl/query_transform_form/ keep their
+    own routes; only the bare /swirl/ index is collapsed.
+    """
+    return redirect('/admin/')
 
 ########################################
 
@@ -686,8 +688,25 @@ class SearchViewSet(viewsets.ModelViewSet):
 
         logger.debug(f"{module_name}: Search.list()!")
 
-        # security review for 1.7 - OK, filtered by owner
-        self.queryset = Search.objects.filter(owner=self.request.user)
+        # security review for 1.7 - OK, filtered by owner.
+        # Order newest-first so the Galaxy sidebar and home-dashboard widgets
+        # show the most recent searches at the top without paginating through
+        # every old search.
+        self.queryset = Search.objects.filter(owner=self.request.user).order_by('-date_created')
+
+        # Galaxy UI (search-history.component, spyglass.component) sends
+        # ?items=N&page=N&search_only=true and reads response.results /
+        # response.next from a DRF-style paginated body. Return that shape
+        # for those callers; preserve the raw-list shape for legacy callers
+        # that pass neither items/page nor search_only.
+        if (request.GET.get('search_only') == 'true'
+                or 'items' in request.GET
+                or 'page' in request.GET):
+            return Response(
+                standard_paginate(self.queryset, request, SearchSerializer),
+                status=status.HTTP_200_OK,
+            )
+
         serializer = SearchSerializer(self.queryset, many=True)
         return Response(paginate(serializer.data, self.request), status=status.HTTP_200_OK)
 

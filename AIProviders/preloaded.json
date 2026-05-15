@@ -33,7 +33,12 @@
       "rag",
       "chat"
     ],
-    "defaults": []
+    "defaults": [
+      "query",
+      "connector",
+      "rag",
+      "chat"
+    ]
   },
   {
     "name": "Azure/OpenAI (Embeddings)",
@@ -56,6 +61,7 @@
     "api_key": "<your-anthropic-key>",
     "model": "<your-anthropic-model-name>",
     "config": {
+      "anthropic_version": "<your-anthropic-api-version>",
       "max_tokens": 170000,
       "_max_tokens_comment": "Headroom under Claude's 200K context window for system prompt + tool definitions + structured-output schema. Adjust if your model has a different ceiling (Sonnet/Opus also 200K; older Claude variants 100K)."
     },
@@ -65,49 +71,54 @@
       "rag",
       "chat"
     ],
-    "defaults": []
+    "defaults": [
+    ]
   },
   {
-    "name": "Mistral AI",
+    "name": "Bedrock Embedding",
     "active": false,
-    "api_key": "<your-mistral-key>",
-    "model": "mistral/mistral-large-latest",
+    "api_key": "<your-bedrock-api-key>",
+    "model": "amazon.<your-bedrock-embedding-model-name>",
+    "config": {
+      "AWS_REGION_NAME": "<your-aws-region-name>"
+    },
+    "tags": [
+      "reader"
+    ],
+    "defaults": [
+      "reader"
+    ]
+  },
+  {
+    "name": "Cohere Embeddings",
+    "active": false,
+    "api_key": "<your-cohere-key>",
+    "model": "embed-english-v3.0",
     "config": {},
+    "tags": [
+      "reader"
+    ],
+    "defaults": [
+      "reader"
+    ]
+  },
+  {
+    "name": "Custom LLM",
+    "active": false,
+    "api_key": "<your-custom-llm-key>",
+    "model": "",
+    "config": {
+      "api_base": "<your-GAI-base-url>",
+      "custom_llm": "<your-llm-type> e.g. 'openai', 'azure', 'anthropic', 'cohere', 'huggingface'"
+    },
     "tags": [
       "query",
       "connector",
       "rag",
       "chat"
     ],
-    "defaults": []
-  },
-  {
-    "name": "DeepSeek",
-    "active": false,
-    "api_key": "<your-deepseek-key>",
-    "model": "deepseek/deepseek-chat",
-    "config": {},
-    "tags": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ],
-    "defaults": []
-  },
-  {
-    "name": "xAI (Grok)",
-    "active": false,
-    "api_key": "<your-xai-key>",
-    "model": "xai/grok-3",
-    "config": {},
-    "tags": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ],
-    "defaults": []
+    "defaults": [
+    ]
   },
   {
     "name": "Gemini (AI Studio)",
@@ -123,7 +134,99 @@
       "rag",
       "chat"
     ],
-    "defaults": []
+    "defaults": [
+    ]
+  },
+  {
+    "name": "HuggingFace (LLama, Qwen, DeepSeek etc.)",
+    "active": false,
+    "api_key": "<your-huggingface-key>",
+    "model": "huggingface/<your-model-name>",
+    "config": {
+      "api_base": "https://<your-endpoint>.huggingface.cloud"
+    },
+    "tags": [
+      "query",
+      "connector",
+      "rag",
+      "chat"
+  ],
+    "defaults": [
+    ]
+  },
+  {
+    "name": "HuggingFace (Embeddings)",
+    "active": false,
+    "api_key": "<your-huggingface-key>",
+    "model": "huggingface/<your-embedding-model-name>",
+    "config": {},
+    "tags": [
+      "reader"
+    ],
+    "defaults": [
+      "reader"
+    ]
+  },
+  {
+    "name": "Ollama (LLama, Qwen, DeepSeek etc.)",
+    "active": false,
+    "api_key": "",
+    "model": "llama3.1:8b",
+    "config": {
+      "api_base": "http://localhost:11434"
+    },
+    "tags": [
+      "query",
+      "connector",
+      "rag",
+      "chat"
+    ],
+    "defaults": [
+    ]
+  },
+  {
+    "name": "OpenAI Embeddings",
+    "active": false,
+    "api_key": "<your-openai-key>",
+    "model": "<your-openai-embedding-model-name>",
+    "config": {},
+    "tags": [
+      "reader"
+    ],
+    "defaults": [
+      "reader"
+    ]
+  },
+  {
+    "name": "spaCy",
+    "active": true,
+    "api_key": "",
+    "model": "",
+    "config": {},
+    "tags": [
+        "reader"
+    ],
+    "defaults": [
+        "reader"
+    ]
+  },
+  {
+    "name": "Ollama Embeddings (mxbai-embed-large)",
+    "active": false,
+    "api_key": "",
+    "model": "ollama/mxbai-embed-large",
+    "config": {
+      "api_base": "http://localhost:11434",
+      "dimensions": 1024,
+      "NO_KEY_CHECK": true,
+      "NO_MODEL_CHECK": true
+    },
+    "tags": [
+      "reader"
+    ],
+    "defaults": [
+      "reader"
+    ]
   },
   {
     "name": "Vertex AI (Gemini)",
@@ -141,162 +244,7 @@
       "rag",
       "chat"
     ],
-    "defaults": []
-  },
-  {
-    "name": "AWS Bedrock",
-    "active": false,
-    "api_key": "<your-aws-access-key-id>",
-    "model": "bedrock/<your-bedrock-model-id>",
-    "config": {
-      "aws_secret_access_key": "<your-aws-secret-access-key>",
-      "aws_region_name": "<your-aws-region-name>"
-    },
-    "tags": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ],
-    "defaults": []
-  },
-  {
-    "name": "HuggingFace (LLama, Qwen, DeepSeek etc.)",
-    "active": false,
-    "api_key": "<your-huggingface-key>",
-    "model": "huggingface/<your-model-name>",
-    "config": {
-      "api_base": "https://<your-endpoint>.huggingface.cloud"
-    },
-    "tags": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ],
-    "defaults": []
-  },
-  {
-    "name": "Ollama (LLama, Qwen, DeepSeek etc.)",
-    "active": false,
-    "api_key": "",
-    "model": "ollama/llama3.1:8b",
-    "config": {
-      "api_base": "http://localhost:11434"
-    },
-    "tags": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ],
-    "defaults": []
-  },
-  {
-    "name": "Custom LLM",
-    "active": false,
-    "api_key": "<your-custom-llm-key>",
-    "model": "",
-    "config": {
-      "api_base": "<your-GAI-base-url>",
-      "custom_llm": "<your-llm-type> e.g. 'openai', 'azure', 'anthropic', 'cohere', 'huggingface'"
-    },
-    "tags": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ],
-    "defaults": []
-  },
-  {
-    "name": "spaCy",
-    "active": true,
-    "api_key": "",
-    "model": "",
-    "config": {},
-    "tags": [
-      "reader"
-    ],
     "defaults": [
-      "reader"
     ]
-  },
-  {
-    "name": "OpenAI Embeddings",
-    "active": false,
-    "api_key": "<your-openai-key>",
-    "model": "<your-openai-embedding-model-name>",
-    "config": {},
-    "tags": [
-      "reader"
-    ],
-    "defaults": []
-  },
-  {
-    "name": "Azure/OpenAI (Embeddings)",
-    "active": false,
-    "api_key": "<your-azure-openai-key>",
-    "model": "azure/<your-embeddings-deployment-name>",
-    "config": {
-      "api_base": "https://<your-resource>.openai.azure.com",
-      "api_version": "2024-08-01-preview",
-      "dimensions": 1536
-    },
-    "tags": [
-      "reader"
-    ],
-    "defaults": []
-  },
-  {
-    "name": "Bedrock Embedding",
-    "active": false,
-    "api_key": "<your-bedrock-api-key>",
-    "model": "amazon.<your-bedrock-embedding-model-name>",
-    "config": {
-      "AWS_REGION_NAME": "<your-aws-region-name>"
-    },
-    "tags": [
-      "reader"
-    ],
-    "defaults": []
-  },
-  {
-    "name": "Cohere Embeddings",
-    "active": false,
-    "api_key": "<your-cohere-key>",
-    "model": "cohere/embed-english-v3.0",
-    "config": {},
-    "tags": [
-      "reader"
-    ],
-    "defaults": []
-  },
-  {
-    "name": "HuggingFace (Embeddings)",
-    "active": false,
-    "api_key": "<your-huggingface-key>",
-    "model": "huggingface/<your-embedding-model-name>",
-    "config": {},
-    "tags": [
-      "reader"
-    ],
-    "defaults": []
-  },
-  {
-    "name": "Ollama Embeddings (mxbai-embed-large)",
-    "active": false,
-    "api_key": "",
-    "model": "ollama/mxbai-embed-large",
-    "config": {
-      "api_base": "http://localhost:11434",
-      "dimensions": 1024,
-      "NO_KEY_CHECK": true,
-      "NO_MODEL_CHECK": true
-    },
-    "tags": [
-      "reader"
-    ],
-    "defaults": []
   }
 ]

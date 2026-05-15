@@ -71,6 +71,8 @@ jobs:
           run: python swirl.py start
         - name: Load the Default SearchProviders
           run:  python swirl_load.py -u admin -p password -s http://localhost:8000/ 'SearchProviders/preloaded.json'
+        - name: Load the Default AIProviders
+          run:  python swirl_load.py -u admin -p password -s http://localhost:8000/ 'AIProviders/preloaded.json'
         - name: Stop Swirl
           run: python swirl.py stop
         - name: Create a New db.dist File

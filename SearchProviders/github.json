@@ -1,6 +1,6 @@
 [
     {
-        "name": "Code - GitHub.com",
+        "name": "Code - GitHub",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -32,7 +32,7 @@
         ]
     },
     {
-        "name": "Issues - GitHub.com",
+        "name": "Issues - GitHub",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -64,7 +64,7 @@
         ]
     },
     {
-        "name": "Pull Requests - GitHub.com",
+        "name": "PRs - GitHub",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -96,7 +96,7 @@
         ]
     },
     {
-        "name": "Commits - GitHub.com",
+        "name": "Commits - GitHub",
         "active": false,
         "default": false,
         "connector": "RequestsGet",

@@ -1,5 +1,5 @@
 {
-    "name": "Company Data - Google BigQuery",
+    "name": "Companies - Google BigQuery",
     "active": false,
     "default": false,
     "connector": "BigQuery",
