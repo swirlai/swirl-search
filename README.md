@@ -1,6 +1,6 @@
 <div align="center">
 
-[![Swirl](https://docs.swirl.today/images/transparent_header_3.png)](https://www.swirl.today)
+[![Swirl](https://docs.swirlaiconnect.com/images/transparent_header_3.png)](https://www.swirlaiconnect.com)
 
 <h1>Swirl Community Edition</h1>
 
@@ -23,7 +23,7 @@
 
 Swirl adapts and distributes user queries to anything with a search API — search engines, databases, NoSQL engines, cloud/SaaS services, data silos, etc. — and uses Large Language Models to re-rank the unified results *without* extracting or indexing *anything*.
 
-![Swirl Diagram](https://docs.swirl.today/images/Animation_2.gif)
+![Swirl Diagram](https://docs.swirlaiconnect.com/images/Animation_2.gif)
 
 Swirl can connect to databases (SQL, NoSQL, Google BigQuery), public data services (Google PSE, ArXiv.org, etc.), and enterprise sources (Microsoft 365, Jira, Miro, etc.), and generate insights with AI models like ChatGPT.
 
@@ -42,12 +42,14 @@ curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.
 
 # Optional: enable RAG with OpenAI
 export OPENAI_API_KEY='your-key-here'
+
+# Microsoft 365 OAuth callback (defaults below work for local Docker;
+# see the M365 Guide to enable M365 connectors)
 export MSAL_CB_PORT=8000
 export MSAL_HOST=localhost
 
-# Start Swirl
-docker-compose pull && docker-compose up        # macOS / Linux
-docker compose up                               # Windows PowerShell
+# Start Swirl (macOS / Linux / Windows)
+docker compose pull && docker compose up
 ```
 
 Open <http://localhost:8000> and log in with `admin` / `password`.
@@ -68,7 +70,7 @@ python swirl.py start
 
 Open <http://localhost:8000/swirl/> and log in with `admin` / `password`.
 
-> **Requirements:** Python 3.11+, Redis running locally.
+> **Requirements:** Python 3.13+, Redis running locally.
 
 <br/>
 
@@ -80,11 +82,11 @@ Add credentials to the preloaded SearchProvider fixtures at `/swirl/searchprovid
 
 ## Microsoft 365
 
-Swirl supports OAuth2 search across M365 Outlook, OneDrive, SharePoint, and Teams. Setup requires approval from an M365 administrator. See the [M365 Guide](https://docs.swirl.today/M365-Guide.html) for full instructions.
+Swirl supports OAuth2 search across M365 Outlook, OneDrive, SharePoint, and Teams. Setup requires approval from an M365 administrator. See the [M365 Guide](https://docs.swirlaiconnect.com/m365-guide) for full instructions.
 
 ## AI / LLM Providers
 
-Configure a `ChatGPT` or `GenAI` SearchProvider with your OpenAI or compatible API key to enable real-time RAG. See the [AI Guide](https://docs.swirl.today/AI-Guide.html).
+Configure a `ChatGPT` or `GenAI` SearchProvider with your OpenAI or compatible API key to enable real-time RAG. See the [AI Guide](https://docs.swirlaiconnect.com/ai-guide).
 
 <br/>
 
@@ -96,6 +98,10 @@ Configure a `ChatGPT` or `GenAI` SearchProvider with your OpenAI or compatible A
 
 - **`search_external`** — searches all active Swirl providers and returns ranked results into the conversation
 - **`import_document`** — fetches a document (PDF, DOCX, DOC) found via Swirl and imports it into the current project
+
+### Demo
+
+▶️ [Swirl Community × Mike OSS: Fetching & Summarizing SharePoint Docs with Claude](https://www.youtube.com/watch?v=biIEPFpQBmQ)
 
 ### Prerequisites
 
@@ -141,7 +147,7 @@ When mike's `import_document` tool receives a SharePoint or OneDrive URL, it pro
 
 # 🔌 List of Connectors
 
-<img src="https://docs.swirl.today/images/Connectors_2.png" height=60% width=70%/>
+<img src="https://docs.swirlaiconnect.com/images/Connectors_2.png" height=60% width=70%/>
 
 ➕ **Need a connector?** [Open an issue](https://github.com/swirlai/swirl-search/issues) or contribute one — see [Contributing](#-contributing-to-swirl).
 
@@ -151,18 +157,18 @@ When mike's `import_document` tool receives a SharePoint or OneDrive URL, it pro
 
 | ✦ | Feature |
 |:-----:|:--------|
-| 📌 | [Microsoft 365 integration and OAUTH2 support](https://docs.swirl.today/M365-Guide.html) |
+| 📌 | [Microsoft 365 integration and OAUTH2 support](https://docs.swirlaiconnect.com/m365-guide) |
 | 🔍 | [SearchProvider configurations](https://github.com/swirlai/swirl-search/tree/main/SearchProviders) for all included Connectors |
-| ✏️ | [Adaptation of the query for each provider](https://docs.swirl.today/User-Guide.html#search-syntax) including NOT rewriting, AND/OR pass-through |
-| ⏳ | [Synchronous or asynchronous search federation](https://docs.swirl.today/Developer-Guide.html#architecture) via [REST API](http://localhost:8000/swirl/api/docs) |
-| 🛎️ | [Optional subscribe feature](https://docs.swirl.today/Developer-Guide.html#subscribe-to-a-search) to continuously monitor any search for new results |
-| 🛠️ | Pipelining of [Processor](https://docs.swirl.today/Developer-Guide.html#develop-new-processors) stages for real-time query, response and result transformation |
+| ✏️ | [Adaptation of the query for each provider](https://docs.swirlaiconnect.com/user-guide#search-syntax) including NOT rewriting, AND/OR pass-through |
+| ⏳ | [Synchronous or asynchronous search federation](https://docs.swirlaiconnect.com/developer-guide#architecture) via [REST API](http://localhost:8000/swirl/api/docs) |
+| 🛎️ | [Optional subscribe feature](https://docs.swirlaiconnect.com/developer-guide#subscribe-to-a-search) to continuously monitor any search for new results |
+| 🛠️ | Pipelining of [Processor](https://docs.swirlaiconnect.com/developer-guide#develop-new-processors) stages for real-time query, response and result transformation |
 | 🗄️ | Results stored in SQLite3 or PostgreSQL for post-processing and analytics |
-| 📖 | [Matching on word stems](https://docs.swirl.today/Developer-Reference.html#cosinerelevancypostresultprocessor) and stopword handling via NLTK |
-| 🚫 | [Duplicate detection](https://docs.swirl.today/Developer-Guide.html#detect-and-remove-duplicate-results) by field or Cosine Similarity threshold |
-| 🔄 | Re-ranking via [Cosine Vector Similarity](https://docs.swirl.today/Developer-Reference.html#cosinerelevancypostresultprocessor) using spaCy and NLTK |
-| 🎚️ | [Result mixers](https://docs.swirl.today/Developer-Reference.html#mixers-1) — relevancy, date, round-robin |
-| ✒️ | [Optional spell correction](https://docs.swirl.today/Developer-Guide.html#add-spelling-correction) using TextBlob |
+| 📖 | [Matching on word stems](https://docs.swirlaiconnect.com/developer-reference#cosinerelevancypostresultprocessor) and stopword handling via NLTK |
+| 🚫 | [Duplicate detection](https://docs.swirlaiconnect.com/developer-guide#detect-and-remove-duplicate-results) by field or Cosine Similarity threshold |
+| 🔄 | Re-ranking via [Cosine Vector Similarity](https://docs.swirlaiconnect.com/developer-reference#cosinerelevancypostresultprocessor) using spaCy and NLTK |
+| 🎚️ | [Result mixers](https://docs.swirlaiconnect.com/developer-reference#mixers-1) — relevancy, date, round-robin |
+| ✒️ | [Optional spell correction](https://docs.swirlaiconnect.com/developer-guide#add-spelling-correction) using TextBlob |
 | 🔌 | Extensible [Connector](https://github.com/swirlai/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/swirlai/swirl-search/tree/main/swirl/mixers) objects |
 
 <br/>
@@ -181,7 +187,7 @@ New to GitHub contributions? The [GitHub contributing guide](https://docs.github
 
 # 📖 Documentation
 
-[Overview](https://docs.swirl.today/) | [Quick Start](https://docs.swirl.today/Quick-Start) | [User Guide](https://docs.swirl.today/User-Guide) | [Admin Guide](https://docs.swirl.today/Admin-Guide) | [M365 Guide](https://docs.swirl.today/M365-Guide) | [Developer Guide](https://docs.swirl.today/Developer-Guide) | [Developer Reference](https://docs.swirl.today/Developer-Reference) | [AI Guide](https://docs.swirl.today/AI-Guide)
+[Overview](https://docs.swirlaiconnect.com/) | [Quick Start](https://docs.swirlaiconnect.com/quick-start) | [User Guide](https://docs.swirlaiconnect.com/user-guide) | [Admin Guide](https://docs.swirlaiconnect.com/admin-guide) | [M365 Guide](https://docs.swirlaiconnect.com/m365-guide) | [Developer Guide](https://docs.swirlaiconnect.com/developer-guide) | [Developer Reference](https://docs.swirlaiconnect.com/developer-reference) | [AI Guide](https://docs.swirlaiconnect.com/ai-guide)
 
 <br/>
 
