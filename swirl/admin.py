@@ -398,7 +398,7 @@ def _read_log_tail(path, max_lines):
 
     # Decode tolerantly — log files can mix encodings during incidents.
     text = chunk.decode('utf-8', errors='replace')
-    # Drop the partial line at the head if we seeked into the middle of one.
+    # Drop the partial line at the head if the seek landed mid-line.
     if start > 0:
         first_nl = text.find('\n')
         if first_nl >= 0:
