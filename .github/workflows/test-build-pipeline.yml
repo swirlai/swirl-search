@@ -205,6 +205,24 @@ jobs:
             cat .env.qa
             echo "========"
             docker run --net=host --env-file .env.qa -t swirlai/swirl-search-qa:automated-tests-develop sh -c "behave --tags=qa_suite,community"
+        # DS-5598: dump every ./logs/*.log produced by `python swirl.py
+        # start` into the qa-suite step output so backend WARNING /
+        # ERROR lines (RAG-DIAG, exception tracebacks, AIProvider
+        # allocation messages) appear in the GitHub Actions log. Without
+        # this the swirl backend logs live on the runner's temp disk
+        # and vanish when the job ends — invisible in the test-build-
+        # pipeline artifact. `if: always()` runs the step even when
+        # behave fails (which is exactly when the logs are most useful).
+        - name: Dump swirl backend logs
+          if: always()
+          run: |
+            shopt -s nullglob
+            for f in logs/*.log; do
+              echo "=================================================="
+              echo "===== $f"
+              echo "=================================================="
+              cat "$f" || true
+            done
 
     swirl-docker:
       needs: qa-suite
