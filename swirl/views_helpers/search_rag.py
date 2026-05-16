@@ -122,15 +122,4 @@ class SearchRag:
         except RagError as err:
             logger.error(f"{self}: Rag Error {err}")
 
-        # DS-5598: temporary diagnostic — pair with the WARNING log in
-        # processors/rag.py to capture additional_content shape at both
-        # producer (writer) and consumer (response builder) sides. Helps
-        # localise where ai_model goes missing on the way to Galaxy's
-        # AI Summary footer. Remove once root cause is identified.
-        logger.warning(
-            f'RAG-DIAG process_rag returning '
-            f'body_text_len={len(body_text) if isinstance(body_text, str) else "n/a"} '
-            f'additional_content={additional_content!r}'
-        )
-
         return {"message": body_text, "additional_content": additional_content}
