@@ -50,9 +50,20 @@ class Authenticator:
             if self.expires_in_field in session_data:
                 if session_data[self.expires_in_field] > int(now.timestamp()):
                     return True
+                logger.warning(
+                    f'{self.type}: token expired '
+                    f'({self.expires_in_field}={session_data[self.expires_in_field]} '
+                    f'<= now={int(now.timestamp())})'
+                )
                 return False
+            logger.warning(
+                f'{self.type}: {self.expires_in_field!r} not in session_data; '
+                f'auth header likely missing from the search request '
+                f'(keys present: {list(session_data.keys()) if hasattr(session_data, "keys") else type(session_data).__name__})'
+            )
             return False
-        except:
+        except Exception as err:
+            logger.warning(f'{self.type}: is_authenticated() raised {type(err).__name__}: {err}')
             return False
 
     def login(self, request):
