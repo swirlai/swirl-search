@@ -35,6 +35,25 @@ def _make_search_rag(rag_items=None):
 
 
 # ---------------------------------------------------------------------------
+# SearchRag.__init__ — rag_timeout extraction
+# ---------------------------------------------------------------------------
+
+def test_rag_timeout_absent_defaults_to_none():
+    sr = SearchRag(_FakeRequest({}))
+    assert sr.rag_timeout is None
+
+
+def test_rag_timeout_integer_string_is_parsed():
+    sr = SearchRag(_FakeRequest({"rag_timeout": "2"}))
+    assert sr.rag_timeout == 2
+
+
+def test_rag_timeout_non_integer_is_ignored():
+    sr = SearchRag(_FakeRequest({"rag_timeout": "not-a-number"}))
+    assert sr.rag_timeout is None
+
+
+# ---------------------------------------------------------------------------
 # SearchRag._extract_result
 # ---------------------------------------------------------------------------
 

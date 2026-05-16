@@ -94,10 +94,18 @@ class RAGPostResultProcessor(PostResultProcessor):
 
     type="RAGPostResultProcessor"
 
-    def __init__(self, search_id, request_id='', should_get_results=False, rag_query_items=False):
+    def __init__(self, search_id, request_id='', should_get_results=False, rag_query_items=False, rag_timeout=None):
         super().__init__(search_id=search_id, request_id=request_id, should_get_results=should_get_results, rag_query_items=rag_query_items)
         self.tasks = None
         self.stop_background_thread = False
+        # DS-5598: per-request OpenAI completion timeout (seconds). The
+        # TimeoutMiddleware's func_timeout wrapper can't interrupt a
+        # blocking OpenAI HTTP call (Python threads don't preempt mid-
+        # syscall), so the URL-query `rag_timeout` was effectively
+        # ignored — the test in rag.feature:240 never saw the timeout
+        # surface. Passing this value straight into the completion call
+        # below makes the timeout actually take effect.
+        self.rag_timeout = rag_timeout
         try:
             rag_result = Result.objects.get(search_id=search_id, searchprovider='ChatGPT')
             if rag_result:
@@ -270,6 +278,14 @@ class RAGPostResultProcessor(PostResultProcessor):
             return 0
 
         client_model = self.client.get_provider().model if hasattr(self.client, 'get_provider') else self.client.get_model()
+        # DS-5598: build the kwargs for the OpenAI / LLMWrapper call once
+        # so we apply the same per-request timeout to both code paths.
+        # The OpenAI Python SDK accepts ``timeout=`` on
+        # ``chat.completions.create`` and per the LLMWrapper signature
+        # (swirl/ai_provider.py) the wrapper accepts it too.
+        completion_kwargs = {}
+        if self.rag_timeout is not None:
+            completion_kwargs["timeout"] = self.rag_timeout
         try:
             if hasattr(self.client, 'completion'):
                 # AIProviderFactory / LLMWrapper path
@@ -277,7 +293,8 @@ class RAGPostResultProcessor(PostResultProcessor):
                     messages=[
                         {"role": "system", "content": rag_prompt.get_role_system_guide_text()},
                         {"role": "user", "content": new_prompt_text},
-                    ]
+                    ],
+                    **completion_kwargs,
                 )
                 model_response = completions_new.choices[0].message.content
             else:
@@ -287,7 +304,8 @@ class RAGPostResultProcessor(PostResultProcessor):
                     messages=[
                         {"role": "system", "content": rag_prompt.get_role_system_guide_text()},
                         {"role": "user", "content": new_prompt_text},
-                    ]
+                    ],
+                    **completion_kwargs,
                 )
                 model_response = completions_new.choices[0].message.content
             logger.warning(f'RAG: fetch_prompt_errors follow:')
