@@ -136,6 +136,8 @@ class SearchProvider(models.Model):
 
     class Meta:
         ordering = ['id']
+        verbose_name = "SearchProvider"
+        verbose_name_plural = "SearchProviders"
 
     def get_absolute_url(self):
         # Returns the URL to access
@@ -268,6 +270,8 @@ class QueryTransform(models.Model) :
         unique_together = [
             ('name', 'qrx_type'),
         ]
+        verbose_name = "QueryTransform"
+        verbose_name_plural = "QueryTransforms"
 
 
 class AIProvider(models.Model):

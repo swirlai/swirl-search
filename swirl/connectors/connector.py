@@ -124,7 +124,25 @@ class Connector:
                 v = self.validate_query(session)
                 if v:
                     if not self.auth:
+                        # Authentication unavailable for this provider in the
+                        # worker context. Previously this branch returned
+                        # silently with no Result row, making federate failures
+                        # invisible to admins and indistinguishable from a
+                        # provider that was never invoked. Log a warning AND
+                        # persist a Result row so the failure shows up in the
+                        # search response and in /swirl/results/.
                         self.status = 'NO_AUTH'
+                        self.warning(
+                            'authentication unavailable for this provider; '
+                            'verify the corresponding Authorization header is '
+                            'forwarded by the client on every search request'
+                        )
+                        self.message(
+                            f'NO_AUTH: authentication unavailable for: '
+                            f'{self.provider.name}. Sign in to the corresponding '
+                            f'identity provider via the profile menu and retry.'
+                        )
+                        self.save_results()
                         return False
                     self.execute_search(session)
                     if self.status not in ['FEDERATING', 'READY']:

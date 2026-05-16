@@ -3,13 +3,16 @@
 @contact:    sid@swirl.today
 '''
 
+import json
 import logging
 
 from django import forms
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.admin.widgets import FilteredSelectMultiple
-from django.shortcuts import render
-from django.urls import path
+from django.contrib.auth import get_user_model
+from django.core.exceptions import FieldError, ValidationError
+from django.shortcuts import redirect, render
+from django.urls import path, reverse
 from django.utils.html import format_html
 
 from .models import AIProvider, SearchProvider, Search, Result, QueryTransform, OauthToken
@@ -81,6 +84,138 @@ class SecretFieldsMixin:
                     pass
         super().save_model(request, obj, form, change)
 
+# ---------------------------------------------------------------------------
+# JsonAddMixin — paste-a-JSON-doc creation flow for any ModelAdmin
+# ---------------------------------------------------------------------------
+
+class JsonAddMixin:
+    """
+    Adds a custom changelist URL `<model>/add-json/` that accepts a single
+    JSON object or a list of objects and creates the corresponding rows.
+
+    Unknown keys are dropped (with a warning). `owner` may be omitted (the
+    current admin user is used) or supplied as a username string.
+
+    Subclasses only need to set `change_list_template` to the partial that
+    extends `admin/change_list.html` and renders the extra `object-tools` link.
+    The template name returned by `_json_add_template()` is rendered for the
+    GET / form-redisplay paths.
+    """
+
+    json_add_template = 'admin/swirl/json_add.html'
+
+    def get_urls(self):
+        info = (self.model._meta.app_label, self.model._meta.model_name)
+        return [
+            path(
+                'add-json/',
+                self.admin_site.admin_view(self.add_via_json_view),
+                name='%s_%s_add_json' % info,
+            ),
+        ] + super().get_urls()
+
+    def _resolve_owner(self, value, fallback):
+        if not value:
+            return fallback
+        if isinstance(value, int):
+            User = get_user_model()
+            try:
+                return User.objects.get(pk=value)
+            except User.DoesNotExist:
+                return fallback
+        if isinstance(value, str):
+            User = get_user_model()
+            try:
+                return User.objects.get(username=value)
+            except User.DoesNotExist:
+                return fallback
+        return fallback
+
+    def _valid_field_names(self):
+        return {
+            f.name for f in self.model._meta.get_fields()
+            if hasattr(f, 'name') and not f.many_to_many and not f.one_to_many
+        }
+
+    def _create_from_dict(self, item, request_user):
+        if not isinstance(item, dict):
+            raise ValidationError(
+                'Each entry must be a JSON object; got %s' % type(item).__name__
+            )
+        item = dict(item)  # don't mutate caller's structure
+        item.pop('id', None)  # let the DB assign
+        owner = self._resolve_owner(item.pop('owner', None), request_user)
+        valid = self._valid_field_names()
+        dropped = sorted(k for k in item.keys() if k not in valid)
+        filtered = {k: v for k, v in item.items() if k in valid}
+        try:
+            obj = self.model.objects.create(owner=owner, **filtered)
+        except (TypeError, FieldError) as err:
+            raise ValidationError(str(err))
+        return obj, dropped
+
+    def add_via_json_view(self, request):
+        if not self.has_add_permission(request):
+            return redirect('..')
+
+        opts = self.model._meta
+        context = {
+            **self.admin_site.each_context(request),
+            'opts': opts,
+            'title': 'Add %s via JSON' % opts.verbose_name,
+            'app_label': opts.app_label,
+            'has_view_permission': True,
+        }
+
+        if request.method != 'POST':
+            return render(request, self.json_add_template, context)
+
+        raw = (request.POST.get('json_data') or '').strip()
+        context['json_data'] = raw
+        if not raw:
+            messages.error(request, 'Paste a JSON object or array first.')
+            return render(request, self.json_add_template, context)
+        try:
+            data = json.loads(raw)
+        except ValueError as err:
+            messages.error(request, 'Invalid JSON: %s' % err)
+            return render(request, self.json_add_template, context)
+
+        items = data if isinstance(data, list) else [data]
+        created, all_dropped = [], set()
+        for idx, item in enumerate(items):
+            try:
+                obj, dropped = self._create_from_dict(item, request.user)
+            except ValidationError as err:
+                messages.error(
+                    request,
+                    'Item %d: %s' % (idx, '; '.join(err.messages) if hasattr(err, 'messages') else err),
+                )
+                return render(request, self.json_add_template, context)
+            created.append(obj)
+            all_dropped.update(dropped)
+
+        if all_dropped:
+            messages.warning(
+                request,
+                'Ignored unknown field(s): %s' % ', '.join(sorted(all_dropped)),
+            )
+        messages.success(
+            request,
+            'Created %d %s%s.' % (
+                len(created),
+                opts.verbose_name,
+                '' if len(created) == 1 else 's',
+            ),
+        )
+        if len(created) == 1:
+            return redirect(
+                'admin:%s_%s_change' % (opts.app_label, opts.model_name),
+                created[0].pk,
+            )
+        return redirect('admin:%s_%s_changelist' % (opts.app_label, opts.model_name))
+
+
 ##################################################
 
 admin.site.site_header = 'SWIRL'
@@ -92,11 +227,16 @@ admin.site.site_url = '/swirl/'
 ##################################################
 
 @admin.register(SearchProvider)
-class SearchProviderAdmin(admin.ModelAdmin):
-    list_display  = ['id', 'name', 'connector', 'active', 'shared', 'owner']
-    list_filter   = ['active', 'shared', 'connector', 'authenticator']
-    search_fields = ['name', 'url', 'tags']
-    ordering      = ['id']
+class SearchProviderAdmin(JsonAddMixin, admin.ModelAdmin):
+    change_list_template = 'admin/swirl/searchprovider/change_list.html'
+    save_as = True
+    save_on_top = True
+    list_display       = ['id', 'name', 'connector', 'active', 'shared', 'default', 'owner']
+    list_display_links = ('id', 'name')
+    list_editable      = ('active', 'shared', 'default')
+    list_filter        = ['active', 'shared', 'connector', 'authenticator']
+    search_fields      = ['name', 'url', 'tags']
+    ordering           = ['id']
     fieldsets = [
         ('Identity', {
             'fields': ['name', 'owner', 'shared', 'active', 'default', 'tags']
@@ -632,17 +772,18 @@ class AIProviderAdminForm(forms.ModelForm):
 
 
 @admin.register(AIProvider)
-class AIProviderAdmin(SecretFieldsMixin, admin.ModelAdmin):
+class AIProviderAdmin(JsonAddMixin, SecretFieldsMixin, admin.ModelAdmin):
     form = AIProviderAdminForm
     model = AIProvider
+    change_list_template = 'admin/swirl/aiprovider/change_list.html'
 
     secret_fields = ('api_key',)
     save_as = True
     save_on_top = True
 
-    list_display = ('name', 'model', 'active', 'shared', 'defaults_display', 'owner', 'date_updated')
-    list_display_links = ('name',)
-    list_editable = ('active',)
+    list_display = ('id', 'name', 'model', 'active', 'shared', 'defaults_display', 'owner', 'date_updated')
+    list_display_links = ('id', 'name')
+    list_editable = ('active', 'shared')
     list_filter = ('active', 'shared')
     search_fields = ('name', 'model')
     readonly_fields = ('date_created', 'date_updated')
