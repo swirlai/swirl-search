@@ -159,20 +159,22 @@ jobs:
               -u admin:"$PASSWORD" \
               -H "Content-Type: application/json" \
               -d "$JSON"
-        - name: PATCH the LinkedIn PSE Config
-          env:
-            JSON: ${{ secrets.QA_PSE_LINKEDIN }}
-            API_ENDPOINT: http://localhost:8000/swirl/searchproviders/3/
-            PASSWORD: ${{ secrets.QA_ADMIN_PW }}
-          run: |
-            curl -X PATCH "$API_ENDPOINT" \
-              -u admin:"$PASSWORD" \
-              -H "Content-Type: application/json" \
-              -d "$JSON"
+        # DS-5598: LinkedIn was removed from SearchProviders/preloaded.json
+        # (it was a Google PSE flavour pointing at linkedin.com that the team
+        # is not maintaining). The previous "PATCH the LinkedIn PSE Config"
+        # step targeted provider ID 3, which after the removal is no longer
+        # LinkedIn — it's "Documentation - SWIRL AI". Removing this step
+        # avoids overwriting the Documentation provider's config with the
+        # stale LinkedIn PSE secret.
+        #
+        # The SWIRL Docs PSE config moved from provider ID 4 -> ID 3 because
+        # LinkedIn no longer occupies a slot above it; the API_ENDPOINT
+        # below is updated to match. This mirrors the equivalent edit on
+        # qa-suite.yml in PR #1850.
         - name: PATCH the SWIRL Docs PSE Config
           env:
             JSON: ${{ secrets.QA_PSE_DOCS }}
-            API_ENDPOINT: http://localhost:8000/swirl/searchproviders/4/
+            API_ENDPOINT: http://localhost:8000/swirl/searchproviders/3/
             PASSWORD: ${{ secrets.QA_ADMIN_PW }}
           run: |
             curl -X PATCH "$API_ENDPOINT" \
