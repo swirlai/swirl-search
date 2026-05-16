@@ -213,16 +213,40 @@ jobs:
         # and vanish when the job ends — invisible in the test-build-
         # pipeline artifact. `if: always()` runs the step even when
         # behave fails (which is exactly when the logs are most useful).
+        #
+        # The first iteration of this step (PR #1864) only globbed
+        # `logs/*.log` from the default cwd and the step finished in 0s
+        # in run #329 — either the cwd isn't where swirl writes its
+        # logs, or the logs are nested under a subdir. This version
+        # falls back to a workspace-wide find so we actually see the
+        # backend output regardless of cwd resolution, and also prints
+        # the cwd / workspace listing up front to make future debugging
+        # one read of the step output rather than two iterations.
         - name: Dump swirl backend logs
           if: always()
           run: |
+            set +e
+            echo "===== pwd: $(pwd)"
+            echo "===== GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+            echo "===== top-level listing:"
+            ls -la
+            echo "===== ./logs (if present):"
+            ls -la ./logs 2>/dev/null || echo "(no ./logs in $(pwd))"
+            echo "===== find workspace for *.log under */logs/*:"
+            find "${GITHUB_WORKSPACE:-.}" -name "*.log" -path "*/logs/*" 2>/dev/null
             shopt -s nullglob
-            for f in logs/*.log; do
+            log_files=( "${GITHUB_WORKSPACE:-.}"/logs/*.log )
+            if [ ${#log_files[@]} -eq 0 ]; then
+              echo "===== no logs/*.log under GITHUB_WORKSPACE; searching workspace"
+              mapfile -t log_files < <(find "${GITHUB_WORKSPACE:-.}" -name "*.log" -path "*/logs/*" 2>/dev/null)
+            fi
+            for f in "${log_files[@]}"; do
               echo "=================================================="
               echo "===== $f"
               echo "=================================================="
               cat "$f" || true
             done
+            echo "===== Dump swirl backend logs: done"
 
     swirl-docker:
       needs: qa-suite
