@@ -405,7 +405,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
 
     ########################################
 
-    def update(self, request, pk=None):
+    def update(self, request, pk=None, partial=False):
 
         # check permissions
         if not request.user.has_perm('swirl.change_searchprovider'):
@@ -417,7 +417,14 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
 
         searchprovider = SearchProvider.objects.get(pk=pk)
         searchprovider.date_updated = datetime.now()
-        serializer = SearchProviderSerializer(instance=searchprovider, data=request.data)
+        # DS-5598: honour the ``partial`` flag so PATCH requests can omit
+        # fields. Previously this view always validated against the full
+        # ModelSerializer schema, which made PATCH behave identically to
+        # PUT — any body missing required fields (e.g. ``name``) returned
+        # 400 ``"This field is required."``. The qa-suite secret-injection
+        # workflow (and any external integration sending a partial PATCH)
+        # relies on the standard DRF partial-update semantics.
+        serializer = SearchProviderSerializer(instance=searchprovider, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         # security review for 1.7 - OK, saved with owner
         serializer.save(owner=self.request.user)
@@ -441,7 +448,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         return Response('SearchProvider Object Deleted', status=status.HTTP_410_GONE)
 
     def partial_update(self, request, pk=None):
-        return self.update(request, pk)
+        return self.update(request, pk, partial=True)
 
     # 10a: health-check endpoint — GET /swirl/searchproviders/{id}/test/
     # Runs a minimal test query against the provider and reports OK or FAIL.
