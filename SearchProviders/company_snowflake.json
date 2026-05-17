@@ -1,8 +1,7 @@
 {
-    "name": "Companies - Snowflake",
+    "name": "Records - Snowflake",
     "active": false,
     "default": false,
-    "authenticator": "",
     "connector": "Snowflake",
     "url": "<snowflake-instance-address>",
     "query_template": "SELECT {fields} FROM {table} WHERE {field1} ILIKE '%{query_string}%' AND NULLIF(TRIM(founded), '') IS NOT NULL ORDER BY TRY_TO_NUMBER(REGEXP_REPLACE(SPLIT_PART(size, '-', 1), '[^0-9]', '')) DESC;",
@@ -24,7 +23,7 @@
     "credentials": "<username>:<password>:FREE_COMPANY_DATASET:COMPUTE_WH",
     "eval_credentials": "",
     "tags": [
-        "Company",
-        "Snowflake"
+        "Snowflake",
+        "Internal"
     ]
 }

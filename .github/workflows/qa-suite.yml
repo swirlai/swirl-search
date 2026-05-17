@@ -64,7 +64,7 @@ jobs:
       # (it was a Google PSE flavour pointing at linkedin.com that the team
       # is not maintaining). The previous "PATCH the LinkedIn PSE Config"
       # step targeted provider ID 3, which after the removal is no longer
-      # LinkedIn — it's "Documentation - SWIRL AI". Removing this step
+      # LinkedIn — it's "Docs - SWIRL". Removing this step
       # avoids overwriting the Documentation provider's config with the
       # stale LinkedIn PSE secret.
       #

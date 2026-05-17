@@ -1,5 +1,5 @@
 {
-    "name": "Boards - Miro.com",
+    "name": "Drawings - Miro",
     "active": false,
     "default": false,
     "connector": "RequestsGet",
@@ -16,10 +16,8 @@
     "response_mappings": "FOUND=total,RESULTS=data",
     "result_mappings": "title=name,body=description,url=viewLink,date_published=modifiedAt,owner.name,picture.imageURL,NO_PAYLOAD",
     "results_per_query": 10,
-    "credentials": "bearer=your-miro-api-token",
+    "credentials": "bearer=your-Miro-api-token",
     "tags": [
-        "Drawings",
-        "Miro",
         "Internal"
     ]
 }

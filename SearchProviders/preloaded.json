@@ -2,7 +2,7 @@
     {
         "name": "Web - Google PSE",
         "active": false,
-        "default": false,
+        "default": true,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
@@ -45,12 +45,11 @@
         "credentials": "key=<your-Google-API-key>",
         "tags": [
             "Google",
-            "Web",
-            "WWW"
+            "Public"
         ]
     },
     {
-        "name": "News - Google News RSS",
+        "name": "News - Google News",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
@@ -74,14 +73,14 @@
         "eval_credentials": "",
         "tags": [
             "Google",
-            "News",
-            "RSS"
+            "Public",
+            "RAG-ready"
         ]
     },
     {
-        "name": "Documentation - SWIRL AI",
-        "active": false,
-        "default": false,
+        "name": "Docs - SWIRL",
+        "active": true,
+        "default": true,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
@@ -125,8 +124,8 @@
         "credentials": "key=<your-Google-API-key>",
         "eval_credentials": "",
         "tags": [
-            "Swirl",
-            "Dev"
+            "Public",
+            "RAG-ready"
         ]
     },
     {
@@ -156,11 +155,12 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "InternetArchive"
+            "Public",
+            "RAG-ready"
         ]
     },
     {
-        "name": "Articles - EuropePMC.org",
+        "name": "Articles - EuropePMC",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
@@ -190,13 +190,13 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "EuropePMC",
-            "EPMC",
-            "STM"
+            "Public",
+            "STM",
+            "RAG-ready"
         ]
     },
     {
-        "name": "Articles - ArXiv",
+        "name": "Articles - arXiv",
         "active": true,
         "default": true,
         "connector": "RequestsGet",
@@ -219,14 +219,15 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "arXiv",
-            "STM"
+            "Public",
+            "STM",
+            "RAG-ready"
         ]
     },
     {
-        "name": "Answers - GAI",
+        "name": "Answers - OpenAI",
         "active": false,
-        "default": true,
+        "default": false,
         "connector": "GenAI",
         "url": "",
         "query_template": "",
@@ -243,12 +244,11 @@
         "results_per_query": 10,
         "credentials": "<your-openai-API-key>",
         "tags": [
-            "GenAI",
-            "Question"
+            "Public"
         ]
     },
     {
-        "name": "Boards - Miro.com",
+        "name": "Drawings - Miro",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -267,13 +267,11 @@
         "results_per_query": 10,
         "credentials": "bearer=your-Miro-api-token",
         "tags": [
-            "Drawings",
-            "Miro",
             "Internal"
         ]
     },
     {
-        "name": "Companies - Google BigQuery",
+        "name": "Records - Google BigQuery",
         "description": "Searches info on 7 million companies worldwide including Linkedin URL, company size, location, and number of employees. Search only with company name, domain or location. Supports many languages. Does not support NOT operator.",
         "active": false,
         "default": false,
@@ -296,15 +294,15 @@
         "response_mappings": "",
         "result_mappings": "title=name,body='{name} was founded in {year_founded} and serves the {industry} industry. The company is located in {locality} and has approximately {current_employee_estimate} employees. The registered domain for this organization is: {domain}',url='https://www.{linkedin_url}',NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "/path/to/bigquery/token.json",
+        "credentials": "<path-to-bigquery-token-json>",
         "eval_credentials": "",
         "tags": [
-            "Company",
-            "BigQuery"
+            "Google",
+            "Internal"
         ]
     },
     {
-        "name": "Companies - SQLite3",
+        "name": "Records - SQLite3",
         "active": false,
         "default": false,
         "connector": "Sqlite3",
@@ -323,13 +321,11 @@
         "results_per_query": 10,
         "credentials": "",
         "tags": [
-            "Company",
-            "SQLite3",
             "Internal"
         ]
     },
     {
-        "name": "Products- Apache Solr",
+        "name": "Records - Apache Solr",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -346,10 +342,8 @@
         "response_mappings": "FOUND=numFound,RESULTS=response.docs",
         "result_mappings": "title=name,body=features,response",
         "results_per_query": 10,
-        "credentials": "HTTPBasicAuth('solr-username','solr-password')",
+        "credentials": "HTTPBasicAuth('<solr-username>','<solr-password>')",
         "tags": [
-            "Solr",
-            "TechProducts",
             "Internal"
         ]
     },
@@ -371,10 +365,8 @@
         "response_mappings": "",
         "result_mappings": "url='https://<your-opensearch-instance>/email/_doc/{_id}',date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,admin:admin",
+        "credentials": "verify_certs=[True|False],ca_certs=<path-to-cert-file>,<opensearch-username>:<opensearch-password>",
         "tags": [
-            "Enron",
-            "OpenSearch",
             "Internal"
         ]
     },
@@ -396,15 +388,13 @@
         "response_mappings": "",
         "result_mappings": "url='https://<your-elastic-instance>/email/_doc/{_id}',date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,username:password",
+        "credentials": "verify_certs=[True|False],ca_certs=<path-to-cert-file>,<elastic-username>:<elastic-password>",
         "tags": [
-            "Enron",
-            "Elastic",
             "Internal"
         ]
     },
     {
-        "name": "Articles - YouTrack",
+        "name": "Articles - JetBrains YouTrack",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -425,13 +415,12 @@
         "results_per_query": 10,
         "credentials": "bearer=your-youtrack-permanent-token",
         "tags": [
-            "Articles",
-            "YouTrack",
+            "JetBrains",
             "Dev"
         ]
     },
     {
-        "name": "Issues - YouTrack",
+        "name": "Issues - JetBrains YouTrack",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -452,13 +441,12 @@
         "results_per_query": 10,
         "credentials": "bearer=your-youtrack-permanent-token",
         "tags": [
-            "Issues",
-            "YouTrack",
+            "JetBrains",
             "Dev"
         ]
     },
     {
-        "name": "Articles - Atlassian Confluence",
+        "name": "Docs - Atlassian Confluence",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -478,7 +466,6 @@
         "results_per_query": 10,
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
-            "Confluence",
             "Atlassian",
             "Dev"
         ]
@@ -504,7 +491,6 @@
         "results_per_query": 10,
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
-            "Jira",
             "Atlassian",
             "Dev"
         ]
@@ -535,13 +521,12 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "Microsoft",
-            "Email",
+            "M365",
             "Internal"
         ]
     },
     {
-        "name": "Calendar - M365 Outlook",
+        "name": "Events - M365 Outlook",
         "active": false,
         "default": true,
         "connector": "M365OutlookCalendar",
@@ -566,8 +551,7 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "Microsoft",
-            "Calendar",
+            "M365",
             "Internal"
         ]
     },
@@ -595,13 +579,12 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "Microsoft",
-            "OneDrive",
+            "M365",
             "Internal"
         ]
     },
     {
-        "name": "Sites - M365 SharePoint",
+        "name": "Docs - M365 SharePoint",
         "active": false,
         "default": true,
         "connector": "M365SharePointSites",
@@ -624,8 +607,7 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "Microsoft",
-            "SharePoint",
+            "M365",
             "Internal"
         ]
     },
@@ -653,8 +635,7 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "Microsoft",
-            "Teams",
+            "M365",
             "Internal"
         ]
     },
@@ -685,8 +666,6 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
-            "Code",
-            "Internal",
             "Dev"
         ]
     },
@@ -717,8 +696,6 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
-            "Issues",
-            "Internal",
             "Dev"
         ]
     },
@@ -749,8 +726,6 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
-            "PullRequests",
-            "Internal",
             "Dev"
         ]
     },
@@ -781,8 +756,6 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
-            "Commits",
-            "Internal",
             "Dev"
         ]
     },
@@ -816,7 +789,6 @@
         "eval_credentials": "",
         "tags": [
             "HubSpot",
-            "Deal",
             "Internal"
         ]
     },
@@ -850,7 +822,6 @@
         "eval_credentials": "",
         "tags": [
             "HubSpot",
-            "Company",
             "Internal"
         ]
     },
@@ -884,7 +855,6 @@
         "eval_credentials": "",
         "tags": [
             "HubSpot",
-            "Contact",
             "Internal"
         ]
     },
@@ -912,9 +882,9 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "HackerNews",
-            "Stories",
-            "Dev"
+            "Hacker News",
+            "Dev",
+            "Public"
         ]
     },
     {
@@ -941,13 +911,13 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "HackerNews",
-            "Comments",
-            "Dev"
+            "Hacker News",
+            "Dev",
+            "Public"
         ]
     },
     {
-        "name": "Knowledge - ServiceNow",
+        "name": "Docs - ServiceNow",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -969,12 +939,11 @@
         "response_mappings": "FOUND=result.meta.count,RESULTS=result.articles",
         "result_mappings": "title=title,body=snippet,date_published=fields.published.value,author=fields.author.display_value,url='https://<your-ServiceNow-domain>.service-now.com/kb_view.do?sysparm_article={number}',fields.active.display_value,fields.article_type.display_value,fields.kb_category.display_value,fields.sys_created_on.display_value,fields.helpful_count.value,fields.kb_knowledge_base.display_value,fields.rating.value,fields.topic.display_value,fields.sys_updated_on.display_value,fields.sys_updated_by.display_value,fields.sys_view_count.value,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "HTTPBasicAuth('servicenow-username','servicenow-password')",
+        "credentials": "HTTPBasicAuth('<servicenow-username>','<servicenow-password>')",
         "eval_credentials": "",
         "tags": [
             "ServiceNow",
-            "Knowledge",
-            "Articles"
+            "Internal"
         ]
     },
     {
@@ -1000,12 +969,11 @@
         "response_mappings": "RESULTS=result",
         "result_mappings": "title=short_description,body=description,url='https://<your-ServiceNow-domain>.service-now.com/com.glideapp.servicecatalog_cat_item_view.do?sysparm_id={sys_id}',name,catalogs[*].title,category.title,availability,request_method,price,recurring_frequency,order,NO_PAYLOAD",
         "results_per_query": 10,
-        "credentials": "HTTPBasicAuth('servicenow-username','servicenow-password')",
+        "credentials": "HTTPBasicAuth('<servicenow-username>','<servicenow-password>')",
         "eval_credentials": "",
         "tags": [
             "ServiceNow",
-            "ServiceCatalog",
-            "Items"
+            "Internal"
         ]
     },
     {
@@ -1066,12 +1034,11 @@
         "eval_credentials": "",
         "tags": [
             "Crunchbase",
-            "Organizations",
             "Internal"
         ]
     },
     {
-        "name": "Transaction - Blockchain.com",
+        "name": "Transactions - Blockchain",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -1098,12 +1065,11 @@
         "eval_credentials": "",
         "tags": [
             "Blockchain",
-            "Bitcoin",
-            "HashID"
+            "Public"
         ]
     },
     {
-        "name": "Address - Blockchain.com",
+        "name": "Wallets - Blockchain",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -1130,12 +1096,11 @@
         "eval_credentials": "",
         "tags": [
             "Blockchain",
-            "Bitcoin",
-            "Wallet"
+            "Public"
         ]
     },
     {
-        "name": "Cards - Atlassian Trello",
+        "name": "Tasks - Atlassian Trello",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -1162,7 +1127,6 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "Trello",
             "Atlassian",
             "Internal"
         ]
@@ -1196,12 +1160,11 @@
         "eval_credentials": "",
         "tags": [
             "Asana",
-            "Tasks",
             "Internal"
         ]
     },
     {
-        "name": "Movies - MongoDB",
+        "name": "Records - MongoDB",
         "active": false,
         "default": false,
         "connector": "MongoDB",
@@ -1231,12 +1194,12 @@
         "credentials": "mongodb+srv://<mongodb-username>:<mongodb-password>@<mongdb-cluster>.mongodb.net/?retryWrites=true&w=majority",
         "eval_credentials": "",
         "tags": [
-            "Movies",
-            "MongoDB"
+            "MongoDB",
+            "Internal"
         ]
     },
     {
-        "name": "Companies - Snowflake",
+        "name": "Records - Snowflake",
         "active": false,
         "default": false,
         "connector": "Snowflake",
@@ -1260,12 +1223,12 @@
         "credentials": "<username>:<password>:FREE_COMPANY_DATASET:COMPUTE_WH",
         "eval_credentials": "",
         "tags": [
-            "Company",
-            "Snowflake"
+            "Snowflake",
+            "Internal"
         ]
     },
     {
-        "name": "Entities - LittleSis.org",
+        "name": "Entities - LittleSis",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -1290,11 +1253,11 @@
         "eval_credentials": "",
         "tags": [
             "LittleSis",
-            "Entities"
+            "Public"
         ]
     },
     {
-        "name": "Entities - OpenSanctions.org",
+        "name": "Entities - OpenSanctions",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -1321,11 +1284,11 @@
         "eval_credentials": "",
         "tags": [
             "OpenSanctions",
-            "Entities"
+            "Public"
         ]
     },
     {
-        "name": "Collection - Pinecone",
+        "name": "Vectors - Pinecone",
         "active": false,
         "default": false,
         "authenticator": "",
@@ -1353,11 +1316,11 @@
         "eval_credentials": "",
         "tags": [
             "Pinecone",
-            "model:<your-embedding-model>"
+            "Internal"
         ]
     },
     {
-        "name": "Collection - Qdrant",
+        "name": "Vectors - Qdrant",
         "active": false,
         "default": false,
         "authenticator": "",
@@ -1384,11 +1347,12 @@
         "credentials": "<qdrant-api-key>",
         "eval_credentials": "",
         "tags": [
-            "Qdrant"
+            "Qdrant",
+            "Internal"
         ]
     },
     {
-        "name": "Case Law (US) - CourtListener",
+        "name": "Cases - CourtListener (US)",
         "active": false,
         "default": false,
         "authenticator": "",
@@ -1414,13 +1378,13 @@
         "credentials": "HTTPBasicAuth('<username>','<password>')",
         "eval_credentials": "",
         "tags": [
-            "legal",
-            "us",
-            "court-listener"
+            "CourtListener",
+            "Legal",
+            "Public"
         ]
     },
     {
-        "name": "Case Law (UK) - National Archives",
+        "name": "Cases - National Archives (UK)",
         "description": "The UK National Archives Case Law service (Find Case Law) provides public access to court judgments from courts across England and Wales. The collection includes decisions from the Supreme Court, Court of Appeal, High Court, and many tribunals, with searchable full text and official citations. Users can review recent and historic judgments, track how legal principles develop, and locate authoritative rulings across different areas of law.",
         "active": false,
         "default": false,
@@ -1456,9 +1420,9 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "uk",
-            "legal",
-            "national-archives"
+            "National Archives",
+            "Legal",
+            "Public"
         ]
     }
 ]

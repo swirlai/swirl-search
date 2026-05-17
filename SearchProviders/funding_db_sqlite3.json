@@ -1,5 +1,5 @@
 {
-    "name": "Companies - SQLite3",
+    "name": "Records - SQLite3",
     "active": false,
     "default": false,
     "connector": "Sqlite3",
@@ -13,10 +13,11 @@
         "MappingResultProcessor",
         "CosineRelevancyResultProcessor"
     ],
+    "response_mappings": "",
     "result_mappings": "title='{company} series {round}',body='{city} {fundeddate}: {company} raised usd ${raisedamt}\nThe company is headquartered in {city} and employs {numemps}',date_published=fundeddate,NO_PAYLOAD",
+    "results_per_query": 10,
+    "credentials": "",
     "tags": [
-        "Company",
-        "SQLite3",
         "Internal"
     ]
 }

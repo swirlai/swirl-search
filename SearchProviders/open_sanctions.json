@@ -1,8 +1,7 @@
 {
-    "name": "Entities - OpenSanctions.org",
+    "name": "Entities - OpenSanctions",
     "active": false,
     "default": false,
-    "authenticator": "",
     "connector": "RequestsGet",
     "url": "https://api.opensanctions.org/search/default",
     "query_template": "{url}?q={query_string}*",
@@ -27,6 +26,6 @@
     "eval_credentials": "",
     "tags": [
         "OpenSanctions",
-        "Entities"
+        "Public"
     ]
 }

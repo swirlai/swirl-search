@@ -1,7 +1,7 @@
 {
     "name": "Web - Internet Archive",
     "active": true,
-    "default": false,
+    "default": true,
     "connector": "RequestsGet",
     "url": "https://archive.org/services/search/v1/scrape?xvar=production&fields=*&count=100",
     "query_template": "{url}&q={query_string}",
@@ -25,6 +25,7 @@
     "credentials": "",
     "eval_credentials": "",
     "tags": [
-        "InternetArchive"
+        "Public",
+        "RAG-ready"
     ]
 }

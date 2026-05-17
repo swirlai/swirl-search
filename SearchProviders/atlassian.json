@@ -20,13 +20,12 @@
         "results_per_query": 10,
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
-            "Jira",
             "Atlassian",
             "Dev"
         ]
     },
     {
-        "name": "Articles - Atlassian Confluence",
+        "name": "Docs - Atlassian Confluence",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -46,16 +45,14 @@
         "results_per_query": 10,
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
-            "Confluence",
             "Atlassian",
             "Dev"
         ]
     },
     {
-        "name": "Cards - Atlassian Trello",
+        "name": "Tasks - Atlassian Trello",
         "active": false,
         "default": false,
-        "authenticator": "",
         "connector": "RequestsGet",
         "url": "https://api.trello.com/1/search?modelTypes=cards&card_board=true&card_members=true&card_attachments=true&partial=true&card_list=true&card_fields=id,closed,dueComplete,dateLastActivity,desc,due,email,labels,name,start,url",
         "query_template": "{url}&query={query_string}&key=<your-Trello-API-Key>&token=<your-Trello-API-Token>",
@@ -80,7 +77,6 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "Trello",
             "Atlassian",
             "Internal"
         ]
