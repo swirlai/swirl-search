@@ -101,7 +101,7 @@ class SearchRag:
                         f"{self.rag_timeout}s.",
                         {},
                     )
-                return "Please check the OpenAI or Azure/OpenAI credentials in your environment.", {}
+                return "Please check the OpenAI or Azure OpenAI credentials in your environment.", {}
 
             if self.search_id in instances:
                 del instances[self.search_id]

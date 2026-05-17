@@ -256,7 +256,7 @@ class LoginView(APIView):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key, 'user': user.username, 'swirl_version': SWIRL_VERSION, 'is_superuser': user.is_superuser})
+            return Response({'token': token.key, 'user': user.username, 'swirl_version': SWIRL_VERSION, 'is_superuser': user.is_superuser, 'edition': 'community'})
         else:
             return Response({'error': 'Invalid credentials'})
 
@@ -300,7 +300,7 @@ class OidcAuthView(APIView):
                             is_staff=True
                         )
                     token, created = Token.objects.get_or_create(user=user)
-                    return Response({ 'user': user.username, 'token': token.key, 'swirl_version': SWIRL_VERSION, 'is_superuser': user.is_superuser })
+                    return Response({ 'user': user.username, 'token': token.key, 'swirl_version': SWIRL_VERSION, 'is_superuser': user.is_superuser, 'edition': 'community' })
                 return HttpResponseForbidden()
             return HttpResponseForbidden()
         return HttpResponseForbidden()
