@@ -116,7 +116,15 @@ jobs:
           echo "========"
           cat .env.qa
           echo "========"
-          docker run --net=host --env-file .env.qa -t swirlai/swirl-search-qa:${{ github.event.inputs.qa_image }} sh -c "behave --no-capture --tags=${{ github.event.inputs.behave_tags }}"
+          # Mount swirl-search-public's preloaded.json files into the QA
+          # container so data_examples/_preloaded.py can resolve them via
+          # $SWIRL_PRELOADED_DIR. Required since the loader refactor.
+          docker run --net=host --env-file .env.qa \
+            -v "${{ github.workspace }}/SearchProviders:/swirl/SearchProviders:ro" \
+            -v "${{ github.workspace }}/AIProviders:/swirl/AIProviders:ro" \
+            -e SWIRL_PRELOADED_DIR=/swirl \
+            -t swirlai/swirl-search-qa:${{ github.event.inputs.qa_image }} \
+            sh -c "behave --no-capture --tags=${{ github.event.inputs.behave_tags }}"
       - name: Upload Log Files
         if: always()
         uses: actions/upload-artifact@v4

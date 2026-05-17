@@ -204,7 +204,16 @@ jobs:
             echo "========"
             cat .env.qa
             echo "========"
-            docker run --net=host --env-file .env.qa -t swirlai/swirl-search-qa:automated-tests-develop sh -c "behave --tags=qa_suite,community"
+            # Mount swirl-search-public's preloaded.json files into the
+            # QA container so data_examples/_preloaded.py can resolve them
+            # via $SWIRL_PRELOADED_DIR. Without this the loader raises
+            # FileNotFoundError on the first import inside behave.
+            docker run --net=host --env-file .env.qa \
+              -v "${{ github.workspace }}/SearchProviders:/swirl/SearchProviders:ro" \
+              -v "${{ github.workspace }}/AIProviders:/swirl/AIProviders:ro" \
+              -e SWIRL_PRELOADED_DIR=/swirl \
+              -t swirlai/swirl-search-qa:automated-tests-develop \
+              sh -c "behave --tags=qa_suite,community"
         # DS-5598: dump every ./logs/*.log produced by `python swirl.py
         # start` into the qa-suite step output so backend WARNING /
         # ERROR lines (RAG-DIAG, exception tracebacks, AIProvider
