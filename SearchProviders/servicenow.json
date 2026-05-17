@@ -26,6 +26,8 @@
         "eval_credentials": "",
         "tags": [
             "ServiceNow",
+            "Knowledge",
+            "Articles",
             "Internal"
         ]
     },
@@ -56,6 +58,8 @@
         "eval_credentials": "",
         "tags": [
             "ServiceNow",
+            "ServiceCatalog",
+            "Items",
             "Internal"
         ]
     }

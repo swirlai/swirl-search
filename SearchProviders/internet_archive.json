@@ -25,6 +25,7 @@
     "credentials": "",
     "eval_credentials": "",
     "tags": [
+        "Web",
         "Public",
         "RAG-ready"
     ]

@@ -27,6 +27,8 @@
         "eval_credentials": "",
         "tags": [
             "Blockchain",
+            "Bitcoin",
+            "HashID",
             "Public"
         ]
     },
@@ -58,6 +60,8 @@
         "eval_credentials": "",
         "tags": [
             "Blockchain",
+            "Bitcoin",
+            "Wallet",
             "Public"
         ]
     }

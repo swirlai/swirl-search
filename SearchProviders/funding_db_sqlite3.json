@@ -18,6 +18,8 @@
     "results_per_query": 10,
     "credentials": "",
     "tags": [
+        "SQLite3",
+        "Company",
         "Internal"
     ]
 }

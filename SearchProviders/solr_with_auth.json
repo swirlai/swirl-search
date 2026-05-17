@@ -18,6 +18,8 @@
     "results_per_query": 10,
     "credentials": "HTTPBasicAuth('<solr-username>','<solr-password>')",
     "tags": [
+        "Solr",
+        "TechProducts",
         "Internal"
     ]
 }

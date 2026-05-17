@@ -18,6 +18,9 @@
     "results_per_query": 10,
     "credentials": "verify_certs=[True|False],ca_certs=<path-to-cert-file>,<elastic-username>:<elastic-password>",
     "tags": [
+        "Elastic",
+        "Email",
+        "Enron",
         "Internal"
     ]
 }

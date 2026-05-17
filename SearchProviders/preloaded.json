@@ -45,6 +45,7 @@
         "credentials": "key=<your-Google-API-key>",
         "tags": [
             "Google",
+            "Web",
             "Public"
         ]
     },
@@ -73,6 +74,8 @@
         "eval_credentials": "",
         "tags": [
             "Google",
+            "News",
+            "RSS",
             "Public",
             "RAG-ready"
         ]
@@ -124,6 +127,8 @@
         "credentials": "key=<your-Google-API-key>",
         "eval_credentials": "",
         "tags": [
+            "Swirl",
+            "Dev",
             "Public",
             "RAG-ready"
         ]
@@ -155,6 +160,7 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
+            "Web",
             "Public",
             "RAG-ready"
         ]
@@ -190,8 +196,11 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "Public",
+            "EuropePMC",
+            "EPMC",
+            "Articles",
             "STM",
+            "Public",
             "RAG-ready"
         ]
     },
@@ -219,8 +228,10 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "Public",
+            "arXiv",
+            "Articles",
             "STM",
+            "Public",
             "RAG-ready"
         ]
     },
@@ -244,6 +255,8 @@
         "results_per_query": 10,
         "credentials": "<your-openai-API-key>",
         "tags": [
+            "GenAI",
+            "Question",
             "Public"
         ]
     },
@@ -267,6 +280,8 @@
         "results_per_query": 10,
         "credentials": "bearer=your-Miro-api-token",
         "tags": [
+            "Miro",
+            "Drawings",
             "Internal"
         ]
     },
@@ -298,6 +313,8 @@
         "eval_credentials": "",
         "tags": [
             "Google",
+            "BigQuery",
+            "Company",
             "Internal"
         ]
     },
@@ -321,6 +338,8 @@
         "results_per_query": 10,
         "credentials": "",
         "tags": [
+            "SQLite3",
+            "Company",
             "Internal"
         ]
     },
@@ -344,6 +363,8 @@
         "results_per_query": 10,
         "credentials": "HTTPBasicAuth('<solr-username>','<solr-password>')",
         "tags": [
+            "Solr",
+            "TechProducts",
             "Internal"
         ]
     },
@@ -367,6 +388,9 @@
         "results_per_query": 10,
         "credentials": "verify_certs=[True|False],ca_certs=<path-to-cert-file>,<opensearch-username>:<opensearch-password>",
         "tags": [
+            "OpenSearch",
+            "Email",
+            "Enron",
             "Internal"
         ]
     },
@@ -390,6 +414,9 @@
         "results_per_query": 10,
         "credentials": "verify_certs=[True|False],ca_certs=<path-to-cert-file>,<elastic-username>:<elastic-password>",
         "tags": [
+            "Elastic",
+            "Email",
+            "Enron",
             "Internal"
         ]
     },
@@ -415,6 +442,8 @@
         "results_per_query": 10,
         "credentials": "bearer=your-youtrack-permanent-token",
         "tags": [
+            "YouTrack",
+            "Articles",
             "JetBrains",
             "Dev"
         ]
@@ -441,6 +470,8 @@
         "results_per_query": 10,
         "credentials": "bearer=your-youtrack-permanent-token",
         "tags": [
+            "YouTrack",
+            "Issues",
             "JetBrains",
             "Dev"
         ]
@@ -466,6 +497,7 @@
         "results_per_query": 10,
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
+            "Confluence",
             "Atlassian",
             "Dev"
         ]
@@ -491,6 +523,8 @@
         "results_per_query": 10,
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
+            "Jira",
+            "Issues",
             "Atlassian",
             "Dev"
         ]
@@ -522,6 +556,9 @@
         "eval_credentials": "",
         "tags": [
             "M365",
+            "Email",
+            "Microsoft",
+            "Outlook",
             "Internal"
         ]
     },
@@ -552,6 +589,9 @@
         "eval_credentials": "",
         "tags": [
             "M365",
+            "Calendar",
+            "Microsoft",
+            "Outlook",
             "Internal"
         ]
     },
@@ -580,6 +620,8 @@
         "eval_credentials": "",
         "tags": [
             "M365",
+            "OneDrive",
+            "Microsoft",
             "Internal"
         ]
     },
@@ -608,6 +650,8 @@
         "eval_credentials": "",
         "tags": [
             "M365",
+            "SharePoint",
+            "Microsoft",
             "Internal"
         ]
     },
@@ -636,6 +680,8 @@
         "eval_credentials": "",
         "tags": [
             "M365",
+            "Teams",
+            "Microsoft",
             "Internal"
         ]
     },
@@ -666,6 +712,7 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
+            "Code",
             "Dev"
         ]
     },
@@ -696,6 +743,7 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
+            "Issues",
             "Dev"
         ]
     },
@@ -726,6 +774,8 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
+            "PullRequests",
+            "PRs",
             "Dev"
         ]
     },
@@ -756,6 +806,7 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
+            "Commits",
             "Dev"
         ]
     },
@@ -789,6 +840,7 @@
         "eval_credentials": "",
         "tags": [
             "HubSpot",
+            "Deal",
             "Internal"
         ]
     },
@@ -822,6 +874,7 @@
         "eval_credentials": "",
         "tags": [
             "HubSpot",
+            "Company",
             "Internal"
         ]
     },
@@ -855,6 +908,8 @@
         "eval_credentials": "",
         "tags": [
             "HubSpot",
+            "Contacts",
+            "Contact",
             "Internal"
         ]
     },
@@ -882,7 +937,9 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "Hacker News",
+            "HackerNews",
+            "Stories",
+            "News",
             "Dev",
             "Public"
         ]
@@ -911,7 +968,8 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "Hacker News",
+            "HackerNews",
+            "Comments",
             "Dev",
             "Public"
         ]
@@ -943,6 +1001,8 @@
         "eval_credentials": "",
         "tags": [
             "ServiceNow",
+            "Knowledge",
+            "Articles",
             "Internal"
         ]
     },
@@ -973,6 +1033,8 @@
         "eval_credentials": "",
         "tags": [
             "ServiceNow",
+            "ServiceCatalog",
+            "Items",
             "Internal"
         ]
     },
@@ -1034,6 +1096,8 @@
         "eval_credentials": "",
         "tags": [
             "Crunchbase",
+            "Organizations",
+            "Company",
             "Internal"
         ]
     },
@@ -1065,6 +1129,8 @@
         "eval_credentials": "",
         "tags": [
             "Blockchain",
+            "Bitcoin",
+            "HashID",
             "Public"
         ]
     },
@@ -1096,6 +1162,8 @@
         "eval_credentials": "",
         "tags": [
             "Blockchain",
+            "Bitcoin",
+            "Wallet",
             "Public"
         ]
     },
@@ -1127,6 +1195,8 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
+            "Trello",
+            "Cards",
             "Atlassian",
             "Internal"
         ]
@@ -1160,6 +1230,7 @@
         "eval_credentials": "",
         "tags": [
             "Asana",
+            "Tasks",
             "Internal"
         ]
     },
@@ -1195,6 +1266,7 @@
         "eval_credentials": "",
         "tags": [
             "MongoDB",
+            "Movies",
             "Internal"
         ]
     },
@@ -1224,6 +1296,7 @@
         "eval_credentials": "",
         "tags": [
             "Snowflake",
+            "Company",
             "Internal"
         ]
     },
@@ -1253,6 +1326,7 @@
         "eval_credentials": "",
         "tags": [
             "LittleSis",
+            "Entities",
             "Public"
         ]
     },
@@ -1284,6 +1358,7 @@
         "eval_credentials": "",
         "tags": [
             "OpenSanctions",
+            "Entities",
             "Public"
         ]
     },
@@ -1420,7 +1495,7 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "National Archives",
+            "NationalArchives",
             "Legal",
             "Public"
         ]
