@@ -29,6 +29,7 @@
         "eval_credentials": "",
         "tags": [
             "HubSpot",
+            "Deal",
             "Internal"
         ]
     },
@@ -62,6 +63,7 @@
         "eval_credentials": "",
         "tags": [
             "HubSpot",
+            "Company",
             "Internal"
         ]
     },
@@ -95,6 +97,8 @@
         "eval_credentials": "",
         "tags": [
             "HubSpot",
+            "Contacts",
+            "Contact",
             "Internal"
         ]
     }

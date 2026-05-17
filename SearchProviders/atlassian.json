@@ -20,6 +20,8 @@
         "results_per_query": 10,
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
+            "Jira",
+            "Issues",
             "Atlassian",
             "Dev"
         ]
@@ -45,6 +47,7 @@
         "results_per_query": 10,
         "credentials": "HTTPBasicAuth('<your-username>','<your-atlassian-token>')",
         "tags": [
+            "Confluence",
             "Atlassian",
             "Dev"
         ]
@@ -77,6 +80,8 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
+            "Trello",
+            "Cards",
             "Atlassian",
             "Internal"
         ]

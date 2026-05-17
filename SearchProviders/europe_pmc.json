@@ -29,8 +29,11 @@
     "credentials": "",
     "eval_credentials": "",
     "tags": [
-        "Public",
+        "EuropePMC",
+        "EPMC",
+        "Articles",
         "STM",
+        "Public",
         "RAG-ready"
     ]
 }

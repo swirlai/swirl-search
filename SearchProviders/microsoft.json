@@ -26,6 +26,9 @@
         "eval_credentials": "",
         "tags": [
             "M365",
+            "Email",
+            "Microsoft",
+            "Outlook",
             "Internal"
         ]
     },
@@ -56,6 +59,9 @@
         "eval_credentials": "",
         "tags": [
             "M365",
+            "Calendar",
+            "Microsoft",
+            "Outlook",
             "Internal"
         ]
     },
@@ -84,6 +90,8 @@
         "eval_credentials": "",
         "tags": [
             "M365",
+            "OneDrive",
+            "Microsoft",
             "Internal"
         ]
     },
@@ -112,6 +120,8 @@
         "eval_credentials": "",
         "tags": [
             "M365",
+            "SharePoint",
+            "Microsoft",
             "Internal"
         ]
     },
@@ -140,6 +150,8 @@
         "eval_credentials": "",
         "tags": [
             "M365",
+            "Teams",
+            "Microsoft",
             "Internal"
         ]
     }

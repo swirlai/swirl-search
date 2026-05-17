@@ -22,8 +22,10 @@
     "credentials": "",
     "eval_credentials": "",
     "tags": [
-        "Public",
+        "arXiv",
+        "Articles",
         "STM",
+        "Public",
         "RAG-ready"
     ]
 }

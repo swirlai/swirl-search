@@ -23,7 +23,9 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "Hacker News",
+            "HackerNews",
+            "Stories",
+            "News",
             "Dev",
             "Public"
         ]
@@ -52,7 +54,8 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "Hacker News",
+            "HackerNews",
+            "Comments",
             "Dev",
             "Public"
         ]

@@ -45,6 +45,7 @@
         "credentials": "key=<your-Google-API-key>",
         "tags": [
             "Google",
+            "Web",
             "Public"
         ]
     },
@@ -73,6 +74,8 @@
         "eval_credentials": "",
         "tags": [
             "Google",
+            "News",
+            "RSS",
             "Public",
             "RAG-ready"
         ]
@@ -154,6 +157,8 @@
         "credentials": "key=<your-Google-API-key>",
         "eval_credentials": "",
         "tags": [
+            "Swirl",
+            "Dev",
             "Public",
             "RAG-ready"
         ]
