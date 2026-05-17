@@ -1,5 +1,5 @@
 {
-    "name": "Articles - EuropePMC.org",
+    "name": "Articles - EuropePMC",
     "active": true,
     "default": true,
     "connector": "RequestsGet",
@@ -13,7 +13,7 @@
             "User-Agent": "Swirlbot/1.0 (+http://swirlaiconnect.com)"
         },
         "timeout": 10
-},
+    },
     "query_processors": [
         "AdaptiveQueryProcessor"
     ],
@@ -29,8 +29,8 @@
     "credentials": "",
     "eval_credentials": "",
     "tags": [
-        "EuropePMC",
-        "EPMC",
-        "STM"
+        "Public",
+        "STM",
+        "RAG-ready"
     ]
 }

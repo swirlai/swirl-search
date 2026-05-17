@@ -2,7 +2,6 @@
     "name": "Companies - Crunchbase",
     "active": false,
     "default": false,
-    "authenticator": "",
     "connector": "RequestsPost",
     "url": "https://api.crunchbase.com/api/v4/searches/organizations",
     "query_template": "{url}",
@@ -57,8 +56,6 @@
     "eval_credentials": "",
     "tags": [
         "Crunchbase",
-        "Organizations",
         "Internal"
-
     ]
 }

@@ -1,5 +1,7 @@
 {
-    "name": "Products- Apache Solr",
+    "name": "Records - Apache Solr",
+    "active": false,
+    "default": false,
     "connector": "RequestsGet",
     "url": "http://localhost:8983/solr/{collection}/select?wt=json",
     "query_template": "{url}&q={query_string}",
@@ -13,10 +15,9 @@
     ],
     "response_mappings": "FOUND=numFound,RESULTS=response.docs",
     "result_mappings": "title=name,body=features,response",
-    "credentials": "HTTPBasicAuth('solr-username','solr-password')",
+    "results_per_query": 10,
+    "credentials": "HTTPBasicAuth('<solr-username>','<solr-password>')",
     "tags": [
-        "Solr",
-        "TechProducts",
         "Internal"
     ]
 }

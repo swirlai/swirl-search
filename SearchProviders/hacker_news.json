@@ -3,7 +3,6 @@
         "name": "News - Hacker News",
         "active": false,
         "default": false,
-        "authenticator": "",
         "connector": "RequestsGet",
         "url": "http://hn.algolia.com/api/v1/search?tags=story",
         "query_template": "{url}&query={query_string}",
@@ -24,16 +23,15 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "HackerNews",
-            "Stories",
-            "Dev"
+            "Hacker News",
+            "Dev",
+            "Public"
         ]
     },
     {
         "name": "Comments - Hacker News",
         "active": false,
         "default": false,
-        "authenticator": "",
         "connector": "RequestsGet",
         "url": "http://hn.algolia.com/api/v1/search?tags=comment",
         "query_template": "{url}&query={query_string}",
@@ -54,10 +52,9 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
-            "HackerNews",
-            "Comments",
-            "Dev"
+            "Hacker News",
+            "Dev",
+            "Public"
         ]
     }
-    
 ]

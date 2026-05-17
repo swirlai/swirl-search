@@ -1,8 +1,7 @@
 {
-    "name": "Movies - MongoDB",
+    "name": "Records - MongoDB",
     "active": false,
     "default": false,
-    "authenticator": "",
     "connector": "MongoDB",
     "url": "sample_mflix:movies",
     "query_template": "",
@@ -30,7 +29,7 @@
     "credentials": "mongodb+srv://<mongodb-username>:<mongodb-password>@<mongdb-cluster>.mongodb.net/?retryWrites=true&w=majority",
     "eval_credentials": "",
     "tags": [
-        "Movies",
-        "MongoDB"
+        "MongoDB",
+        "Internal"
     ]
 }

@@ -26,8 +26,6 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
-            "Code",
-            "Internal",
             "Dev"
         ]
     },
@@ -58,8 +56,6 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
-            "Issues",
-            "Internal",
             "Dev"
         ]
     },
@@ -90,8 +86,6 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
-            "PullRequests",
-            "Internal",
             "Dev"
         ]
     },
@@ -122,8 +116,6 @@
         "eval_credentials": "",
         "tags": [
             "GitHub",
-            "Commits",
-            "Internal",
             "Dev"
         ]
     }

@@ -1,250 +1,244 @@
 [
-  {
-    "name": "Azure/OpenAI",
-    "active": false,
-    "api_key": "<your-azure-openai-key>",
-    "model": "azure/<your-deployment-name>",
-    "config": {
-      "api_base": "https://<your-azure-resource-name>.openai.azure.com",
-      "api_version": "<your-azure-openai-api-version>"
+    {
+        "name": "Azure OpenAI",
+        "active": false,
+        "api_key": "<your-azure-openai-key>",
+        "model": "azure/<your-deployment-name>",
+        "config": {
+            "api_base": "https://<your-azure-resource-name>.openai.azure.com",
+            "api_version": "<your-azure-openai-api-version>"
+        },
+        "tags": [
+            "query",
+            "connector",
+            "rag",
+            "chat"
+        ],
+        "defaults": [
+            "query",
+            "connector",
+            "rag",
+            "chat"
+        ]
     },
-    "tags": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ],
-    "defaults": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ]
-  },
-  {
-    "name": "OpenAI GPT-5",
-    "active": false,
-    "api_key": "<your-openai-key>",
-    "model": "gpt-5",
-    "config": {},
-    "tags": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ],
-    "defaults": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ]
-  },
-  {
-    "name": "Azure/OpenAI (Embeddings)",
-    "active": false,
-    "api_key": "<your-azure-openai-key>",
-    "model": "azure/<your-embeddings-deployment-name>",
-    "config": {
-      "api_base": "https://<your-resource>.openai.azure.com",
-      "api_version": "2024-08-01-preview",
-      "dimensions": 1536
+    {
+        "name": "OpenAI GPT",
+        "active": false,
+        "api_key": "<your-openai-key>",
+        "model": "gpt-5",
+        "config": {},
+        "tags": [
+            "query",
+            "connector",
+            "rag",
+            "chat"
+        ],
+        "defaults": [
+            "query",
+            "connector",
+            "rag",
+            "chat"
+        ]
     },
-    "tags": [
-      "reader"
-    ],
-    "defaults": []
-  },
-  {
-    "name": "Anthropic",
-    "active": false,
-    "api_key": "<your-anthropic-key>",
-    "model": "<your-anthropic-model-name>",
-    "config": {
-      "anthropic_version": "<your-anthropic-api-version>",
-      "max_tokens": 170000,
-      "_max_tokens_comment": "Headroom under Claude's 200K context window for system prompt + tool definitions + structured-output schema. Adjust if your model has a different ceiling (Sonnet/Opus also 200K; older Claude variants 100K)."
+    {
+        "name": "Azure OpenAI Embeddings",
+        "active": false,
+        "api_key": "<your-azure-openai-key>",
+        "model": "azure/<your-embeddings-deployment-name>",
+        "config": {
+            "api_base": "https://<your-resource>.openai.azure.com",
+            "api_version": "2024-08-01-preview",
+            "dimensions": 1536
+        },
+        "tags": [
+            "reader"
+        ],
+        "defaults": []
     },
-    "tags": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ],
-    "defaults": [
-    ]
-  },
-  {
-    "name": "Bedrock Embedding",
-    "active": false,
-    "api_key": "<your-bedrock-api-key>",
-    "model": "amazon.<your-bedrock-embedding-model-name>",
-    "config": {
-      "AWS_REGION_NAME": "<your-aws-region-name>"
+    {
+        "name": "Anthropic Claude",
+        "active": false,
+        "api_key": "<your-anthropic-key>",
+        "model": "<your-anthropic-model-name>",
+        "config": {
+            "anthropic_version": "<your-anthropic-api-version>",
+            "max_tokens": 170000,
+            "_max_tokens_comment": "Headroom under Claude's 200K context window for system prompt + tool definitions + structured-output schema. Adjust if your model has a different ceiling (Sonnet/Opus also 200K; older Claude variants 100K)."
+        },
+        "tags": [
+            "query",
+            "connector",
+            "rag",
+            "chat"
+        ],
+        "defaults": []
     },
-    "tags": [
-      "reader"
-    ],
-    "defaults": [
-      "reader"
-    ]
-  },
-  {
-    "name": "Cohere Embeddings",
-    "active": false,
-    "api_key": "<your-cohere-key>",
-    "model": "embed-english-v3.0",
-    "config": {},
-    "tags": [
-      "reader"
-    ],
-    "defaults": [
-      "reader"
-    ]
-  },
-  {
-    "name": "Custom LLM",
-    "active": false,
-    "api_key": "<your-custom-llm-key>",
-    "model": "",
-    "config": {
-      "api_base": "<your-GAI-base-url>",
-      "custom_llm": "<your-llm-type> e.g. 'openai', 'azure', 'anthropic', 'cohere', 'huggingface'"
+    {
+        "name": "AWS Bedrock Embeddings",
+        "active": false,
+        "api_key": "<your-bedrock-api-key>",
+        "model": "amazon.<your-bedrock-embedding-model-name>",
+        "config": {
+            "AWS_REGION_NAME": "<your-aws-region-name>"
+        },
+        "tags": [
+            "reader"
+        ],
+        "defaults": [
+            "reader"
+        ]
     },
-    "tags": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ],
-    "defaults": [
-    ]
-  },
-  {
-    "name": "Gemini (AI Studio)",
-    "active": false,
-    "api_key": "<your-gemini-key>",
-    "model": "<your-gemini-model-name>",
-    "config": {
-      "api_base": "https://generativelanguage.googleapis.com"
+    {
+        "name": "Cohere Embeddings",
+        "active": false,
+        "api_key": "<your-cohere-key>",
+        "model": "embed-english-v3.0",
+        "config": {},
+        "tags": [
+            "reader"
+        ],
+        "defaults": [
+            "reader"
+        ]
     },
-    "tags": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ],
-    "defaults": [
-    ]
-  },
-  {
-    "name": "HuggingFace (LLama, Qwen, DeepSeek etc.)",
-    "active": false,
-    "api_key": "<your-huggingface-key>",
-    "model": "huggingface/<your-model-name>",
-    "config": {
-      "api_base": "https://<your-endpoint>.huggingface.cloud"
+    {
+        "name": "Custom LLM",
+        "active": false,
+        "api_key": "<your-custom-llm-key>",
+        "model": "",
+        "config": {
+            "api_base": "<your-GAI-base-url>",
+            "custom_llm": "<your-llm-type> e.g. 'openai', 'azure', 'anthropic', 'cohere', 'huggingface'"
+        },
+        "tags": [
+            "query",
+            "connector",
+            "rag",
+            "chat"
+        ],
+        "defaults": []
     },
-    "tags": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-  ],
-    "defaults": [
-    ]
-  },
-  {
-    "name": "HuggingFace (Embeddings)",
-    "active": false,
-    "api_key": "<your-huggingface-key>",
-    "model": "huggingface/<your-embedding-model-name>",
-    "config": {},
-    "tags": [
-      "reader"
-    ],
-    "defaults": [
-      "reader"
-    ]
-  },
-  {
-    "name": "Ollama (LLama, Qwen, DeepSeek etc.)",
-    "active": false,
-    "api_key": "",
-    "model": "llama3.1:8b",
-    "config": {
-      "api_base": "http://localhost:11434"
+    {
+        "name": "Google Gemini",
+        "active": false,
+        "api_key": "<your-gemini-key>",
+        "model": "<your-gemini-model-name>",
+        "config": {
+            "api_base": "https://generativelanguage.googleapis.com"
+        },
+        "tags": [
+            "query",
+            "connector",
+            "rag",
+            "chat"
+        ],
+        "defaults": []
     },
-    "tags": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ],
-    "defaults": [
-    ]
-  },
-  {
-    "name": "OpenAI Embeddings",
-    "active": false,
-    "api_key": "<your-openai-key>",
-    "model": "<your-openai-embedding-model-name>",
-    "config": {},
-    "tags": [
-      "reader"
-    ],
-    "defaults": [
-      "reader"
-    ]
-  },
-  {
-    "name": "spaCy",
-    "active": true,
-    "api_key": "",
-    "model": "",
-    "config": {},
-    "tags": [
-        "reader"
-    ],
-    "defaults": [
-        "reader"
-    ]
-  },
-  {
-    "name": "Ollama Embeddings (mxbai-embed-large)",
-    "active": false,
-    "api_key": "",
-    "model": "ollama/mxbai-embed-large",
-    "config": {
-      "api_base": "http://localhost:11434",
-      "dimensions": 1024,
-      "NO_KEY_CHECK": true,
-      "NO_MODEL_CHECK": true
+    {
+        "name": "Hugging Face",
+        "active": false,
+        "api_key": "<your-huggingface-key>",
+        "model": "huggingface/<your-model-name>",
+        "config": {
+            "api_base": "https://<your-endpoint>.huggingface.cloud"
+        },
+        "tags": [
+            "query",
+            "connector",
+            "rag",
+            "chat"
+        ],
+        "defaults": []
     },
-    "tags": [
-      "reader"
-    ],
-    "defaults": [
-      "reader"
-    ]
-  },
-  {
-    "name": "Vertex AI (Gemini)",
-    "active": false,
-    "api_key": "<your-gcp-key-file-path>",
-    "model": "gemini-1.5-pro",
-    "config": {
-      "VERTEX_PROJECT": "<your-gcp-project-id>",
-      "VERTEX_LOCATION": "us-central1",
-      "GOOGLE_APPLICATION_CREDENTIALS": "/path/to/service_account.json"
+    {
+        "name": "Hugging Face Embeddings",
+        "active": false,
+        "api_key": "<your-huggingface-key>",
+        "model": "huggingface/<your-embedding-model-name>",
+        "config": {},
+        "tags": [
+            "reader"
+        ],
+        "defaults": [
+            "reader"
+        ]
     },
-    "tags": [
-      "query",
-      "connector",
-      "rag",
-      "chat"
-    ],
-    "defaults": [
-    ]
-  }
+    {
+        "name": "Ollama",
+        "active": false,
+        "api_key": "",
+        "model": "llama3.1:8b",
+        "config": {
+            "api_base": "http://localhost:11434"
+        },
+        "tags": [
+            "query",
+            "connector",
+            "rag",
+            "chat"
+        ],
+        "defaults": []
+    },
+    {
+        "name": "OpenAI Embeddings",
+        "active": false,
+        "api_key": "<your-openai-key>",
+        "model": "<your-openai-embedding-model-name>",
+        "config": {},
+        "tags": [
+            "reader"
+        ],
+        "defaults": [
+            "reader"
+        ]
+    },
+    {
+        "name": "spaCy",
+        "active": true,
+        "api_key": "",
+        "model": "",
+        "config": {},
+        "tags": [
+            "reader"
+        ],
+        "defaults": [
+            "reader"
+        ]
+    },
+    {
+        "name": "Ollama Embeddings",
+        "active": false,
+        "api_key": "",
+        "model": "ollama/mxbai-embed-large",
+        "config": {
+            "api_base": "http://localhost:11434",
+            "dimensions": 1024,
+            "NO_KEY_CHECK": true,
+            "NO_MODEL_CHECK": true
+        },
+        "tags": [
+            "reader"
+        ],
+        "defaults": [
+            "reader"
+        ]
+    },
+    {
+        "name": "Google Vertex Gemini",
+        "active": false,
+        "api_key": "<your-gcp-key-file-path>",
+        "model": "gemini-1.5-pro",
+        "config": {
+            "VERTEX_PROJECT": "<your-gcp-project-id>",
+            "VERTEX_LOCATION": "us-central1",
+            "GOOGLE_APPLICATION_CREDENTIALS": "/path/to/service_account.json"
+        },
+        "tags": [
+            "query",
+            "connector",
+            "rag",
+            "chat"
+        ],
+        "defaults": []
+    }
 ]

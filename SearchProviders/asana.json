@@ -2,7 +2,6 @@
     "name": "Tasks - Asana",
     "active": false,
     "default": false,
-    "authenticator": "",
     "connector": "RequestsGet",
     "url": "https://app.asana.com/api/1.0/workspaces/<your-workspace-gid>/tasks/search?opt_fields=gid,resource_type,assignee_status,completed,completed_at,completed_by.name,created_at,created_by.name,due_on,likes.user.name,modified_at,name,notes,num_subtasks,start_on,assignee.name,assignee_section.name,followers.name,parent.name,permalink_url,projects.name,tags.name,workspace.name",
     "query_template": "{url}&text={query_string}",
@@ -28,7 +27,6 @@
     "eval_credentials": "",
     "tags": [
         "Asana",
-        "Tasks",
         "Internal"
     ]
 }
