@@ -362,7 +362,16 @@ class CosineRelevancyPostResultProcessor(PostResultProcessor):
         (dict_result_lens, list_query_lens) = self._pass_2_extract_result_len_stats()
 
         if not dict_result_lens:
-            if self.result_count == 0:
+            # `result_count` sums Result.retrieved across every row, including
+            # NO_AUTH / ERROR rows where retrieved is -1, so it can be non-zero
+            # even when no provider produced an actual document. The accurate
+            # signal is whether any READY row carries scorable docs — if not,
+            # the processor has nothing to compute and that's not a config bug.
+            has_scorable_docs = any(
+                getattr(r, 'status', None) == 'READY' and getattr(r, 'json_results', None)
+                for r in self.results
+            )
+            if not has_scorable_docs:
                 # not an error
                 pass
             else:
