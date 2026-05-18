@@ -67,7 +67,7 @@ docker compose pull && docker compose up
 
 Open <http://localhost:8000> and log in with `admin` / `password`.
 
-> **Note:** The Docker quickstart is intended for evaluation and development. The container does not retain data or configuration when shut down — for persistent deployment, see the [Admin Guide](https://docs.swirlaiconnect.com/admin-guide).
+> **Note:** The Docker quickstart is intended for evaluation and development. The container does not retain data or configuration when shut down. For persistent deployment, see the [Installation - Community](https://docs.swirlaiconnect.com/installation-community) guide, the [Admin Guide](https://docs.swirlaiconnect.com/admin-guide), or the [Kubernetes Deployment](https://docs.swirlaiconnect.com/kubernetes-guide) guide for cluster setups.
 
 ### Option B — Developer install (from source)
 
@@ -229,7 +229,7 @@ Install: `pipx install git+https://github.com/swirlai/swirl-mcp-server`. Then ad
 }
 ```
 
-Restart Claude Desktop and `swirl` should appear in the tools menu. Read more at [swirlai/swirl-mcp-server](https://github.com/swirlai/swirl-mcp-server) — six MCP tools (`search`, `rag_answer`, `list_providers`, `create_search`, `get_results`, `list_searches`), with Claude Code and Cursor configs in [`examples/`](https://github.com/swirlai/swirl-mcp-server/tree/main/examples).
+Restart Claude Desktop and `swirl` should appear in the tools menu. Read more in the [MCP Server guide](https://docs.swirlaiconnect.com/mcp-guide) or at [swirlai/swirl-mcp-server](https://github.com/swirlai/swirl-mcp-server) — six MCP tools (`search`, `rag_answer`, `list_providers`, `create_search`, `get_results`, `list_searches`), with Claude Code and Cursor configs in [`examples/`](https://github.com/swirlai/swirl-mcp-server/tree/main/examples).
 
 <br/>
 
@@ -247,8 +247,8 @@ Restart Claude Desktop and `swirl` should appear in the tools menu. Read more at
 | 📖 | [Matching on word stems](https://docs.swirlaiconnect.com/developer-reference#cosinerelevancypostresultprocessor) and stopword handling via NLTK |
 | 🚫 | [Duplicate detection](https://docs.swirlaiconnect.com/developer-guide#detect-and-remove-duplicate-results) by field or Cosine Similarity threshold |
 | 🔄 | Re-ranking via [Cosine Vector Similarity](https://docs.swirlaiconnect.com/developer-reference#cosinerelevancypostresultprocessor) using spaCy and NLTK |
-| 🎚️ | [Result mixers](https://docs.swirlaiconnect.com/developer-reference#mixers-1) — relevancy, date, round-robin |
-| ✒️ | [Optional spell correction](https://docs.swirlaiconnect.com/developer-guide#add-spelling-correction) using TextBlob |
+| 🎚️ | [Result mixers](https://docs.swirlaiconnect.com/developer-reference#mixers_1) — relevancy, date, round-robin |
+| ✒️ | [Optional spell correction](https://docs.swirlaiconnect.com/developer-guide#spellcheck-example) using TextBlob |
 | 🔌 | Extensible [Connector](https://github.com/swirlai/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/swirlai/swirl-search/tree/main/swirl/mixers) objects |
 
 <br/>
@@ -267,7 +267,7 @@ New to GitHub contributions? The [GitHub contributing guide](https://docs.github
 
 ## 📖 Documentation
 
-[Overview](https://docs.swirlaiconnect.com/) | [Quick Start](https://docs.swirlaiconnect.com/quick-start) | [User Guide](https://docs.swirlaiconnect.com/user-guide) | [Admin Guide](https://docs.swirlaiconnect.com/admin-guide) | [M365 Guide](https://docs.swirlaiconnect.com/m365-guide) | [Developer Guide](https://docs.swirlaiconnect.com/developer-guide) | [Developer Reference](https://docs.swirlaiconnect.com/developer-reference) | [AI Guide](https://docs.swirlaiconnect.com/rag-guide)
+[Overview](https://docs.swirlaiconnect.com/) | [Quick Start](https://docs.swirlaiconnect.com/quick-start) | [Installation - Community](https://docs.swirlaiconnect.com/installation-community) | [User Guide](https://docs.swirlaiconnect.com/user-guide) | [Admin Guide](https://docs.swirlaiconnect.com/admin-guide) | [M365 Guide](https://docs.swirlaiconnect.com/m365-guide) | [MCP Guide](https://docs.swirlaiconnect.com/mcp-guide) | [AI Guide](https://docs.swirlaiconnect.com/rag-guide) | [AI Search Assistant](https://docs.swirlaiconnect.com/ai-search-assistant) | [Developer Guide](https://docs.swirlaiconnect.com/developer-guide) | [Developer Reference](https://docs.swirlaiconnect.com/developer-reference) | [Kubernetes](https://docs.swirlaiconnect.com/kubernetes-guide) | [Monitoring](https://docs.swirlaiconnect.com/monitoring-guide) | [Troubleshooting](https://docs.swirlaiconnect.com/troubleshooting) | [Tutorials](https://docs.swirlaiconnect.com/tutorials) | [Glossary](https://docs.swirlaiconnect.com/glossary)
 
 <br/>
 
