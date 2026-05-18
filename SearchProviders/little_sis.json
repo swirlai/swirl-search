@@ -1,8 +1,7 @@
 {
-    "name": "Entities - LittleSis.org",
+    "name": "Entities - LittleSis",
     "active": false,
     "default": false,
-    "authenticator": "",
     "connector": "RequestsGet",
     "url": "https://littlesis.org/api/entities/search",
     "query_template": "{url}?q={query_string}*",
@@ -25,6 +24,7 @@
     "eval_credentials": "",
     "tags": [
         "LittleSis",
-        "Entities"
+        "Entities",
+        "Public"
     ]
 }

@@ -1,0 +1,202 @@
+/*
+ * SWIRL Django admin theme.
+ *
+ * Matches the look of /swirl/ (the main SWIRL dashboard): a mostly
+ * white/off-white surface with SWIRL blue (#0060A8) reserved for links,
+ * buttons, and highlight accents. Overrides Django 4.x admin CSS
+ * custom properties; respects the [data-theme="dark"] toggle.
+ */
+
+:root,
+[data-theme="light"] {
+  /* Core SWIRL palette */
+  --primary:           #0060A8;
+  --primary-fg:        #FCFBFB;
+  --secondary:         #0060A8;
+  --accent:            #0060A8;
+
+  /* Text / body */
+  --body-fg:           #41484D;
+  --body-quiet-color:  #6B7280;
+  --body-loud-color:   #1E293B;
+  --body-bg:           #CBD5E1;   /* darker than Galaxy body so the
+                                     caption stripe (which uses --body-bg)
+                                     reads clearly against the white
+                                     #FCFBFB card surface. AA-safe for
+                                     #0060A8 caption text (~5.0:1) and
+                                     #4B5563 category headers (~4.8:1). */
+
+  /* Header bar: white with blue text, matches /swirl/ card style */
+  --header-bg:             #FCFBFB;
+  --header-color:          #0060A8;
+  --header-link-color:     #0060A8;
+  --header-branding-color: #0060A8;
+
+  /* Breadcrumbs: very light blue, blue links */
+  --breadcrumbs-bg:      #F0F7FF;
+  --breadcrumbs-fg:      #41484D;
+  --breadcrumbs-link-fg: #0060A8;
+
+  /* Links */
+  --link-fg:           #0060A8;
+  --link-hover-color:  #004F8A;
+  --link-selected-fg:  #004F8A;
+
+  /* Buttons */
+  --button-bg:         #0060A8;
+  --button-fg:         #FCFBFB;
+  --button-hover-bg:   #004F8A;
+
+  --default-button-bg:       #0060A8;
+  --default-button-hover-bg: #004F8A;
+
+  --close-button-bg:         #6B7280;
+  --close-button-hover-bg:   #41484D;
+
+  --delete-button-bg:        #B91C1C;  /* WCAG AA: ~7.5:1 white-on-red */
+  --delete-button-hover-bg:  #7F1D1D;  /* WCAG AAA: ~10.7:1 */
+
+  --object-tools-bg:         #0060A8;
+  --object-tools-fg:         #FCFBFB;
+  --object-tools-hover-bg:   #004F8A;
+
+  /* Selection / row highlights */
+  --selected-row: #F0F7FF;
+  --selected-bg:  #E0EFFF;
+
+  /* Separators / surfaces */
+  --border-color:     #E5E7EB;
+  --hairline-color:   #E5E7EB;
+  --darkened-bg:      #F4F3F2;
+  --message-success-bg: #E6F4EA;
+  --message-warning-bg: #FEF3C7;
+  --message-error-bg:   #FEE2E2;
+}
+
+/*
+ * Note on dark mode: we deliberately do NOT auto-switch on
+ * prefers-color-scheme. The /swirl/ dashboard stays light regardless of
+ * system preference, and we want the admin to match. Users who want
+ * dark mode can still opt in via Django's header toggle (which sets
+ * [data-theme="dark"], handled below).
+ */
+
+[data-theme="dark"] {
+  --primary:           #4C9DE4;
+  --secondary:         #4C9DE4;
+  --body-fg:           #CBD5E1;
+  --body-bg:           #11172B;
+  --body-quiet-color:  #94A3B8;
+  --border-color:      #1E293B;
+  --header-bg:         #0E1626;
+  --header-color:      #FCFBFB;
+  --header-link-color: #FCFBFB;
+  --breadcrumbs-bg:    #1E293B;
+  --breadcrumbs-fg:    #CBD5E1;
+  --breadcrumbs-link-fg: #93C5FD;
+  --link-fg:           #93C5FD;
+  --link-hover-color:  #4C9DE4;
+}
+
+/* --- Structural refinements to match /swirl/ --------------------------- */
+
+/* Thin blue bottom border under the white header. */
+#header {
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 1px 0 rgba(0, 96, 168, 0.06);
+}
+[data-theme="dark"] #header {
+  border-bottom: 1px solid #1E293B;
+  box-shadow: none;
+}
+
+#branding #site-name,
+#branding #site-name a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--header-branding-color);
+}
+#branding img.swirl-logo {
+  height: 28px;
+  width: auto;
+}
+
+/* Module (section) headers: SWIRL light-blue strip with SWIRL-blue
+   text. Uses the same #F0F7FF accent as breadcrumbs and selected rows
+   for visual consistency. Contrast: #0060A8 text on #F0F7FF ≈ 6.0:1
+   (WCAG AA). */
+.module h2,
+.module caption,
+.inline-group h2 {
+  background: #F0F7FF;
+  color: var(--primary);
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 600;
+}
+
+/* Caption links (<a class="section">) inside .module caption. Django's
+   default points these at var(--header-link-color) which resolves to
+   near-white in dark mode — giving white-on-white when the caption bg
+   stays light due to cascade. Pin to --primary so it always tracks the
+   caption text color. */
+.module caption a.section:link,
+.module caption a.section:visited {
+  color: var(--primary);
+}
+
+[data-theme="dark"] .module h2,
+[data-theme="dark"] .module caption,
+[data-theme="dark"] .inline-group h2 {
+  background: #1E293B;
+  color: #93C5FD;
+  border-bottom-color: #0E1626;
+}
+[data-theme="dark"] .module caption a.section:link,
+[data-theme="dark"] .module caption a.section:visited {
+  color: #93C5FD;
+}
+
+/* Module bodies: plain white surface. Border darkened for WCAG 1.4.11
+   (non-text contrast >= 3:1 vs the #FCFBFB card background). */
+.module {
+  background: #FCFBFB;
+  border: 1px solid #9CA3AF;
+  border-radius: 4px;
+}
+
+/* Admin index (body.dashboard) tiles: force all rows transparent so
+   the white card body shows through. Django's default row alternation
+   paints odd rows with var(--body-bg) (our darker gray) and even rows
+   with var(--darkened-bg) (cream), producing jarring stripes against
+   our new body color. Scoped to .dashboard so changelist data tables
+   keep their normal row1/row2 alternation. */
+body.dashboard .module tr,
+body.dashboard .module tr th,
+body.dashboard .module tr td {
+  background: transparent;
+}
+[data-theme="dark"] .module {
+  background: #11172B;
+  border-color: #1E293B;
+}
+
+/* Change-list rows: lighter row highlight on selection. */
+#changelist table tbody tr.selected {
+  background: var(--selected-bg);
+}
+
+/* Action dropdown area: light surface, blue button. */
+.changelist-actions,
+.actions {
+  background: var(--body-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Fieldset headers inside the change form: lighter weight. */
+fieldset.module > h2 {
+  padding: 8px 12px;
+  font-size: 0.95em;
+  text-transform: none;
+  letter-spacing: 0;
+}

@@ -414,7 +414,7 @@ computers, computer
 cheap.* smartphones, cheap smartphone
 on
 to
-What is the % In-Stock for (.+?) YTD\?, [% In Stock] \\1 ‘Year to date’
+What is the % In-Stock for (.+?) YTD\\?, [% In Stock] \\1 ‘Year to date’
 """
 }
 @pytest.fixture

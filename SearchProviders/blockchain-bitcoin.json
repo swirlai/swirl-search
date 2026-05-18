@@ -1,9 +1,8 @@
 [
     {
-        "name": "Bitcoin Transaction - Blockchain.com",
+        "name": "Transactions - Blockchain",
         "active": false,
         "default": false,
-        "authenticator": "",
         "connector": "RequestsGet",
         "url": "https://blockchain.info/rawtx/",
         "query_template": "{url}{query_string}",
@@ -29,14 +28,14 @@
         "tags": [
             "Blockchain",
             "Bitcoin",
-            "HashID"
+            "HashID",
+            "Public"
         ]
     },
     {
-        "name": "Bitcoin Address - Blockchain.com",
+        "name": "Wallets - Blockchain",
         "active": false,
         "default": false,
-        "authenticator": "",
         "connector": "RequestsGet",
         "url": "https://blockchain.info/rawaddr/",
         "query_template": "{url}{query_string}",
@@ -62,7 +61,8 @@
         "tags": [
             "Blockchain",
             "Bitcoin",
-            "Wallet"
+            "Wallet",
+            "Public"
         ]
-    }    
+    }
 ]

@@ -13,6 +13,7 @@ from subprocess import SubprocessError
 import json
 import time
 import signal
+import glob
 from datetime import datetime
 
 from swirl_server import settings
@@ -20,31 +21,21 @@ from swirl_server import settings
 module_name = 'swirl.py'
 
 from swirl.banner import SWIRL_BANNER, bcolors, SWIRL_VERSION
-from swirl.utils import get_page_fetcher_or_none, is_running_celery_redis
+from swirl.utils import is_running_celery_redis
 from swirl.services import SWIRL_SERVICES_DEBUG, SWIRL_SERVICES_DEBUG_DICT, SERVICES, SERVICES_DICT
 
 SWIRL_CORE_SERVICES = ['django', 'celery-worker']
-SWIRL_VERSION_CHECK_URL = 'http://updatecheck.swirl.today/'
+
+# How long to poll after launch before declaring success (seconds).
+# Increase only if a service needs more than 2 s to detect a bad config and exit.
+EARLY_FAIL_WINDOW = 2.0
+EARLY_FAIL_POLL   = 0.1   # seconds between polls during launch window
+
+# How long to wait for a SIGTERM'd service to exit before giving up.
+STOP_TIMEOUT      = 8.0
+STOP_POLL         = 0.25
 
 COMMAND_LIST = [ 'help', 'start', 'debug', 'start_sleep', 'stop', 'restart', 'migrate', 'setup', 'status', 'watch', 'logs' ]
-
-def get_swirl_version():
-    """
-    Fetch the current version of swirl and if it fails for any reason, return the current
-    version instead.
-    """
-    version = SWIRL_VERSION
-    url = SWIRL_VERSION_CHECK_URL
-    try:
-        page = get_page_fetcher_or_none(url=url).get_page()
-        version_text = page.get_text_strip_html()
-        match = re.search(r'(\d+\.\d+(?:\.\d+){0,2})', version_text)
-        if match:
-            version = match.group(1)
-    except Exception as err:
-        print('Error while checking version; startup continuing')
-    finally:
-        return version.strip()
 
 def service_is_retired(service_name):
     ret = False
@@ -64,11 +55,6 @@ def check_pid(pid):
     proc = subprocess.run(['ps','-p',str(pid)], capture_output=True)
     result = proc.stdout.decode('UTF-8')
     return str(pid) in result
-
-def show_pids(pid_string):
-    proc = subprocess.run(['ps','-p', pid_string[:-1]], capture_output=True)
-    result = proc.stdout.decode('UTF-8')
-    return result
 
 ##################################################
 
@@ -99,7 +85,10 @@ def write_swirl_file(dict_pid):
 ##################################################
 
 def launch(name, path):
-
+    """
+    Start a service subprocess and poll for EARLY_FAIL_WINDOW seconds.
+    Returns the pid (>0) on success, or -1 if the process exited early.
+    """
     # prepare the path
     path_list = path.split()
 
@@ -117,14 +106,22 @@ def launch(name, path):
 
     # do not close this file
 
-    if process.returncode == None:
-        return process.pid
-    else:
-        return -1
+    # Poll for EARLY_FAIL_WINDOW seconds to catch immediate exits (bad config, port in use, etc.)
+    deadline = time.monotonic() + EARLY_FAIL_WINDOW
+    while time.monotonic() < deadline:
+        rc = process.poll()
+        if rc is not None:
+            # Process exited during the window
+            if rc == 0:
+                return process.pid   # clean daemonised exit — treat as success
+            return -1                # non-zero exit = failure
+        time.sleep(EARLY_FAIL_POLL)
+
+    return process.pid
 
 ##################################################
 
-def start(service_list):
+def start(service_list, no_version_check=False):
 
     dict_pid = {}
 
@@ -133,83 +130,67 @@ def start(service_list):
     if dict_pid:
         for service_name in dict_pid:
             if service_name in service_list:
-                print(f"Error: {service_name} appears to be running, please check .swirl or remove it; exiting...")
+                print(f"  {service_name} is already running — remove .swirl if this is incorrect")
                 return False
         # end for
         # items in service_list are NOT in dict_pid, so continue and start them
     # end if
 
     if not os.path.exists('./logs'):
-        print("Warning: logs directory does not exist, creating it")
+        print("  Creating logs/ directory")
         os.mkdir('./logs')
 
     if not is_running_celery_redis():
-           print(f"Error: Celery requires redis, settings.CELERY_BROKER_URL:{settings.CELERY_BROKER_URL}\n"
-                 f"settings.CELERY_RESULT_BACKEND:{settings.CELERY_RESULT_BACKEND} but it does not appear to be running,\n"
-                 "please consult the admin guide at https://docs.swirlaiconnect.com/Admin-Guide.html.")
-           return False
+        print(f"  Redis is not running or unreachable ({settings.CELERY_BROKER_URL})")
+        print( "  Start Redis before starting SWIRL — see https://docs.swirlaiconnect.com/Admin-Guide.html")
+        return False
 
     # start service_list
-    pids = ""
+    W = 16   # name column width
+    print("Starting SWIRL:")
     flag = False
     for service_name in service_list:
         if service_name in SERVICES_DICT:
             if service_is_retired(service_name=service_name):
                 continue
-            print(f"Start: {service_name} -> {SERVICES_DICT[service_name]} ... ", end='')
+            print(f"  {service_name:<{W}} ...", end='', flush=True)
             result = launch(service_name, SERVICES_DICT[service_name])
-            time.sleep(5)
             if result > 0:
-                print(f'Ok, pid: {result}')
+                print(f'  started  (pid {result})')
                 dict_pid[service_name] = result
-                pids = pids + str(result) + ','
             else:
-                print(f"Error: {result}, check logs for output")
+                print(f'  error    — check logs/{service_name}.log')
                 flag = True
             # end if
         else:
-            print(f"Warning: unknown service: {service_name}, ignoring\n")
+            print(f"  Unknown service '{service_name}' — ignored")
         # end if
     # end for
 
     if len(dict_pid) > 0:
-        # something was started, write the file
-        print("Updating .swirl... ", end='')
         write_swirl_file(dict_pid)
-        print("Ok")
-
-    print()
-    print(show_pids(pids))
 
     if flag:
         return False
 
-    try:
-        sw_version = get_swirl_version()
-        if sw_version != SWIRL_VERSION:
-            print(f"You're using version {SWIRL_VERSION} of Swirl, and version {sw_version} is available.")
-        else:
-            print(f"You're using version {SWIRL_VERSION} of Swirl, the current version.")
-    except Exception as err:
-        print(f"INFO {err} getting version, continuing start")
-
+    print(f"\nSWIRL {SWIRL_VERSION} is running.")
     return True
 
 ##################################################
 
-def start_sleep (service_list):
+def start_sleep (service_list, no_version_check=False):
 
-    status = start(service_list)
+    status = start(service_list, no_version_check=no_version_check)
     return status
 
 ##################################################
 
-def debug(service_list):
+def debug(service_list, no_version_check=False):
     pass
 
 ##################################################
 
-def watch(service_list):
+def watch(service_list, no_version_check=False):
 
     while 1:
         try:
@@ -224,12 +205,17 @@ def watch(service_list):
 
 ##################################################
 
-def logs(service_list):
+def logs(service_list, no_version_check=False):
 
-    print("tail -f logs/*.log - hit ^C to stop:")
+    log_files = sorted(glob.glob('logs/*.log'))
+    if not log_files:
+        print("No log files found in logs/")
+        return True
+
+    print(f"tail -f {' '.join(log_files)} - hit ^C to stop:")
 
     try:
-        p = subprocess.Popen(['tail','-f','logs/django.log','logs/celery-worker.log'], stdout=subprocess.PIPE)
+        p = subprocess.Popen(['tail', '-f'] + log_files, stdout=subprocess.PIPE)
 
         while p.poll() is None:
             l = p.stdout.readline()
@@ -243,38 +229,34 @@ def logs(service_list):
 
 ##################################################
 
-def status(service_list):
+def status(service_list, no_version_check=False):
 
     # check if .swirl exists
     dict_pid = load_swirl_file()
 
     if not dict_pid:
-        print(f"Swirl does not appear to be running - .swirl not found")
+        print("  SWIRL is not running")
         return True
 
-    pid_string = ""
+    W = 16   # name column width
+    print("SWIRL status:")
     for service_name in dict_pid:
         if service_name in service_list:
             if service_is_retired(service_name=service_name):
                 continue
-            pid_string = pid_string + str(dict_pid[service_name]) + ','
-            print(f"Service: {service_name}...", end='')
-            if check_pid(dict_pid[service_name]):
-                print(f"RUNNING, pid:{dict_pid[service_name]}")
+            pid = dict_pid[service_name]
+            if check_pid(pid):
+                print(f"  {service_name:<{W}} running   pid {pid}")
             else:
-                print(f"UNKNOWN, pid:{dict_pid[service_name]} not found")
-            # end if
+                print(f"  {service_name:<{W}} unknown   pid {pid} not found")
         # end if
     # end for
-
-    print()
-    print(show_pids(pid_string))
 
     return True
 
 ##################################################
 
-def migrate(service_list):
+def migrate(service_list, no_version_check=False):
 
     print("Checking Migrations:")
 
@@ -314,7 +296,16 @@ def migrate(service_list):
 
 ##################################################
 
-def stop(service_list):
+def _wait_for_pid_exit(pid):
+    """Poll until the process is gone or STOP_TIMEOUT is reached. Returns True if gone."""
+    deadline = time.monotonic() + STOP_TIMEOUT
+    while time.monotonic() < deadline:
+        if not check_pid(pid):
+            return True
+        time.sleep(STOP_POLL)
+    return not check_pid(pid)
+
+def stop(service_list, no_version_check=False):
 
     dict_pid = {}
 
@@ -322,11 +313,12 @@ def stop(service_list):
     dict_pid = load_swirl_file()
 
     if not dict_pid:
-        print(f"Error: .swirl not found, exiting")
+        print("  SWIRL is not running")
         return False
 
+    W = 16   # name column width
     # stop service_list
-    pids = ""
+    print("Stopping SWIRL:")
     stopped_names = []
     flag = False
     for service_name in dict_pid:
@@ -334,106 +326,83 @@ def stop(service_list):
         if service_name in service_list:
             if service_is_retired(service_name=service_name):
                 continue
-            # if specified as argument to command
+            # first listed service is stopped last
             if service_name == SERVICES[0]['name']:
-                # except for the first listed service
                 continue
-            print(f"Stop: {service_name}, pid: {dict_pid[service_name]}... ", end='')
+            print(f"  {service_name:<{W}} (pid {dict_pid[service_name]}) ...", end='', flush=True)
             pid = int(dict_pid[service_name])
             try:
-                os.kill(pid, 0)  # if the pid doesn't exist, this will throw an exception
+                os.kill(pid, 0)
                 os.kill(pid, signal.SIGTERM)
             except OSError as err:
-                print(f"Error: {err}")
+                print(f"  error    — {err}")
                 flag = True
-            time.sleep(10)
-            # confirm
-            if check_pid(pid):
-                print(f"Error: still running!")
-                flag = True
-            else:
-                print(f"Ok")
+            if _wait_for_pid_exit(pid):
+                print(f"  stopped")
                 stopped_names.append(service_name)
-            pids = pids + str(pid) + ','
+            else:
+                print(f"  error    — still running after {STOP_TIMEOUT:.0f}s")
+                flag = True
             # end if
         # end if
     # end for
 
-    # shut down the first service, last - IF specified
+    # shut down the first service last
     if SERVICES[0]['name'] in dict_pid:
         if SERVICES[0]['name'] in service_list:
-            print(f"Stop: {SERVICES[0]['name']}, pid_group: {dict_pid[SERVICES[0]['name']]}... ", end='')
-            pid = int(dict_pid[SERVICES[0]['name']])
+            svc = SERVICES[0]['name']
+            print(f"  {svc:<{W}} (pid {dict_pid[svc]}) ...", end='', flush=True)
+            pid = int(dict_pid[svc])
             try:
                 pgrp = os.getpgid(pid)
                 os.killpg(pgrp, signal.SIGTERM)
-                # os.kill(pid, 0)  # if the pid doesn't exist, this will throw an exception
-                # os.kill(pid, signal.SIGTERM)
             except OSError as err:
-                print(f"Error: {err}")
+                print(f"  error    — {err}")
                 flag = True
-            time.sleep(10)
-            # confirm
-            if check_pid(pid):
-                print(f"Error: still running!")
-                flag = True
+            if _wait_for_pid_exit(pid):
+                print(f"  stopped")
+                stopped_names.append(svc)
             else:
-                print(f"Ok")
-                stopped_names.append(SERVICES[0]['name'])
-            pids = pids + str(pid) + ','
+                print(f"  error    — still running after {STOP_TIMEOUT:.0f}s")
+                flag = True
             # end if
     # end if
-
-    print()
-    print(show_pids(pids))
 
     for service_name in stopped_names:
         del dict_pid[service_name]
 
     if dict_pid:
-        # print("Removing stopped services from .swirl... ", end='')
         write_swirl_file(dict_pid)
-        # print("Ok")
 
     if flag:
-        print("Warning: at least one error occurred, check .swirl for remaining pids")
+        print("  Warning: some services may still be running — check .swirl")
         return False
 
     if not dict_pid:
-        # print("All services stopped, removing .swirl... ", end='')
         try:
             os.remove('.swirl')
         except OSError as err:
-            print(f"Error: {err}")
+            print(f"  error removing .swirl — {err}")
             return False
-        # print("Ok")
-    # end if
 
+    print("\nSWIRL stopped.")
     return True
 
 ##################################################
 
-def restart(service_list):
-
-    print(f"Restart: {', '.join(service_list)}")
+def restart(service_list, no_version_check=False):
 
     result = stop(service_list)
-    if result:
-        time.sleep(5)
-        result = start(service_list)
-    else:
-        print(f"Error stopping: {' '.join(service_list)}")
-        return result
-    # end if
-
     if not result:
-        print(f"Error starting: {' '.join(service_list)}")
+        return result
 
+    print()
+    result = start(service_list, no_version_check=no_version_check)
     return result
 
 ##################################################
 
-def help(service_list):
+def help(service_list, no_version_check=False):
     # Filter out the retired services
     active_services = [service for service in service_list if not SERVICES[service].get('retired', False)]
 
@@ -450,7 +419,7 @@ def help(service_list):
 
 ##################################################
 
-def setup(service_list):
+def setup(service_list, no_version_check=False):
 
     print("Setting Up Swirl:")
 
@@ -491,6 +460,8 @@ def main(argv):
     parser = argparse.ArgumentParser(description="Manage the Swirl server")
     parser.add_argument('command', nargs='+', help="Specify 'help' to get a list of available commands")
     parser.add_argument('-d', '--debug', action="store_true", help="start Swirl in debug mode")
+    parser.add_argument('--no-version-check', action="store_true", dest="no_version_check",
+                        help="skip the external version check on startup")
     args = parser.parse_args()
 
     if args.debug:
@@ -500,12 +471,13 @@ def main(argv):
     # check to see that we are in a directory with swirl under it, and manage.py in it
     dir = os.getcwd()
     if not os.path.exists(dir + '/swirl'):
-        print(f"{bcolors.FAIL}Error: swirl subdirectory is missing, are you sure '{dir}' is the right directory?{bcolors.ENDC}")
+        print(f"  Error: swirl subdirectory is missing — is '{dir}' the right directory?")
     if not os.path.exists(dir + '/manage.py'):
-        print(f"{bcolors.FAIL}Error: manage.py is missing, are you sure '{dir}' is the right directory?{bcolors.ENDC}")
+        print(f"  Error: manage.py is missing — is '{dir}' the right directory?")
 
     if not args.command[0] in COMMAND_LIST:
-        print(f"Unknown command: '{args.command[0]}'")
+        print(f"  Unknown command: '{args.command[0]}'")
+        print(f"  Available commands: {', '.join(COMMAND_LIST)}")
         return 0
     else:
         service_list = args.command[1:]
@@ -521,25 +493,20 @@ def main(argv):
         else:
             for service in service_list:
                 if not service in SERVICES_DICT:
-                    print(f"{bcolors.WARNING}Unknown service: {service}{bcolors.ENDC}")
-                    print(f"Available services: ", end='')
-                    for swirl_service in SERVICES:
-                        if not swirl_service['retired']:
-                            print(f"{swirl_service['name']} ", end='')
-                    print()
+                    active = [s['name'] for s in SERVICES if not s.get('retired', False)]
+                    print(f"  Unknown service: '{service}'")
+                    print(f"  Available services: {', '.join(active)}")
                     return False
                 # end if
             # end for
         # run the command
         command = args.command[0]
-        result = COMMAND_DISPATCH.get(command)(service_list=service_list)
+        result = COMMAND_DISPATCH.get(command)(service_list=service_list, no_version_check=args.no_version_check)
     # end if
 
     if result == False:
-        print(f"{bcolors.FAIL}Command {args.command[0]} reported an error{bcolors.ENDC}")
         return 1
     else:
-        print(f"{bcolors.OKGREEN}Command successful!{bcolors.ENDC}")
         if args.command[0] == 'start_sleep':
             while 1:
                 try:

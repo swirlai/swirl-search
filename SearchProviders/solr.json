@@ -1,5 +1,5 @@
 {
-    "name": "techproducts - Apache Solr",
+    "name": "Records - Apache Solr",
     "active": false,
     "default": false,
     "connector": "RequestsGet",
@@ -15,10 +15,11 @@
     ],
     "response_mappings": "FOUND=numFound,RESULTS=response.docs",
     "result_mappings": "title=name,body=features,response",
-    "credentials": "",
+    "results_per_query": 10,
+    "credentials": "HTTPBasicAuth('<solr-username>','<solr-password>')",
     "tags": [
-        "TechProducts",
         "Solr",
+        "TechProducts",
         "Internal"
     ]
 }

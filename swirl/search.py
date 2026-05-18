@@ -21,9 +21,11 @@ from celery.result import allow_join_result
 from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
+from django.db import models as django_models
+
 from swirl.models import Search, SearchProvider, Result
 from swirl.tasks import federate_task
-from swirl.processors import *
+from swirl.processors import alloc_processor
 from swirl.processors.transform_query_processor_utils import get_pre_query_processor_or_transform
 from swirl.utils import select_providers,get_url_details
 from swirl.performance_logger import SwirlQueryRequestLogger
@@ -55,13 +57,17 @@ def get_query_selected_provider_list(search):
         else:
             tags_in_query_list.append(tag[:tag.find(':')])
 
-    providers = SearchProvider.objects.filter(active=True, owner=search.owner) | SearchProvider.objects.filter(active=True, shared=True)
+    providers = SearchProvider.objects.filter(
+        active=True
+    ).filter(
+        django_models.Q(owner=search.owner) | django_models.Q(shared=True)
+    ).distinct()
     selected_provider_list = []
     if search.searchprovider_list:
         # add providers to list by id, name or tag
         for provider in providers:
             provider_key = None
-            if type(search.searchprovider_list[0]) == str:
+            if isinstance(search.searchprovider_list[0], str):
                 provider_key = str(provider.id)
             else:
                 provider_key = provider.id
@@ -202,26 +208,13 @@ def search(id, session=None, request=None):
         from celery import group, current_task
         tasks_list = [federate_task.s(search.id, provider.id, provider.connector, update, session, swqrx_logger.request_id) for provider in providers]
         results = group(*tasks_list).delay()
-        if current_task:
-            logger.debug(f'in current_task about to get {search.id}')
-            with allow_join_result():
-                logger.debug(f'allow_join about to get {search.id}')
-                try:
-                    results = results.get(interval=0.05, timeout=settings.SWIRL_TIMEOUT)
-                except CeleryTimeoutError as err:
-                    logger.warning(f"Timeout:{err} in allow_join context, query results may still be returned")
-                except Exception as err:
-                    logger.error(f"Unexpected:{err}")
-                logger.debug(f'in current_task got my results {search.id}')
-        else:
-            logger.debug(f'NOT in the current task about to get {search.id}')
+        with allow_join_result():
             try:
                 results = results.get(interval=0.05, timeout=settings.SWIRL_TIMEOUT)
             except CeleryTimeoutError as err:
-                logger.warning(f"Timeout:{err} query results may still be returned")
+                logger.warning(f"Timeout:{err} — query results may still be returned")
             except Exception as err:
-                logger.error(f"Unexpected:{err}")
-            logger.debug(f'NOT in the current task got my result {search.id}')
+                logger.error(f"Unexpected error waiting for federate tasks: {err}")
 
 
     search.status = 'FULL_RESULTS'

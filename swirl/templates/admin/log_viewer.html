@@ -1,0 +1,151 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Log Viewer | {{ site_title|default:_('SWIRL') }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+  &rsaquo; Log Viewer
+</div>
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  /* Tab strip — one tab per log file. Mirrors the activity page chrome. */
+  .lv-tabs {
+    display: flex; gap: 4px; padding: 1rem 1.25rem 0;
+    border-bottom: 1px solid #CBD5E1; margin-bottom: 0;
+  }
+  .lv-tab {
+    padding: 8px 14px;
+    border: 1px solid #CBD5E1; border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    background: #F1F5F9; color: #475569;
+    text-decoration: none; font-size: 0.85rem;
+    transition: background 80ms ease-out;
+  }
+  .lv-tab:hover { background: #E2E8F0; color: #1E293B; }
+  .lv-tab.lv-tab-selected {
+    background: #ffffff; color: #1E293B; font-weight: 600;
+    border-bottom: 1px solid #ffffff; position: relative; top: 1px;
+  }
+
+  /* Meta row sits between the tabs and the log pane. Shows file path,
+     size, and how many lines we tailed; mirrors the look of the
+     activity overview cards. */
+  .lv-meta {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    padding: 10px 1.25rem; font-size: 0.78rem; color: #475569;
+    background: #F8FAFC; border-bottom: 1px solid #E5E7EB;
+  }
+  .lv-meta strong { color: #1E293B; font-weight: 600; }
+  .lv-meta-spacer { flex: 1; }
+
+  .lv-controls {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.78rem;
+  }
+  .lv-controls input[type="number"] {
+    width: 72px; padding: 2px 6px;
+    border: 1px solid #CBD5E1; border-radius: 3px;
+    font-size: 0.78rem;
+  }
+  .lv-controls button {
+    padding: 3px 10px; cursor: pointer;
+    border: 1px solid #94A3B8; border-radius: 3px;
+    background: #ffffff; color: #1E293B;
+    font-size: 0.78rem;
+  }
+  .lv-controls button:hover { background: #F1F5F9; }
+
+  /* Log pane — monospace, dark, wraps don't break long lines. Scrolls
+     within itself rather than the document so the tabs stay anchored. */
+  .lv-pane {
+    background: #0F172A;
+    color: #E2E8F0;
+    padding: 12px 16px;
+    font-family: ui-monospace, SFMono-Regular, "Menlo", "Consolas", monospace;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    white-space: pre;
+    overflow: auto;
+    max-height: calc(100vh - 260px);
+    margin: 0 1.25rem 1.25rem;
+    border-radius: 0 0 4px 4px;
+  }
+
+  /* Subtle level highlighting — best-effort string match. Falls back to
+     default colouring when the line shape doesn't match. */
+  .lv-line {
+    display: block; padding: 0;
+  }
+  .lv-line.lv-err  { color: #FCA5A5; }
+  .lv-line.lv-warn { color: #FCD34D; }
+  .lv-line.lv-info { color: #BAE6FD; }
+  .lv-line.lv-dbg  { color: #94A3B8; }
+
+  .lv-empty {
+    padding: 18px;
+    color: #94A3B8; font-style: italic;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{# ── Tabs ─────────────────────────────────────────────────── #}
+<div class="lv-tabs">
+  {% for f in log_files %}
+    <a class="lv-tab {% if f.selected %}lv-tab-selected{% endif %}"
+       href="?file={{ f.label }}&lines={{ n_lines }}">{{ f.label }}</a>
+  {% endfor %}
+</div>
+
+{# ── Meta row ─────────────────────────────────────────────── #}
+<div class="lv-meta">
+  <span><strong>File:</strong> {{ selected_rel }}</span>
+  <span><strong>Size on disk:</strong>
+    {% if size_bytes is None %}
+      <em>missing</em>
+    {% else %}
+      {{ size_bytes|filesizeformat }}
+    {% endif %}
+  </span>
+  <span><strong>Tail window:</strong> {{ tail_bytes|filesizeformat }} max</span>
+  <span><strong>Lines shown:</strong> {{ line_count }}</span>
+
+  <span class="lv-meta-spacer"></span>
+
+  <form method="get" action="" class="lv-controls">
+    <input type="hidden" name="file" value="{{ selected_label }}">
+    <label for="lv-lines">Lines:</label>
+    <input id="lv-lines" type="number" name="lines"
+           min="50" max="{{ max_lines }}" step="50"
+           value="{{ n_lines }}">
+    <button type="submit">Apply</button>
+    <button type="button" onclick="window.location.reload();" title="Refresh">↻ Refresh</button>
+  </form>
+</div>
+
+{# ── Log pane ─────────────────────────────────────────────── #}
+{% if lines %}
+<pre class="lv-pane" id="lv-pane">{% spaceless %}{% for line in lines %}<span class="lv-line{% if ' ERROR ' in line or 'Traceback' in line %} lv-err{% elif ' WARNING ' in line or ' WARN ' in line %} lv-warn{% elif ' DEBUG ' in line %} lv-dbg{% elif ' INFO ' in line %} lv-info{% endif %}">{{ line }}
+</span>{% endfor %}{% endspaceless %}</pre>
+{% else %}
+<div class="lv-pane lv-empty">
+  No log content available at <code>{{ selected_rel }}</code>.
+  This is normal on a fresh install before SWIRL has handled any requests.
+</div>
+{% endif %}
+
+<script>
+  // Auto-scroll to the bottom on load so the freshest log lines are
+  // visible without manual scrolling — same UX as `tail -f`.
+  (function() {
+    var pane = document.getElementById('lv-pane');
+    if (pane) { pane.scrollTop = pane.scrollHeight; }
+  })();
+</script>
+
+{% endblock %}

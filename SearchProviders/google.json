@@ -1,8 +1,8 @@
 [
     {
-        "name": "Google Web - pse.google.com",
+        "name": "Web - Google PSE",
         "active": false,
-        "default": false,
+        "default": true,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
@@ -41,15 +41,18 @@
         ],
         "response_mappings": "FOUND=searchInformation.totalResults,RETRIEVED=queries.request[0].count,RESULTS=items",
         "result_mappings": "url=link,body=snippet,author=displayLink,cacheId,pagemap.metatags[*].['og:type'],pagemap.metatags[*].['og:site_name'],pagemap.metatags[*].['og:description'],NO_PAYLOAD",
+        "results_per_query": 10,
         "credentials": "key=<your-Google-API-key>",
         "tags": [
-            "Web", "WWW", "Google"
+            "Google",
+            "Web",
+            "Public"
         ]
     },
     {
-        "name": "Google News - news.google.com",
-        "active": false,
-        "default": false,
+        "name": "News - Google News",
+        "active": true,
+        "default": true,
         "connector": "RequestsGet",
         "url": "https://news.google.com/rss/search",
         "query_template": "{url}?q={query_string}",
@@ -70,9 +73,11 @@
         "credentials": "",
         "eval_credentials": "",
         "tags": [
+            "Google",
             "News",
             "RSS",
-            "Google"
+            "Public",
+            "RAG-ready"
         ]
     },
     {
@@ -106,9 +111,9 @@
         ]
     },
     {
-        "name": "Swirl Documentation - docs.swirlaiconnect.com",
-        "active": false,
-        "default": false,
+        "name": "Docs - SWIRL",
+        "active": true,
+        "default": true,
         "connector": "RequestsGet",
         "url": "https://www.googleapis.com/customsearch/v1",
         "query_template": "{url}?cx={cx}&key={key}&q={query_string}",
@@ -153,7 +158,9 @@
         "eval_credentials": "",
         "tags": [
             "Swirl",
-            "Dev"
+            "Dev",
+            "Public",
+            "RAG-ready"
         ]
     }
 ]

@@ -1,7 +1,7 @@
 {
-    "name": "ArXiv - arxiv.org",
-    "active": false,
-    "default": false,
+    "name": "Articles - arXiv",
+    "active": true,
+    "default": true,
     "connector": "RequestsGet",
     "url": "http://export.arxiv.org/api/query",
     "query_template": "{url}?search_query=all:{query_string}",
@@ -22,7 +22,10 @@
     "credentials": "",
     "eval_credentials": "",
     "tags": [
-        "arXiv", 
-        "STM"
+        "arXiv",
+        "Articles",
+        "STM",
+        "Public",
+        "RAG-ready"
     ]
 }

@@ -1,6 +1,6 @@
 [
     {
-        "name": "Deals - HubSpot.com",
+        "name": "Deals - HubSpot",
         "active": false,
         "default": false,
         "connector": "RequestsPost",
@@ -34,7 +34,7 @@
         ]
     },
     {
-        "name": "Companies - HubSpot.com",
+        "name": "Companies - HubSpot",
         "active": false,
         "default": false,
         "connector": "RequestsPost",
@@ -68,7 +68,7 @@
         ]
     },
     {
-        "name": "Contacts - HubSpot.com",
+        "name": "Contacts - HubSpot",
         "active": false,
         "default": false,
         "connector": "RequestsPost",
@@ -97,6 +97,7 @@
         "eval_credentials": "",
         "tags": [
             "HubSpot",
+            "Contacts",
             "Contact",
             "Internal"
         ]

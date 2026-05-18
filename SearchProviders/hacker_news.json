@@ -1,9 +1,8 @@
 [
     {
-        "name": "Hacker News Stories - HN.Algolia.com",
+        "name": "News - Hacker News",
         "active": false,
         "default": false,
-        "authenticator": "",
         "connector": "RequestsGet",
         "url": "http://hn.algolia.com/api/v1/search?tags=story",
         "query_template": "{url}&query={query_string}",
@@ -26,14 +25,15 @@
         "tags": [
             "HackerNews",
             "Stories",
-            "Dev"
+            "News",
+            "Dev",
+            "Public"
         ]
     },
     {
-        "name": "Hacker News Comments - HN.Algolia.com",
+        "name": "Comments - Hacker News",
         "active": false,
         "default": false,
-        "authenticator": "",
         "connector": "RequestsGet",
         "url": "http://hn.algolia.com/api/v1/search?tags=comment",
         "query_template": "{url}&query={query_string}",
@@ -56,8 +56,8 @@
         "tags": [
             "HackerNews",
             "Comments",
-            "Dev"
+            "Dev",
+            "Public"
         ]
     }
-    
 ]

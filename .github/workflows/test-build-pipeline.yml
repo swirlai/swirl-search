@@ -25,7 +25,7 @@ jobs:
         - name: Set Up Python
           uses: actions/setup-python@v6
           with:
-            python-version: '3.13.9'
+            python-version: '3.13.12'
             cache: 'pip'
         - name: Install Swirl
           run: ./install.sh
@@ -56,7 +56,7 @@ jobs:
         - name: Set Up Python
           uses: actions/setup-python@v6
           with:
-            python-version: '3.13.9'
+            python-version: '3.13.12'
             cache: 'pip'
         - name: Install Swirl (with a timeout)
           run: ./install.sh
@@ -71,6 +71,8 @@ jobs:
           run: python swirl.py start
         - name: Load the Default SearchProviders
           run:  python swirl_load.py -u admin -p password -s http://localhost:8000/ 'SearchProviders/preloaded.json'
+        - name: Load the Default AIProviders
+          run:  python swirl_load.py -u admin -p password -s http://localhost:8000/ 'AIProviders/preloaded.json'
         - name: Stop Swirl
           run: python swirl.py stop
         - name: Create a New db.dist File
@@ -125,7 +127,7 @@ jobs:
         - name: Set Up Python
           uses: actions/setup-python@v6
           with:
-            python-version: '3.13.9'
+            python-version: '3.13.12'
             cache: 'pip'
         - name: Install Swirl
           run: ./install.sh
@@ -157,20 +159,22 @@ jobs:
               -u admin:"$PASSWORD" \
               -H "Content-Type: application/json" \
               -d "$JSON"
-        - name: PATCH the LinkedIn PSE Config
-          env:
-            JSON: ${{ secrets.QA_PSE_LINKEDIN }}
-            API_ENDPOINT: http://localhost:8000/swirl/searchproviders/3/
-            PASSWORD: ${{ secrets.QA_ADMIN_PW }}
-          run: |
-            curl -X PATCH "$API_ENDPOINT" \
-              -u admin:"$PASSWORD" \
-              -H "Content-Type: application/json" \
-              -d "$JSON"
+        # DS-5598: LinkedIn was removed from SearchProviders/preloaded.json
+        # (it was a Google PSE flavour pointing at linkedin.com that the team
+        # is not maintaining). The previous "PATCH the LinkedIn PSE Config"
+        # step targeted provider ID 3, which after the removal is no longer
+        # LinkedIn — it's "Docs - SWIRL". Removing this step
+        # avoids overwriting the Documentation provider's config with the
+        # stale LinkedIn PSE secret.
+        #
+        # The SWIRL Docs PSE config moved from provider ID 4 -> ID 3 because
+        # LinkedIn no longer occupies a slot above it; the API_ENDPOINT
+        # below is updated to match. This mirrors the equivalent edit on
+        # qa-suite.yml in PR #1850.
         - name: PATCH the SWIRL Docs PSE Config
           env:
             JSON: ${{ secrets.QA_PSE_DOCS }}
-            API_ENDPOINT: http://localhost:8000/swirl/searchproviders/4/
+            API_ENDPOINT: http://localhost:8000/swirl/searchproviders/3/
             PASSWORD: ${{ secrets.QA_ADMIN_PW }}
           run: |
             curl -X PATCH "$API_ENDPOINT" \
@@ -200,7 +204,49 @@ jobs:
             echo "========"
             cat .env.qa
             echo "========"
-            docker run --net=host --env-file .env.qa -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=qa_suite,community"
+            # Mount swirl-search-public's preloaded.json files into the
+            # QA container so data_examples/_preloaded.py can resolve them
+            # via $SWIRL_PRELOADED_DIR. Without this the loader raises
+            # FileNotFoundError on the first import inside behave.
+            docker run --net=host --env-file .env.qa \
+              -v "${{ github.workspace }}/SearchProviders:/swirl/SearchProviders:ro" \
+              -v "${{ github.workspace }}/AIProviders:/swirl/AIProviders:ro" \
+              -e SWIRL_PRELOADED_DIR=/swirl \
+              -t swirlai/swirl-search-qa:automated-tests-master \
+              sh -c "behave --tags=qa_suite,community"
+        # DS-5598: dump every ./logs/*.log produced by `python swirl.py
+        # start` into the qa-suite step output so backend WARNING /
+        # ERROR lines (RAG-DIAG, exception tracebacks, AIProvider
+        # allocation messages) appear in the GitHub Actions log. Without
+        # this the swirl backend logs live on the runner's temp disk
+        # and vanish when the job ends — invisible in the test-build-
+        # pipeline artifact. `if: always()` runs the step even when
+        # behave fails (which is exactly when the logs are most useful).
+        - name: Dump swirl backend logs
+          if: always()
+          run: |
+            set +e
+            echo "===== pwd: $(pwd)"
+            echo "===== GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+            echo "===== top-level listing:"
+            ls -la
+            echo "===== ./logs (if present):"
+            ls -la ./logs 2>/dev/null || echo "(no ./logs in $(pwd))"
+            echo "===== find workspace for *.log under */logs/*:"
+            find "${GITHUB_WORKSPACE:-.}" -name "*.log" -path "*/logs/*" 2>/dev/null
+            shopt -s nullglob
+            log_files=( "${GITHUB_WORKSPACE:-.}"/logs/*.log )
+            if [ ${#log_files[@]} -eq 0 ]; then
+              echo "===== no logs/*.log under GITHUB_WORKSPACE; searching workspace"
+              mapfile -t log_files < <(find "${GITHUB_WORKSPACE:-.}" -name "*.log" -path "*/logs/*" 2>/dev/null)
+            fi
+            for f in "${log_files[@]}"; do
+              echo "=================================================="
+              echo "===== $f"
+              echo "=================================================="
+              cat "$f" || true
+            done
+            echo "===== Dump swirl backend logs: done"
 
     swirl-docker:
       needs: qa-suite

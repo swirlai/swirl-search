@@ -1,6 +1,6 @@
 [
     {
-        "name": "Code - GitHub.com",
+        "name": "Code - GitHub",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -27,12 +27,11 @@
         "tags": [
             "GitHub",
             "Code",
-            "Internal",
             "Dev"
         ]
     },
     {
-        "name": "Issues - GitHub.com",
+        "name": "Issues - GitHub",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -59,12 +58,11 @@
         "tags": [
             "GitHub",
             "Issues",
-            "Internal",
             "Dev"
         ]
     },
     {
-        "name": "Pull Requests - GitHub.com",
+        "name": "PRs - GitHub",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -91,12 +89,12 @@
         "tags": [
             "GitHub",
             "PullRequests",
-            "Internal",
+            "PRs",
             "Dev"
         ]
     },
     {
-        "name": "Commits - GitHub.com",
+        "name": "Commits - GitHub",
         "active": false,
         "default": false,
         "connector": "RequestsGet",
@@ -123,7 +121,6 @@
         "tags": [
             "GitHub",
             "Commits",
-            "Internal",
             "Dev"
         ]
     }

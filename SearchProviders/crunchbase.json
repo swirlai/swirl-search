@@ -1,8 +1,7 @@
 {
-    "name": "Organizations - Crunchbase.com",
+    "name": "Companies - Crunchbase",
     "active": false,
     "default": false,
-    "authenticator": "",
     "connector": "RequestsPost",
     "url": "https://api.crunchbase.com/api/v4/searches/organizations",
     "query_template": "{url}",
@@ -58,7 +57,7 @@
     "tags": [
         "Crunchbase",
         "Organizations",
+        "Company",
         "Internal"
-
     ]
 }
