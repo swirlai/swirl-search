@@ -1,6 +1,6 @@
 <div align="center">
 
-[![SWIRL — open-source enterprise metasearch and RAG](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/transparent_header_3.png)](https://www.swirlaiconnect.com)
+[![SWIRL — open-source enterprise metasearch and RAG](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/large_header.png)](https://www.swirlaiconnect.com)
 
 # Swirl Community Edition
 
@@ -30,7 +30,7 @@ Swirl exposes its federated search and RAG via REST API and via the [Model Conte
 
 ![SWIRL architecture: queries fan out to enterprise connectors, results are re-ranked with LLM relevancy](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/Animation_2.gif)
 
-![SWIRL Galaxy UI showing an AI-summarized federated search across M365 sources](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/SWIRL_4_Galaxy_UI.png)
+![SWIRL Galaxy UI in 4.5: a RAG AI Summary answer with cited sources from federated M365 results](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/swirl_45_galaxy_ai_summary.png)
 
 Swirl can connect to databases (SQL, NoSQL, Google BigQuery), public data services (Google PSE, arXiv, etc.), and enterprise sources (Microsoft 365, Jira, Miro, etc.), and generate insights with AI models like ChatGPT.
 
@@ -111,10 +111,6 @@ Add credentials to the preloaded SearchProvider fixtures at `/swirl/searchprovid
 
 Swirl supports OAuth2 search across M365 Outlook, OneDrive, SharePoint, and Teams. Setup requires approval from an M365 administrator. See the [M365 Guide](https://docs.swirlaiconnect.com/m365-guide) for full instructions.
 
-### Google Workspace
-
-Swirl also supports OAuth2 search across Google Workspace (Drive, Gmail, Calendar). See the [Google Workspace Guide](https://docs.swirlaiconnect.com/googleworkspace-guide).
-
 ### M365 Quick Reference
 
 When M365 is configured, Swirl recognizes these tag-prefix shortcuts in the search query, routing to just the matching providers:
@@ -162,6 +158,41 @@ Swirl ships with 40+ pre-configured SearchProviders covering public web, scienti
 
 ## 🔗 Integrations
 
+### swirl-mcp-server
+
+[swirl-mcp-server](https://github.com/swirlai/swirl-mcp-server) is a [Model Context Protocol](https://modelcontextprotocol.io) adapter for Swirl. It exposes Swirl's federated search and RAG as MCP tools so Claude Desktop, Claude Code, Cursor, and other MCP clients can answer questions against your Swirl-connected sources without any data leaving your network.
+
+#### Demo
+
+![SWIRL MCP Server — rag_answer tool returning a federated RAG answer in the MCP Inspector](https://raw.githubusercontent.com/swirlai/swirl-mcp-server/main/docs/images/mcp_inspector_rag.png)
+
+#### Prerequisites
+
+- **Swirl Community 4.x** running — see [Quick Start](#-quick-start) above
+- **Python 3.10+** on the machine running the MCP server
+- **For `rag=true` (generated answers):** Swirl itself needs an `OPENAI_API_KEY` (or Azure OpenAI equivalents) — set it in Swirl's environment before `docker compose up`. Plain `search` works without one.
+
+#### Configuration
+
+Install: `pipx install git+https://github.com/swirlai/swirl-mcp-server`. Then add to Claude Desktop's config (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS, `%APPDATA%\Claude\claude_desktop_config.json` on Windows):
+
+```json
+{
+  "mcpServers": {
+    "swirl": {
+      "command": "swirl-mcp",
+      "env": {
+        "SWIRL_BASE_URL": "http://localhost:8000",
+        "SWIRL_USERNAME": "<your-swirl-username>",
+        "SWIRL_PASSWORD": "<your-swirl-password>"
+      }
+    }
+  }
+}
+```
+
+Restart Claude Desktop and `swirl` should appear in the tools menu. Read more in the [MCP Server guide](https://docs.swirlaiconnect.com/mcp-guide) or at [swirlai/swirl-mcp-server](https://github.com/swirlai/swirl-mcp-server) — six MCP tools (`search`, `rag_answer`, `list_providers`, `create_search`, `get_results`, `list_searches`), with Claude Code and Cursor configs in [`examples/`](https://github.com/swirlai/swirl-mcp-server/tree/main/examples).
+
 ### mike
 
 [mike](https://github.com/willchen96/mike) is an open-source project assistant that uses Swirl for federated search and document import. When connected, mike's project chat gains two tools:
@@ -202,41 +233,6 @@ mike consumes Swirl's [M365 Quick Reference](#m365-quick-reference) tag-prefix s
 
 When mike's `import_document` tool receives a SharePoint or OneDrive URL, it proxies the download through Swirl's `/swirl/fetch-document/` endpoint, which handles the Microsoft Graph API three-step fetch using the user's stored OAuth token. No M365 credentials need to be in mike's environment.
 
-### swirl-mcp-server
-
-[swirl-mcp-server](https://github.com/swirlai/swirl-mcp-server) is a [Model Context Protocol](https://modelcontextprotocol.io) adapter for Swirl. It exposes Swirl's federated search and RAG as MCP tools so Claude Desktop, Claude Code, Cursor, and other MCP clients can answer questions against your Swirl-connected sources without any data leaving your network.
-
-#### Demo
-
-![SWIRL MCP Server — rag_answer tool returning a federated RAG answer in the MCP Inspector](https://raw.githubusercontent.com/swirlai/swirl-mcp-server/main/docs/images/mcp_inspector_rag.png)
-
-#### Prerequisites
-
-- **Swirl Community 4.x** running — see [Quick Start](#-quick-start) above
-- **Python 3.10+** on the machine running the MCP server
-- **For `rag=true` (generated answers):** Swirl itself needs an `OPENAI_API_KEY` (or Azure OpenAI equivalents) — set it in Swirl's environment before `docker compose up`. Plain `search` works without one.
-
-#### Configuration
-
-Install: `pipx install git+https://github.com/swirlai/swirl-mcp-server`. Then add to Claude Desktop's config (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS, `%APPDATA%\Claude\claude_desktop_config.json` on Windows):
-
-```json
-{
-  "mcpServers": {
-    "swirl": {
-      "command": "swirl-mcp",
-      "env": {
-        "SWIRL_BASE_URL": "http://localhost:8000",
-        "SWIRL_USERNAME": "<your-swirl-username>",
-        "SWIRL_PASSWORD": "<your-swirl-password>"
-      }
-    }
-  }
-}
-```
-
-Restart Claude Desktop and `swirl` should appear in the tools menu. Read more in the [MCP Server guide](https://docs.swirlaiconnect.com/mcp-guide) or at [swirlai/swirl-mcp-server](https://github.com/swirlai/swirl-mcp-server) — six MCP tools (`search`, `rag_answer`, `list_providers`, `create_search`, `get_results`, `list_searches`), with Claude Code and Cursor configs in [`examples/`](https://github.com/swirlai/swirl-mcp-server/tree/main/examples).
-
 <br/>
 
 ## 🌟 Key Features
@@ -261,13 +257,11 @@ Restart Claude Desktop and `swirl` should appear in the tools menu. Read more in
 
 ## 👩‍💻 Contributing
 
-**Got an idea or improvement?**
-
 1. Join the [Swirl Slack Community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 2. Branch off `develop` with a descriptive name
 3. Submit a PR — we follow [Gitflow](https://nvie.com/posts/a-successful-git-branching-model/) loosely
 
-New to GitHub contributions? The [GitHub contributing guide](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) is a great starting point.
+New to GitHub? The [GitHub contributing guide](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) is a great starting point.
 
 <br/>
 
@@ -277,7 +271,7 @@ New to GitHub contributions? The [GitHub contributing guide](https://docs.github
 
 **Use Swirl** — [User Guide](https://docs.swirlaiconnect.com/user-guide) · [AI Search](https://docs.swirlaiconnect.com/ai-search) · [AI Search Assistant](https://docs.swirlaiconnect.com/ai-search-assistant) · [Glossary](https://docs.swirlaiconnect.com/glossary)
 
-**Configure connectors** — [SearchProviders](https://docs.swirlaiconnect.com/sp-guide) · [M365](https://docs.swirlaiconnect.com/m365-guide) · [Google Workspace](https://docs.swirlaiconnect.com/googleworkspace-guide) · [AI / RAG](https://docs.swirlaiconnect.com/rag-guide) · [MCP Server](https://docs.swirlaiconnect.com/mcp-guide)
+**Configure connectors** — [SearchProviders](https://docs.swirlaiconnect.com/sp-guide) · [M365](https://docs.swirlaiconnect.com/m365-guide) · [AI / RAG](https://docs.swirlaiconnect.com/rag-guide) · [MCP Server](https://docs.swirlaiconnect.com/mcp-guide)
 
 **Operate** — [Admin Guide](https://docs.swirlaiconnect.com/admin-guide) · [Kubernetes](https://docs.swirlaiconnect.com/kubernetes-guide) · [Monitoring](https://docs.swirlaiconnect.com/monitoring-guide) · [Security](https://docs.swirlaiconnect.com/security-guide) · [Troubleshooting](https://docs.swirlaiconnect.com/troubleshooting)
 
