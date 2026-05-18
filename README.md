@@ -18,6 +18,8 @@
 [![Tests](https://github.com/swirlai/swirl-search/actions/workflows/qa-suite.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/qa-suite.yml)
 [![Static Badge](https://img.shields.io/badge/Join%20Our%20Slack-0E21A0?logo=slack)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 
+📦 **Latest:** [Release Notes](https://docs.swirlaiconnect.com/release-notes) · what's new in each Community release.
+
 <br/>
 
 ## 🔎 What is Swirl?
@@ -103,11 +105,15 @@ Open <http://localhost:8000/swirl/> and log in with `admin` / `password`.
 
 ### SearchProviders
 
-Add credentials to the preloaded SearchProvider fixtures at `/swirl/searchproviders/` or via the Django admin at `/admin/swirl/searchprovider/`. Each provider maps a connector type to a URL, credentials, and query/result mappings.
+Add credentials to the preloaded SearchProvider fixtures at `/swirl/searchproviders/` or via the Django admin at `/admin/swirl/searchprovider/`. Each provider maps a connector type to a URL, credentials, and query/result mappings. Full configuration reference: [SearchProviders Guide](https://docs.swirlaiconnect.com/sp-guide).
 
 ### Microsoft 365
 
 Swirl supports OAuth2 search across M365 Outlook, OneDrive, SharePoint, and Teams. Setup requires approval from an M365 administrator. See the [M365 Guide](https://docs.swirlaiconnect.com/m365-guide) for full instructions.
+
+### Google Workspace
+
+Swirl also supports OAuth2 search across Google Workspace (Drive, Gmail, Calendar). See the [Google Workspace Guide](https://docs.swirlaiconnect.com/googleworkspace-guide).
 
 ### M365 Quick Reference
 
@@ -267,7 +273,15 @@ New to GitHub contributions? The [GitHub contributing guide](https://docs.github
 
 ## 📖 Documentation
 
-[Overview](https://docs.swirlaiconnect.com/) | [Quick Start](https://docs.swirlaiconnect.com/quick-start) | [Installation - Community](https://docs.swirlaiconnect.com/installation-community) | [User Guide](https://docs.swirlaiconnect.com/user-guide) | [Admin Guide](https://docs.swirlaiconnect.com/admin-guide) | [M365 Guide](https://docs.swirlaiconnect.com/m365-guide) | [MCP Guide](https://docs.swirlaiconnect.com/mcp-guide) | [AI Guide](https://docs.swirlaiconnect.com/rag-guide) | [AI Search Assistant](https://docs.swirlaiconnect.com/ai-search-assistant) | [Developer Guide](https://docs.swirlaiconnect.com/developer-guide) | [Developer Reference](https://docs.swirlaiconnect.com/developer-reference) | [Kubernetes](https://docs.swirlaiconnect.com/kubernetes-guide) | [Monitoring](https://docs.swirlaiconnect.com/monitoring-guide) | [Troubleshooting](https://docs.swirlaiconnect.com/troubleshooting) | [Tutorials](https://docs.swirlaiconnect.com/tutorials) | [Glossary](https://docs.swirlaiconnect.com/glossary)
+**Get started** — [Overview](https://docs.swirlaiconnect.com/) · [Quick Start](https://docs.swirlaiconnect.com/quick-start) · [Installation - Community](https://docs.swirlaiconnect.com/installation-community) · [Release Notes](https://docs.swirlaiconnect.com/release-notes)
+
+**Use Swirl** — [User Guide](https://docs.swirlaiconnect.com/user-guide) · [AI Search](https://docs.swirlaiconnect.com/ai-search) · [AI Search Assistant](https://docs.swirlaiconnect.com/ai-search-assistant) · [Glossary](https://docs.swirlaiconnect.com/glossary)
+
+**Configure connectors** — [SearchProviders](https://docs.swirlaiconnect.com/sp-guide) · [M365](https://docs.swirlaiconnect.com/m365-guide) · [Google Workspace](https://docs.swirlaiconnect.com/googleworkspace-guide) · [AI / RAG](https://docs.swirlaiconnect.com/rag-guide) · [MCP Server](https://docs.swirlaiconnect.com/mcp-guide)
+
+**Operate** — [Admin Guide](https://docs.swirlaiconnect.com/admin-guide) · [Kubernetes](https://docs.swirlaiconnect.com/kubernetes-guide) · [Monitoring](https://docs.swirlaiconnect.com/monitoring-guide) · [Security](https://docs.swirlaiconnect.com/security-guide) · [Troubleshooting](https://docs.swirlaiconnect.com/troubleshooting)
+
+**Build & contribute** — [Developer Guide](https://docs.swirlaiconnect.com/developer-guide) · [Developer Reference](https://docs.swirlaiconnect.com/developer-reference) · [Tutorials](https://docs.swirlaiconnect.com/tutorials) · [Contributions](https://docs.swirlaiconnect.com/contributions)
 
 <br/>
 
