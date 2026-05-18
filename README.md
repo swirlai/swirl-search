@@ -1,6 +1,6 @@
 <div align="center">
 
-[![SWIRL — open-source enterprise metasearch and RAG](https://docs.swirlaiconnect.com/images/transparent_header_3.png)](https://www.swirlaiconnect.com)
+[![SWIRL — open-source enterprise metasearch and RAG](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/transparent_header_3.png)](https://www.swirlaiconnect.com)
 
 # Swirl Community Edition
 
@@ -26,7 +26,7 @@ Swirl adapts and distributes user queries to anything with a search API — sear
 
 Swirl exposes its federated search and RAG via REST API and via the [Model Context Protocol (MCP)](https://modelcontextprotocol.io), so Claude Desktop, Claude Code, Cursor, and other MCP clients can answer questions against your private sources through [swirl-mcp-server](#swirl-mcp-server) — no data movement, no per-source plumbing in the agent.
 
-![SWIRL architecture: queries fan out to enterprise connectors, results are re-ranked with LLM relevancy](https://docs.swirlaiconnect.com/images/Animation_2.gif)
+![SWIRL architecture: queries fan out to enterprise connectors, results are re-ranked with LLM relevancy](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/Animation_2.gif)
 
 ![SWIRL Galaxy UI showing an AI-summarized federated search across M365 sources](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/SWIRL_4_Galaxy_UI.png)
 
@@ -148,7 +148,7 @@ Swirl ships with 40+ pre-configured SearchProviders covering public web, scienti
 | Legal | CourtListener (US), National Archives (UK) | Case law and government records |
 | Other | Asana, Miro, Blockchain (Transactions + Wallets) | Tasks, drawings, on-chain data |
 
-<img src="https://docs.swirlaiconnect.com/images/Connectors_2.png" alt="Grid of SWIRL connector logos for the supported enterprise and public data sources" height=60% width=70%/>
+<img src="https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/Connectors_2.png" alt="Grid of SWIRL connector logos for the supported enterprise and public data sources" height=60% width=70%/>
 
 ➕ **Need a connector?** [Open an issue](https://github.com/swirlai/swirl-search/issues) or contribute one — see [Contributing](#-contributing).
 
