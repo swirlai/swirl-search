@@ -9,7 +9,7 @@ from django.urls import include, path
 from rest_framework import routers, permissions
 from . import views
 from swirl.authenticators import Microsoft
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 router = routers.DefaultRouter()
@@ -20,6 +20,7 @@ router.register(r'querytransforms', views.QueryTransformViewSet, basename='query
 router.register(r'search', views.SearchViewSet, basename='search')
 router.register(r'results', views.ResultViewSet, basename='results')
 router.register(r'branding', views.BrandingConfigurationViewSet, basename='branding')
+router.register(r'aiproviders', views.AIProviderViewSet, basename='aiproviders')
 
 router.register(r'sapi/search', views.SearchViewSet, basename='galaxy-search')
 router.register(r'sapi/results', views.ResultViewSet, basename='galaxy-results')
@@ -46,14 +47,16 @@ urlpatterns = [
     path('sapi/is_chat_ai_provider_exists', views.IsChatAIProviderExists.as_view({'get': 'list'}), name='is-chat-ai-provider-exists'),
 
     path('', views.index, name='index'),
-    path('index.html', views.index, name='index'),
+    path('index.html', views.index, name='index_html'),
     path('error.html', views.error, name='error'),
     path('authenticators.html', views.authenticators, name='authenticators'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('microsoft-callback', Microsoft().callback, name='microsoft_callback'),
+    path('callback/microsoft-callback', Microsoft().callback, name='microsoft_callback_callback'),
     path('password_reset/', TemplateView.as_view(template_name="no_feature_password.html"), name="password_reset"),
     path('login/', views.LoginView.as_view()),
     path('swirl-logout/', views.LogoutView.as_view()),
+    path('fetch-document/', views.FetchDocumentView.as_view(), name='fetch-document'),
     path('oidc_authenticate/', views.OidcAuthView.as_view()),
     path('microsoft/update_token', views.UpdateMicrosoftToken.as_view()),
 

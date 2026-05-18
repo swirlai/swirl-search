@@ -1,5 +1,6 @@
 {
-    "name": "Company Data - Google BigQuery",
+    "name": "Records - Google BigQuery",
+    "description": "Searches info on 7 million companies worldwide including Linkedin URL, company size, location, and number of employees. Search only with company name, domain or location. Supports many languages. Does not support NOT operator.",
     "active": false,
     "default": false,
     "connector": "BigQuery",
@@ -21,11 +22,12 @@
     "response_mappings": "",
     "result_mappings": "title=name,body='{name} was founded in {year_founded} and serves the {industry} industry. The company is located in {locality} and has approximately {current_employee_estimate} employees. The registered domain for this organization is: {domain}',url='https://www.{linkedin_url}',NO_PAYLOAD",
     "results_per_query": 10,
-    "credentials": "/path/to/bigquery/token.json",
+    "credentials": "<path-to-bigquery-token-json>",
     "eval_credentials": "",
     "tags": [
-        "Company",
+        "Google",
         "BigQuery",
+        "Company",
         "Internal"
     ]
 }

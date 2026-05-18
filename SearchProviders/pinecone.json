@@ -1,5 +1,5 @@
 {
-    "name": "PineconeDB",
+    "name": "Vectors - Pinecone",
     "active": false,
     "default": false,
     "authenticator": "",
@@ -27,6 +27,6 @@
     "eval_credentials": "",
     "tags": [
         "Pinecone",
-        "model:<your-embedding-model>"
+        "Internal"
     ]
 }

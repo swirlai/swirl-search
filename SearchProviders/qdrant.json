@@ -1,5 +1,5 @@
 {
-    "name": "QdrantDB",
+    "name": "Vectors - Qdrant",
     "active": false,
     "default": false,
     "authenticator": "",
@@ -26,6 +26,7 @@
     "credentials": "<qdrant-api-key>",
     "eval_credentials": "",
     "tags": [
-        "Qdrant"
+        "Qdrant",
+        "Internal"
     ]
 }

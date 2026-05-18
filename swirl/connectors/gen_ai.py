@@ -23,6 +23,7 @@ from swirl.connectors.connector import Connector
 from datetime import datetime
 
 from swirl.openai.openai import AI_QUERY_USE, OpenAIClient
+from swirl.ai_provider import AIProviderFactory
 
 ########################################
 ########################################
@@ -45,12 +46,17 @@ class GenAI(Connector):
         logger.debug(f"{self}: execute_search()")
         client = None
         try:
-            # If provider.credentials is set, it overrides the default key
-            client = OpenAIClient(usage=AI_QUERY_USE, key=self.provider.credentials)
-        except ValueError as valErr:
-            logger.error(f"err {valErr} while initializing OpenAI client")
-            self.status = "ERR_NO_CREDENTIALS"
-            return
+            client = AIProviderFactory().alloc_ai_provider('connector', owner=self.search.owner)
+            if client is None:
+                raise ValueError("No active AIProvider configured for role 'connector'")
+        except Exception as err:
+            logger.warning(f"{self}: AIProviderFactory failed ({err}), falling back to OpenAIClient")
+            try:
+                client = OpenAIClient(usage=AI_QUERY_USE, key=self.provider.credentials)
+            except ValueError as valErr:
+                logger.error(f"err {valErr} while initializing OpenAI client")
+                self.status = "ERR_NO_CREDENTIALS"
+                return
 
         prompted_query = ""
         if self.query_to_provider.endswith('?'):
@@ -76,7 +82,11 @@ class GenAI(Connector):
             self.status = "ERR_PROMPT_FAILED"
             return
 
-        model_name = client.get_model()
+        model_name = (
+            client.get_provider().model
+            if hasattr(client, 'get_provider')
+            else client.get_model()
+        )
         logger.info(
             "GenAI completion system guide: %s model: %s query_to_provider: %s",
             self.system_guide,
@@ -85,13 +95,16 @@ class GenAI(Connector):
         )
 
         self.query_to_provider = prompted_query
-        completions = client.openai_client.chat.completions.create(
-            model=model_name,
-            messages=[
-                {"role": "system", "content": self.system_guide},
-                {"role": "user", "content": self.query_to_provider},
-            ],
-        )
+        messages = [
+            {"role": "system", "content": self.system_guide},
+            {"role": "user", "content": self.query_to_provider},
+        ]
+        if hasattr(client, 'completion'):
+            completions = client.completion(messages=messages)
+        else:
+            completions = client.openai_client.chat.completions.create(
+                model=model_name, messages=messages,
+            )
         message = completions.choices[0].message.content
         self.found = 1
         self.retrieved = 1
@@ -100,7 +113,11 @@ class GenAI(Connector):
             {
                 'title': self.query_string_to_provider,
                 'body': f'{msg}',
-                'author': 'GenAI',
+                'author': (
+                    client.get_provider().name
+                    if hasattr(client, 'get_provider')
+                    else 'GenAI'
+                ),
                 'date_published': str(datetime.now()),
                 'model': model_name,
             }

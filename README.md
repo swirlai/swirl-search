@@ -1,235 +1,156 @@
 <div align="center">
 
-[![SWIRL](docs/images/large_header.png)](https://www.swirlaiconnect.com)
+[![Swirl](https://docs.swirlaiconnect.com/images/transparent_header_3.png)](https://www.swirlaiconnect.com)
 
+<h1>Swirl Community Edition</h1>
+
+### Swirl is open source software that simultaneously searches multiple content sources and returns AI ranked results.
+
+[Quick Start](#-quick-start) · [Slack](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw) · [Key Features](#-key-features) · [Connectors](#-list-of-connectors) · [Integrations](#-integrations) · [Contributing](#-contributing-to-swirl)
 </div>
 
-<h1>SWIRL</h1>
-
-## Give your team ChatGPT-level search without moving data to the cloud
-
-### RAG with One Drive & Microsoft 365 in 60 seconds
-
-Ask question → Get answer with sources → Click through to source
-
-![SWIRL One Drive RAG](docs/images/SWIRL_4_AI_Search.gif)
-
-Watch it on [Youtube](https://youtu.be/6cT25SD4cV4)
-
-**Teams using SWIRL saves an average 7.5 hours of productive time per week.**
-
-<div align="center">
-
-[⚡ Quick Start](#-try-swirl-now-in-docker) ·
-[🔌 Connectors](swirlaiconnect.com/connectors) ·
-[🤝 Contribute](#contributing)
+---
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=088395&logoColor=blue&style=flat-square)](https://opensource.org/license/apache-2-0/)
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat-square&color=8DDFCB&label=Release)](https://github.com/swirlai/swirl-search/releases)
-[![Website](https://img.shields.io/badge/Website-swirlaiconnect.com-00215E?style=flat-square)](https://www.swirlaiconnect.com)
-[![Time Saved](https://img.shields.io/badge/Hours%20Saved-10K%2B-brightgreen)]()
-[![GitHub Stars](https://img.shields.io/github/stars/swirlai/swirl-search?style=social)](https://github.com/swirlai/swirl-search/stargazers)
+[![Docker Build](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml/badge.svg?style=flat-square&branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/docker-image.yml)
+[![Tests](https://github.com/swirlai/swirl-search/actions/workflows/qa-suite.yml/badge.svg?branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/qa-suite.yml)
+[![Static Badge](https://img.shields.io/badge/Join%20Our%20Slack-0E21A0?logo=slack)](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
 
-[![Test and Build Pipeline](https://github.com/swirlai/swirl-search/actions/workflows/test-build-pipeline.yml/badge.svg?style=flat-square&branch=main)](https://github.com/swirlai/swirl-search/actions/workflows/test-build-pipeline.yml)
+<br/>
 
-</div>
+# 🔎 What is Swirl?
 
-[![Bringing AI to the Data Newsletter](docs/images/Newsletter_CTA.png)](https://www.linkedin.com/newsletters/7201909550860427264/)
+Swirl adapts and distributes user queries to anything with a search API — search engines, databases, NoSQL engines, cloud/SaaS services, data silos, etc. — and uses Large Language Models to re-rank the unified results *without* extracting or indexing *anything*.
 
-## 🤔 Why SWIRL?
+![Swirl Diagram](https://docs.swirlaiconnect.com/images/Animation_2.gif)
 
-### Skip the Complexity, Keep the Power
+Swirl can connect to databases (SQL, NoSQL, Google BigQuery), public data services (Google PSE, ArXiv.org, etc.), and enterprise sources (Microsoft 365, Jira, Miro, etc.), and generate insights with AI models like ChatGPT.
 
-<table>
-<tr>
-<td>
-<h3 align="center">❌ Without SWIRL</h3>
+<br/>
 
-- Set up vector databases
-- Move data around
-- Complex ETL pipelines
-- Weeks of infrastructure work
-- Security headaches
+# 🔗 Integrations
 
-</td>
-<td>
-<h3 align="center">✅ With SWIRL</h3>
+## mike
 
-- One docker command
-- Data stays in place
-- No vector DB needed
-- 2-minute setup
-- Enterprise-grade security
+[mike](https://github.com/willchen96/mike) is an open-source project assistant that uses Swirl for federated search and document import. When connected, mike's project chat gains two tools:
 
-</td>
-</tr>
-</table>
+- **`search_external`** — searches all active Swirl providers and returns ranked results into the conversation
+- **`import_document`** — fetches a document (PDF, DOCX, DOC) found via Swirl and imports it into the current project
 
-## 🚀 Built Different
+### Demo
 
-### No Vector DB Drama
+▶️ [Swirl Community × Mike OSS: Fetching & Summarizing SharePoint Docs with Claude](https://www.youtube.com/watch?v=biIEPFpQBmQ)
 
-```bash
-# No need for:
-$ setup-vector-db
-$ migrate-data
-$ configure-indexes
+### Prerequisites
 
-# Just this:
-$ curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
+- **Swirl Community 4.5 or later** — earlier versions don't include the integration points mike needs. Earlier versions are welcome to add support via PR! 🙂
+- **mike built from [willchen96/mike#14](https://github.com/willchen96/mike/pull/14) or later** — this PR contains the Swirl integration changes
+- A running mike backend (`npm run dev` in `backend/`)
+- Optional: Microsoft 365 OAuth configured in Swirl for M365 document fetch
+
+### Configuration
+
+In mike's `backend/.env`:
+
+```env
+# SWIRL federated search (optional — enables search_external and import_document tools)
+SWIRL_URL=http://localhost:8000
+
+# Authenticate with a DRF token:
+SWIRL_TOKEN=your-swirl-api-token
+
+# Or with username/password Basic auth (takes precedence over SWIRL_TOKEN if both are set):
+# SWIRL_USERNAME=admin
+# SWIRL_PASSWORD=your-swirl-password
 ```
 
-## 💡 What Can You Build With SWIRL?
+### Microsoft 365 prefix syntax
 
-Real examples of what teams build with SWIRL:
+When M365 is configured in Swirl, mike understands these prefixes in the search query:
 
-### 🔍 Knowledge Base Search
+| Prefix | Source |
+|--------|--------|
+| `sharepoint:` | SharePoint Sites |
+| `onedrive:` | OneDrive |
+| `outlook:` | Outlook Messages |
+| `teams:` | Microsoft Teams |
+| `microsoft:` | All M365 sources |
 
-- Connect SharePoint, Confluence, & Drive
-- Get instant answers with source links
-- Keep sensitive data secure
+Example: *"Find the Q3 budget in sharepoint: finance"*
 
-### 🤖 Customer Support Assistant
+### M365 document fetch
 
-- Search across support docs & tickets
-- Draft responses using your content
-- Maintain consistent answers
-
-### 👩‍💻 Developer Assistant
-
-- Search GitHub, Jira, & documentation
-- Find code examples & solutions
-- Speed up development workflow
-
-### 🏢 Unified Search
-
-- Unified search across all tools
-- Results respect existing permissions
-- No data duplication needed
-
-### 👀 See it in action
-
-![SWIRL Chat in Action](docs/images/SWIRL_4_AI_Chat.gif)
-
-## Schedule Your [Free Demo](https://swirlaiconnect.com/contact-us) of SWIRL Enterprise
-
-**Try SWIRL Enterprise for free for 30 Days. Click on the banner to contact us.**
-
-[![SWIRL Assistant](docs/images/swirl_enterprise_demo.png)](https://swirlaiconnect.com/contact-us)
-
-### ⚡ Why Teams Choose SWIRL
-
-- 🔒 Your infrastructure, your control
-- 🚀 Deploy in minutes, not months
-- 🔌 100+ enterprise connectors
-- 🤖 AI that respects your security
-
-## SWIRL's Ranking in Action
-
-SWIRL doesn't just search - it understands your company's context. Instead of broad web results, you get precise answers from your private data, right where it lives.
-
-<a href="https://www.youtube.com/watch?v=Ypn4XvSJfcQ" target="_blank">
-
-![SWIRL vs Google Ranking](docs/images/SWIRL_ranking_img.png)
-
-</a>
-
-## SWIRL Features
-
-![Features 1](docs/images/part_1.png)
-![Features 2](docs/images/part_2.png)
+When mike's `import_document` tool receives a SharePoint or OneDrive URL, it proxies the download through Swirl's `/swirl/fetch-document/` endpoint, which handles the Microsoft Graph API three-step fetch using the user's stored OAuth token. No M365 credentials need to be in mike's environment.
 
 <br/>
 
-### **Full list of connectors is available [here](https://swirlaiconnect.com/connectors)**
+# 🚀 Quick Start
 
-**For Support on Connectors**  Contact the Swirl Team at: [support@swirlaiconnect.com](mailto:support@swirlaiconnect.com)  
+## Option A — Docker (recommended for evaluation)
 
-<br/>
-
-# 🔥 Try Swirl Now In Docker
-
-## Prerequisites
-
-- To run Swirl in Docker, you must have the latest [Docker app](https://docs.docker.com/get-docker/) for MacOS, Linux, or Windows installed and running locally. You can also watch the [**video tutorial**](https://www.youtube.com/watch?v=OogRYkfSki8) to get started.
-
-- Windows users must also install and configure either the WSL 2 or the Hyper-V backend, as outlined in the  [System Requirements for installing Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/#system-requirements).
-
-## Start Swirl in Docker
-
-> **Warning**
-> Make sure the Docker app is running before proceeding!
-
-- Download the YAML file: [https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml](https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml)
+> **Requirements:** [Docker Desktop](https://docs.docker.com/get-docker/) must be running.  
+> Windows users: configure WSL 2 or Hyper-V per [Docker's Windows requirements](https://docs.docker.com/desktop/install/windows-install/#system-requirements).
 
 ```bash
+# Download the compose file
 curl https://raw.githubusercontent.com/swirlai/swirl-search/main/docker-compose.yaml -o docker-compose.yaml
-```
 
-- *Optional*: To enable Swirl's Real-Time Retrieval Augmented Generation (RAG) in Docker, run the following commands from the Console using a valid OpenAI API key:
-  
-``` shell
+# Optional: enable RAG with OpenAI
+export OPENAI_API_KEY='your-key-here'
+
+# Microsoft 365 OAuth callback (defaults below work for local Docker;
+# see the M365 Guide to enable M365 connectors)
 export MSAL_CB_PORT=8000
 export MSAL_HOST=localhost
-export OPENAI_API_KEY=‘<your-OpenAI-API-key>’
+
+# Start Swirl (macOS / Linux / Windows)
+docker compose pull && docker compose up
 ```
 
-:key: Check out [OpenAI's YouTube video](https://youtu.be/nafDyRsVnXU?si=YpvyaRvhX65vtBrb) if you don't have an OpenAI API Key.
+Open <http://localhost:8000> and log in with `admin` / `password`.
 
-- In MacOS or Linux, run the following command from the Console:
+> **Note:** The Docker version does not retain data or configuration when shut down.
+
+## Option B — Local install (pip)
 
 ```bash
-docker-compose pull && docker-compose up
+git clone https://github.com/swirlai/swirl-search.git
+cd swirl-search
+pip install -r requirements.txt
+python -m spacy download en_core_web_lg
+
+python swirl.py setup
+python swirl.py start
 ```
 
-- In Windows, run the following command from PowerShell:
+Open <http://localhost:8000/swirl/> and log in with `admin` / `password`.
 
-```bash
-docker compose up
-```
+> **Requirements:** Python 3.13+, Redis running locally.
 
-After a few minutes the following or similar should appear:
+<br/>
 
-<img src="https://docs.swirlaiconnect.com/images/swirl_docker_1.png" height="70%" width="90%">
+# ⚙️ Configuration
 
-- Open this URL with a browser: <http://localhost:8000> (or <http://localhost:8000/galaxy>)
+## SearchProviders
 
-- If the search page appears, click `Log Out` at the top, right. The Swirl login page will appear.
+Add credentials to the preloaded SearchProvider fixtures at `/swirl/searchproviders/` or via the Django admin at `/admin/swirl/searchprovider/`. Each provider maps a connector type to a URL, credentials, and query/result mappings.
 
-- Enter the username `admin` and password `password`, then click `Login`.
+## Microsoft 365
 
-- Enter a search in the search box and press the `Search` button. Ranked results appear in just a few seconds:
+Swirl supports OAuth2 search across M365 Outlook, OneDrive, SharePoint, and Teams. Setup requires approval from an M365 administrator. See the [M365 Guide](https://docs.swirlaiconnect.com/m365-guide) for full instructions.
 
-<img src="docs/images/SWIRL_4_Galaxy_UI.png" height="70%" weight="70%" style="border-radius: 10px;">
+## AI / LLM Providers
 
-- To view the raw JSON, open <http://localhost:8000/swirl/search/>
+Configure a `ChatGPT` or `GenAI` SearchProvider with your OpenAI or compatible API key to enable real-time RAG. See the [AI Guide](https://docs.swirlaiconnect.com/rag-guide).
 
-The most recent Search object will be displayed at the top. Click on the `result_url` link to view the full JSON Response.
+<br/>
 
-## Notes 📝
+# 🔌 List of Connectors
 
-> **Warning**
-> The Docker version of Swirl *does not* retain any data or configuration when shut down!
+<img src="https://docs.swirlaiconnect.com/images/Connectors_2.png" height=60% width=70%/>
 
-:key: Swirl comes configured to search Arxiv, European PMC and Google News right out of the box.
-
-:key: Using Swirl with Microsoft 365 requires installation and approval by an authorized company Administrator. For more information, please review the [M365 Guide](https://docs.swirlaiconnect.com/M365-Guide.html) or [contact us](mailto:hello@swirlaiconnect.com).
-
-## Next Steps 👇
-
-- Check out the details of our [latest release](https://github.com/swirlai/swirl-search/releases)!
-
-- Head over to the [Quick Start Guide](https://docs.swirlaiconnect.com/Quick-Start.html) and install Swirl locally!
-
-## Video Tutorial
-
-Guide to Run SWIRL in Docker in 60 seconds.
-
-<a href="https://www.youtube.com/watch?v=Ypn4XvSJfcQ" target="_blank">
-
-<img src="docs/images/SWIRL_in_docker_guide.jpg" height="200px" width="400px"/>
-
-</a>
+➕ **Need a connector?** [Open an issue](https://github.com/swirlai/swirl-search/issues) or contribute one — see [Contributing](#-contributing-to-swirl).
 
 <br/>
 
@@ -237,42 +158,42 @@ Guide to Run SWIRL in Docker in 60 seconds.
 
 | ✦ | Feature |
 |:-----:|:--------|
-| 📌 | [Microsoft 365 integration and OAUTH2 support](https://docs.swirlaiconnect.com/M365-Guide.html) |
-| 🔍 | [SearchProvider configurations](https://github.com/swirlai/swirl-search/tree/main/SearchProviders) for all included Connectors. They can be [organized with the active, default and tags properties](https://docs.swirlaiconnect.com/User-Guide.html#organizing-searchproviders-with-active-default-and-tags). |
-| ✏️ | [Adaptation of the query for each provider](https://docs.swirlaiconnect.com/User-Guide.html#search-syntax) such as rewriting `NOT term` to `-term`, removing NOTted terms from providers that don't support NOT, and passing down the AND, + and OR operators. |
-| ⏳ | [Synchronous or asynchronous search federation](https://docs.swirlaiconnect.com/Developer-Guide.html#architecture) via [APIs](http://localhost:8000/swirl/swagger-ui/) |
-| 🛎️ | [Optional subscribe feature](https://docs.swirlaiconnect.com/Developer-Guide.html#subscribe-to-a-search) to continuously monitor any search for new results |
-| 🛠️ | Pipelining of [Processor](https://docs.swirlaiconnect.com/Developer-Guide.html#develop-new-processors) stages for real-time adaptation and transformation of queries, responses and results |
-| 🗄️ | [Results stored](https://docs.swirlaiconnect.com/Developer-Reference.html#result-objects) in SQLite3 or PostgreSQL for post-processing, consumption and/or analytics |
-| ➡️ | Built-in [Query Transformation](https://docs.swirlaiconnect.com/Developer-Guide.html#using-query-transformations) support, including re-writing and replacement |
-| 📖 | [Matching on word stems](https://docs.swirlaiconnect.com/Developer-Reference.html#cosinerelevancypostresultprocessor) and [handling of stopwords](https://docs.swirlaiconnect.com/Developer-Guide.html#configure-stopwords-language) via NLTK |
-| 🚫 | [Duplicate detection](https://docs.swirlaiconnect.com/Developer-Guide.html#detect-and-remove-duplicate-results) on field or by configurable Cosine Similarity threshold |
-| 🔄 | Re-ranking of unified results [using Cosine Vector Similarity](https://docs.swirlaiconnect.com/Developer-Reference.html#cosinerelevancypostresultprocessor) based on [spaCy](https://spacy.io/)'s large language model and [NLTK](https://www.nltk.org/) |
-| 🎚️ | [Result mixers](https://docs.swirlaiconnect.com/Developer-Reference.html#mixers-1) order results by relevancy, date or round-robin (stack) format, with optional filtering of just new items in subscribe mode |
-| 📄 | Page through all results requested, re-run, re-score and update searches using URLs provided with each result set |
-| 📁 | [Sample data sets](https://github.com/swirlai/swirl-search/tree/main/Data) for use with SQLite3 and PostgreSQL |
-| ✒️ | [Optional spell correction](https://docs.swirlaiconnect.com/Developer-Guide.html#add-spelling-correction) using [TextBlob](https://textblob.readthedocs.io/en/dev/quickstart.html#spelling-correction) |
-| ⌛ | [Optional search/result expiration service](https://docs.swirlaiconnect.com/Admin-Guide.html#search-expiration-service) to limit storage use |
-| 🔌 | Easily extensible [Connector](https://github.com/swirlai/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/swirlai/swirl-search/tree/main/swirl/mixers) objects |
+| 📌 | [Microsoft 365 integration and OAUTH2 support](https://docs.swirlaiconnect.com/m365-guide) |
+| 🔍 | [SearchProvider configurations](https://github.com/swirlai/swirl-search/tree/main/SearchProviders) for all included Connectors |
+| ✏️ | [Adaptation of the query for each provider](https://docs.swirlaiconnect.com/user-guide#search-syntax) including NOT rewriting, AND/OR pass-through |
+| ⏳ | [Synchronous or asynchronous search federation](https://docs.swirlaiconnect.com/developer-guide#architecture) via [REST API](http://localhost:8000/swirl/api/docs) |
+| 🛎️ | [Optional subscribe feature](https://docs.swirlaiconnect.com/developer-guide#subscribe-to-a-search) to continuously monitor any search for new results |
+| 🛠️ | Pipelining of [Processor](https://docs.swirlaiconnect.com/developer-guide#develop-new-processors) stages for real-time query, response and result transformation |
+| 🗄️ | Results stored in SQLite3 or PostgreSQL for post-processing and analytics |
+| 📖 | [Matching on word stems](https://docs.swirlaiconnect.com/developer-reference#cosinerelevancypostresultprocessor) and stopword handling via NLTK |
+| 🚫 | [Duplicate detection](https://docs.swirlaiconnect.com/developer-guide#detect-and-remove-duplicate-results) by field or Cosine Similarity threshold |
+| 🔄 | Re-ranking via [Cosine Vector Similarity](https://docs.swirlaiconnect.com/developer-reference#cosinerelevancypostresultprocessor) using spaCy and NLTK |
+| 🎚️ | [Result mixers](https://docs.swirlaiconnect.com/developer-reference#mixers-1) — relevancy, date, round-robin |
+| ✒️ | [Optional spell correction](https://docs.swirlaiconnect.com/developer-guide#add-spelling-correction) using TextBlob |
+| 🔌 | Extensible [Connector](https://github.com/swirlai/swirl-search/tree/main/swirl/connectors) and [Mixer](https://github.com/swirlai/swirl-search/tree/main/swirl/mixers) objects |
 
 <br/>
 
-# ☁ Use the Swirl Cloud
+# 👩‍💻 Contributing to Swirl
 
-For information about Swirl as a managed service, please [contact us](mailto:hello@swirlaiconnect.com)!
+**Got an idea or improvement?**
+
+1. Join the [Swirl Slack Community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
+2. Branch off `develop` with a descriptive name
+3. Submit a PR — we follow [Gitflow](https://nvie.com/posts/a-successful-git-branching-model/) loosely
+
+New to GitHub contributions? The [GitHub contributing guide](https://docs.github.com/en/get-started/quickstart/contributing-to-projects) is a great starting point.
 
 <br/>
 
 # 📖 Documentation
 
-🔗 [SWIRL Documentation](https://docs.swirlaiconnect.com/)
+[Overview](https://docs.swirlaiconnect.com/) | [Quick Start](https://docs.swirlaiconnect.com/quick-start) | [User Guide](https://docs.swirlaiconnect.com/user-guide) | [Admin Guide](https://docs.swirlaiconnect.com/admin-guide) | [M365 Guide](https://docs.swirlaiconnect.com/m365-guide) | [Developer Guide](https://docs.swirlaiconnect.com/developer-guide) | [Developer Reference](https://docs.swirlaiconnect.com/developer-reference) | [AI Guide](https://docs.swirlaiconnect.com/rag-guide)
 
 <br/>
 
-# 👷‍♂️ Need Help? We're Here for You
+# 👷‍♂️ Support
 
-At Swirl, every user matters to us. Whether you're a beginner finding your way or an expert with feedback, we're here to support, listen, and help. Don't hesitate to reach out to us.
-
-- **Direct Support:** For any questions, suggestions, or even a simple hello, drop us an email at [support@swirlaiconnect.com](mailto:support@swirlaiconnect.com). We cherish every message and promise to get back to you promptly!
-
-- **Request A Connector (Enterprise Support)** Want to see a new connector quickly and fast? Contact us: [support@swirlaiconnect.com](mailto:support@swirlaiconnect.com)
+* **Slack:** [Swirl Community](https://join.slack.com/t/swirlmetasearch/shared_invite/zt-1qk7q02eo-kpqFAbiZJGOdqgYVvR1sfw)
+* **Email:** [support@swirlaiconnect.com](mailto:support@swirlaiconnect.com)
+* **Enterprise / managed service:** [hello@swirlaiconnect.com](mailto:hello@swirlaiconnect.com)

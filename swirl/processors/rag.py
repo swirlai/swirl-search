@@ -15,6 +15,7 @@ from datetime import datetime
 from django.conf import settings
 
 from swirl.openai.openai import OpenAIClient, AI_RAG_USE
+from swirl.ai_provider import AIProviderFactory
 
 from celery import group
 import threading
@@ -93,10 +94,18 @@ class RAGPostResultProcessor(PostResultProcessor):
 
     type="RAGPostResultProcessor"
 
-    def __init__(self, search_id, request_id='', should_get_results=False, rag_query_items=False):
+    def __init__(self, search_id, request_id='', should_get_results=False, rag_query_items=False, rag_timeout=None):
         super().__init__(search_id=search_id, request_id=request_id, should_get_results=should_get_results, rag_query_items=rag_query_items)
         self.tasks = None
         self.stop_background_thread = False
+        # DS-5598: per-request OpenAI completion timeout (seconds). The
+        # TimeoutMiddleware's func_timeout wrapper can't interrupt a
+        # blocking OpenAI HTTP call (Python threads don't preempt mid-
+        # syscall), so the URL-query `rag_timeout` was effectively
+        # ignored — the test in rag.feature:240 never saw the timeout
+        # surface. Passing this value straight into the completion call
+        # below makes the timeout actually take effect.
+        self.rag_timeout = rag_timeout
         try:
             rag_result = Result.objects.get(search_id=search_id, searchprovider='ChatGPT')
             if rag_result:
@@ -166,6 +175,11 @@ class RAGPostResultProcessor(PostResultProcessor):
         # Use module-level, settings-driven config
         chosen_rag = sorted_rag[:RAG_MAX_TO_CONSIDER]
 
+        logger.info(f"RAG: considering {len(chosen_rag)} of {len(sorted_rag)} results for query '{user_query}'")
+        for i, item in enumerate(chosen_rag):
+            body_len = len((item.get('body') or '').split())
+            logger.info(f"RAG candidate [{i+1}] provider={item.get('searchprovider','?')} score={item.get('swirl_score','?')} body_words={body_len} url={item.get('url','')[:80]}")
+
         max_tokens = RAG_MAX_TOKENS
         fallback_text = ""
         fallback_tokens = 0
@@ -174,6 +188,7 @@ class RAGPostResultProcessor(PostResultProcessor):
             max_tokens=max_tokens,
             model=self.client.get_encoding_model()
         )
+        logger.info(f"RAG: token budget={max_tokens} model={self.client.get_encoding_model()}")
 
         fetch_prompt_errors = {}
         from swirl.tasks import page_fetcher_task
@@ -194,8 +209,16 @@ class RAGPostResultProcessor(PostResultProcessor):
         results = result_group.get(interval=0.05, timeout=120)
         if self.stop_background_thread:
             return 0
+
+        chunks_added = 0
+        chunks_fallback = 0
+        chunks_skipped = 0
+
         for nth_result, result in enumerate(results):
+            url = chosen_rag[nth_result].get('url', '')
             if result[0] == False:
+                chunks_skipped += 1
+                logger.info(f"RAG [{nth_result+1}] SKIPPED (page_fetcher returned False) url={url[:80]}")
                 continue
             else:
                 text_for_query, response_url, document_type, body, url, json = result
@@ -205,28 +228,41 @@ class RAGPostResultProcessor(PostResultProcessor):
                         fallback_text = fallback_text + new_content
                         fallback_tokens = fallback_tokens + len(new_content.split())
 
-                    # Getting search provider from the last item is questionable practice D.A.N.
-                    # logger.info(f'RAG {item["searchprovider"]} PageFetcherFactory adding prompt content from page :\nurl : {url}\ncontent_url : {content_url}\nresponse_url:{response_url}')
                     if new_content := text_for_query:
-                        # is_full = rag_prompt.put_chunk(new_content, url=url, type=document_type, filter_file_type=(not content_url))
+                        source = "page" if text_for_query != f"body : {body}" else "summary"
                         is_full = rag_prompt.put_chunk(new_content, url=url, type=document_type, filter_file_type=True)
                         if not rag_prompt.is_last_chunk_added():
                             summary_page_text = self.format_result_as_page(chosen_rag[nth_result]['body'], rag_prompt.get_last_chunk_status())
                             is_full = rag_prompt.put_chunk(summary_page_text, url=url, type=document_type, filter_file_type=True)
                             if not rag_prompt.is_last_chunk_added():
-                                warn =  f"RAG Chunk not added : {rag_prompt.get_last_chunk_status()}"
+                                warn = f"RAG Chunk not added : {rag_prompt.get_last_chunk_status()}"
                                 self._log_n_store_warn(url=url, warn=warn, buffer=fetch_prompt_errors)
                                 fetch_prompt_errors[url] = warn
+                                chunks_skipped += 1
+                                logger.info(f"RAG [{nth_result+1}] REJECTED status={rag_prompt.get_last_chunk_status()} url={url[:80]}")
+                            else:
+                                chunks_fallback += 1
+                                logger.info(f"RAG [{nth_result+1}] ADDED via summary fallback tokens={rag_prompt.get_num_tokens()} url={url[:80]}")
+                        else:
+                            chunks_added += 1
+                            logger.info(f"RAG [{nth_result+1}] ADDED via {source} tokens={rag_prompt.get_num_tokens()} url={url[:80]}")
 
-                        logger.debug(f'RAG : max_tokens:{max_tokens} num_tokens {rag_prompt.get_num_tokens()} is_full:{rag_prompt.is_full()}')
                         if is_full:
+                            logger.info(f"RAG: token budget exhausted after {nth_result+1} results")
                             break
                     else:
                         summary_page_text = self.format_result_as_page(chosen_rag[nth_result]['body'], "NO CONTENT")
                         is_full = rag_prompt.put_chunk(summary_page_text, url=url, type=document_type, filter_file_type=True)
                         if not rag_prompt.is_last_chunk_added():
                             warn = f'RAG No content found in {url} max_tokens:{max_tokens} num_tokens {rag_prompt.get_num_tokens()} is_full:{rag_prompt.is_full()} JSON:{json}'
-                            self._log_n_store_warn(url=url,warn=warn,buffer=fetch_prompt_errors)
+                            self._log_n_store_warn(url=url, warn=warn, buffer=fetch_prompt_errors)
+                            chunks_skipped += 1
+                            logger.info(f"RAG [{nth_result+1}] REJECTED no content url={url[:80]}")
+                        else:
+                            chunks_fallback += 1
+                            logger.info(f"RAG [{nth_result+1}] ADDED via body-only fallback tokens={rag_prompt.get_num_tokens()} url={url[:80]}")
+
+        logger.info(f"RAG summary: added={chunks_added} fallback={chunks_fallback} skipped={chunks_skipped} prompt_tokens={rag_prompt.get_num_tokens()}/{max_tokens}")
 
         new_prompt_text = rag_prompt.get_promp_text()
         logger.debug(f"\nRAG Prompt:\n\t{new_prompt_text}")
@@ -241,16 +277,37 @@ class RAGPostResultProcessor(PostResultProcessor):
             result.save()
             return 0
 
-        client_model=self.client.get_model()
+        client_model = self.client.get_provider().model if hasattr(self.client, 'get_provider') else self.client.get_model()
+        # DS-5598: build the kwargs for the OpenAI / LLMWrapper call once
+        # so we apply the same per-request timeout to both code paths.
+        # The OpenAI Python SDK accepts ``timeout=`` on
+        # ``chat.completions.create`` and per the LLMWrapper signature
+        # (swirl/ai_provider.py) the wrapper accepts it too.
+        completion_kwargs = {}
+        if self.rag_timeout is not None:
+            completion_kwargs["timeout"] = self.rag_timeout
         try:
-            completions_new = self.client.openai_client.chat.completions.create(
-                model=client_model,
-                messages=[
-                    {"role": "system", "content": rag_prompt.get_role_system_guide_text()},
-                    {"role": "user", "content": new_prompt_text},
-                ]
-            )
-            model_response = completions_new.choices[0].message.content
+            if hasattr(self.client, 'completion'):
+                # AIProviderFactory / LLMWrapper path
+                completions_new = self.client.completion(
+                    messages=[
+                        {"role": "system", "content": rag_prompt.get_role_system_guide_text()},
+                        {"role": "user", "content": new_prompt_text},
+                    ],
+                    **completion_kwargs,
+                )
+                model_response = completions_new.choices[0].message.content
+            else:
+                # Legacy OpenAIClient path
+                completions_new = self.client.openai_client.chat.completions.create(
+                    model=client_model,
+                    messages=[
+                        {"role": "system", "content": rag_prompt.get_role_system_guide_text()},
+                        {"role": "user", "content": new_prompt_text},
+                    ],
+                    **completion_kwargs,
+                )
+                model_response = completions_new.choices[0].message.content
             logger.warning(f'RAG: fetch_prompt_errors follow:')
             for (k,v) in fetch_prompt_errors.items():
                 logger.warning(f'RAG:\t url:{k} problem:{v}')
@@ -274,12 +331,25 @@ class RAGPostResultProcessor(PostResultProcessor):
         rag_result['date_published'] = str(datetime.now())
         rag_result['title'] = self.search.query_string_processed,
         rag_result['body'] = model_response,
-        rag_result['author'] = 'ChatGPT'
-        rag_result['searchprovider'] = f'ChatGPT-{client_model}'
+        provider_label = (
+            self.client.get_provider().name
+            if hasattr(self.client, 'get_provider')
+            else 'ChatGPT'
+        )
+        rag_result['author'] = provider_label
+        rag_result['searchprovider'] = f'{provider_label}-{client_model}'
         rag_result['searchprovider_rank'] = 1
         if settings.SWIRL_DEFAULT_RESULT_BLOCK:
             rag_result['result_block'] = getattr(settings, 'SWIRL_DEFAULT_RESULT_BLOCK', 'ai_summary')
         rag_result['rag_query_items'] = [str(item['swirl_id']) for item in chosen_rag]
+        rag_result['additional_content'] = {
+            'sources': [
+                {'title': item.get('title', ''), 'url': item.get('url', '')}
+                for item in chosen_rag
+                if item.get('url')
+            ],
+            'ai_model': client_model,
+        }
 
         result = Result.objects.create(owner=self.search.owner, search_id=self.search, provider_id=5, searchprovider='ChatGPT', query_string_to_provider=new_prompt_text[:256], query_to_provider='None', status='READY', retrieved=1, found=1, json_results=[rag_result], time=0.0)
         result.save()
@@ -287,14 +357,19 @@ class RAGPostResultProcessor(PostResultProcessor):
 
     def process(self, should_return=True):
         self.client = None
-        try :
-            logger.debug('RAG allocating client')
-            self.client = OpenAIClient(usage=AI_RAG_USE)
-            logger.debug(f'RAG allocate client complete {self.client}')
-        except ValueError as err:
-            logger.warning(f"RAG : {err} allocating openAI client")
-            logger.warning(err)
-            return 0
+        try:
+            logger.debug('RAG allocating AI provider')
+            self.client = AIProviderFactory().alloc_ai_provider('rag', owner=self.search.owner)
+            if self.client is None:
+                raise ValueError("No active AIProvider configured for role 'rag'")
+            logger.debug(f'RAG allocated provider: {self.client.get_provider().name}')
+        except Exception as err:
+            logger.warning(f"RAG: {err} — falling back to OpenAIClient")
+            try:
+                self.client = OpenAIClient(usage=AI_RAG_USE)
+            except ValueError as fallback_err:
+                logger.warning(f"RAG: fallback also failed: {fallback_err}")
+                return 0
 
         if should_return:
             return self.background_process()

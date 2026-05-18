@@ -1,5 +1,5 @@
 {
-    "name": "ENRON Email - OpenSearch",
+    "name": "Email - OpenSearch",
     "active": false,
     "default": false,
     "connector": "OpenSearch",
@@ -13,11 +13,14 @@
         "MappingResultProcessor",
         "CosineRelevancyResultProcessor"
     ],
+    "response_mappings": "",
     "result_mappings": "url='https://<your-opensearch-instance>/email/_doc/{_id}',date_published=_source.date_published,author=_source.author,title=_source.subject,body=_source.content,_source.to,NO_PAYLOAD",
-    "credentials": "verify_certs=[True|False],ca_certs=/path/to/cert/file.crt,username:password",
+    "results_per_query": 10,
+    "credentials": "verify_certs=[True|False],ca_certs=<path-to-cert-file>,<opensearch-username>:<opensearch-password>",
     "tags": [
-        "Enron",
         "OpenSearch",
+        "Email",
+        "Enron",
         "Internal"
     ]
 }

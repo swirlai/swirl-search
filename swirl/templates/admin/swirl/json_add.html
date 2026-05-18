@@ -1,0 +1,43 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+  &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+  &rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+  &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <p>
+    Paste a single JSON object, or an array of objects, with the same
+    field names you would use in <code>preloaded.json</code> or in a Swirl
+    export. <code>id</code> is ignored (the DB assigns one).
+    <code>owner</code> may be a username string or omitted (defaults to you).
+    Unknown fields are dropped with a warning.
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+    <fieldset class="module aligned">
+      <div class="form-row">
+        <label for="id_json_data">{% trans 'JSON' %}:</label>
+        <textarea
+          id="id_json_data"
+          name="json_data"
+          rows="24"
+          cols="100"
+          style="font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; width: 100%; min-height: 360px;"
+          placeholder='{&#10;  "name": "My Provider",&#10;  "connector": "RequestsGet",&#10;  "url": "https://example.com/search",&#10;  "active": true,&#10;  "tags": ["Internal"]&#10;}'>{{ json_data|default_if_none:'' }}</textarea>
+      </div>
+    </fieldset>
+    <div class="submit-row">
+      <input type="submit" value="{% trans 'Create' %}" class="default" />
+      <a href="../" class="button cancel-link">{% trans 'Cancel' %}</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

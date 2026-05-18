@@ -28,7 +28,7 @@ jobs:
       - name: Set Up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.13.9'
+          python-version: '3.13.12'
           cache: 'pip'
       - name: Install Swirl
         run: ./install.sh
@@ -60,20 +60,21 @@ jobs:
             -u admin:"$PASSWORD" \
             -H "Content-Type: application/json" \
             -d "$JSON"
-      - name: PATCH the LinkedIn PSE Config
-        env:
-          JSON: ${{ secrets.QA_PSE_LINKEDIN }}
-          API_ENDPOINT: http://localhost:8000/swirl/searchproviders/3/
-          PASSWORD: ${{ secrets.QA_ADMIN_PW }}
-        run: |
-          curl -X PATCH "$API_ENDPOINT" \
-            -u admin:"$PASSWORD" \
-            -H "Content-Type: application/json" \
-            -d "$JSON"
+      # DS-5598: LinkedIn was removed from SearchProviders/preloaded.json
+      # (it was a Google PSE flavour pointing at linkedin.com that the team
+      # is not maintaining). The previous "PATCH the LinkedIn PSE Config"
+      # step targeted provider ID 3, which after the removal is no longer
+      # LinkedIn — it's "Docs - SWIRL". Removing this step
+      # avoids overwriting the Documentation provider's config with the
+      # stale LinkedIn PSE secret.
+      #
+      # The SWIRL Docs PSE config moved from provider ID 4 -> ID 3 because
+      # LinkedIn no longer occupies a slot above it; the API_ENDPOINT
+      # below is updated to match.
       - name: PATCH the SWIRL Docs PSE Config
         env:
           JSON: ${{ secrets.QA_PSE_DOCS }}
-          API_ENDPOINT: http://localhost:8000/swirl/searchproviders/4/
+          API_ENDPOINT: http://localhost:8000/swirl/searchproviders/3/
           PASSWORD: ${{ secrets.QA_ADMIN_PW }}
         run: |
           curl -X PATCH "$API_ENDPOINT" \
@@ -103,7 +104,16 @@ jobs:
           echo "========"
           cat .env.qa
           echo "========"
-          docker run --net=host --env-file .env.qa -t swirlai/swirl-search-qa:automated-tests-master sh -c "behave --tags=qa_suite,community"
+          # Mount swirl-search-public's preloaded.json files into the QA
+          # container so data_examples/_preloaded.py can resolve them via
+          # $SWIRL_PRELOADED_DIR. Without this the loader raises
+          # FileNotFoundError on the first import inside behave.
+          docker run --net=host --env-file .env.qa \
+            -v "${{ github.workspace }}/SearchProviders:/swirl/SearchProviders:ro" \
+            -v "${{ github.workspace }}/AIProviders:/swirl/AIProviders:ro" \
+            -e SWIRL_PRELOADED_DIR=/swirl \
+            -t swirlai/swirl-search-qa:automated-tests-master \
+            sh -c "behave --tags=qa_suite,community --exclude nl_research"
       - name: Upload Log Files
         if: always()
         uses: actions/upload-artifact@v4

@@ -27,19 +27,19 @@ class RagPrompt():
         self._is_full = False
         self._num_tokens = 0
         self._last_chunk_status = RAG_PROMPT_CHUNK_OK
-        self._model_encoding = tiktoken.encoding_for_model(model)
+        try:
+            self._model_encoding = tiktoken.encoding_for_model(model)
+        except (KeyError, Exception):
+            # Non-OpenAI models (Anthropic, Azure deployments, Ollama, etc.)
+            # aren't in tiktoken's registry; cl100k_base is a safe fallback.
+            self._model_encoding = tiktoken.get_encoding('cl100k_base')
 
         self._prompt_footer = (
         f"\n\n\n\n--- Final Instructions ---\nIn your response do not assume people with vastly different work histories are the same person. "
         f"If the query appears to be a proper name, focus on answering the question, 'Who is?' or 'What is?', as appropriate. "
         f"If the query appears to be a question, then try to answer it. "
-        f"For the list of sources, use the HTML tags and format in the example below, do not generate duplicate entries, one entry per source.:\n"
-        f"\n<p>"
-        f"\n<br><b>Sources:</b>"
-        f"\n<br><i>example description 1</i> &nbsp;&nbsp;&nbsp; <b>example URL or source name 1</b>"
-        f"\n<br><i>example description 2</i> &nbsp;&nbsp;&nbsp; <b>example URL or source name 2</b>"
-        f"\n</p>"
-        f"\n\nEnclose your response in HTML tags <p></p> and insert a <br> HTML tag every two sentences."
+        f"At the end of your response, list your sources in plain text, one per line, with a short description followed by the URL or source name. "
+        f"Do not generate duplicate source entries. Do not use HTML tags in your response."
         )
 
     def get_num_tokens(self):

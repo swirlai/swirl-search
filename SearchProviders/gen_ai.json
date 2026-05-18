@@ -1,7 +1,7 @@
 {
-    "name": "Generative AI",
+    "name": "Answers - OpenAI",
     "active": false,
-    "default": true,
+    "default": false,
     "connector": "GenAI",
     "url": "",
     "query_template": "",
@@ -19,6 +19,7 @@
     "credentials": "<your-openai-API-key>",
     "tags": [
         "GenAI",
-        "Question"
+        "Question",
+        "Public"
     ]
 }
