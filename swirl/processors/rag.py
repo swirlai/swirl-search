@@ -94,7 +94,7 @@ class RAGPostResultProcessor(PostResultProcessor):
 
     type="RAGPostResultProcessor"
 
-    def __init__(self, search_id, request_id='', should_get_results=False, rag_query_items=False, rag_timeout=None):
+    def __init__(self, search_id, request_id='', should_get_results=False, rag_query_items=False, rag_timeout=None, ai_instructions=''):
         super().__init__(search_id=search_id, request_id=request_id, should_get_results=should_get_results, rag_query_items=rag_query_items)
         self.tasks = None
         self.stop_background_thread = False
@@ -106,6 +106,12 @@ class RAGPostResultProcessor(PostResultProcessor):
         # surface. Passing this value straight into the completion call
         # below makes the timeout actually take effect.
         self.rag_timeout = rag_timeout
+        # Free-form user-provided instructions for this RAG response. Wired
+        # from Galaxy's "Optional instructions for the AI Response..."
+        # textarea via ?ai_instructions=... on detail-search-rag. Threaded
+        # into RagPrompt below so it lands in the prompt body the model
+        # actually sees. Empty string = no extra instructions.
+        self.ai_instructions = (ai_instructions or '').strip()
         try:
             rag_result = Result.objects.get(search_id=search_id, searchprovider='ChatGPT')
             if rag_result:
@@ -186,7 +192,8 @@ class RAGPostResultProcessor(PostResultProcessor):
         rag_prompt = RagPrompt(
             user_query,
             max_tokens=max_tokens,
-            model=self.client.get_encoding_model()
+            model=self.client.get_encoding_model(),
+            query_instructions=self.ai_instructions,
         )
         logger.info(f"RAG: token budget={max_tokens} model={self.client.get_encoding_model()}")
 
