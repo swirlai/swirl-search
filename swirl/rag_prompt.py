@@ -19,11 +19,28 @@ class RagPrompt():
     def __str__(self):
         return f"{self.__class__.__name__}"
 
-    def __init__(self, query, max_tokens, model):
+    def __init__(self, query, max_tokens, model, query_instructions=""):
         self._query = query
         self._max_tokens = max_tokens
         self._model = model
-        self._prompt_text = f"Answer this query '{query}' given the following recent search results as background information. Do not mention that you are using the provided background information. Please cite the sources at the end of your response. Ignore information that is off-topic or obviously conflicting, without warning about it."
+        # query_instructions: optional free-form user-supplied guidance for
+        # this specific RAG response (e.g., "respond in markdown", "keep it
+        # under 200 words", "address the reader as 'team'"). Galaxy has
+        # had an "Optional instructions for the AI Response..." textarea
+        # for a while and sends the value via ?ai_instructions=... on the
+        # detail-search-rag endpoint; before this change the backend
+        # accepted the URL param but silently dropped it. Weaving the
+        # instructions into the prompt as an additional clause lets the
+        # model honour them without us shipping a separate system-prompt
+        # pathway.
+        self._query_instructions = (query_instructions or "").strip()
+        instructions_clause = (
+            f" Additionally, follow these user-provided instructions when "
+            f"composing your answer: {self._query_instructions}."
+            if self._query_instructions
+            else ""
+        )
+        self._prompt_text = f"Answer this query '{query}'{instructions_clause} given the following recent search results as background information. Do not mention that you are using the provided background information. Please cite the sources at the end of your response. Ignore information that is off-topic or obviously conflicting, without warning about it."
         self._is_full = False
         self._num_tokens = 0
         self._last_chunk_status = RAG_PROMPT_CHUNK_OK
