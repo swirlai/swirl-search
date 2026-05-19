@@ -54,6 +54,72 @@ def test_rag_timeout_non_integer_is_ignored():
 
 
 # ---------------------------------------------------------------------------
+# SearchRag.__init__ — ai_instructions extraction
+# ---------------------------------------------------------------------------
+
+def test_ai_instructions_absent_defaults_to_empty_string():
+    sr = SearchRag(_FakeRequest({}))
+    assert sr.ai_instructions == ""
+
+
+def test_ai_instructions_is_extracted_from_request():
+    sr = SearchRag(_FakeRequest({"ai_instructions": "Respond in bullet points."}))
+    assert sr.ai_instructions == "Respond in bullet points."
+
+
+def test_ai_instructions_is_trimmed():
+    sr = SearchRag(_FakeRequest({"ai_instructions": "   keep under 100 words   "}))
+    assert sr.ai_instructions == "keep under 100 words"
+
+
+def test_ai_instructions_capped_at_2000_chars():
+    # Defensive bound — keeps a megabyte payload from blowing up the
+    # prompt token budget. The actual prompt limit is RAG_MAX_TOKENS;
+    # this is just a fast upfront sanity cap.
+    sr = SearchRag(_FakeRequest({"ai_instructions": "x" * 5000}))
+    assert len(sr.ai_instructions) == 2000
+
+
+# ---------------------------------------------------------------------------
+# RagPrompt — query_instructions weaving
+# ---------------------------------------------------------------------------
+
+def test_rag_prompt_without_instructions_omits_clause():
+    from swirl.rag_prompt import RagPrompt
+
+    p = RagPrompt(query="diabetes treatments", max_tokens=4000, model="gpt-4")
+    assert "user-provided instructions" not in p._prompt_text
+    assert "diabetes treatments" in p._prompt_text
+
+
+def test_rag_prompt_with_instructions_weaves_clause():
+    from swirl.rag_prompt import RagPrompt
+
+    p = RagPrompt(
+        query="diabetes treatments",
+        max_tokens=4000,
+        model="gpt-4",
+        query_instructions="Respond in markdown bullet points.",
+    )
+    assert "user-provided instructions" in p._prompt_text
+    assert "Respond in markdown bullet points." in p._prompt_text
+    # Original query phrasing preserved before the instruction clause.
+    assert "Answer this query 'diabetes treatments'" in p._prompt_text
+
+
+def test_rag_prompt_with_blank_instructions_treated_as_absent():
+    # Galaxy's URL param can be present-but-empty (?ai_instructions=).
+    # Whitespace-only should also be treated as no instructions.
+    from swirl.rag_prompt import RagPrompt
+
+    for blank in ("", "   ", "\n\t"):
+        p = RagPrompt(
+            query="q", max_tokens=4000, model="gpt-4", query_instructions=blank
+        )
+        assert "user-provided instructions" not in p._prompt_text
+
+
+# ---------------------------------------------------------------------------
 # SearchRag._extract_result
 # ---------------------------------------------------------------------------
 
