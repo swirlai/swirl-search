@@ -1,4 +1,4 @@
-aiohappyeyeballs==2.6.1
+aiohappyeyeballs==2.6.2
 aiohttp==3.13.4
 aiosignal==1.4.0
 amqp==5.3.1
@@ -20,7 +20,7 @@ bs4==0.0.2
 catalogue==2.0.10
 cbor2==6.1.1
 celery==5.6.3
-certifi==2026.4.22
+certifi==2026.5.20
 cffi==1.17.1
 channels==4.3.2
 channels_redis==4.3.0
@@ -89,7 +89,7 @@ jsonschema-specifications==2025.9.1
 kombu==5.6.2
 litellm==1.83.14
 lxml==6.1.1
-lxml_html_clean==0.4.4
+lxml_html_clean==0.4.5
 markdown-it-py==4.2.0
 MarkupSafe==3.0.3
 mdurl==0.1.2
