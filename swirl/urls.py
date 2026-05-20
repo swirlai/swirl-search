@@ -27,6 +27,13 @@ router.register(r'sapi/results', views.ResultViewSet, basename='galaxy-results')
 router.register(r'sapi/authenticators', views.AuthenticatorViewSet, basename='galaxy-authenticators')
 router.register(r'sapi/searchproviders', views.SearchProviderViewSet, basename='galaxy-searchproviders'),
 router.register(r'sapi/branding', views.BrandingConfigurationViewSet, basename='galaxy-branding')
+# Galaxy's swirl.service.ts hardcodes /api/swirl/sapi/ai_providers/?tag=rag for the
+# RAG model selector / AI-instructions drawer gate. The AIProviderViewSet was only
+# registered at the top-level /swirl/aiproviders/ path, so the Galaxy call 404'd
+# and the box.component never rendered the drawer (the ai_instructions textarea
+# lives inside it). Mirror the SearchProvider pattern: expose the same viewset at
+# the sapi/ path Galaxy expects.
+router.register(r'sapi/ai_providers', views.AIProviderViewSet, basename='galaxy-ai-providers')
 
 urlpatterns = [
     # drf-spectacular paths for API schema and documentation
