@@ -41,6 +41,17 @@ class SearchRag:
             except (TypeError, ValueError):
                 self.rag_timeout = None
 
+        # Free-form user-supplied guidance for the RAG response. Galaxy
+        # sends this via the "Optional instructions for the AI Response..."
+        # textarea as ?ai_instructions=...; before this wiring the backend
+        # silently dropped it. We trim and bound the value to keep a
+        # malicious / accidental megabyte payload from blowing up the
+        # prompt budget — RAG_MAX_TOKENS is the real backstop but a cheap
+        # upfront cap is cleaner than letting RagPrompt see truncated
+        # mid-sentence text.
+        ai_instructions_raw = request_data.get("ai_instructions", "") or ""
+        self.ai_instructions = ai_instructions_raw.strip()[:2000]
+
     def _extract_result(self, json_result: dict) -> tuple:
         """Return (body_text, additional_content) from a stored rag json_result."""
         body = json_result.get("body", [None])
@@ -82,6 +93,7 @@ class SearchRag:
             should_get_results=True,
             rag_query_items=self.rag_query_items,
             rag_timeout=self.rag_timeout,
+            ai_instructions=self.ai_instructions,
         )
         instances[self.search_id] = rag_processor
         if rag_processor.validate():

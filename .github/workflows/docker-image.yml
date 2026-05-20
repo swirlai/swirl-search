@@ -61,9 +61,16 @@ jobs:
           TAG_NAME=$([ "$BRANCH_NAME" = "main" ] && echo "latest" || echo "$BRANCH_NAME")
           echo "Building tag: swirlai/swirl-search:$TAG_NAME"
           docker buildx use devBuilder || docker buildx create --name devBuilder --use
+          # --sbom=true + --provenance=mode=max attach an SBOM (SPDX) and a
+          # max-detail SLSA provenance attestation to every published image
+          # as a multi-arch manifest attestation. Customers can fetch via:
+          #   docker buildx imagetools inspect swirlai/swirl-search:latest \
+          #     --format '{{ json .SBOM }}'
           docker buildx build \
             -t swirlai/swirl-search:$TAG_NAME \
             --platform linux/amd64,linux/arm64 \
+            --sbom=true \
+            --provenance=mode=max \
             --push .
 
       - name: Update the Docker Repo Description
