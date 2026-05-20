@@ -27,6 +27,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from swirl.authentication import OptionalTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -514,15 +515,18 @@ class SearchViewSet(viewsets.ModelViewSet):
     """
     queryset = Search.objects.all()
     serializer_class = SearchSerializer
-    # TokenAuthentication first: when Galaxy sends `Authorization: Token <key>`
-    # alongside a stale session cookie, SessionAuthentication-first caused
-    # DRF to authenticate via the session and then enforce CSRF on unsafe
-    # methods (DELETE / PUT / POST). Without a fresh csrftoken cookie that
-    # matched the X-CSRFToken header, every search-history delete returned
-    # 403, and the Galaxy auth-interceptor over-reacted by clearing
-    # localStorage — appearing to log the user out and wipe their history.
-    # Putting Token first lets the explicit Token header win cleanly.
-    authentication_classes = [TokenAuthentication, SessionAuthentication, BasicAuthentication]
+    # OptionalTokenAuthentication FIRST so the explicit `Authorization: Token`
+    # header Galaxy sends wins cleanly when valid (bypasses CSRF enforcement
+    # on unsafe methods — the original 403 cascade on the search-history
+    # delete flow). OptionalToken differs from stock TokenAuthentication in
+    # one important way: when the token header is present but invalid (stale,
+    # revoked, or carried over from a prior login in the same Selenium /
+    # browser session), it RETURNS None instead of raising
+    # AuthenticationFailed. That hands control to SessionAuthentication,
+    # which authenticates via the session cookie set during form login.
+    # Stock TokenAuth would have short-circuited the chain at 401, which is
+    # what regressed the QA suite on 4.5.0.3.
+    authentication_classes = [OptionalTokenAuthentication, SessionAuthentication, BasicAuthentication]
 
     def report(self):
         return self.queryset
