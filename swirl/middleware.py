@@ -31,7 +31,20 @@ class TokenMiddleware:
             return HttpResponseForbidden()
 
         auth_header = request.headers['Authorization']
-        token = auth_header.split(' ')[1]
+        # Defensive split: the Authorization header is expected to be
+        # ``<scheme> <credentials>`` (e.g. ``Token abc123``). Anything
+        # malformed — empty value, scheme-only, no space at all — used to
+        # IndexError out of ``split(' ')[1]`` and surface as a 500.
+        # Treat any malformed header as Forbidden, same as a token that
+        # isn't on file. Symptoms before the fix: any /sapi/ request from
+        # a client that sent ``Authorization: Token `` (empty value) or
+        # ``Authorization: Bearer`` (no value) crashed instead of being
+        # rejected, and Galaxy's getIsAIProviderExistsStatus error path
+        # hid the AI drawer (including the ai_instructions textarea).
+        parts = auth_header.split(' ', 1)
+        if len(parts) != 2 or not parts[1].strip():
+            return HttpResponseForbidden()
+        token = parts[1].strip()
         try:
             token_obj = Token.objects.get(key=token)
             request.user = token_obj.user
