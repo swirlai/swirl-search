@@ -1,0 +1,68 @@
+# Exclude content that has no business in the runtime image.
+# The Dockerfile uses `COPY . /app`, which would otherwise drag in
+# every file in the build context — including internal docs that have
+# previously leaked SWIRL tenant identifiers into the published image.
+
+# --- version control + GitHub Actions ----------------------------------
+.git
+.gitignore
+.github
+
+# --- internal docs (M365-Guide.md, etc.) -------------------------------
+# Internal-facing markdown that ships at docs.swirlaiconnect.com, not in
+# the runtime image. The 4.5.0.2 release scrubbed leaked tenant UUIDs
+# from these files; this exclusion prevents future leaks of that shape.
+docs/
+HANDOFF-*.md
+BUILD-AND-RELEASE.md
+
+# --- tests + fixtures --------------------------------------------------
+# Test code and large JSON fixtures (some embed internal docs in their
+# result content). Not needed by the running server.
+swirl/tests/
+requirements-test.txt
+install-test.sh
+pytest.ini
+
+# --- developer tooling -------------------------------------------------
+DevUtils/
+.devcontainer/
+.gitpod.yml
+.vscode/
+
+# --- agent / IDE metadata ----------------------------------------------
+.claude/
+.cursor/
+.idea/
+
+# --- python bytecode + caches ------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# --- local env / runtime artefacts --------------------------------------
+# .env / .env.local hold per-developer secrets and should never ship.
+# .env.docker IS used by the Dockerfile (COPY ./.env.docker /app/.env) —
+# it is intentionally NOT excluded here.
+.env
+.env.local
+.swirl/
+logs/
+
+# --- OS / editor cruft -------------------------------------------------
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
+*.swp
+*~
+
+# --- misc local checkouts ----------------------------------------------
+node_modules/

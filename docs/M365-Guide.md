@@ -211,8 +211,8 @@ Example configuration for SWIRL running locally:
 ```
   "msalConfig": {
     "auth": {
-      "clientId": "7df052ca-a153-4514-b26c-87eef2696e59",
-      "authority": "https://login.microsoftonline.com/2c1f7fec-50db-4d19-99c2-073454d5e3c2",
+      "clientId": "<client-id-redacted>",
+      "authority": "https://login.microsoftonline.com/<tenant-id-redacted>",
       "redirectUri": "http://localhost:8000/galaxy/microsoft-callback"
     }
   },
@@ -223,8 +223,8 @@ Example configuration for SWIRL running behind a gateway:
 ```
   "msalConfig": {
     "auth": {
-      "clientId": "7df052ca-a153-4514-b26c-87eef2696e59",
-      "authority": "https://login.microsoftonline.com/2c1f7fec-50db-4d19-99c2-073454d5e3c2",
+      "clientId": "<client-id-redacted>",
+      "authority": "https://login.microsoftonline.com/<tenant-id-redacted>",
       "redirectUri": "https://search.swirl.today/galaxy/microsoft-callback"
     }
   },
@@ -317,7 +317,7 @@ This configuration can be used when running SWIRL locally:
     "name": "Microsoft",
     "active": true,
     "callback_path": "/swirl/callback/microsoft-callback",
-    "client_id": "7df052ca-a153-4514-b26c-87eef2696e59",
+    "client_id": "<client-id-redacted>",
     "client_secret": "<secret-redacted>",
     "app_uri": "http://localhost:8000",
     "auth_uri": "https://login.microsoftonline.com/<tenant-id-redacted>/oauth2/v2.0/authorize",
@@ -383,7 +383,7 @@ Example OIDC configuration for Microsoft:
    "Microsoft": {
       "active": true,
       "issuer": "https://login.microsoftonline.com/<tenant-id-redacted>/v2.0",
-      "clientId": "7df052ca-a153-4514-b26c-87eef2696e59",
+      "clientId": "<client-id-redacted>",
       "redirectUri": "https://search.swirl.today/galaxy/oidc-callback",
       "scope": "openid email",
       "responseType": "code",
