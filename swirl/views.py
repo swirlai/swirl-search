@@ -514,7 +514,15 @@ class SearchViewSet(viewsets.ModelViewSet):
     """
     queryset = Search.objects.all()
     serializer_class = SearchSerializer
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    # TokenAuthentication first: when Galaxy sends `Authorization: Token <key>`
+    # alongside a stale session cookie, SessionAuthentication-first caused
+    # DRF to authenticate via the session and then enforce CSRF on unsafe
+    # methods (DELETE / PUT / POST). Without a fresh csrftoken cookie that
+    # matched the X-CSRFToken header, every search-history delete returned
+    # 403, and the Galaxy auth-interceptor over-reacted by clearing
+    # localStorage — appearing to log the user out and wipe their history.
+    # Putting Token first lets the explicit Token header win cleanly.
+    authentication_classes = [TokenAuthentication, SessionAuthentication, BasicAuthentication]
 
     def report(self):
         return self.queryset
