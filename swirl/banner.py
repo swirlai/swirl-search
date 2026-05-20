@@ -10,7 +10,7 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
 
-SWIRL_VERSION = '4.5.0.3'
+SWIRL_VERSION = '4.5.0.4'
 
 SWIRL_BANNER_TEXT = f"SWIRL AI COMMUNITY {SWIRL_VERSION}"
 
