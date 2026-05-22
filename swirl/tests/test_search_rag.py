@@ -264,6 +264,89 @@ def test_get_rag_result_serves_cache_when_request_items_match_stored(monkeypatch
     assert cached.deleted is False
 
 
+def test_concurrent_get_rag_result_serializes_via_lock(monkeypatch):
+    """REGRESSION 4.5.0.6: two simultaneous detail-search-rag calls for the
+    same search_id must NOT both spin up a RAGPostResultProcessor.
+
+    Galaxy has been observed firing /sapi/detail-search-rag/ twice for a
+    single user action — box.component.toggleChange's direct call PLUS a
+    cascaded call from summary.component after queryParamMap-triggered
+    makeSearch(). Without the per-search-id lock added to SearchRag, both
+    calls saw cache miss, both ran OpenAI completions, both saved Result
+    rows, and the user saw the AI Summary swap from one body to another.
+
+    With the lock, only ONE processor is instantiated; the second caller
+    blocks, re-checks the cache after acquiring the lock, and serves the
+    body the first writer just stored.
+    """
+    import threading
+    from swirl.models import Result
+    from swirl.views_helpers import search_rag as sr_mod
+
+    cached_after_first_writer = _FakeResult(
+        rag_query_items=["item-a"], body="first-writer-body"
+    )
+    state = {"first_done": False}
+
+    def _fake_get(*args, **kwargs):
+        if state["first_done"]:
+            return cached_after_first_writer
+        raise Result.DoesNotExist
+
+    monkeypatch.setattr(Result.objects, "get", _fake_get)
+
+    instances_created = []
+
+    class StubProc:
+        def __init__(self, **kwargs):
+            instances_created.append(self)
+
+        def validate(self):
+            return True
+
+        def process(self, should_return=False):
+            # Simulate slow OpenAI work, then flip the "cache exists" flag
+            # so the next caller's _try_serve_cache finds the Result.
+            import time as _t
+            _t.sleep(0.2)
+            state["first_done"] = True
+            return type("FakeResult", (), {
+                "json_results": [{
+                    "body": ["first-writer-body"],
+                    "additional_content": {},
+                    "rag_query_items": ["item-a"],
+                }],
+            })()
+
+    monkeypatch.setattr(
+        "swirl.views_helpers.search_rag.RAGPostResultProcessor", StubProc
+    )
+    # Reset the module-level lock dict so the test is independent.
+    monkeypatch.setattr(sr_mod, "_rag_locks", {})
+
+    results = []
+
+    def caller():
+        sr = _make_search_rag(rag_items="item-a")
+        sr.search_id = "concurrent-test"
+        results.append(sr.get_rag_result())
+
+    t1 = threading.Thread(target=caller)
+    t2 = threading.Thread(target=caller)
+    t1.start()
+    t2.start()
+    t1.join(timeout=5)
+    t2.join(timeout=5)
+
+    assert len(instances_created) == 1, (
+        f"Expected exactly 1 RAGPostResultProcessor instance under "
+        f"concurrent get_rag_result; got {len(instances_created)} — "
+        f"lock failed to serialize."
+    )
+    bodies = [r[0] for r in results]
+    assert bodies == ["first-writer-body", "first-writer-body"], bodies
+
+
 def test_get_rag_result_regenerates_when_request_items_differ_from_stored(monkeypatch):
     """When the caller explicitly requested DIFFERENT rag_items, the cache
     must miss. We don't exercise the RAGPostResultProcessor branch here
