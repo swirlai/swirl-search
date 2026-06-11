@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/swirlai-swirl-search-badge.png)](https://mseep.ai/app/swirlai-swirl-search)
+
 <div align="center">
 
 [![SWIRL — open-source enterprise metasearch and RAG](https://raw.githubusercontent.com/swirlai/swirl-search/main/docs/images/large_header.png)](https://www.swirlaiconnect.com)
