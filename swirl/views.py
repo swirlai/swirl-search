@@ -103,18 +103,16 @@ def get_session_data_with_db_fallback(request):
                 logger.debug(f"get_session_data_with_db_fallback: DB sync skipped: {_e}")
         return session_data
 
-    # No browser session — look up the OauthToken DB row.
+    # No browser session — look up the OauthToken DB row for THIS user only.
+    # We must never fall back to another user's token: doing so would run one
+    # user's M365 search with another user's credentials (cross-user exposure).
     oauth_token = None
     if getattr(request, 'user', None) and request.user.is_authenticated:
         try:
             oauth_token = OauthToken.objects.get(owner=request.user, idp='Microsoft')
             logger.debug(f"get_session_data_with_db_fallback: loaded token from DB for {request.user}")
         except OauthToken.DoesNotExist:
-            logger.debug(f"get_session_data_with_db_fallback: no token for {request.user}, trying any Microsoft token")
-    if oauth_token is None:
-        oauth_token = OauthToken.objects.filter(idp='Microsoft').first()
-        if oauth_token:
-            logger.debug(f"get_session_data_with_db_fallback: using Microsoft token from owner={oauth_token.owner}")
+            logger.debug(f"get_session_data_with_db_fallback: no Microsoft token for {request.user}")
 
     if oauth_token:
         # Decode the real JWT expiry so we can decide whether to refresh.
@@ -288,18 +286,23 @@ class OidcAuthView(APIView):
             token = header.split(' ')[1]
             if token:
                 data = Microsoft().get_user(token)
-                if data['mail']:
+                if data.get('mail'):
                     user = None
                     try:
                         user = User.objects.get(email=data['mail'])
                     except User.DoesNotExist:
+                        # Provision a regular (non-privileged) user. OIDC sign-in must
+                        # never confer superuser/staff rights, and these accounts
+                        # authenticate via the token flow only, so they get no usable
+                        # password (no shared Basic-auth backdoor).
                         user = User.objects.create_user(
                             username=data['mail'],
-                            password='WQasdmwq2319dqwmk',
                             email=data['mail'],
-                            is_superuser=True,
-                            is_staff=True
+                            is_superuser=False,
+                            is_staff=False
                         )
+                        user.set_unusable_password()
+                        user.save()
                     token, created = Token.objects.get_or_create(user=user)
                     return Response({ 'user': user.username, 'token': token.key, 'swirl_version': SWIRL_VERSION, 'is_superuser': user.is_superuser, 'edition': 'community' })
                 return HttpResponseForbidden()
