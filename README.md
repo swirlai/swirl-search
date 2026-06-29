@@ -1,7 +1,7 @@
 <!-- Drop-in replacement for github.com/swirlai/swirl-search/README.md -->
 <!-- Image paths reference the repo's existing docs/images assets so they render unchanged. -->
 
-[![SWIRL](docs/images/swirl5_header.png)](https://www.swirlaiconnect.com)
+[![SWIRL](https://github.com/swirlai/swirl-search/raw/main/docs/images/swirl5_header.png)](https://www.swirlaiconnect.com)
 
 # SWIRL Community
 
@@ -9,12 +9,12 @@
 
 Ask a question. SWIRL searches your apps live, ranks the results, and returns an answer with sources you can click through to. Data stays where it lives. No vector database, no ETL, no second copy to govern. Open source, Apache 2.0, running on your machine in about two minutes.
 
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](https://opensource.org/license/apache-2-0/)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](https://opensource.org/license/apache-2.0)
 [![GitHub Release](https://img.shields.io/github/v/release/swirlai/swirl-search?style=flat-square&label=Release)](https://github.com/swirlai/swirl-search/releases)
 [![GitHub Stars](https://img.shields.io/github/stars/swirlai/swirl-search?style=social)](https://github.com/swirlai/swirl-search/stargazers)
 [![Website](https://img.shields.io/badge/Website-swirlaiconnect.com-00215E?style=flat-square)](https://www.swirlaiconnect.com)
 
-[![SWIRL Galaxy UI: ask a question, get an answer with sources](docs/images/swirl5_galaxy_ui.png)](https://www.swirlaiconnect.com)
+[![SWIRL Galaxy UI: ask a question, get an answer with sources](https://github.com/swirlai/swirl-search/raw/main/docs/images/swirl5_galaxy_ui.png)](https://www.swirlaiconnect.com)
 
 [⚡ Quick Start](#-quick-start-docker-in-2-minutes) · [🧱 What you get](#-what-swirl-community-gives-you) · [🆚 Community vs Enterprise](#-community-vs-swirl-5-enterprise) · [🔌 Connectors](https://swirlaiconnect.com/connectors) · [🤝 Contribute](#-contributing)
 
@@ -58,9 +58,9 @@ docker-compose pull && docker-compose up
 
 Then open <http://localhost:8000/galaxy>, log in with `admin` / `password`, and run a search. SWIRL comes ready to search Arxiv, European PMC and Google News out of the box.
 
-[![SWIRL Galaxy UI home](docs/images/swirl5_galaxy_home.png)](https://www.swirlaiconnect.com)
+[![SWIRL Galaxy UI: federated, ranked results across your sources](https://github.com/swirlai/swirl-search/raw/main/docs/images/swirl5_galaxy_results.png)](https://www.swirlaiconnect.com)
 
-> Note: the Docker version does not retain data or configuration when shut down. For a persistent install, see the [Quick Start Guide](https://docs.swirlaiconnect.com/Quick-Start.html). Watch the [60-second video tutorial](https://www.youtube.com/watch?v=Ypn4XvSJfcQ) to get going.
+> Note: the Docker version does not retain data or configuration when shut down. For a persistent install, see the [Quick Start Guide](https://docs.swirlaiconnect.com/quick-start). Watch the [60-second video tutorial](https://www.youtube.com/watch?v=Ypn4XvSJfcQ) to get going.
 
 ## 🧱 What SWIRL Community gives you
 
@@ -110,11 +110,11 @@ If that is where you are heading, you can [talk to us](https://swirlaiconnect.co
 
 ## 🔌 Connectors
 
-The full, current list lives at [swirlaiconnect.com/connectors](https://swirlaiconnect.com/connectors). Connectors are easily extensible; see the [Connector objects](https://github.com/swirlai/swirl-search/tree/main/swirl/connectors) and the [Developer Guide](https://docs.swirlaiconnect.com/Developer-Guide.html#develop-new-processors). To request a connector, email [support@swirlaiconnect.com](mailto:support@swirlaiconnect.com).
+The full, current list lives at [swirlaiconnect.com/connectors](https://swirlaiconnect.com/connectors). Connectors are easily extensible; see the [Connector objects](https://github.com/swirlai/swirl-search/tree/main/swirl/connectors) and the [Developer Guide](https://docs.swirlaiconnect.com/developer-guide#develop-new-processors). To request a connector, email [support@swirlaiconnect.com](mailto:support@swirlaiconnect.com).
 
 ## 📖 Documentation
 
-Full docs: [docs.swirlaiconnect.com](https://docs.swirlaiconnect.com/). Start with the [Quick Start Guide](https://docs.swirlaiconnect.com/Quick-Start.html), then the [User Guide](https://docs.swirlaiconnect.com/User-Guide.html) and [Developer Guide](https://docs.swirlaiconnect.com/Developer-Guide.html).
+Full docs: [docs.swirlaiconnect.com](https://docs.swirlaiconnect.com/). Start with the [Quick Start Guide](https://docs.swirlaiconnect.com/quick-start), then the [User Guide](https://docs.swirlaiconnect.com/user-guide) and [Developer Guide](https://docs.swirlaiconnect.com/developer-guide).
 
 ## 🤝 Contributing
 
@@ -134,4 +134,4 @@ Please read the Code of Conduct and Contributing guide in the repo before openin
 
 ## License
 
-SWIRL Community is licensed under the [Apache License 2.0](https://opensource.org/license/apache-2-0/). See `LICENSE` and `NOTICE` for details.
+SWIRL Community is licensed under the [Apache License 2.0](https://opensource.org/license/apache-2.0). See `LICENSE` and `NOTICE` for details.
