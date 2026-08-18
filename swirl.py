@@ -52,6 +52,11 @@ def service_is_retired(service_name):
 
 
 def check_pid(pid):
+    """Check whether a process with the given PID is currently running.
+
+    Runs ``ps -p <pid>`` and returns True if the PID appears in the output,
+    False otherwise.
+    """
     proc = subprocess.run(['ps','-p',str(pid)], capture_output=True)
     result = proc.stdout.decode('UTF-8')
     return str(pid) in result
