@@ -59,6 +59,13 @@ def check_pid(pid):
 ##################################################
 
 def load_swirl_file():
+    """
+    Load the .swirl PID file from the current directory.
+
+    Returns a dict mapping service names to PIDs when the file exists and
+    is valid JSON, an empty dict when the file does not exist, or False if
+    the file cannot be read.
+    """
     if os.path.exists('.swirl'):
         try:
             swirl_file = open('./.swirl', 'r')
