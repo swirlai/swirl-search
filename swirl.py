@@ -38,6 +38,10 @@ STOP_POLL         = 0.25
 COMMAND_LIST = [ 'help', 'start', 'debug', 'start_sleep', 'stop', 'restart', 'migrate', 'setup', 'status', 'watch', 'logs' ]
 
 def service_is_retired(service_name):
+    """
+    Return True if the named service is marked as retired in SERVICES, False otherwise.
+    Prints a notice when a retired service is encountered.
+    """
     ret = False
     try:
         for service in SERVICES:
