@@ -402,7 +402,7 @@ After a few seconds, SWIRL redirects to the **fully mixed results page**:
 
 **Limitations of `q=`:**
 
-- The **query must be URL-encoded** (e.g., spaces → `+`). Use a [free URL encoder](https://www.freeformatter.com/url-encoder.html) for assistance.
+- The **query must be URL-encoded** (e.g., spaces → `+`). Use a [free URL encoder](https://extendsclass.com/url-encode.html) for assistance.
 - **All active and default SearchProviders are queried**.
 - **Limited error handling**—if no results appear, inspect the Search object:  
   `http://localhost:8000/swirl/search/<your-search-id>`
