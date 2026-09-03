@@ -16,6 +16,7 @@ from django.urls import path, reverse
 from django.utils.html import format_html
 
 from .models import AIProvider, SearchProvider, Search, Result, QueryTransform, OauthToken
+from .scope import check_scope
 
 logger = logging.getLogger(__name__)
 
@@ -226,8 +227,32 @@ admin.site.site_url = '/swirl/'
 
 ##################################################
 
+class SearchProviderAdminForm(forms.ModelForm):
+    """Surfaces the scope rule (swirl/scope.py) as a field error in the admin."""
+
+    class Meta:
+        model = SearchProvider
+        fields = '__all__'
+
+    def clean(self):
+        cleaned = super().clean()
+        provider = self.instance
+        # Judge the provider the operator is about to save, not the stored row.
+        provider.active = cleaned.get('active', provider.active)
+        provider.query_template = cleaned.get('query_template', provider.query_template)
+        provider.query_template_json = cleaned.get(
+            'query_template_json', provider.query_template_json)
+        provider.tags = cleaned.get('tags', provider.tags)
+        provider.config = cleaned.get('config', provider.config)
+        error = check_scope(provider)
+        if error:
+            raise forms.ValidationError({'query_template': error})
+        return cleaned
+
+
 @admin.register(SearchProvider)
 class SearchProviderAdmin(JsonAddMixin, admin.ModelAdmin):
+    form = SearchProviderAdminForm
     change_list_template = 'admin/swirl/searchprovider/change_list.html'
     save_as = True
     save_on_top = True
@@ -259,6 +284,15 @@ class SearchProviderAdmin(JsonAddMixin, admin.ModelAdmin):
         }),
         ('Auth', {
             'fields': ['authenticator']
+        }),
+        ('Configuration', {
+            'fields': ['config'],
+            'description': (
+                'SWIRL keys live under "swirl". Set '
+                '{"swirl": {"scope_unrestricted": true}} to activate a source '
+                'that has a scope rule without a scope restriction; results are '
+                'then labelled shared_visibility "unrestricted".'
+            ),
         }),
     ]
 

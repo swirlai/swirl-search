@@ -3,6 +3,7 @@
 @contact:    sid@swirl.today
 '''
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 
@@ -133,11 +134,24 @@ class SearchProvider(models.Model):
     tags = models.JSONField(default=list)
     http_request_headers = models.JSONField(default={}, blank=True)
     page_fetch_config_json = models.JSONField(default={}, blank=True)
+    # Free-form provider configuration, keyed by namespace. SWIRL's own keys
+    # live under config['swirl']; today that is
+    # config['swirl']['scope_unrestricted'] (see swirl/scope.py).
+    config = models.JSONField(default=dict, blank=True)
 
     class Meta:
         ordering = ['id']
         verbose_name = "SearchProvider"
         verbose_name_plural = "SearchProviders"
+
+    def clean(self):
+        # Sources that return the whole tenant when queried without a scope
+        # cannot be activated until the scope is set. See swirl/scope.py.
+        super().clean()
+        from swirl.scope import check_scope
+        error = check_scope(self)
+        if error:
+            raise ValidationError({'query_template': error})
 
     def get_absolute_url(self):
         # Returns the URL to access
