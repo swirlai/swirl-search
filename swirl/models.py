@@ -3,6 +3,7 @@
 @contact:    sid@swirl.today
 '''
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 
@@ -88,6 +89,7 @@ class SearchProvider(models.Model):
         ('Oracle','Oracle'),
         ('Snowflake','Snowflake'),
         ('PineconeDB','PineconeDB'),
+        ('TantivyIndex', 'SWIRL Tantivy Index'),
     ]
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
@@ -133,11 +135,24 @@ class SearchProvider(models.Model):
     tags = models.JSONField(default=list)
     http_request_headers = models.JSONField(default={}, blank=True)
     page_fetch_config_json = models.JSONField(default={}, blank=True)
+    # Free-form provider configuration, keyed by namespace. SWIRL's own keys
+    # live under config['swirl']; today that is
+    # config['swirl']['scope_unrestricted'] (see swirl/scope.py).
+    config = models.JSONField(default=dict, blank=True)
 
     class Meta:
         ordering = ['id']
         verbose_name = "SearchProvider"
         verbose_name_plural = "SearchProviders"
+
+    def clean(self):
+        # Sources that return the whole tenant when queried without a scope
+        # cannot be activated until the scope is set. See swirl/scope.py.
+        super().clean()
+        from swirl.scope import check_scope
+        error = check_scope(self)
+        if error:
+            raise ValidationError({'query_template': error})
 
     def get_absolute_url(self):
         # Returns the URL to access
@@ -200,6 +215,11 @@ class Search(models.Model):
         ('StackNMixer', 'StackNMixer')
     ]
     result_mixer = models.CharField(max_length=200, default='RelevancyMixer', choices=MIXER_CHOICES)
+    # Per-search payload connectors can read. The search view stores the
+    # Backstage query params under the 'backstage' key
+    # (TECH_DESIGN_swirl_for_backstage.md section 3.5); every other connector
+    # ignores it.
+    query_template_json = models.JSONField(default=dict, blank=True)
     RETENTION_CHOICES = [
         (0, 'Never expire'),
         (1, 'Expire after 1 hour'),
@@ -312,3 +332,44 @@ class AIProvider(models.Model):
         ordering = ['-date_updated']
         verbose_name = "AIProvider"
         verbose_name_plural = "AIProviders"
+
+
+class SearchIndexGeneration(models.Model):
+    '''
+    Bookkeeping for the Tantivy index generations created by the Backstage
+    ingest API (TECH_DESIGN_swirl_for_backstage.md section 3.2).
+
+    The filesystem under SWIRL_TANTIVY_DATA_DIR is the source of truth. These
+    rows exist so the admin and GET /swirl/index/ can show what happened
+    without walking every generation directory.
+    '''
+    STATE_OPEN = 'open'
+    STATE_LIVE = 'live'
+    STATE_ABORTED = 'aborted'
+    STATE_RETIRED = 'retired'
+    STATE_CHOICES = [
+        (STATE_OPEN, 'Open'),
+        (STATE_LIVE, 'Live'),
+        (STATE_ABORTED, 'Aborted'),
+        (STATE_RETIRED, 'Retired'),
+    ]
+
+    id = models.BigAutoField(primary_key=True)
+    type = models.CharField(max_length=64)
+    generation = models.CharField(max_length=32)
+    state = models.CharField(max_length=16, default=STATE_OPEN, choices=STATE_CHOICES)
+    doc_count = models.IntegerField(default=0)
+    bytes = models.BigIntegerField(default=0)
+    started_at = models.DateTimeField(auto_now_add=True)
+    finalized_at = models.DateTimeField(blank=True, null=True)
+    started_by = models.ForeignKey('auth.User', on_delete=models.SET_NULL,
+                                   blank=True, null=True)
+
+    class Meta:
+        ordering = ['-started_at']
+        unique_together = [['type', 'generation']]
+        verbose_name = "SearchIndexGeneration"
+        verbose_name_plural = "SearchIndexGenerations"
+
+    def __str__(self):
+        return '{}/{} ({})'.format(self.type, self.generation, self.state)

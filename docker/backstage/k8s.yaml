@@ -1,0 +1,141 @@
+# SWIRL for Backstage on Kubernetes
+# (TECH_DESIGN_swirl_for_backstage.md section 3.8).
+#
+# One replica, strategy Recreate, one PVC. The container runs Redis, Django and
+# Celery together, so two replicas would each hold their own Redis and their own
+# copy of the index; scale out is a phase 2 question.
+#
+#   kubectl apply -f docker/backstage/k8s.yaml
+#
+# The SECRET_KEY below is a placeholder. Replace the Secret with one created
+# out of band, for example:
+#   kubectl create secret generic swirl-backstage \
+#       --from-literal=SECRET_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(50))')"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: swirl-backstage-data
+  labels:
+    app: swirl-backstage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: swirl-backstage
+  labels:
+    app: swirl-backstage
+spec:
+  selector:
+    app: swirl-backstage
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: swirl-backstage
+  labels:
+    app: swirl-backstage
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: swirl-backstage
+  template:
+    metadata:
+      labels:
+        app: swirl-backstage
+    spec:
+      containers:
+        - name: swirl
+          image: swirlai/swirl-backstage:dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            - name: ALLOWED_HOSTS
+              value: "localhost,127.0.0.1,swirl-backstage"
+            - name: CSRF_TRUSTED_ORIGINS
+              value: "http://localhost:8000"
+            - name: SQL_ENGINE
+              value: django.db.backends.sqlite3
+            - name: SQL_DATABASE
+              value: /data/db.sqlite3
+            - name: CELERY_BROKER_URL
+              value: redis://127.0.0.1:6379/0
+            - name: CELERY_RESULT_BACKEND
+              value: redis://127.0.0.1:6379/0
+            - name: SWIRL_TANTIVY_DATA_DIR
+              value: /data/tantivy
+            - name: SWIRL_TANTIVY_WRITER_HEAP_MB
+              value: "64"
+            - name: SWIRL_SPACY_MODEL_EN
+              value: en_core_web_sm
+            # Backstage plugin-token verification (TECH_DESIGN section 3.3).
+            # Point the JWKS URL at the Backstage backend in this cluster; an
+            # empty value disables the path.
+            - name: SWIRL_BACKSTAGE_JWKS_URL
+              value: "http://backstage:7007/api/search/.backstage/auth/v1/jwks.json"
+            - name: SWIRL_BACKSTAGE_AUDIENCE
+              value: search
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: swirl-backstage
+                  key: SECRET_KEY
+                  optional: true
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          startupProbe:
+            httpGet:
+              path: /swirl/sapi/health/backstage/
+              port: http
+            periodSeconds: 5
+            failureThreshold: 24
+          readinessProbe:
+            httpGet:
+              path: /swirl/sapi/health/backstage/
+              port: http
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /swirl/sapi/health/backstage/
+              port: http
+            periodSeconds: 30
+            failureThreshold: 5
+          # Measured on the WP06 image: 2.48 GiB idle, 2.64 GiB with 5,071
+          # documents indexed. Most of that is `import swirl.processors`
+          # (torch, presidio, litellm, spacy, transformers), paid once by
+          # daphne, once by the search worker and once by beats; Tantivy adds
+          # about 150 MB. The old 2Gi limit was under the idle footprint, so
+          # the pod was OOMKilled before it ever answered a query.
+          #
+          # The deferred slim profile (WP06b in
+          # reboot-design/BUILD_PLAN_swirl_for_backstage.md: CPU-only torch
+          # wheels, lazy imports in swirl/processors, no beats when nothing is
+          # scheduled) is what brings these numbers down. Until it lands these
+          # are the measured numbers, not a target.
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "2.5Gi"
+            limits:
+              memory: "3Gi"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: swirl-backstage-data

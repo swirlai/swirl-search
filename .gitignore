@@ -136,3 +136,6 @@ dmypy.json
 \#*\#
 .\#*
 
+
+# SWIRL Tantivy index data (SWIRL for Backstage)
+tantivy_data/

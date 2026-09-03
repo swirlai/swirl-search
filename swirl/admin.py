@@ -15,7 +15,9 @@ from django.shortcuts import redirect, render
 from django.urls import path, reverse
 from django.utils.html import format_html
 
-from .models import AIProvider, SearchProvider, Search, Result, QueryTransform, OauthToken
+from .models import (AIProvider, SearchProvider, Search, Result, QueryTransform,
+                     OauthToken, SearchIndexGeneration)
+from .scope import check_scope
 
 logger = logging.getLogger(__name__)
 
@@ -226,8 +228,32 @@ admin.site.site_url = '/swirl/'
 
 ##################################################
 
+class SearchProviderAdminForm(forms.ModelForm):
+    """Surfaces the scope rule (swirl/scope.py) as a field error in the admin."""
+
+    class Meta:
+        model = SearchProvider
+        fields = '__all__'
+
+    def clean(self):
+        cleaned = super().clean()
+        provider = self.instance
+        # Judge the provider the operator is about to save, not the stored row.
+        provider.active = cleaned.get('active', provider.active)
+        provider.query_template = cleaned.get('query_template', provider.query_template)
+        provider.query_template_json = cleaned.get(
+            'query_template_json', provider.query_template_json)
+        provider.tags = cleaned.get('tags', provider.tags)
+        provider.config = cleaned.get('config', provider.config)
+        error = check_scope(provider)
+        if error:
+            raise forms.ValidationError({'query_template': error})
+        return cleaned
+
+
 @admin.register(SearchProvider)
 class SearchProviderAdmin(JsonAddMixin, admin.ModelAdmin):
+    form = SearchProviderAdminForm
     change_list_template = 'admin/swirl/searchprovider/change_list.html'
     save_as = True
     save_on_top = True
@@ -259,6 +285,15 @@ class SearchProviderAdmin(JsonAddMixin, admin.ModelAdmin):
         }),
         ('Auth', {
             'fields': ['authenticator']
+        }),
+        ('Configuration', {
+            'fields': ['config'],
+            'description': (
+                'SWIRL keys live under "swirl". Set '
+                '{"swirl": {"scope_unrestricted": true}} to activate a source '
+                'that has a scope rule without a scope restriction; results are '
+                'then labelled shared_visibility "unrestricted".'
+            ),
         }),
     ]
 
@@ -304,6 +339,116 @@ class ResultAdmin(admin.ModelAdmin):
         'messages', 'status', 'retrieved', 'found', 'time',
         'json_results', 'tags',
     ]
+
+##################################################
+
+@admin.register(SearchIndexGeneration)
+class SearchIndexGenerationAdmin(admin.ModelAdmin):
+    """
+    Read-only view of the Backstage Tantivy index generations
+    (TECH_DESIGN_swirl_for_backstage.md section 7).
+
+    Nothing here is editable: the filesystem under SWIRL_TANTIVY_DATA_DIR is
+    the source of truth and these rows are bookkeeping. "Abort" releases an
+    open generation whose ingest run died, lock file included. "Clear the
+    stale OPEN lock" is the escape hatch for a type wedged behind a lock file
+    with no row of its own, which is how a half-done begin used to leave things.
+    """
+    list_display = ['id', 'type', 'generation', 'state', 'doc_count',
+                    'size', 'started_at', 'finalized_at', 'started_by']
+    list_filter = ['type', 'state']
+    search_fields = ['type', 'generation']
+    ordering = ['-started_at']
+    date_hierarchy = 'started_at'
+    actions = ['abort_open_generations', 'clear_stale_open_locks']
+    readonly_fields = [
+        'id', 'type', 'generation', 'state', 'doc_count', 'bytes',
+        'started_at', 'finalized_at', 'started_by',
+    ]
+
+    @admin.display(description='Size', ordering='bytes')
+    def size(self, obj):
+        total = float(obj.bytes or 0)
+        if total < 1024:
+            return '{:.0f} B'.format(total)
+        for unit in ('KB', 'MB', 'GB'):
+            total = total / 1024.0
+            if total < 1024 or unit == 'GB':
+                return '{:.1f} {}'.format(total, unit)
+        return '{:.1f} GB'.format(total)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    @admin.action(description='Abort the selected open generations')
+    def abort_open_generations(self, request, queryset):
+        """Drop the generation and release its OPEN lock.
+
+        The lock file is removed even when the generation directory has already
+        gone, which is the case that used to leave a type answering 409 to
+        every begin with nothing on disk to explain it.
+        """
+        from django.utils import timezone
+
+        from swirl.tantivy_index import generations as gen_module
+        from swirl.tantivy_index.manager import default_manager
+
+        aborted = 0
+        for row in queryset.filter(state=SearchIndexGeneration.STATE_OPEN):
+            try:
+                default_manager.abort(row.type, row.generation)
+            except gen_module.GenerationNotFound:
+                # No directory left, but the lock may still name it.
+                default_manager.rollback_begin(row.type, row.generation)
+            except gen_module.TantivyIndexError as err:
+                self.message_user(
+                    request, '{}: {}'.format(row, err), level=messages.WARNING)
+                continue
+            # abort() only clears the lock when it names this generation; make
+            # sure nothing is left holding the type either way.
+            default_manager.rollback_begin(row.type, row.generation)
+            row.state = SearchIndexGeneration.STATE_ABORTED
+            row.finalized_at = timezone.now()
+            row.save(update_fields=['state', 'finalized_at'])
+            aborted += 1
+        if aborted:
+            self.message_user(
+                request, 'Aborted {} generation(s).'.format(aborted),
+                level=messages.SUCCESS)
+
+    @admin.action(description='Clear the stale OPEN lock for the selected types')
+    def clear_stale_open_locks(self, request, queryset):
+        """Release an abandoned OPEN lock without waiting for the TTL.
+
+        A type whose ingest run died holds its lock until
+        SWIRL_TANTIVY_BEGIN_TTL expires, and every begin in the meantime gets a
+        409. This releases it now. A lock that is still inside its TTL is left
+        alone, so this cannot cut a running ingest off at the knees.
+        """
+        from swirl.tantivy_index.manager import default_manager
+
+        cleared = []
+        skipped = []
+        for type_name in sorted({row.type for row in queryset}):
+            if default_manager.clear_stale_open(type_name):
+                cleared.append(type_name)
+            else:
+                skipped.append(type_name)
+        if cleared:
+            self.message_user(
+                request,
+                'Cleared the OPEN lock for: {}.'.format(', '.join(cleared)),
+                level=messages.SUCCESS)
+        if skipped:
+            self.message_user(
+                request,
+                'No stale lock to clear for: {}. A lock inside its TTL belongs '
+                'to a running ingest; use Abort to end it.'.format(
+                    ', '.join(skipped)),
+                level=messages.INFO)
 
 ##################################################
 

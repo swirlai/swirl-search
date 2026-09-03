@@ -29,6 +29,7 @@ from swirl.connectors.utils import get_mappings_dict
 from swirl.processors import *
 from swirl.processors.utils import result_processor_feedback_merge_records
 from swirl.processors.transform_query_processor_utils import get_query_processor_or_transform
+from swirl.scope import mark_shared_visibility, warn_if_unrestricted
 
 SWIRL_RP_SKIP_TAG = 'SW_RESULT_PROCESSOR_SKIP'
 
@@ -115,6 +116,11 @@ class Connector:
         '''
 
         self.start_time = time.time()
+
+        # A provider whose tag has a scope rule but which was activated with
+        # the config.swirl.scope_unrestricted bypass gets a warning on every
+        # federate, not only when the flag is set. See swirl/scope.py.
+        warn_if_unrestricted(self.provider)
 
         if self.status == 'READY':
             self.status = 'FEDERATING'
@@ -341,6 +347,7 @@ class Connector:
 
         if not processor_list:
             self.processed_results = self.results
+            mark_shared_visibility(self.provider, self.processed_results)
             self.status = 'READY'
             return
 
@@ -375,6 +382,9 @@ class Connector:
             del last_results
         # end for
         self.processed_results = self.results if self.results else []
+        # Results from a provider running without a scope restriction carry the
+        # label, so the consumer can show what it is looking at.
+        mark_shared_visibility(self.provider, self.processed_results)
         self.status = 'READY'
         self.retrieved = len(self.processed_results) # adjust retrieved in case processing effected the size of the list.
 

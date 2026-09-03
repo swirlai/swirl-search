@@ -45,3 +45,4 @@ presidio-anonymizer
 func_timeout
 litellm>=1.83.10,<1.84
 pydantic>=2.0,<3
+tantivy>=0.26

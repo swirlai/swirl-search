@@ -104,6 +104,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'swirl.middleware.BackstageTokenMiddleware',
     'swirl.middleware.TokenMiddleware',
     'swirl.middleware.SpyglassAuthenticatorsMiddleware',
     'swirl.middleware.SwaggerMiddleware',
@@ -371,6 +372,21 @@ SWIRL_WRITE_PATH = env('SWIRL_WRITE_PATH', default=SWIRL_WRITE_PATH_DEF)
 
 SWIRL_MAX_FIELD_LEN = 512
 
+# Tantivy index (SWIRL for Backstage, TECH_DESIGN section 3.1)
+# SWIRL_TANTIVY_DATA_DIR holds one directory per document type, each with
+# generation directories and a LIVE file naming the live generation.
+SWIRL_TANTIVY_DATA_DIR_DEF = str(BASE_DIR / 'tantivy_data')
+SWIRL_TANTIVY_DATA_DIR = env('SWIRL_TANTIVY_DATA_DIR', default=SWIRL_TANTIVY_DATA_DIR_DEF)
+# Writer heap per open generation, in megabytes.
+SWIRL_TANTIVY_WRITER_HEAP_MB = _env_int('SWIRL_TANTIVY_WRITER_HEAP_MB', default=128)
+# Seconds after which an abandoned open generation may be taken over by a new
+# begin. Until then a second begin for the same type answers HTTP 409. Half an
+# hour: long enough for a slow collator pass over a large catalog, short enough
+# that an ingest run which died without aborting does not hold the type for the
+# rest of the day. The SearchIndexGeneration admin can clear a stale lock
+# without waiting for this.
+SWIRL_TANTIVY_BEGIN_TTL = _env_int('SWIRL_TANTIVY_BEGIN_TTL', default=30 * 60)
+
 CHANNEL_LAYERS = {
     'default': {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -383,3 +399,14 @@ CHANNEL_LAYERS = {
 ASGI_THREADS = 1000
 
 SWIRL_CONNECTOR_TRACE=env.get_value('SWIRL_CONNECTOR_TRACE', default=None)
+
+#####################################################
+# SWIRL for Backstage
+#
+# Backstage's search backend forwards its own plugin token to SWIRL. Verifying
+# it needs the backend's JWKS URL and the plugin id SWIRL should accept as the
+# audience. Leaving either empty disables the path entirely: no Bearer token is
+# treated as a Backstage token. See swirl/backstage_bearer.py.
+
+SWIRL_BACKSTAGE_JWKS_URL = env.get_value('SWIRL_BACKSTAGE_JWKS_URL', default='')
+SWIRL_BACKSTAGE_AUDIENCE = env.get_value('SWIRL_BACKSTAGE_AUDIENCE', default='search')

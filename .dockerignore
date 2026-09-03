@@ -1,0 +1,21 @@
+# Build context exclusions. Without this the image picks up the developer's
+# local .env, db.sqlite3, Tantivy index and .git history, all of which are
+# either overwritten later in the Dockerfile or should never be in an image.
+.git
+.gitignore
+**/__pycache__
+**/*.py[cod]
+.pytest_cache
+.venv
+venv
+env
+.swirl
+*.log
+logs
+tantivy_data
+db.sqlite3
+db.sqlite3-journal
+.env
+static
+stored_results
+node_modules

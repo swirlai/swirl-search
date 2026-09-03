@@ -28,12 +28,15 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from swirl.authentication import OptionalTokenAuthentication
+from swirl.backstage_bearer import BackstagePrincipal, BackstagePrincipalAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
 import csv
+import json
+import re
 import base64
 import hashlib
 import hmac
@@ -504,6 +507,197 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
 ########################################
 ########################################
 
+########################################
+########################################
+
+#: Query params the Backstage engine module sends (TECH_DESIGN section 3.5).
+#: They are parked on Search.query_template_json['backstage'] so the
+#: TantivyIndex connector can read them. Every other connector ignores them.
+BACKSTAGE_QUERY_KEY = 'backstage'
+
+
+#: Clamp for ?backstage_timeout_ms, in seconds. The lower bound keeps a typo
+#: from making every federation fail; the upper bound is the same ceiling
+#: TimeoutMiddleware uses for rag_timeout.
+BACKSTAGE_MIN_TIMEOUT = 1
+BACKSTAGE_MAX_TIMEOUT = 180
+
+#: Clamp for ?results_requested.
+MIN_RESULTS_REQUESTED = 1
+MAX_RESULTS_REQUESTED = 1000
+
+#: Marker the TantivyIndex connector writes when a requested Backstage type has
+#: no live generation. Kept in sync with
+#: swirl.connectors.tantivy_index.MISSING_INDEX_MARKER.
+MISSING_INDEX_MARKER = '__MISSING_INDEX__'
+_MISSING_INDEX_RE = re.compile(re.escape(MISSING_INDEX_MARKER) + r'\s+types=([^\s]+)')
+
+
+def backstage_query_params(request):
+    """Read the Backstage query params off a request.
+
+    backstage_types is a comma list, backstage_filters is a JSON object and
+    backstage_timeout_ms is the federation timeout for this query in
+    milliseconds. Returns {} when none is present, so nothing is stored for an
+    ordinary search. A malformed value is logged and ignored rather than
+    failing the search.
+    """
+    block = {}
+    raw_types = request.GET.get('backstage_types', '')
+    if raw_types:
+        types = [part.strip() for part in raw_types.split(',') if part.strip()]
+        if types:
+            block['types'] = types
+    raw_filters = request.GET.get('backstage_filters', '')
+    if raw_filters:
+        try:
+            filters = json.loads(raw_filters)
+        except (ValueError, TypeError) as err:
+            logger.warning(f'{module_name}: ignoring malformed backstage_filters: {err}')
+            filters = None
+        if isinstance(filters, dict) and filters:
+            block['filters'] = filters
+        elif filters is not None and not isinstance(filters, dict):
+            logger.warning(f'{module_name}: backstage_filters must be a JSON object, ignoring it')
+    raw_timeout = request.GET.get('backstage_timeout_ms', '')
+    if raw_timeout:
+        try:
+            seconds = int(round(int(raw_timeout) / 1000.0))
+        except (ValueError, TypeError):
+            logger.warning(f'{module_name}: ignoring malformed backstage_timeout_ms: {raw_timeout}')
+            seconds = None
+        if seconds is not None:
+            block['timeout'] = max(BACKSTAGE_MIN_TIMEOUT,
+                                   min(BACKSTAGE_MAX_TIMEOUT, seconds))
+    if not block:
+        return {}
+    return {BACKSTAGE_QUERY_KEY: block}
+
+
+def results_requested_param(request, default=10):
+    """Read ?results_requested, the page size for the mixed result list."""
+    raw = request.GET.get('results_requested', '')
+    if not raw:
+        return default
+    try:
+        value = int(raw)
+    except (ValueError, TypeError):
+        logger.warning(f'{module_name}: ignoring malformed results_requested: {raw}')
+        return default
+    return max(MIN_RESULTS_REQUESTED, min(MAX_RESULTS_REQUESTED, value))
+
+
+def missing_index_types(messages):
+    """Pull the Backstage missing-index types out of a response messages list.
+
+    The connector cannot put a dict into Result.messages, which the mixer
+    natsorts as strings, so it writes a marker line instead and this reads it
+    back. Returns a sorted list of type names, empty when there is no marker.
+    """
+    found = []
+    for message in messages or []:
+        if not isinstance(message, str):
+            continue
+        match = _MISSING_INDEX_RE.search(message)
+        if match:
+            found.extend(name for name in match.group(1).split(',') if name)
+    return sorted(set(found))
+
+
+def apply_missing_index(results, request=None):
+    """Turn the connector's marker into the shape the Backstage engine reads.
+
+    Returns a DRF Response when nothing could be served (HTTP 404 with
+    {"error": "missing_index", "types": [...]}), otherwise None after adding
+    {"type": "__MISSING_INDEX__", "types": [...]} to the messages array of the
+    envelope, which is left otherwise untouched.
+    """
+    if not isinstance(results, dict):
+        return None
+    types = missing_index_types(results.get('messages'))
+    if not types:
+        return None
+    if not results.get('results'):
+        logger.warning(f'{module_name}: no live Backstage index for {types}')
+        return Response({'error': 'missing_index', 'types': types},
+                        status=status.HTTP_404_NOT_FOUND)
+    messages = results.get('messages')
+    if not isinstance(messages, list):
+        messages = []
+        results['messages'] = messages
+    messages.append({'type': MISSING_INDEX_MARKER, 'types': types})
+    return None
+
+
+#: Fields whose plain value must not carry SWIRL's highlight markers on the
+#: Backstage path, and where the marked-up version belongs instead.
+BACKSTAGE_HIGHLIGHT_FIELDS = (
+    ('title', 'title_hit_highlights'),
+    ('body', 'body_hit_highlights'),
+)
+
+
+def is_backstage_request(request):
+    """Whether this request came from the Backstage engine module.
+
+    Either it carries the Backstage query params, or it was authenticated with
+    a verified Backstage plugin token. Galaxy satisfies neither, which is what
+    keeps the highlight handling below off the Galaxy path.
+    """
+    if request is None:
+        return False
+    if isinstance(getattr(request, 'backstage_principal', None), BackstagePrincipal):
+        return True
+    params = getattr(request, 'GET', None)
+    if params is None:
+        return False
+    return bool(params.get('backstage_types') or params.get('backstage_filters'))
+
+
+def move_highlights_out_of_the_plain_fields(results, request=None):
+    """Give Backstage clean title and body, and the markers in the hit lists.
+
+    SWIRL's relevancy processor writes the marked-up text back over `title` and
+    `body`, which is what Galaxy renders. Backstage renders the document text
+    as plain text, so those markers arrived on screen as literal `<em>`, while
+    `highlight.fields` stayed empty because the engine only reads
+    `title_hit_highlights` and `body_hit_highlights` - and for a federated
+    result those were empty.
+
+    On the Backstage path only, the marked-up value is moved into the hit
+    highlight list (when the provider did not already supply one) and the plain
+    field is stripped. Nothing here runs for Galaxy.
+
+    Returns the number of fields changed, for the tests.
+    """
+    if not is_backstage_request(request):
+        return 0
+    if not isinstance(results, dict):
+        return 0
+    rows = results.get('results')
+    if not isinstance(rows, list):
+        return 0
+
+    start = settings.SWIRL_HIGHLIGHT_START_CHAR
+    end = settings.SWIRL_HIGHLIGHT_END_CHAR
+    changed = 0
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        for field, highlight_field in BACKSTAGE_HIGHLIGHT_FIELDS:
+            value = row.get(field)
+            if not isinstance(value, str) or start not in value:
+                continue
+            existing = row.get(highlight_field)
+            if not isinstance(existing, list) or not any(existing):
+                # The connector produced no highlight of its own, so the marked
+                # up plain field is the only one there is: keep it here.
+                row[highlight_field] = [value]
+            row[field] = value.replace(start, '').replace(end, '')
+            changed += 1
+    return changed
+
+
 class SearchViewSet(viewsets.ModelViewSet):
     """
     API endpoint for managing Search objects.
@@ -518,6 +712,14 @@ class SearchViewSet(viewsets.ModelViewSet):
     """
     queryset = Search.objects.all()
     serializer_class = SearchSerializer
+    # BackstagePrincipalAuthentication first so a verified Backstage plugin
+    # token reaches this view as its 'backstage:<entity ref>' user. The
+    # middleware has already set request.user; without this class DRF resolves
+    # it back to AnonymousUser on every method that SessionAuthentication's CSRF
+    # check rejects (TECH_DESIGN sections 3.3 and 3.5). It claims only requests
+    # that carry a verified Backstage principal, so it returns None for every
+    # Galaxy request and the develop chain below runs unchanged.
+    #
     # OptionalTokenAuthentication FIRST so the explicit `Authorization: Token`
     # header Galaxy sends wins cleanly when valid (bypasses CSRF enforcement
     # on unsafe methods — the original 403 cascade on the search-history
@@ -528,8 +730,10 @@ class SearchViewSet(viewsets.ModelViewSet):
     # AuthenticationFailed. That hands control to SessionAuthentication,
     # which authenticates via the session cookie set during form login.
     # Stock TokenAuth would have short-circuited the chain at 401, which is
-    # what regressed the QA suite on 4.5.0.3.
-    authentication_classes = [OptionalTokenAuthentication, SessionAuthentication, BasicAuthentication]
+    # what regressed the QA suite on 4.5.0.3. It replaces the stock
+    # TokenAuthentication the Backstage branch had at the tail of this list.
+    authentication_classes = [BackstagePrincipalAuthentication, OptionalTokenAuthentication,
+                              SessionAuthentication, BasicAuthentication]
 
     def report(self):
         return self.queryset
@@ -570,7 +774,9 @@ class SearchViewSet(viewsets.ModelViewSet):
             # run search
             logger.debug(f"{module_name}: Search.create() from ?q")
             try:
-                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user, tags=tags)
+                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user, tags=tags,
+                                                   results_requested=results_requested_param(request),
+                                                   query_template_json=backstage_query_params(request))
             except Error as err:
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
@@ -611,7 +817,9 @@ class SearchViewSet(viewsets.ModelViewSet):
             try:
                 # security review for 1.7 - OK, created with owner
                 new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user,
-                                                   pre_query_processors=pre_query_processor_single_list,tags=tags)
+                                                   pre_query_processors=pre_query_processor_single_list,tags=tags,
+                                                   results_requested=results_requested_param(request),
+                                                   query_template_json=backstage_query_params(request))
             except Error as err:
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
@@ -644,6 +852,13 @@ class SearchViewSet(viewsets.ModelViewSet):
                     message = f'Error: TypeError: {err}'
                     logger.error(f'{module_name}: {message}')
                     return
+                # Backstage missing-index signalling (engine module contract):
+                # 404 when nothing could be served, a structured message when
+                # other providers still returned results.
+                missing = apply_missing_index(results, request)
+                if missing is not None:
+                    return missing
+                move_highlights_out_of_the_plain_fields(results, request)
                 return Response(paginate(results, self.request), status=status.HTTP_200_OK)
             else:
                 time.sleep(1)
@@ -863,7 +1078,10 @@ class ResultViewSet(viewsets.ModelViewSet):
     """
     queryset = Result.objects.all()
     serializer_class = ResultSerializer
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    # A Backstage user follows Search.result_url to this view, so it accepts the
+    # same principal the search endpoint does.
+    authentication_classes = [BackstagePrincipalAuthentication,
+                              SessionAuthentication, BasicAuthentication]
 
     def list(self, request):
         # check permissions
@@ -934,6 +1152,9 @@ class ResultViewSet(viewsets.ModelViewSet):
                     message = f'Error: TypeError: {err}'
                     logger.error(f'{module_name}: {message}')
                     return
+                # Page N of a Backstage query comes through here, so it needs
+                # the same clean title and body as page 0.
+                move_highlights_out_of_the_plain_fields(results, request)
                 return Response(paginate(results, self.request), status=status.HTTP_200_OK)
             else:
                 return Response('Result Object Not Ready Yet', status=status.HTTP_503_SERVICE_UNAVAILABLE)

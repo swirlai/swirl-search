@@ -1,0 +1,36 @@
+{
+    "name": "Backstage Index - SWIRL",
+    "active": true,
+    "default": true,
+    "authenticator": "",
+    "connector": "TantivyIndex",
+    "url": "",
+    "query_template": "",
+    "query_template_json": {
+        "backstage": {
+            "types": [],
+            "filters": {}
+        }
+    },
+    "post_query_template": {},
+    "http_request_headers": {},
+    "page_fetch_config_json": {},
+    "query_processors": [
+        "BackstageQueryProcessor"
+    ],
+    "query_mappings": "",
+    "result_grouping_field": "",
+    "result_processors": [
+        "MappingResultProcessor",
+        "CosineRelevancyResultProcessor"
+    ],
+    "response_mappings": "",
+    "result_mappings": "",
+    "results_per_query": 100,
+    "credentials": "",
+    "eval_credentials": "",
+    "tags": [
+        "backstage",
+        "backstage-index"
+    ]
+}
