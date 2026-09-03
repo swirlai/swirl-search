@@ -371,6 +371,17 @@ SWIRL_WRITE_PATH = env('SWIRL_WRITE_PATH', default=SWIRL_WRITE_PATH_DEF)
 
 SWIRL_MAX_FIELD_LEN = 512
 
+# Tantivy index (SWIRL for Backstage, TECH_DESIGN section 3.1)
+# SWIRL_TANTIVY_DATA_DIR holds one directory per document type, each with
+# generation directories and a LIVE file naming the live generation.
+SWIRL_TANTIVY_DATA_DIR_DEF = str(BASE_DIR / 'tantivy_data')
+SWIRL_TANTIVY_DATA_DIR = env('SWIRL_TANTIVY_DATA_DIR', default=SWIRL_TANTIVY_DATA_DIR_DEF)
+# Writer heap per open generation, in megabytes.
+SWIRL_TANTIVY_WRITER_HEAP_MB = _env_int('SWIRL_TANTIVY_WRITER_HEAP_MB', default=128)
+# Seconds after which an abandoned open generation may be taken over by a new
+# begin. Until then a second begin for the same type answers HTTP 409.
+SWIRL_TANTIVY_BEGIN_TTL = _env_int('SWIRL_TANTIVY_BEGIN_TTL', default=2 * 60 * 60)
+
 CHANNEL_LAYERS = {
     'default': {
         "BACKEND": "channels_redis.core.RedisChannelLayer",

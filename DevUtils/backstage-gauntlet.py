@@ -21,31 +21,38 @@ Exit code is non-zero when any gauntlet assertion fails.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import random
-import re
 import resource
 import shutil
 import sys
 import tempfile
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Callable, Iterable
+
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
+
+# The schema, the analyzers and the tuning surface live in SWIRL itself as of
+# WP01. This script imports them so the gate-zero numbers are measured against
+# the shipped code and not against a copy. swirl.tantivy_index.schema and
+# swirl.tantivy_index.tuning import no Django, so this stays standalone.
+from swirl.tantivy_index.schema import (  # noqa: E402
+    SEARCH_FIELDS,
+    build_analyzers,
+    build_schema,
+    document_id,
+    escape_term,
+    open_index,
+)
+from swirl.tantivy_index.tuning import DEFAULT_TUNING, Tuning  # noqa: E402
 
 try:
     import tantivy
-    from tantivy import (
-        Document,
-        Filter,
-        Index,
-        Occur,
-        Query,
-        SchemaBuilder,
-        TextAnalyzerBuilder,
-        Tokenizer,
-    )
+    from tantivy import Document, Occur, Query
 
     TANTIVY_AVAILABLE = True
 except ImportError:  # pragma: no cover - exercised by the skipif in the test
@@ -68,117 +75,11 @@ DEFAULT_LUNR_BASE_URL = "http://localhost:7007"
 BACKSTAGE_DOC_TYPE = "software-catalog"
 
 # ---------------------------------------------------------------------------
-# Tuning, mirroring the app-config search.swirl.tuning block (TECH_DESIGN 2.2)
+# Tuning, schema and analyzers now live in swirl/tantivy_index (WP01) and are
+# imported above: Tuning, DEFAULT_TUNING, SEARCH_FIELDS, build_schema,
+# build_analyzers, open_index, escape_term and document_id. TECH_DESIGN 2.2
+# and 3.1.
 # ---------------------------------------------------------------------------
-
-
-@dataclass
-class Tuning:
-    """The tuning surface from TECH_DESIGN 2.2, with the design defaults."""
-
-    title_exact_boost: float = 3.0
-    title_ngram_boost: float = 1.0
-    text_boost: float = 1.0
-    ngram_min: int = 3
-    ngram_max: int = 8
-    stemmer: str = "english"
-    stopwords_language: str = "english"
-    extra_stopwords: list[str] = field(default_factory=list)
-    fuzzy_enabled: bool = False
-    fuzzy_distance: int = 1
-    remove_long: int = 64
-
-    @property
-    def field_boosts(self) -> dict[str, float]:
-        return {
-            "title_exact": self.title_exact_boost,
-            "title_ngram": self.title_ngram_boost,
-            "text": self.text_boost,
-        }
-
-
-DEFAULT_TUNING = Tuning()
-SEARCH_FIELDS = ["title_exact", "title_ngram", "text"]
-
-# ---------------------------------------------------------------------------
-# Schema and analyzers (TECH_DESIGN 3.1)
-# ---------------------------------------------------------------------------
-
-
-def build_schema():
-    """Build the Tantivy schema exactly as TECH_DESIGN section 3.1 specifies."""
-    builder = SchemaBuilder()
-    builder.add_text_field(
-        "title_exact", stored=False, tokenizer_name="swirl_exact", index_option="position"
-    )
-    builder.add_text_field(
-        "title_ngram", stored=False, tokenizer_name="swirl_ngram", index_option="position"
-    )
-    builder.add_text_field(
-        "text", stored=False, tokenizer_name="swirl_text", index_option="position"
-    )
-    builder.add_text_field(
-        "attrs", stored=False, tokenizer_name="raw", index_option="basic"
-    )
-    builder.add_text_field(
-        "doc_id", stored=True, tokenizer_name="raw", index_option="basic"
-    )
-    builder.add_text_field(
-        "type", stored=True, tokenizer_name="raw", index_option="basic"
-    )
-    builder.add_text_field(
-        "title", stored=True, tokenizer_name="raw", index_option="basic"
-    )
-    builder.add_text_field(
-        "location", stored=True, tokenizer_name="raw", index_option="basic"
-    )
-    # document_json is stored only. Tantivy text fields are always indexed, so
-    # the raw tokenizer with 'basic' keeps it to a single non-positional token
-    # that nothing ever queries.
-    builder.add_text_field(
-        "document_json", stored=True, tokenizer_name="raw", index_option="basic"
-    )
-    return builder.build()
-
-
-def build_analyzers(tuning: Tuning = DEFAULT_TUNING) -> dict[str, Any]:
-    """Return the three named analyzers keyed by their registered name."""
-    exact = (
-        TextAnalyzerBuilder(Tokenizer.simple())
-        .filter(Filter.lowercase())
-        .filter(Filter.ascii_fold())
-        .filter(Filter.remove_long(tuning.remove_long))
-        .filter(Filter.stemmer(tuning.stemmer))
-        .build()
-    )
-    ngram = (
-        TextAnalyzerBuilder(Tokenizer.ngram(tuning.ngram_min, tuning.ngram_max, False))
-        .filter(Filter.lowercase())
-        .filter(Filter.ascii_fold())
-        .build()
-    )
-    text_builder = (
-        TextAnalyzerBuilder(Tokenizer.simple())
-        .filter(Filter.lowercase())
-        .filter(Filter.ascii_fold())
-        .filter(Filter.remove_long(tuning.remove_long))
-        .filter(Filter.stopword(tuning.stopwords_language))
-    )
-    if tuning.extra_stopwords:
-        text_builder = text_builder.filter(
-            Filter.custom_stopword(list(tuning.extra_stopwords))
-        )
-    text = text_builder.filter(Filter.stemmer(tuning.stemmer)).build()
-    return {"swirl_exact": exact, "swirl_ngram": ngram, "swirl_text": text}
-
-
-def open_index(path: str | None = None, tuning: Tuning = DEFAULT_TUNING):
-    """Create the index and register the analyzers before any document is added."""
-    schema = build_schema()
-    index = Index(schema, path=path) if path else Index(schema)
-    for name, analyzer in build_analyzers(tuning).items():
-        index.register_tokenizer(name, analyzer)
-    return index
 
 
 # ---------------------------------------------------------------------------
@@ -406,7 +307,14 @@ def generate_synthetic(count: int, seed: int = 20260903) -> list[dict]:
 
 
 def document_attrs(document: dict) -> list[str]:
-    """One lowercased `key=value` token per scalar attribute."""
+    """One lowercased `key=value` token per collator attribute.
+
+    The gate-zero corpus carries the exact attribute set the Backstage catalog
+    collator emits, with spec.type under the key `componentType`, so this maps
+    that set explicitly. The ingest API uses the general rule in
+    swirl.tantivy_index.schema.document_attrs instead: every scalar top level
+    attribute other than title, text and location.
+    """
     attrs = []
     for key in INDEXED_ATTRS:
         source_key = "componentType" if key == "type" else key
@@ -414,14 +322,6 @@ def document_attrs(document: dict) -> list[str]:
         if value:
             attrs.append("{}={}".format(key, str(value).lower()))
     return attrs
-
-
-def document_id(document: dict) -> str:
-    location = document.get("location")
-    if location:
-        return location
-    payload = json.dumps(document, sort_keys=True).encode("utf-8")
-    return hashlib.sha256(payload).hexdigest()
 
 
 def index_documents(index, documents: list[dict], heap_mb: int = 128) -> int:
@@ -462,14 +362,6 @@ def build_corpus_index(
 # ---------------------------------------------------------------------------
 # Query building (TECH_DESIGN 3.1 manager.search)
 # ---------------------------------------------------------------------------
-
-_QUERY_SPECIALS = re.compile(r'([+\-&|!(){}\[\]^"~*?:\\/])')
-
-
-def escape_term(term: str) -> str:
-    """Escape the Tantivy query-parser metacharacters in raw user input."""
-    return _QUERY_SPECIALS.sub(r"\\\1", term)
-
 
 def build_query(
     index,
