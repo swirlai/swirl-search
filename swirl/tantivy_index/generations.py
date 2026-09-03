@@ -34,7 +34,16 @@ TYPE_NAME_RE = re.compile(r'^[a-z0-9-]{1,64}$')
 GENERATION_RE = re.compile(r'^[0-9]{8}T[0-9]{6}-[0-9]{6}$')
 
 #: Default seconds after which an OPEN lock is considered abandoned.
-DEFAULT_BEGIN_TTL = 2 * 60 * 60
+#: Half an hour: long enough for a slow collator pass over a large catalog,
+#: short enough that a run which died without aborting does not hold the type
+#: for the rest of the working day. An operator who does not want to wait can
+#: clear the lock from the SearchIndexGeneration admin.
+DEFAULT_BEGIN_TTL = 30 * 60
+
+#: How many times ``begin`` retries after taking over a stale lock. Each retry
+#: costs one O_EXCL create, so a low number is enough; the loop only spins when
+#: two callers race for the same abandoned lock.
+BEGIN_ATTEMPTS = 3
 
 
 class TantivyIndexError(Exception):
@@ -192,11 +201,92 @@ def _is_stale(record, ttl):
     return (time.time() - started_at) > float(ttl)
 
 
-def clear_open(data_dir, type_name):
+def clear_open(data_dir, type_name, generation=None):
+    '''Release the OPEN lock. Returns True when a lock file was removed.
+
+    With ``generation``, the lock is only released when it still names that
+    generation, so a caller cleaning up after itself cannot delete a lock some
+    other process took in the meantime.
+    '''
+    if generation is not None:
+        record = read_open(data_dir, type_name)
+        if record and record.get('generation') != generation:
+            return False
     try:
         os.unlink(open_file(data_dir, type_name))
     except (FileNotFoundError, NotADirectoryError):
-        pass
+        return False
+    return True
+
+
+def take_open_lock(data_dir, type_name, generation, started_by=None):
+    '''Create the OPEN file exclusively. True when this caller took the lock.
+
+    O_CREAT | O_EXCL is the whole point: two processes calling ``begin`` in the
+    same instant used to both read "no lock", both create a generation
+    directory and both write OPEN, which left one of them believing it owned a
+    generation nobody would ever finalize. Exactly one create can win now.
+
+    The record is written into the file that was created exclusively, not into
+    a temp file renamed over it, because a rename would clobber a lock another
+    caller had already taken.
+    '''
+    path = open_file(data_dir, type_name)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    payload = json.dumps({
+        'generation': generation,
+        'started_at': time.time(),
+        'pid': os.getpid(),
+        'started_by': started_by or '',
+    })
+    try:
+        handle = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
+    except FileExistsError:
+        return False
+    try:
+        with os.fdopen(handle, 'w', encoding='utf-8') as stream:
+            stream.write(payload)
+            stream.flush()
+            os.fsync(stream.fileno())
+    except Exception:
+        # Never leave a lock file with no record in it: read_open would treat
+        # it as absent and the next begin would create a second generation.
+        try:
+            os.unlink(path)
+        except OSError:
+            pass
+        raise
+    return True
+
+
+def rollback(data_dir, type_name, generation):
+    '''Undo a ``begin``: drop the generation directory and release the lock.
+
+    Called when the caller could not finish opening the generation (the ingest
+    view could not write its bookkeeping row, say). Without it a half-done
+    begin leaves the type answering 409 to every later begin until the TTL runs
+    out. The live generation is never touched.
+    '''
+    validate_type_name(type_name)
+    if generation and generation != live_generation(data_dir, type_name):
+        if GENERATION_RE.match(generation):
+            shutil.rmtree(os.path.join(type_dir(data_dir, type_name), generation),
+                          ignore_errors=True)
+    return clear_open(data_dir, type_name, generation)
+
+
+def clear_stale_open(data_dir, type_name, ttl=DEFAULT_BEGIN_TTL):
+    '''Release the OPEN lock when it has gone stale. True when one was cleared.
+
+    The admin uses this to unwedge a type whose ingest run died. A lock that is
+    still inside its TTL is left alone.
+    '''
+    record = read_open(data_dir, type_name)
+    if not record:
+        return False
+    if not _is_stale(record, ttl):
+        return False
+    return clear_open(data_dir, type_name, record.get('generation'))
 
 
 ########################################
@@ -204,18 +294,41 @@ def clear_open(data_dir, type_name):
 
 
 def begin(data_dir, type_name, ttl=DEFAULT_BEGIN_TTL, started_by=None, now=None):
-    '''Create a new generation directory and take the OPEN lock.
+    '''Take the OPEN lock, then create the generation directory.
 
     Raises GenerationOpen when another generation is open for the same type and
     the lock has not gone stale past ``ttl``. A stale lock is taken over and the
     abandoned generation directory is removed.
+
+    The lock is taken with an exclusive create before anything else exists on
+    disk, so two callers arriving in the same instant cannot both believe they
+    opened a generation. The loser sees GenerationOpen and nothing of its own
+    was created; the winner owns both the lock and the directory.
     '''
     validate_type_name(type_name)
     directory = type_dir(data_dir, type_name)
     os.makedirs(directory, exist_ok=True)
 
-    record = read_open(data_dir, type_name)
-    if record:
+    for _attempt in range(BEGIN_ATTEMPTS):
+        generation = new_generation_id(now)
+        while os.path.exists(os.path.join(directory, generation)):
+            generation = new_generation_id((now or time.time()) + 0.000001)
+
+        if take_open_lock(data_dir, type_name, generation, started_by):
+            try:
+                os.makedirs(os.path.join(directory, generation))
+            except OSError:
+                # The lock is ours and nothing else has run yet, so release it
+                # rather than hold the type on a directory that never appeared.
+                clear_open(data_dir, type_name, generation)
+                raise
+            return generation
+
+        # Somebody else holds the lock. Take it over only when it is stale.
+        record = read_open(data_dir, type_name)
+        if record is None:
+            # Released between our create and this read; go round again.
+            continue
         started_at = record.get('started_at') or 0
         try:
             age = time.time() - float(started_at)
@@ -223,23 +336,15 @@ def begin(data_dir, type_name, ttl=DEFAULT_BEGIN_TTL, started_by=None, now=None)
             age = float(ttl) + 1
         if age <= float(ttl):
             raise GenerationOpen(type_name, record.get('generation'), age)
-        # Stale. Drop the abandoned generation and take the lock.
         stale = record.get('generation')
         if stale and stale != live_generation(data_dir, type_name):
             shutil.rmtree(os.path.join(directory, stale), ignore_errors=True)
-        clear_open(data_dir, type_name)
+        clear_open(data_dir, type_name, stale)
 
-    generation = new_generation_id(now)
-    while os.path.exists(os.path.join(directory, generation)):
-        generation = new_generation_id((now or time.time()) + 0.000001)
-    os.makedirs(os.path.join(directory, generation))
-    _write_atomic(open_file(data_dir, type_name), json.dumps({
-        'generation': generation,
-        'started_at': time.time(),
-        'pid': os.getpid(),
-        'started_by': started_by or '',
-    }))
-    return generation
+    # Every attempt lost the race for the same lock. Answer the way a caller
+    # that lost to a live generation is answered: 409, nothing created.
+    record = read_open(data_dir, type_name) or {}
+    raise GenerationOpen(type_name, record.get('generation'), 0)
 
 
 def require_open(data_dir, type_name, generation, ttl=DEFAULT_BEGIN_TTL):

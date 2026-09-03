@@ -433,3 +433,198 @@ def test_the_generation_admin_size_is_human_readable():
     assert model_admin.size(SearchIndexGeneration(bytes=0)) == "0 B"
     assert model_admin.size(SearchIndexGeneration(bytes=2048)) == "2.0 KB"
     assert model_admin.size(SearchIndexGeneration(bytes=3 * 1024 * 1024)) == "3.0 MB"
+
+
+# ---------------------------------------------------------------------------
+# Concurrent begin
+#
+# Defect: two collators calling POST /swirl/index/<type>/begin/ in the same
+# instant both created a generation directory, and the loser died with
+# sqlite3.OperationalError "database is locked" out of the bookkeeping write
+# after the directory and the OPEN lock were already on disk. The type was then
+# wedged: every later begin answered 409 until the two hour TTL expired.
+# ---------------------------------------------------------------------------
+
+@pytest.mark.django_db(transaction=True)
+def test_two_simultaneous_begins_do_not_wedge_the_type(indexer, data_dir):
+    """One 201, one 409, no 500, and the type still works afterwards."""
+    import threading
+
+    from django.db import connection
+
+    barrier = threading.Barrier(2)
+    outcomes = {}
+
+    def call(name):
+        api = APIClient()
+        api.force_authenticate(user=indexer)
+        try:
+            barrier.wait(timeout=30)
+            response = api.post("{}{}/begin/".format(BASE, TYPE), {},
+                                format="json")
+            outcomes[name] = (response.status_code, response.data)
+        except Exception as err:                     # noqa: BLE001
+            outcomes[name] = ("raised", repr(err))
+        finally:
+            connection.close()
+
+    threads = [threading.Thread(target=call, args=(name,))
+               for name in ("first", "second")]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(timeout=60)
+        assert not thread.is_alive(), "a begin thread hung"
+
+    codes = sorted(str(code) for code, _ in outcomes.values())
+    assert "500" not in codes, outcomes
+    assert "raised" not in codes, outcomes
+    assert codes.count("201") == 1, outcomes
+    assert codes == ["201", "409"], outcomes
+
+    winner = [payload["generation"] for code, payload in outcomes.values()
+              if code == 201][0]
+
+    # Exactly one generation directory exists, and it is the one that won.
+    assert gen.generations(data_dir, TYPE) == [winner]
+    assert gen.open_generation(data_dir, TYPE) == winner
+    assert SearchIndexGeneration.objects.filter(type=TYPE).count() == 1
+    assert SearchIndexGeneration.objects.get(
+        type=TYPE, generation=winner).state == SearchIndexGeneration.STATE_OPEN
+
+    # The type is not wedged: finish the winner and a new begin is accepted.
+    api = APIClient()
+    api.force_authenticate(user=indexer)
+    assert api.post("{}{}/{}/docs/".format(BASE, TYPE, winner),
+                    {"documents": [doc("petstore")]},
+                    format="json").status_code == 202
+    assert api.post("{}{}/{}/finalize/".format(BASE, TYPE, winner), {},
+                    format="json").status_code == 200
+    again = api.post("{}{}/begin/".format(BASE, TYPE), {}, format="json")
+    assert again.status_code == 201, again.data
+    assert again.data["generation"] != winner
+
+
+@pytest.mark.django_db
+def test_a_locked_database_is_retried_and_the_begin_succeeds(client, monkeypatch):
+    """A transient "database is locked" does not fail the begin."""
+    from django.db import OperationalError
+
+    real = SearchIndexGeneration.objects.update_or_create
+    attempts = []
+
+    def flaky(*args, **kwargs):
+        attempts.append(1)
+        if len(attempts) < 3:
+            raise OperationalError("database is locked")
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(SearchIndexGeneration.objects, "update_or_create", flaky)
+
+    response = client.post("{}{}/begin/".format(BASE, TYPE), {}, format="json")
+
+    assert response.status_code == 201, response.data
+    assert len(attempts) == 3
+    assert SearchIndexGeneration.objects.filter(
+        type=TYPE, generation=response.data["generation"]).exists()
+
+
+@pytest.mark.django_db
+def test_a_begin_that_cannot_be_recorded_rolls_the_generation_back(
+        client, data_dir, monkeypatch):
+    """The failure mode that used to wedge the type leaves nothing behind."""
+    from django.db import OperationalError
+
+    def always_locked(*args, **kwargs):
+        raise OperationalError("database is locked")
+
+    monkeypatch.setattr(SearchIndexGeneration.objects, "update_or_create",
+                        always_locked)
+
+    response = client.post("{}{}/begin/".format(BASE, TYPE), {}, format="json")
+
+    assert response.status_code == 503, response.data
+    assert "rolled back" in response.data["detail"]
+    # Nothing of the half-done begin survives: no lock, no directory, no row.
+    assert gen.read_open(data_dir, TYPE) is None
+    assert gen.generations(data_dir, TYPE) == []
+    assert SearchIndexGeneration.objects.filter(type=TYPE).count() == 0
+
+    # And the type is not wedged.
+    monkeypatch.undo()
+    again = client.post("{}{}/begin/".format(BASE, TYPE), {}, format="json")
+    assert again.status_code == 201, again.data
+
+
+@pytest.mark.django_db
+def test_the_generation_admin_can_clear_a_stale_open_lock(client, data_dir):
+    """The escape hatch for a type left holding a lock, without waiting a TTL."""
+    from django.contrib import admin as django_admin
+
+    generation = begin(client)
+    model_admin = django_admin.site._registry[SearchIndexGeneration]
+    assert "clear_stale_open_locks" in model_admin.actions
+
+    queryset = SearchIndexGeneration.objects.filter(type=TYPE)
+    request = _admin_request()
+
+    # A lock inside its TTL belongs to a running ingest and is left alone.
+    model_admin.clear_stale_open_locks(request, queryset)
+    assert gen.read_open(data_dir, TYPE)["generation"] == generation
+
+    # Age it past the TTL and it is released.
+    _age_the_open_lock(data_dir, TYPE)
+    model_admin.clear_stale_open_locks(request, queryset)
+    assert gen.read_open(data_dir, TYPE) is None
+    assert client.post("{}{}/begin/".format(BASE, TYPE), {},
+                       format="json").status_code == 201
+
+
+@pytest.mark.django_db
+def test_the_admin_abort_action_removes_the_lock_file(client, data_dir):
+    """Abort has to release the lock, not only delete the directory."""
+    from django.contrib import admin as django_admin
+
+    generation = begin(client)
+    model_admin = django_admin.site._registry[SearchIndexGeneration]
+    model_admin.abort_open_generations(
+        _admin_request(), SearchIndexGeneration.objects.filter(type=TYPE))
+
+    assert gen.read_open(data_dir, TYPE) is None
+    assert generation not in gen.generations(data_dir, TYPE)
+    assert SearchIndexGeneration.objects.get(
+        type=TYPE, generation=generation).state == (
+            SearchIndexGeneration.STATE_ABORTED)
+    assert client.post("{}{}/begin/".format(BASE, TYPE), {},
+                       format="json").status_code == 201
+
+
+def _admin_request():
+    """A request object with the message framework stubbed out."""
+    from django.test import RequestFactory
+
+    request = RequestFactory().post("/admin/")
+    request._messages = _SwallowMessages()
+    return request
+
+
+class _SwallowMessages(list):
+    def add(self, level, message, extra_tags=''):
+        self.append((level, message))
+
+
+def _age_the_open_lock(data_dir, type_name, seconds=None):
+    """Backdate the OPEN record so the lock reads as abandoned."""
+    import json as _json
+    import time as _time
+
+    from django.conf import settings as django_settings
+
+    ttl = seconds if seconds is not None else getattr(
+        django_settings, "SWIRL_TANTIVY_BEGIN_TTL", 1800)
+    path = gen.open_file(data_dir, type_name)
+    with open(path, "r", encoding="utf-8") as handle:
+        record = _json.load(handle)
+    record["started_at"] = _time.time() - (float(ttl) + 60)
+    with open(path, "w", encoding="utf-8") as handle:
+        _json.dump(record, handle)

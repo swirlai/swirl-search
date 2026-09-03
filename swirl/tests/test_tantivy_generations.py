@@ -426,3 +426,136 @@ def test_manager_reads_settings_when_no_data_dir_is_given(settings, tmp_path):
     assert manager.data_dir == str(tmp_path / "from-settings")
     assert manager.writer_heap_bytes == 17 * 1024 * 1024
     assert manager.begin_ttl == 42
+
+
+# ---------------------------------------------------------------------------
+# Concurrent begin
+#
+# Defect: begin read the OPEN lock, then created the generation directory, then
+# wrote the lock. Two callers in that window both came away believing they
+# owned a generation. The lock is now taken with an exclusive create before
+# anything else exists, so exactly one caller can win.
+# ---------------------------------------------------------------------------
+
+def test_only_one_of_two_simultaneous_begins_wins(data_dir):
+    import threading
+
+    barrier = threading.Barrier(2)
+    outcomes = []
+
+    def call():
+        barrier.wait(timeout=30)
+        try:
+            outcomes.append(("open", gen.begin(data_dir, TYPE)))
+        except gen.GenerationOpen as err:
+            outcomes.append(("conflict", err.generation))
+        except Exception as err:                     # noqa: BLE001
+            outcomes.append(("raised", repr(err)))
+
+    threads = [threading.Thread(target=call) for _ in range(2)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(timeout=30)
+        assert not thread.is_alive()
+
+    kinds = sorted(kind for kind, _ in outcomes)
+    assert kinds == ["conflict", "open"], outcomes
+
+    winner = [value for kind, value in outcomes if kind == "open"][0]
+    # The loser created nothing: one directory, and it is the winner's.
+    assert gen.generations(data_dir, TYPE) == [winner]
+    assert gen.open_generation(data_dir, TYPE) == winner
+    # And the loser was told which generation holds the lock, not a phantom.
+    assert [value for kind, value in outcomes if kind == "conflict"] == [winner]
+
+
+def test_take_open_lock_is_exclusive(data_dir):
+    os.makedirs(gen.type_dir(data_dir, TYPE), exist_ok=True)
+    assert gen.take_open_lock(data_dir, TYPE, "20260101T000000-000000") is True
+    assert gen.take_open_lock(data_dir, TYPE, "20260101T000001-000000") is False
+    assert gen.read_open(data_dir, TYPE)["generation"] == "20260101T000000-000000"
+
+
+# ---------------------------------------------------------------------------
+# Rolling a half-done begin back
+# ---------------------------------------------------------------------------
+
+def test_rollback_releases_the_lock_and_the_directory(manager, data_dir):
+    generation = manager.begin(TYPE)
+    assert generation in gen.generations(data_dir, TYPE)
+
+    assert manager.rollback_begin(TYPE, generation) is True
+
+    assert gen.read_open(data_dir, TYPE) is None
+    assert gen.generations(data_dir, TYPE) == []
+    # The type is not wedged.
+    assert manager.begin(TYPE) != generation
+
+
+def test_rollback_never_touches_the_live_generation(manager, data_dir):
+    live = manager.begin(TYPE)
+    manager.add(TYPE, live, [doc("petstore")])
+    manager.finalize(TYPE, live)
+
+    manager.rollback_begin(TYPE, live)
+
+    assert gen.live_generation(data_dir, TYPE) == live
+    assert live in gen.generations(data_dir, TYPE)
+
+
+def test_rollback_does_not_release_a_lock_someone_else_took(manager, data_dir):
+    mine = manager.begin(TYPE)
+    manager.rollback_begin(TYPE, mine)
+    theirs = manager.begin(TYPE)
+
+    # A late rollback for the generation that is long gone must not unlock the
+    # one that replaced it.
+    assert manager.rollback_begin(TYPE, mine) is False
+    assert gen.open_generation(data_dir, TYPE) == theirs
+
+
+# ---------------------------------------------------------------------------
+# Clearing a stale lock
+# ---------------------------------------------------------------------------
+
+def _age_lock(data_dir, type_name, seconds):
+    path = gen.open_file(data_dir, type_name)
+    with open(path, "r", encoding="utf-8") as handle:
+        record = json.load(handle)
+    record["started_at"] = time.time() - seconds
+    with open(path, "w", encoding="utf-8") as handle:
+        json.dump(record, handle)
+
+
+def test_clear_stale_open_leaves_a_live_lock_alone(manager, data_dir):
+    generation = manager.begin(TYPE)
+    assert manager.clear_stale_open(TYPE) is False
+    assert gen.open_generation(data_dir, TYPE) == generation
+
+
+def test_clear_stale_open_releases_an_abandoned_lock(manager, data_dir):
+    manager.begin(TYPE)
+    _age_lock(data_dir, TYPE, manager.begin_ttl + 60)
+
+    assert manager.clear_stale_open(TYPE) is True
+    assert gen.read_open(data_dir, TYPE) is None
+
+
+def test_clear_stale_open_on_a_type_with_no_lock(manager):
+    assert manager.clear_stale_open(TYPE) is False
+
+
+# ---------------------------------------------------------------------------
+# The TTL default
+# ---------------------------------------------------------------------------
+
+def test_the_default_begin_ttl_is_thirty_minutes():
+    """Two hours held a wedged type for most of a working day."""
+    assert gen.DEFAULT_BEGIN_TTL == 30 * 60
+
+
+def test_the_settings_default_matches_the_module_default():
+    from django.conf import settings
+
+    assert settings.SWIRL_TANTIVY_BEGIN_TTL == gen.DEFAULT_BEGIN_TTL

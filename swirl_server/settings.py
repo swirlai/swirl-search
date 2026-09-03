@@ -380,8 +380,12 @@ SWIRL_TANTIVY_DATA_DIR = env('SWIRL_TANTIVY_DATA_DIR', default=SWIRL_TANTIVY_DAT
 # Writer heap per open generation, in megabytes.
 SWIRL_TANTIVY_WRITER_HEAP_MB = _env_int('SWIRL_TANTIVY_WRITER_HEAP_MB', default=128)
 # Seconds after which an abandoned open generation may be taken over by a new
-# begin. Until then a second begin for the same type answers HTTP 409.
-SWIRL_TANTIVY_BEGIN_TTL = _env_int('SWIRL_TANTIVY_BEGIN_TTL', default=2 * 60 * 60)
+# begin. Until then a second begin for the same type answers HTTP 409. Half an
+# hour: long enough for a slow collator pass over a large catalog, short enough
+# that an ingest run which died without aborting does not hold the type for the
+# rest of the day. The SearchIndexGeneration admin can clear a stale lock
+# without waiting for this.
+SWIRL_TANTIVY_BEGIN_TTL = _env_int('SWIRL_TANTIVY_BEGIN_TTL', default=30 * 60)
 
 CHANNEL_LAYERS = {
     'default': {

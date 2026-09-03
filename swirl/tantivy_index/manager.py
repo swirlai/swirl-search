@@ -129,6 +129,19 @@ class TantivyIndexManager:
     def open_generation(self, type_name):
         return gen.open_generation(self.data_dir, type_name, ttl=self.begin_ttl)
 
+    def rollback_begin(self, type_name, generation):
+        '''Undo a begin whose caller could not finish opening the generation.
+
+        Without this a begin that failed after the directory and the lock were
+        created leaves the type answering 409 to every later begin until the
+        TTL runs out.
+        '''
+        return gen.rollback(self.data_dir, type_name, generation)
+
+    def clear_stale_open(self, type_name):
+        '''Release the OPEN lock for a type when it has gone stale.'''
+        return gen.clear_stale_open(self.data_dir, type_name, ttl=self.begin_ttl)
+
     def add(self, type_name, generation, documents, doc_type=None):
         '''Validate and write a batch, then commit.
 

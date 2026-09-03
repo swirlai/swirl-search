@@ -25,7 +25,9 @@ SearchIndexGeneration rows written here are bookkeeping for the admin.
 '''
 
 import logging
+import time
 
+from django.db import OperationalError, transaction
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.authentication import (
@@ -45,6 +47,13 @@ from swirl.tantivy_index.manager import MAX_BATCH, default_manager
 logger = logging.getLogger(__name__)
 
 INGEST_PERMISSION = 'swirl.change_searchprovider'
+
+#: How many times a begin retries its bookkeeping write, and how long it waits
+#: between attempts. SQLite answers a concurrent writer with
+#: "database is locked" rather than blocking, and the write is a single small
+#: row, so a short retry is enough to ride out another request's commit.
+BEGIN_DB_ATTEMPTS = 3
+BEGIN_DB_RETRY_SECONDS = 0.1
 
 
 def _forbidden():
@@ -146,7 +155,21 @@ class IndexTypeView(IndexViewBase):
 
 
 class IndexBeginView(IndexViewBase):
-    '''POST /swirl/index/<type>/begin/ : open a generation, 409 if one is open.'''
+    '''POST /swirl/index/<type>/begin/ : open a generation, 409 if one is open.
+
+    Two collators calling this in the same instant used to leave the type
+    wedged: both created a generation directory, and the one that lost the race
+    on the bookkeeping row died with "database is locked" out of SQLite after
+    the directory and the OPEN lock already existed, so every later begin
+    answered 409 until the TTL expired.
+
+    Now the filesystem lock is taken first, with an exclusive create, so
+    exactly one caller gets past it and the other is told 409 having created
+    nothing. The bookkeeping row is written inside that protected section, in
+    one transaction, retried a few times on a locked database, and if it still
+    cannot be written the directory and the lock are rolled back so the type is
+    left exactly as it was found.
+    '''
 
     def post(self, request, type_name):
         denied = self.check_ingest_permission(request)
@@ -167,17 +190,51 @@ class IndexBeginView(IndexViewBase):
             logger.error('index begin %s: %s', type_name, err)
             return _bad_request('could not create the generation: {}'.format(err))
 
-        SearchIndexGeneration.objects.update_or_create(
-            type=type_name, generation=generation,
-            defaults={
-                'state': SearchIndexGeneration.STATE_OPEN,
-                'doc_count': 0,
-                'bytes': 0,
-                'finalized_at': None,
-                'started_by': request.user if request.user.is_authenticated else None,
-            })
+        try:
+            self._record_open(request, type_name, generation)
+        except OperationalError as err:
+            logger.error('index begin %s/%s: %s', type_name, generation, err)
+            self.manager.rollback_begin(type_name, generation)
+            return Response(
+                {'detail': 'the index bookkeeping database is busy; the '
+                           'generation was rolled back, retry the begin: '
+                           '{}'.format(err),
+                 'type': type_name},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        except Exception as err:      # noqa: BLE001 - the rollback is the point
+            logger.error('index begin %s/%s: %s', type_name, generation, err)
+            self.manager.rollback_begin(type_name, generation)
+            raise
+
         return Response({'type': type_name, 'generation': generation},
                         status=status.HTTP_201_CREATED)
+
+    def _record_open(self, request, type_name, generation):
+        '''Write the OPEN bookkeeping row, retrying a locked database.'''
+        last = None
+        for attempt in range(BEGIN_DB_ATTEMPTS):
+            try:
+                with transaction.atomic():
+                    SearchIndexGeneration.objects.update_or_create(
+                        type=type_name, generation=generation,
+                        defaults={
+                            'state': SearchIndexGeneration.STATE_OPEN,
+                            'doc_count': 0,
+                            'bytes': 0,
+                            'finalized_at': None,
+                            'started_by': (request.user
+                                           if request.user.is_authenticated
+                                           else None),
+                        })
+                return
+            except OperationalError as err:
+                last = err
+                logger.warning('index begin %s/%s: attempt %s of %s: %s',
+                               type_name, generation, attempt + 1,
+                               BEGIN_DB_ATTEMPTS, err)
+                if attempt + 1 < BEGIN_DB_ATTEMPTS:
+                    time.sleep(BEGIN_DB_RETRY_SECONDS)
+        raise last
 
 
 class IndexDocsView(IndexViewBase):
