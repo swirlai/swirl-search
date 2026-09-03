@@ -33,6 +33,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
 import csv
+import json
 import base64
 import hashlib
 import hmac
@@ -500,6 +501,45 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
 ########################################
 ########################################
 
+########################################
+########################################
+
+#: Query params the Backstage engine module sends (TECH_DESIGN section 3.5).
+#: They are parked on Search.query_template_json['backstage'] so the
+#: TantivyIndex connector can read them. Every other connector ignores them.
+BACKSTAGE_QUERY_KEY = 'backstage'
+
+
+def backstage_query_params(request):
+    """Read backstage_types and backstage_filters off a request.
+
+    backstage_types is a comma list, backstage_filters is a JSON object.
+    Returns {} when neither is present, so nothing is stored for an ordinary
+    search. A malformed backstage_filters is logged and ignored rather than
+    failing the search.
+    """
+    block = {}
+    raw_types = request.GET.get('backstage_types', '')
+    if raw_types:
+        types = [part.strip() for part in raw_types.split(',') if part.strip()]
+        if types:
+            block['types'] = types
+    raw_filters = request.GET.get('backstage_filters', '')
+    if raw_filters:
+        try:
+            filters = json.loads(raw_filters)
+        except (ValueError, TypeError) as err:
+            logger.warning(f'{module_name}: ignoring malformed backstage_filters: {err}')
+            filters = None
+        if isinstance(filters, dict) and filters:
+            block['filters'] = filters
+        elif filters is not None and not isinstance(filters, dict):
+            logger.warning(f'{module_name}: backstage_filters must be a JSON object, ignoring it')
+    if not block:
+        return {}
+    return {BACKSTAGE_QUERY_KEY: block}
+
+
 class SearchViewSet(viewsets.ModelViewSet):
     """
     API endpoint for managing Search objects.
@@ -555,7 +595,8 @@ class SearchViewSet(viewsets.ModelViewSet):
             # run search
             logger.debug(f"{module_name}: Search.create() from ?q")
             try:
-                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user, tags=tags)
+                new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user, tags=tags,
+                                                   query_template_json=backstage_query_params(request))
             except Error as err:
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'
@@ -596,7 +637,8 @@ class SearchViewSet(viewsets.ModelViewSet):
             try:
                 # security review for 1.7 - OK, created with owner
                 new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user,
-                                                   pre_query_processors=pre_query_processor_single_list,tags=tags)
+                                                   pre_query_processors=pre_query_processor_single_list,tags=tags,
+                                                   query_template_json=backstage_query_params(request))
             except Error as err:
                 self.error(f'Search.create() failed: {err}')
             new_search.status = 'NEW_SEARCH'

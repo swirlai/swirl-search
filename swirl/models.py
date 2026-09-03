@@ -88,6 +88,7 @@ class SearchProvider(models.Model):
         ('Oracle','Oracle'),
         ('Snowflake','Snowflake'),
         ('PineconeDB','PineconeDB'),
+        ('TantivyIndex', 'SWIRL Tantivy Index'),
     ]
     connector = models.CharField(max_length=200, default='RequestsGet', choices=CONNECTOR_CHOICES)
     url = models.CharField(max_length=2048, default=str, blank=True)
@@ -200,6 +201,11 @@ class Search(models.Model):
         ('StackNMixer', 'StackNMixer')
     ]
     result_mixer = models.CharField(max_length=200, default='RelevancyMixer', choices=MIXER_CHOICES)
+    # Per-search payload connectors can read. The search view stores the
+    # Backstage query params under the 'backstage' key
+    # (TECH_DESIGN_swirl_for_backstage.md section 3.5); every other connector
+    # ignores it.
+    query_template_json = models.JSONField(default=dict, blank=True)
     RETENTION_CHOICES = [
         (0, 'Never expire'),
         (1, 'Expire after 1 hour'),
