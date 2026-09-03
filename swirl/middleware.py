@@ -3,17 +3,74 @@ import logging
 
 import jwt
 import yaml
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
 from func_timeout import FunctionTimedOut, func_timeout
 from rest_framework.authtoken.models import Token
 
 from swirl.authenticators import *
+from swirl.backstage_bearer import (
+    BackstageTokenError,
+    authenticate_backstage_token,
+    get_or_create_backstage_user,
+    is_backstage_enabled,
+    is_backstage_token,
+)
 
 logger = logging.getLogger(__name__)
 
 
 SWIRL_API_SEARCH_URLS = ["/api/swirl/search/", "/swirl/search/"]
 SWIRL_API_RAG_URLS = ["/api/swirl/rag-search/", "/api/swirl/sapi/detail-search-rag/"]
+
+
+class BackstageTokenMiddleware:
+    '''Verify Backstage plugin tokens presented as "Authorization: Bearer <jwt>".
+
+    Sibling of TokenMiddleware rather than a replacement: it claims only a
+    request whose Bearer token carries the Backstage plugin "typ", and it runs
+    only when SWIRL_BACKSTAGE_JWKS_URL and SWIRL_BACKSTAGE_AUDIENCE are both
+    set. Every other request passes through untouched, with
+    request.backstage_principal set to None so downstream code can rely on the
+    attribute existing.
+    '''
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        request.backstage_principal = None
+
+        if not is_backstage_enabled():
+            return self.get_response(request)
+
+        auth_header = request.headers.get('Authorization', '')
+        if not auth_header.lower().startswith('bearer '):
+            return self.get_response(request)
+
+        raw = auth_header.split(' ', 1)[1].strip()
+        if not is_backstage_token(raw):
+            return self.get_response(request)
+
+        try:
+            principal = authenticate_backstage_token(raw)
+        except BackstageTokenError as err:
+            logger.warning(f'BackstageTokenMiddleware: rejected token for {request.path}: {err}')
+            return self.invalid_token()
+
+        try:
+            request.user = get_or_create_backstage_user(principal)
+        except Exception as err:
+            logger.error(f'BackstageTokenMiddleware: user mapping failed for {principal}: {err}')
+            return self.invalid_token()
+
+        request.backstage_principal = principal
+        logger.debug(f'BackstageTokenMiddleware: authenticated {principal} for {request.path}')
+        return self.get_response(request)
+
+    def invalid_token(self):
+        response = JsonResponse({'detail': 'Invalid Backstage token'}, status=401)
+        response['WWW-Authenticate'] = 'Bearer error="invalid_token"'
+        return response
 
 
 class TokenMiddleware:
@@ -23,6 +80,10 @@ class TokenMiddleware:
     def __call__(self, request):
 
         if(request.path == '/api/swirl/sapi/branding/'):
+            return self.get_response(request)
+
+        # A verified Backstage plugin token has already set request.user.
+        if getattr(request, 'backstage_principal', None):
             return self.get_response(request)
 
         if (request.path == '/swirl/login/' or request.path == '/swirl/oidc_authenticate/' or '/sapi/' not in request.path) and request.path != '/swirl/logout/':
