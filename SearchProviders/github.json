@@ -27,7 +27,8 @@
         "tags": [
             "GitHub",
             "Code",
-            "Dev"
+            "Dev",
+            "backstage"
         ]
     },
     {
@@ -58,7 +59,8 @@
         "tags": [
             "GitHub",
             "Issues",
-            "Dev"
+            "Dev",
+            "backstage"
         ]
     },
     {
@@ -90,7 +92,8 @@
             "GitHub",
             "PullRequests",
             "PRs",
-            "Dev"
+            "Dev",
+            "backstage"
         ]
     },
     {
@@ -121,7 +124,8 @@
         "tags": [
             "GitHub",
             "Commits",
-            "Dev"
+            "Dev",
+            "backstage"
         ]
     }
 ]

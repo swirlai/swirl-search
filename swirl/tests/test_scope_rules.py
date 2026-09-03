@@ -348,3 +348,103 @@ def test_preloaded_github_and_confluence_ship_with_placeholder_scopes(owner):
     for name in ('Code - GitHub', 'Issues - GitHub', 'PRs - GitHub', 'Commits - GitHub'):
         assert 'repo:<your-org>/<your-repo>' in by_name[name]['query_template'], name
     assert "space='<YOUR-SPACE-KEY>'" in by_name['Docs - Atlassian Confluence']['query_template']
+
+
+# ---------------------------------------------------------------------------
+# The federated providers the Backstage engine fans out to
+#
+# The engine's default federated.providerTags is ["backstage"], so a provider
+# has to carry that tag to take part in the swirl-federated lane. These five
+# are the ones a Backstage evaluator is most likely to want, and they ship
+# inactive with a placeholder scope, exactly as before.
+# ---------------------------------------------------------------------------
+
+BACKSTAGE_FEDERATED = ('Code - GitHub', 'Issues - GitHub', 'PRs - GitHub',
+                       'Commits - GitHub', 'Docs - Atlassian Confluence')
+
+PROVIDER_FILES = ('SearchProviders/preloaded.json',
+                  'SearchProviders/github.json',
+                  'SearchProviders/atlassian.json')
+
+
+@pytest.mark.parametrize('path', PROVIDER_FILES)
+def test_the_backstage_tag_is_on_the_github_and_confluence_providers(path):
+    with open(path) as handle:
+        entries = json.load(handle)
+
+    by_name = {entry['name']: entry for entry in entries}
+    wanted = [name for name in BACKSTAGE_FEDERATED if name in by_name]
+    assert wanted, path
+    for name in wanted:
+        assert 'backstage' in by_name[name]['tags'], (path, name)
+
+
+@pytest.mark.parametrize('path', PROVIDER_FILES)
+def test_the_backstage_tag_did_not_replace_the_tags_that_were_there(path):
+    """The tag is added, not swapped in: Galaxy filters on the old ones."""
+    expected = {
+        'Code - GitHub': {'GitHub', 'Code', 'Dev'},
+        'Issues - GitHub': {'GitHub', 'Issues', 'Dev'},
+        'PRs - GitHub': {'GitHub', 'PullRequests', 'PRs', 'Dev'},
+        'Commits - GitHub': {'GitHub', 'Commits', 'Dev'},
+        'Docs - Atlassian Confluence': {'Confluence', 'Atlassian', 'Dev'},
+    }
+    with open(path) as handle:
+        by_name = {entry['name']: entry for entry in json.load(handle)}
+
+    for name, tags in expected.items():
+        if name not in by_name:
+            continue
+        assert tags <= set(by_name[name]['tags']), (path, name)
+
+
+@pytest.mark.parametrize('path', PROVIDER_FILES)
+def test_the_backstage_federated_providers_still_ship_inactive_and_scoped(path):
+    """Tagging them must not switch them on, nor drop the placeholder scope."""
+    with open(path) as handle:
+        by_name = {entry['name']: entry for entry in json.load(handle)}
+
+    for name in BACKSTAGE_FEDERATED:
+        if name not in by_name:
+            continue
+        entry = by_name[name]
+        assert entry['active'] is False, (path, name)
+        if name.endswith('GitHub'):
+            assert 'repo:<your-org>/<your-repo>' in entry['query_template'], name
+        else:
+            assert "space='<YOUR-SPACE-KEY>'" in entry['query_template'], name
+
+
+@pytest.mark.django_db
+def test_the_backstage_tagged_providers_still_pass_their_own_scope_rule(owner):
+    """Adding a tag must not make a shipped provider fail check_scope."""
+    with open('SearchProviders/preloaded.json') as handle:
+        by_name = {entry['name']: entry for entry in json.load(handle)}
+
+    for name in BACKSTAGE_FEDERATED:
+        entry = by_name[name]
+        provider = SearchProvider(
+            owner=owner,
+            name=entry['name'],
+            active=entry.get('active', False),
+            query_template=entry.get('query_template', ''),
+            query_template_json=entry.get('query_template_json') or {},
+            tags=entry.get('tags', []),
+            config=entry.get('config') or {},
+        )
+        assert check_scope(provider) is None, name
+
+
+def test_the_three_provider_files_agree_on_the_backstage_tag():
+    """preloaded.json is a copy; the copies must not drift apart."""
+    loaded = {}
+    for path in PROVIDER_FILES:
+        with open(path) as handle:
+            for entry in json.load(handle):
+                if entry['name'] in BACKSTAGE_FEDERATED:
+                    loaded.setdefault(entry['name'], []).append(
+                        (path, tuple(sorted(entry['tags']))))
+
+    for name, seen in loaded.items():
+        tag_sets = {tags for _path, tags in seen}
+        assert len(tag_sets) == 1, (name, seen)
