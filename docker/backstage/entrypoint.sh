@@ -87,6 +87,12 @@ python "$APP_DIR/docker/backstage/load_backstage_provider.py"
 ########################################
 # Workers, then daphne in the foreground
 
+# A restarted container keeps its writable layer, so the pid file swirl.py
+# wrote in the previous run is still there and swirl.py would refuse to start
+# the worker ("celery-worker is already running"). Clear it first; see
+# clear_stale_pids.sh for why the pids are not validated.
+sh "$APP_DIR/docker/backstage/clear_stale_pids.sh" "$APP_DIR"
+
 log "starting celery"
 python swirl.py start celery-worker celery-beats
 
