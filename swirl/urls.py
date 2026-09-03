@@ -8,6 +8,7 @@
 from django.urls import include, path
 from rest_framework import routers, permissions
 from . import views
+from . import views_index
 from swirl.authenticators import Microsoft
 from django.views.generic import TemplateView, RedirectView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
@@ -45,6 +46,15 @@ urlpatterns = [
     path('search/search', views.SearchViewSet.as_view({'get': 'list'}), name='search'),
     path('sapi/detail-search-rag/', views.DetailSearchRagView.as_view(), name='detail-search-rag'),
     path('sapi/is_chat_ai_provider_exists', views.IsChatAIProviderExists.as_view({'get': 'list'}), name='is-chat-ai-provider-exists'),
+
+    # Backstage ingest API (TECH_DESIGN section 3.2)
+    path('index/', views_index.IndexListView.as_view(), name='index-list'),
+    path('index/config/', views_index.IndexConfigView.as_view(), name='index-config'),
+    path('index/<str:type_name>/', views_index.IndexTypeView.as_view(), name='index-type'),
+    path('index/<str:type_name>/begin/', views_index.IndexBeginView.as_view(), name='index-begin'),
+    path('index/<str:type_name>/<str:generation>/docs/', views_index.IndexDocsView.as_view(), name='index-docs'),
+    path('index/<str:type_name>/<str:generation>/finalize/', views_index.IndexFinalizeView.as_view(), name='index-finalize'),
+    path('index/<str:type_name>/<str:generation>/abort/', views_index.IndexAbortView.as_view(), name='index-abort'),
 
     path('', views.index, name='index'),
     path('index.html', views.index, name='index_html'),

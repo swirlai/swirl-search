@@ -312,3 +312,44 @@ class AIProvider(models.Model):
         ordering = ['-date_updated']
         verbose_name = "AIProvider"
         verbose_name_plural = "AIProviders"
+
+
+class SearchIndexGeneration(models.Model):
+    '''
+    Bookkeeping for the Tantivy index generations created by the Backstage
+    ingest API (TECH_DESIGN_swirl_for_backstage.md section 3.2).
+
+    The filesystem under SWIRL_TANTIVY_DATA_DIR is the source of truth. These
+    rows exist so the admin and GET /swirl/index/ can show what happened
+    without walking every generation directory.
+    '''
+    STATE_OPEN = 'open'
+    STATE_LIVE = 'live'
+    STATE_ABORTED = 'aborted'
+    STATE_RETIRED = 'retired'
+    STATE_CHOICES = [
+        (STATE_OPEN, 'Open'),
+        (STATE_LIVE, 'Live'),
+        (STATE_ABORTED, 'Aborted'),
+        (STATE_RETIRED, 'Retired'),
+    ]
+
+    id = models.BigAutoField(primary_key=True)
+    type = models.CharField(max_length=64)
+    generation = models.CharField(max_length=32)
+    state = models.CharField(max_length=16, default=STATE_OPEN, choices=STATE_CHOICES)
+    doc_count = models.IntegerField(default=0)
+    bytes = models.BigIntegerField(default=0)
+    started_at = models.DateTimeField(auto_now_add=True)
+    finalized_at = models.DateTimeField(blank=True, null=True)
+    started_by = models.ForeignKey('auth.User', on_delete=models.SET_NULL,
+                                   blank=True, null=True)
+
+    class Meta:
+        ordering = ['-started_at']
+        unique_together = [['type', 'generation']]
+        verbose_name = "SearchIndexGeneration"
+        verbose_name_plural = "SearchIndexGenerations"
+
+    def __str__(self):
+        return '{}/{} ({})'.format(self.type, self.generation, self.state)

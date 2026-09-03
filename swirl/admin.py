@@ -15,7 +15,8 @@ from django.shortcuts import redirect, render
 from django.urls import path, reverse
 from django.utils.html import format_html
 
-from .models import AIProvider, SearchProvider, Search, Result, QueryTransform, OauthToken
+from .models import (AIProvider, SearchProvider, Search, Result, QueryTransform,
+                     OauthToken, SearchIndexGeneration)
 
 logger = logging.getLogger(__name__)
 
@@ -304,6 +305,71 @@ class ResultAdmin(admin.ModelAdmin):
         'messages', 'status', 'retrieved', 'found', 'time',
         'json_results', 'tags',
     ]
+
+##################################################
+
+@admin.register(SearchIndexGeneration)
+class SearchIndexGenerationAdmin(admin.ModelAdmin):
+    """
+    Read-only view of the Backstage Tantivy index generations
+    (TECH_DESIGN_swirl_for_backstage.md section 7).
+
+    Nothing here is editable: the filesystem under SWIRL_TANTIVY_DATA_DIR is
+    the source of truth and these rows are bookkeeping. The one action is
+    "Abort", which releases an open generation whose ingest run died.
+    """
+    list_display = ['id', 'type', 'generation', 'state', 'doc_count',
+                    'size', 'started_at', 'finalized_at', 'started_by']
+    list_filter = ['type', 'state']
+    search_fields = ['type', 'generation']
+    ordering = ['-started_at']
+    date_hierarchy = 'started_at'
+    actions = ['abort_open_generations']
+    readonly_fields = [
+        'id', 'type', 'generation', 'state', 'doc_count', 'bytes',
+        'started_at', 'finalized_at', 'started_by',
+    ]
+
+    @admin.display(description='Size', ordering='bytes')
+    def size(self, obj):
+        total = float(obj.bytes or 0)
+        if total < 1024:
+            return '{:.0f} B'.format(total)
+        for unit in ('KB', 'MB', 'GB'):
+            total = total / 1024.0
+            if total < 1024 or unit == 'GB':
+                return '{:.1f} {}'.format(total, unit)
+        return '{:.1f} GB'.format(total)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    @admin.action(description='Abort the selected open generations')
+    def abort_open_generations(self, request, queryset):
+        from django.utils import timezone
+
+        from swirl.tantivy_index import generations as gen_module
+        from swirl.tantivy_index.manager import default_manager
+
+        aborted = 0
+        for row in queryset.filter(state=SearchIndexGeneration.STATE_OPEN):
+            try:
+                default_manager.abort(row.type, row.generation)
+            except gen_module.TantivyIndexError as err:
+                self.message_user(
+                    request, '{}: {}'.format(row, err), level=messages.WARNING)
+                continue
+            row.state = SearchIndexGeneration.STATE_ABORTED
+            row.finalized_at = timezone.now()
+            row.save(update_fields=['state', 'finalized_at'])
+            aborted += 1
+        if aborted:
+            self.message_user(
+                request, 'Aborted {} generation(s).'.format(aborted),
+                level=messages.SUCCESS)
 
 ##################################################
 
