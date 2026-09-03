@@ -101,7 +101,15 @@ class IndexViewBase(APIView):
 
 
 class IndexConfigView(IndexViewBase):
-    '''POST /swirl/index/config/ : persist the tuning block.'''
+    '''POST /swirl/index/config/ : persist the tuning block.
+
+    Two shapes are accepted: SWIRL's own flat snake_case names, and the nested
+    camelCase block the Backstage engine module sends verbatim out of
+    app-config. The response is the effective tuning in SWIRL's flat form, plus
+    ``accepted_keys`` naming every key as it was sent, plus a ``bm25`` notice
+    when BM25 parameters were stored but the installed tantivy cannot apply
+    them. An unknown key is a 400 that names it, rather than a silent drop.
+    '''
 
     def get(self, request):
         denied = self.check_ingest_permission(request)
@@ -117,13 +125,13 @@ class IndexConfigView(IndexViewBase):
         if payload is None:
             return _bad_request('the body must be a JSON object')
         try:
-            effective = self.manager.configure(payload)
+            _effective, report = self.manager.configure_with_report(payload)
         except ValueError as err:
             return _bad_request(err)
         except OSError as err:
             logger.error('index config: %s', err)
             return _bad_request('could not persist the tuning: {}'.format(err))
-        return Response(effective.to_dict(), status=status.HTTP_200_OK)
+        return Response(report, status=status.HTTP_200_OK)
 
 
 class IndexListView(IndexViewBase):

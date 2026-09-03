@@ -38,6 +38,11 @@ class Tuning:
     remove_long: int = 64
     highlight: bool = True
     snippet_chars: int = 300
+    #: BM25 parameters. Accepted and stored, but tantivy-py exposes no way to
+    #: set them (see ``bm25_supported``), so the config endpoint says so in its
+    #: response rather than pretending they took effect.
+    bm25_k1: float = 1.2
+    bm25_b: float = 0.75
 
     @property
     def field_boosts(self) -> dict:
@@ -56,21 +61,29 @@ class Tuning:
 
     @classmethod
     def from_dict(cls, data) -> 'Tuning':
-        '''Build a Tuning from a partial dict, ignoring unknown keys.
+        '''Build a Tuning from a partial dict in either accepted shape.
 
-        Raises ValueError when a known key carries a value of the wrong type or
-        an out-of-range value, so the config endpoint can answer 400.
+        Two shapes are accepted: SWIRL's own flat snake_case names, and the
+        nested camelCase block the Backstage engine module sends verbatim from
+        app-config (``fieldBoosts.titleExact``, ``ngram.min``,
+        ``fuzzy.enabled``, ``bm25.k1``, ``highlight.maxChars`` and friends).
+        The two may be mixed in one call.
+
+        Unknown keys are rejected rather than dropped: silently ignoring them
+        is how a whole documented tuning block used to do nothing at all.
+        Raises ValueError, which the config endpoint turns into a 400, when a
+        key is unknown, or a known key carries a value of the wrong type or an
+        out-of-range value.
         '''
-        data = data or {}
-        if not isinstance(data, dict):
-            raise ValueError('tuning must be a JSON object')
-        known = {f.name: f for f in fields(cls)}
-        kwargs = {}
-        for key, value in data.items():
-            if key not in known:
-                continue
-            kwargs[key] = _coerce(key, value)
-        tuning = cls(**kwargs)
+        flat, _accepted, unknown = normalize(data)
+        if unknown:
+            raise ValueError(
+                'unknown tuning key(s): {}. Known keys are the SWIRL names '
+                '({}) and the nested Backstage names ({}).'.format(
+                    ', '.join(unknown),
+                    ', '.join(sorted(f.name for f in fields(cls))),
+                    ', '.join(sorted(NESTED_KEYS))))
+        tuning = cls(**flat)
         tuning.validate()
         return tuning
 
@@ -103,11 +116,15 @@ class Tuning:
             raise ValueError('stemmer must be a non empty string')
         if not isinstance(self.stopwords_language, str) or not self.stopwords_language:
             raise ValueError('stopwords_language must be a non empty string')
+        if self.bm25_k1 < 0:
+            raise ValueError('bm25_k1 must not be negative')
+        if self.bm25_b < 0 or self.bm25_b > 1:
+            raise ValueError('bm25_b must be between 0 and 1')
         return self
 
 
 _FLOATS = {'title_exact_boost', 'title_ngram_boost', 'text_boost',
-           'phrase_boost_multiplier'}
+           'phrase_boost_multiplier', 'bm25_k1', 'bm25_b'}
 _INTS = {'ngram_min', 'ngram_max', 'fuzzy_distance', 'remove_long', 'snippet_chars'}
 _BOOLS = {'fuzzy_enabled', 'highlight'}
 
@@ -137,6 +154,122 @@ def _coerce(key, value):
     if not isinstance(value, str):
         raise ValueError('{} must be a string'.format(key))
     return value
+
+
+########################################
+# The two accepted key shapes
+#
+# SWIRL's own flat snake_case names, and the nested camelCase block the
+# Backstage engine module sends verbatim out of app-config
+# (TECH_DESIGN_swirl_for_backstage.md section 2.2). The engine used to send the
+# documented nested shape and SWIRL used to drop every key of it on the floor,
+# so an operator's whole tuning block did nothing.
+
+#: Nested camelCase path -> SWIRL field. ``stopwords`` is deliberately absent:
+#: it maps to two different fields depending on the value, see _NESTED_SPECIAL.
+NESTED_KEY_MAP = {
+    'fieldBoosts.titleExact': 'title_exact_boost',
+    'fieldBoosts.titleNgram': 'title_ngram_boost',
+    'fieldBoosts.text': 'text_boost',
+    'fieldBoosts.phraseMultiplier': 'phrase_boost_multiplier',
+    'ngram.min': 'ngram_min',
+    'ngram.max': 'ngram_max',
+    'stemmer': 'stemmer',
+    'fuzzy.enabled': 'fuzzy_enabled',
+    'fuzzy.distance': 'fuzzy_distance',
+    'bm25.k1': 'bm25_k1',
+    'bm25.b': 'bm25_b',
+    'highlight.enabled': 'highlight',
+    'highlight.maxChars': 'snippet_chars',
+    'removeLong': 'remove_long',
+}
+
+#: Top level nested keys that carry an object, so that a scalar in their place
+#: is a clear error rather than an unknown key.
+NESTED_OBJECTS = ('fieldBoosts', 'ngram', 'fuzzy', 'bm25', 'highlight')
+
+#: Every nested path the config endpoint accepts, for the error message.
+NESTED_KEYS = tuple(sorted(NESTED_KEY_MAP)) + ('stopwords',)
+
+#: What the config endpoint reports when BM25 parameters were accepted and
+#: stored but the installed tantivy cannot apply them.
+BM25_NOT_APPLIED = 'not applied by this engine version'
+
+
+def bm25_supported() -> bool:
+    '''Whether the installed tantivy exposes BM25 k1 and b.
+
+    tantivy-py 0.26 does not: neither Index, Schema, SchemaBuilder nor Searcher
+    carries anything to set them, and the Rust crate's ``Bm25Weight`` is not
+    bound. The probe is written against the objects rather than a version
+    number so that a later binding is picked up on its own.
+    '''
+    try:
+        import tantivy
+    except ImportError:
+        return False
+    for holder in ('Index', 'Schema', 'SchemaBuilder', 'Searcher'):
+        target = getattr(tantivy, holder, None)
+        if target is None:
+            continue
+        names = {name.lower() for name in dir(target)}
+        if 'bm25' in names or {'k1', 'b'} <= names:
+            return True
+    return bool(getattr(tantivy, 'Bm25Weight', None))
+
+
+def normalize(data):
+    '''Fold either accepted shape into SWIRL's flat field names.
+
+    Returns ``(flat, accepted_keys, unknown_keys)``. ``accepted_keys`` names the
+    keys as they were sent, dotted for the nested shape, so a caller can log
+    exactly what SWIRL took. ``unknown_keys`` is what the caller should be told
+    about instead of having it dropped.
+    '''
+    if data is None:
+        return {}, [], []
+    if not isinstance(data, dict):
+        raise ValueError('tuning must be a JSON object')
+
+    known = {f.name for f in fields(Tuning)}
+    flat = {}
+    accepted = []
+    unknown = []
+
+    def take(field, value, sent_as):
+        flat[field] = _coerce(field, value)
+        accepted.append(sent_as)
+
+    for key, value in data.items():
+        # A nested block wins over a flat field of the same name: `highlight`
+        # is a bool in SWIRL's own shape and an object in the Backstage one.
+        if key in NESTED_OBJECTS and isinstance(value, dict):
+            for inner, inner_value in value.items():
+                path = '{}.{}'.format(key, inner)
+                if path in NESTED_KEY_MAP:
+                    take(NESTED_KEY_MAP[path], inner_value, path)
+                else:
+                    unknown.append(path)
+            continue
+        if key in known:
+            take(key, value, key)
+            continue
+        if key == 'stopwords':
+            # The Backstage block types this as a list of extra stopwords; a
+            # bare string names a language, which is SWIRL's own knob.
+            if isinstance(value, str):
+                take('stopwords_language', value, 'stopwords')
+            else:
+                take('extra_stopwords', value, 'stopwords')
+            continue
+        if key in NESTED_KEY_MAP and not isinstance(value, dict):
+            take(NESTED_KEY_MAP[key], value, key)
+            continue
+        if key in NESTED_OBJECTS:
+            raise ValueError('{} must be a JSON object'.format(key))
+        unknown.append(key)
+
+    return flat, accepted, unknown
 
 
 DEFAULT_TUNING = Tuning()

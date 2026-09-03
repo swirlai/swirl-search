@@ -279,10 +279,78 @@ def test_tuning_defaults_match_the_design():
     assert tuning.fuzzy_distance == 1
 
 
-def test_tuning_from_dict_ignores_unknown_keys():
-    tuning = Tuning.from_dict({"text_boost": 2, "nonsense": True})
+def test_tuning_from_dict_rejects_unknown_keys():
+    """Contract change: unknown keys used to be dropped in silence, which is
+    how the whole documented Backstage tuning block could be configured and do
+    nothing at all. They are now named in the error the endpoint returns.
+    """
+    with pytest.raises(ValueError) as err:
+        Tuning.from_dict({"text_boost": 2, "nonsense": True})
+    assert "nonsense" in str(err.value)
+    assert "text_boost" not in str(err.value).split("Known keys")[0]
+
+
+def test_tuning_from_dict_accepts_the_nested_backstage_shape():
+    """The block the engine module sends verbatim out of app-config."""
+    tuning = Tuning.from_dict({
+        "fieldBoosts": {"titleExact": 5, "titleNgram": 2, "text": 1.5},
+        "ngram": {"min": 2, "max": 6},
+        "stemmer": "porter",
+        "stopwords": ["Platform"],
+        "fuzzy": {"enabled": True, "distance": 2},
+        "bm25": {"k1": 1.4, "b": 0.5},
+        "highlight": {"enabled": False, "maxChars": 150},
+    })
+    assert tuning.title_exact_boost == 5.0
+    assert tuning.title_ngram_boost == 2.0
+    assert tuning.text_boost == 1.5
+    assert tuning.ngram_min == 2
+    assert tuning.ngram_max == 6
+    assert tuning.stemmer == "porter"
+    assert tuning.extra_stopwords == ["platform"]
+    assert tuning.fuzzy_enabled is True
+    assert tuning.fuzzy_distance == 2
+    assert tuning.bm25_k1 == 1.4
+    assert tuning.bm25_b == 0.5
+    assert tuning.highlight is False
+    assert tuning.snippet_chars == 150
+
+
+def test_tuning_from_dict_still_accepts_the_flat_swirl_shape():
+    tuning = Tuning.from_dict({"fuzzy_enabled": True, "ngram_min": 4,
+                               "snippet_chars": 111})
+    assert tuning.fuzzy_enabled is True
+    assert tuning.ngram_min == 4
+    assert tuning.snippet_chars == 111
+
+
+def test_tuning_from_dict_accepts_both_shapes_in_one_call():
+    tuning = Tuning.from_dict({"text_boost": 2, "fuzzy": {"enabled": True}})
     assert tuning.text_boost == 2.0
-    assert not hasattr(tuning, "nonsense")
+    assert tuning.fuzzy_enabled is True
+
+
+def test_highlight_is_a_bool_flat_and_an_object_nested():
+    """`highlight` is a SWIRL bool and a Backstage block; both have to work."""
+    assert Tuning.from_dict({"highlight": False}).highlight is False
+    assert Tuning.from_dict({"highlight": {"enabled": False}}).highlight is False
+
+
+def test_normalize_reports_the_keys_it_took_and_the_ones_it_did_not():
+    from swirl.tantivy_index.tuning import normalize
+
+    flat, accepted, unknown = normalize(
+        {"text_boost": 2, "fuzzy": {"enabled": True, "bogus": 1}, "nope": 1})
+    assert flat == {"text_boost": 2.0, "fuzzy_enabled": True}
+    assert accepted == ["text_boost", "fuzzy.enabled"]
+    assert unknown == ["fuzzy.bogus", "nope"]
+
+
+def test_bm25_is_not_applied_by_this_tantivy():
+    """If a later tantivy-py binds BM25, this is the test that says so."""
+    from swirl.tantivy_index.tuning import bm25_supported
+
+    assert bm25_supported() is False
 
 
 @pytest.mark.parametrize("payload", [
@@ -297,6 +365,10 @@ def test_tuning_from_dict_ignores_unknown_keys():
     {"ngram_min": "three"},
     {"extra_stopwords": "the"},
     {"extra_stopwords": [1, 2]},
+    {"bm25": {"k1": -1}},
+    {"bm25": {"b": 2}},
+    {"ngram": 5},
+    {"fieldBoosts": "high"},
 ])
 def test_tuning_from_dict_rejects_bad_values(payload):
     with pytest.raises(ValueError):

@@ -38,7 +38,15 @@ from swirl.tantivy_index.schema import (
     register_analyzers,
     validate_document,
 )
-from swirl.tantivy_index.tuning import DEFAULT_TUNING, Tuning, load_tuning, save_tuning
+from swirl.tantivy_index.tuning import (
+    BM25_NOT_APPLIED,
+    DEFAULT_TUNING,
+    Tuning,
+    bm25_supported,
+    load_tuning,
+    normalize,
+    save_tuning,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -115,9 +123,38 @@ class TantivyIndexManager:
         Applied on the next ``begin``; the live generations keep the analyzers
         they were built with until they are replaced.
         '''
+        return self.configure_with_report(payload)[0]
+
+    def configure_with_report(self, payload):
+        '''Persist a tuning block, and say what was taken from it.
+
+        Returns ``(tuning, report)``. The report is the effective tuning in
+        SWIRL's flat form plus ``accepted_keys``, naming every key as the
+        caller sent it, and a ``bm25`` notice when BM25 parameters were stored
+        but the installed tantivy cannot apply them. The Backstage engine logs
+        both at startup, so an operator can see what their app-config tuning
+        block actually did.
+
+        The payload is folded into SWIRL's flat names before it is merged with
+        the stored tuning; merging first would leave the nested keys sitting
+        beside the flat defaults they are supposed to replace.
+        '''
+        flat, accepted, unknown = normalize(payload)
+        if unknown:
+            # Let Tuning.from_dict build the message, so there is one wording.
+            Tuning.from_dict(payload)
         current = self.tuning().to_dict()
-        current.update(payload or {})
-        return save_tuning(self.data_dir, Tuning.from_dict(current))
+        current.update(flat)
+        tuning = save_tuning(self.data_dir, Tuning.from_dict(current))
+
+        report = dict(tuning.to_dict())
+        report['accepted_keys'] = accepted
+        asked_for_bm25 = any(key.startswith('bm25') for key in accepted)
+        stored_bm25 = (tuning.bm25_k1 != DEFAULT_TUNING.bm25_k1
+                       or tuning.bm25_b != DEFAULT_TUNING.bm25_b)
+        if (asked_for_bm25 or stored_bm25) and not bm25_supported():
+            report['bm25'] = BM25_NOT_APPLIED
+        return tuning, report
 
     ########################################
     # Write side

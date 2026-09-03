@@ -367,10 +367,91 @@ def test_config_rejects_a_bad_tuning_block(client):
 
 
 @pytest.mark.django_db
-def test_config_ignores_unknown_keys(client):
+def test_config_rejects_unknown_keys_instead_of_dropping_them(client):
+    """Contract change: silently dropping keys is how a whole tuning block
+    could be configured and do nothing. An unknown key is now a 400 naming it.
+    """
     response = client.post(BASE + "config/", {"nonsense": 1}, format="json")
+    assert response.status_code == 400
+    assert "nonsense" in response.data["detail"]
+    assert "unknown tuning key" in response.data["detail"]
+
+
+@pytest.mark.django_db
+def test_config_names_an_unknown_key_inside_a_nested_block(client):
+    response = client.post(BASE + "config/", {"fuzzy": {"bogus": 1}},
+                           format="json")
+    assert response.status_code == 400
+    assert "fuzzy.bogus" in response.data["detail"]
+
+
+@pytest.mark.django_db
+def test_config_accepts_the_nested_backstage_tuning_block(client):
+    """The shape the engine module sends verbatim out of app-config."""
+    response = client.post(BASE + "config/", {
+        "fieldBoosts": {"titleExact": 5, "titleNgram": 2, "text": 1.5},
+        "ngram": {"min": 2, "max": 6},
+        "stemmer": "english",
+        "stopwords": ["platform"],
+        "fuzzy": {"enabled": True, "distance": 2},
+        "bm25": {"k1": 1.5, "b": 0.6},
+        "highlight": {"enabled": True, "maxChars": 120},
+    }, format="json")
+
+    assert response.status_code == 200, response.data
+    # The response is SWIRL's flat form.
+    assert response.data["title_exact_boost"] == 5.0
+    assert response.data["title_ngram_boost"] == 2.0
+    assert response.data["text_boost"] == 1.5
+    assert response.data["ngram_min"] == 2
+    assert response.data["ngram_max"] == 6
+    assert response.data["extra_stopwords"] == ["platform"]
+    assert response.data["fuzzy_enabled"] is True
+    assert response.data["fuzzy_distance"] == 2
+    assert response.data["snippet_chars"] == 120
+    assert response.data["bm25_k1"] == 1.5
+    assert response.data["bm25_b"] == 0.6
+    # ...and it says what it took, in the shape it was sent.
+    assert "fuzzy.enabled" in response.data["accepted_keys"]
+    assert "fieldBoosts.titleExact" in response.data["accepted_keys"]
+    assert "highlight.maxChars" in response.data["accepted_keys"]
+    # It persists.
+    assert client.get(BASE + "config/").data["fuzzy_enabled"] is True
+
+
+@pytest.mark.django_db
+def test_config_still_accepts_the_flat_swirl_tuning_block(client):
+    response = client.post(BASE + "config/",
+                           {"fuzzy_enabled": True, "text_boost": 2.0},
+                           format="json")
+    assert response.status_code == 200, response.data
+    assert response.data["fuzzy_enabled"] is True
+    assert response.data["text_boost"] == 2.0
+    assert sorted(response.data["accepted_keys"]) == ["fuzzy_enabled",
+                                                      "text_boost"]
+
+
+@pytest.mark.django_db
+def test_config_reports_that_bm25_is_not_applied(client):
+    """tantivy-py exposes no BM25 knobs, so the values are stored and said so."""
+    from swirl.tantivy_index.tuning import BM25_NOT_APPLIED, bm25_supported
+
+    response = client.post(BASE + "config/", {"bm25": {"k1": 1.4, "b": 0.5}},
+                           format="json")
+    assert response.status_code == 200, response.data
+    assert response.data["bm25_k1"] == 1.4
+    assert response.data["bm25_b"] == 0.5
+    if bm25_supported():
+        assert "bm25" not in response.data
+    else:
+        assert response.data["bm25"] == BM25_NOT_APPLIED
+
+
+@pytest.mark.django_db
+def test_config_says_nothing_about_bm25_when_it_was_not_asked_for(client):
+    response = client.post(BASE + "config/", {"text_boost": 2.0}, format="json")
     assert response.status_code == 200
-    assert "nonsense" not in response.data
+    assert "bm25" not in response.data
 
 
 # ---------------------------------------------------------------------------
