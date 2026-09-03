@@ -143,3 +143,219 @@ def test_the_manifest_points_at_the_deferred_slim_profile():
         body = handle.read()
     assert "WP06b" in body
     assert "slim profile" in body
+
+
+# ---------------------------------------------------------------------------
+# The seed path the image actually uses
+#
+# Defect, found re-running the gauntlet against the released image: the
+# provider-tag fix changed SearchProviders/*.json, but the container seeds
+# /data/db.sqlite3 from the shipped db.sqlite3.dist, which is a binary artifact
+# only .github/workflows/db-dist.yml regenerates. The shipped `Code - GitHub`
+# row therefore still carried ["GitHub", "Code", "Dev"] and an unscoped
+# template, so it could not join the federated lane whose default tag is
+# `backstage`.
+#
+# The fix is reconciliation in docker/backstage/load_backstage_provider.py,
+# which the entrypoint runs on every start. These tests drive that reconciler
+# over the rows taken out of the real db.sqlite3.dist, which is the state a
+# fresh container is in on its first boot.
+# ---------------------------------------------------------------------------
+
+import importlib.util
+import sqlite3
+
+import pytest
+
+DIST_DB = os.path.join(ROOT, "db.sqlite3.dist")
+PRELOADED = os.path.join(ROOT, "SearchProviders", "preloaded.json")
+
+#: The six providers preloaded.json tags for the federated lane: four GitHub,
+#: Confluence, and the Backstage index itself.
+FEDERATED_NAMES = (
+    "Code - GitHub",
+    "Issues - GitHub",
+    "PRs - GitHub",
+    "Commits - GitHub",
+    "Docs - Atlassian Confluence",
+    "Backstage Index - SWIRL",
+)
+
+#: Columns of swirl_searchprovider that map onto model fields the reconciler
+#: reads or writes.
+SEEDED_COLUMNS = (
+    "name", "active", "tags", "query_template", "query_template_json",
+    "connector", "url", "shared",
+)
+
+
+def load_seeder():
+    """Import the script the entrypoint runs, by path: it is not a package."""
+    path = os.path.join(ROOT, "docker", "backstage", "load_backstage_provider.py")
+    spec = importlib.util.spec_from_file_location("load_backstage_provider", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def seed_from_dist(owner):
+    """Recreate the shipped rows in the test database, verbatim from the dist.
+
+    This is the whole point of the test: not a hand written fixture of what the
+    dist is believed to hold, but what it actually holds today.
+    """
+    from swirl.models import SearchProvider
+
+    connection = sqlite3.connect(DIST_DB)
+    connection.row_factory = sqlite3.Row
+    placeholders = ",".join("?" for _ in FEDERATED_NAMES)
+    rows = connection.execute(
+        "select {} from swirl_searchprovider where name in ({})".format(
+            ",".join(SEEDED_COLUMNS), placeholders), FEDERATED_NAMES).fetchall()
+    connection.close()
+
+    seeded = {}
+    for row in rows:
+        provider = SearchProvider.objects.create(
+            owner=owner,
+            name=row["name"],
+            active=bool(row["active"]),
+            shared=bool(row["shared"]),
+            connector=row["connector"] or "RequestsGet",
+            url=row["url"] or "",
+            query_template=row["query_template"] or "",
+            query_template_json=json.loads(row["query_template_json"] or "{}"),
+            tags=json.loads(row["tags"] or "[]"),
+        )
+        seeded[provider.name] = provider
+    return seeded
+
+
+@pytest.fixture
+def dist_owner(db):
+    from django.contrib.auth.models import User
+
+    user, _ = User.objects.get_or_create(username="dist_seed_owner")
+    return user
+
+
+def test_the_shipped_dist_database_is_the_state_the_reconciler_is_for():
+    """Guard the premise. If a regenerated dist ships, this is what changes."""
+    assert os.path.exists(DIST_DB), DIST_DB
+    connection = sqlite3.connect(DIST_DB)
+    row = connection.execute(
+        "select tags from swirl_searchprovider where name = 'Code - GitHub'"
+    ).fetchone()
+    connection.close()
+    assert row is not None, "Code - GitHub is missing from db.sqlite3.dist"
+    # Either the dist is stale, which is what the reconciler repairs, or it has
+    # been regenerated and already carries the tag. Both are acceptable; what
+    # is not acceptable is the reconciler silently doing nothing in either case,
+    # which the tests below check.
+    assert isinstance(json.loads(row[0]), list)
+
+
+@pytest.mark.django_db
+def test_the_seed_path_gives_code_github_the_backstage_tag(dist_owner):
+    from swirl.models import SearchProvider
+
+    seed_from_dist(dist_owner)
+    load_seeder().reconcile_federated_providers(PRELOADED)
+
+    provider = SearchProvider.objects.get(name="Code - GitHub")
+    assert "backstage" in provider.tags
+
+
+@pytest.mark.django_db
+def test_the_seed_path_leaves_code_github_inactive_and_scoped(dist_owner):
+    from swirl.models import SearchProvider
+    from swirl.scope import is_scoped
+
+    seed_from_dist(dist_owner)
+    load_seeder().reconcile_federated_providers(PRELOADED)
+
+    provider = SearchProvider.objects.get(name="Code - GitHub")
+    assert provider.active is False
+    assert "repo:<your-org>/<your-repo>" in provider.query_template
+    assert is_scoped(provider)
+
+
+@pytest.mark.django_db
+def test_the_seed_path_covers_every_federated_provider_it_finds(dist_owner):
+    from swirl.models import SearchProvider
+
+    seeded = seed_from_dist(dist_owner)
+    load_seeder().reconcile_federated_providers(PRELOADED)
+
+    for name in seeded:
+        provider = SearchProvider.objects.get(name=name)
+        assert "backstage" in provider.tags, name
+        assert provider.active is False, name
+
+
+@pytest.mark.django_db
+def test_the_seed_path_keeps_the_tags_the_row_already_had(dist_owner):
+    """Galaxy filters on the old tags; the new one is added, not swapped in."""
+    from swirl.models import SearchProvider
+
+    seeded = seed_from_dist(dist_owner)
+    before = {name: set(provider.tags) for name, provider in seeded.items()}
+    load_seeder().reconcile_federated_providers(PRELOADED)
+
+    for name, tags in before.items():
+        provider = SearchProvider.objects.get(name=name)
+        assert tags <= set(provider.tags), name
+
+
+@pytest.mark.django_db
+def test_the_seed_path_is_idempotent(dist_owner):
+    from swirl.models import SearchProvider
+
+    seed_from_dist(dist_owner)
+    seeder = load_seeder()
+    seeder.reconcile_federated_providers(PRELOADED)
+    first = {p.name: (p.tags, p.query_template)
+             for p in SearchProvider.objects.all()}
+
+    assert seeder.reconcile_federated_providers(PRELOADED) == []
+
+    second = {p.name: (p.tags, p.query_template)
+              for p in SearchProvider.objects.all()}
+    assert first == second
+
+
+@pytest.mark.django_db
+def test_the_seed_path_does_not_undo_an_operator_scope(dist_owner):
+    """An operator who filled in their repo and switched it on keeps it."""
+    from swirl.models import SearchProvider
+
+    seed_from_dist(dist_owner)
+    provider = SearchProvider.objects.get(name="Code - GitHub")
+    provider.query_template = "{url}?q={query_string}+repo:acme/widgets"
+    provider.active = True
+    provider.save()
+
+    load_seeder().reconcile_federated_providers(PRELOADED)
+
+    provider.refresh_from_db()
+    assert provider.query_template == "{url}?q={query_string}+repo:acme/widgets"
+    assert provider.active is True
+    assert "backstage" in provider.tags
+
+
+@pytest.mark.django_db
+def test_the_seed_path_does_not_recreate_a_deleted_provider(dist_owner):
+    from swirl.models import SearchProvider
+
+    seed_from_dist(dist_owner)
+    SearchProvider.objects.filter(name="Commits - GitHub").delete()
+
+    load_seeder().reconcile_federated_providers(PRELOADED)
+
+    assert not SearchProvider.objects.filter(name="Commits - GitHub").exists()
+
+
+def test_the_entrypoint_runs_the_provider_loader_before_starting_celery():
+    body = open(ENTRYPOINT).read()
+    assert "load_backstage_provider.py" in body
+    assert body.index("load_backstage_provider.py") < body.index("swirl.py start")

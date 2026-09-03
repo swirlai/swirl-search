@@ -86,6 +86,23 @@ def _scope_text(provider):
     return ' '.join(parts)
 
 
+def is_scoped(provider):
+    '''True when the templates already carry the scope this provider's tags need.
+
+    The active flag is deliberately not consulted, so this answers "would
+    activating this be allowed", which is what an installer reconciling a
+    shipped provider has to know before it decides whether to replace a
+    template. check_scope() is the same question asked of an active provider.
+    '''
+    rules = scope_rules_for(provider)
+    if not rules:
+        return True
+    if is_scope_unrestricted(provider):
+        return True
+    text = _scope_text(provider)
+    return all(re.search(pattern, text, re.IGNORECASE) for _tag, pattern in rules)
+
+
 def check_scope(provider):
     '''Return an error message when this provider may not be activated, else None.
 
