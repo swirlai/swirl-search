@@ -99,3 +99,47 @@ def test_the_entrypoint_clears_the_pid_state_before_starting_celery():
 def test_the_entrypoint_and_the_script_are_executable():
     assert os.access(ENTRYPOINT, os.X_OK)
     assert os.access(SCRIPT, os.X_OK)
+
+
+# ---------------------------------------------------------------------------
+# The Kubernetes manifest
+#
+# The image measures 2.48 GiB idle, so the 2Gi limit it shipped with was under
+# the idle footprint and the pod was OOMKilled before it answered a query.
+# ---------------------------------------------------------------------------
+
+K8S = os.path.join(ROOT, "docker", "backstage", "k8s.yaml")
+
+
+def _swirl_container():
+    yaml = pytest.importorskip("yaml")
+    with open(K8S, "r", encoding="utf-8") as handle:
+        documents = list(yaml.safe_load_all(handle))
+    deployments = [d for d in documents if d and d.get("kind") == "Deployment"]
+    assert len(deployments) == 1, "expected one Deployment in k8s.yaml"
+    return deployments[0]["spec"]["template"]["spec"]["containers"][0]
+
+
+def _mebibytes(value):
+    units = {"Ki": 1 / 1024.0, "Mi": 1.0, "Gi": 1024.0}
+    for suffix, factor in units.items():
+        if value.endswith(suffix):
+            return float(value[:-len(suffix)]) * factor
+    return float(value) / (1024.0 * 1024.0)
+
+
+def test_the_memory_limit_is_above_the_measured_footprint():
+    resources = _swirl_container()["resources"]
+    assert resources["limits"]["memory"] == "3Gi"
+    assert resources["requests"]["memory"] == "2.5Gi"
+    # 2.64 GiB with the example catalog indexed is the number to clear.
+    assert _mebibytes(resources["limits"]["memory"]) >= 2.64 * 1024
+    assert (_mebibytes(resources["limits"]["memory"])
+            >= _mebibytes(resources["requests"]["memory"]))
+
+
+def test_the_manifest_points_at_the_deferred_slim_profile():
+    with open(K8S, "r", encoding="utf-8") as handle:
+        body = handle.read()
+    assert "WP06b" in body
+    assert "slim profile" in body

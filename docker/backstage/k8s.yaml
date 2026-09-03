@@ -117,12 +117,24 @@ spec:
               port: http
             periodSeconds: 30
             failureThreshold: 5
+          # Measured on the WP06 image: 2.48 GiB idle, 2.64 GiB with 5,071
+          # documents indexed. Most of that is `import swirl.processors`
+          # (torch, presidio, litellm, spacy, transformers), paid once by
+          # daphne, once by the search worker and once by beats; Tantivy adds
+          # about 150 MB. The old 2Gi limit was under the idle footprint, so
+          # the pod was OOMKilled before it ever answered a query.
+          #
+          # The deferred slim profile (WP06b in
+          # reboot-design/BUILD_PLAN_swirl_for_backstage.md: CPU-only torch
+          # wheels, lazy imports in swirl/processors, no beats when nothing is
+          # scheduled) is what brings these numbers down. Until it lands these
+          # are the measured numbers, not a target.
           resources:
             requests:
               cpu: "500m"
-              memory: "768Mi"
+              memory: "2.5Gi"
             limits:
-              memory: "2Gi"
+              memory: "3Gi"
       volumes:
         - name: data
           persistentVolumeClaim:
