@@ -104,6 +104,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'swirl.middleware.BackstageTokenMiddleware',
     'swirl.middleware.TokenMiddleware',
     'swirl.middleware.SpyglassAuthenticatorsMiddleware',
     'swirl.middleware.SwaggerMiddleware',
@@ -394,3 +395,14 @@ CHANNEL_LAYERS = {
 ASGI_THREADS = 1000
 
 SWIRL_CONNECTOR_TRACE=env.get_value('SWIRL_CONNECTOR_TRACE', default=None)
+
+#####################################################
+# SWIRL for Backstage
+#
+# Backstage's search backend forwards its own plugin token to SWIRL. Verifying
+# it needs the backend's JWKS URL and the plugin id SWIRL should accept as the
+# audience. Leaving either empty disables the path entirely: no Bearer token is
+# treated as a Backstage token. See swirl/backstage_bearer.py.
+
+SWIRL_BACKSTAGE_JWKS_URL = env.get_value('SWIRL_BACKSTAGE_JWKS_URL', default='')
+SWIRL_BACKSTAGE_AUDIENCE = env.get_value('SWIRL_BACKSTAGE_AUDIENCE', default='search')

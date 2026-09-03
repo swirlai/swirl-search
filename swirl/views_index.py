@@ -11,10 +11,14 @@ Backstage ingest API (TECH_DESIGN_swirl_for_backstage.md section 3.2).
 | DELETE /swirl/index/<type>/                | 204                             |
 | GET    /swirl/index/                       | 200 list of types               |
 
-Auth is IsAuthenticated plus the swirl.change_searchprovider permission. The
-Backstage bearer principal from WP03 authenticates through the middleware and
-arrives here as an ordinary authenticated user carrying that permission, so no
-special case is needed in this module.
+Auth is IsAuthenticated plus the swirl.change_searchprovider permission,
+satisfied by a Token, a session, HTTP Basic, or a Backstage service principal.
+BackstageTokenMiddleware (WP03) verifies the plugin token and sets
+request.backstage_principal; BackstagePrincipalAuthentication carries that
+decision into DRF, which would otherwise resolve request.user back to
+AnonymousUser. A plugin token with no obo maps to the user 'backstage:service',
+which holds swirl.change_searchprovider, so the Backstage backend can ingest
+without a SWIRL API token of its own.
 
 The filesystem under SWIRL_TANTIVY_DATA_DIR is the source of truth. The
 SearchIndexGeneration rows written here are bookkeeping for the admin.
@@ -33,6 +37,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from swirl.backstage_bearer import BackstagePrincipalAuthentication
 from swirl.models import SearchIndexGeneration
 from swirl.tantivy_index import generations as gen
 from swirl.tantivy_index.manager import MAX_BATCH, default_manager
@@ -60,7 +65,8 @@ def _not_found(message):
 class IndexViewBase(APIView):
     '''Shared auth, permission check and type-name validation.'''
 
-    authentication_classes = [TokenAuthentication, SessionAuthentication,
+    authentication_classes = [BackstagePrincipalAuthentication,
+                              TokenAuthentication, SessionAuthentication,
                               BasicAuthentication]
     permission_classes = [IsAuthenticated]
 

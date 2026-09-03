@@ -27,6 +27,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from swirl.backstage_bearer import BackstagePrincipalAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -638,7 +639,13 @@ class SearchViewSet(viewsets.ModelViewSet):
     """
     queryset = Search.objects.all()
     serializer_class = SearchSerializer
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    # BackstagePrincipalAuthentication first so a verified Backstage plugin
+    # token reaches this view as its 'backstage:<entity ref>' user. The
+    # middleware has already set request.user; without this class DRF resolves
+    # it back to AnonymousUser on every method that SessionAuthentication's CSRF
+    # check rejects (TECH_DESIGN sections 3.3 and 3.5).
+    authentication_classes = [BackstagePrincipalAuthentication,
+                              SessionAuthentication, BasicAuthentication, TokenAuthentication]
 
     def report(self):
         return self.queryset
@@ -982,7 +989,10 @@ class ResultViewSet(viewsets.ModelViewSet):
     """
     queryset = Result.objects.all()
     serializer_class = ResultSerializer
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    # A Backstage user follows Search.result_url to this view, so it accepts the
+    # same principal the search endpoint does.
+    authentication_classes = [BackstagePrincipalAuthentication,
+                              SessionAuthentication, BasicAuthentication]
 
     def list(self, request):
         # check permissions

@@ -83,6 +83,13 @@ spec:
               value: "64"
             - name: SWIRL_SPACY_MODEL_EN
               value: en_core_web_sm
+            # Backstage plugin-token verification (TECH_DESIGN section 3.3).
+            # Point the JWKS URL at the Backstage backend in this cluster; an
+            # empty value disables the path.
+            - name: SWIRL_BACKSTAGE_JWKS_URL
+              value: "http://backstage:7007/api/search/.backstage/auth/v1/jwks.json"
+            - name: SWIRL_BACKSTAGE_AUDIENCE
+              value: search
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:

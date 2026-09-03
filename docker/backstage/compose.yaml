@@ -28,6 +28,13 @@ services:
       SWIRL_TANTIVY_DATA_DIR: /data/tantivy
       SWIRL_TANTIVY_WRITER_HEAP_MB: "64"
       SWIRL_SPACY_MODEL_EN: en_core_web_sm
+      # Backstage plugin-token verification (TECH_DESIGN section 3.3). Both
+      # empty disables the path and no Bearer token is treated as a Backstage
+      # token; point the JWKS URL at the Backstage backend, e.g.
+      # http://backstage:7007/api/search/.backstage/auth/v1/jwks.json, or at
+      # http://host.docker.internal:<port>/... when it is served on the host.
+      SWIRL_BACKSTAGE_JWKS_URL: "${SWIRL_BACKSTAGE_JWKS_URL:-}"
+      SWIRL_BACKSTAGE_AUDIENCE: "${SWIRL_BACKSTAGE_AUDIENCE:-search}"
       # Uncomment to print the admin API token in the container log on start.
       # SWIRL_PRINT_ADMIN_TOKEN: "true"
       # Set an admin password on first start. Prefer a secret or an env file.
@@ -42,6 +49,11 @@ services:
       timeout: 5s
       start_period: 10s
       retries: 18
+    # host.docker.internal is built in on Docker Desktop; this line is what
+    # makes it resolve on Linux, where the Backstage backend often runs on the
+    # host during evaluation.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
 
 volumes:
