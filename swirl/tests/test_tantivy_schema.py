@@ -123,6 +123,19 @@ def test_exact_analyzer_stems_and_folds():
 def test_ngram_analyzer_produces_infix_grams():
     grams = build_analyzers()[ANALYZER_NGRAM].analyze("petstore")
     assert "store" in grams
+    assert "etst" in grams
+
+
+def test_ngram_analyzer_honours_the_minimum():
+    """The default minimum is 4 since fix pass 2; see Tuning's docstring."""
+    grams = build_analyzers()[ANALYZER_NGRAM].analyze("petstore")
+    assert "pet" not in grams
+    assert min(len(gram) for gram in grams) == Tuning().ngram_min
+
+
+def test_ngram_analyzer_still_follows_a_lowered_minimum():
+    """The operator knob still works: ngram.min 3 restores the old grams."""
+    grams = build_analyzers(Tuning(ngram_min=3))[ANALYZER_NGRAM].analyze("petstore")
     assert "pet" in grams
 
 
@@ -272,7 +285,7 @@ def test_escape_term_escapes_the_parser_metacharacters():
 def test_tuning_defaults_match_the_design():
     tuning = Tuning()
     assert tuning.title_exact_boost == 3.0
-    assert tuning.ngram_min == 3
+    assert tuning.ngram_min == 4
     assert tuning.ngram_max == 8
     assert tuning.stemmer == "english"
     assert tuning.fuzzy_enabled is False

@@ -8,6 +8,11 @@ cannot be "stored, not indexed". They use the ``raw`` tokenizer with
 ``index_option='basic'``, which costs one non positional term per document and
 is never queried.
 
+A second deviation, from fix pass 2: ``title_ngram`` is built with a minimum
+gram of 4 rather than the 3 in the design table. The reason and the measurement
+are in the Tuning class docstring in tuning.py. The value is still an operator
+knob, ``ngram.min`` in the app-config tuning block.
+
 No Django imports here on purpose: the gate-zero gauntlet in
 DevUtils/backstage-gauntlet.py imports this module standalone.
 '''

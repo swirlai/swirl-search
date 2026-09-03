@@ -16,7 +16,7 @@
     "http_request_headers": {},
     "page_fetch_config_json": {},
     "query_processors": [
-        "AdaptiveQueryProcessor"
+        "BackstageQueryProcessor"
     ],
     "query_mappings": "",
     "result_grouping_field": "",

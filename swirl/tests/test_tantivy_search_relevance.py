@@ -199,7 +199,11 @@ def test_ngram_tokenizer_produces_infix_grams():
     analyzer = gauntlet.build_analyzers()["swirl_ngram"]
     grams = analyzer.analyze("petstore")
     assert "store" in grams
-    assert "pet" in grams
+    assert "etst" in grams
+    # The default minimum is 4 since fix pass 2; see the Tuning docstring in
+    # swirl/tantivy_index/tuning.py. Three character infix grams are what let
+    # `com` match inside every recommendation-* title.
+    assert "pet" not in grams
 
 
 def test_text_analyzer_removes_stopwords():

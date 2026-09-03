@@ -12,6 +12,7 @@ Run with: pytest swirl/tests/test_tantivy_connector.py -v
 """
 
 import json
+import re
 
 import pytest
 
@@ -637,3 +638,106 @@ def test_hit_highlights_are_empty_when_nothing_matched(loaded, provider, owner):
     connector.execute_search()
     connector.normalize_response()
     assert all(result["title_hit_highlights"] == [] for result in connector.results)
+
+
+# ---------------------------------------------------------------------------
+# Dotted and slashed tokens
+#
+# A token carrying a dot or a slash is one identifier, not two words:
+# foo-bar.com, component/petstore. Gate zero asks for foo-bar.com at rank 1
+# without the user quoting anything.
+#
+# Recorded here because fix pass 2 went looking for this and found it already
+# done: Tantivy's own query parser turns such a token into a phrase query on
+# title_exact, so no clause has to be added on the SWIRL side. What broke the
+# released image was upstream of the parser, in AdaptiveQueryProcessor, which
+# turned the dot into a space so the parser never saw one identifier at all
+# (see swirl/processors/backstage_query.py). These tests pin the property, so
+# that a later change to escape_term or to the analyzers cannot take it away
+# quietly.
+# ---------------------------------------------------------------------------
+
+@pytest.fixture
+def dotted(manager):
+    generation = manager.begin(TYPE)
+    manager.add(TYPE, generation, [
+        doc("foo-bar.com"),
+        doc("recommendation-consumer-api"),
+        doc("recommendation-history-lib"),
+        doc("recommendation-service"),
+        doc("component/petstore"),
+    ])
+    manager.finalize(TYPE, generation)
+    return manager
+
+
+@pytest.mark.django_db
+def test_a_dotted_token_alone_ranks_the_entity_named_that_first(dotted, provider, owner):
+    results = run(build(provider, owner, "foo-bar.com"))
+    assert results
+    assert results[0]["title"] == "foo-bar.com", [r["title"] for r in results[:5]]
+
+
+@pytest.mark.django_db
+def test_a_dotted_token_inside_a_longer_query_still_ranks_first(dotted, provider,
+                                                                owner):
+    """The case the whole-term phrase boost cannot reach on its own."""
+    results = run(build(provider, owner, "recommendation foo-bar.com"))
+    assert results
+    assert results[0]["title"] == "foo-bar.com", [r["title"] for r in results[:5]]
+
+
+@pytest.mark.django_db
+def test_a_slashed_token_inside_a_longer_query_ranks_first(dotted, provider, owner):
+    results = run(build(provider, owner, "recommendation component/petstore"))
+    assert results
+    assert results[0]["title"] == "component/petstore", [
+        r["title"] for r in results[:5]]
+
+
+def title_exact_phrases(query):
+    """The title_exact phrase clauses in a built query, as term lists.
+
+    title_exact is field 0 of the schema. The query object is opaque from
+    Python apart from its repr, which spells the clauses out in full.
+    """
+    phrases = []
+    for match in re.finditer(
+            r"PhraseQuery \{ field: Field\(0\), phrase_terms: \[(.*?)\]", repr(query)):
+        phrases.append(re.findall(r'Term\(field=0, type=Str, "([^"]*)"\)',
+                                  match.group(1)))
+    return phrases
+
+
+@pytest.mark.django_db
+def test_a_dotted_token_is_a_title_exact_phrase_in_its_own_right(dotted):
+    """Inside a longer query the whole-term phrase cannot match anything.
+
+    The clause the dotted token carries on its own is what makes the entity
+    named that rank as an exact title match rather than as three loose words.
+    """
+    index = dotted.reader(TYPE)
+    phrases = title_exact_phrases(
+        dotted.build_query(index, "recommendation foo-bar.com"))
+
+    assert ["foo", "bar", "com"] in phrases, phrases
+    assert ["recommend", "foo", "bar", "com"] in phrases, phrases
+
+
+@pytest.mark.django_db
+def test_a_slashed_token_is_a_title_exact_phrase_in_its_own_right(dotted):
+    """escape_term() escapes the slash, and the phrase survives it."""
+    index = dotted.reader(TYPE)
+    phrases = title_exact_phrases(
+        dotted.build_query(index, "recommendation component/petstore"))
+
+    assert ["compon", "petstor"] in phrases, phrases
+
+
+@pytest.mark.django_db
+def test_a_query_with_no_dotted_token_has_only_the_whole_term_phrase(dotted):
+    index = dotted.reader(TYPE)
+    phrases = title_exact_phrases(
+        dotted.build_query(index, "recommendation service"))
+
+    assert phrases == [["recommend", "servic"]], phrases

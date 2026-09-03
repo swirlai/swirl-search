@@ -22,13 +22,41 @@ TUNING_FILENAME = 'tuning.json'
 
 @dataclass
 class Tuning:
-    '''The tuning surface from TECH_DESIGN 2.2, carrying the design defaults.'''
+    '''The tuning surface from TECH_DESIGN 2.2, carrying the design defaults.
+
+    One default has moved since the design was written: ``ngram_min`` was 3 and
+    is now 4.
+
+    Why. Re-running the gate-zero gauntlet against the released image failed the
+    dotted hostname case. The query reached the provider as ``foo-bar com``, and
+    the three character token ``com`` matched inside every ``recommendation-*``
+    title through the ``title_ngram`` field, which swamped the one exact hit.
+    Three character infix grams are the cheapest way to turn a short token into
+    a match on an unrelated long name, and that whole class of noise is the
+    Backstage complaint this index exists to answer: "mes" returning a page of
+    unrelated people and templates. The query processor is fixed separately, in
+    swirl/processors/backstage_query.py; this is the second line, so that a
+    short token which does arrive cannot do the same damage again.
+
+    What it costs. A query of three characters or fewer no longer matches as an
+    infix at all. It still matches as a whole word through ``title_exact`` and
+    ``text``, so "api" still finds an entity named "api"; what it stops doing is
+    finding "rapid" and "capital". Four is still short enough for the prefix
+    case gate zero asks for, "abac" finding "abacus".
+
+    Measured on the gate-zero corpus, the example catalog plus 5,000 synthetic
+    entities: all nine cases pass at ``ngram_min`` 3 and at 4, and every top 5
+    is unchanged apart from the dotted hostname. An operator who wants the old
+    behaviour sets ``ngram.min: 3`` in the app-config tuning block, which
+    applies on the next ingest.
+    '''
 
     title_exact_boost: float = 3.0
     title_ngram_boost: float = 1.0
     text_boost: float = 1.0
     phrase_boost_multiplier: float = 2.0
-    ngram_min: int = 3
+    #: 4, not the 3 in TECH_DESIGN 3.1. See the class docstring.
+    ngram_min: int = 4
     ngram_max: int = 8
     stemmer: str = 'english'
     stopwords_language: str = 'english'
