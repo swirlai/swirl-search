@@ -34,6 +34,7 @@ from drf_spectacular.types import OpenApiTypes
 
 import csv
 import json
+import re
 import base64
 import hashlib
 import hmac
@@ -510,12 +511,30 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
 BACKSTAGE_QUERY_KEY = 'backstage'
 
 
-def backstage_query_params(request):
-    """Read backstage_types and backstage_filters off a request.
+#: Clamp for ?backstage_timeout_ms, in seconds. The lower bound keeps a typo
+#: from making every federation fail; the upper bound is the same ceiling
+#: TimeoutMiddleware uses for rag_timeout.
+BACKSTAGE_MIN_TIMEOUT = 1
+BACKSTAGE_MAX_TIMEOUT = 180
 
-    backstage_types is a comma list, backstage_filters is a JSON object.
-    Returns {} when neither is present, so nothing is stored for an ordinary
-    search. A malformed backstage_filters is logged and ignored rather than
+#: Clamp for ?results_requested.
+MIN_RESULTS_REQUESTED = 1
+MAX_RESULTS_REQUESTED = 1000
+
+#: Marker the TantivyIndex connector writes when a requested Backstage type has
+#: no live generation. Kept in sync with
+#: swirl.connectors.tantivy_index.MISSING_INDEX_MARKER.
+MISSING_INDEX_MARKER = '__MISSING_INDEX__'
+_MISSING_INDEX_RE = re.compile(re.escape(MISSING_INDEX_MARKER) + r'\s+types=([^\s]+)')
+
+
+def backstage_query_params(request):
+    """Read the Backstage query params off a request.
+
+    backstage_types is a comma list, backstage_filters is a JSON object and
+    backstage_timeout_ms is the federation timeout for this query in
+    milliseconds. Returns {} when none is present, so nothing is stored for an
+    ordinary search. A malformed value is logged and ignored rather than
     failing the search.
     """
     block = {}
@@ -535,9 +554,74 @@ def backstage_query_params(request):
             block['filters'] = filters
         elif filters is not None and not isinstance(filters, dict):
             logger.warning(f'{module_name}: backstage_filters must be a JSON object, ignoring it')
+    raw_timeout = request.GET.get('backstage_timeout_ms', '')
+    if raw_timeout:
+        try:
+            seconds = int(round(int(raw_timeout) / 1000.0))
+        except (ValueError, TypeError):
+            logger.warning(f'{module_name}: ignoring malformed backstage_timeout_ms: {raw_timeout}')
+            seconds = None
+        if seconds is not None:
+            block['timeout'] = max(BACKSTAGE_MIN_TIMEOUT,
+                                   min(BACKSTAGE_MAX_TIMEOUT, seconds))
     if not block:
         return {}
     return {BACKSTAGE_QUERY_KEY: block}
+
+
+def results_requested_param(request, default=10):
+    """Read ?results_requested, the page size for the mixed result list."""
+    raw = request.GET.get('results_requested', '')
+    if not raw:
+        return default
+    try:
+        value = int(raw)
+    except (ValueError, TypeError):
+        logger.warning(f'{module_name}: ignoring malformed results_requested: {raw}')
+        return default
+    return max(MIN_RESULTS_REQUESTED, min(MAX_RESULTS_REQUESTED, value))
+
+
+def missing_index_types(messages):
+    """Pull the Backstage missing-index types out of a response messages list.
+
+    The connector cannot put a dict into Result.messages, which the mixer
+    natsorts as strings, so it writes a marker line instead and this reads it
+    back. Returns a sorted list of type names, empty when there is no marker.
+    """
+    found = []
+    for message in messages or []:
+        if not isinstance(message, str):
+            continue
+        match = _MISSING_INDEX_RE.search(message)
+        if match:
+            found.extend(name for name in match.group(1).split(',') if name)
+    return sorted(set(found))
+
+
+def apply_missing_index(results, request=None):
+    """Turn the connector's marker into the shape the Backstage engine reads.
+
+    Returns a DRF Response when nothing could be served (HTTP 404 with
+    {"error": "missing_index", "types": [...]}), otherwise None after adding
+    {"type": "__MISSING_INDEX__", "types": [...]} to the messages array of the
+    envelope, which is left otherwise untouched.
+    """
+    if not isinstance(results, dict):
+        return None
+    types = missing_index_types(results.get('messages'))
+    if not types:
+        return None
+    if not results.get('results'):
+        logger.warning(f'{module_name}: no live Backstage index for {types}')
+        return Response({'error': 'missing_index', 'types': types},
+                        status=status.HTTP_404_NOT_FOUND)
+    messages = results.get('messages')
+    if not isinstance(messages, list):
+        messages = []
+        results['messages'] = messages
+    messages.append({'type': MISSING_INDEX_MARKER, 'types': types})
+    return None
 
 
 class SearchViewSet(viewsets.ModelViewSet):
@@ -596,6 +680,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             logger.debug(f"{module_name}: Search.create() from ?q")
             try:
                 new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user, tags=tags,
+                                                   results_requested=results_requested_param(request),
                                                    query_template_json=backstage_query_params(request))
             except Error as err:
                 self.error(f'Search.create() failed: {err}')
@@ -638,6 +723,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 # security review for 1.7 - OK, created with owner
                 new_search = Search.objects.create(query_string=query_string,searchprovider_list=providers,owner=self.request.user,
                                                    pre_query_processors=pre_query_processor_single_list,tags=tags,
+                                                   results_requested=results_requested_param(request),
                                                    query_template_json=backstage_query_params(request))
             except Error as err:
                 self.error(f'Search.create() failed: {err}')
@@ -671,6 +757,12 @@ class SearchViewSet(viewsets.ModelViewSet):
                     message = f'Error: TypeError: {err}'
                     logger.error(f'{module_name}: {message}')
                     return
+                # Backstage missing-index signalling (engine module contract):
+                # 404 when nothing could be served, a structured message when
+                # other providers still returned results.
+                missing = apply_missing_index(results, request)
+                if missing is not None:
+                    return missing
                 return Response(paginate(results, self.request), status=status.HTTP_200_OK)
             else:
                 time.sleep(1)

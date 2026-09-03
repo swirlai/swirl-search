@@ -15,6 +15,16 @@ logger = logging.getLogger(__name__)
 SWIRL_API_SEARCH_URLS = ["/api/swirl/search/", "/swirl/search/"]
 SWIRL_API_RAG_URLS = ["/api/swirl/rag-search/", "/api/swirl/sapi/detail-search-rag/"]
 
+# Paths under /sapi/ that TokenMiddleware must let through unauthenticated.
+# The Backstage health endpoint is AllowAny by design (TECH_DESIGN
+# section 3.7): the engine module polls it before it has a token, and the
+# container HEALTHCHECK calls it with no credentials at all. It returns no
+# secrets.
+SWIRL_API_ANONYMOUS_URLS = [
+    "/swirl/sapi/health/backstage/",
+    "/api/swirl/sapi/health/backstage/",
+]
+
 
 class TokenMiddleware:
     def __init__(self, get_response):
@@ -23,6 +33,9 @@ class TokenMiddleware:
     def __call__(self, request):
 
         if(request.path == '/api/swirl/sapi/branding/'):
+            return self.get_response(request)
+
+        if request.path in SWIRL_API_ANONYMOUS_URLS:
             return self.get_response(request)
 
         if (request.path == '/swirl/login/' or request.path == '/swirl/oidc_authenticate/' or '/sapi/' not in request.path) and request.path != '/swirl/logout/':

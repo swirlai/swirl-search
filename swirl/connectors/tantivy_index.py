@@ -24,6 +24,7 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 
 from swirl.connectors.connector import Connector
+from swirl.processors.utils import highlight_list
 from swirl.tantivy_index.manager import default_manager
 
 ########################################
@@ -31,6 +32,15 @@ from swirl.tantivy_index.manager import default_manager
 
 #: Where the search view parks the Backstage query params (section 3.5).
 BACKSTAGE_KEY = 'backstage'
+
+#: Marker the connector writes into its messages when a requested Backstage
+#: type has no live generation. swirl/views.py turns it into either an HTTP 404
+#: {"error": "missing_index", "types": [...]} when nothing at all could be
+#: served, or a structured entry in the response "messages" array when other
+#: providers did return results. The format is fixed because the message text
+#: travels through Result.messages as a plain string with a timestamp prefix.
+MISSING_INDEX_MARKER = '__MISSING_INDEX__'
+MISSING_INDEX_TEMPLATE = MISSING_INDEX_MARKER + ' types={}'
 
 
 class TantivyIndex(Connector):
@@ -131,6 +141,15 @@ class TantivyIndex(Connector):
 
         logger.debug(f"{self}: execute_search()")
 
+        # Signal any requested type that has no live generation. The search
+        # still runs for the types that do have one.
+        if self.backstage_types:
+            live = set(self.manager.types())
+            missing = [name for name in self.backstage_types if name not in live]
+            if missing:
+                self.warning(f"no live index for backstage types: {missing}")
+                self.message(MISSING_INDEX_TEMPLATE.format(','.join(missing)))
+
         try:
             hits = self.manager.search(
                 types=self.backstage_types,
@@ -153,6 +172,27 @@ class TantivyIndex(Connector):
 
     ########################################
 
+    @staticmethod
+    def _highlights(text, terms):
+        '''Mark the query terms in text with SWIRL's own highlight characters.
+
+        Returns a one element list when something was marked, else an empty
+        list, which is the shape every other connector produces. The markers
+        are settings.SWIRL_HIGHLIGHT_START_CHAR and _END_CHAR, which are <em>
+        and </em> in this code base, not the asterisks the helper falls back to
+        when the settings are absent.
+        '''
+        if not text or not terms:
+            return []
+        try:
+            marked = highlight_list(text, list(terms))
+        except Exception as err:
+            logger.debug(f"highlight failed: {err}")
+            return []
+        return [marked] if marked != text else []
+
+    ########################################
+
     def normalize_response(self):
         '''
         Turn Tantivy hits into SWIRL result dictionaries. The whole Backstage
@@ -168,11 +208,12 @@ class TantivyIndex(Connector):
             self.status = 'READY'
             return
 
+        terms = (self.query_string_to_provider or '').split()
         results = []
         for hit in self.response:
             document = hit.get('document') or {}
-            snippet = hit.get('snippet') or ''
-            body = snippet or (hit.get('body') or document.get('text') or '')
+            title = hit.get('title') or document.get('title') or ''
+            body = hit.get('body') or document.get('text') or ''
             # searchprovider_score rides inside payload on purpose. Community's
             # MappingResultProcessor collects every result key it does not
             # recognise into a payload of its own and then overwrites
@@ -180,11 +221,11 @@ class TantivyIndex(Connector):
             # Emitting only keys the processor knows, with the score inside the
             # payload, keeps both.
             result = {
-                'title': hit.get('title') or document.get('title') or '',
+                'title': title,
                 'body': body,
                 'url': hit.get('location') or document.get('location') or '',
-                'title_hit_highlights': [],
-                'body_hit_highlights': [snippet] if snippet else [],
+                'title_hit_highlights': self._highlights(title, terms),
+                'body_hit_highlights': self._highlights(body, terms),
                 'payload': {
                     BACKSTAGE_KEY: {
                         'type': hit.get('type') or '',

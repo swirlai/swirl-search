@@ -1,0 +1,48 @@
+# SWIRL for Backstage: one container, one volume
+# (TECH_DESIGN_swirl_for_backstage.md section 3.8).
+#
+#   docker build --build-arg SWIRL_PROFILE=backstage -t swirlai/swirl-backstage:dev .
+#   docker compose -f docker/backstage/compose.yaml up
+#
+# Redis, Django and Celery all run inside the single container, against /data.
+# The container reports healthy once GET /swirl/sapi/health/backstage/ answers
+# 200, which requires Redis, the Celery worker and the Tantivy reader.
+
+services:
+  swirl:
+    image: swirlai/swirl-backstage:dev
+    container_name: swirl-backstage
+    ports:
+      - "8000:8000"
+    volumes:
+      - swirl-data:/data
+    environment:
+      # Set a real key for anything reachable by anyone else.
+      # SECRET_KEY: <your-secret-key>
+      ALLOWED_HOSTS: "localhost,127.0.0.1,swirl,swirl-backstage"
+      CSRF_TRUSTED_ORIGINS: "http://localhost:8000"
+      SQL_ENGINE: django.db.backends.sqlite3
+      SQL_DATABASE: /data/db.sqlite3
+      CELERY_BROKER_URL: redis://127.0.0.1:6379/0
+      CELERY_RESULT_BACKEND: redis://127.0.0.1:6379/0
+      SWIRL_TANTIVY_DATA_DIR: /data/tantivy
+      SWIRL_TANTIVY_WRITER_HEAP_MB: "64"
+      SWIRL_SPACY_MODEL_EN: en_core_web_sm
+      # Uncomment to print the admin API token in the container log on start.
+      # SWIRL_PRINT_ADMIN_TOKEN: "true"
+      # Set an admin password on first start. Prefer a secret or an env file.
+      # SWIRL_ADMIN_PASSWORD: <your-admin-password>
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import sys, urllib.request; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/swirl/sapi/health/backstage/', timeout=4).status == 200 else 1)"
+      interval: 5s
+      timeout: 5s
+      start_period: 10s
+      retries: 18
+    restart: unless-stopped
+
+volumes:
+  swirl-data:

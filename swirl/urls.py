@@ -9,6 +9,7 @@ from django.urls import include, path
 from rest_framework import routers, permissions
 from . import views
 from . import views_index
+from . import views_health
 from swirl.authenticators import Microsoft
 from django.views.generic import TemplateView, RedirectView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
@@ -46,6 +47,9 @@ urlpatterns = [
     path('search/search', views.SearchViewSet.as_view({'get': 'list'}), name='search'),
     path('sapi/detail-search-rag/', views.DetailSearchRagView.as_view(), name='detail-search-rag'),
     path('sapi/is_chat_ai_provider_exists', views.IsChatAIProviderExists.as_view({'get': 'list'}), name='is-chat-ai-provider-exists'),
+
+    # Backstage health endpoint (TECH_DESIGN section 3.7)
+    path('sapi/health/backstage/', views_health.BackstageHealthView.as_view(), name='backstage-health'),
 
     # Backstage ingest API (TECH_DESIGN section 3.2)
     path('index/', views_index.IndexListView.as_view(), name='index-list'),

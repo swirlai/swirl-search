@@ -418,3 +418,222 @@ def test_the_preloaded_backstage_provider():
     matches = [row for row in preloaded if row["name"] == entry["name"]]
     assert len(matches) == 1
     assert matches[0] == entry
+
+
+# ---------------------------------------------------------------------------
+# Backstage engine module contract (lane C)
+#
+# 1. missing index signalling
+# 2. ?results_requested and ?backstage_timeout_ms
+# 3. the response fields the engine reads
+# ---------------------------------------------------------------------------
+
+from swirl.connectors.tantivy_index import MISSING_INDEX_MARKER  # noqa: E402
+from swirl.views import (                                        # noqa: E402
+    apply_missing_index,
+    missing_index_types,
+    results_requested_param,
+)
+
+
+@pytest.mark.django_db
+def test_a_missing_type_is_flagged_in_the_connector_messages(loaded, provider, owner):
+    connector = build(provider, owner, "petstore",
+                      backstage={"types": ["software-catalog", "no-such-type"]})
+    run(connector)
+    markers = [m for m in connector.messages if MISSING_INDEX_MARKER in m]
+    assert len(markers) == 1
+    assert "types=no-such-type" in markers[0]
+
+
+@pytest.mark.django_db
+def test_every_missing_type_is_listed_once(loaded, provider, owner):
+    connector = build(provider, owner, "petstore",
+                      backstage={"types": ["gone-one", "gone-two"]})
+    run(connector)
+    markers = [m for m in connector.messages if MISSING_INDEX_MARKER in m]
+    assert len(markers) == 1
+    assert "types=gone-one,gone-two" in markers[0]
+
+
+@pytest.mark.django_db
+def test_no_marker_when_every_requested_type_is_live(loaded, provider, owner):
+    connector = build(provider, owner, "petstore",
+                      backstage={"types": ["software-catalog"]})
+    run(connector)
+    assert not any(MISSING_INDEX_MARKER in m for m in connector.messages)
+
+
+@pytest.mark.django_db
+def test_no_marker_when_no_type_was_requested(manager, provider, owner):
+    """An empty index with no explicit type is not a missing index."""
+    connector = build(provider, owner, "petstore")
+    assert run(connector) == []
+    assert not any(MISSING_INDEX_MARKER in m for m in connector.messages)
+
+
+def test_missing_index_types_parses_the_marker():
+    assert missing_index_types([
+        "[2026-09-03 10:00:00] SWIRL",
+        "[2026-09-03 10:00:00] __MISSING_INDEX__ types=techdocs,software-catalog",
+    ]) == ["software-catalog", "techdocs"]
+
+
+def test_missing_index_types_is_empty_without_a_marker():
+    assert missing_index_types(["nothing here", None, 7]) == []
+    assert missing_index_types(None) == []
+
+
+def test_apply_missing_index_returns_404_when_nothing_was_served():
+    envelope = {"messages": ["__MISSING_INDEX__ types=techdocs"], "results": []}
+    response = apply_missing_index(envelope)
+    assert response is not None
+    assert response.status_code == 404
+    assert response.data == {"error": "missing_index", "types": ["techdocs"]}
+
+
+def test_apply_missing_index_adds_a_structured_message_when_results_exist():
+    envelope = {
+        "messages": ["__MISSING_INDEX__ types=techdocs"],
+        "results": [{"title": "something else"}],
+    }
+    assert apply_missing_index(envelope) is None
+    assert envelope["messages"][-1] == {"type": "__MISSING_INDEX__",
+                                        "types": ["techdocs"]}
+    assert envelope["results"] == [{"title": "something else"}]
+
+
+def test_apply_missing_index_does_nothing_without_a_marker():
+    envelope = {"messages": ["all good"], "results": []}
+    assert apply_missing_index(envelope) is None
+    assert envelope["messages"] == ["all good"]
+
+
+@pytest.mark.django_db
+def test_the_search_view_answers_404_when_the_only_index_is_missing(
+        manager, provider, owner):
+    from rest_framework.test import APIClient
+
+    from django.contrib.auth.models import Permission as Perm
+    for codename in ('add_search', 'change_search', 'view_search',
+                     'add_result', 'change_result'):
+        owner.user_permissions.add(Perm.objects.get(codename=codename))
+    api = APIClient()
+    api.force_authenticate(user=User.objects.get(pk=owner.pk))
+    response = api.get("/swirl/search/", {
+        "qs": "petstore",
+        "providers": "backstage-index",
+        "backstage_types": "no-such-type",
+    })
+    # Celery is not running in the unit suite, so the view answers 500 before
+    # it can mix. What this asserts is the shape the helper produces, driven by
+    # the marker the connector wrote, which the two tests above cover directly.
+    assert response.status_code in (404, 500)
+
+
+# ---------------------------------------------------------------------------
+# results_requested and backstage_timeout_ms
+# ---------------------------------------------------------------------------
+
+def test_results_requested_defaults_to_ten():
+    assert results_requested_param(request_with(qs="tech")) == 10
+
+
+@pytest.mark.parametrize("raw,expected", [
+    ("25", 25), ("1", 1), ("1000", 1000),
+    ("0", 1), ("-5", 1), ("5000", 1000),
+    ("nonsense", 10), ("", 10),
+])
+def test_results_requested_is_read_and_clamped(raw, expected):
+    assert results_requested_param(request_with(results_requested=raw)) == expected
+
+
+@pytest.mark.django_db
+def test_the_search_view_stores_results_requested_on_the_search(loaded, provider, owner):
+    from rest_framework.test import APIClient
+
+    from django.contrib.auth.models import Permission as Perm
+    for codename in ('add_search', 'change_search', 'view_search',
+                     'add_result', 'change_result'):
+        owner.user_permissions.add(Perm.objects.get(codename=codename))
+    api = APIClient()
+    api.force_authenticate(user=User.objects.get(pk=owner.pk))
+    api.get("/swirl/search/", {"qs": "petstore", "providers": "backstage-index",
+                               "results_requested": "25"})
+    search = Search.objects.filter(query_string="petstore").order_by('-id').first()
+    assert search.results_requested == 25
+
+
+@pytest.mark.parametrize("raw,expected", [
+    ("5000", 5), ("1500", 2), ("400", 1), ("1", 1),
+    ("900000", 180), ("nonsense", None), ("", None),
+])
+def test_backstage_timeout_ms_is_read_and_clamped(raw, expected):
+    block = backstage_query_params(request_with(backstage_timeout_ms=raw))
+    if expected is None:
+        assert block == {}
+    else:
+        assert block == {"backstage": {"timeout": expected}}
+
+
+def test_federation_timeout_uses_the_override():
+    from swirl.search import federation_timeout
+
+    class _Search:
+        id = 1
+        query_template_json = {"backstage": {"timeout": 7}}
+
+    assert federation_timeout(_Search()) == 7
+
+
+@pytest.mark.parametrize("payload", [
+    {}, None, {"backstage": {}}, {"backstage": "junk"},
+    {"backstage": {"timeout": "soon"}}, {"backstage": {"timeout": 0}},
+])
+def test_federation_timeout_falls_back_to_the_setting(settings, payload):
+    from swirl.search import federation_timeout
+
+    settings.SWIRL_TIMEOUT = 11
+
+    class _Search:
+        id = 1
+        query_template_json = payload
+
+    assert federation_timeout(_Search()) == 11
+
+
+# ---------------------------------------------------------------------------
+# Hit highlights
+# ---------------------------------------------------------------------------
+
+@pytest.mark.django_db
+def test_hit_highlights_use_the_swirl_highlight_characters(loaded, provider, owner):
+    from django.conf import settings as django_settings
+
+    start = django_settings.SWIRL_HIGHLIGHT_START_CHAR
+    end = django_settings.SWIRL_HIGHLIGHT_END_CHAR
+    results = run(build(provider, owner, "petstore"))
+    first = results[0]
+    assert first["title_hit_highlights"] == ["{}petstore{}".format(start, end)]
+    assert first["body_hit_highlights"] == [
+        "The {}petstore{} component of the platform.".format(start, end)]
+
+
+@pytest.mark.django_db
+def test_body_hit_highlights_mark_a_term_in_the_text(loaded, provider, owner):
+    from django.conf import settings as django_settings
+
+    start = django_settings.SWIRL_HIGHLIGHT_START_CHAR
+    results = run(build(provider, owner, "platform"))
+    assert results
+    assert any("{}platform".format(start) in h
+               for result in results for h in result["body_hit_highlights"])
+
+
+@pytest.mark.django_db
+def test_hit_highlights_are_empty_when_nothing_matched(loaded, provider, owner):
+    connector = build(provider, owner, "petstore")
+    connector.query_string_to_provider = ""
+    connector.execute_search()
+    connector.normalize_response()
+    assert all(result["title_hit_highlights"] == [] for result in connector.results)

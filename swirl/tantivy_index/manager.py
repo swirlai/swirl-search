@@ -43,7 +43,7 @@ from swirl.tantivy_index.tuning import DEFAULT_TUNING, Tuning, load_tuning, save
 logger = logging.getLogger(__name__)
 
 try:
-    from tantivy import Document, Index, Occur, Query, SnippetGenerator
+    from tantivy import Document, Index, Occur, Query
     TANTIVY_AVAILABLE = True
 except ImportError:  # pragma: no cover - exercised by the skipif in the tests
     TANTIVY_AVAILABLE = False
@@ -368,18 +368,18 @@ class TantivyIndexManager:
 
     def _search_one(self, index, type_name, term, filters, limit, fuzzy,
                     highlight, tuning):
+        '''One type index. Note there is no Tantivy SnippetGenerator here.
+
+        SnippetGenerator reads the stored value of the field it snippets, and
+        the design has ``text`` as stored=False (section 3.1), so it would
+        return an empty fragment for every hit. Highlighting is done from the
+        full text instead, by the connector, with SWIRL's own highlight_list so
+        the markers match every other provider.
+        '''
         query = self.build_query(index, term, filters=filters, fuzzy=fuzzy,
                                  tuning=tuning)
         searcher = index.searcher()
         result = searcher.search(query, limit)
-        snippets = None
-        if highlight:
-            try:
-                snippets = SnippetGenerator.create(searcher, query, index.schema, 'text')
-                snippets.set_max_num_chars(tuning.snippet_chars)
-            except Exception as err:
-                logger.debug('tantivy_index: no snippets for %s: %s', type_name, err)
-                snippets = None
         hits = []
         for score, address in result.hits:
             stored = searcher.doc(address)
@@ -391,16 +391,9 @@ class TantivyIndexManager:
                 except ValueError:
                     document = {}
             body = document.get('text') or ''
-            snippet = ''
-            if snippets is not None:
-                try:
-                    snippet = snippets.snippet_from_doc(stored).to_html()
-                except Exception:
-                    snippet = ''
             hits.append({
                 'title': stored.get_first('title') or '',
                 'body': body[:tuning.snippet_chars],
-                'snippet': snippet,
                 'location': stored.get_first('location') or '',
                 'doc_id': stored.get_first('doc_id') or '',
                 'type': stored.get_first('type') or type_name,
