@@ -9,6 +9,7 @@ from rest_framework.authtoken.models import Token
 
 from swirl.authenticators import *
 from swirl.backstage_bearer import (
+    BackstagePrincipal,
     BackstageTokenError,
     authenticate_backstage_token,
     get_or_create_backstage_user,
@@ -96,7 +97,10 @@ class TokenMiddleware:
             return self.get_response(request)
 
         # A verified Backstage plugin token has already set request.user.
-        if getattr(request, 'backstage_principal', None):
+        # Only BackstageTokenMiddleware can put a real BackstagePrincipal here,
+        # so the isinstance check is what makes this a bypass for a verified
+        # Backstage caller and nothing else.
+        if isinstance(getattr(request, 'backstage_principal', None), BackstagePrincipal):
             return self.get_response(request)
 
         if (request.path == '/swirl/login/' or request.path == '/swirl/oidc_authenticate/' or '/sapi/' not in request.path) and request.path != '/swirl/logout/':
@@ -105,7 +109,20 @@ class TokenMiddleware:
             return HttpResponseForbidden()
 
         auth_header = request.headers['Authorization']
-        token = auth_header.split(' ')[1]
+        # Defensive split: the Authorization header is expected to be
+        # ``<scheme> <credentials>`` (e.g. ``Token abc123``). Anything
+        # malformed — empty value, scheme-only, no space at all — used to
+        # IndexError out of ``split(' ')[1]`` and surface as a 500.
+        # Treat any malformed header as Forbidden, same as a token that
+        # isn't on file. Symptoms before the fix: any /sapi/ request from
+        # a client that sent ``Authorization: Token `` (empty value) or
+        # ``Authorization: Bearer`` (no value) crashed instead of being
+        # rejected, and Galaxy's getIsAIProviderExistsStatus error path
+        # hid the AI drawer (including the ai_instructions textarea).
+        parts = auth_header.split(' ', 1)
+        if len(parts) != 2 or not parts[1].strip():
+            return HttpResponseForbidden()
+        token = parts[1].strip()
         try:
             token_obj = Token.objects.get(key=token)
             request.user = token_obj.user

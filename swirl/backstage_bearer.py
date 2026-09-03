@@ -287,7 +287,7 @@ class BackstagePrincipalAuthentication(BaseAuthentication):
 
     def authenticate(self, request):
         principal = getattr(request._request, 'backstage_principal', None)
-        if not principal:
+        if not isinstance(principal, BackstagePrincipal):
             return None
         user = getattr(request._request, 'user', None)
         if user is None or not user.is_authenticated:

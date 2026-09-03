@@ -27,7 +27,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
-from swirl.backstage_bearer import BackstagePrincipalAuthentication
+from swirl.authentication import OptionalTokenAuthentication
+from swirl.backstage_bearer import BackstagePrincipal, BackstagePrincipalAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -105,18 +106,16 @@ def get_session_data_with_db_fallback(request):
                 logger.debug(f"get_session_data_with_db_fallback: DB sync skipped: {_e}")
         return session_data
 
-    # No browser session — look up the OauthToken DB row.
+    # No browser session — look up the OauthToken DB row for THIS user only.
+    # We must never fall back to another user's token: doing so would run one
+    # user's M365 search with another user's credentials (cross-user exposure).
     oauth_token = None
     if getattr(request, 'user', None) and request.user.is_authenticated:
         try:
             oauth_token = OauthToken.objects.get(owner=request.user, idp='Microsoft')
             logger.debug(f"get_session_data_with_db_fallback: loaded token from DB for {request.user}")
         except OauthToken.DoesNotExist:
-            logger.debug(f"get_session_data_with_db_fallback: no token for {request.user}, trying any Microsoft token")
-    if oauth_token is None:
-        oauth_token = OauthToken.objects.filter(idp='Microsoft').first()
-        if oauth_token:
-            logger.debug(f"get_session_data_with_db_fallback: using Microsoft token from owner={oauth_token.owner}")
+            logger.debug(f"get_session_data_with_db_fallback: no Microsoft token for {request.user}")
 
     if oauth_token:
         # Decode the real JWT expiry so we can decide whether to refresh.
@@ -290,18 +289,23 @@ class OidcAuthView(APIView):
             token = header.split(' ')[1]
             if token:
                 data = Microsoft().get_user(token)
-                if data['mail']:
+                if data.get('mail'):
                     user = None
                     try:
                         user = User.objects.get(email=data['mail'])
                     except User.DoesNotExist:
+                        # Provision a regular (non-privileged) user. OIDC sign-in must
+                        # never confer superuser/staff rights, and these accounts
+                        # authenticate via the token flow only, so they get no usable
+                        # password (no shared Basic-auth backdoor).
                         user = User.objects.create_user(
                             username=data['mail'],
-                            password='WQasdmwq2319dqwmk',
                             email=data['mail'],
-                            is_superuser=True,
-                            is_staff=True
+                            is_superuser=False,
+                            is_staff=False
                         )
+                        user.set_unusable_password()
+                        user.save()
                     token, created = Token.objects.get_or_create(user=user)
                     return Response({ 'user': user.username, 'token': token.key, 'swirl_version': SWIRL_VERSION, 'is_superuser': user.is_superuser, 'edition': 'community' })
                 return HttpResponseForbidden()
@@ -642,7 +646,7 @@ def is_backstage_request(request):
     """
     if request is None:
         return False
-    if getattr(request, 'backstage_principal', None):
+    if isinstance(getattr(request, 'backstage_principal', None), BackstagePrincipal):
         return True
     params = getattr(request, 'GET', None)
     if params is None:
@@ -712,9 +716,24 @@ class SearchViewSet(viewsets.ModelViewSet):
     # token reaches this view as its 'backstage:<entity ref>' user. The
     # middleware has already set request.user; without this class DRF resolves
     # it back to AnonymousUser on every method that SessionAuthentication's CSRF
-    # check rejects (TECH_DESIGN sections 3.3 and 3.5).
-    authentication_classes = [BackstagePrincipalAuthentication,
-                              SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    # check rejects (TECH_DESIGN sections 3.3 and 3.5). It claims only requests
+    # that carry a verified Backstage principal, so it returns None for every
+    # Galaxy request and the develop chain below runs unchanged.
+    #
+    # OptionalTokenAuthentication FIRST so the explicit `Authorization: Token`
+    # header Galaxy sends wins cleanly when valid (bypasses CSRF enforcement
+    # on unsafe methods — the original 403 cascade on the search-history
+    # delete flow). OptionalToken differs from stock TokenAuthentication in
+    # one important way: when the token header is present but invalid (stale,
+    # revoked, or carried over from a prior login in the same Selenium /
+    # browser session), it RETURNS None instead of raising
+    # AuthenticationFailed. That hands control to SessionAuthentication,
+    # which authenticates via the session cookie set during form login.
+    # Stock TokenAuth would have short-circuited the chain at 401, which is
+    # what regressed the QA suite on 4.5.0.3. It replaces the stock
+    # TokenAuthentication the Backstage branch had at the tail of this list.
+    authentication_classes = [BackstagePrincipalAuthentication, OptionalTokenAuthentication,
+                              SessionAuthentication, BasicAuthentication]
 
     def report(self):
         return self.queryset
