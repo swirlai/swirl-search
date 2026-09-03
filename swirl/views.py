@@ -625,6 +625,75 @@ def apply_missing_index(results, request=None):
     return None
 
 
+#: Fields whose plain value must not carry SWIRL's highlight markers on the
+#: Backstage path, and where the marked-up version belongs instead.
+BACKSTAGE_HIGHLIGHT_FIELDS = (
+    ('title', 'title_hit_highlights'),
+    ('body', 'body_hit_highlights'),
+)
+
+
+def is_backstage_request(request):
+    """Whether this request came from the Backstage engine module.
+
+    Either it carries the Backstage query params, or it was authenticated with
+    a verified Backstage plugin token. Galaxy satisfies neither, which is what
+    keeps the highlight handling below off the Galaxy path.
+    """
+    if request is None:
+        return False
+    if getattr(request, 'backstage_principal', None):
+        return True
+    params = getattr(request, 'GET', None)
+    if params is None:
+        return False
+    return bool(params.get('backstage_types') or params.get('backstage_filters'))
+
+
+def move_highlights_out_of_the_plain_fields(results, request=None):
+    """Give Backstage clean title and body, and the markers in the hit lists.
+
+    SWIRL's relevancy processor writes the marked-up text back over `title` and
+    `body`, which is what Galaxy renders. Backstage renders the document text
+    as plain text, so those markers arrived on screen as literal `<em>`, while
+    `highlight.fields` stayed empty because the engine only reads
+    `title_hit_highlights` and `body_hit_highlights` - and for a federated
+    result those were empty.
+
+    On the Backstage path only, the marked-up value is moved into the hit
+    highlight list (when the provider did not already supply one) and the plain
+    field is stripped. Nothing here runs for Galaxy.
+
+    Returns the number of fields changed, for the tests.
+    """
+    if not is_backstage_request(request):
+        return 0
+    if not isinstance(results, dict):
+        return 0
+    rows = results.get('results')
+    if not isinstance(rows, list):
+        return 0
+
+    start = settings.SWIRL_HIGHLIGHT_START_CHAR
+    end = settings.SWIRL_HIGHLIGHT_END_CHAR
+    changed = 0
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        for field, highlight_field in BACKSTAGE_HIGHLIGHT_FIELDS:
+            value = row.get(field)
+            if not isinstance(value, str) or start not in value:
+                continue
+            existing = row.get(highlight_field)
+            if not isinstance(existing, list) or not any(existing):
+                # The connector produced no highlight of its own, so the marked
+                # up plain field is the only one there is: keep it here.
+                row[highlight_field] = [value]
+            row[field] = value.replace(start, '').replace(end, '')
+            changed += 1
+    return changed
+
+
 class SearchViewSet(viewsets.ModelViewSet):
     """
     API endpoint for managing Search objects.
@@ -770,6 +839,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 missing = apply_missing_index(results, request)
                 if missing is not None:
                     return missing
+                move_highlights_out_of_the_plain_fields(results, request)
                 return Response(paginate(results, self.request), status=status.HTTP_200_OK)
             else:
                 time.sleep(1)
@@ -1063,6 +1133,9 @@ class ResultViewSet(viewsets.ModelViewSet):
                     message = f'Error: TypeError: {err}'
                     logger.error(f'{module_name}: {message}')
                     return
+                # Page N of a Backstage query comes through here, so it needs
+                # the same clean title and body as page 0.
+                move_highlights_out_of_the_plain_fields(results, request)
                 return Response(paginate(results, self.request), status=status.HTTP_200_OK)
             else:
                 return Response('Result Object Not Ready Yet', status=status.HTTP_503_SERVICE_UNAVAILABLE)

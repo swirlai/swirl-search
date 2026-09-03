@@ -221,6 +221,15 @@ def test_ingest_with_a_service_token_then_search_with_a_user_token(
                                         owner="team-c")
     assert hit["url"] == "/catalog/default/component/petstore"
 
+    # No SWIRL highlight marker reaches Backstage in a plain field: the engine
+    # hands document.title and document.text straight to a renderer that shows
+    # them as plain text. The marked-up text belongs in the hit highlights.
+    from django.conf import settings as django_settings
+    marker = django_settings.SWIRL_HIGHLIGHT_START_CHAR
+    for item in results:
+        assert marker not in (item.get("title") or ""), item
+        assert marker not in (item.get("body") or ""), item
+
 
 @pytest.mark.django_db
 @backstage_on
