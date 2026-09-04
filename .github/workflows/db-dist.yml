@@ -24,11 +24,11 @@ jobs:
           - 6379:6379
     steps:
       - name: Checkout the Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - name: Pull the Latest (for just this branch)
         run: git pull origin ${{ github.ref_name }}
       - name: Set Up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.13.12'
           cache: 'pip'
@@ -58,7 +58,7 @@ jobs:
         run: cp db.sqlite3 db.sqlite3.dist
       - name: Create a Pull Request
         id: createpr
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           add-paths: db.sqlite3.dist
           branch: db_dist/autoupdate
@@ -81,7 +81,7 @@ jobs:
           gh pr merge --merge --auto "${{ steps.createpr.outputs.pull-request-number }}"
       - name: Upload log files
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: log-files
           path: |
