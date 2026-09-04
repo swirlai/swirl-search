@@ -138,6 +138,29 @@ jobs:
           env:
             MSAL_CB_PORT: 8000
             MSAL_HOST: localhost
+        # The backstage_* scenarios sign ES256 plugin tokens that SWIRL
+        # verifies against this JWK set. Minted by the QA image's own
+        # BackstageTokenFactory so the key format has a single definition.
+        # Must precede "Start Swirl": settings.py reads the URL at startup.
+        - name: Mint the Backstage JWKS key pair
+          run: |
+            mkdir -p "${{ github.workspace }}/backstage-jwks"
+            docker run --rm \
+              -v "${{ github.workspace }}/backstage-jwks:/jwks" \
+              -e QA_BACKSTAGE_JWKS_DIR=/jwks \
+              swirlai/swirl-search-qa:automated-tests-develop \
+              python -c "from support.backstage_auth import token_factory; print('kid:', token_factory().load()[1])"
+            ls -l "${{ github.workspace }}/backstage-jwks"
+        - name: Serve the Backstage JWKS
+          run: |
+            cd "${{ github.workspace }}/backstage-jwks"
+            nohup python -m http.server 8899 --bind 127.0.0.1 \
+              > "${{ github.workspace }}/jwks-server.log" 2>&1 &
+            for i in $(seq 1 20); do
+              curl -sf http://127.0.0.1:8899/jwks.json > /dev/null && break
+              sleep 0.5
+            done
+            curl -sf http://127.0.0.1:8899/jwks.json
         - name: Start Swirl
           run: |
             echo "OPENAI_API_KEY='${{ secrets.QA_OPENAI_KEY }}'" >> .env
@@ -148,6 +171,9 @@ jobs:
             SWIRL_RAG_MODEL: gpt-4.1
             SWIRL_REWRITE_MODEL: gpt-4.1
             SWIRL_QUERY_MODEL: gpt-4.1
+            # Audience must match QA_BACKSTAGE_AUDIENCE in the suite.
+            SWIRL_BACKSTAGE_JWKS_URL: http://127.0.0.1:8899/jwks.json
+            SWIRL_BACKSTAGE_AUDIENCE: search
         - name: PATCH the Web PSE Config
           env:
             JSON: ${{ secrets.QA_PSE_WEB }}
@@ -201,6 +227,9 @@ jobs:
             echo "QA_GITHUB_TOKEN=${{ secrets.QA_GITHUB_TOKEN }}" >> .env.qa
             echo "BIGQUERY_TOKEN_PATH=${{ github.workspace }}/token.json" >> .env.qa
             echo "QA_TRELLO_KEYS=${{ secrets.QA_TRELLO_KEYS }}" >> .env.qa
+            # The suite signs with the private key behind the JWKS URL above.
+            echo "QA_BACKSTAGE_JWKS_DIR=/backstage-jwks" >> .env.qa
+            echo "QA_BACKSTAGE_AUDIENCE=search" >> .env.qa
             echo "========"
             cat .env.qa
             echo "========"
@@ -211,6 +240,7 @@ jobs:
             docker run --net=host --env-file .env.qa \
               -v "${{ github.workspace }}/SearchProviders:/swirl/SearchProviders:ro" \
               -v "${{ github.workspace }}/AIProviders:/swirl/AIProviders:ro" \
+              -v "${{ github.workspace }}/backstage-jwks:/backstage-jwks:ro" \
               -e SWIRL_PRELOADED_DIR=/swirl \
               -t swirlai/swirl-search-qa:automated-tests-develop \
               sh -c "behave --tags=qa_suite,community"
