@@ -170,7 +170,7 @@ class Requests(VerifyCertsCommon):
         if 'RESULT_ZERO_INDEX' in self.query_mappings['PAGE']:
             page_spec = self.query_mappings['PAGE'].replace('RESULT_ZERO_INDEX',str(start-1))
         if 'PAGE_INDEX' in self.query_mappings['PAGE']:
-            page_spec = self.query_mappings['PAGE'].replace('PAGE_INDEX',page+1)
+            page_spec = self.query_mappings['PAGE'].replace('PAGE_INDEX',str(page+1))
         if page_spec:
             page_query = page_query + '&' + page_spec + self.query_to_provider[self.query_to_provider.rfind('&'):]
         else:
