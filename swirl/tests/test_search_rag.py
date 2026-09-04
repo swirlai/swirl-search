@@ -264,6 +264,59 @@ def test_get_rag_result_serves_cache_when_request_items_match_stored(monkeypatch
     assert cached.deleted is False
 
 
+def test_get_rag_result_serves_empty_stored_result_without_indexerror(monkeypatch):
+    """REGRESSION DS-5681: a stored ChatGPT Result whose json_results is []
+    must be served as "nothing to report", not crash the endpoint.
+
+    The auto-RAG path writes such a row whenever it produces nothing — an
+    expired rag_timeout, an AI provider error, or a search with no results
+    to summarize. _try_serve_cache then read json_results[0] unconditionally
+    and raised IndexError, which DRF turned into a 500 on
+    /sapi/detail-search-rag/. Galaxy rendered the HTTP failure in the AI
+    Summary card instead of "No response from Generative AI".
+
+    Latent since the endpoint was added; it only became a 500 in 8c8d01ea,
+    which narrowed a bare `except:` to Result.DoesNotExist and moved this
+    read outside the try.
+    """
+    empty = _FakeResult(rag_query_items=[])
+    empty.json_results = []          # auto-RAG produced nothing
+    _patch_result_get(monkeypatch, empty)
+
+    sr = _make_search_rag()          # Galaxy's fetch: no rag_items in the URL
+    body_text, additional_content = sr.get_rag_result()
+
+    assert "credentials" in body_text, (
+        "with no rag_timeout the empty result should explain the likely cause"
+    )
+    assert additional_content == {}
+    assert empty.deleted is False, (
+        "an empty Result must not trigger a regenerate — that re-runs the "
+        "model on every fetch"
+    )
+
+
+def test_get_rag_result_serves_empty_stored_result_as_timeout_message(monkeypatch):
+    """With a rag_timeout, the cached-empty path must carry the documented
+    "No response from Generative AI" string.
+
+    This is the exact route rag.feature's rag_timeout scenario takes: a 2s
+    budget expires, the auto-RAG path stores a Result with no items, and
+    Galaxy then fetches detail-search-rag. Serving a bare False here put the
+    literal "False" in the AI Summary card.
+    """
+    empty = _FakeResult(rag_query_items=[])
+    empty.json_results = []
+    _patch_result_get(monkeypatch, empty)
+
+    sr = SearchRag(_FakeRequest({"rag_timeout": "2"}))
+    body_text, additional_content = sr.get_rag_result()
+
+    assert "No response from Generative AI" in body_text
+    assert "2s" in body_text
+    assert additional_content == {}
+
+
 def test_concurrent_get_rag_result_serializes_via_lock(monkeypatch):
     """REGRESSION 4.5.0.6: two simultaneous detail-search-rag calls for the
     same search_id must NOT both spin up a RAGPostResultProcessor.
