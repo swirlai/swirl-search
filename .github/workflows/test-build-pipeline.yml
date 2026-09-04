@@ -138,23 +138,10 @@ jobs:
           env:
             MSAL_CB_PORT: 8000
             MSAL_HOST: localhost
-        # DS-5681: SWIRL for Backstage verifies the ES256 plugin token the
-        # engine module forwards against the JWK set published at
-        # SWIRL_BACKSTAGE_JWKS_URL. swirl/backstage_bearer.py treats an empty
-        # URL as "the Backstage path is off" (is_backstage_enabled() needs a
-        # URL *and* an audience), so with neither configured every request in
-        # the backstage_* QA group is refused 401 and 24 scenarios fail
-        # without ever reaching the code they cover.
-        #
-        # The key pair is minted by the QA image's own BackstageTokenFactory
-        # rather than re-implemented here, so the key/JWKS format has one
-        # definition and cannot drift between this workflow and the suite
-        # that signs the tokens. The image is pulled by the QA step below
-        # anyway, so this costs no extra download.
-        #
-        # Both steps must run before "Start Swirl": settings.py reads the
-        # JWKS URL at startup. The JWK set itself is fetched lazily on the
-        # first token, so the server only has to be up by then.
+        # The backstage_* scenarios sign ES256 plugin tokens that SWIRL
+        # verifies against this JWK set. Minted by the QA image's own
+        # BackstageTokenFactory so the key format has a single definition.
+        # Must precede "Start Swirl": settings.py reads the URL at startup.
         - name: Mint the Backstage JWKS key pair
           run: |
             mkdir -p "${{ github.workspace }}/backstage-jwks"
@@ -184,7 +171,7 @@ jobs:
             SWIRL_RAG_MODEL: gpt-4.1
             SWIRL_REWRITE_MODEL: gpt-4.1
             SWIRL_QUERY_MODEL: gpt-4.1
-            # Must match QA_BACKSTAGE_AUDIENCE in the suite (default 'search').
+            # Audience must match QA_BACKSTAGE_AUDIENCE in the suite.
             SWIRL_BACKSTAGE_JWKS_URL: http://127.0.0.1:8899/jwks.json
             SWIRL_BACKSTAGE_AUDIENCE: search
         - name: PATCH the Web PSE Config
@@ -240,9 +227,7 @@ jobs:
             echo "QA_GITHUB_TOKEN=${{ secrets.QA_GITHUB_TOKEN }}" >> .env.qa
             echo "BIGQUERY_TOKEN_PATH=${{ github.workspace }}/token.json" >> .env.qa
             echo "QA_TRELLO_KEYS=${{ secrets.QA_TRELLO_KEYS }}" >> .env.qa
-            # DS-5681: the suite signs its Backstage tokens with the private
-            # key behind the JWKS URL the backend was started against, so it
-            # has to read the same directory that was minted above.
+            # The suite signs with the private key behind the JWKS URL above.
             echo "QA_BACKSTAGE_JWKS_DIR=/backstage-jwks" >> .env.qa
             echo "QA_BACKSTAGE_AUDIENCE=search" >> .env.qa
             echo "========"
