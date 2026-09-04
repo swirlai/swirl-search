@@ -84,6 +84,22 @@ class SearchRag:
         additional_content = json_result.get("additional_content", {})
         return body_text, additional_content
 
+    def _no_response_message(self) -> tuple:
+        """The body Galaxy renders when RAG produced nothing.
+
+        DS-5598: with a ``rag_timeout`` the message has to carry the
+        documented "No response from Generative AI" string that
+        rag.feature asserts on. Without one, the likeliest cause is
+        credentials, so say that instead.
+        """
+        if self.rag_timeout is not None:
+            return (
+                f"Timeout: No response from Generative AI within "
+                f"{self.rag_timeout}s.",
+                {},
+            )
+        return "Please check the OpenAI or Azure OpenAI credentials in your environment.", {}
+
     def _try_serve_cache(self) -> tuple | None:
         """Cache-only check. Returns the cached body+content tuple, or None on miss.
 
@@ -101,6 +117,16 @@ class SearchRag:
             )
         except Result.DoesNotExist:
             return None
+
+        # A stored Result with no items is the auto-RAG path recording that it
+        # produced nothing — a rag_timeout that expired, an AI provider error,
+        # or a search with no results to summarize. That is a cache hit with
+        # nothing to serve, not a miss: returning None would re-run the model
+        # on every fetch, the thrash 8c8d01ea fixed. Serve the same message
+        # the generating path returns in that situation, so the reader sees
+        # why there is no summary rather than a bare False.
+        if not rag_result.json_results:
+            return self._no_response_message()
 
         stored_items = set(rag_result.json_results[0].get("rag_query_items") or [])
         requested_items = set(self.rag_query_items)
@@ -152,13 +178,7 @@ class SearchRag:
                     # AI" string the rag.feature:240 scenario asserts on.
                     # Without this branch the test sees the generic
                     # credentials message and fails.
-                    if self.rag_timeout is not None:
-                        return (
-                            f"Timeout: No response from Generative AI within "
-                            f"{self.rag_timeout}s.",
-                            {},
-                        )
-                    return "Please check the OpenAI or Azure OpenAI credentials in your environment.", {}
+                    return self._no_response_message()
 
                 if self.search_id in instances:
                     del instances[self.search_id]
