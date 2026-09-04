@@ -21,6 +21,19 @@ from swirl.authenticators.microsoft import Microsoft
 ########################################
 DEFAULT_DATESORT_X = "createdDateTime desc"
 
+# Microsoft Graph caps the number of results it will return per search request, and the
+# cap depends on the entity type being searched: 25 for the Outlook and Teams types,
+# 1000 for the SharePoint and OneDrive ones.
+# https://learn.microsoft.com/en-us/graph/search-concept-sort-and-page
+MAX_PAGE_SIZE_BY_ENTITY_TYPE = {
+    "message": 25,
+    "event": 25,
+    "chatMessage": 25,
+    "driveItem": 1000,
+    "site": 1000,
+}
+DEFAULT_MAX_PAGE_SIZE = 25
+
 class M365(RequestsGet):
 
     type = "M365"
@@ -75,7 +88,41 @@ class M365SearchQuery(M365Post):
         self.query_mappings_mappings = get_mappings_dict(self.provider.query_mappings)
         self.provider.url = 'https://graph.microsoft.com/beta/search/query'
         self.entity_type = ""
+        self.page_from = 0
         self.search = get_search_obj(id=search_id) # get the search object so we can decorate the search request if needed
+
+    ########################################
+    # paging
+    #
+    # Graph pages this endpoint with from/size in the POST body rather than with URL
+    # parameters, so the PAGE query mapping the base connector uses does not apply.
+
+    def get_page_size(self):
+        max_page_size = MAX_PAGE_SIZE_BY_ENTITY_TYPE.get(self.entity_type, DEFAULT_MAX_PAGE_SIZE)
+        return max(1, min(int(self.provider.results_per_query), max_page_size))
+
+    def supports_paging(self):
+        return True
+
+    def build_page_query(self, page, start):
+        # the URL is the same for every page; the offset goes in the body
+        self.page_from = start - 1
+        return self.query_to_provider
+
+    def continue_paging(self, json_data):
+        """
+        Graph reports moreResultsAvailable on each hits container. Stop as soon as it
+        says there is nothing more; if it says nothing, let the page count decide.
+        """
+        try:
+            containers = json_data['value'][0]['hitsContainers']
+        except (KeyError, IndexError, TypeError):
+            return True
+        flags = [c['moreResultsAvailable'] for c in containers
+                 if isinstance(c, dict) and 'moreResultsAvailable' in c]
+        if not flags:
+            return True
+        return any(flags)
 
     def send_request(self, url, params=None, query=None, **kwargs):
         json = dict({
@@ -86,7 +133,9 @@ class M365SearchQuery(M365Post):
                     ],
                     "query": {
                         "queryString": f'({query}) AND (NOT contenttype:folder)'
-                    }
+                    },
+                    "from": self.page_from,
+                    "size": self.get_page_size()
                 }
             ]
         })

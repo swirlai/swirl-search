@@ -510,7 +510,7 @@ class MicrosoftOutlookMessagesDatesort(MicrosoftAPITestCase):
         mock_send_request.return_value = mock_response
         result = self._run_search()
         mock_send_request.assert_called_with('https://graph.microsoft.com/beta/search/query', params=None,
-                                             query={'requests': [{'entityTypes': ['message'], 'query': {'queryString': '(test) AND (NOT contenttype:folder)'}, 'orderby': 'createdDateTime desc'}]},
+                                             query={'requests': [{'entityTypes': ['message'], 'query': {'queryString': '(test) AND (NOT contenttype:folder)'}, 'from': 0, 'size': 10, 'orderby': 'createdDateTime desc'}]},
                                              headers={'Authorization': 'Bearer access_token'}, verify=True)
 
 class MicrosoftOutlookMessagesDatesortWithQueryMapping(MicrosoftAPITestCase):
@@ -582,5 +582,97 @@ class MicrosoftOutlookMessagesDatesortWithQueryMapping(MicrosoftAPITestCase):
         mock_send_request.return_value = mock_response
         result = self._run_search()
         mock_send_request.assert_called_with('https://graph.microsoft.com/beta/search/query', params=None,
-                                            query={'requests': [{'entityTypes': ['message'], 'query': {'queryString': '(test) AND (NOT contenttype:folder)'}, 'orderby': 'my_custom_datesort desc'}]},
+                                            query={'requests': [{'entityTypes': ['message'], 'query': {'queryString': '(test) AND (NOT contenttype:folder)'}, 'from': 0, 'size': 10, 'orderby': 'my_custom_datesort desc'}]},
                                             headers={'Authorization': 'Bearer access_token'}, verify=True)
+
+
+class MicrosoftGraphPagingAPITestCase(MicrosoftAPITestCase):
+    """
+    Graph pages /search/query with from/size in the POST body rather than with URL
+    parameters, so a provider asking for more results than the entity type's page
+    size has to issue several requests at increasing offsets.
+    """
+
+    TOTAL = 60
+    RESULTS_PER_QUERY = 60
+
+    def _get_connector_name(self):
+        return 'M365OutlookMessages'
+
+    def _hit(self, i):
+        return {
+            'summary': f'TEST {i}',
+            'resource': {
+                'subject': f'TEST {i}',
+                'createdDateTime': '2020-11-17T16:02:27Z',
+                'from': {
+                    'emailAddress': {
+                        'address': 'test@gmail.com'
+                    }
+                }
+            }
+        }
+
+    def _get_hits(self):
+        return [self._hit(0)]
+
+    def _get_provider_data(self):
+        provider = super()._get_provider_data()
+        provider['results_per_query'] = self.RESULTS_PER_QUERY
+        return provider
+
+    def _add_paged_callback(self, total=None, send_more_flag=True):
+        """Serve successive pages honoring the from/size in the request body."""
+        total = self.TOTAL if total is None else total
+
+        def callback(request):
+            search_request = json.loads(request.body)['requests'][0]
+            start = search_request['from']
+            size = search_request['size']
+            hits = [self._hit(i) for i in range(start, min(start + size, total))]
+            container = {'total': total, 'hits': hits}
+            if send_more_flag:
+                container['moreResultsAvailable'] = (start + size) < total
+            payload = {'value': [{'hitsContainers': [container]}]}
+            return (200, {'Content-Type': 'application/json'}, json.dumps(payload))
+
+        responses.add_callback(responses.POST, self._microsoft_api_url,
+                               callback=callback, content_type='application/json')
+
+    def _sent_requests(self):
+        return [json.loads(call.request.body)['requests'][0] for call in responses.calls]
+
+    @responses.activate
+    def test_paging_requests_successive_offsets(self):
+        self._add_paged_callback()
+        self._run_search()
+        sent = self._sent_requests()
+        # 60 results at the 25-per-page cap for messages is three requests
+        assert [request['from'] for request in sent] == [0, 25, 50]
+        assert [request['size'] for request in sent] == [25, 25, 25]
+
+    @responses.activate
+    def test_paging_stops_on_more_results_available(self):
+        # only 30 results exist, so the second page is the last one
+        self._add_paged_callback(total=30)
+        self._run_search()
+        sent = self._sent_requests()
+        assert [request['from'] for request in sent] == [0, 25]
+
+    @responses.activate
+    def test_paging_stops_on_short_page_without_flag(self):
+        # a source that never sends moreResultsAvailable must still stop
+        self._add_paged_callback(total=20, send_more_flag=False)
+        self._run_search()
+        assert len(responses.calls) == 1
+
+    @responses.activate
+    def test_default_provider_issues_a_single_request(self):
+        # the shipped providers ask for 10, which fits in one page: no extra calls
+        self.RESULTS_PER_QUERY = 10
+        self._add_paged_callback()
+        self._run_search()
+        sent = self._sent_requests()
+        assert len(sent) == 1
+        assert sent[0]['from'] == 0
+        assert sent[0]['size'] == 10

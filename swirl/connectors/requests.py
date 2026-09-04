@@ -48,6 +48,9 @@ class Requests(VerifyCertsCommon):
 
     type = "Requests"
 
+    # number of results Swirl requests per page unless a connector says otherwise
+    DEFAULT_PAGE_SIZE = 10
+
     def __init__(self, provider_id, search_id, update, request_id=''):
         super().__init__(provider_id, search_id, update, request_id)
 
@@ -130,42 +133,88 @@ class Requests(VerifyCertsCommon):
             ret_headers.update(headers)
         return ret_headers
 
+    ########################################
+    # paging
+    #
+    # The default is URL paging: the PAGE query mapping is rewritten into the query
+    # URL, ten results at a time.  Connectors that page some other way - for example
+    # in a POST body, or in units other than ten - override the four hooks below.
+
+    def get_page_size(self):
+        """
+        Number of results to request per page.
+        """
+        return self.DEFAULT_PAGE_SIZE
+
+    def supports_paging(self):
+        """
+        True if this connector can request more than one page.  URL paging needs a
+        PAGE query mapping to rewrite; connectors that page by other means override
+        this.
+        """
+        return 'PAGE' in self.query_mappings
+
+    def build_page_query(self, page, start):
+        """
+        Return the query to send for one page.  `page` is the 0-based page number and
+        `start` the 1-based index of the first result wanted.  Connectors that page in
+        the request body override this and return self.query_to_provider unchanged.
+        """
+        if 'PAGE' not in self.query_mappings:
+            return self.query_to_provider
+
+        page_query = self.query_to_provider[:self.query_to_provider.rfind('&')]
+        page_spec = None
+        if 'RESULT_INDEX' in self.query_mappings['PAGE']:
+            page_spec = self.query_mappings['PAGE'].replace('RESULT_INDEX',str(start))
+        if 'RESULT_ZERO_INDEX' in self.query_mappings['PAGE']:
+            page_spec = self.query_mappings['PAGE'].replace('RESULT_ZERO_INDEX',str(start-1))
+        if 'PAGE_INDEX' in self.query_mappings['PAGE']:
+            page_spec = self.query_mappings['PAGE'].replace('PAGE_INDEX',page+1)
+        if page_spec:
+            page_query = page_query + '&' + page_spec + self.query_to_provider[self.query_to_provider.rfind('&'):]
+        else:
+            self.warning(f"failed to resolve PAGE query mapping: {self.query_mappings['PAGE']}")
+            page_query = self.query_to_provider
+        return page_query
+
+    def continue_paging(self, json_data):
+        """
+        Called once each page is parsed.  Return False to stop early, e.g. when the
+        source reports that it has no further results.
+        """
+        return True
+
+    ########################################
+
     def execute_search(self, session=None):
 
         logger.debug(f"{self}: execute_search()")
 
+        page_size = self.get_page_size()
+        if page_size < 1:
+            page_size = self.DEFAULT_PAGE_SIZE
+
         # determine if paging is required
         pages = 1
-        if 'PAGE' in self.query_mappings:
-            if self.provider.results_per_query > 10:
+        if self.supports_paging():
+            if self.provider.results_per_query > page_size:
                 # yes, gather multiple pages
-                pages = int(int(self.provider.results_per_query) / 10)
+                pages = int(int(self.provider.results_per_query) / page_size)
                 # handle remainder
-                if (int(self.provider.results_per_query) % 10) > 0:
+                if (int(self.provider.results_per_query) % page_size) > 0:
                     pages = pages + 1
 
         # issue the query
         start = 1
         mapped_responses = []
+        # totals from the last page that returned results, so that an empty trailing
+        # page does not discard what earlier pages found
+        last_found = last_retrieved = -1
 
         for page in range(0, pages):
 
-            if 'PAGE' in self.query_mappings:
-                page_query = self.query_to_provider[:self.query_to_provider.rfind('&')]
-                page_spec = None
-                if 'RESULT_INDEX' in self.query_mappings['PAGE']:
-                    page_spec = self.query_mappings['PAGE'].replace('RESULT_INDEX',str(start))
-                if 'RESULT_ZERO_INDEX' in self.query_mappings['PAGE']:
-                    page_spec = self.query_mappings['PAGE'].replace('RESULT_ZERO_INDEX',str(start-1))
-                if 'PAGE_INDEX' in self.query_mappings['PAGE']:
-                    page_spec = self.query_mappings['PAGE'].replace('PAGE_INDEX',page+1)
-                if page_spec:
-                    page_query = page_query + '&' + page_spec + self.query_to_provider[self.query_to_provider.rfind('&'):]
-                else:
-                    self.warning(f"failed to resolve PAGE query mapping: {self.query_mappings['PAGE']}")
-                    page_query = self.query_to_provider
-            else:
-                page_query = self.query_to_provider
+            page_query = self.build_page_query(page, start)
 
             # check the query
             if page_query == "":
@@ -258,6 +307,10 @@ class Requests(VerifyCertsCommon):
 
             mapped_response = {}
             if not json_data:
+                if mapped_responses:
+                    # trailing empty page; keep what the previous pages returned
+                    found, retrieved = last_found, last_retrieved
+                    break
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.retrieved = 0
                 self.found = 0
@@ -312,6 +365,10 @@ class Requests(VerifyCertsCommon):
                 else:
                     is_empty_list = True
             if found == 0 or retrieved == 0 or is_empty_list:
+                if mapped_responses:
+                    # trailing empty page; keep what the previous pages returned
+                    found, retrieved = last_found, last_retrieved
+                    break
                 # no results, not an error
                 self.message(f"Retrieved 0 of 0 results from: {self.provider.name}")
                 self.retrieved = 0
@@ -403,12 +460,18 @@ class Requests(VerifyCertsCommon):
                 self.status = 'READY'
                 return
 
+            last_found, last_retrieved = found, retrieved
+
             # check count
-            if retrieved < 10:
+            if retrieved < page_size:
                 # no more pages, so don't request any
                 break
 
-            start = start + 10 # get only as many pages as required to satisfy provider results_per_query setting, in increments of 10
+            if not self.continue_paging(json_data):
+                # the source reports it has nothing further
+                break
+
+            start = start + page_size # get only as many pages as required to satisfy provider results_per_query setting
 
             time.sleep(1)
 
