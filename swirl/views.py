@@ -528,9 +528,13 @@ MAX_RESULTS_REQUESTED = 1000
 
 #: Marker the TantivyIndex connector writes when a requested Backstage type has
 #: no live generation. Kept in sync with
-#: swirl.connectors.tantivy_index.MISSING_INDEX_MARKER.
+#: swirl.connectors.tantivy_index.MISSING_INDEX_MARKER and its template, which
+#: is "__MISSING_INDEX__ types=<missing> live=<requested types that are live>".
+#: live= may be empty, and is absent altogether on a marker written by an older
+#: connector, which reads the same way: no requested type is live.
 MISSING_INDEX_MARKER = '__MISSING_INDEX__'
-_MISSING_INDEX_RE = re.compile(re.escape(MISSING_INDEX_MARKER) + r'\s+types=([^\s]+)')
+_MISSING_INDEX_RE = re.compile(re.escape(MISSING_INDEX_MARKER)
+                               + r'\s+types=([^\s]+)(?:\s+live=([^\s]*))?')
 
 
 def backstage_query_params(request):
@@ -587,37 +591,90 @@ def results_requested_param(request, default=10):
     return max(MIN_RESULTS_REQUESTED, min(MAX_RESULTS_REQUESTED, value))
 
 
-def missing_index_types(messages):
-    """Pull the Backstage missing-index types out of a response messages list.
+def _missing_index_marker_groups(messages):
+    """Yield the (missing, live) group pair of every marker in a messages list.
 
     The connector cannot put a dict into Result.messages, which the mixer
     natsorts as strings, so it writes a marker line instead and this reads it
-    back. Returns a sorted list of type names, empty when there is no marker.
+    back.
     """
-    found = []
     for message in messages or []:
         if not isinstance(message, str):
             continue
         match = _MISSING_INDEX_RE.search(message)
         if match:
-            found.extend(name for name in match.group(1).split(',') if name)
+            yield match.group(1), match.group(2)
+
+
+def _split_marker_types(raw):
+    return [name for name in (raw or '').split(',') if name]
+
+
+def missing_index_types(messages):
+    """The Backstage types that have no live index, sorted, from the markers.
+
+    Empty when there is no marker.
+    """
+    found = []
+    for missing, _live in _missing_index_marker_groups(messages):
+        found.extend(_split_marker_types(missing))
     return sorted(set(found))
+
+
+def live_index_types(messages):
+    """The requested Backstage types that do have a live index, from the markers.
+
+    Sorted, and empty both when there is no marker and when a marker reports
+    that none of the requested types is live.
+    """
+    found = []
+    for _missing, live in _missing_index_marker_groups(messages):
+        found.extend(_split_marker_types(live))
+    return sorted(set(found))
+
+
+def requested_backstage_types(request):
+    """The Backstage types this request asked for, from ?backstage_types.
+
+    Empty when the request did not name any, which includes the case where the
+    types came from the SearchProvider rather than the query.
+    """
+    if request is None or getattr(request, 'GET', None) is None:
+        return []
+    block = backstage_query_params(request).get(BACKSTAGE_QUERY_KEY) or {}
+    return block.get('types') or []
 
 
 def apply_missing_index(results, request=None):
     """Turn the connector's marker into the shape the Backstage engine reads.
 
-    Returns a DRF Response when nothing could be served (HTTP 404 with
-    {"error": "missing_index", "types": [...]}), otherwise None after adding
+    The hard failure is reserved for the query that could never be served:
+    every requested Backstage type is missing a live index and nothing at all
+    came back. Then this returns a DRF Response, HTTP 404 with
+    {"error": "missing_index", "types": [...]}.
+
+    Every other case is the soft path: None is returned after adding
     {"type": "__MISSING_INDEX__", "types": [...]} to the messages array of the
-    envelope, which is left otherwise untouched.
+    envelope, which is left otherwise untouched, and the caller answers 200.
+    In particular, when at least one requested type is live the answer is 200
+    even though the query matched nothing. Zero results from a live index is an
+    answer, and turning it into an error page is what broke every no-match
+    search in Backstage.
+
+    A type counts as live either because the connector said so in the marker or
+    because the request asked for it and no marker calls it missing; the second
+    form covers a type served by some other provider.
     """
     if not isinstance(results, dict):
         return None
-    types = missing_index_types(results.get('messages'))
+    envelope_messages = results.get('messages')
+    types = missing_index_types(envelope_messages)
     if not types:
         return None
-    if not results.get('results'):
+    live = live_index_types(envelope_messages)
+    served = [name for name in requested_backstage_types(request)
+              if name not in types]
+    if not live and not served and not results.get('results'):
         logger.warning(f'{module_name}: no live Backstage index for {types}')
         return Response({'error': 'missing_index', 'types': types},
                         status=status.HTTP_404_NOT_FOUND)

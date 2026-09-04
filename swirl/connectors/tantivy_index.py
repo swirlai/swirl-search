@@ -34,13 +34,18 @@ from swirl.tantivy_index.manager import default_manager
 BACKSTAGE_KEY = 'backstage'
 
 #: Marker the connector writes into its messages when a requested Backstage
-#: type has no live generation. swirl/views.py turns it into either an HTTP 404
-#: {"error": "missing_index", "types": [...]} when nothing at all could be
-#: served, or a structured entry in the response "messages" array when other
-#: providers did return results. The format is fixed because the message text
-#: travels through Result.messages as a plain string with a timestamp prefix.
+#: type has no live generation. It names the missing types in types= and the
+#: requested types that do have a live generation in live=, which is empty when
+#: there are none. swirl/views.py turns it into either an HTTP 404
+#: {"error": "missing_index", "types": [...]} when every requested type is
+#: missing, so the query could never be served at all, or a structured entry in
+#: the response "messages" array when at least one requested type is live. The
+#: latter holds even when the query matched nothing: an empty result set from a
+#: live index is an answer, not an error. The format is fixed because the
+#: message text travels through Result.messages as a plain string with a
+#: timestamp prefix.
 MISSING_INDEX_MARKER = '__MISSING_INDEX__'
-MISSING_INDEX_TEMPLATE = MISSING_INDEX_MARKER + ' types={}'
+MISSING_INDEX_TEMPLATE = MISSING_INDEX_MARKER + ' types={} live={}'
 
 
 class TantivyIndex(Connector):
@@ -142,13 +147,17 @@ class TantivyIndex(Connector):
         logger.debug(f"{self}: execute_search()")
 
         # Signal any requested type that has no live generation. The search
-        # still runs for the types that do have one.
+        # still runs for the types that do have one, and the marker carries
+        # those in live= so swirl/views.py can tell a query that can still be
+        # served from one that cannot be served at all.
         if self.backstage_types:
             live = set(self.manager.types())
             missing = [name for name in self.backstage_types if name not in live]
             if missing:
+                served = [name for name in self.backstage_types if name in live]
                 self.warning(f"no live index for backstage types: {missing}")
-                self.message(MISSING_INDEX_TEMPLATE.format(','.join(missing)))
+                self.message(MISSING_INDEX_TEMPLATE.format(','.join(missing),
+                                                           ','.join(served)))
 
         try:
             hits = self.manager.search(

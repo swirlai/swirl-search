@@ -231,6 +231,134 @@ def test_ingest_with_a_service_token_then_search_with_a_user_token(
         assert marker not in (item.get("body") or ""), item
 
 
+# ---------------------------------------------------------------------------
+# Missing index: a type with no live generation must not turn a search that
+# matches nothing into an error page (post-publish smoke test defect B2).
+#
+# A stock create-app never gets a techdocs index, and under permissions the
+# search router names every registered type on every query, so techdocs is in
+# the type list of every search a real portal makes. The rule these four tests
+# pin down is that the hard 404 belongs only to the query that could never be
+# served, meaning every requested type is missing.
+# ---------------------------------------------------------------------------
+
+def ingest(api, priv_pem, kid, documents, type_name=TYPE):
+    """Run the whole begin/docs/finalize lifecycle with a service token."""
+    token = _mint_plugin_token(priv_pem, kid)
+    begin = api.post("{}{}/begin/".format(INDEX, type_name), {}, format="json",
+                     **bearer(token))
+    assert begin.status_code == 201, begin.data
+    generation = begin.data["generation"]
+    docs = api.post("{}{}/{}/docs/".format(INDEX, type_name, generation),
+                    {"documents": documents}, format="json", **bearer(token))
+    assert docs.status_code == 202, docs.data
+    finalize = api.post("{}{}/{}/finalize/".format(INDEX, type_name, generation),
+                        {}, format="json", **bearer(token))
+    assert finalize.status_code == 200, finalize.data
+    return generation
+
+
+def soft_missing_index_messages(body):
+    """The structured missing-index entries in a search response envelope."""
+    return [message for message in body.get("messages") or []
+            if isinstance(message, dict)
+            and message.get("type") == "__MISSING_INDEX__"]
+
+
+def search(api, token, term, **params):
+    query = {"qs": term, "providers": "backstage-index"}
+    query.update(params)
+    return api.get("/swirl/search/", query, **bearer(token))
+
+
+@pytest.mark.django_db
+@backstage_on
+@responses.activate
+def test_a_missing_type_beside_a_live_one_is_a_soft_message_when_there_are_hits(
+        keys, index_dir, provider, celery_eager):
+    """One live type, one missing type, a term that matches: 200 plus a message."""
+    priv_pem, jwk = keys
+    _serve_jwks(jwk)
+    api = APIClient()
+    ingest(api, priv_pem, jwk["kid"], [doc("petstore"), doc("wayback-search")])
+    user_token = _mint_plugin_token(priv_pem, jwk["kid"], user_ref=USER_REF)
+
+    response = search(api, user_token, "petstore",
+                      backstage_types="{},techdocs".format(TYPE))
+
+    assert response.status_code == 200, response.data
+    body = response.json()
+    assert body["results"], body
+    assert soft_missing_index_messages(body) == [
+        {"type": "__MISSING_INDEX__", "types": ["techdocs"]}]
+
+
+@pytest.mark.django_db
+@backstage_on
+@responses.activate
+def test_a_missing_type_beside_a_live_one_is_a_soft_message_with_zero_hits(
+        keys, index_dir, provider, celery_eager):
+    """The defect: a term that matches nothing used to answer 404 here.
+
+    software-catalog is live and answers the query; it just has nothing to
+    show. That is an empty result set, not a missing index, so the response is
+    200 with the same soft message the non-empty path already carried.
+    """
+    priv_pem, jwk = keys
+    _serve_jwks(jwk)
+    api = APIClient()
+    ingest(api, priv_pem, jwk["kid"], [doc("petstore"), doc("wayback-search")])
+    user_token = _mint_plugin_token(priv_pem, jwk["kid"], user_ref=USER_REF)
+
+    response = search(api, user_token, "nonsensequerystring",
+                      backstage_types="{},techdocs".format(TYPE))
+
+    assert response.status_code == 200, response.data
+    body = response.json()
+    assert body.get("results") == [], body
+    assert soft_missing_index_messages(body) == [
+        {"type": "__MISSING_INDEX__", "types": ["techdocs"]}]
+
+
+@pytest.mark.django_db
+@backstage_on
+@responses.activate
+def test_a_query_whose_every_type_is_missing_answers_404(
+        keys, index_dir, provider, celery_eager):
+    """The hard failure survives, narrowed to the query that cannot be served."""
+    priv_pem, jwk = keys
+    _serve_jwks(jwk)
+    api = APIClient()
+    ingest(api, priv_pem, jwk["kid"], [doc("petstore"), doc("wayback-search")])
+    user_token = _mint_plugin_token(priv_pem, jwk["kid"], user_ref=USER_REF)
+
+    response = search(api, user_token, "nonsensequerystring",
+                      backstage_types="techdocs")
+
+    assert response.status_code == 404, response.data
+    assert response.json() == {"error": "missing_index", "types": ["techdocs"]}
+
+
+@pytest.mark.django_db
+@backstage_on
+@responses.activate
+def test_a_query_that_names_no_type_is_never_a_missing_index(
+        keys, index_dir, provider, celery_eager):
+    """No type requested means nothing can be missing: 200, no message."""
+    priv_pem, jwk = keys
+    _serve_jwks(jwk)
+    api = APIClient()
+    ingest(api, priv_pem, jwk["kid"], [doc("petstore"), doc("wayback-search")])
+    user_token = _mint_plugin_token(priv_pem, jwk["kid"], user_ref=USER_REF)
+
+    response = search(api, user_token, "nonsensequerystring")
+
+    assert response.status_code == 200, response.data
+    body = response.json()
+    assert body.get("results") == [], body
+    assert soft_missing_index_messages(body) == []
+
+
 @pytest.mark.django_db
 @backstage_on
 @responses.activate
