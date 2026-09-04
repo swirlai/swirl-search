@@ -290,6 +290,11 @@ def test_the_seed_path_covers_every_federated_provider_it_finds(dist_owner):
     for name in seeded:
         provider = SearchProvider.objects.get(name=name)
         assert "backstage" in provider.tags, name
+        if provider.connector == "TantivyIndex":
+            # The Backstage index provider is the indexed lane and ships active
+            # in the image profile by design; only federated rows stay inactive
+            # until an operator scopes them.
+            continue
         assert provider.active is False, name
 
 
