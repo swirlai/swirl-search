@@ -432,7 +432,9 @@ def test_the_preloaded_backstage_provider():
 from swirl.connectors.tantivy_index import MISSING_INDEX_MARKER  # noqa: E402
 from swirl.views import (                                        # noqa: E402
     apply_missing_index,
+    live_index_types,
     missing_index_types,
+    requested_backstage_types,
     results_requested_param,
 )
 
@@ -445,6 +447,9 @@ def test_a_missing_type_is_flagged_in_the_connector_messages(loaded, provider, o
     markers = [m for m in connector.messages if MISSING_INDEX_MARKER in m]
     assert len(markers) == 1
     assert "types=no-such-type" in markers[0]
+    # The requested type that does have a live index is named too, so the view
+    # can answer 200 for this query even when it matches nothing.
+    assert live_index_types(markers) == ["software-catalog"]
 
 
 @pytest.mark.django_db
@@ -455,6 +460,8 @@ def test_every_missing_type_is_listed_once(loaded, provider, owner):
     markers = [m for m in connector.messages if MISSING_INDEX_MARKER in m]
     assert len(markers) == 1
     assert "types=gone-one,gone-two" in markers[0]
+    # Nothing requested is live, so live= is empty and the view may answer 404.
+    assert live_index_types(markers) == []
 
 
 @pytest.mark.django_db
@@ -485,12 +492,89 @@ def test_missing_index_types_is_empty_without_a_marker():
     assert missing_index_types(None) == []
 
 
+def test_live_index_types_parses_the_live_half_of_the_marker():
+    assert live_index_types([
+        "[2026-09-03 10:00:00] SWIRL",
+        "[2026-09-03 10:00:00] __MISSING_INDEX__ types=techdocs live=software-catalog",
+    ]) == ["software-catalog"]
+
+
+def test_live_index_types_is_empty_when_nothing_requested_is_live():
+    assert live_index_types(["__MISSING_INDEX__ types=techdocs live="]) == []
+    # A marker written before live= existed reads the same way.
+    assert live_index_types(["__MISSING_INDEX__ types=techdocs"]) == []
+    assert live_index_types(["nothing here", None, 7]) == []
+    assert live_index_types(None) == []
+
+
+def test_missing_index_types_still_parses_a_marker_carrying_live():
+    assert missing_index_types([
+        "__MISSING_INDEX__ types=techdocs,other live=software-catalog",
+    ]) == ["other", "techdocs"]
+
+
+def test_requested_backstage_types_reads_the_query_param():
+    assert requested_backstage_types(
+        request_with(qs="x", backstage_types="software-catalog, techdocs")) == [
+            "software-catalog", "techdocs"]
+    assert requested_backstage_types(request_with(qs="x")) == []
+    assert requested_backstage_types(None) == []
+
+
 def test_apply_missing_index_returns_404_when_nothing_was_served():
     envelope = {"messages": ["__MISSING_INDEX__ types=techdocs"], "results": []}
     response = apply_missing_index(envelope)
     assert response is not None
     assert response.status_code == 404
     assert response.data == {"error": "missing_index", "types": ["techdocs"]}
+
+
+def test_apply_missing_index_404s_when_every_requested_type_is_missing():
+    """The one case that keeps the hard failure: nothing requested is live."""
+    envelope = {"messages": ["__MISSING_INDEX__ types=techdocs live="],
+                "results": []}
+    response = apply_missing_index(
+        envelope, request_with(qs="nonsense", backstage_types="techdocs"))
+    assert response is not None
+    assert response.status_code == 404
+    assert response.data == {"error": "missing_index", "types": ["techdocs"]}
+
+
+def test_apply_missing_index_is_soft_on_zero_hits_when_a_type_is_live():
+    """The B2 fix: an empty result set from a live index is an answer, not a 404."""
+    envelope = {
+        "messages": ["__MISSING_INDEX__ types=techdocs live=software-catalog"],
+        "results": [],
+    }
+    assert apply_missing_index(
+        envelope,
+        request_with(qs="nonsense",
+                     backstage_types="software-catalog,techdocs")) is None
+    assert envelope["results"] == []
+    assert envelope["messages"][-1] == {"type": "__MISSING_INDEX__",
+                                        "types": ["techdocs"]}
+
+
+def test_apply_missing_index_is_soft_on_zero_hits_without_a_request():
+    """The marker alone carries enough to decide; the request is optional."""
+    envelope = {
+        "messages": ["__MISSING_INDEX__ types=techdocs live=software-catalog"],
+        "results": [],
+    }
+    assert apply_missing_index(envelope) is None
+    assert envelope["messages"][-1] == {"type": "__MISSING_INDEX__",
+                                        "types": ["techdocs"]}
+
+
+def test_apply_missing_index_is_soft_when_the_request_names_a_live_type():
+    """A type served by another provider counts as live even with no live= half."""
+    envelope = {"messages": ["__MISSING_INDEX__ types=techdocs"], "results": []}
+    assert apply_missing_index(
+        envelope,
+        request_with(qs="nonsense",
+                     backstage_types="software-catalog,techdocs")) is None
+    assert envelope["messages"][-1] == {"type": "__MISSING_INDEX__",
+                                        "types": ["techdocs"]}
 
 
 def test_apply_missing_index_adds_a_structured_message_when_results_exist():
