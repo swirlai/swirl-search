@@ -31,7 +31,9 @@ channels
 channels-redis>=4,<5
 tika
 pymongo
-snowflake-connector-python==3.17.3
+# DS-5735: 3.17.3 publishes no cp314 wheel (and pins cffi<2, which has none
+# either); 4.4.0+ does. SWIRL uses only the DB-API 2.0 surface.
+snowflake-connector-python>=4.4.0,<5
 oracledb
 psycopg2-binary
 transformers>=4.57,<5
@@ -43,6 +45,8 @@ qdrant-client==1.10.0
 presidio-analyzer
 presidio-anonymizer
 func_timeout
-litellm>=1.83.10,<1.84
+# DS-5735: every litellm release from 1.83.8 through 1.92.x declares
+# requires-python <3.14; 1.93.0 is the first that installs on 3.14.
+litellm>=1.93.0,<2
 pydantic>=2.0,<3
 tantivy>=0.26

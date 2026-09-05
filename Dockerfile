@@ -1,4 +1,4 @@
-FROM python:3.13.12-slim-trixie
+FROM python:3.14.7-slim-trixie
 
 # Build profile (TECH_DESIGN_swirl_for_backstage.md section 3.8).
 #   full      - the default image, unchanged: en_core_web_lg, every extra
