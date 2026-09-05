@@ -118,6 +118,16 @@ class SearchRag:
         except Result.DoesNotExist:
             return None
 
+        # Different AI instructions are different inputs, like a different
+        # item set: "Generate" again with new instructions must re-run the
+        # model, not replay the stored summary. Results written before the
+        # field was recorded carry none, which reads as "no instructions",
+        # so a plain fetch keeps serving them (no thrash).
+        stored = rag_result.json_results[0] if rag_result.json_results else {}
+        stored_instructions = (stored.get("ai_instructions") or "").strip()
+        if stored_instructions != self.ai_instructions:
+            return None
+
         # A stored Result with no items is the auto-RAG path recording that it
         # produced nothing — a rag_timeout that expired, an AI provider error,
         # or a search with no results to summarize. That is a cache hit with

@@ -317,6 +317,98 @@ def test_get_rag_result_serves_empty_stored_result_as_timeout_message(monkeypatc
     assert additional_content == {}
 
 
+# ---------------------------------------------------------------------------
+# Cache vs. ai_instructions. Galaxy's "Optional instructions" second pass is
+# "add instructions, press Generate again" on the SAME search: a cache keyed
+# only on search_id + rag_query_items replayed the first summary every time.
+# ---------------------------------------------------------------------------
+
+def _stub_processor(monkeypatch, body="regenerated body"):
+    """Replace RAGPostResultProcessor with a stub; returns the instance list."""
+    instances_created = []
+
+    class StubProc:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+            instances_created.append(self)
+
+        def validate(self):
+            return True
+
+        def process(self, should_return=False):
+            return type("FakeResult", (), {
+                "json_results": [{
+                    "body": [body],
+                    "additional_content": {},
+                    "rag_query_items": [],
+                    "ai_instructions": self.kwargs.get("ai_instructions", ""),
+                }],
+            })()
+
+    monkeypatch.setattr(
+        "swirl.views_helpers.search_rag.RAGPostResultProcessor", StubProc
+    )
+    return instances_created
+
+
+def test_get_rag_result_regenerates_when_instructions_differ_from_stored(monkeypatch):
+    """A stored summary made without instructions must not be replayed for a
+    request that carries them — that is the second-pass flow from Galaxy."""
+    cached = _FakeResult(rag_query_items=[], body="first pass, no instructions")
+    _patch_result_get(monkeypatch, cached)
+    instances = _stub_processor(monkeypatch)
+
+    sr = SearchRag(_FakeRequest({"ai_instructions": "Answer in three bullet points."}))
+    body_text, _ = sr.get_rag_result()
+
+    assert body_text == "regenerated body"
+    assert len(instances) == 1
+    assert instances[0].kwargs["ai_instructions"] == "Answer in three bullet points."
+
+
+def test_get_rag_result_serves_cache_when_instructions_match_stored(monkeypatch):
+    cached = _FakeResult(rag_query_items=[], body="instructed body")
+    cached.json_results[0]["ai_instructions"] = "Answer in three bullet points."
+    _patch_result_get(monkeypatch, cached)
+    instances = _stub_processor(monkeypatch)
+
+    sr = SearchRag(_FakeRequest({"ai_instructions": " Answer in three bullet points. "}))
+    body_text, _ = sr.get_rag_result()
+
+    assert body_text == "instructed body"
+    assert instances == []
+    assert cached.deleted is False
+
+
+def test_get_rag_result_serves_legacy_cache_without_instructions_field(monkeypatch):
+    """Rows written before ai_instructions was recorded carry no field; a
+    plain fetch (Galaxy's auto-RAG follow-up) must still be a cache hit."""
+    cached = _FakeResult(rag_query_items=["item-a"], body="legacy body")
+    _patch_result_get(monkeypatch, cached)
+    instances = _stub_processor(monkeypatch)
+
+    body_text, _ = _make_search_rag().get_rag_result()
+
+    assert body_text == "legacy body"
+    assert instances == []
+
+
+def test_get_rag_result_regenerates_empty_stored_result_when_instructions_supplied(monkeypatch):
+    """An empty stored Result (timed-out / errored first pass) is served as a
+    message on a plain fetch (DS-5681), but a deliberate retry with
+    instructions is new input and re-runs the model."""
+    empty = _FakeResult(rag_query_items=[])
+    empty.json_results = []
+    _patch_result_get(monkeypatch, empty)
+    instances = _stub_processor(monkeypatch)
+
+    sr = SearchRag(_FakeRequest({"ai_instructions": "Try again, briefly."}))
+    body_text, _ = sr.get_rag_result()
+
+    assert body_text == "regenerated body"
+    assert len(instances) == 1
+
+
 def test_concurrent_get_rag_result_serializes_via_lock(monkeypatch):
     """REGRESSION 4.5.0.6: two simultaneous detail-search-rag calls for the
     same search_id must NOT both spin up a RAGPostResultProcessor.
