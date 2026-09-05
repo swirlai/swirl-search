@@ -36,7 +36,10 @@ pymongo
 snowflake-connector-python>=4.4.0,<5
 oracledb
 psycopg2-binary
-transformers>=4.57,<5
+# DS-5737: 4.57.x carries four High advisories fixed only in 5.x
+# (CVE-2026-5241, CVE-2026-4372, CVE-2025-14929, CVE-2026-9856). SWIRL uses
+# AutoTokenizer / AutoModel / AutoModelForSequenceClassification only.
+transformers>=5,<6
 torch>=2.9,<3
 pinecone
 pandas
