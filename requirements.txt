@@ -1,6 +1,8 @@
 requests
 Django>=5.2,<6.0
-django_restframework
+# DS-5737: was `django_restframework`, an empty 0.0.1 stub; the real Django
+# REST Framework only arrived transitively via drf-spectacular.
+djangorestframework
 django-celery-beat
 Celery
 pika
@@ -13,7 +15,6 @@ textblob
 spacy
 natsort
 django-environ
-statistics
 nltk
 bs4
 google-cloud-bigquery
@@ -44,7 +45,8 @@ torch>=2.9,<3
 pinecone
 pandas
 drf-spectacular
-qdrant-client==1.10.0
+# DS-5737: was an exact pin from 2024; range-pinned so security releases float.
+qdrant-client>=1.10,<2
 presidio-analyzer
 presidio-anonymizer
 func_timeout
@@ -52,4 +54,7 @@ func_timeout
 # requires-python <3.14; 1.93.0 is the first that installs on 3.14.
 litellm>=1.93.0,<2
 pydantic>=2.0,<3
+# DS-5737: the image resolved 48.0.1, which still carries CVE-2026-69249
+# (fixed 49.0) and CVE-2026-69247 (fixed 50.0). Do not lower this floor.
+cryptography>=50.0.0
 tantivy>=0.26
