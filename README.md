@@ -126,7 +126,7 @@ python swirl.py start
 
 Open <http://localhost:8000/swirl/> and log in with `admin` / `password`.
 
-> **Requirements:** Python 3.13+, Redis running locally.
+> **Requirements:** Python 3.14+, Redis running locally.
 
 <br/>
 
