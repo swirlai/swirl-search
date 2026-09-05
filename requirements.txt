@@ -1,5 +1,9 @@
 requests
-Django>=5.2,<6.0
+# DS-5737: the <6.0 cap dated from Django 6.0's early admin changelist markup
+# change breaking the filter sidebar; 6.0.6+ lays it out correctly with our
+# theme (verified 6.0.8). Same floor as Enterprise. django-celery-beat 2.9
+# caps <6.1, so this resolves to 6.0.x until it moves.
+Django>=6.0.6,<7
 # DS-5737: was `django_restframework`, an empty 0.0.1 stub; the real Django
 # REST Framework only arrived transitively via drf-spectacular.
 djangorestframework
