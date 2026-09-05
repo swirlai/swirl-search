@@ -38,13 +38,15 @@ class QdrantDB(VectorDBConnector):
 
         try:
             client = QdrantClient(url=qdrant_url, api_key=api_key)
-            response = client.search(
+            # query_points is the Query API (qdrant-client >= 1.10); the
+            # older search() was removed from the client in 1.16+.
+            response = client.query_points(
                 collection_name,
-                query_vector=self.vector_to_provider,
+                query=self.vector_to_provider,
                 limit=self.provider.results_per_query,
                 with_payload=True,
                 with_vectors=False,
-            )
+            ).points
         except Exception as err:
             self.error(f"{err} connecting to {self.type}")
             self.status = "ERR"
