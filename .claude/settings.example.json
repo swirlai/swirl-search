@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(python -m compileall:*)",
+      "Bash(pytest --collect-only:*)",
+      "Bash(docker build:*)"
+    ],
+    "ask": [
+      "Bash(./install.sh:*)",
+      "Bash(./install-ui.sh:*)",
+      "Bash(./install-test.sh:*)",
+      "Bash(python swirl.py setup:*)",
+      "Bash(python swirl.py start:*)",
+      "Bash(python swirl.py stop:*)",
+      "Bash(python swirl.py restart:*)",
+      "Bash(python swirl_load.py:*)",
+      "Bash(./DevUtils/pre-checkin-tests.sh:*)",
+      "Bash(./DevUtils/run-integtration-tests.sh:*)",
+      "Bash(python ./DevUtils/verify_search.py:*)",
+      "Bash(docker buildx build:*)"
+    ],
+    "deny": [
+      "Bash(docker login:*)",
+      "Bash(docker push:*)",
+      "Bash(docker buildx build *--push*)",
+      "Bash(pg_restore:*)",
+      "Bash(psql *DROP*)",
+      "Bash(psql *TRUNCATE*)",
+      "Bash(./DevUtils/index_email_elastic.py:*)",
+      "Bash(./DevUtils/index_email_opensearch.py:*)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/.env.docker)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)"
+    ]
+  }
+}
