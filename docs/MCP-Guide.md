@@ -287,6 +287,48 @@ MCP> /call SWIRL_search {"query_text": "swirl ai search"}
     },
  ```
 
+# Research with SWIRL and public web sources
+
+Use SWIRL to search sources you have permission to access, and [Parallel Search MCP](https://docs.parallel.ai/integrations/mcp/search-mcp) to find current public web information in the same MCP client. For example, compare an internal deployment checklist with a vendor's latest public release notes, citing both sets of sources.
+
+## Add Parallel to an existing MCP client
+
+Start with a working SWIRL MCP connection in a client that supports multiple servers and Streamable HTTP, such as [Claude Code](https://code.claude.com/docs/en/mcp). The raw TCP REPL described above cannot load this HTTP server.
+
+With SWIRL already connected in Claude Code, run these commands from your project directory:
+
+```bash
+claude mcp add --transport http --scope local parallel-search https://search.parallel.ai/mcp
+claude mcp get parallel-search
+```
+
+Local scope makes the new server available only to you in this project. Keep your existing SWIRL server entry. Start a new Claude Code session and run `/mcp` to confirm that both servers are connected and their tools are available.
+
+Parallel provides `web_search` for public web searches and `web_fetch` for reading public pages. The endpoint above works without an account or API key; anonymous searches use Fast mode and are subject to free-tier rate limits. See the [Parallel setup guide](https://docs.parallel.ai/integrations/mcp/search-mcp) for other clients and authentication options.
+
+## Choose the sources for each part of the question
+
+1. Use `SWIRL_get_sources` to identify the internal sources available to you, then `SWIRL_search` to retrieve the relevant documents.
+2. Use Parallel's `web_search` with public product names and topics to find current external information. Use `web_fetch` on selected public URLs when you need more detail.
+3. Ask the client to compare the findings and cite internal SWIRL results separately from public web pages. Keep private document text and internal URLs out of public web tool arguments.
+
+For example, adapt this prompt to a product and internal source you can access:
+
+```text
+Use SWIRL to find our PostgreSQL upgrade checklist. Separately, use Parallel
+to find the current PostgreSQL release notes on postgresql.org and fetch
+the relevant public pages. Compare the public upgrade requirements with
+our checklist. Cite each internal document and public page, and identify
+anything the sources do not establish. Send only public product names and
+public URLs to Parallel, without copying internal document content.
+```
+
+To remove the optional server, run this command from the same project directory:
+
+```bash
+claude mcp remove --scope local parallel-search
+```
+
 # Example: SWIRL + MCP + Crew.AI
 
 [Crew.AI]() is an amazing new multi-agent platform! Build an deploy automated, agentic workflows quickly and easily. 
