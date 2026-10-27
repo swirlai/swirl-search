@@ -1,4 +1,5 @@
 import time
+import statistics
 import json
 import os
 from django.test import TestCase
@@ -15,7 +16,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from swirl.processors.adaptive import *
 from swirl.processors.gen_ai_query import *
 from swirl.processors.transform_query_processor import *
-from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list, match_all, tokenize_word_list
+from swirl.processors.utils import str_tok_get_prefixes, date_str_to_timestamp, highlight_list, match_all, tokenize_word_list, result_processor_feedback_empty_record, result_processor_feedback_merge_records
 from swirl.processors.result_map_converter import ResultMapConverter
 from swirl.processors.dedupe import DedupeByFieldResultProcessor
 from swirl.processors.relevancy import DropIrrelevantPostResultProcessor
@@ -926,6 +927,24 @@ def test_utils_date_str_to_timestamp(utils_date_str_to_timestamp_cases, utils_da
         ret = date_str_to_timestamp(c)
         assert ret == utils_date_str_to_timestamp_expected[i]
         i = i + 1
+
+
+@pytest.mark.django_db
+def test_utils_result_processor_feedback_merge_records_keeps_duplicate_lens():
+    rec = {"result_processor_feedback": {"query": {"dict_result_lens": {"body": [5, 5, 5, 5, 100]}}}}
+    merged = result_processor_feedback_merge_records(result_processor_feedback_empty_record(), rec)
+    merged = result_processor_feedback_merge_records(merged, rec)
+    assert sorted(merged["result_processor_feedback"]["query"]["dict_result_lens"]["body"]) == [5] * 8 + [100] * 2
+
+
+@pytest.mark.django_db
+def test_utils_result_processor_feedback_merge_records_distinct_keys_median():
+    rec1 = {"result_processor_feedback": {"query": {"dict_result_lens": {"a": [5, 5, 100]}}}}
+    rec2 = {"result_processor_feedback": {"query": {"dict_result_lens": {"b": [7], "a": [5, 5]}}}}
+    lens = result_processor_feedback_merge_records(rec1, rec2)["result_processor_feedback"]["query"]["dict_result_lens"]
+    assert lens["b"] == [7]
+    assert sorted(lens["a"]) == [5, 5, 5, 5, 100]
+    assert statistics.median(lens["a"]) == 5
 
 
 @pytest.mark.django_db

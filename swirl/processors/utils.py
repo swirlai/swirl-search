@@ -45,11 +45,9 @@ def result_processor_feedback_merge_records(record1, record2):
         dict_result_lens_keys.update(record2["result_processor_feedback"]["query"]["dict_result_lens"].keys())
 
     for key in dict_result_lens_keys:
-        merged_record["result_processor_feedback"]["query"]["dict_result_lens"][key] = list(
-            set(
-                record1.get("result_processor_feedback", {}).get("query", {}).get("dict_result_lens", {}).get(key, []) +
-                record2.get("result_processor_feedback", {}).get("query", {}).get("dict_result_lens", {}).get(key, [])
-            )
+        merged_record["result_processor_feedback"]["query"]["dict_result_lens"][key] = (
+            record1.get("result_processor_feedback", {}).get("query", {}).get("dict_result_lens", {}).get(key, []) +
+            record2.get("result_processor_feedback", {}).get("query", {}).get("dict_result_lens", {}).get(key, [])
         )
 
     # Merge provider_query_terms
