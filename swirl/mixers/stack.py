@@ -49,8 +49,12 @@ class StackNMixer(Mixer):
         for provider in list_ranked_providers:
             dict_ranked_providers[provider['searchprovider']] = provider['swirl_score']
 
+        if not dict_ranked_providers:
+            self.mixed_results = []
+            return
+
         if self.stack == 0:
-            self.stack = int(int(self.results_requested)/len(dict_ranked_providers))
+            self.stack = max(1, int(int(self.results_requested)/len(dict_ranked_providers)))
 
         # mix the results
         stacked_results = []
