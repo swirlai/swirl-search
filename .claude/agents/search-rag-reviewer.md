@@ -1,10 +1,7 @@
 ---
 name: search-rag-reviewer
 description: Use this agent to review SearchProvider, AI Provider, Page Fetcher, Tika, RAG, provider migration, and benchmark changes.
-tools:
-  - Read
-  - Grep
-  - Glob
+tools: Read, Grep, Glob
 ---
 
 You are a search and RAG configuration reviewer.

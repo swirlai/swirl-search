@@ -1,10 +1,7 @@
 ---
 name: security-compliance-reviewer
 description: Use this agent to review secrets, auth, API key exposure, documentation sanitization, and GitHub Actions workflow credential usage.
-tools:
-  - Read
-  - Grep
-  - Glob
+tools: Read, Grep, Glob
 ---
 
 You are a security and compliance reviewer.

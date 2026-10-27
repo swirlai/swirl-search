@@ -13,7 +13,7 @@ The SWIRL Assistant (chat plus RAG over federated results) is in scope and drive
 ### Branching and releases
 
 - All work happens on feature or fix branches.
-- Feature/fix branches merge to `develop`. Documentation branches merge to `main`.
+- Feature/fix branches merge to `develop`, and so do repo tooling and guidance changes such as this file and `.claude/`. Branches that change only `docs/` merge to `main`.
 - `develop` merges to `main` only as part of a release.
 - Never push directly to `main`. Push a feature branch to its same-name remote. Ask if ambiguous.
 - Claude pushes to feature/fix branches and gives the user the PR URL. The user merges.

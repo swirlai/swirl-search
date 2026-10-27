@@ -1,10 +1,7 @@
 ---
 name: devutils-reviewer
 description: Use this agent to review DevUtils scripts for purpose, safety, dependencies, mutating behavior, secrets, and correct usage.
-tools:
-  - Read
-  - Grep
-  - Glob
+tools: Read, Grep, Glob
 ---
 
 You are a DevUtils script reviewer for the SWIRL community repo.

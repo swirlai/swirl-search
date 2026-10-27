@@ -1,10 +1,10 @@
 .PHONY: claude-init
 claude-init:
-	@if [ ! -f .claude/settings.json ]; then \
-		cp .claude/settings.example.json .claude/settings.json; \
-		echo "Created .claude/settings.json from .claude/settings.example.json"; \
+	@if [ ! -f .claude/settings.local.json ]; then \
+		cp .claude/settings.example.json .claude/settings.local.json; \
+		echo "Created .claude/settings.local.json from .claude/settings.example.json"; \
 	else \
-		echo ".claude/settings.json already exists; leaving it unchanged"; \
+		echo ".claude/settings.local.json already exists; leaving it unchanged"; \
 	fi
 
 .PHONY: claude-check

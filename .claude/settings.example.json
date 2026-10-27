@@ -27,10 +27,7 @@
     "deny": [
       "Bash(docker login:*)",
       "Bash(docker push:*)",
-      "Bash(docker buildx build *--push*)",
       "Bash(pg_restore:*)",
-      "Bash(psql *DROP*)",
-      "Bash(psql *TRUNCATE*)",
       "Bash(./DevUtils/index_email_elastic.py:*)",
       "Bash(./DevUtils/index_email_opensearch.py:*)",
       "Read(**/.env)",
