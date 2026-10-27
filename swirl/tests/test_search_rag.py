@@ -264,6 +264,234 @@ def test_get_rag_result_serves_cache_when_request_items_match_stored(monkeypatch
     assert cached.deleted is False
 
 
+def test_get_rag_result_serves_empty_stored_result_without_indexerror(monkeypatch):
+    """REGRESSION DS-5681: a stored ChatGPT Result whose json_results is []
+    must be served as "nothing to report", not crash the endpoint.
+
+    The auto-RAG path writes such a row whenever it produces nothing — an
+    expired rag_timeout, an AI provider error, or a search with no results
+    to summarize. _try_serve_cache then read json_results[0] unconditionally
+    and raised IndexError, which DRF turned into a 500 on
+    /sapi/detail-search-rag/. Galaxy rendered the HTTP failure in the AI
+    Summary card instead of "No response from Generative AI".
+
+    Latent since the endpoint was added; it only became a 500 in 8c8d01ea,
+    which narrowed a bare `except:` to Result.DoesNotExist and moved this
+    read outside the try.
+    """
+    empty = _FakeResult(rag_query_items=[])
+    empty.json_results = []          # auto-RAG produced nothing
+    _patch_result_get(monkeypatch, empty)
+
+    sr = _make_search_rag()          # Galaxy's fetch: no rag_items in the URL
+    body_text, additional_content = sr.get_rag_result()
+
+    assert "credentials" in body_text, (
+        "with no rag_timeout the empty result should explain the likely cause"
+    )
+    assert additional_content == {}
+    assert empty.deleted is False, (
+        "an empty Result must not trigger a regenerate — that re-runs the "
+        "model on every fetch"
+    )
+
+
+def test_get_rag_result_serves_empty_stored_result_as_timeout_message(monkeypatch):
+    """With a rag_timeout, the cached-empty path must carry the documented
+    "No response from Generative AI" string.
+
+    This is the exact route rag.feature's rag_timeout scenario takes: a 2s
+    budget expires, the auto-RAG path stores a Result with no items, and
+    Galaxy then fetches detail-search-rag. Serving a bare False here put the
+    literal "False" in the AI Summary card.
+    """
+    empty = _FakeResult(rag_query_items=[])
+    empty.json_results = []
+    _patch_result_get(monkeypatch, empty)
+
+    sr = SearchRag(_FakeRequest({"rag_timeout": "2"}))
+    body_text, additional_content = sr.get_rag_result()
+
+    assert "No response from Generative AI" in body_text
+    assert "2s" in body_text
+    assert additional_content == {}
+
+
+# ---------------------------------------------------------------------------
+# Cache vs. ai_instructions. Galaxy's "Optional instructions" second pass is
+# "add instructions, press Generate again" on the SAME search: a cache keyed
+# only on search_id + rag_query_items replayed the first summary every time.
+# ---------------------------------------------------------------------------
+
+def _stub_processor(monkeypatch, body="regenerated body"):
+    """Replace RAGPostResultProcessor with a stub; returns the instance list."""
+    instances_created = []
+
+    class StubProc:
+        def __init__(self, **kwargs):
+            self.kwargs = kwargs
+            instances_created.append(self)
+
+        def validate(self):
+            return True
+
+        def process(self, should_return=False):
+            return type("FakeResult", (), {
+                "json_results": [{
+                    "body": [body],
+                    "additional_content": {},
+                    "rag_query_items": [],
+                    "ai_instructions": self.kwargs.get("ai_instructions", ""),
+                }],
+            })()
+
+    monkeypatch.setattr(
+        "swirl.views_helpers.search_rag.RAGPostResultProcessor", StubProc
+    )
+    return instances_created
+
+
+def test_get_rag_result_regenerates_when_instructions_differ_from_stored(monkeypatch):
+    """A stored summary made without instructions must not be replayed for a
+    request that carries them — that is the second-pass flow from Galaxy."""
+    cached = _FakeResult(rag_query_items=[], body="first pass, no instructions")
+    _patch_result_get(monkeypatch, cached)
+    instances = _stub_processor(monkeypatch)
+
+    sr = SearchRag(_FakeRequest({"ai_instructions": "Answer in three bullet points."}))
+    body_text, _ = sr.get_rag_result()
+
+    assert body_text == "regenerated body"
+    assert len(instances) == 1
+    assert instances[0].kwargs["ai_instructions"] == "Answer in three bullet points."
+
+
+def test_get_rag_result_serves_cache_when_instructions_match_stored(monkeypatch):
+    cached = _FakeResult(rag_query_items=[], body="instructed body")
+    cached.json_results[0]["ai_instructions"] = "Answer in three bullet points."
+    _patch_result_get(monkeypatch, cached)
+    instances = _stub_processor(monkeypatch)
+
+    sr = SearchRag(_FakeRequest({"ai_instructions": " Answer in three bullet points. "}))
+    body_text, _ = sr.get_rag_result()
+
+    assert body_text == "instructed body"
+    assert instances == []
+    assert cached.deleted is False
+
+
+def test_get_rag_result_serves_legacy_cache_without_instructions_field(monkeypatch):
+    """Rows written before ai_instructions was recorded carry no field; a
+    plain fetch (Galaxy's auto-RAG follow-up) must still be a cache hit."""
+    cached = _FakeResult(rag_query_items=["item-a"], body="legacy body")
+    _patch_result_get(monkeypatch, cached)
+    instances = _stub_processor(monkeypatch)
+
+    body_text, _ = _make_search_rag().get_rag_result()
+
+    assert body_text == "legacy body"
+    assert instances == []
+
+
+def test_get_rag_result_regenerates_empty_stored_result_when_instructions_supplied(monkeypatch):
+    """An empty stored Result (timed-out / errored first pass) is served as a
+    message on a plain fetch (DS-5681), but a deliberate retry with
+    instructions is new input and re-runs the model."""
+    empty = _FakeResult(rag_query_items=[])
+    empty.json_results = []
+    _patch_result_get(monkeypatch, empty)
+    instances = _stub_processor(monkeypatch)
+
+    sr = SearchRag(_FakeRequest({"ai_instructions": "Try again, briefly."}))
+    body_text, _ = sr.get_rag_result()
+
+    assert body_text == "regenerated body"
+    assert len(instances) == 1
+
+
+def test_concurrent_get_rag_result_serializes_via_lock(monkeypatch):
+    """REGRESSION 4.5.0.6: two simultaneous detail-search-rag calls for the
+    same search_id must NOT both spin up a RAGPostResultProcessor.
+
+    Galaxy has been observed firing /sapi/detail-search-rag/ twice for a
+    single user action — box.component.toggleChange's direct call PLUS a
+    cascaded call from summary.component after queryParamMap-triggered
+    makeSearch(). Without the per-search-id lock added to SearchRag, both
+    calls saw cache miss, both ran OpenAI completions, both saved Result
+    rows, and the user saw the AI Summary swap from one body to another.
+
+    With the lock, only ONE processor is instantiated; the second caller
+    blocks, re-checks the cache after acquiring the lock, and serves the
+    body the first writer just stored.
+    """
+    import threading
+    from swirl.models import Result
+    from swirl.views_helpers import search_rag as sr_mod
+
+    cached_after_first_writer = _FakeResult(
+        rag_query_items=["item-a"], body="first-writer-body"
+    )
+    state = {"first_done": False}
+
+    def _fake_get(*args, **kwargs):
+        if state["first_done"]:
+            return cached_after_first_writer
+        raise Result.DoesNotExist
+
+    monkeypatch.setattr(Result.objects, "get", _fake_get)
+
+    instances_created = []
+
+    class StubProc:
+        def __init__(self, **kwargs):
+            instances_created.append(self)
+
+        def validate(self):
+            return True
+
+        def process(self, should_return=False):
+            # Simulate slow OpenAI work, then flip the "cache exists" flag
+            # so the next caller's _try_serve_cache finds the Result.
+            import time as _t
+            _t.sleep(0.2)
+            state["first_done"] = True
+            return type("FakeResult", (), {
+                "json_results": [{
+                    "body": ["first-writer-body"],
+                    "additional_content": {},
+                    "rag_query_items": ["item-a"],
+                }],
+            })()
+
+    monkeypatch.setattr(
+        "swirl.views_helpers.search_rag.RAGPostResultProcessor", StubProc
+    )
+    # Reset the module-level lock dict so the test is independent.
+    monkeypatch.setattr(sr_mod, "_rag_locks", {})
+
+    results = []
+
+    def caller():
+        sr = _make_search_rag(rag_items="item-a")
+        sr.search_id = "concurrent-test"
+        results.append(sr.get_rag_result())
+
+    t1 = threading.Thread(target=caller)
+    t2 = threading.Thread(target=caller)
+    t1.start()
+    t2.start()
+    t1.join(timeout=5)
+    t2.join(timeout=5)
+
+    assert len(instances_created) == 1, (
+        f"Expected exactly 1 RAGPostResultProcessor instance under "
+        f"concurrent get_rag_result; got {len(instances_created)} — "
+        f"lock failed to serialize."
+    )
+    bodies = [r[0] for r in results]
+    assert bodies == ["first-writer-body", "first-writer-body"], bodies
+
+
 def test_get_rag_result_regenerates_when_request_items_differ_from_stored(monkeypatch):
     """When the caller explicitly requested DIFFERENT rag_items, the cache
     must miss. We don't exercise the RAGPostResultProcessor branch here

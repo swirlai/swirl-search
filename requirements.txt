@@ -1,6 +1,12 @@
 requests
-Django>=5.2,<6.0
-django_restframework
+# DS-5737: the <6.0 cap dated from Django 6.0's early admin changelist markup
+# change breaking the filter sidebar; 6.0.6+ lays it out correctly with our
+# theme (verified 6.0.8). Same floor as Enterprise. django-celery-beat 2.9
+# caps <6.1, so this resolves to 6.0.x until it moves.
+Django>=6.0.6,<7
+# DS-5737: was `django_restframework`, an empty 0.0.1 stub; the real Django
+# REST Framework only arrived transitively via drf-spectacular.
+djangorestframework
 django-celery-beat
 Celery
 pika
@@ -13,7 +19,6 @@ textblob
 spacy
 natsort
 django-environ
-statistics
 nltk
 bs4
 google-cloud-bigquery
@@ -31,17 +36,29 @@ channels
 channels-redis>=4,<5
 tika
 pymongo
-snowflake-connector-python==3.17.3
+# DS-5735: 3.17.3 publishes no cp314 wheel (and pins cffi<2, which has none
+# either); 4.4.0+ does. SWIRL uses only the DB-API 2.0 surface.
+snowflake-connector-python>=4.4.0,<5
 oracledb
 psycopg2-binary
-transformers>=4.57,<5
+# DS-5737: 4.57.x carries four High advisories fixed only in 5.x
+# (CVE-2026-5241, CVE-2026-4372, CVE-2025-14929, CVE-2026-9856). SWIRL uses
+# AutoTokenizer / AutoModel / AutoModelForSequenceClassification only.
+transformers>=5,<6
 torch>=2.9,<3
 pinecone
 pandas
 drf-spectacular
-qdrant-client==1.10.0
+# DS-5737: was an exact pin from 2024; range-pinned so security releases float.
+qdrant-client>=1.10,<2
 presidio-analyzer
 presidio-anonymizer
 func_timeout
-litellm>=1.83.10,<1.84
+# DS-5735: every litellm release from 1.83.8 through 1.92.x declares
+# requires-python <3.14; 1.93.0 is the first that installs on 3.14.
+litellm>=1.93.0,<2
 pydantic>=2.0,<3
+# DS-5737: the image resolved 48.0.1, which still carries CVE-2026-69249
+# (fixed 49.0) and CVE-2026-69247 (fixed 50.0). Do not lower this floor.
+cryptography>=50.0.0
+tantivy>=0.26

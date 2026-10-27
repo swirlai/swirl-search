@@ -26,12 +26,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # The ubuntu-26.04 runner image mounts /tmp as a quota'd RAM tmpfs (actions/runner-images#14777);
+      # pip unpacking the torch/CUDA wheels there can hit the quota with "Disk quota exceeded". RUNNER_TEMP
+      # is on disk on every image, so keep temp files there. Harmless on ubuntu-24.04. DS-5745.
+      - name: Keep temp files on disk, not the tmpfs /tmp
+        run: echo "TMPDIR=$RUNNER_TEMP" >> "$GITHUB_ENV"
+
       - name: Checkout the Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - name: Set Up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
-          python-version: '3.13.12'
+          python-version: '3.14.7'
           cache: 'pip'
       - name: Install Swirl
         run: ./install.sh
@@ -42,7 +48,7 @@ jobs:
         run: pytest --junitxml=reports/junit.xml --tb=short --ignore=integrations
       - name: Upload Log Files
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: log-files
           path: |

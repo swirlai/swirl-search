@@ -349,6 +349,9 @@ class RAGPostResultProcessor(PostResultProcessor):
         if settings.SWIRL_DEFAULT_RESULT_BLOCK:
             rag_result['result_block'] = getattr(settings, 'SWIRL_DEFAULT_RESULT_BLOCK', 'ai_summary')
         rag_result['rag_query_items'] = [str(item['swirl_id']) for item in chosen_rag]
+        # Recorded so the detail-search-rag cache can tell a "Generate
+        # again with different instructions" request from a replay.
+        rag_result['ai_instructions'] = self.ai_instructions
         rag_result['additional_content'] = {
             'sources': [
                 {'title': item.get('title', ''), 'url': item.get('url', '')}

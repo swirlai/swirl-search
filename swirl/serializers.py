@@ -7,6 +7,32 @@ from django.contrib.auth.models import Group, User
 from rest_framework import serializers
 
 from swirl.models import AIProvider, QueryTransform, Result, Search, SearchProvider
+from swirl.scope import check_scope
+
+
+def _validate_provider_scope(serializer, attrs):
+    """Run the scope rule over the provider this payload would produce.
+
+    Builds an unsaved SearchProvider from the incoming attributes merged over
+    the existing instance (so a PATCH that only flips `active` is judged
+    against the stored query_template), then calls the single rule in
+    swirl/scope.py.
+    """
+    instance = serializer.instance
+    provider = SearchProvider(
+        name=attrs.get('name', getattr(instance, 'name', '')),
+        active=attrs.get('active', getattr(instance, 'active', False)),
+        query_template=attrs.get(
+            'query_template', getattr(instance, 'query_template', '')),
+        query_template_json=attrs.get(
+            'query_template_json', getattr(instance, 'query_template_json', None)),
+        tags=attrs.get('tags', getattr(instance, 'tags', [])),
+        config=attrs.get('config', getattr(instance, 'config', {})),
+    )
+    error = check_scope(provider)
+    if error:
+        raise serializers.ValidationError({'query_template': error})
+    return attrs
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -53,7 +79,11 @@ class SearchProviderSerializer(serializers.ModelSerializer):
             "credentials",
             "eval_credentials",
             "tags",
+            "config",
         ]
+
+    def validate(self, attrs):
+        return _validate_provider_scope(self, super().validate(attrs))
 
 
 class SearchProviderNoCredentialsSerializer(serializers.ModelSerializer):
@@ -85,7 +115,11 @@ class SearchProviderNoCredentialsSerializer(serializers.ModelSerializer):
             "result_mappings",
             "results_per_query",
             "tags",
+            "config",
         ]
+
+    def validate(self, attrs):
+        return _validate_provider_scope(self, super().validate(attrs))
 
 
 class SearchSerializer(serializers.ModelSerializer):

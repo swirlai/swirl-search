@@ -16,6 +16,15 @@ class AdaptiveQueryProcessor(QueryProcessor):
 
     type = 'AdaptiveQueryProcessor'
 
+    def clean(self, query_string):
+        '''The character filter applied after the tag syntax has been taken out.
+
+        A hook, not a behaviour change: this is the clean_string() call that was
+        inline here. BackstageQueryProcessor overrides it to keep the dots in a
+        hostname, which clean_string() turns into spaces.
+        '''
+        return clean_string(query_string)
+
     def process(self):
 
         # TAG: processing
@@ -77,7 +86,7 @@ class AdaptiveQueryProcessor(QueryProcessor):
         else:
             self.query_string = ' '.join(query_wot_list)
 
-        query = clean_string(self.query_string).strip()
+        query = self.clean(self.query_string).strip()
         query_list = query.split()
 
         # NOT tag

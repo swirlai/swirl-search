@@ -99,6 +99,33 @@ def get_query_selected_provider_list(search):
     return selected_provider_list
 
 
+def federation_timeout(search):
+    """Seconds to wait for the federate tasks of this search.
+
+    settings.SWIRL_TIMEOUT unless the search carries a per-request override in
+    query_template_json['backstage']['timeout'], which swirl/views.py sets from
+    the ?backstage_timeout_ms query param the Backstage engine module sends.
+    The view has already clamped it.
+    """
+    default = getattr(settings, 'SWIRL_TIMEOUT', 10)
+    payload = getattr(search, 'query_template_json', None) or {}
+    if not isinstance(payload, dict):
+        return default
+    block = payload.get('backstage') or {}
+    if not isinstance(block, dict):
+        return default
+    override = block.get('timeout')
+    try:
+        override = int(override)
+    except (TypeError, ValueError):
+        return default
+    if override <= 0:
+        return default
+    logger.info(f"{module_name}_{search.id}: federation timeout overridden to {override}s by the Backstage query")
+    return override
+
+########################################
+
 def search(id, session=None, request=None):
 
     '''
@@ -210,7 +237,7 @@ def search(id, session=None, request=None):
         results = group(*tasks_list).delay()
         with allow_join_result():
             try:
-                results = results.get(interval=0.05, timeout=settings.SWIRL_TIMEOUT)
+                results = results.get(interval=0.05, timeout=federation_timeout(search))
             except CeleryTimeoutError as err:
                 logger.warning(f"Timeout:{err} — query results may still be returned")
             except Exception as err:

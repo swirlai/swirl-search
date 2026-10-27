@@ -137,6 +137,9 @@ dmypy.json
 .\#*
 
 
+# SWIRL Tantivy index data (SWIRL for Backstage)
+tantivy_data/
+
 # Claude Code local state
 .claude/settings.local.json
 .claude/worktrees/
