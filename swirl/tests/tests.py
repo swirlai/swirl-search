@@ -885,6 +885,28 @@ def test_rm_btc_converter_boundary_cases():
     assert converter.get_key() == 'sw_btcconvertfoo'
     assert converter.get_value('foo') == 'foo'
 
+@pytest.mark.django_db
+def test_rm_converter_keeps_json_types_without_directive():
+    # Issue 1995: values without a directive must keep their JSON type
+    for v in [None, ['<em>a</em>', 'b'], {'a': 1}, True, 1.5, 0, 'ok']:
+        converter = ResultMapConverter('$.title')
+        converter.get_key()
+        assert converter.get_value(v) == v
+        assert type(converter.get_value(v)) == type(v)
+
+@pytest.mark.django_db
+def test_rm_converter_directives_accept_non_strings():
+    converter = ResultMapConverter('sw_btcconvert(foo)')
+    converter.get_key()
+    assert converter.get_value(100000000) == '1'
+    converter = ResultMapConverter('sw_btcconvert(foo)')
+    converter.get_key()
+    with pytest.raises(ValueError):
+        converter.get_value(None)
+    converter = ResultMapConverter('sw_urlencode(foo)')
+    converter.get_key()
+    assert converter.get_value(12) == '12'
+
 @pytest.fixture
 def prefix_toks_test_cases():
     return [

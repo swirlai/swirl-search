@@ -28,9 +28,10 @@ class ResultMapConverter():
         """Convert if needed (Bitcoin or URL encoding)."""
         if self.__found_directive:
             if self.__found_directive.group(0).startswith('sw_btcconvert'):
-                if not v.isdigit():
+                s = str(v)
+                if not s.isdigit():
                     raise ValueError("Invalid input. The input should be a numeric string.")
-                btc_decimal = Decimal(v) / Decimal(100_000_000)
+                btc_decimal = Decimal(s) / Decimal(100_000_000)
                 return str(btc_decimal)
             elif self.__found_directive.group(0).startswith('sw_urlencode'):
                 return quote(str(v), safe='')
@@ -46,5 +47,6 @@ class ResultMapConverter():
     def get_value(self, v):
         """
         Return the value, either as is, or converted if directed (Bitcoin or URL encoding).
+        Without a directive the value keeps its JSON type (None, list, dict, bool, number).
         """
-        return self.__optional_convert_value(str(v))
+        return self.__optional_convert_value(v)
