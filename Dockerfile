@@ -9,16 +9,21 @@ FROM python:3.14.10-slim-trixie
 ARG SWIRL_PROFILE=full
 ENV SWIRL_PROFILE=${SWIRL_PROFILE}
 
-# Update, upgrade and install packages in a single RUN to reduce layers
+# Runtime packages only, in a single RUN to reduce layers:
+#   jq           - docker-compose.yaml writes the Galaxy config with it
+#   procps       - swirl.py checks service PIDs with `ps`
+#   redis-server - the backstage profile runs Redis inside the container
+# No compiler toolchain (build-essential, python3-dev, libpq-dev): every compiled
+# dependency installs from a wheel on amd64 and arm64, psycopg2-binary carries its
+# own libpq, and the one sdist (func_timeout) is pure Python. If a dependency ever
+# ships without a wheel, the pip step below fails instead of compiling silently.
+# zlib (DSA-6613-1) from trixie-security: the 3.14.10 base tag (built 2026-11-05)
+# still ships the unfixed zlib1g. Drop that line once the base tag carries the fix.
 RUN apt-get update && apt-get install -y \
-    apt-file \
-    build-essential \
     jq \
-    libpq-dev \
     procps \
-    python3-dev \
     redis-server \
-&& apt-file update \
+&& apt-get install -y --only-upgrade zlib1g \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
 
