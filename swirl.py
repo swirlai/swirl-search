@@ -47,8 +47,7 @@ def service_is_retired(service_name):
                     ret = True
     except Exception as err:
         print(f"{err} checking retired service")
-    finally:
-        return ret
+    return ret
 
 
 def check_pid(pid):

@@ -145,8 +145,7 @@ class RagPrompt():
             self._last_chunk_status = RAG_PROMPT_CHUNK_OK
         except Exception as err:
             logger.info(f"{self} {err} while putting chunk")
-        finally:
-            return self.is_full()
+        return self.is_full()
 
     def get_promp_text(self):
         logger.info(f'{self} : max_tokens:{self._max_tokens} num_tokens {self.get_num_tokens()} is_full:{self.is_full()}')

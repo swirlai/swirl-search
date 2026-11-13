@@ -47,6 +47,7 @@ def page_fetcher_task(searchprovider, swirl_score, url, provider_id, body, user_
     from django.core.exceptions import ObjectDoesNotExist
     def get_authenticator_from_search_provider(provider_id):
         ret = None
+        idp = None
         if not provider_id:
             logger.error(f"Blank provider ID getting fetch options")
             return ret
@@ -62,8 +63,7 @@ def page_fetcher_task(searchprovider, swirl_score, url, provider_id, body, user_
             logger.error(f"Unexpected attribute error for {idp}")
         except Exception as err:
             logger.error(f"Unexecpected exception {err} getting fetch options")
-        finally:
-            return ret
+        return ret
 
     def get_page_fetcher_options_from_search_provider(provider_id):
         ret_options = {}

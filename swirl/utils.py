@@ -35,8 +35,7 @@ def safe_urlparse(url):
         ret =  urlparse(url)
     except Exception as err:
         print(f'{err} while parsing URL')
-    finally:
-        return ret
+    return ret
 
 def provider_getter():
     try:
