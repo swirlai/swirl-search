@@ -78,8 +78,7 @@ class WebPage (metaclass=ABCMeta):
             ret_text = soup.get_text()
         except Exception as err:
             logger.error(f"{self} convertin html to text")
-        finally:
-            return ret_text
+        return ret_text
 
 class DocumentWebPage (WebPage):
     def __str__(self):
@@ -115,9 +114,8 @@ class DocumentWebPage (WebPage):
             else:
                 logger.warning(f"Retrieval failed: {self._response.url}")
         except Exception as err:
-            logger.err(f'exception {err} getting text from page')
-        finally:
-            return ret_text
+            logger.error(f'exception {err} getting text from page')
+        return ret_text
 
 
 class PageFetcher (metaclass=ABCMeta):
