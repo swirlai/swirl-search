@@ -23,6 +23,7 @@ from django.conf import settings
 from .forms import QueryTransformForm
 
 from rest_framework import viewsets, status
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -1326,6 +1327,8 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
+    # User management is for administrators (staff accounts).
+    permission_classes = [IsAdminUser]
 
 ########################################
 ########################################
@@ -1339,6 +1342,8 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
+    # Group management is for administrators (staff accounts).
+    permission_classes = [IsAdminUser]
 
 ########################################
 ########################################
