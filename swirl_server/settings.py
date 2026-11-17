@@ -362,6 +362,9 @@ SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY_DEF=True
 SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY=env.bool('SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY',default=SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY_DEF)
 
 MICROSOFT_CLIENT_ID= env('MICROSOFT_CLIENT_ID', default='')
+# Directory (tenant) ID of the app registration. Optional: when set, Microsoft
+# sign-in is restricted to that tenant.
+MICROSOFT_TENANT_ID = env('MICROSOFT_TENANT_ID', default='')
 MICROSOFT_CLIENT_SECRET = env('MICROSOFT_CLIENT_SECRET', default='')
 MICROSOFT_REDIRECT_URI = env('MICROSOFT_REDIRECT_URI',default='')
 

@@ -30,6 +30,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from swirl.authentication import OptionalTokenAuthentication
 from swirl.backstage_bearer import BackstagePrincipal, BackstagePrincipalAuthentication
+from swirl.oidc_signin import SigninTokenError, identity_from_claims, verify_signin_token
 from rest_framework.permissions import IsAuthenticated
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -284,34 +285,65 @@ class LogoutView(APIView):
 @extend_schema(exclude=True)  # This excludes the entire viewset from Swagger documentation
 class OidcAuthView(APIView):
 
+    """
+    Microsoft sign-in for Galaxy. The browser presents the ID token it received
+    from Microsoft in the OIDC-Token header; it is verified against this
+    instance's app registration (see swirl/oidc_signin.py) and exchanged for a
+    SWIRL API token.
+    """
+
     def post(self, request):
-        if 'OIDC-Token' in request.headers:
-            header = request.headers['OIDC-Token']
-            token = header.split(' ')[1]
-            if token:
-                data = Microsoft().get_user(token)
-                if data.get('mail'):
-                    user = None
-                    try:
-                        user = User.objects.get(email=data['mail'])
-                    except User.DoesNotExist:
-                        # Provision a regular (non-privileged) user. OIDC sign-in must
-                        # never confer superuser/staff rights, and these accounts
-                        # authenticate via the token flow only, so they get no usable
-                        # password (no shared Basic-auth backdoor).
-                        user = User.objects.create_user(
-                            username=data['mail'],
-                            email=data['mail'],
-                            is_superuser=False,
-                            is_staff=False
-                        )
-                        user.set_unusable_password()
-                        user.save()
-                    token, created = Token.objects.get_or_create(user=user)
-                    return Response({ 'user': user.username, 'token': token.key, 'swirl_version': SWIRL_VERSION, 'is_superuser': user.is_superuser, 'edition': 'community' })
-                return HttpResponseForbidden()
+        # "Bearer <token>" or the bare token; anything else is not a JWT and
+        # is refused by the verifier.
+        id_token = request.headers.get('OIDC-Token', '').split(' ')[-1].strip()
+        if not id_token:
             return HttpResponseForbidden()
-        return HttpResponseForbidden()
+
+        try:
+            claims = verify_signin_token(id_token)
+        except SigninTokenError as err:
+            logger.warning(f"oidc_authenticate: sign-in token refused: {err.reason}")
+            return HttpResponseForbidden()
+
+        identity = identity_from_claims(claims)
+        if not identity:
+            logger.warning('oidc_authenticate: verified token carries no email or username claim')
+            return HttpResponseForbidden()
+
+        user = self._get_or_create_user(identity)
+        if user is None:
+            return HttpResponseForbidden()
+
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({ 'user': user.username, 'token': token.key, 'swirl_version': SWIRL_VERSION, 'is_superuser': user.is_superuser, 'edition': 'community' })
+
+    def _get_or_create_user(self, identity):
+        """The user whose e-mail address is *identity*, created on first
+        sign-in. Returns None when the address does not map to exactly one
+        account."""
+        matches = list(User.objects.filter(email__iexact=identity).order_by('id')[:2])
+        if len(matches) == 1:
+            return matches[0]
+        if len(matches) > 1:
+            logger.warning('oidc_authenticate: more than one user has this e-mail address; refusing sign-in')
+            return None
+        if User.objects.filter(username__iexact=identity).exists():
+            logger.warning('oidc_authenticate: a user with this username has a different e-mail address; refusing sign-in')
+            return None
+
+        # Provision a regular (non-privileged) user. OIDC sign-in must
+        # never confer superuser/staff rights, and these accounts
+        # authenticate via the token flow only, so they get no usable
+        # password (no shared Basic-auth backdoor).
+        user = User.objects.create_user(
+            username=identity,
+            email=identity,
+            is_superuser=False,
+            is_staff=False
+        )
+        user.set_unusable_password()
+        user.save()
+        return user
 
 
 @extend_schema(exclude=True)  # This excludes the entire viewset from Swagger documentation

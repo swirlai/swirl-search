@@ -61,14 +61,16 @@ def test_own_token_still_returned():
 
 def _oidc_post():
     req = APIRequestFactory().post('/swirl/oidc_authenticate/')
-    req.META['HTTP_OIDC_TOKEN'] = 'Bearer graph-access-token'
+    req.META['HTTP_OIDC_TOKEN'] = 'Bearer id-token'
     return req
 
 
 @pytest.mark.django_db
 def test_oidc_provisions_non_privileged_user():
     """A new OIDC user must be created without superuser/staff or a usable password."""
-    with patch('swirl.views.Microsoft.get_user', return_value={'mail': 'newbie@example.com'}):
+    # Token verification has its own tests (test_oidc_signin.py); this one is
+    # about the account a verified sign-in creates.
+    with patch('swirl.views.verify_signin_token', return_value={'email': 'newbie@example.com'}):
         response = OidcAuthView().post(_oidc_post())
 
     assert response.status_code == 200
@@ -81,8 +83,7 @@ def test_oidc_provisions_non_privileged_user():
 
 @pytest.mark.django_db
 def test_oidc_invalid_token_forbidden():
-    """A token with no mail (e.g. expired/invalid) must return 403, not 500."""
-    with patch('swirl.views.Microsoft.get_user', return_value={'error': 'invalid'}):
-        response = OidcAuthView().post(_oidc_post())
+    """A token that does not verify (e.g. expired/invalid) must return 403, not 500."""
+    response = OidcAuthView().post(_oidc_post())
 
     assert response.status_code == 403
