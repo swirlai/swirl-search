@@ -19,7 +19,8 @@ Tenant, the same rule as SWIRL Enterprise:
   * not set: the issuer of the tenant named in the token's ``tid`` claim is
     expected, and signature and audience are still enforced against
     Microsoft's common key set.  A multi-tenant app registration then lets
-    any Entra tenant sign in, so a WARNING is logged once.  Set
+    any Entra tenant sign in, so a WARNING is logged once per process, at
+    start-up and again at the first sign-in if start-up did not log it.  Set
     ``MICROSOFT_TENANT_ID`` to restrict sign-in to one tenant.
 
 Sign-in is refused when ``MICROSOFT_CLIENT_ID`` is not configured.  Only v2.0
@@ -104,6 +105,22 @@ def _warn_once(key: str, message: str):
     logger.warning(message)
 
 
+TENANT_NOT_SET_MESSAGE = (
+    'oidc_signin: MICROSOFT_TENANT_ID is not set, so a sign-in token from '
+    'any Entra tenant is accepted for this app registration. Set '
+    'MICROSOFT_TENANT_ID to the Directory (tenant) ID to restrict sign-in '
+    'to one tenant.')
+
+
+def warn_if_any_tenant_can_sign_in():
+    """Log the tenant notice now, if it applies: Microsoft sign-in is
+    configured (``MICROSOFT_CLIENT_ID``) and no tenant is.  Called when a
+    SWIRL process starts, so the notice does not wait for the first sign-in.
+    Once per process, shared with the sign-in path."""
+    if signin_client_id() and not signin_tenant_id():
+        _warn_once('tenant-not-set', TENANT_NOT_SET_MESSAGE)
+
+
 def _issuer_and_keys(raw_token: str):
     """Return ``(issuer, jwks_uri)`` to verify *raw_token* against.
 
@@ -127,12 +144,7 @@ def _issuer_and_keys(raw_token: str):
     tid = tid.strip().lower() if isinstance(tid, str) else ''
     if not _GUID_RE.match(tid):
         raise SigninTokenError('token has no valid tid')
-    _warn_once(
-        'tenant-not-set',
-        'oidc_signin: MICROSOFT_TENANT_ID is not set, so a sign-in token from '
-        'any Entra tenant is accepted for this app registration. Set '
-        'MICROSOFT_TENANT_ID to the Directory (tenant) ID to restrict sign-in '
-        'to one tenant.')
+    _warn_once('tenant-not-set', TENANT_NOT_SET_MESSAGE)
     return f'{MS_AUTHORITY}/{tid}/v2.0', MS_COMMON_JWKS_URI
 
 

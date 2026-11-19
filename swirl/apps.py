@@ -12,6 +12,20 @@ class SwirlConfig(AppConfig):
         setup_logging()
         print ("setting up logging DONE")
         post_migrate.connect(ensure_backstage_group, sender=self)
+        warn_about_signin_configuration()
+
+
+def warn_about_signin_configuration():
+    """Say at start-up what the sign-in configuration allows, where that is
+    worth knowing (swirl/oidc_signin.py). Reads settings only, and never
+    stops start-up."""
+    import logging
+    logger = logging.getLogger(__name__)
+    try:
+        from swirl import oidc_signin
+        oidc_signin.warn_if_any_tenant_can_sign_in()
+    except Exception as err:
+        logger.warning(f"warn_about_signin_configuration: skipped: {err}")
 
 
 def ensure_backstage_group(sender, **kwargs):
