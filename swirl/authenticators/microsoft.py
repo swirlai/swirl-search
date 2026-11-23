@@ -15,6 +15,21 @@ scopes = ["User.Read", "Mail.Read", "Files.Read.All", "Calendars.Read", "Sites.R
 
 graph_url = 'https://graph.microsoft.com/v1.0'
 
+DEFAULT_IDP_REQUEST_TIMEOUT_SECONDS = 30
+
+
+def idp_request_timeout():
+    """How long, in seconds, to wait for Microsoft to answer a token or
+    profile request. ``SWIRL_IDP_REQUEST_TIMEOUT``, 30 when it is unset or
+    not a number. Zero or less returns None, which waits without limit as
+    SWIRL did before."""
+    value = getattr(settings, 'SWIRL_IDP_REQUEST_TIMEOUT', DEFAULT_IDP_REQUEST_TIMEOUT_SECONDS)
+    try:
+        seconds = float(value)
+    except (TypeError, ValueError):
+        return DEFAULT_IDP_REQUEST_TIMEOUT_SECONDS
+    return seconds if seconds > 0 else None
+
 class Microsoft(Authenticator):
 
     type = "SWIRL Microsoft Authenticator"
@@ -32,7 +47,8 @@ class Microsoft(Authenticator):
             headers={'Authorization': 'Bearer {0}'.format(token)},
             params={
                 '$select': 'displayName,mail,userPrincipalName'
-            })
+            },
+            timeout=idp_request_timeout())
         return user.json()
 
 
@@ -48,7 +64,10 @@ class Microsoft(Authenticator):
             client_id=settings.MICROSOFT_CLIENT_ID,
             client_credential=settings.MICROSOFT_CLIENT_SECRET,
             authority="https://login.microsoftonline.com/common", ## may need to change to the tenan ID, not the common?
-            token_cache=cache
+            token_cache=cache,
+            # Applies to every request this client makes: redeeming a code
+            # and refreshing a token.
+            timeout=idp_request_timeout()
         )
         return auth_app
 
@@ -100,8 +119,9 @@ class Microsoft(Authenticator):
         result = self.get_token_from_code(request)
         tok = result.get('access_token', None)
         if not tok:
-            logger.error(f'access token not present in call back result {result}')
-            raise ValueError(result)
+            reason = describe_failure(result)
+            logger.error(f'access token not present in call back result: {reason}')
+            raise ValueError(f'Microsoft returned no access token: {reason}')
 
         user = self.get_user(tok)
         self.store_user(request, user, result)
@@ -120,23 +140,37 @@ class Microsoft(Authenticator):
         app = self._get_auth_app()
         result = app.acquire_token_by_refresh_token(refresh_token=refresh_token, scopes=scopes)
         if 'access_token' in result:
-            logger.debug(f'in result : access_token {result["access_token"]} refresh_token : {result["refresh_token"]}')
+            logger.debug('acquire_token_by_refresh: received a new access token and refresh token')
             self.update_oauth_token_in_db(user, result['access_token'], result['refresh_token'])
         else:
-            logger.debug(f'access token not present in result {result}')
+            logger.debug(f'acquire_token_by_refresh: access token not present in result: {describe_failure(result)}')
 
     def update_token(self, request):
         logger.debug('update_token')
         app = self.get_auth_app(request)
         session_data = self.get_session_data(request)
         if session_data:
-            logger.debug(f'session_data:{session_data}')
+            logger.debug('update_token: the session holds token data')
             result = app.acquire_token_by_refresh_token(session_data[self.refresh_token_field], scopes=scopes)
             if 'access_token' in result:
-                logger.debug(f'in result : access_token {result["access_token"]} refresh_token : {result["refresh_token"]}')
+                logger.debug('update_token: received a new access token and refresh token')
                 now = datetime.now()
                 self.set_session_data(request, result['access_token'], result['refresh_token'], int(now.timestamp()) + result['expires_in'])
                 request.session.save()
                 self.update_oauth_token_in_db(request.user, result['access_token'], result['refresh_token'])
                 return True
         return self.login(request)
+
+MAX_LOGGED_ERROR_CHARS = 300
+
+
+def describe_failure(result):
+    """What Microsoft said went wrong, for a log line or an error message:
+    the ``error`` code and its description, cut short. The rest of the
+    response is left out, because it can carry tokens."""
+    if not isinstance(result, dict):
+        return 'no usable response'
+    error = str(result.get('error') or 'no error code')
+    description = str(result.get('error_description') or '')
+    text = f'{error}: {description}' if description else error
+    return text[:MAX_LOGGED_ERROR_CHARS]
