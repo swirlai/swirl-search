@@ -1,14 +1,9 @@
 """
-DS-5772: connecting a Microsoft account does not write tokens to the log.
+DS-5772: what the Microsoft authenticator writes to the log.
 
-The Microsoft authenticator logged the access token and the refresh token
-each time a token was refreshed, logged the session's token data, and logged
-the whole response from Microsoft when a connection came back without an
-access token. Logs are read by more people, and kept for longer, than a
-token should be.
-
-The log lines stay, so a refresh can still be followed in the log. They say
-what happened without the values.
+The log lines for connecting a Microsoft account and refreshing its token
+say what happened (a token was received, or the error Microsoft returned)
+and carry no token values. A refresh can still be followed in the log.
 """
 import logging
 from unittest.mock import MagicMock
