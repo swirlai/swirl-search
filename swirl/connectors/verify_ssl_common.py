@@ -15,8 +15,17 @@ class VerifyCertsCommon(Connector):
     def str_to_bool(self,s):
         return s.strip().lower() in ['true', '1', 'yes', 'y']
 
-    def log_invalid_credentials(self):
-        self.error(f"invalid credentials: {self.provider.credentials}")
+    def log_invalid_credentials(self, entry=None, entries=None):
+        """Report that the SearchProvider's credentials could not be read:
+        which comma-separated entry is wrong and what forms are accepted.
+        The message does not repeat the credentials; it is written to the
+        log and saved with the search's messages."""
+        where = f"entry {entry} of {entries} is" if entry and entries else "an entry is"
+        self.error(
+            f"invalid credentials: {where} not in a recognised form. Expected "
+            "username:password, bearer=<token>, verify_certs=<true or false> or "
+            "ca_certs=<path>, separated by commas. The credentials themselves "
+            "are not shown.")
         self.status = "ERR_INVALID_CREDENTIALS"
 
     def get_creds(self, def_verify_certs=False):
@@ -32,33 +41,34 @@ class VerifyCertsCommon(Connector):
         if not self.provider.credentials:
             return uname, pw, verify_certs, ca_certs, bearer
 
-        for cre in cred_list:
+        entries = len(cred_list)
+        for entry, cre in enumerate(cred_list, start=1):
             if cre.startswith('bearer='):
                 # handle this special because tokens have '=' sign in them
                 bearer = cre[len('bearer='):]
                 if not bearer:
-                    self.log_invalid_credentials()
+                    self.log_invalid_credentials(entry, entries)
                     break
             elif ':' in cre:
                 (uname,pw) = cre.split(':')
                 if not (uname and pw):
-                    self.log_invalid_credentials()
+                    self.log_invalid_credentials(entry, entries)
                     break
             elif '=' in cre:
                 # handle k=v type params
                 (k,v) = cre.split('=')
                 if not (k and v):
-                    self.log_invalid_credentials()
+                    self.log_invalid_credentials(entry, entries)
                     break
                 if k.strip().lower() == 'verify_certs':
                     verify_certs= self.str_to_bool(v)
                 elif k.strip().lower() == 'ca_certs':
                     ca_certs = v.strip()
                 else:
-                    self.log_invalid_credentials()
+                    self.log_invalid_credentials(entry, entries)
                     break
             else:
-                self.log_invalid_credentials()
+                self.log_invalid_credentials(entry, entries)
                 break
 
         return uname, pw, verify_certs, ca_certs, bearer
