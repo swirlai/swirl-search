@@ -15,6 +15,21 @@ scopes = ["User.Read", "Mail.Read", "Files.Read.All", "Calendars.Read", "Sites.R
 
 graph_url = 'https://graph.microsoft.com/v1.0'
 
+DEFAULT_IDP_REQUEST_TIMEOUT_SECONDS = 30
+
+
+def idp_request_timeout():
+    """How long, in seconds, to wait for Microsoft to answer a token or
+    profile request. ``SWIRL_IDP_REQUEST_TIMEOUT``, 30 when it is unset or
+    not a number. Zero or less returns None, which waits without limit as
+    SWIRL did before."""
+    value = getattr(settings, 'SWIRL_IDP_REQUEST_TIMEOUT', DEFAULT_IDP_REQUEST_TIMEOUT_SECONDS)
+    try:
+        seconds = float(value)
+    except (TypeError, ValueError):
+        return DEFAULT_IDP_REQUEST_TIMEOUT_SECONDS
+    return seconds if seconds > 0 else None
+
 class Microsoft(Authenticator):
 
     type = "SWIRL Microsoft Authenticator"
@@ -32,7 +47,8 @@ class Microsoft(Authenticator):
             headers={'Authorization': 'Bearer {0}'.format(token)},
             params={
                 '$select': 'displayName,mail,userPrincipalName'
-            })
+            },
+            timeout=idp_request_timeout())
         return user.json()
 
 
@@ -48,7 +64,10 @@ class Microsoft(Authenticator):
             client_id=settings.MICROSOFT_CLIENT_ID,
             client_credential=settings.MICROSOFT_CLIENT_SECRET,
             authority="https://login.microsoftonline.com/common", ## may need to change to the tenan ID, not the common?
-            token_cache=cache
+            token_cache=cache,
+            # Applies to every request this client makes: redeeming a code
+            # and refreshing a token.
+            timeout=idp_request_timeout()
         )
         return auth_app
 
