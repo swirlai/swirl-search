@@ -368,6 +368,12 @@ MICROSOFT_TENANT_ID = env('MICROSOFT_TENANT_ID', default='')
 MICROSOFT_CLIENT_SECRET = env('MICROSOFT_CLIENT_SECRET', default='')
 MICROSOFT_REDIRECT_URI = env('MICROSOFT_REDIRECT_URI',default='')
 
+# Seconds to wait for an identity provider to answer a token or profile
+# request. 0 waits without limit. Kept as text and read where it is used,
+# so a mistyped value falls back to 30 seconds and does not stop SWIRL
+# from starting.
+SWIRL_IDP_REQUEST_TIMEOUT = env("SWIRL_IDP_REQUEST_TIMEOUT", default="30")
+
 CSRF_TRUSTED_ORIGINS = list(env('CSRF_TRUSTED_ORIGINS').split(','))
 
 SWIRL_WRITE_PATH_DEF = 'stored_results'
