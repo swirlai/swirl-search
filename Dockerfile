@@ -17,13 +17,14 @@ ENV SWIRL_PROFILE=${SWIRL_PROFILE}
 # dependency installs from a wheel on amd64 and arm64, psycopg2-binary carries its
 # own libpq, and the one sdist (func_timeout) is pure Python. If a dependency ever
 # ships without a wheel, the pip step below fails instead of compiling silently.
-# zlib (DSA-6613-1) from trixie-security: the 3.14.10 base tag (built 2026-11-05)
-# still ships the unfixed zlib1g. Drop that line once the base tag carries the fix.
+# Debian packages come from the base tag as it ships; no --only-upgrade exception is
+# needed today (the 3.14.10 base tag, rebuilt 2026-11-24, carries the current fixes).
+# If the base lags a fix, add a verified `apt-get install -y --only-upgrade <package>`
+# step below and drop it once the base tag carries the fix.
 RUN apt-get update && apt-get install -y \
     jq \
     procps \
     redis-server \
-&& apt-get install -y --only-upgrade zlib1g \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
 
