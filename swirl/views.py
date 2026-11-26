@@ -1314,6 +1314,11 @@ class ResultViewSet(viewsets.ModelViewSet):
         result.date_updated = datetime.now()
         serializer = ResultSerializer(instance=result, data=request.data)
         serializer.is_valid(raise_exception=True)
+        # A result stays within its owner's searches: it cannot be attached
+        # to a search that belongs to someone else.
+        search = serializer.validated_data.get('search_id')
+        if search is not None and search.owner_id != self.request.user.id:
+            return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
         # security review for 1.7 - OK, saved with owner
         serializer.save(owner=self.request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
