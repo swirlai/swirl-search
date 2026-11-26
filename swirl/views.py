@@ -46,7 +46,7 @@ import hmac
 from swirl.models import *
 from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, OauthToken, AIProvider
-from swirl.serializers import UserSerializer, DetailSearchRagSerializer, GroupSerializer, SearchProviderSerializer, SearchProviderSharedSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, StatusResponseSerializer, AuthResponseSerializer, AIProviderSerializer, AIProviderNoCredentialsSerializer
+from swirl.serializers import UserSerializer, DetailSearchRagSerializer, GroupSerializer, SearchProviderSerializer, SearchProviderSharedSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, StatusResponseSerializer, AuthResponseSerializer, AIProviderSerializer, AIProviderNoCredentialsSerializer, AIProviderSharedSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
 from swirl.views_helpers.search_rag import SearchRag
@@ -1770,10 +1770,16 @@ class AIProviderViewSet(viewsets.ModelViewSet):
             AIProvider.objects.filter(owner=request.user)
         )
         if request.user.is_superuser:
-            serializer = AIProviderSerializer(qs, many=True)
+            data = AIProviderSerializer(qs, many=True).data
         else:
-            serializer = AIProviderNoCredentialsSerializer(qs, many=True)
-        return Response(paginate(serializer.data, request), status=status.HTTP_200_OK)
+            # The user's own providers without their api_key; other users'
+            # shared providers without anything the provider signs in with.
+            data = [
+                (AIProviderNoCredentialsSerializer if provider.owner_id == request.user.id
+                 else AIProviderSharedSerializer)(provider).data
+                for provider in qs
+            ]
+        return Response(paginate(data, request), status=status.HTTP_200_OK)
 
     def create(self, request):
         if not request.user.has_perm('swirl.add_aiprovider'):
@@ -1799,7 +1805,7 @@ class AIProviderViewSet(viewsets.ModelViewSet):
         if request.user == obj.owner or request.user.is_superuser:
             serializer = AIProviderSerializer(obj)
         else:
-            serializer = AIProviderNoCredentialsSerializer(obj)
+            serializer = AIProviderSharedSerializer(obj)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def update(self, request, pk=None, partial=False):
