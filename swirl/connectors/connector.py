@@ -7,6 +7,7 @@
 from sys import path
 from os import environ
 import time
+import urllib.parse
 import copy
 
 import django
@@ -32,6 +33,12 @@ from swirl.processors.transform_query_processor_utils import get_query_processor
 from swirl.scope import mark_shared_visibility, warn_if_unrestricted
 
 SWIRL_RP_SKIP_TAG = 'SW_RESULT_PROCESSOR_SKIP'
+
+# What replaces a provider credential value in saved provider queries, messages
+# and log lines; values shorter than the minimum are too short to be told apart
+# from ordinary text and are left alone.
+CREDENTIAL_PLACEHOLDER = '<credential>'
+CREDENTIAL_VALUE_MIN_LENGTH = 4
 
 ########################################
 
@@ -93,10 +100,35 @@ class Connector:
 
     ########################################
 
+    def withhold_credentials(self, text):
+        """
+        Return text with the provider's credential values replaced.
+
+        Credentials of the form key=value are substituted into the request the
+        connector sends, so they are part of the provider query and of any
+        message that quotes it. Those are saved with the search and shown to
+        whoever ran it, and written to the log; the value itself is not.
+        """
+        if not text or not isinstance(text, str):
+            return text
+        credentials = getattr(getattr(self, 'provider', None), 'credentials', None)
+        if not credentials or not isinstance(credentials, str):
+            return text
+        for entry in credentials.split(','):
+            if '=' not in entry:
+                continue
+            value = entry[entry.find('=') + 1:].strip()
+            if len(value) < CREDENTIAL_VALUE_MIN_LENGTH:
+                continue
+            for form in {value, urllib.parse.quote(value, safe=''), urllib.parse.quote_plus(value)}:
+                text = text.replace(form, CREDENTIAL_PLACEHOLDER)
+        return text
+
     def message(self, message):
-        self.messages.append(f'[{datetime.now()}] {message}')
+        self.messages.append(f'[{datetime.now()}] {self.withhold_credentials(str(message))}')
 
     def error(self, message, save_results=True):
+        message = self.withhold_credentials(str(message))
         logger.error(f'{self}: {message}')
         self.message(f'Error: {self}: {message}')
         self.status = 'ERROR'
@@ -105,7 +137,7 @@ class Connector:
 
 
     def warning(self, message):
-        logger.warning(f'{self}: {message}')
+        logger.warning(f'{self}: {self.withhold_credentials(str(message))}')
 
     ########################################
 
@@ -360,7 +392,7 @@ class Connector:
             logger.debug(f"{self}: invoking processor: process results {processor}")
             last_results = copy.deepcopy(self.results)
             try:
-                proc = alloc_processor(processor=processor)(self.results, self.provider, self.query_string_to_provider, request_id=self.request_id,
+                proc = alloc_processor(processor=processor, kind=ResultProcessor)(self.results, self.provider, self.query_string_to_provider, request_id=self.request_id,
                                                             result_processor_json_feedback=self.result_processor_json_feedback)
                 modified = proc.process()
                 self.results = proc.get_results()
@@ -447,7 +479,7 @@ class Connector:
         try:
             logger.debug(f"{self}: Result.create()")
             new_result = Result.objects.create(search_id=self.search, searchprovider=self.provider.name, provider_id=self.provider.id,
-                                               query_string_to_provider=self.query_string_to_provider, query_to_provider=self.query_to_provider,
+                                               query_string_to_provider=self.query_string_to_provider, query_to_provider=self.withhold_credentials(self.query_to_provider),
                                                query_processors=query_processors, result_processors=result_processors, messages=self.messages,
                                                status=self.status, found=self.found, retrieved=self.retrieved, time=f'{(end_time - self.start_time):.1f}',
                                                json_results=self.processed_results, owner=self.search.owner,result_processor_json_feedback=self.result_processor_json_feedback)
@@ -460,7 +492,7 @@ class Connector:
                 f"searchprovider={self.provider.name}, "
                 f"provider_id={self.provider.id}, "
                 f"query_string_to_provider={self.query_string_to_provider}, "
-                f"query_to_provider={self.query_to_provider}, "
+                f"query_to_provider={self.withhold_credentials(self.query_to_provider)}, "
                 f"query_processors={query_processors}, "
                 f"result_processors={result_processors}, "
                 f"messages={self.messages}, "

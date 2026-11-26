@@ -46,7 +46,7 @@ import hmac
 from swirl.models import *
 from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, OauthToken, AIProvider
-from swirl.serializers import UserSerializer, DetailSearchRagSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, StatusResponseSerializer, AuthResponseSerializer, AIProviderSerializer, AIProviderNoCredentialsSerializer
+from swirl.serializers import UserSerializer, DetailSearchRagSerializer, GroupSerializer, SearchProviderSerializer, SearchProviderSharedSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, StatusResponseSerializer, AuthResponseSerializer, AIProviderSerializer, AIProviderNoCredentialsSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
 from swirl.views_helpers.search_rag import SearchRag
@@ -381,10 +381,18 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         shared_providers = SearchProvider.objects.filter(shared=True)
         self.queryset = shared_providers | SearchProvider.objects.filter(owner=self.request.user)
 
-        serializer = SearchProviderNoCredentialsSerializer(self.queryset, many=True)
         if self.request.user.is_superuser:
-            serializer = SearchProviderSerializer(self.queryset, many=True)
-        return Response(paginate(serializer.data, self.request), status=status.HTTP_200_OK)
+            data = SearchProviderSerializer(self.queryset, many=True).data
+        else:
+            # The user's own providers without their credentials; other
+            # users' shared providers without anything the connector signs
+            # in with.
+            data = [
+                (SearchProviderNoCredentialsSerializer if provider.owner_id == self.request.user.id
+                 else SearchProviderSharedSerializer)(provider).data
+                for provider in self.queryset
+            ]
+        return Response(paginate(data, self.request), status=status.HTTP_200_OK)
 
     ########################################
 
@@ -439,7 +447,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         searchprovider = SearchProvider.objects.get(pk=pk)
 
         if not self.request.user == searchprovider.owner:
-            serializer = SearchProviderNoCredentialsSerializer(searchprovider)
+            serializer = SearchProviderSharedSerializer(searchprovider)
         else:
             serializer = SearchProviderSerializer(searchprovider)
 
@@ -1148,6 +1156,20 @@ class DetailSearchRagView(APIView):
 
     def get(self, request):
         logger.debug(f"DetailSearchRagView: {request.GET}")
+        # The answer belongs to the search it was generated for, and generating
+        # it reads and replaces that search's stored result. Only the owner of
+        # the search may do either. An unknown id and another user's id get the
+        # same answer.
+        search_id = request.GET.get('search_id')
+        if search_id is not None:
+            if not request.user.is_authenticated:
+                return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
+            try:
+                owned = Search.objects.filter(pk=int(search_id), owner=request.user).exists()
+            except (TypeError, ValueError):
+                owned = False
+            if not owned:
+                return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
         search_rag = SearchRag(request)
         result = search_rag.process_rag()
         serializer = DetailSearchRagSerializer(result)
@@ -1624,6 +1646,19 @@ class FetchDocumentView(APIView):
         content_type = dl_resp.headers.get('Content-Type', 'application/octet-stream').split(';')[0].strip()
         return dl_resp.content, content_type
 
+    # How many of the caller's most recent result sets are looked through for
+    # the requested url.
+    RESULT_SETS_SEARCHED = 200
+
+    @staticmethod
+    def _same_document(url_a: str, url_b: str) -> bool:
+        """True when two urls name the same document, ignoring encoding, a fragment and a trailing slash."""
+        from urllib.parse import unquote, urldefrag
+
+        def plain(url):
+            return unquote(urldefrag(str(url).strip())[0]).rstrip('/')
+        return bool(url_a) and bool(url_b) and plain(url_a) == plain(url_b)
+
     def get(self, request):
         from swirl.web_page import PageFetcherFactory
         from urllib.parse import urlparse
@@ -1631,6 +1666,23 @@ class FetchDocumentView(APIView):
         fetch_url = request.GET.get('url', '').strip()
         if not fetch_url:
             return Response({'error': 'url parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # This endpoint fetches a document found by a search. It only fetches
+        # a url that one of the caller's own searches returned, and (below)
+        # uses a provider's page-fetch settings only for a url that provider
+        # returned.
+        NOT_A_RESULT = object()
+        result_provider_id = NOT_A_RESULT
+        recent = Result.objects.filter(owner=request.user).order_by('-id')[:self.RESULT_SETS_SEARCHED]
+        for result in recent:
+            items = result.json_results if isinstance(result.json_results, list) else []
+            if any(isinstance(item, dict) and self._same_document(item.get('url'), fetch_url) for item in items):
+                result_provider_id = result.provider_id
+                break
+        if result_provider_id is NOT_A_RESULT:
+            logger.warning(f"FetchDocumentView: {request.user} asked for a url that is not in their results")
+            return Response({'error': 'url is not in the results of any of your recent searches'},
+                            status=status.HTTP_404_NOT_FOUND)
 
         # ── SharePoint URLs: use Graph two-step fetch (metadata → downloadUrl) ──
         if self._is_sharepoint_url(fetch_url):
@@ -1653,8 +1705,15 @@ class FetchDocumentView(APIView):
         options = {"cache": "false"}
 
         if provider_id:
+            # Use a provider's page-fetch settings only for a caller who could
+            # search that provider: its owner, or anyone when it is shared.
+            # Any other id is treated like one that does not exist.
             try:
                 provider = SearchProvider.objects.get(pk=int(provider_id))
+                if provider.owner_id != request.user.id and not provider.shared:
+                    raise SearchProvider.DoesNotExist
+                if provider.id != result_provider_id:
+                    raise SearchProvider.DoesNotExist
                 cfg = provider.page_fetch_config_json or {}
                 if isinstance(cfg, dict):
                     options.update(cfg)
