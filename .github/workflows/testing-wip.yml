@@ -78,7 +78,8 @@ jobs:
           curl -X PATCH "$API_ENDPOINT" \
             -u admin:"$PASSWORD" \
             -H "Content-Type: application/json" \
-            -d "$JSON"
+            -d "$JSON" \
+            -sS -o /dev/null -w 'HTTP %{http_code}\n'
       - name: PATCH the LinkedIn PSE Config
         env:
           JSON: ${{ secrets.QA_PSE_LINKEDIN }}
@@ -88,7 +89,8 @@ jobs:
           curl -X PATCH "$API_ENDPOINT" \
             -u admin:"$PASSWORD" \
             -H "Content-Type: application/json" \
-            -d "$JSON"
+            -d "$JSON" \
+            -sS -o /dev/null -w 'HTTP %{http_code}\n'
       - name: PATCH the SWIRL Docs PSE Config
         env:
           JSON: ${{ secrets.QA_PSE_DOCS }}
@@ -98,7 +100,8 @@ jobs:
           curl -X PATCH "$API_ENDPOINT" \
             -u admin:"$PASSWORD" \
             -H "Content-Type: application/json" \
-            -d "$JSON"
+            -d "$JSON" \
+            -sS -o /dev/null -w 'HTTP %{http_code}\n'
       - name: Decode BigQuery token and create JSON file
         run: |
           echo "$BIGQUERY_TOKEN_BASE64" | base64 --decode > "${{ github.workspace }}/token.json"
