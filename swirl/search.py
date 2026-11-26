@@ -26,6 +26,7 @@ from django.db import models as django_models
 from swirl.models import Search, SearchProvider, Result
 from swirl.tasks import federate_task
 from swirl.processors import alloc_processor
+from swirl.processors.processor import PostResultProcessor
 from swirl.processors.transform_query_processor_utils import get_pre_query_processor_or_transform
 from swirl.utils import select_providers,get_url_details
 from swirl.performance_logger import SwirlQueryRequestLogger
@@ -281,7 +282,7 @@ def search(id, session=None, request=None):
         for processor in processor_list:
             logger.debug(f"{module_name}: invoking processor: {processor}")
             try:
-                post_result_processor = alloc_processor(processor=processor)(search_id=search.id, request_id=swqrx_logger.request_id)
+                post_result_processor = alloc_processor(processor=processor, kind=PostResultProcessor)(search_id=search.id, request_id=swqrx_logger.request_id)
                 if post_result_processor.validate():
                     results_modified = post_result_processor.process()
                 else:
@@ -339,7 +340,7 @@ def run_processor_if_tag_in_request(tag, processor_name, request, search, swqrx_
         return
     try:
        if tag in request.GET.keys() and processor_name:
-            processor = alloc_processor(processor=processor_name)(search_id=search.id, request_id=swqrx_logger.request_id, should_get_results=True)
+            processor = alloc_processor(processor=processor_name, kind=PostResultProcessor)(search_id=search.id, request_id=swqrx_logger.request_id, should_get_results=True)
             if processor.validate():
                 return processor.process()
             return False
