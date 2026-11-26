@@ -259,6 +259,8 @@ class LoginView(APIView):
         password = request.data.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            from swirl.default_admin import warn_at_sign_in
+            warn_at_sign_in(user, password)
             token, created = Token.objects.get_or_create(user=user)
             return Response({'token': token.key, 'user': user.username, 'swirl_version': SWIRL_VERSION, 'is_superuser': user.is_superuser, 'edition': 'community'})
         else:

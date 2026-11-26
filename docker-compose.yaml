@@ -25,6 +25,7 @@ services:
              python swirl.py start celery-worker celery-beats &&
              daphne -b 0.0.0.0 -p 8000 swirl_server.asgi:application'
     environment: # Environment variables section
+      - SWIRL_ADMIN_PASSWORD # replaces the shipped administrator password at start
       - OPENAI_API_KEY
       - AZURE_OPENAI_KEY
       - AZURE_OPENAI_ENDPOINT
