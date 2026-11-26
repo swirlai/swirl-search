@@ -12,6 +12,8 @@ class SwirlConfig(AppConfig):
         setup_logging()
         print ("setting up logging DONE")
         post_migrate.connect(ensure_backstage_group, sender=self)
+        from swirl.default_admin import check_admin_account
+        post_migrate.connect(check_admin_account, sender=self)
         warn_about_signin_configuration()
 
 

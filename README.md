@@ -110,6 +110,8 @@ docker compose pull && docker compose up
 
 Open <http://localhost:8000> and log in with `admin` / `password`.
 
+That password is public. To replace it, set `SWIRL_ADMIN_PASSWORD` before starting (`export SWIRL_ADMIN_PASSWORD='...'`); SWIRL logs a warning while the shipped one is still in use.
+
 > **Note:** The Docker version does not retain data or configuration when shut down.
 
 ## Option B — Local install (pip)
@@ -125,6 +127,8 @@ python swirl.py start
 ```
 
 Open <http://localhost:8000/swirl/> and log in with `admin` / `password`.
+
+That password is public. To replace it, change it in the admin, or set `SWIRL_ADMIN_PASSWORD` in `.env` and run `python swirl.py setup` again; SWIRL logs a warning while the shipped one is still in use.
 
 > **Requirements:** Python 3.14+, Redis running locally.
 
