@@ -100,6 +100,39 @@ def _get_session_for_oauth_providers(search, owner, session_data):
             logger.error(f"Unexpected error for {idp} and owner {owner}: {str(e)}")
             search.messages.append(f"[{datetime.now()}] Unexpected error for {idp} and owner {owner}: {str(e)}")
 
+def update_subscription(search):
+    '''
+    Re-run one subscribed search for its owner.
+    '''
+    logger.debug(f"{module_name}: subscriber: {search.id}")
+    owner = search.owner # User(search.owner)
+    # check permissions
+    if not (owner.has_perm('swirl.change_search') and owner.has_perm('swirl.change_result')):
+        logger.warning(f"{module_name}: User {owner} needs permissions change_search({owner.has_perm('swirl.change_search')}), change_result({owner.has_perm('swirl.change_result')})")
+        search.status = 'ERR_SUBSCRIBE_PERMISSIONS'
+        if search.subscribe:
+            search.messages.append(f'[{datetime.now()}] Subscriber disabled updates due to permission error')
+            search.subscribe = False
+        search.save()
+        return
+    # Update oauth tokens if necessary
+    session_data = dict()
+    logger.debug(f"{module_name}: update session: {search.id}")
+    _get_session_for_oauth_providers(search=search,owner=owner, session_data=session_data)
+    search.status = 'UPDATE_SEARCH'
+    search.save()
+    # to do: better than below and renaming upon import
+    success = run_search(search.id, session_data)
+    if success:
+        logger.debug(f"{module_name}: subscriber: updated {search.id}")
+    else:
+        logger.error(f"{module_name}: subscriber: error {search.status} updating {search.id}")
+        if search.subscribe:
+            search.messages.append(f'[{datetime.now()}] Subscriber disabled updates due to error {search.status}')
+            search.subscribe = False
+        search.save()
+    # end if
+
 def subscriber():
     '''
     This is fired whenever a Celery Beat event arrives
@@ -109,34 +142,12 @@ def subscriber():
     searches = Search.objects.filter(subscribe=True)
     logger.debug(f"START {module_name}")
     for search in searches:
-        logger.debug(f"{module_name}: subscriber: {search.id}")
-        owner = search.owner # User(search.owner)
-        # check permissions
-        if not (owner.has_perm('swirl.change_search') and owner.has_perm('swirl.change_result')):
-            logger.warning(f"{module_name}: User {owner} needs permissions change_search({owner.has_perm('swirl.change_search')}), change_result({owner.has_perm('swirl.change_result')})")
-            search.status = 'ERR_SUBSCRIBE_PERMISSIONS'
-            if search.subscribe:
-                search.messages.append(f'[{datetime.now()}] Subscriber disabled updates due to permission error')
-                search.subscribe = False
-            search.save()
-            continue
-        # Update oauth tokens if necessary
-        session_data = dict()
-        logger.debug(f"{module_name}: update session: {search.id}")
-        _get_session_for_oauth_providers(search=search,owner=owner, session_data=session_data)
-        search.status = 'UPDATE_SEARCH'
-        search.save()
-        # to do: better than below and renaming upon import
-        success = run_search(search.id, session_data)
-        if success:
-            logger.debug(f"{module_name}: subscriber: updated {search.id}")
-        else:
-            logger.error(f"{module_name}: subscriber: error {search.status} updating {search.id}")
-            if search.subscribe:
-                search.messages.append(f'[{datetime.now()}] Subscriber disabled updates due to error {search.status}')
-                search.subscribe = False
-            search.save()
-        # end if
+        # One search that cannot be updated must not stop the run: the
+        # searches after it belong to other users.
+        try:
+            update_subscription(search)
+        except Exception as err:
+            logger.error(f"{module_name}: subscriber could not update search {search.id}: {err}")
         # time.sleep(SWIRL_SUBSCRIBE_WAIT)
     # end for
     logger.debug(f"END {module_name}")
