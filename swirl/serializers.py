@@ -306,3 +306,19 @@ class AIProviderNoCredentialsSerializer(serializers.ModelSerializer):
             "id", "name", "owner", "shared", "date_created", "date_updated",
             "active", "model", "config", "tags", "defaults", "prompt_overrides",
         ]
+
+
+class AIProviderSharedSerializer(serializers.ModelSerializer):
+    """
+    What a user sees of a shared AI provider that belongs to someone else:
+    enough to choose it. Left out, as well as the api_key, is config, which
+    can carry request headers and other values the provider signs in with.
+    """
+    owner = serializers.ReadOnlyField(source="owner.username")
+
+    class Meta:
+        model = AIProvider
+        fields = [
+            "id", "name", "owner", "shared", "date_created", "date_updated",
+            "active", "model", "tags", "defaults", "prompt_overrides",
+        ]
