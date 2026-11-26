@@ -46,7 +46,7 @@ import hmac
 from swirl.models import *
 from swirl.serializers import *
 from swirl.models import SearchProvider, Search, Result, QueryTransform, Authenticator as AuthenticatorModel, OauthToken, AIProvider
-from swirl.serializers import UserSerializer, DetailSearchRagSerializer, GroupSerializer, SearchProviderSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, StatusResponseSerializer, AuthResponseSerializer, AIProviderSerializer, AIProviderNoCredentialsSerializer
+from swirl.serializers import UserSerializer, DetailSearchRagSerializer, GroupSerializer, SearchProviderSerializer, SearchProviderSharedSerializer, SearchSerializer, ResultSerializer, QueryTransformSerializer, QueryTransformNoCredentialsSerializer, LoginRequestSerializer, StatusResponseSerializer, AuthResponseSerializer, AIProviderSerializer, AIProviderNoCredentialsSerializer
 from swirl.authenticators.authenticator import Authenticator
 from swirl.authenticators import *
 from swirl.views_helpers.search_rag import SearchRag
@@ -379,10 +379,18 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         shared_providers = SearchProvider.objects.filter(shared=True)
         self.queryset = shared_providers | SearchProvider.objects.filter(owner=self.request.user)
 
-        serializer = SearchProviderNoCredentialsSerializer(self.queryset, many=True)
         if self.request.user.is_superuser:
-            serializer = SearchProviderSerializer(self.queryset, many=True)
-        return Response(paginate(serializer.data, self.request), status=status.HTTP_200_OK)
+            data = SearchProviderSerializer(self.queryset, many=True).data
+        else:
+            # The user's own providers without their credentials; other
+            # users' shared providers without anything the connector signs
+            # in with.
+            data = [
+                (SearchProviderNoCredentialsSerializer if provider.owner_id == self.request.user.id
+                 else SearchProviderSharedSerializer)(provider).data
+                for provider in self.queryset
+            ]
+        return Response(paginate(data, self.request), status=status.HTTP_200_OK)
 
     ########################################
 
@@ -437,7 +445,7 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         searchprovider = SearchProvider.objects.get(pk=pk)
 
         if not self.request.user == searchprovider.owner:
-            serializer = SearchProviderNoCredentialsSerializer(searchprovider)
+            serializer = SearchProviderSharedSerializer(searchprovider)
         else:
             serializer = SearchProviderSerializer(searchprovider)
 
@@ -1146,6 +1154,20 @@ class DetailSearchRagView(APIView):
 
     def get(self, request):
         logger.debug(f"DetailSearchRagView: {request.GET}")
+        # The answer belongs to the search it was generated for, and generating
+        # it reads and replaces that search's stored result. Only the owner of
+        # the search may do either. An unknown id and another user's id get the
+        # same answer.
+        search_id = request.GET.get('search_id')
+        if search_id is not None:
+            if not request.user.is_authenticated:
+                return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
+            try:
+                owned = Search.objects.filter(pk=int(search_id), owner=request.user).exists()
+            except (TypeError, ValueError):
+                owned = False
+            if not owned:
+                return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
         search_rag = SearchRag(request)
         result = search_rag.process_rag()
         serializer = DetailSearchRagSerializer(result)

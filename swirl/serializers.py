@@ -122,6 +122,46 @@ class SearchProviderNoCredentialsSerializer(serializers.ModelSerializer):
         return _validate_provider_scope(self, super().validate(attrs))
 
 
+class SearchProviderSharedSerializer(serializers.ModelSerializer):
+    """
+    What a user sees of a shared provider that belongs to someone else: enough
+    to choose it for a search. Left out, as well as the credentials, are the
+    fields that carry what the connector uses to sign in: the request headers,
+    the page-fetch settings (which hold request headers), and the url, which
+    for database connectors is the connection string.
+    """
+    owner = serializers.ReadOnlyField(source="owner.username")
+
+    class Meta:
+        model = SearchProvider
+        fields = [
+            "id",
+            "name",
+            "owner",
+            "shared",
+            "date_created",
+            "date_updated",
+            "active",
+            "default",
+            "authenticator",
+            "connector",
+            "query_template",
+            "query_template_json",
+            "post_query_template",
+            "query_processors",
+            "query_mappings",
+            "result_processors",
+            "response_mappings",
+            "result_mappings",
+            "results_per_query",
+            "tags",
+            "config",
+        ]
+
+    def validate(self, attrs):
+        return _validate_provider_scope(self, super().validate(attrs))
+
+
 class SearchSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source="owner.username")
 
