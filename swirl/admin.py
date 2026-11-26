@@ -66,6 +66,10 @@ class SecretFieldsMixin:
                 continue
             field = form.base_fields[fname]
             field.widget = forms.PasswordInput(render_value=False)
+            # A model field with a callable default gets a hidden "initial"
+            # input holding the stored value, which would put the secret in
+            # the page next to the masked input.
+            field.show_hidden_initial = False
             has_value = obj and getattr(obj, fname, None)
             if has_value or is_saveasnew:
                 field.required = False
@@ -73,6 +77,30 @@ class SecretFieldsMixin:
             else:
                 field.help_text = 'Required for a new provider.'
         return form
+
+    def get_fieldsets(self, request, obj=None):
+        """Leave the secret fields off the page for an account that may view
+        but not change the object. Django shows such an account every field
+        as stored text, which the password widget above does not cover."""
+        fieldsets = super().get_fieldsets(request, obj)
+        if obj is None or self.has_change_permission(request, obj):
+            return fieldsets
+
+        def without_secrets(fields):
+            kept = []
+            for entry in fields:
+                if isinstance(entry, (list, tuple)):
+                    inner = without_secrets(entry)
+                    if inner:
+                        kept.append(type(entry)(inner))
+                elif entry not in self.secret_fields:
+                    kept.append(entry)
+            return kept
+
+        return [
+            (name, {**options, 'fields': tuple(without_secrets(options.get('fields', ())))})
+            for name, options in fieldsets
+        ]
 
     def save_model(self, request, obj, form, change):
         for fname in self.secret_fields:
