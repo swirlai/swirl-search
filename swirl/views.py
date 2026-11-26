@@ -1474,6 +1474,12 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
         return self.update(request, pk)
 
 def query_transform_form(request):
+    # The form creates a QueryTransform owned by the caller, so it needs what
+    # the API needs for the same thing: a signed-in user who may add one.
+    if not request.user.is_authenticated:
+        return redirect(f"/swirl/api-auth/login?next={request.path}")
+    if not request.user.has_perm('swirl.add_querytransform'):
+        return HttpResponseForbidden()
     if request.method == 'POST':
         form = QueryTransformForm(request.POST, request.FILES)
         if form.is_valid():
