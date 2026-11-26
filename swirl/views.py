@@ -23,7 +23,7 @@ from django.conf import settings
 from .forms import QueryTransformForm
 
 from rest_framework import viewsets, status
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -226,6 +226,9 @@ class AuthenticatorSerializer(serializers.ModelSerializer):
 
 class AuthenticatorViewSet(viewsets.ModelViewSet):
     serializer_class = AuthenticatorSerializer
+    # Reading is unchanged. Creating, changing or deleting a record needs the
+    # matching model permission, as it does in the admin.
+    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
         return AuthenticatorModel.objects.all()
