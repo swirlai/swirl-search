@@ -118,6 +118,13 @@ class DocumentWebPage (WebPage):
         return ret_text
 
 
+def header_names(headers):
+    """
+    Header names for a log line. Values are left out: they can carry
+    credentials for the site being fetched.
+    """
+    return sorted(headers or {})
+
 class PageFetcher (metaclass=ABCMeta):
 
     def __str__(self):
@@ -161,7 +168,7 @@ class PageFetcher (metaclass=ABCMeta):
             response = requests.get(self._url, headers=self._headers, timeout=self._timeout)
             self._http_status = None
             if response.status_code != HTTPStatus.OK:
-                logger.error(f"GET Got unexpected status code: {response.status_code} : {self._url} {self._timeout} {self._headers}")
+                logger.error(f"GET Got unexpected status code: {response.status_code} : {self._url} {self._timeout} headers: {header_names(self._headers)}")
                 return None
             return document_type(response=response)
         except (TimeoutError, NewConnectionError, ConnectionError, requests.exceptions.InvalidURL, Exception) as err:
@@ -189,7 +196,7 @@ class PageFetcher (metaclass=ABCMeta):
 
         self._http_status = None
         if not response.status_code in ( HTTPStatus.OK, HTTPStatus.CREATED, HTTPStatus.ACCEPTED, HTTPStatus.NO_CONTENT, HTTPStatus.RESET_CONTENT):
-            logger.error(f"POST Got unexpected status code: {response.status_code} : {self._url} {self._timeout} {self._headers}")
+            logger.error(f"POST Got unexpected status code: {response.status_code} : {self._url} {self._timeout} headers: {header_names(self._headers)}")
             return None
 
         return self.get_page_document_type()(response=response)
@@ -263,7 +270,7 @@ class PageFetcherFactory():
         pfo = PageFetcherOptions(options=options,url=url)
 
         if not pfo.is_enabled():
-            logger.warning(f"page fetcher requested, but options are not enabled <<{options}>>")
+            logger.warning(f"page fetcher requested, but options are not enabled, options given: {sorted(options)}")
             return None
 
         if pfo.is_pagefetch():

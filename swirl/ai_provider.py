@@ -268,7 +268,7 @@ class LLMWrapper(metaclass=ABCMeta):
         if not ("NO_KEY_CHECK" in cfg or self.engine == "requestpost" or skip_litellm_checks):
             if not self._check_valid_key():
                 logger.warning(
-                    f"Key {self.provider.api_key} not valid for model {self.provider.model}"
+                    f"API key of AI Provider {self.provider.name} not valid for model {self.provider.model}"
                 )
 
         use_model_max_tokens = not (
