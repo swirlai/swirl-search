@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from swirl.models import QueryTransform
 from swirl.processors.transform_query_processor import TransformQueryProcessorFactory
 from swirl.processors import alloc_processor
+from swirl.processors.processor import QueryProcessor
 
 module_name = 'transform_query_processor_utils'
 def __find_query_transform(name, type, user=None):
@@ -44,7 +45,7 @@ def get_pre_query_processor_or_transform(processor, query_temp, tags, user=None 
     Get the pre-query processed based on an entry from from the pre_query_processor(s) fields
     """
     try:
-        pre_query_processor = alloc_processor(processor=processor)(query_temp, None, tags)
+        pre_query_processor = alloc_processor(processor=processor, kind=QueryProcessor)(query_temp, None, tags)
     except (Exception) as err:
         # catch all exceptions here, because anything can come back from eval
         pre_query_processor = __fall_back_to_query_transform(processor, query_temp, err, user)
@@ -56,7 +57,7 @@ def get_query_processor_or_transform(processor, query_temp, mappings, tags, user
     Get the query processed based on an entry from from the query_processor(s) fields
     """
     try:
-        query_processor = alloc_processor(processor=processor)(query_temp, mappings, tags)
+        query_processor = alloc_processor(processor=processor, kind=QueryProcessor)(query_temp, mappings, tags)
     except (Exception) as err:
         query_processor = __fall_back_to_query_transform(processor, query_temp, err, user)
 
