@@ -1,8 +1,11 @@
 services:
   redis:
     image: redis:latest
+    # The app reaches Redis over the compose network. The port is published
+    # on the loopback address only, for tools on this host; Redis has no
+    # password here and must not be reachable from other machines.
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
