@@ -44,6 +44,23 @@ import xmltodict
 ########################################
 ########################################
 
+QUOTED_LITERAL_LANGUAGES = ('jql=', 'cql=')
+
+def escape_term_for_quoted_literal(template, term):
+    """
+    Jira (JQL) and Confluence (CQL) templates put the search term inside a
+    quoted literal, e.g. text~'{query_string}'. A quote in the term would end
+    that literal, and the rest of the term would be read as query syntax.
+    Both languages accept a backslash before a quote inside a literal, so the
+    term stays one literal. Other templates get the term unchanged.
+    """
+    if not any(language in template.lower() for language in QUOTED_LITERAL_LANGUAGES):
+        return term
+    for quote in ("'", '"'):
+        if f"{quote}{{query_string}}{quote}" in template:
+            return term.replace('\\', '\\\\').replace(quote, '\\' + quote)
+    return term
+
 class Requests(VerifyCertsCommon):
 
     type = "Requests"
@@ -82,7 +99,8 @@ class Requests(VerifyCertsCommon):
             query_to_provider = bind_query_mappings(self.provider.query_template, self.provider.query_mappings, self.provider.url, self.provider.credentials)
         # this should leave one item, {query_string}
         if '{query_string}' in query_to_provider:
-            query_to_provider = query_to_provider.replace('{query_string}', urllib.parse.quote_plus(self.query_string_to_provider))
+            term = escape_term_for_quoted_literal(query_to_provider, self.query_string_to_provider)
+            query_to_provider = query_to_provider.replace('{query_string}', urllib.parse.quote_plus(term))
 
         if self.search.sort.lower() == 'date':
             # insert before the last parameter, which is expected to be the user query
