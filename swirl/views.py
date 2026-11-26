@@ -1651,8 +1651,13 @@ class FetchDocumentView(APIView):
         options = {"cache": "false"}
 
         if provider_id:
+            # Use a provider's page-fetch settings only for a caller who could
+            # search that provider: its owner, or anyone when it is shared.
+            # Any other id is treated like one that does not exist.
             try:
                 provider = SearchProvider.objects.get(pk=int(provider_id))
+                if provider.owner_id != request.user.id and not provider.shared:
+                    raise SearchProvider.DoesNotExist
                 cfg = provider.page_fetch_config_json or {}
                 if isinstance(cfg, dict):
                     options.update(cfg)
