@@ -236,7 +236,7 @@ class Connector:
         for processor in processor_list:
             logger.debug(f"{self}: invoking query processor: {processor}")
             try:
-                processed_query = get_query_processor_or_transform(processor, query_temp, self.provider.query_mappings, self.provider.tags, self.search_user).process()
+                processed_query = get_query_processor_or_transform(processor, query_temp, self.provider.query_mappings, self.provider.tags, self.search_user, self.provider.owner).process()
             except (NameError, TypeError, ValueError) as err:
                 self.error(f'{processor}: {err.args}, {err}')
                 return

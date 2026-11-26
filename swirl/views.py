@@ -23,7 +23,7 @@ from django.conf import settings
 from .forms import QueryTransformForm
 
 from rest_framework import viewsets, status
-from rest_framework.permissions import IsAdminUser, DjangoModelPermissions, SAFE_METHODS
+from rest_framework.permissions import IsAdminUser, DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly, SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -226,6 +226,9 @@ class AuthenticatorSerializer(serializers.ModelSerializer):
 
 class AuthenticatorViewSet(viewsets.ModelViewSet):
     serializer_class = AuthenticatorSerializer
+    # Reading is unchanged. Creating, changing or deleting a record needs the
+    # matching model permission, as it does in the admin.
+    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
         return AuthenticatorModel.objects.all()
@@ -1314,6 +1317,11 @@ class ResultViewSet(viewsets.ModelViewSet):
         result.date_updated = datetime.now()
         serializer = ResultSerializer(instance=result, data=request.data)
         serializer.is_valid(raise_exception=True)
+        # A result stays within its owner's searches: it cannot be attached
+        # to a search that belongs to someone else.
+        search = serializer.validated_data.get('search_id')
+        if search is not None and search.owner_id != self.request.user.id:
+            return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
         # security review for 1.7 - OK, saved with owner
         serializer.save(owner=self.request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -1494,6 +1502,12 @@ class QueryTransformViewSet(viewsets.ModelViewSet):
         return self.update(request, pk)
 
 def query_transform_form(request):
+    # The form creates a QueryTransform owned by the caller, so it needs what
+    # the API needs for the same thing: a signed-in user who may add one.
+    if not request.user.is_authenticated:
+        return redirect(f"/swirl/api-auth/login?next={request.path}")
+    if not request.user.has_perm('swirl.add_querytransform'):
+        return HttpResponseForbidden()
     if request.method == 'POST':
         form = QueryTransformForm(request.POST, request.FILES)
         if form.is_valid():
