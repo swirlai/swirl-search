@@ -23,7 +23,7 @@ from django.conf import settings
 from .forms import QueryTransformForm
 
 from rest_framework import viewsets, status
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, DjangoModelPermissions, SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -1342,6 +1342,24 @@ class ResultViewSet(viewsets.ModelViewSet):
 ########################################
 ########################################
 
+class StaffWithModelPermissions(DjangoModelPermissions):
+    """
+    Staff may read. Adding, changing or deleting needs the model permission
+    for that action, and only a superuser may change or delete a superuser.
+    """
+
+    def has_permission(self, request, view):
+        if not (request.user and request.user.is_staff):
+            return False
+        return super().has_permission(request, view)
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
+        if isinstance(obj, User) and obj.is_superuser:
+            return request.user.is_superuser
+        return True
+
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows management of Users objects.
@@ -1351,8 +1369,9 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    # User management is for administrators (staff accounts).
-    permission_classes = [IsAdminUser]
+    # User management is for administrators (staff accounts) who hold the
+    # matching model permission, as in the admin.
+    permission_classes = [StaffWithModelPermissions]
 
 ########################################
 ########################################
@@ -1366,8 +1385,9 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    # Group management is for administrators (staff accounts).
-    permission_classes = [IsAdminUser]
+    # Group management is for administrators (staff accounts) who hold the
+    # matching model permission, as in the admin.
+    permission_classes = [StaffWithModelPermissions]
 
 ########################################
 ########################################
