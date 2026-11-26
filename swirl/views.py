@@ -1154,6 +1154,20 @@ class DetailSearchRagView(APIView):
 
     def get(self, request):
         logger.debug(f"DetailSearchRagView: {request.GET}")
+        # The answer belongs to the search it was generated for, and generating
+        # it reads and replaces that search's stored result. Only the owner of
+        # the search may do either. An unknown id and another user's id get the
+        # same answer.
+        search_id = request.GET.get('search_id')
+        if search_id is not None:
+            if not request.user.is_authenticated:
+                return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
+            try:
+                owned = Search.objects.filter(pk=int(search_id), owner=request.user).exists()
+            except (TypeError, ValueError):
+                owned = False
+            if not owned:
+                return Response('Search Object Not Found', status=status.HTTP_404_NOT_FOUND)
         search_rag = SearchRag(request)
         result = search_rag.process_rag()
         serializer = DetailSearchRagSerializer(result)
@@ -1659,8 +1673,13 @@ class FetchDocumentView(APIView):
         options = {"cache": "false"}
 
         if provider_id:
+            # Use a provider's page-fetch settings only for a caller who could
+            # search that provider: its owner, or anyone when it is shared.
+            # Any other id is treated like one that does not exist.
             try:
                 provider = SearchProvider.objects.get(pk=int(provider_id))
+                if provider.owner_id != request.user.id and not provider.shared:
+                    raise SearchProvider.DoesNotExist
                 cfg = provider.page_fetch_config_json or {}
                 if isinstance(cfg, dict):
                     options.update(cfg)
