@@ -39,7 +39,8 @@ def request_with_session(tokens=True):
     session = {}
     if tokens:
         session['user'] = {'microsoft_access_token': OLD_ACCESS, 'microsoft_refresh_token': OLD_REFRESH,
-                           'microsoft_access_token_expiration_time': 1}
+                           'microsoft_access_token_expiration_time': 1,
+                           'owner_id': request.user.id}
 
     class Session(dict):
         def save(self):

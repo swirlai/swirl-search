@@ -285,6 +285,10 @@ class LogoutView(APIView):
         token = Token.objects.get(user=token_obj.user)
         if token:
             token.delete()
+        # The browser session can outlive this sign-out; do not leave the
+        # user's identity-provider tokens in it.
+        for key in ('user', 'token_cache', 'auth_flow'):
+            request.session.pop(key, None)
         return Response({'status': 'OK'})
 
 @extend_schema(exclude=True)  # This excludes the entire viewset from Swagger documentation
