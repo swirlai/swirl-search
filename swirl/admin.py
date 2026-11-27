@@ -411,7 +411,13 @@ class SearchIndexGenerationAdmin(admin.ModelAdmin):
     def has_change_permission(self, request, obj=None):
         return False
 
-    @admin.action(description='Abort the selected open generations')
+    def has_ingest_permission(self, request):
+        """The actions below end or unblock an ingest run, so they need the
+        permission the index API asks of the caller that runs one."""
+        from swirl.views_index import INGEST_PERMISSION
+        return request.user.has_perm(INGEST_PERMISSION)
+
+    @admin.action(description='Abort the selected open generations', permissions=['ingest'])
     def abort_open_generations(self, request, queryset):
         """Drop the generation and release its OPEN lock.
 
@@ -447,7 +453,7 @@ class SearchIndexGenerationAdmin(admin.ModelAdmin):
                 request, 'Aborted {} generation(s).'.format(aborted),
                 level=messages.SUCCESS)
 
-    @admin.action(description='Clear the stale OPEN lock for the selected types')
+    @admin.action(description='Clear the stale OPEN lock for the selected types', permissions=['ingest'])
     def clear_stale_open_locks(self, request, queryset):
         """Release an abandoned OPEN lock without waiting for the TTL.
 
