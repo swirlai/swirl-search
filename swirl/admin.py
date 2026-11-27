@@ -10,7 +10,7 @@ from django import forms
 from django.contrib import admin, messages
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth import get_user_model
-from django.core.exceptions import FieldError, ValidationError
+from django.core.exceptions import FieldError, PermissionDenied, ValidationError
 from django.shortcuts import redirect, render
 from django.urls import path, reverse
 from django.utils.html import format_html
@@ -611,8 +611,12 @@ def _horizontal_bar_svg(rows, *, width=720, row_height=24, label_pad=200,
 def _admin_activity_view(request):
     """
     Admin page: searches-by-day, top providers, futile queries.
-    Protected by admin.site.admin_view() at registration time.
+    Protected by admin.site.admin_view() at registration time. The page lists
+    users' queries, so it also needs the permission to view searches.
     """
+    if not request.user.has_perm('swirl.view_search'):
+        raise PermissionDenied
+
     from datetime import timedelta
     from django.utils import timezone
     from swirl.admin_analytics import searches_by_day, top_providers, futile_searches
