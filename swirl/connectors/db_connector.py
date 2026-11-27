@@ -26,6 +26,18 @@ class DBConnector(Connector):
 
     type = "DBConnector"
 
+    # True for a dialect whose string literals treat a backslash as an escape
+    # character (BigQuery, Snowflake). The others write a quote inside a
+    # literal by doubling it.
+    backslash_escapes_in_literals = False
+
+    def escape_term_for_literal(self, term):
+        """The search term as it must be written inside a single-quoted SQL
+        literal, so a quote in the term stays part of the literal."""
+        if self.backslash_escapes_in_literals:
+            return term.replace('\\', '\\\\').replace("'", "\\'")
+        return term.replace("'", "''")
+
     ########################################
 
     def __init__(self, provider_id, search_id, update, request_id=''):
@@ -53,7 +65,7 @@ class DBConnector(Connector):
         count_query = bind_query_mappings(count_query_template, self.provider.query_mappings)
 
         if '{query_string}' in count_query:
-            count_query = count_query.replace('{query_string}', self.query_string_to_provider)
+            count_query = count_query.replace('{query_string}', self.escape_term_for_literal(self.query_string_to_provider))
         else:
             self.error(f"{{query_string}} not found in bound query_template {count_query}")
             return
@@ -63,7 +75,7 @@ class DBConnector(Connector):
         # main query
         query_to_provider = bind_query_mappings(self.provider.query_template, self.provider.query_mappings)
         if '{query_string}' in query_to_provider:
-            query_to_provider = query_to_provider.replace('{query_string}', self.query_string_to_provider)
+            query_to_provider = query_to_provider.replace('{query_string}', self.escape_term_for_literal(self.query_string_to_provider))
 
         # sort field
         sort_field = ""
