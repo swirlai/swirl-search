@@ -74,6 +74,10 @@ def test_the_body_carries_no_secret(healthy, monkeypatch, settings):
     ("redis://user:pw@redis:6379/1", "redis://user:***@redis:6379/1"),
     ("rediss://:pw@redis:6380/0", "rediss://redis:6380/0"),
     ("", ""),
+    ("redis+socket:///var/run/redis.sock?password=pw", "redis+socket:///var/run/redis.sock"),
+    ("unix://user:pw@/var/run/redis.sock?db=0", "unix:///var/run/redis.sock"),
+    ("redis://:pw@", "redis://"),
+    ("pw-with-no-scheme", ""),
 ])
 def test_redact_url(url, expected):
     assert views_health.redact_url(url) == expected

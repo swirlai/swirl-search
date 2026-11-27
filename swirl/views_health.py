@@ -43,7 +43,11 @@ def redact_url(url):
     except ValueError:
         return ''
     if not parts.hostname:
-        return url
+        # A socket or other host-less form. Keep the scheme and path; the
+        # user-info and query parts are where a password would be.
+        if not parts.scheme:
+            return ''
+        return '{}://{}'.format(parts.scheme, parts.path)
     netloc = parts.hostname
     if parts.username:
         netloc = '{}:***@{}'.format(parts.username, netloc)
