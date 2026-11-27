@@ -16,12 +16,15 @@ Tenant, the same rule as SWIRL Enterprise:
 
   * ``MICROSOFT_TENANT_ID`` set (the Directory (tenant) ID, a GUID): only that
     tenant's issuer is accepted, and the keys are that tenant's.
-  * not set: the issuer of the tenant named in the token's ``tid`` claim is
-    expected, and signature and audience are still enforced against
-    Microsoft's common key set.  A multi-tenant app registration then lets
-    any Entra tenant sign in, so a WARNING is logged once per process, at
-    start-up and again at the first sign-in if start-up did not log it.  Set
-    ``MICROSOFT_TENANT_ID`` to restrict sign-in to one tenant.
+  * not set: sign-in is refused, and a WARNING says so once per process, at
+    start-up and again at the first sign-in if start-up did not log it.
+  * not set, with ``MICROSOFT_ALLOW_ANY_TENANT`` true: the issuer of the
+    tenant named in the token's ``tid`` claim is expected, and signature and
+    audience are still enforced against Microsoft's common key set.  A
+    multi-tenant app registration then lets any Entra tenant sign in, and an
+    account is matched by the address in the token, so this is for an
+    instance that means to admit every tenant.  The WARNING is logged the
+    same way.
 
 Sign-in is refused when ``MICROSOFT_CLIENT_ID`` is not configured.  Only v2.0
 tokens are accepted; the legacy ``sts.windows.net`` issuer is not.
@@ -81,6 +84,10 @@ def signin_tenant_id() -> str:
     return _setting('MICROSOFT_TENANT_ID').lower()
 
 
+def any_tenant_allowed() -> bool:
+    return bool(getattr(settings, 'MICROSOFT_ALLOW_ANY_TENANT', False))
+
+
 def _get_jwks_client(jwks_uri: str):
     with _lock:
         client = _jwks_clients.get(jwks_uri)
@@ -112,13 +119,25 @@ TENANT_NOT_SET_MESSAGE = (
     'to one tenant.')
 
 
+TENANT_REQUIRED_MESSAGE = (
+    'oidc_signin: MICROSOFT_TENANT_ID is not set, so Microsoft sign-in is '
+    'refused. Set MICROSOFT_TENANT_ID to the Directory (tenant) ID of the '
+    'app registration. To admit every Entra tenant instead, set '
+    'MICROSOFT_ALLOW_ANY_TENANT to true.')
+
+
+def _warn_tenant_not_set():
+    _warn_once('tenant-not-set',
+               TENANT_NOT_SET_MESSAGE if any_tenant_allowed() else TENANT_REQUIRED_MESSAGE)
+
+
 def warn_if_any_tenant_can_sign_in():
     """Log the tenant notice now, if it applies: Microsoft sign-in is
     configured (``MICROSOFT_CLIENT_ID``) and no tenant is.  Called when a
     SWIRL process starts, so the notice does not wait for the first sign-in.
     Once per process, shared with the sign-in path."""
     if signin_client_id() and not signin_tenant_id():
-        _warn_once('tenant-not-set', TENANT_NOT_SET_MESSAGE)
+        _warn_tenant_not_set()
 
 
 def _issuer_and_keys(raw_token: str):
@@ -136,6 +155,10 @@ def _issuer_and_keys(raw_token: str):
         return (f'{MS_AUTHORITY}/{tenant}/v2.0',
                 f'{MS_AUTHORITY}/{tenant}/discovery/v2.0/keys')
 
+    _warn_tenant_not_set()
+    if not any_tenant_allowed():
+        raise SigninTokenError('tenant not configured')
+
     try:
         unverified = jwt.decode(raw_token, options={'verify_signature': False})
     except Exception:
@@ -144,7 +167,6 @@ def _issuer_and_keys(raw_token: str):
     tid = tid.strip().lower() if isinstance(tid, str) else ''
     if not _GUID_RE.match(tid):
         raise SigninTokenError('token has no valid tid')
-    _warn_once('tenant-not-set', TENANT_NOT_SET_MESSAGE)
     return f'{MS_AUTHORITY}/{tid}/v2.0', MS_COMMON_JWKS_URI
 
 
