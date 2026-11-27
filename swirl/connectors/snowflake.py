@@ -30,6 +30,7 @@ from swirl.connectors.utils import bind_query_mappings
 class Snowflake(DBConnector):
 
     type = "Snowflake"
+    backslash_escapes_in_literals = True
 
     ########################################
 

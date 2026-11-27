@@ -30,6 +30,7 @@ from swirl.connectors.db_connector import DBConnector
 class BigQuery(DBConnector):
 
     type = "BigQuery"
+    backslash_escapes_in_literals = True
 
     ########################################
 
