@@ -20,7 +20,7 @@ import requests
 
 from swirl.connectors.utils import bind_query_mappings
 
-from swirl.connectors.requests import Requests
+from swirl.connectors.requests import Requests, request_timeout
 
 ########################################
 ########################################
@@ -38,4 +38,5 @@ class RequestsGet(Requests):
         return 'get'
 
     def send_request(self, url, params=None, query=None, **kwargs):
+        kwargs.setdefault('timeout', request_timeout())
         return requests.get(url, params=params, **kwargs)

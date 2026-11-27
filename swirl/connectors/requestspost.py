@@ -25,7 +25,7 @@ logger = get_task_logger(__name__)
 
 from swirl.connectors.utils import bind_query_mappings
 
-from swirl.connectors.requests import Requests
+from swirl.connectors.requests import Requests, request_timeout
 
 ########################################
 ########################################
@@ -73,4 +73,5 @@ class RequestsPost(Requests):
             post_json=query
 
         logger.debug(f"post_json_str:{post_json_str} query:{query} post_json:{post_json}")
+        kwargs.setdefault('timeout', request_timeout())
         return requests.post(url, params=params, json=post_json, **kwargs)
