@@ -37,10 +37,11 @@ from swirl.connectors.mappings import RESPONSE_MAPPING_KEYS
 from swirl.connectors.utils import bind_query_mappings
 
 from swirl.connectors.connector import Connector
-from swirl.scope import remove_scope_qualifiers
 from swirl.connectors.verify_ssl_common import VerifyCertsCommon
 
 import xmltodict
+
+from swirl.scope import remove_scope_qualifiers
 
 ########################################
 ########################################
