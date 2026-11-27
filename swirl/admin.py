@@ -332,6 +332,48 @@ class SearchProviderAdmin(JsonAddMixin, SecretFieldsMixin, admin.ModelAdmin):
     ]
 
 ##################################################
+# API tokens. The stock pages show every user's token in full (the list, and
+# the title of each token's own page), which lets an account that may only
+# view tokens act as any user. Only a superuser gets the full key or works
+# with a single token here; other staff who may view tokens get the list,
+# with enough of each key to tell tokens apart.
+
+from rest_framework.authtoken.admin import TokenAdmin as StockTokenAdmin  # registers the stock page
+from rest_framework.authtoken.models import TokenProxy
+
+admin.site.unregister(TokenProxy)
+
+
+@admin.register(TokenProxy)
+class TokenAdmin(StockTokenAdmin):
+
+    @admin.display(description='Key', ordering='key')
+    def masked_key(self, obj):
+        return '{}{}'.format('\u2022' * 8, obj.key[-4:])
+
+    def get_list_display(self, request):
+        if request.user.is_superuser:
+            return ('key', 'user', 'created')
+        return ('masked_key', 'user', 'created')
+
+    def get_list_display_links(self, request, list_display):
+        return list_display[:1] if request.user.is_superuser else None
+
+    def has_view_permission(self, request, obj=None):
+        if obj is not None and not request.user.is_superuser:
+            return False
+        return super().has_view_permission(request, obj)
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+##################################################
 
 @admin.register(Search)
 class SearchAdmin(admin.ModelAdmin):
