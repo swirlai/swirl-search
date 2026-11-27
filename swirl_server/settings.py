@@ -362,9 +362,12 @@ SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY_DEF=True
 SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY=env.bool('SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY',default=SWIRL_ALWAYS_FALL_BACK_TO_SUMMARY_DEF)
 
 MICROSOFT_CLIENT_ID= env('MICROSOFT_CLIENT_ID', default='')
-# Directory (tenant) ID of the app registration. Optional: when set, Microsoft
-# sign-in is restricted to that tenant.
+# Directory (tenant) ID of the app registration. Microsoft sign-in is
+# restricted to that tenant, and is refused while this is not set.
 MICROSOFT_TENANT_ID = env('MICROSOFT_TENANT_ID', default='')
+# Only for an instance that means to admit every Entra tenant: accept a
+# sign-in token from any tenant when MICROSOFT_TENANT_ID is not set.
+MICROSOFT_ALLOW_ANY_TENANT = env.bool('MICROSOFT_ALLOW_ANY_TENANT', default=False)
 MICROSOFT_CLIENT_SECRET = env('MICROSOFT_CLIENT_SECRET', default='')
 MICROSOFT_REDIRECT_URI = env('MICROSOFT_REDIRECT_URI',default='')
 

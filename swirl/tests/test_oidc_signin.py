@@ -342,7 +342,45 @@ class TestConfiguration:
 
 
 # ---------------------------------------------------------------------------
-# no tenant configured: the token's own tenant, audience still enforced
+# no tenant configured: sign-in is refused
+# ---------------------------------------------------------------------------
+
+@pytest.mark.django_db
+class TestNoTenantConfiguredIsRefused:
+
+    @pytest.fixture(autouse=True)
+    def no_tenant(self, settings):
+        settings.MICROSOFT_TENANT_ID = ''
+
+    def test_a_valid_token_from_the_app_registrations_own_tenant(self, key, microsoft):
+        assert_refused(post(mint(key)), microsoft)
+        assert len(microsoft.calls) == 0
+
+    def test_a_valid_token_from_another_tenant(self, key, microsoft):
+        assert_refused(post(mint(key, iss=issuer(OTHER_TENANT), tid=OTHER_TENANT)), microsoft)
+
+    def test_an_existing_account_is_not_signed_in(self, key, microsoft):
+        User.objects.create_superuser('existing', EMAIL, 'not-a-real-password')
+
+        response = post(mint(key, iss=issuer(OTHER_TENANT), tid=OTHER_TENANT))
+
+        assert response.status_code == 403
+        assert Token.objects.count() == 0
+
+    def test_the_reason_is_logged_once(self, key, caplog):
+        with caplog.at_level('WARNING', logger='swirl.oidc_signin'):
+            post(mint(key))
+            post(mint(key))
+
+        warnings = [r.getMessage() for r in caplog.records
+                    if 'MICROSOFT_TENANT_ID is not set' in r.getMessage()]
+        assert len(warnings) == 1
+        assert 'sign-in is refused' in warnings[0]
+
+
+# ---------------------------------------------------------------------------
+# no tenant configured, every tenant admitted on purpose: the token's own
+# tenant, audience still enforced
 # ---------------------------------------------------------------------------
 
 @pytest.mark.django_db
@@ -351,6 +389,7 @@ class TestNoTenantConfigured:
     @pytest.fixture(autouse=True)
     def no_tenant(self, settings):
         settings.MICROSOFT_TENANT_ID = ''
+        settings.MICROSOFT_ALLOW_ANY_TENANT = True
 
     def test_token_from_any_tenant_signs_in_using_the_common_key_set(self, key, microsoft):
         token = mint(key, iss=issuer(OTHER_TENANT), tid=OTHER_TENANT)
