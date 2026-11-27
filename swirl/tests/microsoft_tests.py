@@ -49,7 +49,7 @@ def _request(test_suser, session):
     r = RequestFactory()
     r.user = test_suser
     r.session = {
-        'user': session
+        'user': {**session, 'owner_id': test_suser.id}
     }
     return r
 

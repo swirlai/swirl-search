@@ -3,6 +3,9 @@ from datetime import datetime
 import logging
 logger = logging.getLogger(__name__)
 
+# Key in the session's token data naming the user it was stored for.
+SESSION_OWNER_FIELD = 'owner_id'
+
 class Authenticator:
 
     type = "SWIRL Authenticator"
@@ -14,10 +17,23 @@ class Authenticator:
 
     ########################################
 
+    def _session_owner_id(self, request):
+        user = getattr(request, 'user', None)
+        if user is not None and getattr(user, 'is_authenticated', False):
+            return user.id
+        return None
+
     def get_session_data(self, request):
-        if 'user' in request.session:
-            return request.session['user']
-        return False
+        """The token data kept in this browser session, when it was stored for
+        the user making the request. A session can outlive a sign-out, so data
+        stored for another user, or for nobody, is not returned."""
+        if 'user' not in request.session:
+            return False
+        data = request.session['user']
+        owner_id = self._session_owner_id(request)
+        if owner_id is None or data.get(SESSION_OWNER_FIELD) != owner_id:
+            return False
+        return data
 
     def get_access_token_session_field(self):
         return self.access_token_field
@@ -29,16 +45,15 @@ class Authenticator:
         return self.expires_in_field
 
     def set_session_data(self, request, access_token, refresh_token, expiration_time):
-        if 'user' not in request.session:
-            request.session['user'] = {
-                self.access_token_field: access_token,
-                self.refresh_token_field: refresh_token,
-                self.expires_in_field: expiration_time
-            }
-        else:
-            request.session['user'][self.access_token_field] = access_token
-            request.session['user'][self.refresh_token_field] = refresh_token
-            request.session['user'][self.expires_in_field] = expiration_time
+        owner_id = self._session_owner_id(request)
+        current = request.session.get('user')
+        if not current or current.get(SESSION_OWNER_FIELD) != owner_id:
+            # Nothing stored yet, or stored for a different user: start clean
+            # so one user's tokens are never mixed with another's.
+            request.session['user'] = {SESSION_OWNER_FIELD: owner_id}
+        request.session['user'][self.access_token_field] = access_token
+        request.session['user'][self.refresh_token_field] = refresh_token
+        request.session['user'][self.expires_in_field] = expiration_time
         request.session.save()
 
     def get_auth_app(self, request):
