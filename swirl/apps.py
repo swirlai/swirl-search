@@ -15,6 +15,9 @@ class SwirlConfig(AppConfig):
         from swirl.default_admin import check_admin_account
         post_migrate.connect(check_admin_account, sender=self)
         warn_about_signin_configuration()
+        from django.contrib.auth.signals import user_login_failed
+        from swirl.signin_limit import on_login_failed
+        user_login_failed.connect(on_login_failed, dispatch_uid='swirl-signin-limit')
 
 
 def warn_about_signin_configuration():

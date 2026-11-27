@@ -267,6 +267,10 @@ class LoginView(APIView):
             token, created = Token.objects.get_or_create(user=user)
             return Response({'token': token.key, 'user': user.username, 'swirl_version': SWIRL_VERSION, 'is_superuser': user.is_superuser, 'edition': 'community'})
         else:
+            from swirl.signin_limit import seconds_until_allowed
+            wait = seconds_until_allowed(request, username)
+            if wait:
+                return Response({'error': f'Too many failed sign-in attempts. Try again in {wait} seconds.'})
             return Response({'error': 'Invalid credentials'})
 
 class LogoutView(APIView):
