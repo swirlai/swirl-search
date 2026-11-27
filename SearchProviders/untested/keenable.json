@@ -1,0 +1,68 @@
+[
+    {
+        "name": "Web - Keenable (keyless)",
+        "active": false,
+        "default": false,
+        "connector": "RequestsPost",
+        "url": "https://api.keenable.ai/v1/search/public",
+        "query_template": "{url}",
+        "post_query_template": {
+            "query": "{query_string}",
+            "max_results": 10
+        },
+        "http_request_headers": {
+            "X-Keenable-Title": "SWIRL"
+        },
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT_CHAR=-,NO_URL_ENCODE",
+        "result_processors": [
+            "MappingResultProcessor",
+            "DateFinderResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "RESULTS=results",
+        "result_mappings": "title=title,url=url,body=snippet,date_published=published_at,description,acquired_at,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "",
+        "eval_credentials": "",
+        "tags": [
+            "Keenable",
+            "Web",
+            "Search"
+        ]
+    },
+    {
+        "name": "Web - Keenable (API key)",
+        "active": false,
+        "default": false,
+        "connector": "RequestsPost",
+        "url": "https://api.keenable.ai/v1/search",
+        "query_template": "{url}",
+        "post_query_template": {
+            "query": "{query_string}",
+            "max_results": 10
+        },
+        "http_request_headers": {},
+        "query_processors": [
+            "AdaptiveQueryProcessor"
+        ],
+        "query_mappings": "NOT_CHAR=-,NO_URL_ENCODE",
+        "result_processors": [
+            "MappingResultProcessor",
+            "DateFinderResultProcessor",
+            "CosineRelevancyResultProcessor"
+        ],
+        "response_mappings": "RESULTS=results",
+        "result_mappings": "title=title,url=url,body=snippet,date_published=published_at,description,acquired_at,NO_PAYLOAD",
+        "results_per_query": 10,
+        "credentials": "X-Api-Key=<your-Keenable-API-key>",
+        "eval_credentials": "",
+        "tags": [
+            "Keenable",
+            "Web",
+            "Search"
+        ]
+    }
+]
