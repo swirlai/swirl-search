@@ -37,6 +37,7 @@ from swirl.connectors.mappings import RESPONSE_MAPPING_KEYS
 from swirl.connectors.utils import bind_query_mappings
 
 from swirl.connectors.connector import Connector
+from swirl.scope import remove_scope_qualifiers
 from swirl.connectors.verify_ssl_common import VerifyCertsCommon
 
 import xmltodict
@@ -99,7 +100,10 @@ class Requests(VerifyCertsCommon):
             query_to_provider = bind_query_mappings(self.provider.query_template, self.provider.query_mappings, self.provider.url, self.provider.credentials)
         # this should leave one item, {query_string}
         if '{query_string}' in query_to_provider:
-            term = escape_term_for_quoted_literal(query_to_provider, self.query_string_to_provider)
+            term, removed = remove_scope_qualifiers(self.provider, self.query_string_to_provider)
+            if removed:
+                self.warning(f"this source has a scope restriction; removed {' '.join(removed)} from the search term")
+            term = escape_term_for_quoted_literal(query_to_provider, term)
             query_to_provider = query_to_provider.replace('{query_string}', urllib.parse.quote_plus(term))
 
         if self.search.sort.lower() == 'date':

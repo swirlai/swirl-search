@@ -168,3 +168,34 @@ def mark_shared_visibility(provider, results):
         payload['shared_visibility'] = 'unrestricted'
         marked += 1
     return marked
+
+
+# Tag (lower case) -> qualifiers a search term could use to name a scope of
+# its own. On a scoped provider the operator's template sets the scope, so
+# these are taken out of the term. Only GitHub's query language lets a term do
+# this without leaving its place in the template.
+TERM_SCOPE_QUALIFIERS = {
+    'github': re.compile(r'(?<!\S)-?(?:repo|org|user):\S*', re.IGNORECASE),
+}
+
+
+def remove_scope_qualifiers(provider, term):
+    '''Return (term, removed) with scope qualifiers taken out of *term*.
+
+    Applies only to a provider whose tags have a scope rule and that is not
+    flagged scope_unrestricted. Every other provider gets its term back
+    unchanged, and so does a term that carries no such qualifier. Other
+    qualifiers (is:, language:, label: ...) are left alone.
+    '''
+    if not term or is_scope_unrestricted(provider):
+        return term, []
+    removed = []
+    for tag, _pattern in scope_rules_for(provider):
+        qualifiers = TERM_SCOPE_QUALIFIERS.get(tag.strip().lower())
+        if not qualifiers:
+            continue
+        removed.extend(qualifiers.findall(term))
+        term = qualifiers.sub('', term)
+    if removed:
+        term = ' '.join(term.split())
+    return term, removed
