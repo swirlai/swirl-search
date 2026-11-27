@@ -55,6 +55,9 @@ class SecretFieldsMixin:
     On edit/PATCH, leaving the field blank preserves the existing secret.
     """
     secret_fields: tuple = ()
+    # Fields an editor works with as stored (JSON, for instance) but which an
+    # account that may only view the object does not need to read.
+    view_only_hidden_fields: tuple = ()
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -86,6 +89,8 @@ class SecretFieldsMixin:
         if obj is None or self.has_change_permission(request, obj):
             return fieldsets
 
+        hidden = tuple(self.secret_fields) + tuple(self.view_only_hidden_fields)
+
         def without_secrets(fields):
             kept = []
             for entry in fields:
@@ -93,7 +98,7 @@ class SecretFieldsMixin:
                     inner = without_secrets(entry)
                     if inner:
                         kept.append(type(entry)(inner))
-                elif entry not in self.secret_fields:
+                elif entry not in hidden:
                     kept.append(entry)
             return kept
 
@@ -280,8 +285,9 @@ class SearchProviderAdminForm(forms.ModelForm):
 
 
 @admin.register(SearchProvider)
-class SearchProviderAdmin(JsonAddMixin, admin.ModelAdmin):
+class SearchProviderAdmin(JsonAddMixin, SecretFieldsMixin, admin.ModelAdmin):
     form = SearchProviderAdminForm
+    view_only_hidden_fields = ('credentials', 'http_request_headers', 'page_fetch_config_json')
     change_list_template = 'admin/swirl/searchprovider/change_list.html'
     save_as = True
     save_on_top = True
