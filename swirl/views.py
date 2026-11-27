@@ -1033,6 +1033,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             if not Search.objects.filter(id=update_id, owner=self.request.user).exists():
                 return Response('Result Object Not Found', status=status.HTTP_404_NOT_FOUND)
             logger.debug(f"{module_name}: ?update!")
+            search = Search.objects.get(id=update_id, owner=self.request.user)
             search.status = 'UPDATE_SEARCH'
             search.save()
             logger.info(f"{request.user} update {update_id}")
