@@ -61,6 +61,16 @@ INSTALLED_APPS = [
 
 ASGI_APPLICATION = 'swirl_server.routing.application'
 
+# Failed password sign-ins allowed for one username from one client address
+# in a minute before further attempts are refused (swirl/signin_limit.py).
+# 0 turns the limit off.
+SWIRL_SIGNIN_FAILURE_LIMIT = _env_int('SWIRL_SIGNIN_FAILURE_LIMIT', default=10)
+
+AUTHENTICATION_BACKENDS = [
+    'swirl.signin_limit.SigninLimitBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
