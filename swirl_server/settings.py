@@ -95,6 +95,10 @@ SPECTACULAR_SETTINGS = {
         'tagsSorter': 'alpha',
         'validatorUrl': None,
     },
+    # The docs page loads its script and stylesheet from this address. Name a
+    # version: the package default is the moving tag "latest".
+    'SWAGGER_UI_DIST': 'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.36.0',
+    'SWAGGER_UI_FAVICON_HREF': 'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.36.0/favicon-32x32.png',
 }
 
 MIDDLEWARE = [
