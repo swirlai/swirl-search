@@ -276,6 +276,12 @@ SWIRL_DEFAULT_QUERY_LANGUAGE = 'english'
 # Can also be set via the SWIRL_TIMEOUT environment variable.
 SWIRL_TIMEOUT_DEFAULT = 10
 SWIRL_TIMEOUT = _env_int('SWIRL_TIMEOUT', default=SWIRL_TIMEOUT_DEFAULT)
+# SWIRL_REQUEST_TIMEOUT — seconds an HTTP source (RequestsGet, RequestsPost)
+# has to connect and to send each part of its answer before the request is
+# given up, so a source that stops answering does not hold a worker.
+# 0 waits without limit. Can also be set via the environment.
+SWIRL_REQUEST_TIMEOUT_DEFAULT = 60
+SWIRL_REQUEST_TIMEOUT = _env_int('SWIRL_REQUEST_TIMEOUT', default=SWIRL_REQUEST_TIMEOUT_DEFAULT)
 SWIRL_SUBSCRIBE_WAIT = 20
 SWIRL_DEDUPE_FIELD = 'url'
 SWIRL_DEDUPE_SIMILARITY_MINIMUM = 0.95

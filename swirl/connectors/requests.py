@@ -37,6 +37,13 @@ from swirl.connectors.mappings import RESPONSE_MAPPING_KEYS
 from swirl.connectors.utils import bind_query_mappings
 
 from swirl.connectors.connector import Connector
+from django.conf import settings
+
+
+def request_timeout():
+    """Seconds an HTTP source has to connect and to send each part of its
+    answer (SWIRL_REQUEST_TIMEOUT), or None for no limit when that is 0."""
+    return getattr(settings, 'SWIRL_REQUEST_TIMEOUT', 60) or None
 from swirl.connectors.verify_ssl_common import VerifyCertsCommon
 
 import xmltodict
@@ -239,6 +246,9 @@ class Requests(VerifyCertsCommon):
                 return
             except requests.exceptions.InvalidURL as err:
                 self.error(f"requests.{self.get_method()} reports {err} from: {self.provider.connector} -> {page_query}")
+                return
+            except requests.exceptions.Timeout:
+                self.error(f"requests.{self.get_method()} got no answer within {request_timeout()} seconds from: {self.provider.connector} -> {page_query}")
                 return
             if response.status_code != HTTPStatus.OK:
                 self.error(f"request.{self.get_method()} returned: {response.status_code} {response.reason} from: {self.provider.name} for: {page_query}")
