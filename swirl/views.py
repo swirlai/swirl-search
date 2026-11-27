@@ -805,6 +805,13 @@ def move_highlights_out_of_the_plain_fields(results, request=None):
     return changed
 
 
+def is_cross_site_session_request(request):
+    """True when the request is signed in by the session cookie alone and the
+    browser marks it as started by another site. A link on another site can
+    carry the cookie; it cannot add a token or Basic header."""
+    return (isinstance(request.successful_authenticator, SessionAuthentication)
+            and request.headers.get('Sec-Fetch-Site', '').lower() == 'cross-site')
+
 class SearchViewSet(viewsets.ModelViewSet):
     """
     API endpoint for managing Search objects.
@@ -979,6 +986,10 @@ class SearchViewSet(viewsets.ModelViewSet):
             rerun_id = int(request.GET['rerun'])
 
         if rerun_id:
+            # Rerun discards stored results, so it is not taken from a link
+            # on another site.
+            if is_cross_site_session_request(request):
+                return Response(status=status.HTTP_403_FORBIDDEN)
             # check permissions
             if not (request.user.has_perm('swirl.change_search') and request.user.has_perm('swirl.delete_result') and request.user.has_perm('swirl.add_result') and request.user.has_perm('swirl.change_result')):
                 logger.warning(f"User {self.request.user} needs permissions change_search({request.user.has_perm('swirl.change_search')}), delete_result({request.user.has_perm('swirl.delete_result')}), add_result({request.user.has_perm('swirl.add_result')}), change_result({request.user.has_perm('swirl.change_result')})")
@@ -1012,6 +1023,8 @@ class SearchViewSet(viewsets.ModelViewSet):
             update_id = request.GET['update']
 
         if update_id:
+            if is_cross_site_session_request(request):
+                return Response(status=status.HTTP_403_FORBIDDEN)
             # check permissions
             if not (request.user.has_perm('swirl.change_search') and request.user.has_perm('swirl.change_result')):
                 logger.warning(f"User {self.request.user} needs permissions change_search({request.user.has_perm('swirl.change_search')}), change_result({request.user.has_perm('swirl.change_result')})")
