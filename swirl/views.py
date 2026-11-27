@@ -530,6 +530,16 @@ class SearchProviderViewSet(viewsets.ModelViewSet):
         if not (provider.owner == request.user or provider.shared):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
+        # A provider that has been switched off is tested by its owner or an
+        # administrator only; a search would not run it for anyone else.
+        if not provider.active and not (provider.owner == request.user or request.user.is_superuser):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        # The test sends a request to the source, so it is not taken from a
+        # link on another site.
+        if is_cross_site_session_request(request):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
         # Create a transient Search object for the test query
         test_query = request.GET.get('q', 'test')
         try:
